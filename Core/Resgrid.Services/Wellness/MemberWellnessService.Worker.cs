@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
+using Resgrid.Localization.Areas.User.ContentNotices;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 
@@ -12,8 +13,11 @@ namespace Resgrid.Services.Wellness
 {
 	/// <summary>
 	/// Worker 91's three passes. Each starts from a query for due work (pending flags, departments with a due anniversary, departments
-	/// holding an entry older than the 30-year minimum), never from a sweep of every department, and asks no billing gate (WL0 is free).
-	/// Automation addresses active members only (inactive-member policy).
+	/// holding an entry older than the 30-year minimum), never from a sweep of every department. Automation addresses active members only
+	/// (inactive-member policy). Workforce Pro (2026-11-26): the gate is asked once per department with due work (never in a sweep of every
+	/// department). A department that is not licensed (or whose flag is off) gets no suggestions and no reminders: its due work is claimed and
+	/// skipped, so nothing piles up to burst out later; in a licensed department only members holding a seat get suggestions and reminders.
+	/// Retention erasure is a legal duty and runs whatever the add-on.
 	/// </summary>
 	public partial class MemberWellnessService
 	{
@@ -25,6 +29,7 @@ namespace Resgrid.Services.Wellness
 		public async Task<WellnessRunResult> ProcessPendingFlagsAsync(DateTime utcNow, CancellationToken cancellationToken = default)
 		{
 			var result = new WellnessRunResult();
+			var gates = new Dictionary<int, WorkforceProAccess>();
 			foreach (var flag in await _callFlags.GetPendingAsync(WorkerBatch) ?? Enumerable.Empty<RmsCallExposureFlag>())
 			{
 				cancellationToken.ThrowIfCancellationRequested();
@@ -43,7 +48,10 @@ namespace Resgrid.Services.Wellness
 					result.FlagsProcessed++;
 					try
 					{
-						var created = callGone ? 0 : await BuildSuggestionsAsync(flag, call, utcNow, cancellationToken);
+						if (!gates.TryGetValue(flag.DepartmentId, out var gate))
+							gates[flag.DepartmentId] = gate = await WorkforceProAsync(flag.DepartmentId);
+						// Not licensed (lapsed since the flag was set, or the flag switched off): the flag is consumed without records.
+						var created = callGone || !gate.Licensed ? 0 : await BuildSuggestionsAsync(flag, call, utcNow, cancellationToken, gate);
 						await _callFlags.SetSuggestionCountAsync(flag.DepartmentId, flag.RmsCallExposureFlagId, created, cancellationToken);
 						result.SuggestionsCreated += created;
 					}
@@ -71,9 +79,12 @@ namespace Resgrid.Services.Wellness
 		/// Suggests an entry to every active member the dispatch data places on the call who has no entry of the flag's category for it
 		/// yet (a dismissed suggestion counts, so it is never suggested twice). Every row is <see cref="ResponderExposureStatuses.Suggested"/>.
 		/// </summary>
-		internal async Task<int> BuildSuggestionsAsync(RmsCallExposureFlag flag, Call call, DateTime utcNow, CancellationToken cancellationToken)
+		internal async Task<int> BuildSuggestionsAsync(RmsCallExposureFlag flag, Call call, DateTime utcNow, CancellationToken cancellationToken, WorkforceProAccess gate = null)
 		{
 			var departmentId = flag.DepartmentId;
+			gate ??= await WorkforceProAsync(departmentId);
+			if (!gate.Licensed)
+				return 0;
 			var active = await _departmentsService.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			if (active.Count == 0)
 				return 0;
@@ -84,7 +95,8 @@ namespace Resgrid.Services.Wellness
 				state.Roles = await _unitsService.Value.GetRolesForUnitStateAsync(state.UnitStateId) ?? new List<UnitStateRole>();
 			var checkIns = (await _checkInService.Value.GetCheckInsForCallAsync(call.CallId) ?? new List<CheckInRecord>()).Where(c => c.DepartmentId == departmentId).ToList();
 
-			var candidates = ResponderExposureSuggestionBuilder.Build(statuses, unitStates, checkIns, active);
+			// Records are created only for members holding a Workforce Pro seat.
+			var candidates = ResponderExposureSuggestionBuilder.Build(statuses, unitStates, checkIns, active).Where(c => gate.HoldsSeat(c.UserId)).ToList();
 			if (candidates.Count == 0)
 				return 0;
 
@@ -133,11 +145,15 @@ namespace Resgrid.Services.Wellness
 				if (department == null)
 					return;
 				var departmentNumber = await _settingsService.GetTextToCallNumberForDepartmentAsync(departmentId);
-				var callDate = DateTime.SpecifyKind(call.LoggedOn, DateTimeKind.Utc).TimeConverter(department).ToShortDateString();
-				const string title = "Please review your exposure log";
-				var message = $"An entry for the call {call.Name} on {callDate} was suggested from dispatch records. Nothing is recorded until you review it in My exposures.";
+				// Each member reads it in their own language, the call's date in the department's zone (round 9C).
+				var cultures = new ContentNoticeCultures(_userProfiles, department);
 				foreach (var userId in created.Select(c => c.UserId).Distinct(StringComparer.OrdinalIgnoreCase))
-					await _communicationService.Value.SendNotificationAsync(userId, departmentId, message, departmentNumber, department, title);
+				{
+					var (culture, profile) = await cultures.ForMemberAsync(userId);
+					var message = ContentNoticeText.Format("Wellness.Suggestion.Message", culture, call.Name, ContentNoticeCultures.LocalDate(call.LoggedOn, department, culture));
+					await _communicationService.Value.SendNotificationAsync(userId, departmentId, message, departmentNumber, department,
+						ContentNoticeText.Get("Wellness.Suggestion.Title", culture), profile);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -188,9 +204,13 @@ namespace Resgrid.Services.Wellness
 			var localToday = localNow.Date;
 			var active = await _departmentsService.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var canTransmit = ConfigHelper.CanTransmit(departmentId);
+			// Workforce Pro: asked once for the department with due anniversaries.
+			var gate = await WorkforceProAsync(departmentId);
 			List<string> peerTeam = null;
 			Dictionary<string, string> names = null;
 			string departmentNumber = null;
+			ContentNoticeCultures cultures = null;
+			DepartmentTerminologyConfig terms = null;
 			var sent = 0;
 
 			foreach (var row in await _exposures.GetDueAnniversariesAsync(departmentId, dueBy, WorkerBatch) ?? Enumerable.Empty<RmsResponderExposure>())
@@ -209,17 +229,22 @@ namespace Resgrid.Services.Wellness
 				// A member who left, was disabled or hidden is not addressed, and nobody is told about them (inactive-member policy).
 				if (!canTransmit || !row.Counts || !active.Contains(row.UserId))
 					continue;
+				// No notices without Workforce Pro, and none about a member without a seat (claimed above, so nothing bursts out later).
+				if (!gate.HoldsSeat(row.UserId))
+					continue;
 
 				var years = MemberWellnessRules.YearsSince(localOccurred, anniversary);
-				var when = anniversary.ToString("D", CultureInfo.InvariantCulture);
-				var yearText = years == 1 ? "one year" : years.ToString(CultureInfo.InvariantCulture) + " years";
 				departmentNumber ??= await _settingsService.GetTextToCallNumberForDepartmentAsync(departmentId);
+				cultures ??= new ContentNoticeCultures(_userProfiles, department);
+				// The department's own word for its peer support team (and the other wellness terms), setting 118.
+				terms ??= await TerminologyAsync(departmentId);
 
 				if (row.RemindMember)
 				{
-					await _communicationService.Value.SendNotificationAsync(row.UserId, departmentId,
-						$"{when} marks {yearText} since a difficult call you attended. Your peer support team and wellness resources are here whenever you would like them.",
-						departmentNumber, department, "Thinking of you");
+					// The member's own language; the date written their way (round 9C).
+					var (culture, profile) = await cultures.ForMemberAsync(row.UserId);
+					await _communicationService.Value.SendNotificationAsync(row.UserId, departmentId, WellnessTerms.Apply(AnniversaryMessage(anniversary, years, culture), terms, culture),
+						departmentNumber, department, WellnessTerms.Apply(ContentNoticeText.Get("Wellness.Anniversary.Title", culture), terms, culture), profile);
 					sent++;
 				}
 
@@ -232,12 +257,15 @@ namespace Resgrid.Services.Wellness
 							.Where(n => !string.IsNullOrWhiteSpace(n.UserId))
 							.GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase)
 							.ToDictionary(g => g.Key, g => g.First().Name, StringComparer.OrdinalIgnoreCase);
-						var name = names.TryGetValue(row.UserId, out var n) && !string.IsNullOrWhiteSpace(n) ? n.Trim() : "A member";
+						var name = names.TryGetValue(row.UserId, out var n) && !string.IsNullOrWhiteSpace(n) ? n.Trim() : null;
 						foreach (var peer in peerTeam.Where(p => !Same(p, row.UserId)))
 						{
-							await _communicationService.Value.SendNotificationAsync(peer, departmentId,
-								$"{name} asked for the peer support team to know that {when} marks {yearText} since a critical incident they attended. A check-in may be welcome.",
-								departmentNumber, department, "Peer support reminder");
+							var (culture, profile) = await cultures.ForMemberAsync(peer);
+							// The member's name goes in after the terms, so a name is never rewritten.
+							var message = PeerReminderMessage(WellnessTerms.Apply(PeerReminderFormat(years, culture), terms, culture),
+								name ?? ContentNoticeText.Get("Wellness.AMember", culture), anniversary, years, culture);
+							await _communicationService.Value.SendNotificationAsync(peer, departmentId, message, departmentNumber, department,
+								WellnessTerms.Apply(ContentNoticeText.Get("Wellness.PeerReminder.Title", culture), terms, culture), profile);
 							sent++;
 						}
 					}
@@ -247,10 +275,55 @@ namespace Resgrid.Services.Wellness
 			return sent;
 		}
 
+		/// <summary>The member's anniversary reminder in <paramref name="culture"/>: the date written that way ("D"), one year or N years.</summary>
+		public static string AnniversaryMessage(DateTime anniversary, int years, CultureInfo culture) =>
+			years == 1 ? ContentNoticeText.Format("Wellness.Anniversary.OneYear", culture, anniversary)
+				: ContentNoticeText.Format("Wellness.Anniversary.Years", culture, anniversary, years);
+
+		/// <summary>The peer support team's reminder about <paramref name="memberName"/> in <paramref name="culture"/>.</summary>
+		public static string PeerReminderMessage(string memberName, DateTime anniversary, int years, CultureInfo culture) =>
+			years == 1 ? ContentNoticeText.Format("Wellness.PeerReminder.OneYear", culture, memberName, anniversary)
+				: ContentNoticeText.Format("Wellness.PeerReminder.Years", culture, memberName, anniversary, years);
+
+		/// <summary>
+		/// The peer reminder's unformatted text ({0} the member, {1} the date, {2} the years): the department's terms are applied to it before
+		/// the member's name goes in, so a name that happens to contain a term is never rewritten.
+		/// </summary>
+		public static string PeerReminderFormat(int years, CultureInfo culture) =>
+			ContentNoticeText.Get(years == 1 ? "Wellness.PeerReminder.OneYear" : "Wellness.PeerReminder.Years", culture);
+
+		/// <summary>A peer reminder format (<see cref="PeerReminderFormat"/>, terms applied) filled in; the text as it is when it cannot be.</summary>
+		public static string PeerReminderMessage(string format, string memberName, DateTime anniversary, int years, CultureInfo culture)
+		{
+			try
+			{
+				return string.Format(culture ?? CultureInfo.InvariantCulture, format ?? string.Empty, memberName, anniversary, years);
+			}
+			catch (FormatException)
+			{
+				return format;
+			}
+		}
+
+		/// <summary>The department's terminology (setting 118); empty when it cannot be read (labels only, never a lost notice).</summary>
+		private async Task<DepartmentTerminologyConfig> TerminologyAsync(int departmentId)
+		{
+			try
+			{
+				return await _settingsService.GetDepartmentTerminologyAsync(departmentId) ?? new DepartmentTerminologyConfig();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Department terminology could not be read for the wellness notices of department {departmentId}.");
+				return new DepartmentTerminologyConfig();
+			}
+		}
+
 		#endregion Anniversary reminders
 
 		#region Retention
 
+		/// <summary>Never gated by Workforce Pro: erasing records past their legal retention is a duty, not a feature.</summary>
 		public async Task<int> EraseExpiredAsync(DateTime utcNow, CancellationToken cancellationToken = default)
 		{
 			var erased = 0;

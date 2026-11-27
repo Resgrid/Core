@@ -900,11 +900,38 @@
   </data>
   <data name="ResgridAcademy" xml:space="preserve">
     <value>Ακαδημία Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyLearnThisPage" xml:space="preserve">
     <value>Μάθημα για αυτή τη σελίδα ({0} λεπτά)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyAssignThisLesson" xml:space="preserve">
     <value>Ανάθεση αυτού του μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessModule" xml:space="preserve">
+    <value>Ευεξία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessOfficersTerm" xml:space="preserve">
+    <value>Υπεύθυνοι ευεξίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TermWellnessOfficer" xml:space="preserve">
+    <value>Υπεύθυνος ευεξίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficersTerm" xml:space="preserve">
+    <value>Ορισμένοι υπεύθυνοι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TermDesignatedOfficer" xml:space="preserve">
+    <value>Ορισμένος υπεύθυνος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerSupportTeamTerm" xml:space="preserve">
+    <value>Ομάδα υποστήριξης συναδέλφων</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

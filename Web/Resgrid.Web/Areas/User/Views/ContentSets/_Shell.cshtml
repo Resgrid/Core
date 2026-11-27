@@ -1,0 +1,52 @@
+@using Resgrid.Web.Areas.User.Models
+@model Resgrid.WebCore.Areas.User.Models.ContentSets.ContentSetPageModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Heading and section strip of the set pages (round 10 A3): protocol sets, course sets, the update inbox, proposals, sponsorships and the
+    update time setting (managers). ViewData["Title"] heading; ViewData["Subtitle"] optional; ViewData["SetSection"] the current section.
+*@
+@{
+    var moduleName = text["SetsHeader"].Value;
+    var title = (string)ViewData["Title"] ?? moduleName;
+    var subtitle = (string)ViewData["Subtitle"];
+    var section = (string)ViewData["SetSection"] ?? "Protocols";
+    var tabs = new ModuleTabsView { Label = moduleName };
+    var protocolTab = new ModuleTab(text["ProtocolSetsTab"].Value, "fa-book", "ContentSets", "Index", section == "Protocols");
+    protocolTab.RouteValues["kind"] = "0";
+    tabs.Tabs.Add(protocolTab);
+    var courseTab = new ModuleTab(text["CourseSetsTab"].Value, "fa-graduation-cap", "ContentSets", "Index", section == "Training");
+    courseTab.RouteValues["kind"] = "1";
+    tabs.Tabs.Add(courseTab);
+    tabs.Tabs.Add(new ModuleTab(Model.OpenUpdates > 0 ? text["InboxTab"].Value + " (" + Model.OpenUpdates + ")" : text["InboxTab"].Value, "fa-inbox", "ContentSets", "Inbox", section == "Inbox"));
+    tabs.Tabs.Add(new ModuleTab(text["ProposalsTab"].Value, "fa-comments-o", "ContentSets", "Proposals", section == "Proposals"));
+    tabs.Tabs.Add(new ModuleTab(text["SponsorshipsTab"].Value, "fa-handshake-o", "ContentSets", "Sponsorships", section == "Sponsorships"));
+    if (Model.CanManage || section == "Settings")
+    {
+        tabs.Tabs.Add(new ModuleTab(text["SettingsTab"].Value, "fa-cog", "ContentSets", "Settings", section == "Settings"));
+    }
+}
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Links" asp-action="Index" asp-route-area="User">@text["LinksCrumb"]</a></li>
+            <li class="active"><strong>@title</strong></li>
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+    </div>
+    <div class="col-sm-12 rgw-module-navigation">
+        @await Html.PartialAsync("~/Areas/User/Views/Shared/_ModuleTabs.cshtml", tabs)
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+}
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+}

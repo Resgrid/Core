@@ -192,6 +192,8 @@ namespace Resgrid.Services
 
 		public IReadOnlyList<LmsCompetencyCatalogFramework> GetCatalog() => LmsCompetencyFrameworkCatalog.All;
 
+		public IReadOnlyList<LmsCompetencyCatalogFramework> GetCatalog(string culture) => LmsCompetencyFrameworkCatalog.AllFor(culture);
+
 		public async Task<List<LmsCompetencyFramework>> GetFrameworksAsync(int departmentId) =>
 			departmentId <= 0 ? new List<LmsCompetencyFramework>() : await _frameworks.GetForDepartmentAsync(departmentId) ?? new List<LmsCompetencyFramework>();
 
@@ -209,9 +211,13 @@ namespace Resgrid.Services
 
 		#region Catalog and CASE import
 
-		public async Task<LmsCompetencyFramework> ApplyCatalogAsync(int departmentId, string catalogKey, string userId, CancellationToken cancellationToken = default)
+		public Task<LmsCompetencyFramework> ApplyCatalogAsync(int departmentId, string catalogKey, string userId, CancellationToken cancellationToken = default) =>
+			ApplyCatalogAsync(departmentId, catalogKey, userId, null, cancellationToken);
+
+		public async Task<LmsCompetencyFramework> ApplyCatalogAsync(int departmentId, string catalogKey, string userId, string culture, CancellationToken cancellationToken = default)
 		{
-			var source = LmsCompetencyFrameworkCatalog.Find(catalogKey) ?? throw new InvalidOperationException("lms_program_framework_not_found");
+			// Round 9C: display names in the author's language (English when none ships); keys and codes are unchanged.
+			var source = LmsCompetencyFrameworkCatalog.Find(catalogKey, culture) ?? throw new InvalidOperationException("lms_program_framework_not_found");
 			var existing = (await GetFrameworksAsync(departmentId)).FirstOrDefault(f => string.Equals(f.CatalogKey, source.Key, StringComparison.OrdinalIgnoreCase));
 			if (existing != null)
 				return existing;

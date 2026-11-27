@@ -1,0 +1,8 @@
+{
+  "key": "partner-packages-scorm",
+  "revision": 1,
+  "kind": "partner",
+  "launch": "scorm",
+  "title": "Partner course packages (SCORM / cmi5)",
+  "summary": "Course packages bought from a partner or exported from another learning system, imported as SCORM 1.2/2004 or cmi5 and played in a sandboxed player. Attribution and licence stay the publisher's."
+}

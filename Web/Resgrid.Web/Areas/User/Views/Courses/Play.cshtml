@@ -153,6 +153,16 @@
                                 @await Html.PartialAsync("_PlayAssessment", Model)
                                 break;
 
+                            case LmsLessonKinds.Scorm:
+                            case LmsLessonKinds.Cmi5:
+                            case LmsLessonKinds.LtiLink:
+                                @* T5: the sandboxed SCORM / cmi5 runtime or the LTI launch; the runtime completes the lesson, never a button. *@
+                                if (player.Error == LmsErrors.None)
+                                {
+                                    @await Component.InvokeAsync("LmsStandardsPlayer", new { enrollmentId, lesson, completed, item = (string)Context.Request.Query["item"] })
+                                }
+                                break;
+
                             case LmsLessonKinds.Survey:
                                 if (player.SurveyAnswered)
                                 {
@@ -201,7 +211,7 @@
                                 break;
                         }
 
-                        @if (kind != LmsLessonKinds.Assessment && kind != LmsLessonKinds.Survey && player.Error == LmsErrors.None)
+                        @if (kind != LmsLessonKinds.Assessment && kind != LmsLessonKinds.Survey && kind != LmsLessonKinds.Scorm && kind != LmsLessonKinds.Cmi5 && kind != LmsLessonKinds.LtiLink && player.Error == LmsErrors.None)
                         {
                             <hr />
                             @if (completed)
@@ -272,6 +282,17 @@
                         PanelId = "kask-course"
                     })
                 }
+                @if (Model.CanAskCourse)
+                {
+                    @* T5 practice cards (Enhanced AI and the LMS, like the tutor): the course's flashcards for spaced practice, never recorded; the
+                       panel stays hidden when the deck is empty. Never beside an assessment or a survey. *@
+                    @await Html.PartialAsync("_PracticeCards", new PracticeCardsPanelModel
+                    {
+                        EnrollmentId = enrollmentId,
+                        CourseId = player.Outline.Course.LmsCourseId,
+                        DeckUrl = Url.Action("Deck", "LmsStudio", new { area = "User", id = enrollmentId })
+                    })
+                }
             </section>
         </div>
     }
@@ -283,4 +304,5 @@
 }
 @section Scripts {
     <script src="~/js/app/internal/courses/resgrid.courses.player.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/courses/resgrid.courses.cards.js" asp-append-version="true"></script>
 }

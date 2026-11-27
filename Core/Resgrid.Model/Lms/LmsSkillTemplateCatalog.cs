@@ -94,7 +94,7 @@ namespace Resgrid.Model.Lms
 				T("comments", "Evaluator comments")),
 			Sheet("evoc-course", "Emergency vehicle driving course", "SKL-EVOC", "Fire / EMS", "Drive the department's cone course and road route.",
 				P("pretrip", "Completes the pre-trip inspection", true), P("serpentine", "Serpentine without striking cones"), P("backing", "Backs with a spotter"),
-				P("stop", "Stops within the box"), P("road", "Road drive: intersections and lane use", true), new LmsSkillStep { Key = "miles", Type = (int)LmsSkillStepTypes.Number, Label = "Road miles driven" },
+				P("stop", "Stops within the box"), P("road", "Road drive: intersections and lane use", true), new LmsSkillStep { Key = "distance", Type = (int)LmsSkillStepTypes.Number, Label = "Road distance driven" },
 				T("comments", "Evaluator comments")),
 			Sheet("pa-trauma", "Patient assessment - trauma", "SKL-PA-T", "EMS", "Assess and manage a trauma patient (scenario).",
 				P("scene", "Scene safety and precautions", true), P("primary", "Primary survey and life threats", true), P("history", "History and secondary assessment"),
@@ -120,6 +120,34 @@ namespace Resgrid.Model.Lms
 			Dor(Sheet("cto-dor-dispatch", "Daily observation report - communications trainee", "DOR-COMM", "Dispatch", "Communications training officer's daily ratings and narrative.",
 				R("call-taking", "Call taking"), R("radio", "Radio procedures"), R("cad", "CAD use"), R("multitask", "Multitasking under load"), R("stress", "Stress tolerance"),
 				new LmsSkillStep { Key = "overall", Type = (int)LmsSkillStepTypes.Computed, Label = "Average rating", ComputeOp = (int)LmsSkillComputeOps.Average, ComputeKeys = new List<string> { "call-taking", "radio", "cad", "multitask", "stress" } },
+				T("strengths", "Most acceptable performance", true), T("improve", "Least acceptable performance", true))),
+
+			// Round 9C: starters for search and rescue, industry, workplaces, security and law enforcement (structure only).
+			Sheet("sar-navigation", "Navigation with map and compass", "SKL-NAV", "SAR", "Find and follow a bearing and confirm position on the map.",
+				H("h1", "Map"), P("orient", "Orients the map to the ground"), P("position", "Identifies the current position", true), P("grid", "Gives a grid reference or coordinates"),
+				H("h2", "Compass"), P("bearing", "Takes a bearing from the map", true), P("follow", "Follows the bearing to the target"), P("pace", "Estimates distance travelled"),
+				T("comments", "Evaluator comments")),
+			Sheet("confined-space-attendant", "Confined space attendant", "SKL-CSATT", "Industrial", "Attend an entry from outside the space.",
+				P("permit", "Checks the entry permit before entry", true), P("air", "Confirms the air test results", true), P("count", "Keeps an accurate count of entrants"),
+				P("comms", "Keeps contact with the entrants"), P("stay-out", "Stays outside the space at all times", true), P("rescue", "Summons rescue without entering", true),
+				T("comments", "Evaluator comments")),
+			Sheet("fall-arrest-harness", "Fall arrest harness inspection and fit", "SKL-HARN", "Industrial", "Inspect, don and connect a full-body harness.",
+				P("inspect", "Inspects webbing, stitching and hardware", true), P("don", "Dons and adjusts the harness"), P("fit", "Fit checked by the evaluator", true),
+				P("anchor", "Selects a suitable anchorage", true), P("connect", "Connects the lanyard or lifeline correctly", true), T("comments", "Evaluator comments")),
+			Sheet("evacuation-warden", "Evacuation warden", "SKL-WARDEN", "Workplace", "Clear an area and report at the assembly point.",
+				P("alarm", "Recognizes the alarm and starts the evacuation"), P("sweep", "Sweeps the assigned area", true), P("assist", "Assists people who need help"),
+				P("doors", "Closes doors behind the group"), P("assembly", "Leads people to the assembly point"), P("report", "Reports the area clear or not clear", true),
+				T("comments", "Evaluator comments")),
+			Sheet("security-patrol", "Security patrol round", "SKL-PATROL", "Security", "Complete a patrol round and record what was found.",
+				P("brief", "Reads the post orders and the log before the round"), P("route", "Follows the set route and checkpoints"), P("observe", "Notices and checks what is out of place", true),
+				P("record", "Records findings in the log"), P("escalate", "Reports an incident to the right contact", true), T("comments", "Evaluator comments")),
+			Sheet("de-escalation-scenario", "De-escalation scenario", "SKL-DEESC", "Law enforcement / Security", "Scenario-based evaluation of communication under stress.",
+				R("approach", "Approach and positioning"), R("listen", "Active listening"), R("calm", "Calm, clear commands"), R("options", "Offers options and time"),
+				R("partner", "Coordinates with the partner"), R("report", "Accurate report afterwards"), T("comments", "Evaluator comments")),
+			Dor(Sheet("dor-security", "Daily observation report - security officer trainee", "DOR-SEC", "Security", "Field training officer's daily ratings and narrative.",
+				R("post-orders", "Knowledge of post orders"), R("patrol", "Patrol and observation"), R("reports", "Report writing"), R("customer", "Customer service"),
+				R("safety", "Officer safety"),
+				new LmsSkillStep { Key = "overall", Type = (int)LmsSkillStepTypes.Computed, Label = "Average rating", ComputeOp = (int)LmsSkillComputeOps.Average, ComputeKeys = new List<string> { "post-orders", "patrol", "reports", "customer", "safety" } },
 				T("strengths", "Most acceptable performance", true), T("improve", "Least acceptable performance", true)))
 		}.AsReadOnly();
 
@@ -227,5 +255,51 @@ namespace Resgrid.Model.Lms
 
 		public static LmsTaskBookTemplate FindTaskBook(string key) =>
 			TaskBooks.FirstOrDefault(t => string.Equals(t.Key, (key ?? string.Empty).Trim(), StringComparison.OrdinalIgnoreCase));
+
+		/// <summary>The text fields of a sheet (round 9C): title, description and each step's and option's label and help. Keys, codes and the sector stay.</summary>
+		public static readonly ISet<string> SheetTextProperties = SeedContentLocalization.Properties("Title", "Description", "Label", "Help");
+
+		/// <summary>The text fields of a task book: its name, description and task titles. Position codes and task numbers stay.</summary>
+		public static readonly ISet<string> TaskBookTextProperties = SeedContentLocalization.Properties("Name", "Description", "Title");
+
+		/// <summary>The pattern of a numbered task's title ("FFT2 task 3"); translated once, not per task.</summary>
+		public const string NumberedTaskPattern = "{0} task {1}";
+
+		private static readonly System.Text.RegularExpressions.Regex NumberedTask =
+			new System.Text.RegularExpressions.Regex(@"^(?<code>[A-Z0-9][A-Z0-9-]*) task (?<n>\d+)$", System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+		/// <summary>A sheet in a language (a translated copy; the sheet itself in English or when the language ships no variant).</summary>
+		public static LmsSkillSheetTemplate Localized(LmsSkillSheetTemplate template, string culture) =>
+			SeedContentLocalization.Localize(template, SeedContentLocalization.SkillTemplates, culture, SheetTextProperties, "sheet:" + template?.Key);
+
+		/// <summary>A task book in a language: numbered task titles keep their code and number around the translated pattern.</summary>
+		public static LmsTaskBookTemplate Localized(LmsTaskBookTemplate template, string culture)
+		{
+			var localized = SeedContentLocalization.Localize(template, SeedContentLocalization.SkillTemplates, culture, TaskBookTextProperties, "book:" + template?.Key);
+			if (localized == null || ReferenceEquals(localized, template))
+				return localized;
+			var pattern = SeedContentLocalization.Translate(SeedContentLocalization.SkillTemplates, NumberedTaskPattern, culture);
+			foreach (var task in localized.Tasks ?? new List<LmsTaskBookTask>())
+			{
+				var match = NumberedTask.Match(task.Title ?? string.Empty);
+				if (match.Success)
+					task.Title = string.Format(System.Globalization.CultureInfo.InvariantCulture, pattern, match.Groups["code"].Value, match.Groups["n"].Value);
+			}
+			return localized;
+		}
+
+		/// <summary>The catalog's guidance line in a language.</summary>
+		public static string GuidanceFor(string culture) => SeedContentLocalization.Translate(SeedContentLocalization.SkillTemplates, Guidance, culture);
+
+		public static IReadOnlyList<LmsSkillSheetTemplate> SheetsFor(string culture) => Sheets.Select(t => Localized(t, culture)).ToList();
+
+		public static IReadOnlyList<LmsTaskBookTemplate> TaskBooksFor(string culture) => TaskBooks.Select(t => Localized(t, culture)).ToList();
+
+		/// <summary>Every English text of the library (what the translations cover); numbered task titles count once, as their pattern.</summary>
+		public static IReadOnlyList<string> AllText() =>
+			new[] { Guidance, NumberedTaskPattern }
+				.Concat(Sheets.SelectMany(t => SeedContentLocalization.CollectObject(t, SheetTextProperties)))
+				.Concat(TaskBooks.SelectMany(t => SeedContentLocalization.CollectObject(t, TaskBookTextProperties)).Where(s => !NumberedTask.IsMatch(s)))
+				.Distinct(StringComparer.Ordinal).ToList();
 	}
 }

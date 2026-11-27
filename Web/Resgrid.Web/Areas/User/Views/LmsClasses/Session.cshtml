@@ -4,6 +4,7 @@
 @using Resgrid.Web.Areas.User.Models.LmsClasses
 @model LmsClassSessionView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> xlLocalizer
 @*
     One class session (T4, LMS): details and the member's own enrol / withdraw / sign-in; for its instructors and class managers the roster
     (enrolled, waitlist, pending; attendance; walk-ins; meeting report import; the shift-calendar conflict flag), sign-off into the
@@ -156,6 +157,8 @@
             @if (Model.CanManage)
             {
                 <a class="btn btn-white btn-sm" asp-controller="LmsClasses" asp-action="Edit" asp-route-area="User" asp-route-id="@session.LmsClassSessionId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Edit"]</a>
+                @* T5: the public listing, fee per external learner, roster export and Business Operations invoices. *@
+                <a class="btn btn-white btn-sm" asp-controller="LmsExternalLearners" asp-action="Class" asp-route-area="User" asp-route-id="@session.LmsClassSessionId"><i class="fa fa-globe" aria-hidden="true"></i> @xlLocalizer["PublicFeesLink"]</a>
             }
             @if (scheduled && session.QrEnabled)
             {
@@ -519,6 +522,11 @@
                 <p class="text-muted">@string.Format(culture, localizer["RetentionHelpFormat"].Value, Model.Local(session.RetainUntil.Value).ToString("d", culture))</p>
             }
         }
+    }
+
+    @if (Model.Recording != null)
+    {
+        <partial name="_ClassRecordCompletions" model="Model" />
     }
 </div>
 

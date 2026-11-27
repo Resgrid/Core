@@ -91,5 +91,11 @@ namespace Resgrid.WebCore.Areas.User.Models.Protocols
 		public Dictionary<string, string> Names { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		public string Message { get; set; }
 		public string Error { get; set; }
+
+		/// <summary>Round 7A: the wording shown is an unsaved Enhanced AI draft (the author reviews it and saves the draft translation).</summary>
+		public bool IsAiDraft { get; set; }
+
+		/// <summary>Round 7A: what the AI draft did (fields drafted, refused, left for another draft).</summary>
+		public string AiNotice { get; set; }
 	}
 }

@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Reviews.Tab" xml:space="preserve">
+    <value>Training reviews</value>
+  </data>
+  <data name="Inbox.Title" xml:space="preserve">
+    <value>Training reviews</value>
+  </data>
+  <data name="Inbox.Intro" xml:space="preserve">
+    <value>Training hours members submitted with evidence, waiting for your review, oldest first.</value>
+  </data>
+  <data name="Inbox.AwaitingTab" xml:space="preserve">
+    <value>Waiting for review</value>
+  </data>
+  <data name="Inbox.InfoTab" xml:space="preserve">
+    <value>Waiting for the member</value>
+  </data>
+  <data name="Inbox.AwaitingTile" xml:space="preserve">
+    <value>Waiting for your review</value>
+  </data>
+  <data name="Inbox.InfoTile" xml:space="preserve">
+    <value>Waiting for the member's answer</value>
+  </data>
+  <data name="Inbox.OldestTile" xml:space="preserve">
+    <value>Oldest waiting since</value>
+  </data>
+  <data name="Inbox.MySubmissionsLink" xml:space="preserve">
+    <value>My submissions</value>
+  </data>
+  <data name="Inbox.Empty" xml:space="preserve">
+    <value>Nothing is waiting for your review.</value>
+  </data>
+  <data name="Inbox.EmptyInfo" xml:space="preserve">
+    <value>No submission is waiting for a member's answer.</value>
+  </data>
+  <data name="Inbox.SelectAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
+  <data name="Inbox.SelectRow" xml:space="preserve">
+    <value>Select {0}</value>
+  </data>
+  <data name="Inbox.FilesCount" xml:space="preserve">
+    <value>{0} files</value>
+  </data>
+  <data name="Inbox.ReviewButton" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="Inbox.BulkNoteLabel" xml:space="preserve">
+    <value>Note to the members (optional)</value>
+  </data>
+  <data name="Inbox.BulkConfirm" xml:space="preserve">
+    <value>Approve the selected submissions?</value>
+  </data>
+  <data name="Inbox.BulkApproveButton" xml:space="preserve">
+    <value>Approve selected</value>
+  </data>
+  <data name="Inbox.NoneSelected" xml:space="preserve">
+    <value>Select at least one submission.</value>
+  </data>
+  <data name="Inbox.BulkApproved" xml:space="preserve">
+    <value>{0} submissions approved.</value>
+  </data>
+  <data name="Inbox.BulkRefused" xml:space="preserve">
+    <value>{0} submissions could not be approved.</value>
+  </data>
+  <data name="Filter.Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Filter.AllCategories" xml:space="preserve">
+    <value>All categories</value>
+  </data>
+  <data name="Filter.Uncategorized" xml:space="preserve">
+    <value>Uncategorized</value>
+  </data>
+  <data name="Filter.Member" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="Filter.AllMembers" xml:space="preserve">
+    <value>All members</value>
+  </data>
+  <data name="Filter.Search" xml:space="preserve">
+    <value>Search title, provider or number</value>
+  </data>
+  <data name="Filter.Apply" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="Filter.Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Col.Member" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="Col.Training" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="Col.Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Col.Hours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="Col.Evidence" xml:space="preserve">
+    <value>Evidence</value>
+  </data>
+  <data name="Col.Waiting" xml:space="preserve">
+    <value>Waiting since</value>
+  </data>
+  <data name="Col.State" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="Col.Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Evidence.Header" xml:space="preserve">
+    <value>Evidence</value>
+  </data>
+  <data name="Evidence.None" xml:space="preserve">
+    <value>No evidence attached</value>
+  </data>
+  <data name="Evidence.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Evidence.Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Evidence.PreviewUnavailable" xml:space="preserve">
+    <value>No preview for this type of file; download it to view it.</value>
+  </data>
+  <data name="Evidence.FilesLabel" xml:space="preserve">
+    <value>Evidence files</value>
+  </data>
+  <data name="Evidence.FilesHelp" xml:space="preserve">
+    <value>Up to {0} files, {1} MB each: a certificate, a photo, a document or a receipt (PDF, JPG, PNG, GIF, WebP, DOC, DOCX or ODT).</value>
+  </data>
+  <data name="Evidence.KindLabel" xml:space="preserve">
+    <value>These files are</value>
+  </data>
+  <data name="Evidence.Kind.Other" xml:space="preserve">
+    <value>Other evidence</value>
+  </data>
+  <data name="Evidence.Kind.Certificate" xml:space="preserve">
+    <value>A certificate</value>
+  </data>
+  <data name="Evidence.Kind.Photo" xml:space="preserve">
+    <value>A photo</value>
+  </data>
+  <data name="Evidence.Kind.Document" xml:space="preserve">
+    <value>A document</value>
+  </data>
+  <data name="Evidence.Kind.Receipt" xml:space="preserve">
+    <value>A receipt</value>
+  </data>
+  <data name="Review.Title" xml:space="preserve">
+    <value>Review training submission</value>
+  </data>
+  <data name="Submission.Title" xml:space="preserve">
+    <value>Training submission</value>
+  </data>
+  <data name="Back.Inbox" xml:space="preserve">
+    <value>Back to training reviews</value>
+  </data>
+  <data name="Back.Mine" xml:space="preserve">
+    <value>Back to my submissions</value>
+  </data>
+  <data name="Detail.Member" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="Detail.CompletedOn" xml:space="preserve">
+    <value>Completed on</value>
+  </data>
+  <data name="Detail.Hours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="Detail.CeHours" xml:space="preserve">
+    <value>CE / CPD hours</value>
+  </data>
+  <data name="Detail.Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Detail.Provider" xml:space="preserve">
+    <value>Provider</value>
+  </data>
+  <data name="Detail.CourseNumber" xml:space="preserve">
+    <value>Course or CE / CPD number</value>
+  </data>
+  <data name="Detail.SubmittedOn" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="Detail.Notes" xml:space="preserve">
+    <value>Member's notes</value>
+  </data>
+  <data name="Detail.DeniedReason" xml:space="preserve">
+    <value>Not accepted:</value>
+  </data>
+  <data name="State.AwaitingReview" xml:space="preserve">
+    <value>Waiting for review</value>
+  </data>
+  <data name="State.InfoRequested" xml:space="preserve">
+    <value>More information needed</value>
+  </data>
+  <data name="State.Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="State.Denied" xml:space="preserve">
+    <value>Not accepted</value>
+  </data>
+  <data name="State.SelfReported" xml:space="preserve">
+    <value>Self-reported</value>
+  </data>
+  <data name="Action.ApproveHeader" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="Action.ApproveHoursLabel" xml:space="preserve">
+    <value>Hours that count</value>
+  </data>
+  <data name="Action.ApproveNoteLabel" xml:space="preserve">
+    <value>Note to the member (optional)</value>
+  </data>
+  <data name="Action.ApproveButton" xml:space="preserve">
+    <value>Approve</value>
+  </data>
+  <data name="Action.InfoHeader" xml:space="preserve">
+    <value>Ask for more information</value>
+  </data>
+  <data name="Action.InfoNoteLabel" xml:space="preserve">
+    <value>What is needed</value>
+  </data>
+  <data name="Action.InfoButton" xml:space="preserve">
+    <value>Ask the member</value>
+  </data>
+  <data name="Action.DenyHeader" xml:space="preserve">
+    <value>Deny</value>
+  </data>
+  <data name="Action.DenyReasonLabel" xml:space="preserve">
+    <value>Reason (the member reads it)</value>
+  </data>
+  <data name="Action.DenyButton" xml:space="preserve">
+    <value>Deny</value>
+  </data>
+  <data name="Action.Decided" xml:space="preserve">
+    <value>This submission is no longer waiting for a decision.</value>
+  </data>
+  <data name="Respond.ReviewerAsked" xml:space="preserve">
+    <value>The reviewer asked:</value>
+  </data>
+  <data name="Respond.Header" xml:space="preserve">
+    <value>Add information and resubmit</value>
+  </data>
+  <data name="Respond.Help" xml:space="preserve">
+    <value>Add evidence, correct the hours or the category, and tell the reviewer what changed.</value>
+  </data>
+  <data name="Respond.NoteLabel" xml:space="preserve">
+    <value>Your answer</value>
+  </data>
+  <data name="Respond.FilesLabel" xml:space="preserve">
+    <value>More evidence</value>
+  </data>
+  <data name="Respond.HoursLabel" xml:space="preserve">
+    <value>Corrected hours</value>
+  </data>
+  <data name="Respond.CategoryLabel" xml:space="preserve">
+    <value>Corrected category</value>
+  </data>
+  <data name="Respond.KeepCategory" xml:space="preserve">
+    <value>Keep the category</value>
+  </data>
+  <data name="Respond.Button" xml:space="preserve">
+    <value>Resubmit</value>
+  </data>
+  <data name="History.Header" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="History.By" xml:space="preserve">
+    <value>by {0}</value>
+  </data>
+  <data name="History.FilesAdded" xml:space="preserve">
+    <value>{0} files added</value>
+  </data>
+  <data name="History.Empty" xml:space="preserve">
+    <value>No history yet.</value>
+  </data>
+  <data name="History.Step.Submitted" xml:space="preserve">
+    <value>Submitted for review</value>
+  </data>
+  <data name="History.Step.SelfReported" xml:space="preserve">
+    <value>Recorded as self-reported</value>
+  </data>
+  <data name="History.Step.Approved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="History.Step.Denied" xml:space="preserve">
+    <value>Not accepted</value>
+  </data>
+  <data name="History.Step.InfoRequested" xml:space="preserve">
+    <value>More information asked for</value>
+  </data>
+  <data name="History.Step.Resubmitted" xml:space="preserve">
+    <value>Resubmitted</value>
+  </data>
+  <data name="Mine.Title" xml:space="preserve">
+    <value>My training submissions</value>
+  </data>
+  <data name="Mine.Intro" xml:space="preserve">
+    <value>Training hours you submitted with evidence, and where each one stands.</value>
+  </data>
+  <data name="Mine.SubmitButton" xml:space="preserve">
+    <value>Submit training hours</value>
+  </data>
+  <data name="Mine.Empty" xml:space="preserve">
+    <value>You have not submitted any training hours yet.</value>
+  </data>
+  <data name="Mine.OpenButton" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Message.Approved" xml:space="preserve">
+    <value>Submission approved.</value>
+  </data>
+  <data name="Message.Denied" xml:space="preserve">
+    <value>Submission not accepted; the member was told why.</value>
+  </data>
+  <data name="Message.InfoRequested" xml:space="preserve">
+    <value>The member was asked for more information.</value>
+  </data>
+  <data name="Message.Resubmitted" xml:space="preserve">
+    <value>Your submission is back with the reviewers.</value>
+  </data>
+  <data name="Message.Submitted" xml:space="preserve">
+    <value>Your submission was received and is waiting for review.</value>
+  </data>
+  <data name="Message.Accepted" xml:space="preserve">
+    <value>Your training hours were recorded as self-reported.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>The action could not be completed.</value>
+  </data>
+  <data name="Next.ReviewsHeader" xml:space="preserve">
+    <value>Training submissions to review</value>
+  </data>
+  <data name="Next.ReviewsAll" xml:space="preserve">
+    <value>Open training reviews</value>
+  </data>
+  <data name="Next.WaitingSince" xml:space="preserve">
+    <value>waiting since {0}</value>
+  </data>
+  <data name="Next.InfoHeader" xml:space="preserve">
+    <value>A reviewer needs more information</value>
+  </data>
+  <data name="Hours.Value" xml:space="preserve">
+    <value>{0} h</value>
+  </data>
+  <data name="Provenance.System" xml:space="preserve">
+    <value>Recorded by the system</value>
+  </data>
+  <data name="Provenance.SelfReported" xml:space="preserve">
+    <value>Self-reported</value>
+  </data>
+  <data name="Provenance.Reviewed" xml:space="preserve">
+    <value>Reviewed</value>
+  </data>
+  <data name="Provenance.RecordedByOther" xml:space="preserve">
+    <value>Recorded by an instructor</value>
+  </data>
+  <data name="Provenance.Imported" xml:space="preserve">
+    <value>Imported</value>
+  </data>
+  <data name="Transcript.SubmissionButton" xml:space="preserve">
+    <value>Submission</value>
+  </data>
+  <data name="Queue.SubmissionsMoved" xml:space="preserve">
+    <value>Members' training hours submissions are reviewed in Training reviews ({0} waiting for you).</value>
+  </data>
+  <data name="Submit.ReviewNotice.Always" xml:space="preserve">
+    <value>A reviewer checks your submission before the hours count. You are told when it is approved, or if more information is needed.</value>
+  </data>
+  <data name="Submit.ReviewNotice.Off" xml:space="preserve">
+    <value>Your hours count as soon as you submit them and are shown as self-reported.</value>
+  </data>
+  <data name="Submit.ReviewNotice.Selected" xml:space="preserve">
+    <value>Some submissions (by category or number of hours) are checked by a reviewer before they count; the rest count at once as self-reported.</value>
+  </data>
+  <data name="Settings.Header" xml:space="preserve">
+    <value>Review of member submissions</value>
+  </data>
+  <data name="Settings.Help" xml:space="preserve">
+    <value>Choose whether training hours members submit wait for a reviewer before they count. Reviewers are those who hold Record Training Completions (training captains, instructors) and the training record managers, for everyone or for their own group.</value>
+  </data>
+  <data name="Settings.Mode" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="Settings.Mode.Always" xml:space="preserve">
+    <value>Every submission waits for a reviewer</value>
+  </data>
+  <data name="Settings.Mode.Off" xml:space="preserve">
+    <value>No review: accepted on submit and shown as self-reported</value>
+  </data>
+  <data name="Settings.Mode.Selected" xml:space="preserve">
+    <value>Only the categories below, or above an hours threshold</value>
+  </data>
+  <data name="Settings.Categories" xml:space="preserve">
+    <value>Categories that need review</value>
+  </data>
+  <data name="Settings.CategoriesHelp" xml:space="preserve">
+    <value>With "only the categories below": submissions in these categories wait for a reviewer.</value>
+  </data>
+  <data name="Settings.AboveHours" xml:space="preserve">
+    <value>Review submissions of more than (hours)</value>
+  </data>
+  <data name="Settings.AboveHoursHelp" xml:space="preserve">
+    <value>0 = no threshold.</value>
+  </data>
+  <data name="Settings.ReviewerNotices" xml:space="preserve">
+    <value>Reviewer notices</value>
+  </data>
+  <data name="Settings.ReviewerNotices.Immediate" xml:space="preserve">
+    <value>A notice for each submission</value>
+  </data>
+  <data name="Settings.ReviewerNotices.DailyDigest" xml:space="preserve">
+    <value>One summary a day</value>
+  </data>
+  <data name="Settings.ReviewerNotices.None" xml:space="preserve">
+    <value>No notices (inbox and home page only)</value>
+  </data>
+  <data name="Settings.OwnGroupOnly" xml:space="preserve">
+    <value>Reviewers named by role review only the members of their own group</value>
+  </data>
+  <data name="Settings.OwnGroupOnlyHelp" xml:space="preserve">
+    <value>Department admins still review everyone; group admins review their own group.</value>
+  </data>
+  <data name="Settings.ModeInvalid" xml:space="preserve">
+    <value>Choose one of the options.</value>
+  </data>
+  <data name="Settings.SelectedRequired" xml:space="preserve">
+    <value>Choose at least one category or an hours threshold.</value>
+  </data>
+  <data name="learning_record_file_type" xml:space="preserve">
+    <value>This type of file is not accepted.</value>
+  </data>
+  <data name="learning_record_file_too_large" xml:space="preserve">
+    <value>A file, or the files together, are too large.</value>
+  </data>
+  <data name="learning_record_file_content" xml:space="preserve">
+    <value>A file's contents do not match its type.</value>
+  </data>
+  <data name="learning_record_too_many_files" xml:space="preserve">
+    <value>Too many files.</value>
+  </data>
+  <data name="learning_record_file_rejected" xml:space="preserve">
+    <value>A file was rejected by the virus scanner.</value>
+  </data>
+  <data name="learning_record_file_empty" xml:space="preserve">
+    <value>A file is empty.</value>
+  </data>
+  <data name="learning_record_submissions_disabled" xml:space="preserve">
+    <value>Your department does not take training submissions from members.</value>
+  </data>
+  <data name="learning_record_resubmit_empty" xml:space="preserve">
+    <value>Add an answer, a correction or a file.</value>
+  </data>
+  <data name="learning_record_not_reviewer" xml:space="preserve">
+    <value>You do not review this member's submissions.</value>
+  </data>
+  <data name="learning_record_not_pending" xml:space="preserve">
+    <value>This submission is no longer waiting.</value>
+  </data>
+  <data name="learning_record_self_review" xml:space="preserve">
+    <value>You cannot review your own submission.</value>
+  </data>
+  <data name="learning_record_note_required" xml:space="preserve">
+    <value>Say what is needed.</value>
+  </data>
+  <data name="learning_record_reason_required" xml:space="preserve">
+    <value>A reason is required.</value>
+  </data>
+  <data name="learning_record_not_awaiting_review" xml:space="preserve">
+    <value>This submission is already waiting for its member.</value>
+  </data>
+  <data name="learning_record_not_submission" xml:space="preserve">
+    <value>This record is not a member submission.</value>
+  </data>
+  <data name="learning_record_hours_invalid" xml:space="preserve">
+    <value>The hours are not valid.</value>
+  </data>
+  <data name="learning_record_category_invalid" xml:space="preserve">
+    <value>The category is not valid.</value>
+  </data>
+  <data name="learning_record_bulk_limit" xml:space="preserve">
+    <value>Too many submissions at once.</value>
+  </data>
+  <data name="Notice.SubmissionReceived.Title" xml:space="preserve">
+    <value>Training submission received</value>
+  </data>
+  <data name="Notice.SubmissionReceived.Body" xml:space="preserve">
+    <value>Your training submission "{0}" ({1} h) was received and is waiting for review.</value>
+  </data>
+  <data name="Notice.SubmissionAccepted.Title" xml:space="preserve">
+    <value>Training hours recorded</value>
+  </data>
+  <data name="Notice.SubmissionAccepted.Body" xml:space="preserve">
+    <value>Your training hours "{0}" ({1} h) were recorded as self-reported.</value>
+  </data>
+  <data name="Notice.SubmissionApproved.Title" xml:space="preserve">
+    <value>Training submission approved</value>
+  </data>
+  <data name="Notice.SubmissionApproved.Body" xml:space="preserve">
+    <value>Your training submission "{0}" was approved; {1} h now count.</value>
+  </data>
+  <data name="Notice.SubmissionDenied.Title" xml:space="preserve">
+    <value>Training submission not accepted</value>
+  </data>
+  <data name="Notice.SubmissionDenied.Body" xml:space="preserve">
+    <value>Your training submission "{0}" was not accepted. Reason: {1}</value>
+  </data>
+  <data name="Notice.SubmissionInfoRequested.Title" xml:space="preserve">
+    <value>More information needed</value>
+  </data>
+  <data name="Notice.SubmissionInfoRequested.Body" xml:space="preserve">
+    <value>A reviewer needs more information about "{0}": {1}. Open it to add evidence and resubmit.</value>
+  </data>
+  <data name="Notice.ReviewWaiting.Title" xml:space="preserve">
+    <value>Training submission to review</value>
+  </data>
+  <data name="Notice.ReviewWaiting.Body" xml:space="preserve">
+    <value>{0} submitted "{1}" ({2} h) for your review.</value>
+  </data>
+  <data name="Notice.ReviewResubmitted.Title" xml:space="preserve">
+    <value>Training submission resubmitted</value>
+  </data>
+  <data name="Notice.ReviewDigest.Title" xml:space="preserve">
+    <value>Training submissions to review</value>
+  </data>
+  <data name="Notice.ReviewDigest.Body" xml:space="preserve">
+    <value>{0} training submissions are waiting for your review.</value>
+  </data>
+  <data name="Notice.CompletionRecorded.Title" xml:space="preserve">
+    <value>Training completion recorded</value>
+  </data>
+  <data name="Notice.CompletionRecorded.Body" xml:space="preserve">
+    <value>{0} recorded your completion of "{1}" on {2}.</value>
+  </data>
+  <data name="Notice.CompletionVoided.Title" xml:space="preserve">
+    <value>Recorded completion voided</value>
+  </data>
+  <data name="Notice.CompletionVoided.Body" xml:space="preserve">
+    <value>Your recorded completion of "{0}" was voided. Reason: {1}</value>
+  </data>
+  <data name="Notice.AMember" xml:space="preserve">
+    <value>A member</value>
+  </data>
+  <data name="Notice.AnInstructor" xml:space="preserve">
+    <value>An instructor</value>
+  </data>
+</root>

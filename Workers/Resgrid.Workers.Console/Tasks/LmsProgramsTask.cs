@@ -28,8 +28,10 @@ namespace Resgrid.Workers.Console.Tasks
 				progress.Report(1, $"Starting the {Name} Task");
 
 				var result = await new LmsProgramsLogic().Process(cancellationToken);
-				if (result.ReportsSent > 0 || result.Renewed > 0 || result.Alerts > 0 || result.FamiliarizationWritten > 0 || result.Failures > 0)
-					_logger.LogInformation($"LmsPrograms::Reports {result.ReportsSent}, renewed {result.Renewed}, alerts {result.Alerts}, familiarization {result.FamiliarizationWritten}, failures {result.Failures}");
+				if (result.ReportsSent > 0 || result.Renewed > 0 || result.Alerts > 0 || result.FamiliarizationWritten > 0 || result.RequirementIssued > 0 ||
+				    result.RequirementDueNotices > 0 || result.Failures > 0)
+					_logger.LogInformation($"LmsPrograms::Reports {result.ReportsSent}, renewed {result.Renewed}, alerts {result.Alerts}, familiarization {result.FamiliarizationWritten}, " +
+						$"requirement sets issued/renewed {result.RequirementIssued}, requirements due {result.RequirementDueNotices}, failures {result.Failures}");
 
 				progress.Report(100, $"Finishing the {Name} Task");
 			}

@@ -1,13 +1,14 @@
 @using Resgrid.Model
 @using Resgrid.Web.Areas.User.Models
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> reviewText
 @inject Resgrid.Model.Services.ILmsAccessService lmsAccess
 @*
     Page heading shared by the training screens (module-workspace.css): title, breadcrumb and a one line description,
     the page's actions, and the module's sections in a strip underneath (Shared/_ModuleTabs).
 
     ViewData["Section"]  My, Transcript, Courses, Academy, CourseLibrary, Manage, Records or Leave: the highlighted section (none for a training's own pages)
-    ViewData["LmsLibrary"] true shows the Course library section (set by the Courses pages for LMS authors and graders)
+    ViewData["LmsLibrary"] true shows the Course library and Standards sections (set by the Courses and Standards pages for LMS authors and graders)
     ViewData["LmsRequirements"] true shows the Requirements section (set by the Programs pages; T3)
     ViewData["LmsSkills"]  true on the Skills pages (T4); the Skills section shows with Programs
     ViewData["Title"]    heading and last crumb (defaults to the module name)
@@ -35,6 +36,8 @@
     if (ViewData["LmsLibrary"] as bool? == true)
     {
         sections.Tabs.Add(new ModuleTab(localizer["CourseLibraryTab"].Value, "fa-sitemap", "Courses", "Library", section == "CourseLibrary"));
+        // Training T5 (LMS): SCORM / cmi5 packages, LTI tools and the xAPI LRS, for the same LMS authors.
+        sections.Tabs.Add(new ModuleTab(localizer["Std.Tab.Standards"].Value, "fa-puzzle-piece", "LmsStandards", "Index", section == "Standards"));
     }
     // Training T3: requirements, compliance, paths, onboarding and enforcement (LMS), on the LMS pages for their managers and readers.
     if (ViewData["LmsRequirements"] as bool? == true || ViewData["LmsLibrary"] as bool? == true)
@@ -49,6 +52,11 @@
     {
         sections.Tabs.Add(new ModuleTab(localizer["Rec.RecordsTab"].Value, "fa-check-square-o", "TrainingRecords", "Queue", section == "Records"));
     }
+    // Round 9B: members' training hours submissions waiting for review (training captains, instructors and record reviewers).
+    if (scope != null && scope.CanReviewSubmissions)
+    {
+        sections.Tabs.Add(new ModuleTab(reviewText["Reviews.Tab"].Value, "fa-inbox", "TrainingReviews", "Index", section == "Reviews"));
+    }
     if (scope != null && scope.AssignRight.HoldsAny)
     {
         sections.Tabs.Add(new ModuleTab(localizer["LeaveTab"].Value, "fa-calendar-times-o", "Trainings", "Leave", section == "Leave"));
@@ -62,6 +70,11 @@
         sections.Tabs.Add(new ModuleTab(localizer["Cls.Tab.Classes"].Value, "fa-users", "LmsClasses", "Index", section == "Classes"));
         // Training T4 part 2 (LMS, dark behind Training.Lms): skill sheets, evaluations and position task books.
         sections.Tabs.Add(new ModuleTab(localizer["Skl.Tab.Skills"].Value, "fa-check-square", "LmsSkills", "Index", section == "Skills"));
+        // Training T5 (LMS, same flag): external learners, the learner portal and paid public classes, for those who manage training.
+        if (section == "External" || (scope != null && scope.IsManager))
+        {
+            sections.Tabs.Add(new ModuleTab(localizer["Ext.Tab.External"].Value, "fa-id-badge", "LmsExternalLearners", "Index", section == "External"));
+        }
     }
 }
 <div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">

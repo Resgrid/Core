@@ -129,9 +129,10 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departments;
 		private readonly ILmsClassNotifier _notifier;
 		private readonly IEventAggregator _events;
+		private readonly ILmsLearnerClassMailer _learnerMail;
 
 		public LmsClassSweepService(ILmsClassSessionsRepository sessions, ILmsClassEnrollmentsRepository enrollments, ILmsClassService classes, ILmsAccessService access,
-			IDepartmentsService departments, ILmsClassNotifier notifier, IEventAggregator events)
+			IDepartmentsService departments, ILmsClassNotifier notifier, IEventAggregator events, ILmsLearnerClassMailer learnerMail)
 		{
 			_sessions = sessions;
 			_enrollments = enrollments;
@@ -140,6 +141,7 @@ namespace Resgrid.Services
 			_departments = departments;
 			_notifier = notifier;
 			_events = events;
+			_learnerMail = learnerMail;
 		}
 
 		public async Task<LmsClassSweepResult> RunDueAsync(DateTime utcNow, CancellationToken cancellationToken = default)
@@ -182,15 +184,25 @@ namespace Resgrid.Services
 					foreach (var session in department)
 					{
 						var local = DateTime.SpecifyKind(session.StartsOn, DateTimeKind.Utc).TimeConverter(timeZone);
+						var learners = new List<string>();
 						foreach (var enrollment in (await _enrollments.GetForSessionAsync(department.Key, session.LmsClassSessionId) ?? new List<LmsClassEnrollment>())
-							.Where(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled && !e.ReminderSentOn.HasValue && active.Contains(e.UserId ?? string.Empty)))
+							.Where(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled && !e.ReminderSentOn.HasValue &&
+								(active.Contains(e.UserId ?? string.Empty) || LmsExternalLearnerIds.IsExternal(e.UserId))))
 						{
 							if (!await _enrollments.ClaimReminderAsync(department.Key, enrollment.LmsClassEnrollmentId, utcNow, cancellationToken))
 								continue;
+							// Round 7B: an external learner is reminded by e-mail (claimed again per start time; an unsubscribed learner gets none).
+							if (LmsExternalLearnerIds.IsExternal(enrollment.UserId))
+							{
+								learners.Add(enrollment.UserId);
+								continue;
+							}
 							result.Reminders += await _notifier.SendAsync(department.Key, new[] { enrollment.UserId }, "Notice.ReminderTitle", "Notice.Reminder",
 								c => new object[] { session.Title, local.ToString("g", c), session.Location ?? session.MeetingUrl ?? string.Empty },
 								"CL:" + session.LmsClassSessionId.ToString(CultureInfo.InvariantCulture), cancellationToken);
 						}
+						if (learners.Count > 0)
+							result.Reminders += await _learnerMail.SendAsync(department.Key, session, learners, LmsLearnerNoticeKinds.Reminder, cancellationToken);
 					}
 				}
 				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

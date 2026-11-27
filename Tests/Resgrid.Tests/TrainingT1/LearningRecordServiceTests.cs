@@ -40,6 +40,8 @@ namespace Resgrid.Tests.TrainingT1
 		private Mock<ILogUsersRepository> _logUsers;
 		private Mock<ILearningRecordBackfillsRepository> _backfills;
 		private LearningRecordWriter _writer;
+		/// <summary>Round 9A: the observers the writer tells about written and voided records.</summary>
+		private readonly List<ILearningRecordObserver> _observers = new List<ILearningRecordObserver>();
 		private LearningRecordService _service;
 		private TrainingRecordSettings _recordSettings;
 
@@ -92,10 +94,10 @@ namespace Resgrid.Tests.TrainingT1
 			_writer = new LearningRecordWriter(_records, mappings.Object, categories.Object, certificationRecords.Object, credits.Object,
 				new Lazy<ICertificationService>(() => _certifications.Object), _trainings.Object, _trainingUsers.Object, _histories.Object, _logUsers.Object,
 				Mock.Of<IRmsOperationalRecordsRepository>(), Mock.Of<IRmsRecordParticipantsRepository>(), Mock.Of<ICalendarItemsRepository>(), Mock.Of<ICalendarItemTypeRepository>(),
-				_settings.Object, Mock.Of<IEventAggregator>());
+				_settings.Object, Mock.Of<IEventAggregator>(), new Lazy<IEnumerable<ILearningRecordObserver>>(() => _observers));
 			_service = new LearningRecordService(_records, Mock.Of<ILearningRecordFilesRepository>(), categories.Object, mappings.Object, _backfills.Object, _writer,
 				_certifications.Object, certificationRecords.Object, credits.Object, _settings.Object, _departments.Object, Mock.Of<IDepartmentGroupsService>(),
-				Mock.Of<IShiftsService>(), Mock.Of<IEventAggregator>());
+				Mock.Of<IShiftsService>(), Mock.Of<IEventAggregator>(), new Resgrid.Services.Records.NullRecordAttachmentScanner());
 		}
 
 		private Task<LearningRecordWriteResult> Write(string source, string user, DateTime on, decimal hours, int? category = CategoryId, bool backfill = false, LearningRecordStatuses status = LearningRecordStatuses.Verified) =>

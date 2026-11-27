@@ -60,59 +60,78 @@
   </resheader>
   <data name="Check.Title" xml:space="preserve">
     <value>Перевірте свої знання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.administrator" xml:space="preserve">
     <value>Адміністратор</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.administrator.Audience" xml:space="preserve">
     <value>Адміністратори підрозділу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.business" xml:space="preserve">
     <value>Бізнес і фінанси</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.business.Audience" xml:space="preserve">
     <value>Адміністратори фінансів і бізнесу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.dispatcher" xml:space="preserve">
     <value>Диспетчер</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.dispatcher.Audience" xml:space="preserve">
     <value>Персонал диспетчерської</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.logistics" xml:space="preserve">
     <value>Логістика та готовність</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.logistics.Audience" xml:space="preserve">
     <value>Відповідальні за логістику та готовність</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.member" xml:space="preserve">
     <value>Учасник / Рятувальник</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.member.Audience" xml:space="preserve">
     <value>Усі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.officer" xml:space="preserve">
     <value>Офіцер / Керівник ліквідації</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.officer.Audience" xml:space="preserve">
     <value>Офіцери та командири</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.records" xml:space="preserve">
     <value>Звіти та документація</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.records.Audience" xml:space="preserve">
     <value>Автори та рецензенти звітів</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.training-officer" xml:space="preserve">
     <value>Відповідальний за навчання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.training-officer.Audience" xml:space="preserve">
     <value>Навчальний персонал</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrueFalse.f" xml:space="preserve">
     <value>Неправда</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrueFalse.t" xml:space="preserve">
     <value>Правда</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

@@ -60,59 +60,78 @@
   </resheader>
   <data name="Check.Title" xml:space="preserve">
     <value>Sprawdź swoją wiedzę</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.administrator" xml:space="preserve">
     <value>Administrator</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.administrator.Audience" xml:space="preserve">
     <value>Administratorzy jednostki</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.business" xml:space="preserve">
     <value>Biznes i finanse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.business.Audience" xml:space="preserve">
     <value>Administratorzy finansów i biznesu</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.dispatcher" xml:space="preserve">
     <value>Dyspozytor</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.dispatcher.Audience" xml:space="preserve">
     <value>Personel dyspozytorni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.logistics" xml:space="preserve">
     <value>Logistyka i gotowość</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.logistics.Audience" xml:space="preserve">
     <value>Osoby odpowiedzialne za logistykę i gotowość</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.member" xml:space="preserve">
     <value>Członek / Ratownik</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.member.Audience" xml:space="preserve">
     <value>Wszyscy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.officer" xml:space="preserve">
     <value>Oficer / Kierowanie działaniem</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.officer.Audience" xml:space="preserve">
     <value>Oficerowie i dowódcy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.records" xml:space="preserve">
     <value>Rejestry i sprawozdawczość</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.records.Audience" xml:space="preserve">
     <value>Autorzy i recenzenci raportów</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.training-officer" xml:space="preserve">
     <value>Oficer ds. szkoleń</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.training-officer.Audience" xml:space="preserve">
     <value>Kadra szkoleniowa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrueFalse.f" xml:space="preserve">
     <value>Fałsz</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrueFalse.t" xml:space="preserve">
     <value>Prawda</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

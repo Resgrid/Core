@@ -308,7 +308,8 @@ namespace Resgrid.Model
 
 		/// <summary>
 		/// The certification type that marks the peer support team (§13b.3: tracked as a certification type with its own refresher).
-		/// Members holding a valid certification of it receive the anniversary reminders members opt in to. 0 = none.
+		/// With no <see cref="PeerTeamRoleId"/>, members holding a valid certification of it are the team and receive the anniversary
+		/// reminders members opt in to; with a role, it is the team's certification shown as status. 0 = none.
 		/// </summary>
 		[ProtoMember(2)]
 		public int PeerTeamCertificationTypeId { get; set; }
@@ -341,6 +342,36 @@ namespace Resgrid.Model
 		[DefaultValue(OshaRules.MinimumRetentionYears)]
 		public int InjuryRetentionYears { get; set; } = OshaRules.MinimumRetentionYears;
 
+		/// <summary>
+		/// The department certification type its wellness officers hold (for example from the "Wellness Officer" template), with the
+		/// requirements and validity the department sets on that type. Shown as each officer's status; it decides who acts only with
+		/// <see cref="RequireCurrentCertification"/>. 0 = none.
+		/// </summary>
+		[ProtoMember(8)]
+		public int WellnessOfficerCertificationTypeId { get; set; }
+
+		/// <summary>
+		/// The certification type its designated officers hold. 0 = none, except that while no designated officer role is named the
+		/// wellness officer role serves and so does its certification type (<see cref="WellnessRoleRules.CertificationTypeIdFor"/>).
+		/// </summary>
+		[ProtoMember(9)]
+		public int DesignatedOfficerCertificationTypeId { get; set; }
+
+		/// <summary>
+		/// The personnel role whose members are the peer support team. 0 = the holders of a current
+		/// <see cref="PeerTeamCertificationTypeId"/> certification are the team (the behaviour before the role existed).
+		/// </summary>
+		[ProtoMember(10)]
+		public int PeerTeamRoleId { get; set; }
+
+		/// <summary>
+		/// When on, a member of a wellness role acts in it (reads, receives reports and reminders) only while holding a current
+		/// certification of that role's linked type; a role with no linked type is unaffected. Off: the role alone decides and the
+		/// certification is shown as status.
+		/// </summary>
+		[ProtoMember(11)]
+		public bool RequireCurrentCertification { get; set; }
+
 		public WellnessSettings Normalized()
 		{
 			return new WellnessSettings
@@ -351,7 +382,11 @@ namespace Resgrid.Model
 				DesignatedOfficerRoleId = Math.Max(0, DesignatedOfficerRoleId),
 				BbpTrainingCertificationTypeId = Math.Max(0, BbpTrainingCertificationTypeId),
 				MedicalClearanceCertificationTypeId = Math.Max(0, MedicalClearanceCertificationTypeId),
-				InjuryRetentionYears = Math.Min(OshaRules.MaximumRetentionYears, Math.Max(OshaRules.MinimumRetentionYears, InjuryRetentionYears))
+				InjuryRetentionYears = Math.Min(OshaRules.MaximumRetentionYears, Math.Max(OshaRules.MinimumRetentionYears, InjuryRetentionYears)),
+				WellnessOfficerCertificationTypeId = Math.Max(0, WellnessOfficerCertificationTypeId),
+				DesignatedOfficerCertificationTypeId = Math.Max(0, DesignatedOfficerCertificationTypeId),
+				PeerTeamRoleId = Math.Max(0, PeerTeamRoleId),
+				RequireCurrentCertification = RequireCurrentCertification
 			};
 		}
 	}
@@ -395,6 +430,35 @@ namespace Resgrid.Model
 
 		/// <summary>The operational columns that must never be cataloged (a nightly rule reads them without a grant).</summary>
 		public static readonly IReadOnlyList<string> OperationalExposureColumns = new[] { "UserId", "CallId", "Category", "OccurredOn", "DurationMinutes", "Status" };
+	}
+
+	/// <summary>
+	/// Every table that holds member wellness and member-health rows: WL0 (M0360) exposures and critical incidents, call exposure flags and
+	/// screening flags; WL1 (M0372-M0374) exposure cases, injuries and their duty periods, medical clearances.
+	/// <para>
+	/// Department deletion purges all of them, whatever their retention period (owner decision 2026-11-26): the department authorized the
+	/// deletion and had the grace period to export. Each carries a DepartmentId column and the Rms prefix, so the Records subtree of the
+	/// deletion (RmsDepartmentCleanup, which discovers every Rms* table with a DepartmentId) removes it, and the orphan sweep (worker 43)
+	/// clears what an earlier deletion left. The rest of the wellness data needs nothing of its own: case and screening follow-up tasks are
+	/// Records work assignments (RmsRecordWorkAssignments, purged by the same cleanup), the settings are a DepartmentSettings row (setting
+	/// 141), and the protected values (ADP catalogs 37 and 38) are stored in these rows under the department's keys, which the deletion
+	/// removes last.
+	/// </para>
+	/// A new wellness table belongs in this list: MemberWellnessDataTablesGuardTests fails until it is (a model under Model/Wellness or a
+	/// migration creating a wellness-named table), and the deletion database tests then prove it is purged.
+	/// </summary>
+	public static class MemberWellnessDataTables
+	{
+		public static readonly IReadOnlyList<string> All = new[]
+		{
+			"RmsResponderExposures",
+			"RmsCallExposureFlags",
+			"RmsResponderScreeningFlags",
+			"RmsExposureIncidents",
+			"RmsMemberInjuries",
+			"RmsInjuryDutyPeriods",
+			"RmsMedicalClearances"
+		};
 	}
 
 	/// <summary>Pure rules of the wellness log: retention, anniversaries and who addresses what.</summary>

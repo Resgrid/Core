@@ -240,17 +240,29 @@
   <data name="PoiImportPending" xml:space="preserve">
     <value>{0} εγγραφές προς εισαγωγή.</value>
   </data>
+  <data name="PoiImportPendingOne" xml:space="preserve">
+    <value>{0} εγγραφή προς εισαγωγή.</value>
+  </data>
   <data name="PoiImportSummary" xml:space="preserve">
     <value>Εισήχθησαν {0} από {1} εγγραφές.</value>
   </data>
   <data name="PoiImportGeocoded" xml:space="preserve">
     <value>{0} εντοπίστηκαν από τη διεύθυνσή τους· ελέγξτε τη θέση τους στον χάρτη.</value>
   </data>
+  <data name="PoiImportGeocodedOne" xml:space="preserve">
+    <value>{0} εντοπίστηκε από τη διεύθυνσή της· ελέγξτε τη θέση της στον χάρτη.</value>
+  </data>
   <data name="PoiImportSkipped" xml:space="preserve">
     <value>{0} παραλείφθηκαν επειδή δεν έχουν ούτε συντεταγμένες ούτε διεύθυνση.</value>
   </data>
+  <data name="PoiImportSkippedOne" xml:space="preserve">
+    <value>{0} παραλείφθηκε επειδή δεν έχει ούτε συντεταγμένες ούτε διεύθυνση.</value>
+  </data>
   <data name="PoiImportUnlocated" xml:space="preserve">
     <value>{0} δεν εισήχθησαν επειδή η διεύθυνσή τους δεν εντοπίστηκε:</value>
+  </data>
+  <data name="PoiImportUnlocatedOne" xml:space="preserve">
+    <value>{0} δεν εισήχθη επειδή η διεύθυνσή της δεν εντοπίστηκε:</value>
   </data>
   <data name="PoiImportUnlocatedMore" xml:space="preserve">
     <value>και {0} ακόμη.</value>
@@ -264,8 +276,14 @@
   <data name="PoiImportRetrying" xml:space="preserve">
     <value>Η υπηρεσία αναζήτησης διευθύνσεων δεν απάντησε για {0} εγγραφές· θα ξαναδοκιμαστούν μετά τις {1}.</value>
   </data>
+  <data name="PoiImportRetryingOne" xml:space="preserve">
+    <value>Η υπηρεσία αναζήτησης διευθύνσεων δεν απάντησε για {0} εγγραφή· θα ξαναδοκιμαστεί μετά τις {1}.</value>
+  </data>
   <data name="PoiImportLookupFailed" xml:space="preserve">
     <value>{0} δεν εισήχθησαν επειδή η υπηρεσία αναζήτησης διευθύνσεων δεν απάντησε, ακόμη και μετά από νέες προσπάθειες:</value>
+  </data>
+  <data name="PoiImportLookupFailedOne" xml:space="preserve">
+    <value>{0} δεν εισήχθη επειδή η υπηρεσία αναζήτησης διευθύνσεων δεν απάντησε, ακόμη και μετά από νέες προσπάθειες:</value>
   </data>
   <data name="PoiImportLookupFailedHint" xml:space="preserve">
     <value>Συνήθως είναι προσωρινό: εισαγάγετε ξανά μόνο αυτές τις εγγραφές αργότερα.</value>
@@ -273,11 +291,17 @@
   <data name="PoiImportLookupNotConfigured" xml:space="preserve">
     <value>{0} δεν εισήχθησαν επειδή η αναζήτηση διευθύνσεων δεν έχει ρυθμιστεί σε αυτόν τον διακομιστή:</value>
   </data>
+  <data name="PoiImportLookupNotConfiguredOne" xml:space="preserve">
+    <value>{0} δεν εισήχθη επειδή η αναζήτηση διευθύνσεων δεν έχει ρυθμιστεί σε αυτόν τον διακομιστή:</value>
+  </data>
   <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
     <value>Προσθέστε στήλες γεωγραφικού πλάτους και μήκους σε αυτές τις εγγραφές και εισαγάγετέ τες ξανά.</value>
   </data>
   <data name="PoiImportNotTried" xml:space="preserve">
     <value>{0} δεν εισήχθησαν επειδή το αρχείο έχει περισσότερες διευθύνσεις από όσες αναζητά μία εισαγωγή:</value>
+  </data>
+  <data name="PoiImportNotTriedOne" xml:space="preserve">
+    <value>{0} δεν εισήχθη επειδή το αρχείο έχει περισσότερες διευθύνσεις από όσες αναζητά μία εισαγωγή:</value>
   </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">

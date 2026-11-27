@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Reviews.Tab" xml:space="preserve">
+    <value>مراجعات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.Title" xml:space="preserve">
+    <value>مراجعات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.Intro" xml:space="preserve">
+    <value>ساعات التدريب التي قدّمها الأعضاء مع الإثباتات وتنتظر مراجعتك، الأقدم أولاً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.AwaitingTab" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.InfoTab" xml:space="preserve">
+    <value>بانتظار العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.AwaitingTile" xml:space="preserve">
+    <value>بانتظار مراجعتك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.InfoTile" xml:space="preserve">
+    <value>بانتظار رد العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.OldestTile" xml:space="preserve">
+    <value>الأقدم ينتظر منذ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.MySubmissionsLink" xml:space="preserve">
+    <value>طلباتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.Empty" xml:space="preserve">
+    <value>لا شيء ينتظر مراجعتك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.EmptyInfo" xml:space="preserve">
+    <value>لا يوجد طلب بانتظار رد أحد الأعضاء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.SelectAll" xml:space="preserve">
+    <value>تحديد الكل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.SelectRow" xml:space="preserve">
+    <value>تحديد {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.FilesCount" xml:space="preserve">
+    <value>{0} ملفات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.ReviewButton" xml:space="preserve">
+    <value>مراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkNoteLabel" xml:space="preserve">
+    <value>ملاحظة للأعضاء (اختياري)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkConfirm" xml:space="preserve">
+    <value>هل تريد اعتماد الطلبات المحددة؟</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkApproveButton" xml:space="preserve">
+    <value>اعتماد المحدد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.NoneSelected" xml:space="preserve">
+    <value>حدد طلباً واحداً على الأقل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkApproved" xml:space="preserve">
+    <value>تم اعتماد {0} طلبات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkRefused" xml:space="preserve">
+    <value>تعذّر اعتماد {0} طلبات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Category" xml:space="preserve">
+    <value>الفئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.AllCategories" xml:space="preserve">
+    <value>كل الفئات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Uncategorized" xml:space="preserve">
+    <value>بدون فئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Member" xml:space="preserve">
+    <value>العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.AllMembers" xml:space="preserve">
+    <value>كل الأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Search" xml:space="preserve">
+    <value>ابحث عن عنوان أو جهة أو رقم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Apply" xml:space="preserve">
+    <value>تصفية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Clear" xml:space="preserve">
+    <value>مسح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Member" xml:space="preserve">
+    <value>العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Training" xml:space="preserve">
+    <value>التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Category" xml:space="preserve">
+    <value>الفئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Hours" xml:space="preserve">
+    <value>الساعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Evidence" xml:space="preserve">
+    <value>الإثباتات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Waiting" xml:space="preserve">
+    <value>ينتظر منذ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.State" xml:space="preserve">
+    <value>المراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Header" xml:space="preserve">
+    <value>الإثباتات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.None" xml:space="preserve">
+    <value>لا توجد إثباتات مرفقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Open" xml:space="preserve">
+    <value>فتح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Download" xml:space="preserve">
+    <value>تنزيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.PreviewUnavailable" xml:space="preserve">
+    <value>لا تتوفر معاينة لهذا النوع من الملفات؛ نزّله لعرضه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.FilesLabel" xml:space="preserve">
+    <value>ملفات الإثبات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.FilesHelp" xml:space="preserve">
+    <value>حتى {0} ملفات، بحد أقصى {1} ميغابايت لكل ملف: شهادة أو صورة أو مستند أو إيصال (PDF أو JPG أو PNG أو GIF أو WebP أو DOC أو DOCX أو ODT).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.KindLabel" xml:space="preserve">
+    <value>هذه الملفات هي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Other" xml:space="preserve">
+    <value>إثبات آخر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Certificate" xml:space="preserve">
+    <value>شهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Photo" xml:space="preserve">
+    <value>صورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Document" xml:space="preserve">
+    <value>مستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Receipt" xml:space="preserve">
+    <value>إيصال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Review.Title" xml:space="preserve">
+    <value>مراجعة طلب تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submission.Title" xml:space="preserve">
+    <value>طلب تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Back.Inbox" xml:space="preserve">
+    <value>العودة إلى مراجعات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Back.Mine" xml:space="preserve">
+    <value>العودة إلى طلباتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Member" xml:space="preserve">
+    <value>العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.CompletedOn" xml:space="preserve">
+    <value>تاريخ الإكمال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Hours" xml:space="preserve">
+    <value>الساعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.CeHours" xml:space="preserve">
+    <value>ساعات التعليم المستمر (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Category" xml:space="preserve">
+    <value>الفئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Provider" xml:space="preserve">
+    <value>الجهة المقدّمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.CourseNumber" xml:space="preserve">
+    <value>رقم الدورة أو التعليم المستمر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.SubmittedOn" xml:space="preserve">
+    <value>تاريخ التقديم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Notes" xml:space="preserve">
+    <value>ملاحظات العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.DeniedReason" xml:space="preserve">
+    <value>لم يُقبل:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.AwaitingReview" xml:space="preserve">
+    <value>بانتظار المراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.InfoRequested" xml:space="preserve">
+    <value>مطلوب مزيد من المعلومات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.Approved" xml:space="preserve">
+    <value>معتمد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.Denied" xml:space="preserve">
+    <value>غير مقبول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.SelfReported" xml:space="preserve">
+    <value>مُبلّغ ذاتياً</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveHeader" xml:space="preserve">
+    <value>اعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveHoursLabel" xml:space="preserve">
+    <value>الساعات المحتسبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveNoteLabel" xml:space="preserve">
+    <value>ملاحظة للعضو (اختياري)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveButton" xml:space="preserve">
+    <value>اعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.InfoHeader" xml:space="preserve">
+    <value>طلب مزيد من المعلومات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.InfoNoteLabel" xml:space="preserve">
+    <value>ما المطلوب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.InfoButton" xml:space="preserve">
+    <value>اسأل العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.DenyHeader" xml:space="preserve">
+    <value>رفض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.DenyReasonLabel" xml:space="preserve">
+    <value>السبب (سيقرأه العضو)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.DenyButton" xml:space="preserve">
+    <value>رفض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.Decided" xml:space="preserve">
+    <value>لم يعد هذا الطلب بانتظار قرار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.ReviewerAsked" xml:space="preserve">
+    <value>سأل المراجع:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.Header" xml:space="preserve">
+    <value>إضافة معلومات وإعادة التقديم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.Help" xml:space="preserve">
+    <value>أضف إثباتات أو صحّح الساعات أو الفئة، وأخبر المراجع بما تغيّر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.NoteLabel" xml:space="preserve">
+    <value>ردك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.FilesLabel" xml:space="preserve">
+    <value>إثباتات إضافية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.HoursLabel" xml:space="preserve">
+    <value>الساعات المصححة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.CategoryLabel" xml:space="preserve">
+    <value>الفئة المصححة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.KeepCategory" xml:space="preserve">
+    <value>الإبقاء على الفئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.Button" xml:space="preserve">
+    <value>إعادة التقديم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Header" xml:space="preserve">
+    <value>السجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.By" xml:space="preserve">
+    <value>بواسطة {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.FilesAdded" xml:space="preserve">
+    <value>تمت إضافة {0} ملفات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Empty" xml:space="preserve">
+    <value>لا يوجد سجل بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Submitted" xml:space="preserve">
+    <value>قُدّم للمراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.SelfReported" xml:space="preserve">
+    <value>سُجّل كمُبلّغ ذاتياً</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Approved" xml:space="preserve">
+    <value>معتمد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Denied" xml:space="preserve">
+    <value>غير مقبول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.InfoRequested" xml:space="preserve">
+    <value>طُلب مزيد من المعلومات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Resubmitted" xml:space="preserve">
+    <value>أُعيد تقديمه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.Title" xml:space="preserve">
+    <value>طلبات التدريب الخاصة بي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.Intro" xml:space="preserve">
+    <value>ساعات التدريب التي قدّمتها مع الإثباتات وحالة كل منها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.SubmitButton" xml:space="preserve">
+    <value>تقديم ساعات تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.Empty" xml:space="preserve">
+    <value>لم تقدّم أي ساعات تدريب بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.OpenButton" xml:space="preserve">
+    <value>فتح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Approved" xml:space="preserve">
+    <value>تم اعتماد الطلب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Denied" xml:space="preserve">
+    <value>لم يُقبل الطلب؛ وأُبلغ العضو بالسبب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.InfoRequested" xml:space="preserve">
+    <value>طُلب من العضو مزيد من المعلومات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Resubmitted" xml:space="preserve">
+    <value>عاد طلبك إلى المراجعين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Submitted" xml:space="preserve">
+    <value>تم استلام طلبك وهو بانتظار المراجعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Accepted" xml:space="preserve">
+    <value>سُجّلت ساعات تدريبك كمُبلّغ عنها ذاتياً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>تعذّر إكمال الإجراء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.ReviewsHeader" xml:space="preserve">
+    <value>طلبات تدريب للمراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.ReviewsAll" xml:space="preserve">
+    <value>فتح مراجعات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.WaitingSince" xml:space="preserve">
+    <value>ينتظر منذ {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.InfoHeader" xml:space="preserve">
+    <value>يحتاج أحد المراجعين إلى مزيد من المعلومات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Hours.Value" xml:space="preserve">
+    <value>{0} س</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.System" xml:space="preserve">
+    <value>سجّله النظام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.SelfReported" xml:space="preserve">
+    <value>مُبلّغ ذاتياً</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.Reviewed" xml:space="preserve">
+    <value>تمت مراجعته</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.RecordedByOther" xml:space="preserve">
+    <value>سجّله مدرّب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.Imported" xml:space="preserve">
+    <value>مستورد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Transcript.SubmissionButton" xml:space="preserve">
+    <value>الطلب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Queue.SubmissionsMoved" xml:space="preserve">
+    <value>تُراجع طلبات ساعات التدريب المقدّمة من الأعضاء في مراجعات التدريب ({0} بانتظارك).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submit.ReviewNotice.Always" xml:space="preserve">
+    <value>يتحقق أحد المراجعين من طلبك قبل احتساب الساعات. ستُبلّغ عند اعتماده أو إذا لزمت معلومات إضافية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submit.ReviewNotice.Off" xml:space="preserve">
+    <value>تُحتسب ساعاتك فور تقديمها وتظهر على أنها مُبلّغ عنها ذاتياً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submit.ReviewNotice.Selected" xml:space="preserve">
+    <value>تُراجع بعض الطلبات (حسب الفئة أو عدد الساعات) قبل احتسابها؛ ويُحتسب الباقي فوراً على أنه مُبلّغ عنه ذاتياً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Header" xml:space="preserve">
+    <value>مراجعة طلبات الأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Help" xml:space="preserve">
+    <value>اختر ما إذا كانت ساعات التدريب التي يقدّمها الأعضاء تنتظر مراجعاً قبل احتسابها. يراجعها حاملو صلاحية تسجيل إكمال التدريب (مسؤولو التدريب والمدرّبون) ومديرو سجلات التدريب، للجميع أو لمجموعتهم فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode" xml:space="preserve">
+    <value>المراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode.Always" xml:space="preserve">
+    <value>كل طلب ينتظر مراجعاً</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode.Off" xml:space="preserve">
+    <value>بلا مراجعة: يُقبل عند التقديم ويظهر كمُبلّغ ذاتياً</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode.Selected" xml:space="preserve">
+    <value>الفئات أدناه فقط أو ما يتجاوز حداً من الساعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Categories" xml:space="preserve">
+    <value>الفئات التي تحتاج إلى مراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.CategoriesHelp" xml:space="preserve">
+    <value>مع خيار "الفئات أدناه فقط": تنتظر طلبات هذه الفئات مراجعاً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.AboveHours" xml:space="preserve">
+    <value>مراجعة الطلبات التي تتجاوز (ساعة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.AboveHoursHelp" xml:space="preserve">
+    <value>0 = بلا حد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices" xml:space="preserve">
+    <value>إشعارات المراجعين</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices.Immediate" xml:space="preserve">
+    <value>إشعار لكل طلب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices.DailyDigest" xml:space="preserve">
+    <value>ملخص واحد يومياً</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices.None" xml:space="preserve">
+    <value>بلا إشعارات (صندوق الوارد والصفحة الرئيسية فقط)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.OwnGroupOnly" xml:space="preserve">
+    <value>المراجعون المعيّنون حسب الدور يراجعون أعضاء مجموعتهم فقط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.OwnGroupOnlyHelp" xml:space="preserve">
+    <value>يظل مسؤولو الإدارة يراجعون الجميع، ومسؤولو المجموعات مجموعتهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ModeInvalid" xml:space="preserve">
+    <value>اختر أحد الخيارات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.SelectedRequired" xml:space="preserve">
+    <value>اختر فئة واحدة على الأقل أو حداً للساعات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_type" xml:space="preserve">
+    <value>هذا النوع من الملفات غير مقبول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_too_large" xml:space="preserve">
+    <value>أحد الملفات، أو مجموع الملفات، كبير جداً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_content" xml:space="preserve">
+    <value>محتوى أحد الملفات لا يطابق نوعه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_too_many_files" xml:space="preserve">
+    <value>عدد الملفات كبير جداً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_rejected" xml:space="preserve">
+    <value>رفض فاحص الفيروسات أحد الملفات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_empty" xml:space="preserve">
+    <value>أحد الملفات فارغ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_submissions_disabled" xml:space="preserve">
+    <value>لا تقبل مؤسستك طلبات التدريب من الأعضاء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_resubmit_empty" xml:space="preserve">
+    <value>أضف رداً أو تصحيحاً أو ملفاً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_reviewer" xml:space="preserve">
+    <value>أنت لا تراجع طلبات هذا العضو.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_pending" xml:space="preserve">
+    <value>لم يعد هذا الطلب بالانتظار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_self_review" xml:space="preserve">
+    <value>لا يمكنك مراجعة طلبك الخاص.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_note_required" xml:space="preserve">
+    <value>اذكر ما هو مطلوب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_reason_required" xml:space="preserve">
+    <value>السبب مطلوب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_awaiting_review" xml:space="preserve">
+    <value>هذا الطلب ينتظر عضوه بالفعل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_submission" xml:space="preserve">
+    <value>هذا السجل ليس طلباً من أحد الأعضاء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_hours_invalid" xml:space="preserve">
+    <value>الساعات غير صالحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_category_invalid" xml:space="preserve">
+    <value>الفئة غير صالحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_bulk_limit" xml:space="preserve">
+    <value>عدد الطلبات كبير جداً دفعة واحدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionReceived.Title" xml:space="preserve">
+    <value>تم استلام طلب التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionReceived.Body" xml:space="preserve">
+    <value>تم استلام طلب التدريب "{0}" ({1} س) وهو بانتظار المراجعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionAccepted.Title" xml:space="preserve">
+    <value>تم تسجيل ساعات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionAccepted.Body" xml:space="preserve">
+    <value>سُجّلت ساعات تدريبك "{0}" ({1} س) كمُبلّغ عنها ذاتياً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionApproved.Title" xml:space="preserve">
+    <value>تم اعتماد طلب التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionApproved.Body" xml:space="preserve">
+    <value>تم اعتماد طلب التدريب "{0}"؛ وأصبحت {1} س محتسبة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionDenied.Title" xml:space="preserve">
+    <value>لم يُقبل طلب التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionDenied.Body" xml:space="preserve">
+    <value>لم يُقبل طلب التدريب "{0}". السبب: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionInfoRequested.Title" xml:space="preserve">
+    <value>مطلوب مزيد من المعلومات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionInfoRequested.Body" xml:space="preserve">
+    <value>يحتاج أحد المراجعين إلى مزيد من المعلومات عن "{0}": {1}. افتحه لإضافة إثباتات وإعادة تقديمه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewWaiting.Title" xml:space="preserve">
+    <value>طلب تدريب للمراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewWaiting.Body" xml:space="preserve">
+    <value>قدّم {0} الطلب "{1}" ({2} س) لمراجعتك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewResubmitted.Title" xml:space="preserve">
+    <value>أُعيد تقديم طلب تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewDigest.Title" xml:space="preserve">
+    <value>طلبات تدريب للمراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewDigest.Body" xml:space="preserve">
+    <value>{0} طلبات تدريب بانتظار مراجعتك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionRecorded.Title" xml:space="preserve">
+    <value>تم تسجيل إكمال تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionRecorded.Body" xml:space="preserve">
+    <value>سجّل {0} إكمالك لـ "{1}" بتاريخ {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionVoided.Title" xml:space="preserve">
+    <value>أُلغي إكمال مسجّل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionVoided.Body" xml:space="preserve">
+    <value>أُلغي الإكمال المسجّل لـ "{0}". السبب: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.AMember" xml:space="preserve">
+    <value>أحد الأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.AnInstructor" xml:space="preserve">
+    <value>أحد المدرّبين</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

@@ -171,7 +171,9 @@ namespace Resgrid.Model.Lms
 		/// <summary>The cycle expired without a later cycle.</summary>
 		Expired = 3,
 		/// <summary>Not an alert: the claim of an automatic renewal (one next cycle per cycle).</summary>
-		AutoRenewClaim = 4
+		AutoRenewClaim = 4,
+		/// <summary>Round 9A: the holder was told the certification's requirement set is due (once per record, expiry and stage).</summary>
+		RequirementsDue = 5
 	}
 
 	#endregion Enums
@@ -992,6 +994,9 @@ namespace Resgrid.Model.Lms
 		/// <summary>The department-local date the certification cycle sweep last claimed.</summary>
 		public DateTime? CycleSweepLocalDate { get; set; }
 
+		/// <summary>Round 9A (M0405): the department-local date the certification requirement-set sweep last claimed.</summary>
+		public DateTime? RequirementSetSweepLocalDate { get; set; }
+
 		/// <summary>Records changed up to this time (UTC) were read for familiarization credit.</summary>
 		public DateTime? FamiliarizationScannedThrough { get; set; }
 
@@ -1024,7 +1029,8 @@ namespace Resgrid.Model.Lms
 
 	/// <summary>
 	/// ProtoBuf <see cref="DepartmentSettingTypes.LmsProgramSettings"/> (144), Trainings → Programs → Settings (LMS): training request
-	/// approval steps and currency, and building-familiarization credit from Records. Missing = both approval steps, USD, no credit.
+	/// approval steps, the department's training currency, and building-familiarization credit from Records. Missing = both approval steps,
+	/// the cluster's default currency (<see cref="LmsTrainingCurrency.SystemDefault"/>), no credit.
 	/// The true defaults carry [DefaultValue(true)] so a false survives protobuf (protobuf-true-default-drop).
 	/// </summary>
 	[ProtoContract]
@@ -1042,7 +1048,10 @@ namespace Resgrid.Model.Lms
 		[DefaultValue(true)]
 		public bool RequestTrainingOfficerApproval { get; set; } = true;
 
-		/// <summary>The ISO 4217 currency training request costs are entered in.</summary>
+		/// <summary>
+		/// The department's training currency (ISO 4217): training request costs are entered in it, and new class costs, public class fees and
+		/// the cost roll-ups default to it (round 9C: CAD, EUR, GBP ... as well as USD). The property keeps its round-4C name for stored data.
+		/// </summary>
 		[ProtoMember(3)]
 		public string RequestCurrency { get; set; }
 
@@ -1070,12 +1079,11 @@ namespace Resgrid.Model.Lms
 
 		public LmsProgramSettings Normalized()
 		{
-			var currency = (RequestCurrency ?? string.Empty).Trim().ToUpperInvariant();
 			return new LmsProgramSettings
 			{
 				RequestSupervisorApproval = RequestSupervisorApproval,
 				RequestTrainingOfficerApproval = RequestTrainingOfficerApproval,
-				RequestCurrency = currency.Length == 3 && currency.All(char.IsLetter) ? currency : "USD",
+				RequestCurrency = LmsTrainingCurrency.Resolve(RequestCurrency),
 				FamiliarizationEnabled = FamiliarizationEnabled,
 				FamiliarizationCategoryId = Math.Max(0, FamiliarizationCategoryId),
 				FamiliarizationMinutes = FamiliarizationMinutes <= 0 ? DefaultFamiliarizationMinutes : Math.Min(FamiliarizationMinutes, 24 * 60),

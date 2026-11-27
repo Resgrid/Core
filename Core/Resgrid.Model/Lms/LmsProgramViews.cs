@@ -635,15 +635,39 @@ namespace Resgrid.Model.Lms
 			}
 		}
 
-		/// <summary>Auto-renew needs renewal hours to complete a cycle and a validity to size the next one.</summary>
-		public static bool CanAutoRenew(DepartmentCertificationType type) =>
-			type != null && !type.IsDeleted && !type.NeverExpires && type.RenewalCreditHoursRequired.HasValue && type.RenewalCreditHoursRequired.Value > 0 &&
-			type.DefaultValidityMonths.HasValue && type.DefaultValidityMonths.Value > 0;
+		/// <summary>
+		/// Auto-renew needs renewal hours to complete a cycle and a validity to size the next one: rolling months, or (round 9A) a calendar or
+		/// fiscal year end. A fixed-date type has no next cycle.
+		/// </summary>
+		public static bool CanAutoRenew(DepartmentCertificationType type)
+		{
+			if (type == null || type.IsDeleted || type.NeverExpires || !type.RenewalCreditHoursRequired.HasValue || type.RenewalCreditHoursRequired.Value <= 0)
+				return false;
+			switch (Certifications.CertificationValidity.RuleOf(type))
+			{
+				case Certifications.CertificationValidityRules.CalendarYearEnd:
+				case Certifications.CertificationValidityRules.FiscalYearEnd:
+					return true;
+				case Certifications.CertificationValidityRules.FixedDate:
+					return false;
+				default:
+					return type.DefaultValidityMonths.HasValue && type.DefaultValidityMonths.Value > 0;
+			}
+		}
 
-		/// <summary>The next cycle's dates: it starts the day after this one ends and lasts the type's validity.</summary>
+		/// <summary>
+		/// The next cycle's dates: it starts the day after this one ends and lasts the type's validity (rolling months), or (round 9A) runs to
+		/// the following year end.
+		/// </summary>
 		public static (DateTime Start, DateTime End) NextCycle(PersonnelCertification record, DepartmentCertificationType type)
 		{
 			var start = record.ExpiresOn.Value.Date.AddDays(1);
+			var rule = Certifications.CertificationValidity.RuleOf(type);
+			if (rule == Certifications.CertificationValidityRules.CalendarYearEnd || rule == Certifications.CertificationValidityRules.FiscalYearEnd)
+			{
+				var (month, day) = Certifications.CertificationValidity.YearEnd(type);
+				return (start, Certifications.CertificationValidity.YearEndOnOrAfter(start, month, day));
+			}
 			var end = start.AddMonths(type.DefaultValidityMonths.Value).AddDays(-1);
 			return (start, end);
 		}

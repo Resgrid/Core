@@ -153,7 +153,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DepartmentId = DepartmentId,
 				UserId = UserId,
 				Type = AuditLogTypes.CallProtocolRemoved,
-				After = Newtonsoft.Json.JsonConvert.SerializeObject(new { removed.CallId, removed.CallProtocolId, removed.DispatchProtocolId, Code = removed.Data, removed.RemovedReason, removed.RemovedOn }),
+				// The removal reason is free text about the call (ADP catalog 39): the audit says one was given, never what it was.
+				After = Newtonsoft.Json.JsonConvert.SerializeObject(new { removed.CallId, removed.CallProtocolId, removed.DispatchProtocolId, Code = removed.Data, HasReason = !string.IsNullOrWhiteSpace(removed.RemovedReason), removed.RemovedOn }),
 				Successful = true,
 				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
 				ServerName = Environment.MachineName,
@@ -183,6 +184,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			protocol.Determinant = row.Determinant;
 			protocol.OverrideReason = row.OverrideReason;
 			protocol.Case = CallProtocolCase.Parse(row.CaseJson);
+			// The removal time only: the reason is free text about the call (ADP catalog 39) and stays off the read.
+			protocol.RemovedOn = row.RemovedOn;
 
 			if (!string.IsNullOrWhiteSpace(row.AnswersJson))
 			{
@@ -208,6 +211,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			protocol.Name = dp.Name;
 			protocol.Code = dp.Code;
 			protocol.IsDisabled = dp.IsDisabled;
+			protocol.IsDeleted = dp.IsDeleted;
 			protocol.Description = dp.Description;
 			protocol.ProtocolText = dp.ProtocolText;
 			protocol.CreatedOn = dp.CreatedOn;

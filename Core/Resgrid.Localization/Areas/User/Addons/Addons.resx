@@ -175,4 +175,109 @@
   <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Your department has not bought the LMS add-on.</value></data>
   <data name="LmsSettingsLapsed" xml:space="preserve"><value>The LMS add-on has ended. Records, certificates and transcripts stay available and exportable.</value></data>
   <data name="LmsSettingsGrace" xml:space="preserve"><value>A payment failed. The LMS keeps working until {0} while the payment is retried.</value></data>
+  <data name="EnhancedAiFeature7" xml:space="preserve">
+    <value>Protocol and training drafts, translations, flashcards and practice</value>
+  </data>
+  <data name="EnhancedAiFeature8" xml:space="preserve">
+    <value>Course drafts, tutor and course flashcards with the LMS add-on</value>
+  </data>
+  <data name="WorkforceProTitle" xml:space="preserve">
+    <value>Workforce Pro</value>
+  </data>
+  <data name="WorkforceProTagline" xml:space="preserve">
+    <value>Member wellness and workplace exposure records, for the members you choose</value>
+  </data>
+  <data name="WorkforceProFeature1" xml:space="preserve">
+    <value>Exposure log for carcinogens, bloodborne pathogens, hazardous substances and critical incidents, with entries suggested after a flagged call</value>
+  </data>
+  <data name="WorkforceProFeature2" xml:space="preserve">
+    <value>Exposure cases with a designated officer workflow and post-exposure follow-up</value>
+  </data>
+  <data name="WorkforceProFeature3" xml:space="preserve">
+    <value>Injuries with duty status, return to duty and injury log exports</value>
+  </data>
+  <data name="WorkforceProFeature4" xml:space="preserve">
+    <value>Medical clearances with restriction status, and wellness roles your organization names</value>
+  </data>
+  <data name="WorkforceProFeature5" xml:space="preserve">
+    <value>Seats only for the members you switch on; records stay readable if you stop</value>
+  </data>
+  <data name="WorkforceProNote" xml:space="preserve">
+    <value>Priced per 25-member pack, graduated: the first 4 packs at the full price, then cheaper. Billed monthly per department; no setup fee. Requires a paid Resgrid plan.</value>
+  </data>
+  <data name="WorkforceProRequiresPaidPlan" xml:space="preserve">
+    <value>Workforce Pro is sold with a paid Resgrid plan. Choose a plan on the subscription page first.</value>
+  </data>
+  <data name="WorkforceProBillingPacksNote" xml:space="preserve">
+    <value>Each pack seats 25 members. Packs are priced in tiers: each pack is billed at the price of its own tier, so adding packs never makes earlier packs cheaper or dearer. Billed monthly; there is no setup fee and no annual term.</value>
+  </data>
+  <data name="WorkforceProBillingSeatsNote" xml:space="preserve">
+    <value>Adding packs is charged at once, prorated to your billing date. Removing packs takes effect at the next billing date, and only down to the members who have Workforce Pro switched on.</value>
+  </data>
+  <data name="WorkforceProBillingFreeNote" xml:space="preserve">
+    <value>Seats are for the members whose records you keep; officers and managers acting on others need their permission, not a seat. If the add-on ends, existing records stay readable and exportable.</value>
+  </data>
+  <data name="WorkforceProManageSeats" xml:space="preserve">
+    <value>Manage Workforce Pro seats</value>
+  </data>
+  <data name="WorkforceProSeatsTitle" xml:space="preserve">
+    <value>Workforce Pro seats</value>
+  </data>
+  <data name="WorkforceProSeatsIntro" xml:space="preserve">
+    <value>Switch Workforce Pro on for the members whose wellness and workplace exposure records your organization keeps. Switching a member off never deletes a record: their records become read-only.</value>
+  </data>
+  <data name="WorkforceProSeatCounter" xml:space="preserve">
+    <value>{0} of {1} seats in use, {2} available</value>
+  </data>
+  <data name="WorkforceProSeatMember" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="WorkforceProSeatState" xml:space="preserve">
+    <value>Workforce Pro seat</value>
+  </data>
+  <data name="WorkforceProSeatOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="WorkforceProSeatOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="WorkforceProSeatNotLicensed" xml:space="preserve">
+    <value>On, not licensed</value>
+  </data>
+  <data name="WorkforceProSeatEnable" xml:space="preserve">
+    <value>Switch on</value>
+  </data>
+  <data name="WorkforceProSeatDisable" xml:space="preserve">
+    <value>Switch off</value>
+  </data>
+  <data name="WorkforceProSeatsFull" xml:space="preserve">
+    <value>All {0} seats are in use. Packs to add: {1}.</value>
+  </data>
+  <data name="WorkforceProSeatNotActive" xml:space="preserve">
+    <value>Only active members can hold a Workforce Pro seat; deleted, disabled and hidden members cannot.</value>
+  </data>
+  <data name="WorkforceProSeatAddonInactive" xml:space="preserve">
+    <value>Your organization has no active Workforce Pro add-on, so Workforce Pro cannot be switched on for anyone. Existing records stay read-only.</value>
+  </data>
+  <data name="WorkforceProSeatFailed" xml:space="preserve">
+    <value>The Workforce Pro seat could not be changed. Please try again.</value>
+  </data>
+  <data name="WorkforceProSeatSaved" xml:space="preserve">
+    <value>Workforce Pro seat updated.</value>
+  </data>
+  <data name="WorkforceProSeatDormant" xml:space="preserve">
+    <value>{0} seats belong to members who are no longer active and are not counted.</value>
+  </data>
+  <data name="WorkforceProAddPack" xml:space="preserve">
+    <value>Add a pack</value>
+  </data>
+  <data name="WorkforceProSeatsNotPurchased" xml:space="preserve">
+    <value>Your organization does not hold the Workforce Pro add-on right now. Existing wellness records stay readable; buy packs to add or change records.</value>
+  </data>
+  <data name="WorkforceProSeatsGrace" xml:space="preserve">
+    <value>A payment failed. Workforce Pro keeps working until {0} while the payment is retried.</value>
+  </data>
+  <data name="WorkforceProSeatsBilling" xml:space="preserve">
+    <value>Buy or change packs</value>
+  </data>
 </root>

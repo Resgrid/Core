@@ -70,7 +70,8 @@ namespace Resgrid.Tests.LmsBilling
 			seats.Setup(s => s.GetForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<LmsMemberSeat>());
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(d => d.GetActiveMemberUserIdsAsync(DepartmentId)).ReturnsAsync(new HashSet<string>(StringComparer.OrdinalIgnoreCase));
-			_gate = new LmsAccessService(flags.Object, settings.Object, billing.Object, states.Object, lapses.Object, seats.Object, departments.Object);
+			_gate = new LmsAccessService(flags.Object, settings.Object, billing.Object, states.Object, lapses.Object, seats.Object, departments.Object,
+				Mock.Of<Resgrid.Model.Providers.IEventAggregator>(), new System.Lazy<Resgrid.Model.Services.ILmsSponsorshipService>(() => null));
 
 			_lms = new Mock<ILmsTrainingService>();
 			_lms.Setup(x => x.GetNccpProgressAsync(DepartmentId, It.IsAny<bool>(), It.IsAny<DateTime>())).ReturnsAsync(new NccpProgressReport());
@@ -124,7 +125,8 @@ namespace Resgrid.Tests.LmsBilling
 			sealing.Setup(x => x.SealHtmlAsync(It.IsAny<SealHtmlRequest>(), It.IsAny<System.Threading.CancellationToken>()))
 				.ReturnsAsync((SealHtmlRequest request, System.Threading.CancellationToken _) => new SealOutcome { Bytes = renderer.ConvertHtmlToPdf(request.Html) ?? new byte[] { 1 } });
 			var controller = new TrainingRecordsController(records ?? Mock.Of<ILearningRecordService>(), Mock.Of<ITrainingHistoryImportService>(), _gate, _lms.Object,
-				authorization.Object, departments.Object, Mock.Of<IDepartmentSettingsService>(), Mock.Of<ICertificationService>(), renderer, sealing.Object, localizer.Object)
+				authorization.Object, departments.Object, Mock.Of<IDepartmentSettingsService>(), Mock.Of<ICertificationService>(), renderer, sealing.Object, localizer.Object,
+				Mock.Of<ITrainingCompletionRecordingService>(), Mock.Of<ITrainingSubmissionService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -178,7 +180,7 @@ namespace Resgrid.Tests.LmsBilling
 			departments.Setup(d => d.GetDepartmentByIdAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = DepartmentId, Name = "Station 9" });
 			departments.Setup(d => d.GetAllPersonnelNamesForDepartmentAsync(DepartmentId)).ReturnsAsync(new List<PersonName> { new PersonName { UserId = "member", FirstName = "Pat", LastName = "Doe" } });
 			return new LmsTrainingService(records.Object, Mock.Of<ITrainingCategoriesRepository>(), Mock.Of<ILmsCertificateTemplatesRepository>(), Mock.Of<ICertificationService>(),
-				Mock.Of<IPersonnelCertificationRepository>(), departments.Object, _gate, seats ?? Mock.Of<ILmsSeatService>());
+				Mock.Of<IPersonnelCertificationRepository>(), departments.Object, _gate, seats ?? Mock.Of<ILmsSeatService>(), Mock.Of<ILmsExternalLearnersRepository>());
 		}
 
 		private static LearningRecord Issued() => new LearningRecord
@@ -249,7 +251,7 @@ namespace Resgrid.Tests.LmsBilling
 			var seats = new Mock<ILmsSeatService>();
 			seats.Setup(s => s.GetLicensedUserIdsAsync(DepartmentId)).ReturnsAsync(new HashSet<string>(new[] { "SEATED" }, StringComparer.OrdinalIgnoreCase));
 			var service = new LmsTrainingService(records.Object, categories.Object, Mock.Of<ILmsCertificateTemplatesRepository>(), Mock.Of<ICertificationService>(),
-				Mock.Of<IPersonnelCertificationRepository>(), departments.Object, _gate, seats.Object);
+				Mock.Of<IPersonnelCertificationRepository>(), departments.Object, _gate, seats.Object, Mock.Of<ILmsExternalLearnersRepository>());
 
 			var report = await service.GetIsoFsrsReportAsync(DepartmentId, DateTime.UtcNow.AddYears(-1), DateTime.UtcNow, false);
 

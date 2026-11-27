@@ -32,9 +32,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ILmsAccessService _access;
 		private readonly ILmsTrainingRequestService _requests;
 		private readonly ILmsCompetencyService _competencies;
+		private readonly ILmsCertificationRequirementService _certificationRequirements;
 
-		public LmsProgramsController(ILmsGateService gate, ILmsAccessService access, ILmsTrainingRequestService requests, ILmsCompetencyService competencies)
+		public LmsProgramsController(ILmsGateService gate, ILmsAccessService access, ILmsTrainingRequestService requests, ILmsCompetencyService competencies,
+			ILmsCertificationRequirementService certificationRequirements)
 		{
+			_certificationRequirements = certificationRequirements;
 			_gate = gate;
 			_access = access;
 			_requests = requests;
@@ -110,6 +113,53 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new LmsTrainingRequestsResult { Data = (await _requests.GetMineAsync(DepartmentId, UserId)).Select(Map).ToList() };
 			return Ok(Populate(result, result.Data.Count));
 		}
+
+		/// <summary>
+		/// Round 9A (Omni "My certification progress"): the member's progress on every certification backed by a requirement set ("3 of 4
+		/// done"), with the state, the expiry, the window in which completions count and each item (an instructor-recorded completion says so).
+		/// </summary>
+		[HttpGet("GetMyCertificationProgress")]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<LmsCertificationProgressResult>> GetMyCertificationProgress()
+		{
+			if (await ActorAsync() == null)
+				return NotFound();
+			var progress = await _certificationRequirements.GetMemberProgressAsync(DepartmentId, UserId, DateTime.UtcNow) ?? new System.Collections.Generic.List<LmsCertificationProgress>();
+			var result = new LmsCertificationProgressResult { Data = progress.Select(Map).ToList() };
+			return Ok(Populate(result, result.Data.Count));
+		}
+
+		public static LmsCertificationProgressData Map(LmsCertificationProgress progress) => progress == null ? null : new LmsCertificationProgressData
+		{
+			CertificationTypeId = progress.CertificationTypeId,
+			CertificationTypeName = progress.CertificationTypeName,
+			CertificationTypeCode = progress.CertificationTypeCode,
+			CertificationId = progress.CertificationId,
+			ExpiresOn = progress.ExpiresOn,
+			DaysUntilExpiry = progress.DaysUntilExpiry,
+			State = progress.State.ToString(),
+			Done = progress.Done,
+			Total = progress.Total,
+			WindowStart = progress.WindowStart,
+			WindowEnd = progress.WindowEnd,
+			NextExpiresOn = progress.NextExpiresOn,
+			IsRenewal = progress.IsRenewal,
+			Items = progress.Items.Select(i => new LmsCertificationItemProgressData
+			{
+				ItemId = i.ItemId,
+				Kind = ((LmsRequirementKinds)i.Kind).ToString(),
+				Label = i.Label,
+				RequireRecordedByInstructor = i.RequireRecordedByInstructor,
+				Done = i.Done,
+				Progress = i.Progress,
+				Required = i.Required,
+				LastCompletedOn = i.LastCompletedUtc,
+				RecordedByInstructor = i.LastRecordedByOther,
+				TargetId = i.TargetRefId
+			}).ToList()
+		};
 
 		[HttpGet("GetTrainingRequestsAwaitingMe")]
 		[Authorize(Policy = ResgridResources.Training_View)]

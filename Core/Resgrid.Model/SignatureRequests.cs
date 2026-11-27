@@ -309,7 +309,7 @@ namespace Resgrid.Model
 
 		public DateTime CreatedOn { get; set; }
 
-		// --- S3 multi-signer ordered requests (M0391) ---
+		// --- S3 multi-signer ordered requests (M0371) ---
 
 		/// <summary><see cref="SignatureSignerKinds"/>: an external signer (every S2 row) or a member step.</summary>
 		public int SignerKind { get; set; }
@@ -351,6 +351,14 @@ namespace Resgrid.Model
 		[JsonIgnore]
 		public bool IsDone => Status == (int)SignatureSignerStatuses.Signed || Status == (int)SignatureSignerStatuses.Declined;
 
+		/// <summary>
+		/// The outside signer's name for a screen: a name ADP sealed (catalog 39, a Records-owned request of a protected department) reads
+		/// REDACTED, never as an envelope. Pages carry no protected-data grant.
+		/// </summary>
+		[NotMapped]
+		[JsonIgnore]
+		public string ExternalNameForDisplay => ProtectedDataEnvelope.HasEnvelopePrefix(ExternalName) ? ProtectedDataEnvelope.RedactionValue : ExternalName;
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -369,11 +377,11 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "IsMember", "IsDone" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "IsMember", "IsDone", "ExternalNameForDisplay" };
 	}
 
 	/// <summary>
-	/// An in-person capture (S2, M0373): the drawn signature and printed name, the optional witness, and the revision hash it was
+	/// An in-person capture (S2, M0358): the drawn signature and printed name, the optional witness, and the revision hash it was
 	/// bound to. The image and names are encrypted at rest. Kept so a pending seal can render the evidence later.
 	/// </summary>
 	[Table("SignatureCaptures")]
@@ -444,7 +452,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// A department's account on the e-sign platform (M0374): one Documenso team per department, its team-scoped API token
+	/// A department's account on the e-sign platform (M0359): one Documenso team per department, its team-scoped API token
 	/// encrypted with the department key (IEncryptionService.EncryptForDepartment). Department users never get platform logins.
 	/// </summary>
 	[Table("ESignProviderAccounts")]
@@ -501,7 +509,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// A webhook hint from the e-sign platform (M0374), idempotent by the provider's event id (the inbound-email-receipts pattern).
+	/// A webhook hint from the e-sign platform (M0359), idempotent by the provider's event id (the inbound-email-receipts pattern).
 	/// Only the envelope id is kept: worker 90 re-fetches the envelope over the API and trusts only that. No DepartmentId (the
 	/// hint is not trusted to name one); purged after <see cref="ESignWebhookPolicy.Retention"/>.
 	/// </summary>

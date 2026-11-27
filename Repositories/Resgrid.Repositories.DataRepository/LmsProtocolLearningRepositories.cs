@@ -11,7 +11,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>Per-protocol LMS learning settings (LmsProtocolLearnings, M0417): portable SQL, unique per department and protocol.</summary>
+	/// <summary>Per-protocol LMS learning settings (LmsProtocolLearnings, M0387): portable SQL, unique per department and protocol.</summary>
 	public class LmsProtocolLearningsRepository : LmsRepositoryBase<LmsProtocolLearning>, ILmsProtocolLearningsRepository
 	{
 		public LmsProtocolLearningsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -47,7 +47,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Protocol acknowledgment quiz attempts (LmsProtocolQuizAttempts, M0417), written against their RowVersion.</summary>
+	/// <summary>Protocol acknowledgment quiz attempts (LmsProtocolQuizAttempts, M0387), written against their RowVersion.</summary>
 	public class LmsProtocolQuizAttemptsRepository : LmsRepositoryBase<LmsProtocolQuizAttempt>, ILmsProtocolQuizAttemptsRepository
 	{
 		public LmsProtocolQuizAttemptsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -96,7 +96,7 @@ namespace Resgrid.Repositories.DataRepository
 				expectedRowVersion, v => attempt.RowVersion = v, cancellationToken);
 	}
 
-	/// <summary>Weekly micro-learning questions and the per-department clock (LmsMicroLearningItems, LmsMicroLearningRuns; M0417).</summary>
+	/// <summary>Weekly micro-learning questions and the per-department clock (LmsMicroLearningItems, LmsMicroLearningRuns; M0387).</summary>
 	public class LmsMicroLearningRepository : LmsRepositoryBase<LmsMicroLearningItem>, ILmsMicroLearningRepository
 	{
 		public LmsMicroLearningRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)

@@ -191,7 +191,8 @@
     <value>Le notifiche SMS, email, push e vocali inviano per impostazione predefinita contenuti generici («È disponibile un dispatch protetto — accedi a Resgrid»).</value>
   </data>
   <data name="Step1NotCompliance" xml:space="preserve">
-    <value>La protezione avanzata dei dati da sola non costituisce conformità HIPAA o ePCR. È un controllo all'interno di un programma di conformità che resta di competenza del tuo ente.</value>
+    <value>La protezione avanzata dei dati da sola non costituisce conformità HIPAA o ad altre norme sui dati sanitari. È un controllo all'interno di un programma di conformità che resta di competenza del tuo ente.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step2Header" xml:space="preserve">
     <value>Passaggio 2 di 6 — Presa d’atto</value>
@@ -230,7 +231,8 @@
     <value>Comprendo che il supporto Resgrid non può leggere valori protetti senza una concessione di supporto esplicita, verificata e approvata dal dipartimento, e che la perdita delle chiavi è recuperabile solo tramite il processo documentato.</value>
   </data>
   <data name="AckNotHipaaCompliance" xml:space="preserve">
-    <value>Comprendo che la protezione avanzata dei dati da sola non è conformità HIPAA/ePCR.</value>
+    <value>Comprendo che la protezione avanzata dei dati da sola non è conformità HIPAA o ad altre norme sui dati sanitari.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step3Header" xml:space="preserve">
     <value>Passaggio 3 di 6 — Controlli preliminari</value>

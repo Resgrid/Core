@@ -20,8 +20,8 @@ namespace Resgrid.Web.Eventing.Controllers
 {
 	/// <summary>
 	/// e-Sign platform webhooks (S2, plan §22.3) — hints only. Documenso's webhook secret is a plain shared value, not an HMAC,
-	/// so a hint is accepted only from the cluster network (ESignConfig.WebhookAllowedNetworks; blank refuses every hint) and,
-	/// when configured, with the shared secret. It is recorded once per provider event id (the inbound-email-receipts pattern)
+	/// so a hint is accepted only from the cluster network (ESignConfig.WebhookAllowedNetworks; blank refuses every hint) and
+	/// with the shared secret (ESignConfig.WebhookSecret; blank refuses every hint too). It is recorded once per provider event id (the inbound-email-receipts pattern)
 	/// and answered 200; worker 90 re-fetches the envelope over the API and trusts only that state.
 	/// </summary>
 	[AllowAnonymous]
@@ -47,7 +47,10 @@ namespace Resgrid.Web.Eventing.Controllers
 			if (!IsAllowed(HttpContext.Connection.RemoteIpAddress, ESignConfig.WebhookAllowedNetworks))
 				return StatusCode(403);
 
-			if (!string.IsNullOrWhiteSpace(ESignConfig.WebhookSecret) && !SecretMatches(Request.Headers["X-Documenso-Secret"].ToString(), ESignConfig.WebhookSecret))
+			// Security review L3 (2026-11-25): fail closed. A blank secret refuses every hint, like a blank network list.
+			if (string.IsNullOrWhiteSpace(ESignConfig.WebhookSecret))
+				return StatusCode(403);
+			if (!SecretMatches(Request.Headers["X-Documenso-Secret"].ToString(), ESignConfig.WebhookSecret))
 				return StatusCode(401);
 
 			string body;

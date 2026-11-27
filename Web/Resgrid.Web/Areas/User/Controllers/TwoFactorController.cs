@@ -443,12 +443,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[AllowAnonymous]
 		public async Task<IActionResult> Verify2FA(string returnUrl = null, string scope = null, CancellationToken cancellationToken = default,
-			int? entry = null, bool resubmit = false)
+			int? entry = null, bool resubmit = false, string stepUpArea = null, bool reauth = false)
 		{
 			var methodScope = ParseScope(scope);
 			var entering = await EntryDepartmentAsync(entry);
+			// A display hint from the area guard (RequiresRecentTwoFactor with StepUpArea): the department allows the password or a provider
+			// sign-in for the area and the member can use one. The guard decides again when the held submission comes back.
+			var safeReturn = !string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl) ? returnUrl : null;
+			Resgrid.Model.Security.StepUpAreas.TryParse(stepUpArea, out var guardedArea);
 			return View(new StepUpVerifyViewModel
 			{
+				ReauthenticateUrl = reauth && safeReturn != null && guardedArea != 0
+					? Url.Action("Reauthenticate", "AccountSecurity", new { area = "User", returnUrl = safeReturn, stepUpArea = Resgrid.Model.Security.StepUpAreas.Name(guardedArea), resubmit })
+					: null,
 				ReturnUrl = returnUrl,
 				Scope = methodScope.ToString(),
 				EntryDepartmentId = entering,

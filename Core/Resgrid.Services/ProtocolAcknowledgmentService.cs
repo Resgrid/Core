@@ -265,7 +265,7 @@ namespace Resgrid.Services
 				switch (ProtocolAcknowledgmentRules.Plan(version, existing, previous, previousAck))
 				{
 					case ProtocolAcknowledgmentPlanActions.Assign:
-						if (await TryInsertAsync(new ProtocolAcknowledgment
+						var assignment = new ProtocolAcknowledgment
 						{
 							DepartmentId = protocol.DepartmentId,
 							DispatchProtocolId = protocol.DispatchProtocolId,
@@ -278,10 +278,13 @@ namespace Resgrid.Services
 							EnteredAudienceOn = source == ProtocolAcknowledgmentSources.AudienceEntry ? utcNow : (DateTime?)null,
 							BundleOrder = protocol.AckBundleOrder,
 							QuizTrainingId = version.QuizTrainingId
-						}, cancellationToken))
+						};
+						if (await TryInsertAsync(assignment, cancellationToken))
 						{
 							assigned++;
 							newlyOpen.Add(userId);
+							// Once per row: the unique (version, member) index lets only one assignment path insert it.
+							RaiseWorkflow(assignment, protocol, version, ProtocolAcknowledgmentWorkflowChanges.Assigned, utcNow);
 						}
 						break;
 
@@ -319,6 +322,7 @@ namespace Resgrid.Services
 						{
 							assigned++;
 							newlyOpen.Add(userId);
+							RaiseWorkflow(existing, protocol, version, ProtocolAcknowledgmentWorkflowChanges.Assigned, utcNow);
 						}
 						break;
 				}
@@ -567,7 +571,11 @@ namespace Resgrid.Services
 			}
 
 			if (status == ProtocolAcknowledgmentStatuses.Acknowledged)
+			{
 				await WriteLearningRecordAsync(protocol, version, row, cancellationToken);
+				// Signed and complete (a quiz still owed completes later, from CompleteAwaitingAsync).
+				RaiseWorkflow(row, protocol, version, ProtocolAcknowledgmentWorkflowChanges.Completed, now);
+			}
 
 			Audit(reader.DepartmentId, reader.UserId, AuditLogTypes.ProtocolAcknowledged, JsonConvert.SerializeObject(new
 			{
@@ -642,7 +650,26 @@ namespace Resgrid.Services
 			var version = await _versions.GetByIdForDepartmentAsync(row.DepartmentId, row.ProtocolVersionId);
 			if (protocol != null && version != null && protocol.DepartmentId == row.DepartmentId)
 				await WriteLearningRecordAsync(protocol, version, row, cancellationToken);
+			// The status compare-and-set above let only this call complete it.
+			RaiseWorkflow(row, protocol != null && protocol.DepartmentId == row.DepartmentId ? protocol : null, version, ProtocolAcknowledgmentWorkflowChanges.Completed, utcNow);
 			return true;
+		}
+
+		/// <summary>Workflow triggers 251-253 for one acknowledgment row: ids, the protocol's code and name and dates; never fatal.</summary>
+		private void RaiseWorkflow(ProtocolAcknowledgment row, DispatchProtocol protocol, ProtocolVersion version, ProtocolAcknowledgmentWorkflowChanges change, DateTime utcNow,
+			ProtocolAcknowledgmentReminderStages? stage = null)
+		{
+			if (row == null || row.DepartmentId <= 0 || string.IsNullOrWhiteSpace(row.UserId))
+				return;
+
+			var evt = ProtocolAcknowledgmentWorkflowEvent.For(row, protocol, version, change, utcNow);
+			if (change == ProtocolAcknowledgmentWorkflowChanges.Overdue)
+			{
+				evt.ReminderStage = (stage ?? ProtocolAcknowledgmentReminderStages.Overdue).ToString();
+				evt.DaysOverdue = row.DueOn.HasValue ? Math.Max(0, (int)Math.Floor((utcNow - row.DueOn.Value).TotalDays)) : (int?)null;
+			}
+
+			ContentWorkflowContext.Publish(_eventAggregator, evt);
 		}
 
 		public async Task<bool> CompleteIfQuizPassedAsync(int departmentId, int protocolVersionId, string userId, DateTime utcNow, CancellationToken cancellationToken = default)
@@ -1078,6 +1105,7 @@ namespace Resgrid.Services
 				ExpiresOn = expires,
 				request.MustRead
 			}));
+			ContentWorkflowContext.Publish(_eventAggregator, ProtocolWorkflowEvent.For(fresh, version, ProtocolWorkflowChanges.BulletinIssued, reader.UserId, now));
 
 			// Must-read: everyone in the audience owes it now, and hears about it by push (non-must-read: the push alone).
 			if (request.MustRead)
@@ -1279,6 +1307,18 @@ namespace Resgrid.Services
 							versions[item.ProtocolVersionId] = version = await _versions.GetByIdForDepartmentAsync(item.DepartmentId, item.ProtocolVersionId);
 						if (protocol == null || version == null || protocol.DepartmentId != item.DepartmentId)
 							continue;
+
+						// Overdue once per row: the first claimed stage at or past Overdue (a row first seen at Escalated raises it then).
+						if (stage >= ProtocolAcknowledgmentReminderStages.Overdue && item.ReminderStage < (int)ProtocolAcknowledgmentReminderStages.Overdue)
+							RaiseWorkflow(await _acks.GetByIdForDepartmentAsync(item.DepartmentId, item.ProtocolAcknowledgmentId) ?? new ProtocolAcknowledgment
+							{
+								ProtocolAcknowledgmentId = item.ProtocolAcknowledgmentId,
+								DepartmentId = item.DepartmentId,
+								DispatchProtocolId = item.DispatchProtocolId,
+								ProtocolVersionId = item.ProtocolVersionId,
+								UserId = item.UserId,
+								DueOn = item.DueOn
+							}, protocol, version, ProtocolAcknowledgmentWorkflowChanges.Overdue, utcNow, stage);
 
 						sent += await _notifications.NotifyReminderAsync(item.DepartmentId, item.UserId, protocol, version, stage, item.DueOn, cancellationToken);
 

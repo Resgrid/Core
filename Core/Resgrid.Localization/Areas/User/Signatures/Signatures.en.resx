@@ -937,4 +937,31 @@
   <data name="ApprovalsTab" xml:space="preserve">
     <value>Approvals</value>
   </data>
+  <data name="StatementMutualAidAgreementCountersignature" xml:space="preserve">
+    <value>I countersign the mutual-aid agreement {0} on behalf of our department as its partner (content code {1}).</value>
+  </data>
+  <data name="StatementRecordDeploymentPartnerAcceptance" xml:space="preserve">
+    <value>I accept the assignment {0} on behalf of our organization, as the linked partner it is filled for (content code {1}).</value>
+  </data>
+  <data name="StatementDepartmentLinkAcceptance" xml:space="preserve">
+    <value>I accept the link with {0} on behalf of our organization, with the sharing shown (content code {1}).</value>
+  </data>
+  <data name="PartnerDeploymentFrom" xml:space="preserve">
+    <value>Sending organization</value>
+  </data>
+  <data name="PartnerDeploymentOrder" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="PartnerDeploymentRequest" xml:space="preserve">
+    <value>Request / fill</value>
+  </data>
+  <data name="PartnerDeploymentResource" xml:space="preserve">
+    <value>Resource</value>
+  </data>
+  <data name="PartnerDeploymentPosition" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="PartnerDeploymentFilledOn" xml:space="preserve">
+    <value>Accepted by the sender</value>
+  </data>
 </root>

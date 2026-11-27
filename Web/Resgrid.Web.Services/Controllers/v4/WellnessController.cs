@@ -18,6 +18,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 	/// my entries and suggestions, log an entry, confirm or dismiss a suggestion built after a flagged call. Every endpoint acts on the
 	/// signed-in member's own entries; there is no parameter naming another member, so the restricted tier holds by construction (the
 	/// officer views stay on the web). Nothing confirms itself: a suggestion counts only after this member confirms it.
+	/// Workforce Pro (2026-11-26): 404 while the Workforce.Pro flag is off; while the add-on is not licensed (or the member holds no seat) the
+	/// reads still answer and the writes are refused with 400 and the code workforce_pro_required / workforce_pro_seat_required.
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -26,10 +28,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class WellnessController : V4AuthenticatedApiControllerbase
 	{
 		private readonly IMemberWellnessService _wellness;
+		private readonly IWorkforceProAccessService _workforcePro;
 
-		public WellnessController(IMemberWellnessService wellness)
+		public WellnessController(IMemberWellnessService wellness, IWorkforceProAccessService workforcePro)
 		{
 			_wellness = wellness;
+			_workforcePro = workforcePro;
 		}
 
 		private static T Populate<T>(T result, int pageSize, string status = ResponseHelper.Success) where T : StandardApiResponseV4Base
@@ -40,12 +44,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
+		/// <summary>Workforce Pro: every endpoint answers 404 while the Workforce.Pro flag is off (the service refuses as well; data is kept).</summary>
+		private Task<bool> OfferedAsync() => _workforcePro.IsOfferedAsync(DepartmentId);
+
 		/// <summary>The signed-in member's entries (newest first), suggestions awaiting their review, counts and screening follow-ups.</summary>
 		[HttpGet("GetMyExposures")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<ActionResult<MyExposuresResult>> GetMyExposures()
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			MemberWellnessOverview overview;
 			try
 			{
@@ -71,7 +80,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DueOn = f.DueOn,
 				State = f.State
 			}).ToList();
-			result.Data.PeerTeamConfigured = (await _wellness.GetSettingsAsync(DepartmentId)).PeerTeamCertificationTypeId > 0;
+			result.Data.PeerTeamConfigured = WellnessRoleRules.PeerTeamConfigured(await _wellness.GetSettingsAsync(DepartmentId));
 			return Ok(Populate(result, result.Data.Entries.Count + result.Data.Suggestions.Count));
 		}
 
@@ -82,6 +91,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<ActionResult<ExposureEntryResult>> CreateExposure([FromBody] CreateExposureInput input, CancellationToken cancellationToken)
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			if (input == null)
 				return BadRequest();
 			var model = ToInput(input);
@@ -97,6 +108,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<ExposureEntryResult>> ConfirmSuggestion([FromBody] ConfirmExposureSuggestionInput input, CancellationToken cancellationToken)
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			if (input == null || string.IsNullOrWhiteSpace(input.ExposureId))
 				return BadRequest();
 			if (!await IsOwnAsync(input.ExposureId))
@@ -113,6 +126,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<ExposureEntryResult>> DismissSuggestion([FromBody] DismissExposureSuggestionInput input, CancellationToken cancellationToken)
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			if (input == null || string.IsNullOrWhiteSpace(input.ExposureId))
 				return BadRequest();
 			if (!await IsOwnAsync(input.ExposureId))

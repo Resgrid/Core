@@ -39,6 +39,7 @@ namespace Resgrid.Tests.Web.User
 		private Mock<IDepartmentsService> _departments;
 		private Mock<IEventAggregator> _events;
 		private Mock<IProtocolLibraryService> _library;
+		private Mock<IProtocolAnalyticsService> _analytics;
 		private ProtocolsController _controller;
 
 		[SetUp]
@@ -51,6 +52,7 @@ namespace Resgrid.Tests.Web.User
 			_events = new Mock<IEventAggregator>();
 			// P1: New creates a draft protocol through the library (its first draft version holds the text).
 			_library = new Mock<IProtocolLibraryService>();
+			_analytics = new Mock<IProtocolAnalyticsService>();
 			_library.Setup(x => x.GetSettingsAsync(DepartmentId)).ReturnsAsync(new ProtocolLibrarySettings());
 			_library.Setup(x => x.UpdateLibraryFieldsAsync(It.IsAny<ProtocolReader>(), It.IsAny<int>(), It.IsAny<ProtocolLibraryFields>(), It.IsAny<long>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new ProtocolLifecycleResult());
@@ -92,7 +94,7 @@ namespace Resgrid.Tests.Web.User
 			Resgrid.Web.Helpers.ClaimsAuthorizationHelper._httpContextAccessor =
 				new HttpContextAccessor { HttpContext = httpContext };
 
-			_controller = new ProtocolsController(_protocolsService.Object, _callsService.Object, _authorization.Object, _departments.Object, Mock.Of<IMappingService>(), _events.Object,
+			_controller = new ProtocolsController(_protocolsService.Object, _callsService.Object, _authorization.Object, _departments.Object, Mock.Of<IMappingService>(), _analytics.Object, _events.Object,
 				library: _library.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }

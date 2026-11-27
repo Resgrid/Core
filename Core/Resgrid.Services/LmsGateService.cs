@@ -29,11 +29,13 @@ namespace Resgrid.Services
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IPermissionsService _permissionsService;
 		private readonly IContentAudienceService _contentAudienceService;
+		private readonly ILmsSponsorshipService _sponsorships;
 
 		public LmsGateService(ILmsAccessService access, ILmsDepartmentStatesRepository states, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IPermissionsService permissionsService,
-			IContentAudienceService contentAudienceService)
+			IContentAudienceService contentAudienceService, ILmsSponsorshipService sponsorships)
 		{
+			_sponsorships = sponsorships;
 			_access = access;
 			_states = states;
 			_departmentsService = departmentsService;
@@ -83,7 +85,42 @@ namespace Resgrid.Services
 				Logging.LogException(ex, "The LMS lapse clock could not be read.");
 			}
 
+			// T5 item 2a (round 10 A3): without an add-on of its own, the department runs its managed copies of a sponsor's course sets on the
+			// sponsor's add-on (and their lapse from when the sponsorship stopped paying). Nothing else becomes runnable.
+			if (gate.AddonActive != true && _sponsorships != null)
+			{
+				try
+				{
+					gate.SponsoredCourses = await _sponsorships.GetSponsoredCourseIdsAsync(departmentId) ?? new Dictionary<int, DateTime?>();
+					gate.SponsoredPaths = await _sponsorships.GetSponsoredPathIdsAsync(departmentId) ?? new Dictionary<int, DateTime?>();
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, "The department's sponsored LMS courses could not be read.");
+				}
+			}
+
 			return gate;
+		}
+
+		public async Task<HashSet<string>> GetLearnerSeatHoldersAsync(int departmentId) =>
+			departmentId <= 0 ? new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+				: await _access.GetLearnerSeatHoldersAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+		public async Task<bool> HoldsLearnerSeatAsync(int departmentId, string userId)
+		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
+				return false;
+			try
+			{
+				return (await GetLearnerSeatHoldersAsync(departmentId)).Contains(userId);
+			}
+			catch (Exception ex)
+			{
+				// Unknown is no seat (fail closed); the Academy and the free baseline never ask.
+				Logging.LogException(ex, "The member's LMS seat could not be read.");
+				return false;
+			}
 		}
 
 		public async Task<LmsActor> GetActorAsync(int departmentId, string userId)

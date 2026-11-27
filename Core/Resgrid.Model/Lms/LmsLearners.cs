@@ -77,6 +77,15 @@ namespace Resgrid.Model.Lms
 
 		public long RowVersion { get; set; }
 
+		/// <summary>
+		/// Round 7B (M0401): <see cref="LearningCompletionMethods"/>. RecordedByOther: an instructor recorded the completion (permission 135);
+		/// the learning record carries the same metadata. A later enrolment the member completes themselves is its own record (both are kept).
+		/// </summary>
+		public int CompletionMethod { get; set; }
+
+		/// <summary>The TrainingCompletionRecordings row of a recorded completion.</summary>
+		public int? RecordedCompletionId { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -140,6 +149,9 @@ namespace Resgrid.Model.Lms
 
 		/// <summary>The crew viewing the member was marked present at (R-C4), when that completed the lesson.</summary>
 		public int? LmsCrewViewingId { get; set; }
+
+		/// <summary>Round 7B (M0401): the recorded completion that marked this lesson complete (undone when the recording is voided).</summary>
+		public int? RecordedCompletionId { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]
@@ -369,7 +381,7 @@ namespace Resgrid.Model.Lms
 
 		public DateTime? RemovedOn { get; set; }
 
-		/// <summary>T3 (M0384): the learning path (an Academy system path or a department path); null on rows not linked yet.</summary>
+		/// <summary>T3 (M0365): the learning path (an Academy system path or a department path); null on rows not linked yet.</summary>
 		public int? LmsPathId { get; set; }
 
 		/// <summary>T3: when the learner finished the path.</summary>
@@ -455,6 +467,13 @@ namespace Resgrid.Model.Lms
 		public int LmsMediaAssetId { get; set; }
 
 		public int DepartmentId { get; set; }
+
+		/// <summary>
+		/// Set when this row shares another department's stored objects (a course set copy, round 10 A3, M0418): the department whose keys
+		/// SourceKey/HlsPrefix/Mp4Key name. Such a row is never archived for its own department's lapse (it follows the set or sponsorship
+		/// gate), and a store purge must not delete objects while any row names them. Null for the department's own uploads.
+		/// </summary>
+		public int? SharedFromDepartmentId { get; set; }
 
 		/// <summary><see cref="LmsMediaKinds"/>.</summary>
 		public int Kind { get; set; }

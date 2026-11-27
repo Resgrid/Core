@@ -101,16 +101,30 @@ namespace Resgrid.Web.Areas.User.Models.Certifications
 		public bool RequiresVerification { get; set; }
 		public bool IsActive { get; set; } = true;
 
+		// Round 9A validity rule (Resgrid.Model.Certifications.CertificationValidityRules): rolling months, a calendar or fiscal year end, a fixed
+		// date; the grace after expiry and the renewal window.
+		public int ValidityRule { get; set; }
+		public int? ValidityYearEndMonth { get; set; }
+		public int? ValidityYearEndDay { get; set; }
+		/// <summary>yyyy-MM-dd from a native date input (a calendar date, no time zone).</summary>
+		public DateTime? ValidityFixedDate { get; set; }
+		public int? RenewalGraceDays { get; set; }
+		public int? RenewalWindowMonths { get; set; }
+
 		public static CertificationTypeInput From(DepartmentCertificationType t) => new CertificationTypeInput
 		{
 			DepartmentCertificationTypeId = t.DepartmentCertificationTypeId, Name = t.Type, Code = t.Code, Category = t.Category, AppliesTo = t.AppliesTo, Description = t.Description, IssuingAuthority = t.IssuingAuthority,
-			DefaultValidityMonths = t.DefaultValidityMonths, NeverExpires = t.NeverExpires, RenewalCreditHoursRequired = t.RenewalCreditHoursRequired, RequiresVerification = t.RequiresVerification, IsActive = t.IsActive
+			DefaultValidityMonths = t.DefaultValidityMonths, NeverExpires = t.NeverExpires, RenewalCreditHoursRequired = t.RenewalCreditHoursRequired, RequiresVerification = t.RequiresVerification, IsActive = t.IsActive,
+			ValidityRule = t.ValidityRule, ValidityYearEndMonth = t.ValidityYearEndMonth, ValidityYearEndDay = t.ValidityYearEndDay, ValidityFixedDate = t.ValidityFixedDate,
+			RenewalGraceDays = t.RenewalGraceDays, RenewalWindowMonths = t.RenewalWindowMonths
 		};
 
 		public void ApplyTo(DepartmentCertificationType t)
 		{
 			t.Type = Name; t.Code = Code; t.Category = Category; t.AppliesTo = AppliesTo; t.Description = Description; t.IssuingAuthority = IssuingAuthority;
 			t.DefaultValidityMonths = DefaultValidityMonths; t.NeverExpires = NeverExpires; t.RenewalCreditHoursRequired = RenewalCreditHoursRequired; t.RequiresVerification = RequiresVerification; t.IsActive = IsActive;
+			t.ValidityRule = ValidityRule; t.ValidityYearEndMonth = ValidityYearEndMonth; t.ValidityYearEndDay = ValidityYearEndDay; t.ValidityFixedDate = ValidityFixedDate?.Date;
+			t.RenewalGraceDays = RenewalGraceDays; t.RenewalWindowMonths = RenewalWindowMonths;
 		}
 	}
 

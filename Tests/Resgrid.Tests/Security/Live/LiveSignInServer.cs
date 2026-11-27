@@ -707,7 +707,7 @@ namespace Resgrid.Tests.Security.Live
 			var credentials = new MfaCredentialStateService(_passkeys, Sessions, ssoConfigs.Object, time);
 			var adpAudit = Mock.Of<IAdpAuditRepository>();
 			builder.Services.AddSingleton<IAdpStepUpService>(new AdpStepUpService(grants, protection.Object, policy, evidence, passkeys, approvals, broker, sso.Object,
-				credentials, activity, adpAudit, gates, time));
+				credentials, activity, adpAudit, gates, time, Resgrid.Tests.Security.StepUpTestPolicies.Strict()));
 			builder.Services.AddSingleton<IProtectedDataGrantService>(grants);
 			builder.Services.AddSingleton(protection.Object);
 			builder.Services.AddSingleton<IMfaCredentialStateService>(credentials);

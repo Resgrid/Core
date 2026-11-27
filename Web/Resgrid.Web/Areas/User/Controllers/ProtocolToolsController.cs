@@ -150,6 +150,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			});
 		}
 
+		/// <summary>
+		/// ADP catalog 39 reveal: the reveal module posts the grant here after step-up (a full-page post cannot carry the header, so it rides the
+		/// hidden field the grant context reads) and the run page renders with the step notes as written. Without a valid grant they stay REDACTED.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> StepsRevealed(int callId, int callProtocolId)
+		{
+			var result = await Steps(callId, callProtocolId);
+			Response.Headers["Cache-Control"] = "no-store";
+			return result is ViewResult view ? View("Steps", view.Model) : result;
+		}
+
 		/// <summary>Starts a protocol (an incident SOP checklist) on the call: attached as a manual pick when it is not on it yet.</summary>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -438,7 +452,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Protocol_Approve)]
-		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true)]
+		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Signatures)]
 		public async Task<IActionResult> ApproveTranslation(int id, int translationId, CancellationToken cancellationToken = default)
 		{
 			var translation = await _translations.GetAsync(DepartmentId, translationId);
@@ -451,7 +465,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var proof = SignatureProof.SessionOnly(UserId, IpAddressHelper.GetRequestIP(Request, true), Request?.Headers["User-Agent"].ToString());
 			// Set by RequiresRecentTwoFactor(RequireForOperation = true) from this session's server-side evidence.
-			proof.StepUpVerifiedOnUtc = HttpContext?.Items["mfa_verified_at"] as DateTime?;
+			Resgrid.Web.Helpers.WebStepUpProof.Apply(proof, HttpContext);
 			var result = await _translations.ApproveAsync(await _access.GetReaderAsync(DepartmentId, UserId), translationId, proof, statement, cancellationToken);
 			TempData[result.Succeeded ? "TranslationMessage" : "TranslationError"] = result.Succeeded ? Text("TranslationApprovedMessage") : Text("TranslationError" + result.Error);
 			return RedirectToAction("Translation", new { id, translationId });

@@ -56,9 +56,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> _signatureText;
 
 		private readonly IMappingService _mappingService;
+		private readonly IProtocolAnalyticsService _analytics;
 
 		public ProtocolsController(IProtocolsService protocolsService, ICallsService callsService, IAuthorizationService authorizationService, IDepartmentsService departmentsService,
-			IMappingService mappingService, IEventAggregator eventAggregator = null, IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer = null,
+			IMappingService mappingService, IProtocolAnalyticsService analytics, IEventAggregator eventAggregator = null, IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer = null,
 			IProtocolAccessService access = null, IProtocolLibraryService library = null, ISignatureService signatures = null, IDepartmentGroupsService groups = null,
 			IPersonnelRolesService roles = null, IShiftsService shifts = null, IUnitsService units = null, ICertificationService certifications = null,
 			IPasskeyService passkeys = null, UserManager<IdentityUser> userManager = null,
@@ -69,6 +70,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
 			_mappingService = mappingService;
+			_analytics = analytics;
 			_eventAggregator = eventAggregator;
 			_localizer = localizer;
 			_access = access;
@@ -131,6 +133,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			string audience = null)
 		{
 			var reader = await ReaderAsync();
+			// P5 QA: the library is where reviewers who are not administrators find the case review tab.
+			ViewData["ReviewsDispatchCases"] = reader?.MayReviewDispatchCases == true;
 			var all = await _protocolsService.GetProtocolSummariesForDepartmentAsync(DepartmentId);
 			var readable = _access == null ? new List<DispatchProtocol>() : await _access.FilterReadableAsync(reader, all);
 			var versions = _library == null ? new List<ProtocolVersion>() : await _library.GetDepartmentVersionHeadersAsync(DepartmentId);
@@ -228,6 +232,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				shown = shown.Where(r => r.HasAudience);
 
 			model.Rows = shown.ToList();
+
+			// P5 analytics ("protocol gaps"): a library search that found nothing is counted, by query and day, never by who asked.
+			if (!string.IsNullOrWhiteSpace(model.Query) && model.Rows.Count == 0 && _analytics != null)
+				await _analytics.RecordSearchMissAsync(DepartmentId, ProtocolSearchSurfaces.Library, model.Query);
+
 			return View(model);
 		}
 
@@ -333,6 +342,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (_library != null && !preview)
 				await _library.RecordViewAsync(DepartmentId, UserId, id);
+
+			// P5: content from the template library or the community exchange shows where it came from (source, licence, version).
+			ViewData["Attribution"] = shown != null && _library != null ? await _library.GetAttributionAsync(DepartmentId, shown.ProtocolVersionId) : null;
 
 			return View(model);
 		}
@@ -1316,7 +1328,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var proof = SignatureProof.SessionOnly(UserId, IpAddressHelper.GetRequestIP(Request, true), Request?.Headers["User-Agent"].ToString());
 			// Set by RequiresRecentTwoFactor(RequireForOperation = true) from this session's server-side evidence.
-			proof.StepUpVerifiedOnUtc = HttpContext?.Items["mfa_verified_at"] as DateTime?;
+			Resgrid.Web.Helpers.WebStepUpProof.Apply(proof, HttpContext);
 			return proof;
 		}
 
@@ -1386,7 +1398,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Protocol_Approve)]
-		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true)]
+		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Signatures)]
 		public async Task<IActionResult> Approve(int id, string comment, CancellationToken cancellationToken = default) =>
 			await ApproveCoreAsync(id, comment, StepUpProof(), cancellationToken);
 
@@ -1475,7 +1487,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true)]
+		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Signatures)]
 		public async Task<IActionResult> RecordReview(int id, CancellationToken cancellationToken = default) =>
 			await RecordReviewCoreAsync(id, StepUpProof(), cancellationToken);
 

@@ -60,1181 +60,1618 @@
   </resheader>
   <data name="ActionFailed" xml:space="preserve">
     <value>Не вдалося виконати.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Actions" xml:space="preserve">
     <value>Дії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddCost" xml:space="preserve">
     <value>Додати витрату</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddInstructor" xml:space="preserve">
     <value>Додати інструктора</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonNotice" xml:space="preserve">
     <value>Заняття входять до доповнення LMS, яке не активне для цього підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonRequired" xml:space="preserve">
     <value>Для цього потрібне активне доповнення LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddPeople" xml:space="preserve">
     <value>Додати людей</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddWalkIn" xml:space="preserve">
     <value>Позначити присутнім без запису</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllTags" xml:space="preserve">
     <value>Усі теги</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlreadySignedIn" xml:space="preserve">
     <value>Ви зареєструвалися о</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Amount" xml:space="preserve">
     <value>Сума</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Approve" xml:space="preserve">
     <value>Схвалити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApprovedMessage" xml:space="preserve">
     <value>Схвалено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Absent" xml:space="preserve">
     <value>Відсутній</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Attended" xml:space="preserve">
     <value>Був присутній</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Excused" xml:space="preserve">
     <value>Поважна причина</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Unmarked" xml:space="preserve">
     <value>Не позначено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Back" xml:space="preserve">
     <value>Назад</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Book" xml:space="preserve">
     <value>Забронювати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BookedMessage" xml:space="preserve">
     <value>Заброньовано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BookingsHeader" xml:space="preserve">
     <value>Об'єкти та тренажери</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BookResource" xml:space="preserve">
     <value>Забронювати для заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Calendar" xml:space="preserve">
     <value>Календар</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CalendarIsClass" xml:space="preserve">
     <value>Цей запис календаря — заняття: запис і присутність — на сторінці заняття.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelClass" xml:space="preserve">
     <value>Скасувати заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cancelled" xml:space="preserve">
     <value>Заняття скасовано, учасників повідомлено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelReason" xml:space="preserve">
     <value>Причина скасування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClassesIntro" xml:space="preserve">
     <value>Заняття з інструктором у календарі: запис, лист очікування, реєстрація присутності та підписаний список учасників.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClassesTitle" xml:space="preserve">
     <value>Заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Absent" xml:space="preserve">
     <value>Відсутні</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attendance" xml:space="preserve">
     <value>Присутність</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.AttendanceRate" xml:space="preserve">
     <value>Відвідуваність</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attended" xml:space="preserve">
     <value>Присутні</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attendee" xml:space="preserve">
     <value>Учасник</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attendees" xml:space="preserve">
     <value>Учасники</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Bookings" xml:space="preserve">
     <value>Бронювання (наступні 90 днів)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Capacity" xml:space="preserve">
     <value>Місткість</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Class" xml:space="preserve">
     <value>Заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.ClassCost" xml:space="preserve">
     <value>Вартість занять</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Classes" xml:space="preserve">
     <value>Заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.ContentSummary" xml:space="preserve">
     <value>Короткий зміст</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Course" xml:space="preserve">
     <value>Курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Date" xml:space="preserve">
     <value>Дата</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Enrolled" xml:space="preserve">
     <value>Записані</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Exception" xml:space="preserve">
     <value>Виняток</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Hours" xml:space="preserve">
     <value>Години</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.HoursTaught" xml:space="preserve">
     <value>Години викладання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Instructor" xml:space="preserve">
     <value>Інструктор</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Instructors" xml:space="preserve">
     <value>Інструктори та кваліфікації</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.JobTitle" xml:space="preserve">
     <value>Посада</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Kind" xml:space="preserve">
     <value>Вид</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Member" xml:space="preserve">
     <value>Учасник</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Pending" xml:space="preserve">
     <value>Очікують</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Published" xml:space="preserve">
     <value>Опубліковано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Qualifications" xml:space="preserve">
     <value>Кваліфікації</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.RequestCost" xml:space="preserve">
     <value>Вартість заявок на навчання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Resource" xml:space="preserve">
     <value>Ресурс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Role" xml:space="preserve">
     <value>Роль</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Seats" xml:space="preserve">
     <value>Місця</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Series" xml:space="preserve">
     <value>Серія</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Sessions" xml:space="preserve">
     <value>Заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.SignIn" xml:space="preserve">
     <value>Реєстрація</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Status" xml:space="preserve">
     <value>Стан</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Title" xml:space="preserve">
     <value>Назва</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Waitlisted" xml:space="preserve">
     <value>Очікування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.WalkIns" xml:space="preserve">
     <value>Без запису</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Year" xml:space="preserve">
     <value>Рік</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.BackfillOvertime" xml:space="preserve">
     <value>Понаднормові на заміну</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.Instructor" xml:space="preserve">
     <value>Інструктор</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.Materials" xml:space="preserve">
     <value>Матеріали</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.Other" xml:space="preserve">
     <value>Інше</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.OutsideFees" xml:space="preserve">
     <value>Зовнішні збори</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostKind" xml:space="preserve">
     <value>Стаття витрат</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostsHeader" xml:space="preserve">
     <value>Витрати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostsIntro" xml:space="preserve">
     <value>Інструктор, матеріали, зовнішні збори та понаднормові на заміну за курсом, учасником або роком поряд із заявками на навчання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostsTitle" xml:space="preserve">
     <value>Витрати на заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Create" xml:space="preserve">
     <value>Створити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CreateClass" xml:space="preserve">
     <value>Створити заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Created" xml:space="preserve">
     <value>Створено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DecisionNote" xml:space="preserve">
     <value>Примітка (обов'язкова для повернення)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Decline" xml:space="preserve">
     <value>Відхилити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeclinedMessage" xml:space="preserve">
     <value>Відхилено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeleteClass" xml:space="preserve">
     <value>Видалити заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Deleted" xml:space="preserve">
     <value>Видалено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeleteLessonPlan" xml:space="preserve">
     <value>Видалити план заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftOnly" xml:space="preserve">
     <value>Лише чернетка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Редагувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditClass" xml:space="preserve">
     <value>Редагувати заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditIntro" xml:space="preserve">
     <value>Час вказано в часовому поясі підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditResource" xml:space="preserve">
     <value>Редагувати об'єкт чи тренажер</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enroll" xml:space="preserve">
     <value>Записатися</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrolledMessage" xml:space="preserve">
     <value>Записано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrollMember" xml:space="preserve">
     <value>Записати учасника</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Declined" xml:space="preserve">
     <value>Відхилено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Enrolled" xml:space="preserve">
     <value>Записано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.PendingApproval" xml:space="preserve">
     <value>Очікує схвалення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Removed" xml:space="preserve">
     <value>Вилучено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Waitlisted" xml:space="preserve">
     <value>У листі очікування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Withdrawn" xml:space="preserve">
     <value>Відмовився</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Evaluation.CourseAssessment" xml:space="preserve">
     <value>Призначити пов'язаний курс (його тест) кожному присутньому</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Evaluation.None" xml:space="preserve">
     <value>Немає</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Excused" xml:space="preserve">
     <value>Відсутність з поважної причини</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Inactive" xml:space="preserve">
     <value>Більше не активний учасник</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.NeverPromoted" xml:space="preserve">
     <value>Залишився в листі очікування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.NoShow" xml:space="preserve">
     <value>Не з'явився</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.OnShift" xml:space="preserve">
     <value>На зміні в цей час</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Pending" xml:space="preserve">
     <value>Заявку не розглянуто</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Waitlisted" xml:space="preserve">
     <value>У листі очікування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.AllowSelfUnenroll" xml:space="preserve">
     <value>Учасники можуть відписатися самі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Capacity" xml:space="preserve">
     <value>Місткість</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CapacityHelp" xml:space="preserve">
     <value>0 — без обмежень.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Category" xml:space="preserve">
     <value>Категорія навчання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ChangeSummary" xml:space="preserve">
     <value>Опис змін</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CompetencyItems" xml:space="preserve">
     <value>Охоплені компетенції</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ContentSummary" xml:space="preserve">
     <value>Короткий зміст (список)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ContentSummaryHelp" xml:space="preserve">
     <value>Що було розглянуто, як це фіксує підписаний список.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Course" xml:space="preserve">
     <value>Курс LMS</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CourseCode" xml:space="preserve">
     <value>Код курсу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Currency" xml:space="preserve">
     <value>Валюта</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CutoffDays" xml:space="preserve">
     <value>Запис закривається (днів до)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Description" xml:space="preserve">
     <value>Опис</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Duration" xml:space="preserve">
     <value>Тривалість (хвилин)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.End" xml:space="preserve">
     <value>Кінець</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.EnrollmentOpen" xml:space="preserve">
     <value>Учасники можуть записатися самі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.GpsRequired" xml:space="preserve">
     <value>Вимагати місцезнаходження телефона в радіусі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Instructors" xml:space="preserve">
     <value>Інструктори</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Latitude" xml:space="preserve">
     <value>Широта</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.LessonPlan" xml:space="preserve">
     <value>План заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Location" xml:space="preserve">
     <value>Місце</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Longitude" xml:space="preserve">
     <value>Довгота</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Materials" xml:space="preserve">
     <value>Матеріали</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.MeetingUrl" xml:space="preserve">
     <value>Посилання на зустріч</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.MeetingUrlHelp" xml:space="preserve">
     <value>Посилання Teams, Zoom або Meet для онлайн чи змішаного заняття.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Notes" xml:space="preserve">
     <value>Примітки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Objectives" xml:space="preserve">
     <value>Цілі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Occurrences" xml:space="preserve">
     <value>Кількість занять</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.PostEvaluation" xml:space="preserve">
     <value>Після заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.PostEvaluationHelp" xml:space="preserve">
     <value>Запускається для кожного присутнього під час першого підписання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.PreBrief" xml:space="preserve">
     <value>Чек-лист інструктажу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Props" xml:space="preserve">
     <value>Тренажери та об'єкти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.QrEnabled" xml:space="preserve">
     <value>Реєстрація за змінним QR (фото коду перестає діяти)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Radius" xml:space="preserve">
     <value>Радіус (метри)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Ratio" xml:space="preserve">
     <value>Учнів на інструктора</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ReminderHours" xml:space="preserve">
     <value>Нагадування (годин до; 0 — без нього)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Repeat" xml:space="preserve">
     <value>Повторювати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RequiresApproval" xml:space="preserve">
     <value>Відповідальний схвалює кожну заявку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RestrictGroups" xml:space="preserve">
     <value>Записатися можуть лише ці групи</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RestrictGroupsHelp" xml:space="preserve">
     <value>Нічого не вибрано: усі учасники.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RetentionYears" xml:space="preserve">
     <value>Зберігати список (років)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RetentionYearsHelp" xml:space="preserve">
     <value>Порожньо: строк категорії (напр. 3 роки для навчання щодо патогенів, що передаються з кров'ю).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Roles" xml:space="preserve">
     <value>Ролі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.SafetyPlan" xml:space="preserve">
     <value>План безпеки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Start" xml:space="preserve">
     <value>Початок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Tags" xml:space="preserve">
     <value>Теги</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Title" xml:space="preserve">
     <value>Назва</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.TitleHelp" xml:space="preserve">
     <value>Залиште порожнім, щоб узяти назву курсу чи навчання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Training" xml:space="preserve">
     <value>Навчання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.VisibleGroups" xml:space="preserve">
     <value>Бачать лише ці групи</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.VisibleGroupsHelp" xml:space="preserve">
     <value>Нічого не вибрано: бачать усі.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.WaitlistEnabled" xml:space="preserve">
     <value>Лист очікування, коли місць немає (за чергою)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Filter" xml:space="preserve">
     <value>Фільтр</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Fingerprint" xml:space="preserve">
     <value>Відбиток</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Footer.Costs" xml:space="preserve">
     <value>Вартість занять {0}, заявки на навчання {1} ({2}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Footer.Exceptions" xml:space="preserve">
     <value>Винятків: {0}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Footer.Sessions" xml:space="preserve">
     <value>Занять: {0}, осіб: {1}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FromStarter" xml:space="preserve">
     <value>З шаблону Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GpsRequiredNotice" xml:space="preserve">
     <value>Під час реєстрації перевіряється місцезнаходження телефона.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GroupBy" xml:space="preserve">
     <value>Групувати за</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursOverride" xml:space="preserve">
     <value>Години</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Import" xml:space="preserve">
     <value>Імпортувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportAttendance" xml:space="preserve">
     <value>Імпортувати звіт про присутність на зустрічі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportAttendanceHelp" xml:space="preserve">
     <value>Звіт CSV про присутність із Teams, Zoom або Google Meet. Зіставлення за e-mail, потім за іменем.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportedMessage" xml:space="preserve">
     <value>Звіт зустрічі імпортовано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportResultFormat" xml:space="preserve">
     <value>Звіт зустрічі: осіб {0}, зіставлено {1}, додано без запису {2}, не зіставлено {3}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Inactive" xml:space="preserve">
     <value>Неактивний</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InstructorsHeader" xml:space="preserve">
     <value>Інструктори</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KioskInstruction" xml:space="preserve">
     <value>Відскануйте цей код телефоном, щоб зареєструватися.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KioskTitle" xml:space="preserve">
     <value>Реєстрація на заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LapsedNotice" xml:space="preserve">
     <value>Доповнення LMS завершилося: заняття лишаються доступними, наявні можна проводити й підписувати, але нічого нового створити не можна.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonPlanIntro" xml:space="preserve">
     <value>Навчання ведеться за опублікованою версією; кожна подана версія зберігається.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonPlansIntro" xml:space="preserve">
     <value>Цілі, компетенції, матеріали, співвідношення, план безпеки та чек-лист інструктажу, з версіями, що схвалюються перед використанням.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonPlansTitle" xml:space="preserve">
     <value>Плани занять</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_addon_required" xml:space="preserve">
     <value>Для цього потрібне активне доповнення LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_calendar_failed" xml:space="preserve">
     <value>Не вдалося створити запис календаря.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_cancelled" xml:space="preserve">
     <value>Це заняття скасовано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_capacity_invalid" xml:space="preserve">
     <value>Місткість має бути від 0 до 10 000.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_category_invalid" xml:space="preserve">
     <value>Виберіть одну з категорій навчання підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_change_summary_required" xml:space="preserve">
     <value>Опишіть зміни перед надсиланням.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_code_expired" xml:space="preserve">
     <value>Код застарів. Відскануйте код з екрана ще раз.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_cost_invalid" xml:space="preserve">
     <value>Вкажіть статтю витрат і суму від 0.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_course_invalid" xml:space="preserve">
     <value>Виберіть опублікований курс або навчання підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_enrollment_closed" xml:space="preserve">
     <value>Записує відповідальний за заняття.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_enrollment_cutoff" xml:space="preserve">
     <value>Запис на це заняття закрито.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_full" xml:space="preserve">
     <value>На це заняття немає місць.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_gps_location_required" xml:space="preserve">
     <value>Вкажіть місце заняття (широту й довготу), щоб вимагати GPS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_gps_required" xml:space="preserve">
     <value>Для реєстрації потрібне місцезнаходження телефона. Дозвольте доступ і спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_gps_too_far" xml:space="preserve">
     <value>Телефон надто далеко від місця заняття.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_hours_invalid" xml:space="preserve">
     <value>Години мають бути від 0 до 9 999.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_import_empty" xml:space="preserve">
     <value>У файлі не знайдено рядків присутності.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_instructor_invalid" xml:space="preserve">
     <value>Виберіть учасника або вкажіть ім'я зовнішнього інструктора.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_lesson_plan_invalid" xml:space="preserve">
     <value>Виберіть опублікований план заняття.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_meeting_url_invalid" xml:space="preserve">
     <value>Посилання має бути вебадресою (https://...).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_name_required" xml:space="preserve">
     <value>Вкажіть назву.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_eligible" xml:space="preserve">
     <value>Це заняття для інших груп.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_enrolled" xml:space="preserve">
     <value>Вас немає в списку цього заняття.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_found" xml:space="preserve">
     <value>Заняття не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_member" xml:space="preserve">
     <value>У списку можуть бути лише поточні учасники підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_open" xml:space="preserve">
     <value>Заняття зараз для цього закрите.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_pending" xml:space="preserve">
     <value>Цю заявку вже розглянуто.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_signed_in" xml:space="preserve">
     <value>Ви не зареєструвалися на це заняття.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_started" xml:space="preserve">
     <value>Заняття можна підписати лише після його початку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_changed" xml:space="preserve">
     <value>Зміст змінився після подання; подайте знову.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_approved" xml:space="preserve">
     <value>Опублікувати можна лише схвалену версію.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_draft" xml:space="preserve">
     <value>Змінити чи подати можна лише чернетку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_found" xml:space="preserve">
     <value>План заняття не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_in_review" xml:space="preserve">
     <value>Ця версія не очікує рішення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_reason_required" xml:space="preserve">
     <value>Вкажіть причину повернення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_resource_conflict" xml:space="preserve">
     <value>Цей об'єкт чи тренажер уже заброньовано на цей час.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_retention_hold" xml:space="preserve">
     <value>Список зберігається до кінця строку й поки не може бути видалений.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_rules_invalid" xml:space="preserve">
     <value>Перевірте правила (закриття 0–365 днів, нагадування 0–336 годин, 1–52 заняття).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_sign_in_closed" xml:space="preserve">
     <value>Реєстрація зараз закрита.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_signed_off" xml:space="preserve">
     <value>Заняття підписано; список уже не можна змінити так.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_times_invalid" xml:space="preserve">
     <value>Заняття має закінчуватися після початку й тривати не довше 14 днів.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_title_required" xml:space="preserve">
     <value>Вкажіть назву або прив'яжіть курс чи навчання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_unenroll_closed" xml:space="preserve">
     <value>Попросіть відповідального вилучити вас.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MajorChange" xml:space="preserve">
     <value>Суттєва зміна</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkPresent" xml:space="preserve">
     <value>Позначити присутність</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MessageRoster" xml:space="preserve">
     <value>Написати учасникам</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Calendar" xml:space="preserve">
     <value>Відмітка в календарі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Import" xml:space="preserve">
     <value>Звіт зустрічі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Manual" xml:space="preserve">
     <value>Інструктором</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.None" xml:space="preserve">
     <value>Не зареєстровано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Qr" xml:space="preserve">
     <value>Реєстрація за QR</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MinutesFormat" xml:space="preserve">
     <value>{0} хв</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyClassesIntro" xml:space="preserve">
     <value>Заняття, на які ви записані або які проводите, і ті, до яких ще можна приєднатися.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyClassesTitle" xml:space="preserve">
     <value>Мої заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewClass" xml:space="preserve">
     <value>Нове заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewDraft" xml:space="preserve">
     <value>Нова чернетка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewLessonPlan" xml:space="preserve">
     <value>Новий план заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewQrSecret" xml:space="preserve">
     <value>Видати новий QR (старі фото перестають діяти)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewResource" xml:space="preserve">
     <value>Новий об'єкт чи тренажер</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoClasses" xml:space="preserve">
     <value>Немає занять.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoConflicts" xml:space="preserve">
     <value>Ніхто не на зміні</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCosts" xml:space="preserve">
     <value>Немає витрат на заняття за цей період.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoInstructors" xml:space="preserve">
     <value>Інструкторів ще немає.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoLessonPlans" xml:space="preserve">
     <value>Планів занять ще немає.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoMyClasses" xml:space="preserve">
     <value>Зараз для вас немає занять.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="None" xml:space="preserve">
     <value>Немає</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoResources" xml:space="preserve">
     <value>Ще немає об'єктів чи тренажерів.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRoster" xml:space="preserve">
     <value>Ще ніхто не записався.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Cancelled" xml:space="preserve">
     <value>{0} ({1}) скасовано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.CancelledTitle" xml:space="preserve">
     <value>Заняття скасовано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Declined" xml:space="preserve">
     <value>Вашу заявку на {0} ({1}) відхилено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Enrolled" xml:space="preserve">
     <value>Вас записано на {0} ({1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.EnrolledTitle" xml:space="preserve">
     <value>Список заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Promoted" xml:space="preserve">
     <value>Звільнилося місце: тепер вас записано на {0} ({1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Reminder" xml:space="preserve">
     <value>{0} починається {1}. {2}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.ReminderTitle" xml:space="preserve">
     <value>Нагадування про заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Removed" xml:space="preserve">
     <value>Вас вилучено з {0} ({1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Waitlisted" xml:space="preserve">
     <value>Ви в листі очікування на {0} ({1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnCalendar" xml:space="preserve">
     <value>Відкрити в календарі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnePerLine" xml:space="preserve">
     <value>По одному в рядку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnShift" xml:space="preserve">
     <value>На зміні</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnShiftHelp" xml:space="preserve">
     <value>На зміні, що перетинається із заняттям.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Open" xml:space="preserve">
     <value>Відкрити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenClass" xml:space="preserve">
     <value>Відкрити заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenReport" xml:space="preserve">
     <value>Відкрити як звіт</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outside" xml:space="preserve">
     <value>зовнішній</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutsideInstructor" xml:space="preserve">
     <value>Зовнішній інструктор (вкажіть ім'я)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutsideName" xml:space="preserve">
     <value>Ім'я зовнішнього інструктора</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PendingHeader" xml:space="preserve">
     <value>Заявки на схвалення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PresentHeader" xml:space="preserve">
     <value>Зареєстровані</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Publish" xml:space="preserve">
     <value>Опублікувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PublishedMessage" xml:space="preserve">
     <value>Опубліковано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QrAlt" xml:space="preserve">
     <value>QR-код для реєстрації</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QrRotated" xml:space="preserve">
     <value>Видано новий QR.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QrRotates" xml:space="preserve">
     <value>Код змінюється кожні 30 секунд.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecentHeader" xml:space="preserve">
     <value>Нещодавні</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Release" xml:space="preserve">
     <value>Звільнити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Remove" xml:space="preserve">
     <value>Вилучити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemovedMessage" xml:space="preserve">
     <value>Вилучено зі списку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Repeat.Daily" xml:space="preserve">
     <value>Щодня</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Repeat.None" xml:space="preserve">
     <value>Один раз</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Repeat.Weekly" xml:space="preserve">
     <value>Щотижня</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequestPlace" xml:space="preserve">
     <value>Подати заявку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Apparatus" xml:space="preserve">
-    <value>Техніка</value>
+    <value>Транспортний засіб або техніка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Equipment" xml:space="preserve">
     <value>Обладнання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Facility" xml:space="preserve">
     <value>Об'єкт</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Other" xml:space="preserve">
     <value>Інше</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Prop" xml:space="preserve">
     <value>Тренажер</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResourcesIntro" xml:space="preserve">
-    <value>Полігони, класи, тренажери, техніка та обладнання; ресурс не бронюється двічі одночасно.</value>
+    <value>Навчальні майданчики, класи, навчальні засоби, транспорт і обладнання; ресурс ніколи не бронюється двічі одночасно.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResourcesTitle" xml:space="preserve">
     <value>Об'єкти та тренажери</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetainUntil" xml:space="preserve">
     <value>Список зберігається до</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionHelpFormat" xml:space="preserve">
     <value>Підписаний список зберігається до {0}; видалення заняття його приховує, а остаточно він видаляється лише після цієї дати.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Role.Assistant" xml:space="preserve">
     <value>Помічник інструктора</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Role.Lead" xml:space="preserve">
     <value>Провідний інструктор</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Role.Safety" xml:space="preserve">
     <value>Відповідальний з безпеки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterHeader" xml:space="preserve">
     <value>Список учасників</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Approval" xml:space="preserve">
     <value>потрібне схвалення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Closed" xml:space="preserve">
     <value>лише відповідальними</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.CutoffFormat" xml:space="preserve">
     <value>закривається за {0} дн.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Open" xml:space="preserve">
     <value>відкритий для учасників</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Waitlist" xml:space="preserve">
     <value>лист очікування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rules" xml:space="preserve">
     <value>Запис</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Зберегти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Saved" xml:space="preserve">
     <value>Збережено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveDraft" xml:space="preserve">
     <value>Зберегти чернетку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeatsFormat" xml:space="preserve">
     <value>Зайнято {0} з {1} місць</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.Details" xml:space="preserve">
     <value>Подробиці</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.Enrolment" xml:space="preserve">
     <value>Правила запису</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.Records" xml:space="preserve">
     <value>Записи та оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.SignIn" xml:space="preserve">
     <value>Реєстрація присутності</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.What" xml:space="preserve">
     <value>Що викладається</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.When" xml:space="preserve">
     <value>Коли й де</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.You" xml:space="preserve">
     <value>Ви</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SendBack" xml:space="preserve">
     <value>Повернути</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesFormat" xml:space="preserve">
     <value>Заняття {0} з {1} у серії.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesIntro" xml:space="preserve">
     <value>Відвідуваність кожного учасника на заняттях серії.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesReport" xml:space="preserve">
     <value>Відвідуваність серії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesTitle" xml:space="preserve">
     <value>Відвідуваність серії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShiftPanelHeader" xml:space="preserve">
     <value>Навчання в календарі змін (наступні 14 днів)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowQr" xml:space="preserve">
     <value>Показати QR для реєстрації</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedInAt" xml:space="preserve">
     <value>Зареєстровано о</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedInMessage" xml:space="preserve">
     <value>Вас зареєстровано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOffFormat" xml:space="preserve">
     <value>Підписано: присутні {0}, відсутні {1}; записів створено {2}, замінено {3}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOffOn" xml:space="preserve">
     <value>Підписано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOutMessage" xml:space="preserve">
     <value>Вихід відмічено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInButton" xml:space="preserve">
     <value>Зареєструвати мене</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInClosed" xml:space="preserve">
     <value>Реєстрація на це заняття зараз закрита.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInConfirm" xml:space="preserve">
     <value>Зареєструватися на заняття зараз?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInTitle" xml:space="preserve">
     <value>Зареєструватися на заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOff" xml:space="preserve">
     <value>Підписати список</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOffAgain" xml:space="preserve">
     <value>Підписати знову</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOffHelp" xml:space="preserve">
     <value>Підписання створює запис про навчання для кожного присутнього (жодного для відсутніх) і зберігає список упродовж строку. Непозначені вважаються відсутніми, якщо не зареєструвалися.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOut" xml:space="preserve">
     <value>Відмітити вихід</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.evoc" xml:space="preserve">
     <value>Керування аварійними транспортними засобами</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.evoc.Help" xml:space="preserve">
-    <value>Огляд перед виїздом, рух заднім ходом із регулювальником, вправи на трасі; години за кермом і кілометраж.</value>
+    <value>Огляд перед виїздом, рух заднім ходом із регулювальником, вправи на трасі; години за кермом і пройдена відстань.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.hose-evolutions" xml:space="preserve">
     <value>Щорічні вправи з рукавами</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.hose-evolutions.Help" xml:space="preserve">
     <value>Попередньо підключені лінії, просування сходами та від стояка, укладання рукавів.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.ladder-evolutions" xml:space="preserve">
     <value>Щорічні вправи з драбинами</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.ladder-evolutions.Help" xml:space="preserve">
     <value>Перенесення, встановлення, розміщення для рятування й вентиляції, підйом і закріплення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.live-fire" xml:space="preserve">
     <value>Навчання з реальним вогнем (план спалювання)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.live-fire.Help" xml:space="preserve">
     <value>Перевірки перед підпалом, ролі, співвідношення та план безпеки, які фіксує підрозділ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.physical-ability" xml:space="preserve">
     <value>Тест фізичної підготовки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.physical-ability.Help" xml:space="preserve">
     <value>Станції на час із власними нормативами підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.pump-evolutions" xml:space="preserve">
     <value>Щорічні вправи з насосами</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.pump-evolutions.Help" xml:space="preserve">
     <value>Живлення від гідранта, забір води, тиск для ліній, перекачування в ланцюжку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.scba" xml:space="preserve">
     <value>Навички роботи з дихальним апаратом</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.scba.Help" xml:space="preserve">
     <value>Огляд, одягання на час, перевірка герметичності, контроль повітря та аварійні процедури.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StartersHeader" xml:space="preserve">
     <value>Шаблони Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StartersIntro" xml:space="preserve">
     <value>Структура й чек-листи, написані Resgrid простою мовою (без тексту стандартів). Копія стає чернеткою вашого підрозділу для адаптації та схвалення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Pending" xml:space="preserve">
     <value>Очікують схвалення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Seats" xml:space="preserve">
     <value>Зайняті місця</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Upcoming" xml:space="preserve">
     <value>Заплановано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Waitlisted" xml:space="preserve">
     <value>У листах очікування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Cancelled" xml:space="preserve">
     <value>Скасовано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Scheduled" xml:space="preserve">
     <value>Заплановано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.SignedOff" xml:space="preserve">
     <value>Підписано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StripLabel" xml:space="preserve">
     <value>Заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmitForApproval" xml:space="preserve">
     <value>Надіслати на схвалення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmittedMessage" xml:space="preserve">
     <value>Надіслано на схвалення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.Classes" xml:space="preserve">
     <value>Заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.Costs" xml:space="preserve">
     <value>Витрати на заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.LessonPlans" xml:space="preserve">
     <value>Плани занять</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.My" xml:space="preserve">
     <value>Мої заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.Resources" xml:space="preserve">
     <value>Об'єкти та тренажери</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TagFilter" xml:space="preserve">
     <value>Тег</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TaughtHeader" xml:space="preserve">
     <value>Заняття, які ви провели</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TimecardOff" xml:space="preserve">
     <value>У підрозділі ще немає табеля, що приймає час навчання (Workforce Pro).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TimecardOn" xml:space="preserve">
     <value>Години учасників пропонуються до їхніх табелів під час підписання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Total" xml:space="preserve">
     <value>Разом</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Uncategorized" xml:space="preserve">
     <value>Без категорії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UpcomingHeader" xml:space="preserve">
     <value>Майбутні</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UseMyLocation" xml:space="preserve">
     <value>Використати моє місцезнаходження</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UseStarter" xml:space="preserve">
     <value>Скопіювати як чернетку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionLabel" xml:space="preserve">
     <value>Версія</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionsHeader" xml:space="preserve">
     <value>Версії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Approved" xml:space="preserve">
     <value>Схвалено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Draft" xml:space="preserve">
     <value>Чернетка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.InReview" xml:space="preserve">
     <value>На розгляді</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Legacy" xml:space="preserve">
     <value>Застаріла</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Published" xml:space="preserve">
     <value>Опубліковано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Retired" xml:space="preserve">
     <value>Виведено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Superseded" xml:space="preserve">
     <value>Замінено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Virtual" xml:space="preserve">
     <value>Онлайн</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WaitlistHeader" xml:space="preserve">
     <value>Лист очікування (за чергою)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WaitlistPositionFormat" xml:space="preserve">
     <value>позиція {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WalkIn" xml:space="preserve">
     <value>Без запису</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WalkInMessage" xml:space="preserve">
     <value>Позначено присутнім.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Withdraw" xml:space="preserve">
     <value>Відписатися</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithdrawnMessage" xml:space="preserve">
     <value>Ви відписалися від заняття.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Так</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="YouTeach" xml:space="preserve">
     <value>Ви проводите це заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CurrencyHelp" xml:space="preserve">
+    <value>Залиште порожнім, щоб використати валюту навчання підрозділу ({0}). Вкажіть код ISO, наприклад CAD, EUR, GBP або USD.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingCurrencyHelp" xml:space="preserve">
+    <value>Валюта навчання підрозділу у вигляді коду ISO, наприклад CAD, EUR, GBP або USD. У ній вводяться витрати заявок на навчання, а нові заняття, їхні витрати та плата за відкриті заняття використовують її, якщо заняття не вказує іншої.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill" xml:space="preserve">
+    <value>Навчальна евакуація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill.Help" xml:space="preserve">
+    <value>Відповідальні за евакуацію, перевірка приміщень і підрахунок у місці збору — для будь-якого робочого місця чи будівлі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill" xml:space="preserve">
+    <value>Навчання з рятування в обмеженому просторі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill.Help" xml:space="preserve">
+    <value>Рятувальна система, контроль повітряного середовища та витягнення постраждалого з офіцером з безпеки та сигналом зупинки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise" xml:space="preserve">
+    <value>Польове навчання з пошуку та рятування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise.Help" xml:space="preserve">
+    <value>Пошук від першого повідомлення до знахідки з постановкою завдань, зачіпками та часом виходу на зв’язок.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation" xml:space="preserve">
+    <value>Навчання деескалації на сценаріях</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation.Help" xml:space="preserve">
+    <value>Навчання на основі сценаріїв зі статистами, стоп-словом і лише інертним спорядженням.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_no_seat" xml:space="preserve">
+    <value>Щоб самостійно записатися або зареєструватися, потрібне місце LMS. Попросіть адміністратора увімкнути вам доступ до LMS або інструктора — додати вас.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

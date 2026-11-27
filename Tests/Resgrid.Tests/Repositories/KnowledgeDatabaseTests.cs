@@ -30,7 +30,7 @@ using Resgrid.Repositories.DataRepository.Transactions;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for K1 on both engines: M0368-M0370 in the full chain, Up again as a no-op, Down and Up; the chunk store with
+	/// Real-database proof for K1 on both engines: M0353-M0355 in the full chain, Up again as a no-op, Down and Up; the chunk store with
 	/// its float32 vector bytes and the revision a write bumps; the reindex queue (idempotent, a re-request survives the processed delete,
 	/// due departments only and never a sweep); the gaps report; the AiGenerations exchange log; the header reads (no document bytes); and
 	/// the department cleanup. Set RESGRID_ADP_SQLSERVER_TEST_CONNECTION / RESGRID_ADP_POSTGRES_TEST_CONNECTION (server-level) to run.
@@ -363,12 +363,12 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test, Order(6)]
-		public async Task M0368_to_M0370_rerun_as_no_ops_roll_back_and_apply_again()
+		public async Task M0353_to_M0355_rerun_as_no_ops_roll_back_and_apply_again()
 		{
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 368");
+				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 353");
 			var tables = IsPostgres
 				? "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('knowledgechunks', 'knowledgeindexrequests', 'knowledgeindexstates', 'knowledgegaps')"
 				: "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME IN ('KnowledgeChunks', 'KnowledgeIndexRequests', 'KnowledgeIndexStates', 'KnowledgeGaps')";
@@ -386,7 +386,7 @@ namespace Resgrid.Tests.Repositories
 				(await ScalarAsync(column)).Should().Be(1);
 				(await ScalarAsync($"SELECT COUNT(*) FROM {T("KnowledgeChunks")} WHERE {T("DepartmentId")} = @D", new { D = _otherDepartment })).Should().Be(1);
 
-				migrations.MigrateDown(367);
+				migrations.MigrateDown(352);
 				(await ScalarAsync(tables)).Should().Be(0);
 				(await ScalarAsync(column)).Should().Be(0);
 

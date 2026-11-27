@@ -116,6 +116,8 @@ namespace Resgrid.Tests.TrainingT4
 		private Mock<ILmsSkillNotificationService> _notifications;
 		private Mock<IDepartmentsService> _departments;
 		private Mock<ILmsGateService> _gate;
+		private Mock<IEventAggregator> _events;
+		private List<Resgrid.Model.Events.SkillWorkflowEvent> _skillEvents;
 		private Mock<ICertificationService> _certifications;
 		private LmsSkillEvaluationService _service;
 		private List<EvaluationRequestInput> _evaluationRequests;
@@ -126,9 +128,18 @@ namespace Resgrid.Tests.TrainingT4
 			Gate = new LmsDepartmentGate { DepartmentId = Dept, ModuleOn = true, FlagOn = flag, AddonActive = addon }
 		};
 
+		private bool _doNotBroadcast;
+
+		// The digest sends only while the department may transmit. TestBase's static constructor turns DoNotBroadcast on for the whole run, so
+		// the fixture sets it off here and puts it back after: otherwise the digest test passes alone and fails after any TestBase fixture.
+		[TearDown]
+		public void TearDown() => Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = _doNotBroadcast;
+
 		[SetUp]
 		public void SetUp()
 		{
+			_doNotBroadcast = Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast;
+			Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = false;
 			_store = new Store();
 			_requests = new Mock<ISignatureRequestService>();
 			_evaluationRequests = new List<EvaluationRequestInput>();
@@ -150,10 +161,13 @@ namespace Resgrid.Tests.TrainingT4
 			_departments.Setup(d => d.GetAllPersonnelNamesForDepartmentAsync(Dept)).ReturnsAsync(new List<PersonName>());
 			_departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(Dept)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { Id = Officer } });
 			_gate = new Mock<ILmsGateService>();
+			_skillEvents = new List<Resgrid.Model.Events.SkillWorkflowEvent>();
+			_events = new Mock<IEventAggregator>();
+			_events.Setup(e => e.SendMessage(It.IsAny<Resgrid.Model.Events.SkillWorkflowEvent>())).Callback((Resgrid.Model.Events.SkillWorkflowEvent e) => _skillEvents.Add(e));
 			_certifications = new Mock<ICertificationService>();
 			_service = new LmsSkillEvaluationService(_store.SheetsRepo.Object, _store.VersionsRepo.Object, _store.EvaluationsRepo.Object, _store.MembersRepo.Object,
 				_store.FilesRepo.Object, _store.BooksRepo.Object, _requests.Object, _eligibility.Object, _sealing.Object, _writer.Object, _taskBooksMock.Object,
-				_notifications.Object, _departments.Object, _gate.Object, Mock.Of<IEventAggregator>());
+				_notifications.Object, _departments.Object, _gate.Object, _events.Object);
 		}
 
 		/// <summary>A published sheet: three pass/fail steps, the last critical; an evaluator rule (certification type 9).</summary>
@@ -506,7 +520,7 @@ namespace Resgrid.Tests.TrainingT4
 
 		private LmsTaskBookService TaskBooks(Mock<ISignatureRequestService> requests = null) =>
 			new LmsTaskBookService(_store.DefinitionsRepo.Object, _store.BooksRepo.Object, _store.EvaluationsRepo.Object, _store.SheetsRepo.Object, _certifications.Object, _writer.Object,
-				(requests ?? _requests).Object, _eligibility.Object, _departments.Object, _notifications.Object, Mock.Of<IEventAggregator>());
+				(requests ?? _requests).Object, _eligibility.Object, _departments.Object, _notifications.Object, _events.Object);
 
 		private LmsTaskBookDefinition Definition()
 		{
@@ -635,6 +649,39 @@ namespace Resgrid.Tests.TrainingT4
 			_store.Books.Single(b => b.LmsTaskBookId == 2).Status.Should().Be((int)LmsTaskBookStatuses.Open);
 			_notifications.Verify(n => n.QueueAsync(Dept, LmsSkillNotificationKinds.TaskBookExpired, It.IsAny<string>(), It.Is<IEnumerable<string>>(u => u.Single() == MemberA), true,
 				It.IsAny<CancellationToken>()), Times.Once);
+
+			// Round 7C, workflow trigger 263: once, for the book that expired, with no acting member.
+			_skillEvents.Should().ContainSingle();
+			var closed = _skillEvents.Single();
+			closed.Trigger.Should().Be(WorkflowTriggerEventType.TaskBookClosed);
+			(closed.TaskBookId, closed.UserId, closed.Result, closed.ActorUserId).Should().Be((1, MemberA, "Expired", (string)null));
+		}
+
+		[Test]
+		public async Task A_completed_crew_evaluation_raises_one_event_per_member_once_and_a_cancelled_task_book_raises_closed_without_the_reason()
+		{
+			// Round 7C, workflow triggers 262-263.
+			var sheet = Sheet(crew: true);
+			Eligible(Evaluator);
+			var evaluation = await SubmittedAsync(sheet, new[] { MemberA, MemberB }, Answers("pass", "pass", "pass"));
+			_skillEvents.Should().BeEmpty("submitted is not completed");
+
+			var request = Completed(evaluation);
+			(await _service.CompleteFromSignatureAsync(request)).Should().BeTrue();
+			(await _service.CompleteFromSignatureAsync(request)).Should().BeFalse();
+
+			_skillEvents.Should().HaveCount(2);
+			_skillEvents.Select(e => e.UserId).Should().BeEquivalentTo(new[] { MemberA, MemberB });
+			_skillEvents.Should().OnlyContain(e => e.Trigger == WorkflowTriggerEventType.SkillEvaluationCompleted && e.Result == "Passed" && e.ActorUserId == Evaluator &&
+				e.MemberCount == 2 && e.EvaluationId == evaluation.LmsSkillEvaluationId);
+
+			_skillEvents.Clear();
+			var books = TaskBooks();
+			_store.Books.Add(new LmsTaskBook { LmsTaskBookId = 3, DepartmentId = Dept, UserId = MemberB, PositionCode = "FFT2", Name = "FFT2", Status = (int)LmsTaskBookStatuses.Open, ExpiresOn = DateTime.UtcNow.AddDays(30) });
+			await books.CancelAsync(Actor(Officer, manager: true), 3, "Trainee moved to another station");
+
+			_skillEvents.Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.TaskBookClosed && e.Result == "Cancelled" && e.ActorUserId == Officer && e.UserId == MemberB);
+			Newtonsoft.Json.JsonConvert.SerializeObject(_skillEvents.Single()).Should().NotContain("another station");
 		}
 
 		#endregion
@@ -658,7 +705,7 @@ namespace Resgrid.Tests.TrainingT4
 			communication.Setup(c => c.SendNotificationAsync(It.IsAny<string>(), Dept, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(),
 				It.IsAny<UserProfile>(), It.IsAny<bool>(), It.IsAny<string>())).ReturnsAsync(true);
 			var service = new LmsSkillNotificationService(_store.NotificationsRepo.Object, Mock.Of<ILmsSkillSettingsService>(), _departments.Object,
-				Mock.Of<IDepartmentSettingsService>(), new Lazy<ICommunicationService>(() => communication.Object));
+				Mock.Of<IDepartmentSettingsService>(), new Lazy<ICommunicationService>(() => communication.Object), Mock.Of<IUserProfileService>());
 
 			(await service.SendDueAsync(now)).Should().Be(1);
 
@@ -677,7 +724,7 @@ namespace Resgrid.Tests.TrainingT4
 			settings.Setup(s => s.GetAsync(Dept)).ReturnsAsync(new LmsSkillSettings { DigestMode = (int)LmsSkillDigestModes.Daily, DigestHour = 7, NotifyMembers = true, NotifyOfficers = false }.Normalized());
 			_departments.Setup(d => d.GetDepartmentByIdAsync(Dept, false)).ReturnsAsync((Department)null);
 			var service = new LmsSkillNotificationService(_store.NotificationsRepo.Object, settings.Object, _departments.Object, Mock.Of<IDepartmentSettingsService>(),
-				new Lazy<ICommunicationService>(() => Mock.Of<ICommunicationService>()));
+				new Lazy<ICommunicationService>(() => Mock.Of<ICommunicationService>()), Mock.Of<IUserProfileService>());
 
 			(await service.QueueAsync(Dept, LmsSkillNotificationKinds.EvaluationCompleted, "done", new[] { MemberA, MemberA.ToLowerInvariant() }, true)).Should().Be(1);
 			_store.Notifications.Single().DueOn.Should().BeAfter(DateTime.UtcNow, "a daily digest is due at the next 07:00");

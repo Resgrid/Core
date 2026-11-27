@@ -15,6 +15,14 @@
     ViewBag.Title = "Resgrid | " + Model.Form.Name;
     var run = Model.Completion;
     var state = (ChecklistRunState)run.State;
+    // The run keeps user ids; show the member's name (a user whose profile is gone reads "Former member", never the raw id).
+    async Task<string> MemberName(string userId)
+    {
+        var name = string.IsNullOrWhiteSpace(userId) ? null : await UserHelper.GetFullNameForUser(userId);
+        return string.IsNullOrWhiteSpace(name) ? localizer["FormerMember"].Value : name;
+    }
+    var authorName = await MemberName(run.CreatedBy);
+    var witnessName = run.WitnessedOn.HasValue ? await MemberName(run.WitnessUserId) : null;
     ViewData["Tab"] = "Index";
     ViewData["Title"] = Model.Form.Name;
     ViewData["ParentText"] = localizer["History"].Value;
@@ -65,12 +73,12 @@
 
             <dl class="dl-horizontal">
                 <dt>@localizer["Score"]</dt><dd>@(run.Score.HasValue ? run.Score + "%" : localizer["NoScore"].Value)</dd>
-                <dt>@localizer["Author"]</dt><dd>@run.CreatedBy</dd>
+                <dt>@localizer["Author"]</dt><dd>@authorName</dd>
                 <dt>@localizer["Submitted"]</dt><dd>@departmentTime.Format(run.SubmittedOn)</dd>
                 <dt>@localizer["Version"]</dt><dd>@Model.VersionNumber</dd>
                 @if (run.WitnessedOn.HasValue)
                 {
-                    <dt>@localizer["WitnessLabel"]</dt><dd>@run.WitnessUserId &middot; @departmentTime.Format(run.WitnessedOn)</dd>
+                    <dt>@localizer["WitnessLabel"]</dt><dd>@witnessName &middot;@departmentTime.Format(run.WitnessedOn)</dd>
                     <dt>@localizer["Attestation"]</dt><dd>@Model.WitnessAttestation</dd>
                 }
             </dl>

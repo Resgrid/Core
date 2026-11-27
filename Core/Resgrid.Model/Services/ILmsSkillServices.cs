@@ -33,6 +33,9 @@ namespace Resgrid.Model.Services
 		/// <summary>A new sheet from a catalog starter, its steps in a draft ready to adapt and publish.</summary>
 		Task<LmsSkillSheet> CreateFromTemplateAsync(LmsActor actor, string templateKey, CancellationToken cancellationToken = default);
 
+		/// <summary>A new sheet from a catalog starter, its text in a language (English when none ships).</summary>
+		Task<LmsSkillSheet> CreateFromTemplateAsync(LmsActor actor, string templateKey, string culture, CancellationToken cancellationToken = default);
+
 		Task<LmsSkillSheet> SaveSheetAsync(LmsActor actor, int lmsSkillSheetId, LmsSkillSheetInput input, CancellationToken cancellationToken = default);
 
 		/// <summary>Saves the draft's steps and grading (a draft is started from the published version when there is none).</summary>
@@ -121,6 +124,9 @@ namespace Resgrid.Model.Services
 		Task<LmsTaskBookDefinition> SaveDefinitionAsync(LmsActor actor, LmsTaskBookDefinition definition, IReadOnlyCollection<LmsTaskBookTask> tasks, CancellationToken cancellationToken = default);
 
 		Task<LmsTaskBookDefinition> CreateFromTemplateAsync(LmsActor actor, string templateKey, CancellationToken cancellationToken = default);
+
+		/// <summary>A new task book from a catalog starter, its names in a language (English when none ships); position codes and numbers stay.</summary>
+		Task<LmsTaskBookDefinition> CreateFromTemplateAsync(LmsActor actor, string templateKey, string culture, CancellationToken cancellationToken = default);
 
 		Task<bool> DeleteDefinitionAsync(LmsActor actor, int lmsTaskBookDefinitionId, CancellationToken cancellationToken = default);
 

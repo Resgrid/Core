@@ -26,6 +26,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// officer (the role named in the wellness settings) opens any member's log, keeps screening flags and follow-up tasks and reads the
 	/// member exposure report. Post-call flags are set by wellness officers, department administrators and those who may edit the call.
 	/// Department administration alone opens no member's entries; it edits the settings. Every rule lives in IMemberWellnessService.
+	/// Workforce Pro (2026-11-26): the pages 404 while the Workforce.Pro flag is off; offered but not licensed they are read-only with the
+	/// upsell banner; the service enforces both, this controller only maps its refusals to the flashed message.
 	/// </summary>
 	[Area("User")]
 	[Authorize]
@@ -41,15 +43,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPersonnelRolesService _rolesService;
 		private readonly ICertificationService _certificationService;
 		private readonly IPdfProvider _pdfProvider;
+		private readonly ILmsAccessService _lmsAccess;
+		private readonly IWorkforceProAccessService _workforcePro;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> _localizer;
+		private WorkforceProAccess _workforceProAccess;
 
 		private Department _department;
 		private Dictionary<string, string> _names;
 
 		public WellnessController(IMemberWellnessService wellness, IMemberHealthService health, IDepartmentsService departmentsService, ICallsService callsService,
-			IPersonnelRolesService rolesService, ICertificationService certificationService, IPdfProvider pdfProvider,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> localizer)
+			IPersonnelRolesService rolesService, ICertificationService certificationService, IPdfProvider pdfProvider, ILmsAccessService lmsAccess,
+			IWorkforceProAccessService workforcePro, IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> localizer)
 		{
+			_workforcePro = workforcePro;
 			_wellness = wellness;
 			_health = health;
 			_departmentsService = departmentsService;
@@ -57,11 +63,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_rolesService = rolesService;
 			_certificationService = certificationService;
 			_pdfProvider = pdfProvider;
+			_lmsAccess = lmsAccess;
 			_localizer = localizer;
 		}
 
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
+			// Workforce Pro: invisible while the flag is off (data kept); read-only with the upsell banner while not licensed.
+			_workforceProAccess = await WorkforceProRequestGate.GetAccessAsync(HttpContext, _workforcePro, DepartmentId);
+			if (!_workforceProAccess.Offered)
+			{
+				context.Result = NotFound();
+				return;
+			}
+
 			// The section strip follows the member's rights (Wellness/_Shell); WL1 adds the designated and health officer sections.
 			var health = await _health.GetAccessAsync(DepartmentId, UserId);
 			ViewData["WellnessAccess"] = new WellnessAccessView
@@ -69,12 +84,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 				IsOfficer = health.IsWellnessOfficer,
 				IsAdmin = health.IsAdmin,
 				IsDesignatedOfficer = health.IsDesignatedOfficer,
-				IsHealthOfficer = health.IsHealthOfficer
+				IsHealthOfficer = health.IsHealthOfficer,
+				WorkforceProReadOnly = _workforceProAccess.IsReadOnly,
+				WorkforceProLicensed = _workforceProAccess.Licensed,
+				ShowWorkforceProLinks = health.IsAdmin,
+				WorkforceProGraceEndsUtc = health.IsAdmin && _workforceProAccess.InDunningGrace ? _workforceProAccess.GraceEndsUtc : null
 			};
 			await next();
 		}
 
 		private WellnessAccessView Access => ViewData["WellnessAccess"] as WellnessAccessView ?? new WellnessAccessView();
+
+		/// <summary>A page about one member: when Workforce Pro is licensed but the member holds no seat, their records are read-only (the notice).</summary>
+		private void MarkSeat(string memberUserId, string memberName)
+		{
+			if (_workforceProAccess == null || !_workforceProAccess.Licensed || _workforceProAccess.HoldsSeat(memberUserId))
+				return;
+			var access = Access;
+			access.SeatMissingMemberName = memberName;
+			access.SeatMissingIsSelf = string.Equals(memberUserId, UserId, StringComparison.OrdinalIgnoreCase);
+			ViewData["WellnessAccess"] = access;
+		}
 
 		private string L(string key) => _localizer[key].Value;
 
@@ -184,16 +214,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Error = TempError()
 			};
 			model.MemberName = model.NameOf(memberUserId);
+			MarkSeat(memberUserId, model.MemberName);
 			model.Overview = await _wellness.GetOverviewAsync(DepartmentId, UserId, memberUserId);
 			model.CallNames = await CallNamesAsync(model.Overview.Entries.Concat(model.Overview.Suggestions).Select(e => e.CallId));
-			model.PeerTeamConfigured = (await _wellness.GetSettingsAsync(DepartmentId)).PeerTeamCertificationTypeId > 0;
+			model.PeerTeamConfigured = WellnessRoleRules.PeerTeamConfigured(await _wellness.GetSettingsAsync(DepartmentId));
 
 			if (model.IsOfficer)
 			{
-				var settings = await _wellness.GetSettingsAsync(DepartmentId);
-				var officerIds = settings.WellnessOfficerRoleId > 0
-					? (await _rolesService.GetAllMembersOfRoleAsync(settings.WellnessOfficerRoleId) ?? new List<PersonnelRoleUser>()).Select(r => r.UserId).ToHashSet(StringComparer.OrdinalIgnoreCase)
-					: new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				// The member and the officers who act today (with the certification switch on, only those holding a current certification).
+				var officerIds = (await _wellness.GetActingMemberIdsAsync(DepartmentId, WellnessRoleKinds.WellnessOfficer) ?? new List<string>())
+					.ToHashSet(StringComparer.OrdinalIgnoreCase);
 				officerIds.Add(memberUserId);
 				model.FollowUpAssignees = (await _departmentsService.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>())
 					.Where(p => officerIds.Contains(p.UserId))
@@ -265,7 +295,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private async Task FillEntryChoicesAsync(WellnessEntryView model)
 		{
-			model.PeerTeamConfigured = (await _wellness.GetSettingsAsync(DepartmentId)).PeerTeamCertificationTypeId > 0;
+			model.PeerTeamConfigured = WellnessRoleRules.PeerTeamConfigured(await _wellness.GetSettingsAsync(DepartmentId));
 			if (model.CallId.HasValue)
 				model.CallName = (await CallNamesAsync(new int?[] { model.CallId })).TryGetValue(model.CallId.Value, out var name) ? name : null;
 			if (model.IsNew || !model.IsSuggestion)
@@ -490,6 +520,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Names = await NamesAsync(),
 				Summaries = await _wellness.GetDepartmentSummaryAsync(DepartmentId, UserId, fromUtc, toUtc),
 				RecentFlags = await _wellness.GetRecentFlagsAsync(DepartmentId, UserId, 20),
+				Roster = await RosterAsync(),
 				Message = TempMessage(),
 				Error = TempError()
 			};
@@ -678,6 +709,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				BbpTrainingCertificationTypeId = settings.BbpTrainingCertificationTypeId,
 				MedicalClearanceCertificationTypeId = settings.MedicalClearanceCertificationTypeId,
 				InjuryRetentionYears = settings.InjuryRetentionYears,
+				WellnessOfficerCertificationTypeId = settings.WellnessOfficerCertificationTypeId,
+				DesignatedOfficerCertificationTypeId = settings.DesignatedOfficerCertificationTypeId,
+				PeerTeamRoleId = settings.PeerTeamRoleId,
+				RequireCurrentCertification = settings.RequireCurrentCertification,
 				Message = TempMessage(),
 				Error = TempError()
 			};
@@ -702,7 +737,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DesignatedOfficerRoleId = model.DesignatedOfficerRoleId,
 					BbpTrainingCertificationTypeId = model.BbpTrainingCertificationTypeId,
 					MedicalClearanceCertificationTypeId = model.MedicalClearanceCertificationTypeId,
-					InjuryRetentionYears = model.InjuryRetentionYears
+					InjuryRetentionYears = model.InjuryRetentionYears,
+					WellnessOfficerCertificationTypeId = model.WellnessOfficerCertificationTypeId,
+					DesignatedOfficerCertificationTypeId = model.DesignatedOfficerCertificationTypeId,
+					PeerTeamRoleId = model.PeerTeamRoleId,
+					RequireCurrentCertification = model.RequireCurrentCertification
 				}, cancellationToken);
 				Flash(L("Msg.SettingsSaved"));
 				return RedirectToAction("Settings");
@@ -724,6 +763,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Roles = (await _rolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>()).OrderBy(r => r.Name).ToList();
 			model.CertificationTypes = (await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId) ?? new List<DepartmentCertificationType>())
 				.OrderBy(t => t.Type).ToList();
+			// A wellness role's own certification: the department's person-scoped types in use, plus whichever is saved now.
+			var linked = new[] { model.WellnessOfficerCertificationTypeId, model.DesignatedOfficerCertificationTypeId };
+			model.PersonCertificationTypes = model.CertificationTypes
+				.Where(t => !t.IsDeleted && t.AppliesTo == (int)CertificationAppliesTo.Person && (t.IsActive || linked.Contains(t.DepartmentCertificationTypeId)))
+				.ToList();
+			model.RequirementSetsAvailable = await _lmsAccess.IsFlagEnabledAsync(DepartmentId);
+			model.Department = await DepartmentAsync();
+			model.Names = await NamesAsync();
+			model.Roster = await RosterAsync();
+		}
+
+		/// <summary>The wellness roles with their members' certification status; empty (never an error page) when it cannot be read.</summary>
+		private async Task<List<WellnessRoleRoster>> RosterAsync()
+		{
+			try
+			{
+				return await _wellness.GetRosterAsync(DepartmentId, UserId) ?? new List<WellnessRoleRoster>();
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return new List<WellnessRoleRoster>();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"The wellness roster could not be built for department {DepartmentId}.");
+				return new List<WellnessRoleRoster>();
+			}
 		}
 
 		#endregion Settings

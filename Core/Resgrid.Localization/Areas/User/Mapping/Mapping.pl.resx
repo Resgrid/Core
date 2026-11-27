@@ -240,17 +240,29 @@
   <data name="PoiImportPending" xml:space="preserve">
     <value>Wpisy do zaimportowania: {0}.</value>
   </data>
+  <data name="PoiImportPendingOne" xml:space="preserve">
+    <value>Wpis do zaimportowania: {0}.</value>
+  </data>
   <data name="PoiImportSummary" xml:space="preserve">
     <value>Zaimportowano {0} z {1} wpisów.</value>
   </data>
   <data name="PoiImportGeocoded" xml:space="preserve">
     <value>Zlokalizowane na podstawie adresu: {0}; sprawdź ich położenie na mapie.</value>
   </data>
+  <data name="PoiImportGeocodedOne" xml:space="preserve">
+    <value>Zlokalizowany na podstawie adresu: {0}; sprawdź jego położenie na mapie.</value>
+  </data>
   <data name="PoiImportSkipped" xml:space="preserve">
     <value>Pominięte, ponieważ nie mają współrzędnych ani adresu: {0}.</value>
   </data>
+  <data name="PoiImportSkippedOne" xml:space="preserve">
+    <value>Pominięty, ponieważ nie ma współrzędnych ani adresu: {0}.</value>
+  </data>
   <data name="PoiImportUnlocated" xml:space="preserve">
     <value>Niezaimportowane, ponieważ nie udało się zlokalizować adresu ({0}):</value>
+  </data>
+  <data name="PoiImportUnlocatedOne" xml:space="preserve">
+    <value>Niezaimportowany, ponieważ nie udało się zlokalizować adresu ({0}):</value>
   </data>
   <data name="PoiImportUnlocatedMore" xml:space="preserve">
     <value>i {0} więcej.</value>
@@ -264,8 +276,14 @@
   <data name="PoiImportRetrying" xml:space="preserve">
     <value>Usługa wyszukiwania adresów nie odpowiedziała dla {0} wpisów; zostaną ponowione po {1}.</value>
   </data>
+  <data name="PoiImportRetryingOne" xml:space="preserve">
+    <value>Usługa wyszukiwania adresów nie odpowiedziała dla {0} wpisu; zostanie ponowiony po {1}.</value>
+  </data>
   <data name="PoiImportLookupFailed" xml:space="preserve">
     <value>Niezaimportowane, ponieważ usługa wyszukiwania adresów nie odpowiedziała nawet po ponownych próbach ({0}):</value>
+  </data>
+  <data name="PoiImportLookupFailedOne" xml:space="preserve">
+    <value>Niezaimportowany, ponieważ usługa wyszukiwania adresów nie odpowiedziała nawet po ponownych próbach ({0}):</value>
   </data>
   <data name="PoiImportLookupFailedHint" xml:space="preserve">
     <value>Zwykle jest to chwilowe: zaimportuj później ponownie tylko te wpisy.</value>
@@ -273,11 +291,17 @@
   <data name="PoiImportLookupNotConfigured" xml:space="preserve">
     <value>Niezaimportowane, ponieważ wyszukiwanie adresów nie jest skonfigurowane na tym serwerze ({0}):</value>
   </data>
+  <data name="PoiImportLookupNotConfiguredOne" xml:space="preserve">
+    <value>Niezaimportowany, ponieważ wyszukiwanie adresów nie jest skonfigurowane na tym serwerze ({0}):</value>
+  </data>
   <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
     <value>Dodaj do tych wpisów kolumny szerokości i długości geograficznej i zaimportuj je ponownie.</value>
   </data>
   <data name="PoiImportNotTried" xml:space="preserve">
     <value>Niezaimportowane, ponieważ plik zawiera więcej adresów, niż wyszukuje jeden import ({0}):</value>
+  </data>
+  <data name="PoiImportNotTriedOne" xml:space="preserve">
+    <value>Niezaimportowany, ponieważ plik zawiera więcej adresów, niż wyszukuje jeden import ({0}):</value>
   </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">

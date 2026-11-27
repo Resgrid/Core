@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 namespace Resgrid.Repositories.DataRepository
 {
 	/// <summary>
-	/// The knowledge index store (K1, M0368), portable SQL for SQL Server and PostgreSQL. Every read starts at the department; a write to a
+	/// The knowledge index store (K1, M0353), portable SQL for SQL Server and PostgreSQL. Every read starts at the department; a write to a
 	/// department's chunks bumps its revision (and refreshes its counts) in the same transaction, so a reader's cached corpus reloads.
 	/// </summary>
 	public class KnowledgeIndexRepository : RmsRepositoryBase<KnowledgeChunk>, IKnowledgeIndexRepository
@@ -357,7 +357,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>The knowledge gaps report (K1, M0369). Every read starts at the department.</summary>
+	/// <summary>The knowledge gaps report (K1, M0354). Every read starts at the department.</summary>
 	public class KnowledgeGapsRepository : RmsRepositoryBase<KnowledgeGap>, IKnowledgeGapsRepository
 	{
 		private static readonly string[] InsertColumns =

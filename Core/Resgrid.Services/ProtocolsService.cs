@@ -32,13 +32,16 @@ namespace Resgrid.Services
 		private readonly Lazy<IDispatchTriggerFactsService> _triggerFacts;
 		private readonly Lazy<IProtocolAiSuggestionService> _aiSuggestions;
 
+		private readonly Lazy<IProtectedWriteService> _protectedWrite;
+
 		public ProtocolsService(IDispatchProtocolRepository dispatchProtocolRepository, IDispatchProtocolAttachmentRepository dispatchProtocolAttachmentRepository,
 			IDispatchProtocolQuestionsRepository dispatchProtocolQuestionsRepository, IDispatchProtocolTriggersRepository dispatchProtocolTriggersRepository,
 			IDispatchProtocolQuestionAnswersRepository dispatchProtocolQuestionAnswersRepository, Lazy<IDispatchTriggerFactsService> triggerFacts,
-			Lazy<IProtocolAiSuggestionService> aiSuggestions, Lazy<ISearchProjectionService> searchProjections = null,
+			Lazy<IProtocolAiSuggestionService> aiSuggestions, Lazy<IProtectedWriteService> protectedWrite, Lazy<ISearchProjectionService> searchProjections = null,
 			ICacheProvider cacheProvider = null, ICallTypesRepository callTypesRepository = null, ICallProtocolsRepository callProtocolsRepository = null,
 			IDispatchProtocolSnapshotsRepository snapshotsRepository = null, IProtocolVersionsRepository versionsRepository = null)
 		{
+			_protectedWrite = protectedWrite;
 			_versionsRepository = versionsRepository;
 			_triggerFacts = triggerFacts;
 			_aiSuggestions = aiSuggestions;
@@ -612,7 +615,29 @@ namespace Resgrid.Services
 			row.RemovedByUserId = userId;
 			row.RemovedReason = text.Length > ProtocolRules.RemovalReasonMaxLength ? text.Substring(0, ProtocolRules.RemovalReasonMaxLength) : text;
 
-			return await _callProtocolsRepository.SaveOrUpdateAsync(row, cancellationToken, true);
+			// ADP catalog 39: the removal reason is free text about the call. It is enveloped before the row is written (the other protected
+			// columns are written back as they were read), and the caller gets the row with the reason it typed.
+			var typed = row.RemovedReason;
+			row.RemovedReason = await ProtectReasonAsync(departmentId, row, cancellationToken);
+			var stored = await _callProtocolsRepository.SaveOrUpdateAsync(row, cancellationToken, true);
+			row.RemovedReason = typed;
+			if (stored != null)
+				stored.RemovedReason = typed;
+			return stored;
+		}
+
+		/// <summary>The removal reason as it may be stored: enveloped for a department that encrypts new writes, else as typed.</summary>
+		private async Task<string> ProtectReasonAsync(int departmentId, CallProtocol row, CancellationToken cancellationToken)
+		{
+			if (_protectedWrite == null || string.IsNullOrEmpty(row.RemovedReason))
+				return row.RemovedReason;
+
+			var probe = new CallProtocol { CallProtocolId = row.CallProtocolId, RemovedReason = row.RemovedReason };
+			var write = await _protectedWrite.Value.PrepareRecordsEntityWriteAsync(departmentId, probe, null, row.CallProtocolId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				ContentProtectedFields.CallProtocols, null, null, null, workloadCaller: true, cancellationToken);
+			if (write != null && !write.Success)
+				throw new InvalidOperationException($"Protected write blocked ({write.Reason}); call protocol {row.CallProtocolId} was not removed.");
+			return probe.RemovedReason;
 		}
 
 		#endregion The call record

@@ -77,7 +77,7 @@ namespace Resgrid.Model
 
 		/// <summary>
 		/// The protocol version the call cites (P1 §4 "calls cite versions, never live rows"), set at attach from the protocol's
-		/// version in force. M0344 filled it for rows recorded before P1: from the P0 snapshot hash where there was one (the
+		/// version in force. M0343 filled it for rows recorded before P1: from the P0 snapshot hash where there was one (the
 		/// matching version, or a Legacy version for text that differs), else version 1.0. Null only for a protocol without
 		/// any version.
 		/// </summary>

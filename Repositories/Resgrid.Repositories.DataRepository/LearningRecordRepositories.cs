@@ -21,14 +21,20 @@ namespace Resgrid.Repositories.DataRepository
 			"DepartmentId", "UserId", "SourceKind", "SourceRefId", "ComponentKey", "SessionKey", "Title", "CourseCode", "CompletedOn", "StartedOn", "EndedOn",
 			"Hours", "CategoryId", "MethodOfTraining", "Objectives", "Location", "CeProvider", "CeCourseNumber", "CeHours", "InstructorUserIds", "InstructorNames",
 			"Status", "SupersedesId", "VoidReason", "VoidedOn", "VoidedByUserId", "VerifiedByUserId", "VerifiedOn", "ReviewNote", "EvidenceFileId", "IsBackfill",
-			"ExternalId", "Notes", "Tags", "PossibleDuplicateOfId", "DuplicateResolvedOn", "DuplicateResolution", "VerificationCode", "CreatedOn", "CreatedByUserId"
+			"ExternalId", "Notes", "Tags", "PossibleDuplicateOfId", "DuplicateResolvedOn", "DuplicateResolution", "VerificationCode", "CreatedOn", "CreatedByUserId",
+			// Round 7B (M0400): a completion recorded by someone else (permission 135)
+			"CompletionMethod", "RecordedByUserId", "RecordedOn", "RecordedCompletionId",
+			// Round 9B (M0408): a member submission's review state and when it was handed to reviewers
+			"ReviewState", "SubmittedOn"
 		};
 
 		/// <summary>Columns a later write may change; the idempotency key and the source fields never change (R-T4).</summary>
 		public static readonly HashSet<string> Updatable = new HashSet<string>(StringComparer.Ordinal)
 		{
 			"Status", "Hours", "CategoryId", "VoidReason", "VoidedOn", "VoidedByUserId", "VerifiedByUserId", "VerifiedOn", "ReviewNote", "PossibleDuplicateOfId",
-			"DuplicateResolvedOn", "DuplicateResolution", "VerificationCode", "SessionKey"
+			"DuplicateResolvedOn", "DuplicateResolution", "VerificationCode", "SessionKey",
+			// Round 9B: a submission's review, and what its member may correct when they resubmit it (still Pending)
+			"ReviewState", "SubmittedOn", "CeHours", "EvidenceFileId"
 		};
 
 		public static DynamicParameters Parameters<T>(T entity, IEnumerable<string> columns, Func<DateTime, DateTime> timestamp)
@@ -58,7 +64,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>The learning-record ledger (Training T1, M0348). Every read starts at the department.</summary>
+	/// <summary>The learning-record ledger (Training T1, M0344). Every read starts at the department.</summary>
 	public class LearningRecordsRepository : RmsRepositoryBase<LearningRecord>, ILearningRecordsRepository
 	{
 		public const int MaxTake = 5000;
@@ -145,6 +151,12 @@ namespace Resgrid.Repositories.DataRepository
 				clauses.Add(CaseInsensitiveInList("UserId", "UserIds"));
 				parameters.Add("UserIds", users);
 			}
+			else
+			{
+				// External learners (T5) are never members: a department-wide query leaves their records out.
+				clauses.Add($"{Col("UserId")} NOT LIKE {P}ExternalLearnerPrefix");
+				parameters.Add("ExternalLearnerPrefix", LearningRecordQuery.ExternalLearnerUserIdPrefix + "%");
+			}
 
 			if (query.From.HasValue)
 			{
@@ -201,6 +213,16 @@ namespace Resgrid.Repositories.DataRepository
 			if (query.UnresolvedDuplicatesOnly)
 				clauses.Add($"{Col("PossibleDuplicateOfId")} IS NOT NULL AND {Col("DuplicateResolvedOn")} IS NULL");
 
+			if (query.ReviewStates != null && query.ReviewStates.Count > 0)
+			{
+				// Round 9B: a T1 submission written before M0408 has no review state and is waiting for a reviewer.
+				var states = query.ReviewStates.Distinct().ToArray();
+				clauses.Add(states.Contains((int)TrainingSubmissionReviewStates.AwaitingReview)
+					? $"({InList("ReviewState", "ReviewStates")} OR {Col("ReviewState")} IS NULL)"
+					: InList("ReviewState", "ReviewStates"));
+				parameters.Add("ReviewStates", states);
+			}
+
 			return string.Join(" AND ", clauses);
 		}
 
@@ -216,7 +238,9 @@ namespace Resgrid.Repositories.DataRepository
 			var where = Where(query, parameters);
 			parameters.Add("Skip", Math.Max(0, query.Skip));
 			parameters.Add("Take", Math.Clamp(query.Take <= 0 ? MaxTake : query.Take, 1, MaxTake));
-			var order = $"ORDER BY {Col("CompletedOn")} DESC, {Col("LearningRecordId")} DESC";
+			var order = query.OldestSubmittedFirst
+				? $"ORDER BY COALESCE({Col("SubmittedOn")}, {Col("CreatedOn")}) ASC, {Col("LearningRecordId")} ASC"
+				: $"ORDER BY {Col("CompletedOn")} DESC, {Col("LearningRecordId")} DESC";
 			var sql = IsPostgres
 				? $"SELECT * FROM {Tbl("LearningRecords")} WHERE {where} {order} LIMIT {P}Take OFFSET {P}Skip"
 				: $"SELECT * FROM {Tbl("LearningRecords")} WHERE {where} {order} OFFSET {P}Skip ROWS FETCH NEXT {P}Take ROWS ONLY";
@@ -379,6 +403,16 @@ namespace Resgrid.Repositories.DataRepository
 				new { Code = verificationCode.Trim().ToUpperInvariant() });
 		}
 
+		public async Task<List<int>> GetDepartmentIdsAwaitingReviewAsync(int take)
+		{
+			var where = $"{Col("SourceKind")} = {(int)LearningRecordSourceKinds.ExternalSubmission} AND {Col("Status")} = {(int)LearningRecordStatuses.Pending} " +
+				$"AND ({Col("ReviewState")} IS NULL OR {Col("ReviewState")} = {(int)TrainingSubmissionReviewStates.AwaitingReview})";
+			var sql = IsPostgres
+				? $"SELECT DISTINCT {Col("DepartmentId")} FROM {Tbl("LearningRecords")} WHERE {where} ORDER BY {Col("DepartmentId")} LIMIT {P}Take"
+				: $"SELECT DISTINCT TOP ({P}Take) {Col("DepartmentId")} FROM {Tbl("LearningRecords")} WHERE {where} ORDER BY {Col("DepartmentId")}";
+			return (await QueryAsync<int>(sql, new { Take = Math.Clamp(take, 1, 10000) })).ToList();
+		}
+
 		private static string Trim(string value, int max)
 		{
 			var trimmed = value?.Trim();
@@ -389,6 +423,13 @@ namespace Resgrid.Repositories.DataRepository
 	/// <summary>Evidence files of external submissions.</summary>
 	public class LearningRecordFilesRepository : RmsRepositoryBase<LearningRecordFile>, ILearningRecordFilesRepository
 	{
+		/// <summary>Round 9B: every column except the bytes (lists and exports never read them).</summary>
+		private static readonly string[] MetadataColumns =
+		{
+			"LearningRecordFileId", "DepartmentId", "UserId", "FileName", "ContentType", "UploadedOn", "UploadedByUserId", "LearningRecordId", "SizeBytes", "Sha256",
+			"EvidenceKind", "ScanState"
+		};
+
 		public LearningRecordFilesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
 			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
 
@@ -396,6 +437,117 @@ namespace Resgrid.Repositories.DataRepository
 			QueryFirstOrDefaultAsync<LearningRecordFile>(
 				$"SELECT * FROM {Tbl("LearningRecordFiles")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("LearningRecordFileId")} = {P}Id",
 				new { DepartmentId = departmentId, Id = learningRecordFileId });
+
+		public async Task<List<LearningRecordFile>> GetForRecordsAsync(int departmentId, IEnumerable<int> learningRecordIds)
+		{
+			var ids = InListValue(learningRecordIds).Where(i => i > 0).Distinct().ToArray();
+			var result = new List<LearningRecordFile>();
+			foreach (var chunk in ids.Chunk(1000))
+			{
+				// Linked files, and the single evidence file a record names (a path that does not link its file, such as an LMS training request).
+				result.AddRange(await QueryAsync<LearningRecordFile>(
+					$"SELECT {Cols(MetadataColumns)} FROM {Tbl("LearningRecordFiles")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND ({InList("LearningRecordId", "Ids")} " +
+					$"OR {Col("LearningRecordFileId")} IN (SELECT {Col("EvidenceFileId")} FROM {Tbl("LearningRecords")} WHERE {Col("DepartmentId")} = {P}DepartmentId " +
+					$"AND {Col("EvidenceFileId")} IS NOT NULL AND {InList("LearningRecordId", "Ids")}))",
+					new { DepartmentId = departmentId, Ids = chunk }));
+			}
+
+			return result.GroupBy(f => f.LearningRecordFileId).Select(g => g.First()).OrderBy(f => f.UploadedOn).ThenBy(f => f.LearningRecordFileId).ToList();
+		}
+
+		public async Task<List<LearningRecordFile>> GetForUserAsync(int departmentId, string userId)
+		{
+			if (string.IsNullOrWhiteSpace(userId))
+				return new List<LearningRecordFile>();
+
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("UserId", userId, System.Data.DbType.String);
+			return (await QueryAsync<LearningRecordFile>(
+				$"SELECT {Cols(MetadataColumns)} FROM {Tbl("LearningRecordFiles")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("UserId")} = {CaseInsensitive("UserId")} " +
+				$"ORDER BY {Col("UploadedOn")}, {Col("LearningRecordFileId")}", parameters)).ToList();
+		}
+
+		public async Task<int> LinkToRecordAsync(int departmentId, IEnumerable<int> learningRecordFileIds, int learningRecordId, CancellationToken cancellationToken = default)
+		{
+			var ids = InListValue(learningRecordFileIds).Where(i => i > 0).Distinct().ToArray();
+			if (ids.Length == 0 || learningRecordId <= 0)
+				return 0;
+
+			var count = 0;
+			foreach (var chunk in ids.Chunk(1000))
+				count += await ExecuteAsync(
+					$"UPDATE {Tbl("LearningRecordFiles")} SET {Col("LearningRecordId")} = {P}RecordId WHERE {Col("DepartmentId")} = {P}DepartmentId " +
+					$"AND {Col("LearningRecordId")} IS NULL AND {InList("LearningRecordFileId", "Ids")}",
+					new { DepartmentId = departmentId, RecordId = learningRecordId, Ids = chunk }, cancellationToken);
+			return count;
+		}
+	}
+
+	/// <summary>Round 9B: the review history of member submissions (M0409).</summary>
+	public class LearningRecordReviewEventsRepository : RmsRepositoryBase<LearningRecordReviewEvent>, ILearningRecordReviewEventsRepository
+	{
+		public LearningRecordReviewEventsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public async Task<List<LearningRecordReviewEvent>> GetForRecordAsync(int departmentId, int learningRecordId) =>
+			(await QueryAsync<LearningRecordReviewEvent>(
+				$"SELECT * FROM {Tbl("LearningRecordReviewEvents")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("LearningRecordId")} = {P}RecordId " +
+				$"ORDER BY {Col("CreatedOn")}, {Col("LearningRecordReviewEventId")}",
+				new { DepartmentId = departmentId, RecordId = learningRecordId })).ToList();
+
+		public async Task<List<LearningRecordReviewEvent>> GetForUserAsync(int departmentId, string userId)
+		{
+			if (string.IsNullOrWhiteSpace(userId))
+				return new List<LearningRecordReviewEvent>();
+
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("UserId", userId, System.Data.DbType.String);
+			return (await QueryAsync<LearningRecordReviewEvent>(
+				$"SELECT * FROM {Tbl("LearningRecordReviewEvents")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("UserId")} = {CaseInsensitive("UserId")} " +
+				$"ORDER BY {Col("CreatedOn")}, {Col("LearningRecordReviewEventId")}", parameters)).ToList();
+		}
+	}
+
+	/// <summary>Round 9B: the daily reviewer digest claims (M0410), unique per department and department-local day.</summary>
+	public class TrainingReviewDigestsRepository : RmsRepositoryBase<TrainingReviewDigest>, ITrainingReviewDigestsRepository
+	{
+		public TrainingReviewDigestsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory) { }
+
+		public async Task<bool> TryClaimAsync(int departmentId, DateTime digestDate, DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("DigestDate", DatabaseTimestamp(digestDate.Date), System.Data.DbType.DateTime2);
+			parameters.Add("SentOn", DatabaseTimestamp(utcNow), System.Data.DbType.DateTime2);
+			var lockHint = IsPostgres ? string.Empty : " WITH (UPDLOCK, HOLDLOCK)";
+			var sql = $"INSERT INTO {Tbl("TrainingReviewDigests")} ({Cols("DepartmentId", "DigestDate", "Reviewers", "Submissions", "SentOn")}) " +
+				$"SELECT {P}DepartmentId, {P}DigestDate, 0, 0, {P}SentOn WHERE NOT EXISTS (SELECT 1 FROM {Tbl("TrainingReviewDigests")}{lockHint} " +
+				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DigestDate")} = {P}DigestDate)";
+			try
+			{
+				return await ExecuteAsync(sql, parameters, cancellationToken) == 1;
+			}
+			catch (Exception ex) when (IsUniqueViolation(ex))
+			{
+				// The unique (DepartmentId, DigestDate) index: another worker claimed the same day first.
+				return false;
+			}
+		}
+
+		public Task<int> SaveCountsAsync(int departmentId, DateTime digestDate, int reviewers, int submissions, CancellationToken cancellationToken = default)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("DigestDate", DatabaseTimestamp(digestDate.Date), System.Data.DbType.DateTime2);
+			parameters.Add("Reviewers", reviewers);
+			parameters.Add("Submissions", submissions);
+			return ExecuteAsync(
+				$"UPDATE {Tbl("TrainingReviewDigests")} SET {Col("Reviewers")} = {P}Reviewers, {Col("Submissions")} = {P}Submissions " +
+				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("DigestDate")} = {P}DigestDate", parameters, cancellationToken);
+		}
 	}
 
 	public class TrainingCategoriesRepository : RmsRepositoryBase<TrainingCategory>, ITrainingCategoriesRepository

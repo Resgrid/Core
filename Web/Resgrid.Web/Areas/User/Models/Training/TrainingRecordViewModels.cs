@@ -177,6 +177,17 @@ namespace Resgrid.Web.Areas.User.Models.Training
 
 		public List<LearningRecord> Records { get; set; } = new List<LearningRecord>();
 
+		/// <summary>Round 7B: the recordings behind completions an instructor recorded (id → recording): who, when, from where, the note.</summary>
+		public Dictionary<int, TrainingCompletionRecording> Recordings { get; set; } = new Dictionary<int, TrainingCompletionRecording>();
+
+		/// <summary>Round 7B: member names (the recorder of a recorded completion).</summary>
+		public Dictionary<string, string> RecorderNames { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+		public TrainingCompletionRecording RecordingOf(LearningRecord record) =>
+			record?.RecordedCompletionId != null && Recordings.TryGetValue(record.RecordedCompletionId.Value, out var recording) ? recording : null;
+
+		public string RecorderName(string userId) => userId != null && RecorderNames.TryGetValue(userId, out var name) && !string.IsNullOrWhiteSpace(name) ? name : userId;
+
 		/// <summary>Audit view: record id → the chain it belongs to (oldest first).</summary>
 		public Dictionary<int, List<LearningRecord>> Chains { get; set; } = new Dictionary<int, List<LearningRecord>>();
 
@@ -222,6 +233,9 @@ namespace Resgrid.Web.Areas.User.Models.Training
 		public bool SubmissionsDisabled { get; set; }
 
 		public string Today { get; set; }
+
+		/// <summary>Round 9B: TrainingSubmissionReviewModes of the department (what the page tells the member happens next).</summary>
+		public int ReviewMode { get; set; }
 	}
 
 	/// <summary>A possible duplicate in the queue: the record and the one it may repeat.</summary>
@@ -240,6 +254,9 @@ namespace Resgrid.Web.Areas.User.Models.Training
 		public List<LearningRecord> Pending { get; set; } = new List<LearningRecord>();
 
 		public List<TrainingRecordDuplicateRow> Duplicates { get; set; } = new List<TrainingRecordDuplicateRow>();
+
+		/// <summary>Round 9B: members' hours submissions waiting for this officer in Training reviews (no longer listed here).</summary>
+		public int SubmissionsAwaiting { get; set; }
 
 		public bool IsOwn(LearningRecord record) => record != null && string.Equals(record.UserId, CurrentUserId, StringComparison.OrdinalIgnoreCase);
 	}
@@ -275,6 +292,9 @@ namespace Resgrid.Web.Areas.User.Models.Training
 		public TrainingCategoryInput Input { get; set; } = new TrainingCategoryInput();
 
 		public IReadOnlyList<TrainingCategoryTemplate> Templates { get; set; } = new List<TrainingCategoryTemplate>();
+
+		/// <summary>Keys of the templates the department's operating profile suggests (round 9C); they are listed first.</summary>
+		public ISet<string> Suggested { get; set; } = new HashSet<string>(StringComparer.Ordinal);
 
 		/// <summary>Codes of the department's categories (a template's categories already applied).</summary>
 		public HashSet<string> Codes { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);

@@ -140,6 +140,8 @@ namespace Resgrid.Services
 				stored.CeHours == draft.CeHours &&
 				(!draft.CategoryId.HasValue || stored.CategoryId == draft.CategoryId) &&
 				stored.Status == (int)draft.Status &&
+				// Round 7B: a completion recorded by an instructor is never rewritten as the member's own (or the other way round).
+				stored.CompletionMethod == draft.CompletionMethod &&
 				string.Equals(stored.SessionKey ?? string.Empty, draft.SessionKey ?? string.Empty, StringComparison.Ordinal);
 		}
 

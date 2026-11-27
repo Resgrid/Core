@@ -60,1181 +60,1618 @@
   </resheader>
   <data name="ActionFailed" xml:space="preserve">
     <value>Das konnte nicht ausgeführt werden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Actions" xml:space="preserve">
     <value>Aktionen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddCost" xml:space="preserve">
     <value>Kosten hinzufügen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddInstructor" xml:space="preserve">
     <value>Ausbilder hinzufügen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonNotice" xml:space="preserve">
     <value>Kurse gehören zum LMS-Zusatzmodul, das für diese Abteilung nicht aktiv ist.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonRequired" xml:space="preserve">
     <value>Dafür ist ein aktives LMS-Zusatzmodul nötig.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddPeople" xml:space="preserve">
     <value>Personen hinzufügen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddWalkIn" xml:space="preserve">
     <value>Anwesenden ohne Anmeldung erfassen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllTags" xml:space="preserve">
     <value>Alle Schlagwörter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlreadySignedIn" xml:space="preserve">
     <value>Sie haben sich angemeldet um</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Amount" xml:space="preserve">
     <value>Betrag</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Approve" xml:space="preserve">
     <value>Genehmigen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApprovedMessage" xml:space="preserve">
     <value>Genehmigt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Absent" xml:space="preserve">
     <value>Abwesend</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Attended" xml:space="preserve">
     <value>Anwesend</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Excused" xml:space="preserve">
     <value>Entschuldigt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Unmarked" xml:space="preserve">
     <value>Nicht erfasst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Back" xml:space="preserve">
     <value>Zurück</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Book" xml:space="preserve">
     <value>Buchen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BookedMessage" xml:space="preserve">
     <value>Gebucht.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BookingsHeader" xml:space="preserve">
     <value>Einrichtungen und Übungsmittel</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BookResource" xml:space="preserve">
     <value>Für diesen Kurs buchen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Calendar" xml:space="preserve">
     <value>Kalender</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CalendarIsClass" xml:space="preserve">
     <value>Dieser Kalendereintrag ist ein Kurs: Anmeldung und Anwesenheit stehen auf der Kursseite.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelClass" xml:space="preserve">
     <value>Kurs absagen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cancelled" xml:space="preserve">
     <value>Der Kurs wurde abgesagt und die Teilnehmer benachrichtigt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelReason" xml:space="preserve">
     <value>Grund der Absage</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClassesIntro" xml:space="preserve">
     <value>Kurse mit Ausbilder im Kalender: Anmeldung, Warteliste, Anwesenheit und die abgezeichnete Teilnehmerliste.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClassesTitle" xml:space="preserve">
     <value>Kurse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Absent" xml:space="preserve">
     <value>Abwesend</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attendance" xml:space="preserve">
     <value>Anwesenheit</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.AttendanceRate" xml:space="preserve">
     <value>Anwesenheitsquote</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attended" xml:space="preserve">
     <value>Anwesend</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attendee" xml:space="preserve">
     <value>Teilnehmer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attendees" xml:space="preserve">
     <value>Teilnehmende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Bookings" xml:space="preserve">
     <value>Buchungen (nächste 90 Tage)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Capacity" xml:space="preserve">
     <value>Kapazität</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Class" xml:space="preserve">
     <value>Kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.ClassCost" xml:space="preserve">
     <value>Kurskosten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Classes" xml:space="preserve">
     <value>Kurse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.ContentSummary" xml:space="preserve">
     <value>Inhaltsübersicht</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Course" xml:space="preserve">
     <value>Kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Date" xml:space="preserve">
     <value>Datum</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Enrolled" xml:space="preserve">
     <value>Angemeldet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Exception" xml:space="preserve">
     <value>Ausnahme</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Hours" xml:space="preserve">
     <value>Stunden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.HoursTaught" xml:space="preserve">
     <value>Unterrichtsstunden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Instructor" xml:space="preserve">
     <value>Ausbilder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Instructors" xml:space="preserve">
     <value>Ausbilder und Qualifikationen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.JobTitle" xml:space="preserve">
     <value>Funktion</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Kind" xml:space="preserve">
     <value>Art</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Member" xml:space="preserve">
     <value>Mitglied</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Pending" xml:space="preserve">
     <value>Ausstehend</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Published" xml:space="preserve">
     <value>Veröffentlicht</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Qualifications" xml:space="preserve">
     <value>Qualifikationen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.RequestCost" xml:space="preserve">
     <value>Kosten der Schulungsanträge</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Resource" xml:space="preserve">
     <value>Ressource</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Role" xml:space="preserve">
     <value>Rolle</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Seats" xml:space="preserve">
     <value>Plätze</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Series" xml:space="preserve">
     <value>Reihe</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Sessions" xml:space="preserve">
     <value>Termine</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.SignIn" xml:space="preserve">
     <value>Angemeldet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Status" xml:space="preserve">
     <value>Status</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Title" xml:space="preserve">
     <value>Titel</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Waitlisted" xml:space="preserve">
     <value>Warteliste</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.WalkIns" xml:space="preserve">
     <value>Ohne Anmeldung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Year" xml:space="preserve">
     <value>Jahr</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.BackfillOvertime" xml:space="preserve">
     <value>Überstunden für Vertretung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.Instructor" xml:space="preserve">
     <value>Ausbilder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.Materials" xml:space="preserve">
     <value>Material</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.Other" xml:space="preserve">
     <value>Sonstiges</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.OutsideFees" xml:space="preserve">
     <value>Externe Gebühren</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostKind" xml:space="preserve">
     <value>Kostenart</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostsHeader" xml:space="preserve">
     <value>Kosten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostsIntro" xml:space="preserve">
     <value>Ausbilder, Material, externe Gebühren und Vertretungsüberstunden je Kurs, Mitglied oder Jahr, neben den Kosten der Schulungsanträge.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostsTitle" xml:space="preserve">
     <value>Kurskosten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Create" xml:space="preserve">
     <value>Anlegen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CreateClass" xml:space="preserve">
     <value>Kurs anlegen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Created" xml:space="preserve">
     <value>Angelegt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DecisionNote" xml:space="preserve">
     <value>Notiz (zum Zurücksenden erforderlich)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Decline" xml:space="preserve">
     <value>Ablehnen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeclinedMessage" xml:space="preserve">
     <value>Abgelehnt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeleteClass" xml:space="preserve">
     <value>Kurs löschen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Deleted" xml:space="preserve">
     <value>Gelöscht.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeleteLessonPlan" xml:space="preserve">
     <value>Unterrichtsplan löschen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftOnly" xml:space="preserve">
     <value>Nur Entwurf</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Bearbeiten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditClass" xml:space="preserve">
     <value>Kurs bearbeiten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditIntro" xml:space="preserve">
     <value>Zeiten in der Zeitzone der Abteilung.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditResource" xml:space="preserve">
     <value>Einrichtung oder Übungsmittel bearbeiten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enroll" xml:space="preserve">
     <value>Anmelden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrolledMessage" xml:space="preserve">
     <value>Angemeldet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrollMember" xml:space="preserve">
     <value>Mitglied anmelden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Declined" xml:space="preserve">
     <value>Abgelehnt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Enrolled" xml:space="preserve">
     <value>Angemeldet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.PendingApproval" xml:space="preserve">
     <value>Wartet auf Genehmigung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Removed" xml:space="preserve">
     <value>Entfernt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Waitlisted" xml:space="preserve">
     <value>Auf der Warteliste</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Withdrawn" xml:space="preserve">
     <value>Abgemeldet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Evaluation.CourseAssessment" xml:space="preserve">
     <value>Den verknüpften Kurs (mit Test) jedem Teilnehmer zuweisen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Evaluation.None" xml:space="preserve">
     <value>Keine</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Excused" xml:space="preserve">
     <value>Entschuldigt abwesend</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Inactive" xml:space="preserve">
     <value>Kein aktives Mitglied mehr</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.NeverPromoted" xml:space="preserve">
     <value>Blieb auf der Warteliste</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.NoShow" xml:space="preserve">
     <value>Nicht erschienen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.OnShift" xml:space="preserve">
     <value>Zu der Zeit im Dienst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Pending" xml:space="preserve">
     <value>Antrag nicht entschieden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Waitlisted" xml:space="preserve">
     <value>Auf der Warteliste</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.AllowSelfUnenroll" xml:space="preserve">
     <value>Mitglieder können sich selbst abmelden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Capacity" xml:space="preserve">
     <value>Kapazität</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CapacityHelp" xml:space="preserve">
     <value>0 für unbegrenzt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Category" xml:space="preserve">
     <value>Schulungskategorie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ChangeSummary" xml:space="preserve">
     <value>Änderungsübersicht</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CompetencyItems" xml:space="preserve">
     <value>Abgedeckte Kompetenzen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ContentSummary" xml:space="preserve">
     <value>Inhaltsübersicht (Teilnehmerliste)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ContentSummaryHelp" xml:space="preserve">
     <value>Was behandelt wurde, wie es die abgezeichnete Teilnehmerliste festhält.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Course" xml:space="preserve">
     <value>LMS-Kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CourseCode" xml:space="preserve">
     <value>Kurscode</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Currency" xml:space="preserve">
     <value>Währung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CutoffDays" xml:space="preserve">
     <value>Anmeldeschluss (Tage vorher)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Description" xml:space="preserve">
     <value>Beschreibung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Duration" xml:space="preserve">
     <value>Dauer (Minuten)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.End" xml:space="preserve">
     <value>Ende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.EnrollmentOpen" xml:space="preserve">
     <value>Mitglieder können sich selbst anmelden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.GpsRequired" xml:space="preserve">
     <value>Standort des Telefons im Umkreis verlangen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Instructors" xml:space="preserve">
     <value>Ausbilder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Latitude" xml:space="preserve">
     <value>Breitengrad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.LessonPlan" xml:space="preserve">
     <value>Unterrichtsplan</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Location" xml:space="preserve">
     <value>Ort</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Longitude" xml:space="preserve">
     <value>Längengrad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Materials" xml:space="preserve">
     <value>Material</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.MeetingUrl" xml:space="preserve">
     <value>Besprechungslink</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.MeetingUrlHelp" xml:space="preserve">
     <value>Ein Teams-, Zoom- oder Meet-Link für einen virtuellen oder hybriden Kurs.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Notes" xml:space="preserve">
     <value>Notizen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Objectives" xml:space="preserve">
     <value>Lernziele</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Occurrences" xml:space="preserve">
     <value>Anzahl der Termine</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.PostEvaluation" xml:space="preserve">
     <value>Nach dem Kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.PostEvaluationHelp" xml:space="preserve">
     <value>Startet für jeden Teilnehmer beim ersten Abzeichnen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.PreBrief" xml:space="preserve">
     <value>Vorbesprechungs-Checkliste</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Props" xml:space="preserve">
     <value>Übungsmittel und Einrichtungen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.QrEnabled" xml:space="preserve">
     <value>Anmeldung per wechselndem QR-Code (ein Foto davon funktioniert nicht mehr)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Radius" xml:space="preserve">
     <value>Radius (Meter)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Ratio" xml:space="preserve">
     <value>Teilnehmende je Ausbilder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ReminderHours" xml:space="preserve">
     <value>Erinnerung (Stunden vorher; 0 für keine)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Repeat" xml:space="preserve">
     <value>Wiederholen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RequiresApproval" xml:space="preserve">
     <value>Ein Kursverantwortlicher genehmigt jeden Antrag</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RestrictGroups" xml:space="preserve">
     <value>Nur diese Gruppen dürfen sich anmelden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RestrictGroupsHelp" xml:space="preserve">
     <value>Keine Auswahl: alle Mitglieder.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RetentionYears" xml:space="preserve">
     <value>Teilnehmerliste aufbewahren (Jahre)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RetentionYearsHelp" xml:space="preserve">
     <value>Leer: Aufbewahrungsfrist der Kategorie (z. B. 3 Jahre für Schulungen zu blutübertragbaren Erregern).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Roles" xml:space="preserve">
     <value>Rollen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.SafetyPlan" xml:space="preserve">
     <value>Sicherheitsplan</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Start" xml:space="preserve">
     <value>Beginn</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Tags" xml:space="preserve">
     <value>Schlagwörter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Title" xml:space="preserve">
     <value>Titel</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.TitleHelp" xml:space="preserve">
     <value>Leer lassen, um den Namen des Kurses oder der Schulung zu verwenden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Training" xml:space="preserve">
     <value>Schulung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.VisibleGroups" xml:space="preserve">
     <value>Nur diese Gruppen sehen ihn</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.VisibleGroupsHelp" xml:space="preserve">
     <value>Keine Auswahl: für alle sichtbar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.WaitlistEnabled" xml:space="preserve">
     <value>Warteliste, wenn voll (Nachrücken der Reihe nach)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Filter" xml:space="preserve">
     <value>Filtern</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Fingerprint" xml:space="preserve">
     <value>Fingerabdruck</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Footer.Costs" xml:space="preserve">
     <value>Kurskosten {0}, Schulungsanträge {1} ({2}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Footer.Exceptions" xml:space="preserve">
     <value>{0} Ausnahmen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Footer.Sessions" xml:space="preserve">
     <value>{0} Termine, {1} Personen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FromStarter" xml:space="preserve">
     <value>Aus einer Resgrid-Vorlage</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GpsRequiredNotice" xml:space="preserve">
     <value>Der Standort Ihres Telefons wird bei der Anmeldung geprüft.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GroupBy" xml:space="preserve">
     <value>Gruppieren nach</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursOverride" xml:space="preserve">
     <value>Stunden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Import" xml:space="preserve">
     <value>Importieren</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportAttendance" xml:space="preserve">
     <value>Anwesenheitsbericht einer Besprechung importieren</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportAttendanceHelp" xml:space="preserve">
     <value>Der CSV-Anwesenheitsbericht aus Teams, Zoom oder Google Meet. Zuordnung per E-Mail, dann per Name.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportedMessage" xml:space="preserve">
     <value>Der Besprechungsbericht wurde importiert.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportResultFormat" xml:space="preserve">
     <value>Besprechungsbericht: {0} Personen, {1} zugeordnet, {2} ohne Anmeldung ergänzt, {3} nicht zugeordnet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Inactive" xml:space="preserve">
     <value>Nicht aktiv</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InstructorsHeader" xml:space="preserve">
     <value>Ausbilder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KioskInstruction" xml:space="preserve">
     <value>Scannen Sie diesen Code mit Ihrem Telefon, um sich anzumelden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KioskTitle" xml:space="preserve">
     <value>Kursanmeldung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LapsedNotice" xml:space="preserve">
     <value>Das LMS-Zusatzmodul ist beendet: Kurse bleiben lesbar, bestehende können weiter durchgeführt und abgezeichnet werden, Neues kann nicht angelegt werden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonPlanIntro" xml:space="preserve">
     <value>Unterrichtet wird nach der veröffentlichten Version; jede eingereichte Version bleibt erhalten.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonPlansIntro" xml:space="preserve">
     <value>Lernziele, Kompetenzen, Material, Betreuungsschlüssel, Sicherheitsplan und Vorbesprechungs-Checkliste, versioniert und vor dem Einsatz genehmigt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonPlansTitle" xml:space="preserve">
     <value>Unterrichtspläne</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_addon_required" xml:space="preserve">
     <value>Dafür ist ein aktives LMS-Zusatzmodul nötig.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_calendar_failed" xml:space="preserve">
     <value>Der Kalendereintrag konnte nicht angelegt werden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_cancelled" xml:space="preserve">
     <value>Dieser Kurs wurde abgesagt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_capacity_invalid" xml:space="preserve">
     <value>Die Kapazität muss zwischen 0 und 10.000 liegen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_category_invalid" xml:space="preserve">
     <value>Wählen Sie eine Schulungskategorie der Abteilung.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_change_summary_required" xml:space="preserve">
     <value>Beschreiben Sie die Änderungen vor dem Einreichen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_code_expired" xml:space="preserve">
     <value>Dieser Code ist abgelaufen. Scannen Sie den Code auf dem Bildschirm erneut.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_cost_invalid" xml:space="preserve">
     <value>Geben Sie eine Kostenart und einen Betrag ab 0 ein.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_course_invalid" xml:space="preserve">
     <value>Wählen Sie einen veröffentlichten Kurs oder eine Schulung der Abteilung.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_enrollment_closed" xml:space="preserve">
     <value>Die Anmeldung erfolgt durch einen Kursverantwortlichen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_enrollment_cutoff" xml:space="preserve">
     <value>Die Anmeldung für diesen Kurs ist geschlossen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_full" xml:space="preserve">
     <value>Dieser Kurs ist ausgebucht.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_gps_location_required" xml:space="preserve">
     <value>Legen Sie den Kursort (Breite und Länge) fest, um GPS zu verlangen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_gps_required" xml:space="preserve">
     <value>Für die Anmeldung braucht dieser Kurs den Standort Ihres Telefons. Erlauben Sie den Standortzugriff und versuchen Sie es erneut.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_gps_too_far" xml:space="preserve">
     <value>Ihr Telefon ist zu weit vom Kursort entfernt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_hours_invalid" xml:space="preserve">
     <value>Die Stunden müssen zwischen 0 und 9.999 liegen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_import_empty" xml:space="preserve">
     <value>In dieser Datei wurden keine Anwesenheitszeilen gefunden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_instructor_invalid" xml:space="preserve">
     <value>Wählen Sie ein Mitglied oder geben Sie den Namen eines externen Ausbilders ein.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_lesson_plan_invalid" xml:space="preserve">
     <value>Wählen Sie einen veröffentlichten Unterrichtsplan.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_meeting_url_invalid" xml:space="preserve">
     <value>Der Besprechungslink muss eine Webadresse sein (https://...).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_name_required" xml:space="preserve">
     <value>Geben Sie einen Namen ein.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_eligible" xml:space="preserve">
     <value>Dieser Kurs ist für andere Gruppen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_enrolled" xml:space="preserve">
     <value>Sie stehen nicht auf der Teilnehmerliste dieses Kurses.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_found" xml:space="preserve">
     <value>Der Kurs wurde nicht gefunden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_member" xml:space="preserve">
     <value>Nur aktuelle Mitglieder der Abteilung können auf einer Teilnehmerliste stehen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_open" xml:space="preserve">
     <value>Dafür ist dieser Kurs derzeit nicht geöffnet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_pending" xml:space="preserve">
     <value>Dieser Antrag wurde bereits entschieden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_signed_in" xml:space="preserve">
     <value>Sie haben sich für diesen Kurs nicht angemeldet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_started" xml:space="preserve">
     <value>Ein Kurs kann erst nach Beginn abgezeichnet werden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_changed" xml:space="preserve">
     <value>Der Inhalt hat sich nach dem Einreichen geändert; reichen Sie ihn erneut ein.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_approved" xml:space="preserve">
     <value>Nur eine genehmigte Version kann veröffentlicht werden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_draft" xml:space="preserve">
     <value>Nur ein Entwurf kann geändert oder eingereicht werden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_found" xml:space="preserve">
     <value>Der Unterrichtsplan wurde nicht gefunden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_in_review" xml:space="preserve">
     <value>Diese Version wartet nicht auf eine Entscheidung.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_reason_required" xml:space="preserve">
     <value>Geben Sie an, warum zurückgesendet wird.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_resource_conflict" xml:space="preserve">
     <value>Diese Einrichtung oder dieses Übungsmittel ist zu dieser Zeit bereits gebucht.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_retention_hold" xml:space="preserve">
     <value>Die Teilnehmerliste wird bis zum Ende ihrer Aufbewahrungsfrist aufbewahrt und kann noch nicht gelöscht werden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_rules_invalid" xml:space="preserve">
     <value>Prüfen Sie die Anmelderegeln (Anmeldeschluss 0–365 Tage, Erinnerung 0–336 Stunden, 1–52 Termine).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_sign_in_closed" xml:space="preserve">
     <value>Die Anmeldung für diesen Kurs ist derzeit nicht geöffnet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_signed_off" xml:space="preserve">
     <value>Der Kurs ist abgezeichnet; seine Liste kann so nicht mehr geändert werden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_times_invalid" xml:space="preserve">
     <value>Der Kurs muss nach dem Beginn enden und darf höchstens 14 Tage dauern.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_title_required" xml:space="preserve">
     <value>Geben Sie einen Titel ein oder verknüpfen Sie einen Kurs bzw. eine Schulung.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_unenroll_closed" xml:space="preserve">
     <value>Bitten Sie einen Kursverantwortlichen, Sie abzumelden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MajorChange" xml:space="preserve">
     <value>Größere Änderung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkPresent" xml:space="preserve">
     <value>Als anwesend erfassen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MessageRoster" xml:space="preserve">
     <value>Teilnehmern schreiben</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Calendar" xml:space="preserve">
     <value>Kalender-Check-in</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Import" xml:space="preserve">
     <value>Besprechungsbericht</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Manual" xml:space="preserve">
     <value>Durch den Ausbilder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.None" xml:space="preserve">
     <value>Nicht angemeldet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Qr" xml:space="preserve">
     <value>QR-Anmeldung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MinutesFormat" xml:space="preserve">
     <value>{0} Min.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyClassesIntro" xml:space="preserve">
     <value>Kurse, für die Sie angemeldet sind oder die Sie leiten, und Kurse, denen Sie noch beitreten können.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyClassesTitle" xml:space="preserve">
     <value>Meine Kurse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewClass" xml:space="preserve">
     <value>Neuer Kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewDraft" xml:space="preserve">
     <value>Neuer Entwurf</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewLessonPlan" xml:space="preserve">
     <value>Neuer Unterrichtsplan</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewQrSecret" xml:space="preserve">
     <value>Neuen QR ausgeben (alte Fotos ungültig)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewResource" xml:space="preserve">
     <value>Neue Einrichtung oder Übungsmittel</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoClasses" xml:space="preserve">
     <value>Keine Kurse.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoConflicts" xml:space="preserve">
     <value>Niemand im Dienst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCosts" xml:space="preserve">
     <value>Keine Kurskosten in diesem Zeitraum.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoInstructors" xml:space="preserve">
     <value>Noch keine Ausbilder.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoLessonPlans" xml:space="preserve">
     <value>Noch keine Unterrichtspläne.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoMyClasses" xml:space="preserve">
     <value>Derzeit keine Kurse für Sie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="None" xml:space="preserve">
     <value>Keine</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoResources" xml:space="preserve">
     <value>Noch keine Einrichtungen oder Übungsmittel.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRoster" xml:space="preserve">
     <value>Noch niemand angemeldet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Cancelled" xml:space="preserve">
     <value>{0} ({1}) wurde abgesagt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.CancelledTitle" xml:space="preserve">
     <value>Kurs abgesagt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Declined" xml:space="preserve">
     <value>Ihr Antrag für {0} ({1}) wurde abgelehnt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Enrolled" xml:space="preserve">
     <value>Sie sind für {0} ({1}) angemeldet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.EnrolledTitle" xml:space="preserve">
     <value>Kursteilnahme</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Promoted" xml:space="preserve">
     <value>Ein Platz ist frei geworden: Sie sind jetzt für {0} ({1}) angemeldet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Reminder" xml:space="preserve">
     <value>{0} beginnt {1}. {2}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.ReminderTitle" xml:space="preserve">
     <value>Kurserinnerung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Removed" xml:space="preserve">
     <value>Sie wurden von {0} ({1}) entfernt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Waitlisted" xml:space="preserve">
     <value>Sie stehen auf der Warteliste für {0} ({1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnCalendar" xml:space="preserve">
     <value>Im Kalender öffnen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnePerLine" xml:space="preserve">
     <value>Eine pro Zeile.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnShift" xml:space="preserve">
     <value>Im Dienst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnShiftHelp" xml:space="preserve">
     <value>In einer Schicht, die sich mit dem Kurs überschneidet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Open" xml:space="preserve">
     <value>Öffnen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenClass" xml:space="preserve">
     <value>Kurs öffnen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenReport" xml:space="preserve">
     <value>Als Bericht öffnen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outside" xml:space="preserve">
     <value>extern</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutsideInstructor" xml:space="preserve">
     <value>Externer Ausbilder (Namen eingeben)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutsideName" xml:space="preserve">
     <value>Name des externen Ausbilders</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PendingHeader" xml:space="preserve">
     <value>Anträge zur Genehmigung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PresentHeader" xml:space="preserve">
     <value>Angemeldet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Publish" xml:space="preserve">
     <value>Veröffentlichen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PublishedMessage" xml:space="preserve">
     <value>Veröffentlicht.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QrAlt" xml:space="preserve">
     <value>QR-Code zur Anmeldung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QrRotated" xml:space="preserve">
     <value>Ein neuer QR wurde ausgegeben.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QrRotates" xml:space="preserve">
     <value>Der Code wechselt alle 30 Sekunden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecentHeader" xml:space="preserve">
     <value>Kürzlich</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Release" xml:space="preserve">
     <value>Freigeben</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Remove" xml:space="preserve">
     <value>Entfernen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemovedMessage" xml:space="preserve">
     <value>Von der Teilnehmerliste entfernt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Repeat.Daily" xml:space="preserve">
     <value>Täglich</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Repeat.None" xml:space="preserve">
     <value>Einmalig</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Repeat.Weekly" xml:space="preserve">
     <value>Wöchentlich</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequestPlace" xml:space="preserve">
     <value>Platz anfragen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Apparatus" xml:space="preserve">
-    <value>Fahrzeug</value>
+    <value>Fahrzeug oder Gerät</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Equipment" xml:space="preserve">
     <value>Ausrüstung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Facility" xml:space="preserve">
     <value>Einrichtung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Other" xml:space="preserve">
     <value>Sonstiges</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Prop" xml:space="preserve">
     <value>Übungsmittel</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResourcesIntro" xml:space="preserve">
-    <value>Übungsgelände, Schulungsräume, Übungsmittel, Fahrzeuge und Ausrüstung; eine Ressource wird nie doppelt gebucht.</value>
+    <value>Übungsgelände, Schulungsräume, Übungsmittel, Fahrzeuge und Ausrüstung; eine Ressource wird nie gleichzeitig doppelt gebucht.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResourcesTitle" xml:space="preserve">
     <value>Einrichtungen und Übungsmittel</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetainUntil" xml:space="preserve">
     <value>Liste aufbewahrt bis</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionHelpFormat" xml:space="preserve">
     <value>Die abgezeichnete Liste wird bis {0} aufbewahrt; Löschen blendet den Kurs aus, endgültig entfernt wird er erst danach.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Role.Assistant" xml:space="preserve">
     <value>Assistierender Ausbilder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Role.Lead" xml:space="preserve">
     <value>Leitender Ausbilder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Role.Safety" xml:space="preserve">
     <value>Sicherheitsbeauftragter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterHeader" xml:space="preserve">
     <value>Teilnehmerliste</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Approval" xml:space="preserve">
     <value>Genehmigung erforderlich</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Closed" xml:space="preserve">
     <value>nur durch Kursverantwortliche</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.CutoffFormat" xml:space="preserve">
     <value>schließt {0} Tage vorher</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Open" xml:space="preserve">
     <value>für Mitglieder offen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Waitlist" xml:space="preserve">
     <value>Warteliste</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rules" xml:space="preserve">
     <value>Anmeldung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Speichern</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Saved" xml:space="preserve">
     <value>Gespeichert.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveDraft" xml:space="preserve">
     <value>Entwurf speichern</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeatsFormat" xml:space="preserve">
     <value>{0} von {1} Plätzen belegt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.Details" xml:space="preserve">
     <value>Details</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.Enrolment" xml:space="preserve">
     <value>Anmelderegeln</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.Records" xml:space="preserve">
     <value>Nachweise und Bewertung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.SignIn" xml:space="preserve">
     <value>Anwesenheitserfassung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.What" xml:space="preserve">
     <value>Inhalt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.When" xml:space="preserve">
     <value>Wann und wo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.You" xml:space="preserve">
     <value>Sie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SendBack" xml:space="preserve">
     <value>Zurücksenden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesFormat" xml:space="preserve">
     <value>Termin {0} von {1} einer Reihe.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesIntro" xml:space="preserve">
     <value>Anwesenheit jedes Mitglieds über alle Termine dieses Kurses.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesReport" xml:space="preserve">
     <value>Anwesenheit der Reihe</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesTitle" xml:space="preserve">
     <value>Anwesenheit der Reihe</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShiftPanelHeader" xml:space="preserve">
     <value>Schulungen im Schichtkalender (nächste 14 Tage)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowQr" xml:space="preserve">
     <value>Anmelde-QR anzeigen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedInAt" xml:space="preserve">
     <value>Angemeldet um</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedInMessage" xml:space="preserve">
     <value>Sie sind angemeldet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOffFormat" xml:space="preserve">
     <value>Abgezeichnet: {0} anwesend, {1} abwesend; {2} Nachweise geschrieben, {3} ersetzt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOffOn" xml:space="preserve">
     <value>Abgezeichnet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOutMessage" xml:space="preserve">
     <value>Sie sind abgemeldet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInButton" xml:space="preserve">
     <value>Anmelden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInClosed" xml:space="preserve">
     <value>Die Anmeldung für diesen Kurs ist derzeit nicht geöffnet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInConfirm" xml:space="preserve">
     <value>Jetzt zu diesem Kurs anmelden?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInTitle" xml:space="preserve">
     <value>Zum Kurs anmelden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOff" xml:space="preserve">
     <value>Teilnehmerliste abzeichnen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOffAgain" xml:space="preserve">
     <value>Erneut abzeichnen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOffHelp" xml:space="preserve">
     <value>Das Abzeichnen schreibt für jeden Anwesenden einen Schulungsnachweis (keinen für Abwesende) und bewahrt die Liste über ihre Frist auf. Nicht erfasste Mitglieder gelten als abwesend, sofern sie sich nicht angemeldet haben.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOut" xml:space="preserve">
     <value>Abmelden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.evoc" xml:space="preserve">
     <value>Fahren von Einsatzfahrzeugen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.evoc.Help" xml:space="preserve">
-    <value>Abfahrtkontrolle, Rückwärtsfahren mit Einweiser, Parcoursübungen; Fahrstunden und gefahrene Kilometer.</value>
+    <value>Abfahrtkontrolle, Rückwärtsfahren mit Einweiser, Parcoursübungen; Fahrstunden und gefahrene Strecke.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.hose-evolutions" xml:space="preserve">
     <value>Jährliche Schlauchübungen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.hose-evolutions.Help" xml:space="preserve">
     <value>Schnellangriff, Vorgehen im Treppenraum und an der Steigleitung, Schlauchbeladung.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.ladder-evolutions" xml:space="preserve">
     <value>Jährliche Leiterübungen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.ladder-evolutions.Help" xml:space="preserve">
     <value>Tragen, Aufstellen, Positionieren für Rettung und Belüftung, Besteigen und Sichern.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.live-fire" xml:space="preserve">
     <value>Heißausbildung (Brandplan)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.live-fire.Help" xml:space="preserve">
     <value>Prüfungen vor dem Brand, Rollen, Betreuungsschlüssel und der Sicherheitsplan, die eine Abteilung dokumentiert.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.physical-ability" xml:space="preserve">
     <value>Körperlicher Leistungstest</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.physical-ability.Help" xml:space="preserve">
     <value>Zeitstationen mit den eigenen Bestehenszeiten der Abteilung.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.pump-evolutions" xml:space="preserve">
     <value>Jährliche Pumpenübungen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.pump-evolutions.Help" xml:space="preserve">
     <value>Versorgung aus dem Hydranten, Ansaugen, Drücke für die eingesetzten Leitungen, Relaisbetrieb.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.scba" xml:space="preserve">
     <value>Atemschutz-Fertigkeiten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.scba.Help" xml:space="preserve">
     <value>Kontrolle, Anlegen auf Zeit, Dichtprüfung, Luftmanagement und Notfallverfahren.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StartersHeader" xml:space="preserve">
     <value>Resgrid-Vorlagen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StartersIntro" xml:space="preserve">
     <value>Von Resgrid in einfacher Sprache verfasste Struktur und Checklisten (kein Normtext). Eine Kopie wird zum Entwurf Ihrer Abteilung zum Anpassen und Genehmigen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Pending" xml:space="preserve">
     <value>Wartet auf Genehmigung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Seats" xml:space="preserve">
     <value>Belegte Plätze</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Upcoming" xml:space="preserve">
     <value>Geplant</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Waitlisted" xml:space="preserve">
     <value>Auf Wartelisten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Cancelled" xml:space="preserve">
     <value>Abgesagt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Scheduled" xml:space="preserve">
     <value>Geplant</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.SignedOff" xml:space="preserve">
     <value>Abgezeichnet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StripLabel" xml:space="preserve">
     <value>Kurse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmitForApproval" xml:space="preserve">
     <value>Zur Genehmigung einreichen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmittedMessage" xml:space="preserve">
     <value>Zur Genehmigung eingereicht.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.Classes" xml:space="preserve">
     <value>Kurse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.Costs" xml:space="preserve">
     <value>Kurskosten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.LessonPlans" xml:space="preserve">
     <value>Unterrichtspläne</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.My" xml:space="preserve">
     <value>Meine Kurse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.Resources" xml:space="preserve">
     <value>Einrichtungen und Übungsmittel</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TagFilter" xml:space="preserve">
     <value>Schlagwort</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TaughtHeader" xml:space="preserve">
     <value>Von Ihnen geleitete Kurse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TimecardOff" xml:space="preserve">
     <value>In dieser Abteilung nimmt noch keine Zeitkarte Schulungszeit an (Workforce Pro).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TimecardOn" xml:space="preserve">
     <value>Die Stunden der Teilnehmenden werden beim Abzeichnen ihren Zeitkarten angeboten.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Total" xml:space="preserve">
     <value>Summe</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Uncategorized" xml:space="preserve">
     <value>Ohne Kategorie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UpcomingHeader" xml:space="preserve">
     <value>Bevorstehend</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UseMyLocation" xml:space="preserve">
     <value>Meinen Standort verwenden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UseStarter" xml:space="preserve">
     <value>Als Entwurf kopieren</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionLabel" xml:space="preserve">
     <value>Version</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionsHeader" xml:space="preserve">
     <value>Versionen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Approved" xml:space="preserve">
     <value>Genehmigt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Draft" xml:space="preserve">
     <value>Entwurf</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.InReview" xml:space="preserve">
     <value>In Prüfung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Legacy" xml:space="preserve">
     <value>Altbestand</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Published" xml:space="preserve">
     <value>Veröffentlicht</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Retired" xml:space="preserve">
     <value>Außer Kraft</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Superseded" xml:space="preserve">
     <value>Ersetzt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Virtual" xml:space="preserve">
     <value>Virtuell</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WaitlistHeader" xml:space="preserve">
     <value>Warteliste (in Reihenfolge)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WaitlistPositionFormat" xml:space="preserve">
     <value>Platz {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WalkIn" xml:space="preserve">
     <value>Ohne Anmeldung</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WalkInMessage" xml:space="preserve">
     <value>Als anwesend erfasst.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Withdraw" xml:space="preserve">
     <value>Abmelden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithdrawnMessage" xml:space="preserve">
     <value>Sie haben sich vom Kurs abgemeldet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Ja</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="YouTeach" xml:space="preserve">
     <value>Sie leiten diesen Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CurrencyHelp" xml:space="preserve">
+    <value>Leer lassen für die Ausbildungswährung der Abteilung ({0}). Verwenden Sie einen ISO-Code wie CAD, EUR, GBP oder USD.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingCurrencyHelp" xml:space="preserve">
+    <value>Die Ausbildungswährung der Abteilung als ISO-Code wie CAD, EUR, GBP oder USD. Kosten von Schulungsanträgen werden darin erfasst, und neue Kurse, Kurskosten und Gebühren öffentlicher Kurse verwenden sie, sofern ein Kurs keine andere nennt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill" xml:space="preserve">
+    <value>Räumungsübung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill.Help" xml:space="preserve">
+    <value>Räumungshelfende, Kontrollgänge und die Vollzähligkeitsfeststellung am Sammelplatz, für jeden Arbeitsplatz und jedes Gebäude.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill" xml:space="preserve">
+    <value>Übung Rettung aus engen Räumen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill.Help" xml:space="preserve">
+    <value>Rettungssystem, Gasmessung und Rettung der verunfallten Person, mit sicherheitsbeauftragter Person und Stoppsignal.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise" xml:space="preserve">
+    <value>Geländeübung Suche und Rettung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise.Help" xml:space="preserve">
+    <value>Eine Suche von der ersten Meldung bis zum Auffinden, mit Auftragsvergabe, Hinweisen und Meldezeiten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation" xml:space="preserve">
+    <value>Szenariotraining Deeskalation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation.Help" xml:space="preserve">
+    <value>Szenariobasiertes Training mit Rollenspielenden, einem Stoppwort und ausschließlich nicht funktionsfähiger Übungsausrüstung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_no_seat" xml:space="preserve">
+    <value>Um sich selbst anzumelden oder einzutragen, benötigen Sie einen LMS-Platz. Bitten Sie Ihren Administrator, Sie für das LMS freizuschalten, oder die Lehrkraft, Sie hinzuzufügen.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

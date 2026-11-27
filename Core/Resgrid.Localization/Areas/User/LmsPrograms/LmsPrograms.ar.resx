@@ -60,782 +60,1050 @@
   </resheader>
   <data name="AcademyPathsHeader" xml:space="preserve">
     <value>المسارات الوظيفية في Resgrid Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyPathsIntro" xml:space="preserve">
     <value>مجانية لكل قسم. تتولى Resgrid صيانة خطواتها، ويمكنك إسنادها واستخدامها في المتطلبات.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyPrefix" xml:space="preserve">
     <value>الأكاديمية:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActedOn" xml:space="preserve">
     <value>التاريخ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActiveLabel" xml:space="preserve">
     <value>نشط</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddStep" xml:space="preserve">
     <value>إضافة خطوة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddStepNoScript" xml:space="preserve">
     <value>احفظ لإضافة مزيد من الخطوات.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonNotice" xml:space="preserve">
     <value>متطلبات التعلّم جزء من إضافة LMS. يمكنك عرضها، أما إنشاؤها وتغييرها فيتطلبان الإضافة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertOnCompletionLabel" xml:space="preserve">
     <value>إبلاغهم أيضًا عندما يُكمل العضو المتطلب أو يجدده</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertSupervisorsLabel" xml:space="preserve">
     <value>إبلاغ مسؤولي مجموعات العضو عندما يكون العضو متأخرًا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertUsersLabel" xml:space="preserve">
     <value>إبلاغ هؤلاء الأشخاص أيضًا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertsHeader" xml:space="preserve">
     <value>التنبيهات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllGroups" xml:space="preserve">
     <value>كل المجموعات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllRequirements" xml:space="preserve">
     <value>كل المتطلبات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllStates" xml:space="preserve">
     <value>كل الحالات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AndMoreFormat" xml:space="preserve">
     <value>و{0} أخرى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignAction" xml:space="preserve">
     <value>إسناد المسار</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignHeader" xml:space="preserve">
     <value>إسناد هذا المسار</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignedFormat" xml:space="preserve">
     <value>أُسند إلى {0} من الأعضاء، وكان لدى {1} منهم بالفعل.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AtRiskDaysLabel" xml:space="preserve">
     <value>التحذير قبل تاريخ الاستحقاق بهذا العدد من الأيام</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceHelp" xml:space="preserve">
     <value>أعضاء أي دور أو مجموعة أو شهادة أو مناوبة تختارها. ومن ينضم لاحقًا أو يُمنح الدور أو يدخل الفئة المستهدفة بأي طريقة أخرى يحصل على تاريخ استحقاق خاص به.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceMember" xml:space="preserve">
     <value>عضو</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceOther" xml:space="preserve">
     <value>أخرى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AutoAssignLabel" xml:space="preserve">
     <value>إسناد الدورة أو المسار إلى كل عضو تلقائيًا (التهيئة)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AutoAssigns" xml:space="preserve">
     <value>إسناد تلقائي</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BacksHelp" xml:space="preserve">
     <value>الفرض المرتبط بالتدريب: عندما يتأخر العضو بعد انقضاء فترة السماح، يمكن إنهاء صلاحية شهادته من هذا النوع. لا تُعرض إلا أنواع الشهادات التي تنتهي صلاحيتها.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BacksLabel" xml:space="preserve">
     <value>الشهادة المدعومة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BreachFormat" xml:space="preserve">
     <value>{0}: {1} من أصل {2} عضوًا ({3}%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>إلغاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CategoryLabel" xml:space="preserve">
     <value>فئة التدريب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CertificationExpires" xml:space="preserve">
     <value>شهادة تنتهي صلاحيتها</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CertificationsLabel" xml:space="preserve">
     <value>الشهادات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChangeMember" xml:space="preserve">
     <value>إعفاء أو تمديد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChooseOption" xml:space="preserve">
     <value>اختر...</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColActions" xml:space="preserve">
     <value>الإجراءات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColHowOften" xml:space="preserve">
     <value>التكرار</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColMembers" xml:space="preserve">
     <value>الأعضاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColRequirement" xml:space="preserve">
     <value>المتطلب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColWhat" xml:space="preserve">
     <value>ماذا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColWho" xml:space="preserve">
     <value>مَن</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ComplianceIntro" xml:space="preserve">
     <value>كل عضو نشط مقابل كل متطلب ينطبق عليه. يظهر الأعضاء الذين ليس لديهم مقعد LMS على أنهم غير مرخّصين ولا يُعدّون متأخرين أبدًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ComplianceTitle" xml:space="preserve">
     <value>الامتثال</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmDelete" xml:space="preserve">
     <value>هل تريد حذف هذا المتطلب؟ يُحتفظ بسجل الأعضاء، ويُلغى أي فرض نفّذه.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmDeletePath" xml:space="preserve">
     <value>هل تريد حذف هذا المسار؟ يُحتفظ بالإسنادات وحالات الإكمال.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmPreviewLabel" xml:space="preserve">
     <value>راجعتُ مَن سيفقد أي دور (مطلوب لتشغيل الفرض)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmRequired" xml:space="preserve">
     <value>راجع المعاينة أدناه وأكّدها لتشغيل الفرض.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmUndo" xml:space="preserve">
     <value>هل تريد التراجع عن هذا الإجراء؟ تُعاد الشهادة والأدوار التي أُزيلت.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CountFormat" xml:space="preserve">
     <value>{0} تقييمات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CountLabel" xml:space="preserve">
     <value>عدد التقييمات الناجحة المطلوبة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CourseLabel" xml:space="preserve">
     <value>الدورة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DefaultAtRiskLabel" xml:space="preserve">
     <value>التحذير الافتراضي للمتطلبات الجديدة (أيام قبل الاستحقاق)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>حذف</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Deleted" xml:space="preserve">
     <value>تم الحذف.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DepartmentPathsHeader" xml:space="preserve">
     <value>مسارات القسم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DescriptionLabel" xml:space="preserve">
     <value>الوصف</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDateLabel" xml:space="preserve">
     <value>تاريخ الاستحقاق</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDaysFormat" xml:space="preserve">
     <value>{0} يوم للإكمال</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDaysHelp" xml:space="preserve">
     <value>تُحتسب من يوم انضمام العضو أو منحه الدور أو دخوله الفئة المستهدفة بطريقة أخرى.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDaysLabel" xml:space="preserve">
     <value>أيام الإكمال</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueFormat" xml:space="preserve">
     <value>مستحق في {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueOn" xml:space="preserve">
     <value>الاستحقاق</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>تعديل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ElectiveBadge" xml:space="preserve">
     <value>اختياري</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ElectiveFormat" xml:space="preserve">
     <value>المجموعة الاختيارية {0}، المطلوب {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforceHelp" xml:space="preserve">
     <value>يتطلب أيضًا تشغيل الفرض للقسم (الفرض). بعد ذلك تزيل وحدة الشهادات الأدوار التي تتطلب الشهادة بعد فترة السماح الخاصة بها، ويُعاد كل شيء عندما يُكمل العضو المتطلب.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforceLabel" xml:space="preserve">
     <value>فرض: إنهاء صلاحية الشهادة عندما يكون العضو متأخرًا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcedBadge" xml:space="preserve">
     <value>مفروض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementEnabledHelp" xml:space="preserve">
     <value>متوقف افتراضيًا. ويجب تفعيله لكل متطلب على حدة أيضًا. لا يُفرض أي شيء ما دامت إضافة LMS غير نشطة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementEnabledLabel" xml:space="preserve">
     <value>تشغيل الفرض المرتبط بالتدريب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementHeader" xml:space="preserve">
     <value>الفرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementIntro" xml:space="preserve">
     <value>اسمح للتدريب التنشيطي المتأخر بإنهاء صلاحية الشهادة التي يدعمها، مع ضمانة توقف أي تشغيل قد يُفرغ دورًا من أعضائه.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementTitle" xml:space="preserve">
     <value>الفرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enforcing" xml:space="preserve">
     <value>يفرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.AddonRequired" xml:space="preserve">
     <value>يتطلب ذلك إضافة LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.AudienceRequired" xml:space="preserve">
     <value>اختر مَن ينطبق عليهم المتطلب.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.CertificationType" xml:space="preserve">
     <value>اختر نوع شهادة للأشخاص تنتهي صلاحيته.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.CountRequired" xml:space="preserve">
     <value>أدخل عدد التقييمات الناجحة المطلوبة (من 1 إلى 1000).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.DaysRange" xml:space="preserve">
     <value>يجب أن تكون الأيام بين 0 و3650 (فترة السماح والتحذير حتى 365).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.ExtensionInvalid" xml:space="preserve">
     <value>اختر تاريخًا مستقبليًا واذكر السبب.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.HoursRequired" xml:space="preserve">
     <value>أدخل الساعات المطلوبة (أكثر من 0).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.IntervalRequired" xml:space="preserve">
     <value>أدخل عدد الأشهر (من 1 إلى 120).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.Invalid" xml:space="preserve">
     <value>تعذّر الحفظ. تحقق من النموذج.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.NameRequired" xml:space="preserve">
     <value>أدخل اسمًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.NotAuthorized" xml:space="preserve">
     <value>ليست لديك صلاحية القيام بذلك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.NotFound" xml:space="preserve">
     <value>لم يُعثر على العنصر.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathDuplicateStep" xml:space="preserve">
     <value>الدورة أو التدريب نفسه مدرج مرتين.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathElectiveCount" xml:space="preserve">
     <value>تحتاج المجموعة الاختيارية إلى خطوة اختيارية واحدة على الأقل، وليس أكثر مما تحتويه.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathInvalidOrder" xml:space="preserve">
     <value>ترتيب الخطوات غير صالح.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathInvalidStep" xml:space="preserve">
     <value>إحدى الخطوات ليست دورة أو تدريبًا يمكن لهذا القسم استخدامه.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathNoSteps" xml:space="preserve">
     <value>أضف خطوة واحدة على الأقل.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathPrerequisiteNotEarlier" xml:space="preserve">
     <value>لا يمكن أن تعتمد الخطوة إلا على خطوات سابقة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathTooManySteps" xml:space="preserve">
     <value>يمكن أن يحتوي المسار على 60 خطوة كحد أقصى.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.ReasonRequired" xml:space="preserve">
     <value>اذكر السبب.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.SkillRequired" xml:space="preserve">
     <value>أدخل رمز المهارة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.TargetRequired" xml:space="preserve">
     <value>اختر ما يجب إكماله لهذا المتطلب.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Everyone" xml:space="preserve">
     <value>الجميع</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExemptAction" xml:space="preserve">
     <value>إعفاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportCsv" xml:space="preserve">
     <value>CSV</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportPdf" xml:space="preserve">
     <value>PDF</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExtendAction" xml:space="preserve">
     <value>تمديد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Filter" xml:space="preserve">
     <value>تصفية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterGroup" xml:space="preserve">
     <value>المجموعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterRequirement" xml:space="preserve">
     <value>المتطلب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterState" xml:space="preserve">
     <value>الحالة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GraceDaysHelp" xml:space="preserve">
     <value>بعد تاريخ الاستحقاق يظهر العضو معرّضًا للخطر لهذا العدد من الأيام، ثم متأخرًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GraceDaysLabel" xml:space="preserve">
     <value>أيام السماح</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GroupsLabel" xml:space="preserve">
     <value>المجموعات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HistoryHeader" xml:space="preserve">
     <value>سجل الفرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursFormat" xml:space="preserve">
     <value>{0} ساعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursLabel" xml:space="preserve">
     <value>الساعات المطلوبة لكل فترة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InForce" xml:space="preserve">
     <value>سارٍ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Inactive" xml:space="preserve">
     <value>غير نشط</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntervalLabel" xml:space="preserve">
     <value>كل كم شهرًا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IssuesCertificationBadge" xml:space="preserve">
     <value>يمنح شهادة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IssuesCertificationLabel" xml:space="preserve">
     <value>منح شهادة عند الإكمال</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Course" xml:space="preserve">
     <value>إكمال دورة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Training" xml:space="preserve">
     <value>إكمال تدريب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.CategoryHours" xml:space="preserve">
     <value>تسجيل ساعات في فئة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Path" xml:space="preserve">
     <value>إنهاء مسار تعلّم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Evaluations" xml:space="preserve">
     <value>اجتياز تقييمات المهارات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindLabel" xml:space="preserve">
     <value>نوع المتطلب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LastCompleted" xml:space="preserve">
     <value>أُكمل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LegendOther" xml:space="preserve">
     <value>معفى أو في إجازة أو غير مرخّص</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LiftExemption" xml:space="preserve">
     <value>رفع الإعفاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MaxShareHelp" xml:space="preserve">
     <value>يُرفض أي تشغيل قد يزيل أكثر من هذه النسبة من أعضاء الدور، ويُبلَّغ المسؤولون.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MaxShareLabel" xml:space="preserve">
     <value>أكبر نسبة من أعضاء الدور يمكن أن يزيلها تشغيل واحد (%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Member" xml:space="preserve">
     <value>العضو</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MembersLabel" xml:space="preserve">
     <value>الأعضاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Mode.Off" xml:space="preserve">
     <value>متوقف</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Mode.WarnOnly" xml:space="preserve">
     <value>تحذير فقط</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Mode.Enforce" xml:space="preserve">
     <value>فرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyRequirementsHeader" xml:space="preserve">
     <value>متطلباتي</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NameLabel" xml:space="preserve">
     <value>الاسم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NeedsStepsFormat" xml:space="preserve">
     <value>يتطلب الخطوة {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewDueDateLabel" xml:space="preserve">
     <value>تاريخ الاستحقاق الجديد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewMembersOnlyLabel" xml:space="preserve">
     <value>الأعضاء الذين يدخلون الفئة المستهدفة من الآن فصاعدًا فقط (التهيئة)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewOnboarding" xml:space="preserve">
     <value>تهيئة جديدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewPath" xml:space="preserve">
     <value>مسار جديد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewRequirement" xml:space="preserve">
     <value>متطلب جديد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextRequirementHeader" xml:space="preserve">
     <value>المتطلب التالي</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoAssignees" xml:space="preserve">
     <value>لم يُسند هذا المسار إلى أحد بعد.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoHistory" xml:space="preserve">
     <value>لا توجد إجراءات فرض بعد.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoMatrixRows" xml:space="preserve">
     <value>لا يوجد أعضاء مطابقون.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoOnboarding" xml:space="preserve">
     <value>لا توجد تهيئة بعد. أضف مسارًا لكل دور يُسند عند انضمام شخص ما أو منحه الدور.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPaths" xml:space="preserve">
     <value>لا توجد مسارات للقسم بعد.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRequirements" xml:space="preserve">
     <value>لا توجد متطلبات بعد.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRolesLost" xml:space="preserve">
     <value>لا شيء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoneOption" xml:space="preserve">
     <value>بلا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotApplicable" xml:space="preserve">
     <value>لا ينطبق</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnboardingIntro" xml:space="preserve">
     <value>مسار تعلّم لكل دور، يُسند تلقائيًا مع تاريخ استحقاق عند انضمام شخص ما أو منحه الدور.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnboardingTitle" xml:space="preserve">
     <value>التهيئة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenCourses" xml:space="preserve">
     <value>دوراتي</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenTraining" xml:space="preserve">
     <value>فتح</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathCompletedFormat" xml:space="preserve">
     <value>أُكمل في {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathCountsFormat" xml:space="preserve">
     <value>{0} خطوات · {1} مُسند · {2} مكتمل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathIntro" xml:space="preserve">
     <value>خطوات مع شروط مسبقة وخطوات اختيارية، ويمكن أن يمنح إنهاء المسار شهادة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathLabel" xml:space="preserve">
     <value>مسار التعلّم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathsIntro" xml:space="preserve">
     <value>دورات ودروس Academy وتدريبات بترتيب محدد، مع شروط مسبقة وخطوات اختيارية.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathsTitle" xml:space="preserve">
     <value>مسارات التعلّم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PausedNotice" xml:space="preserve">
     <value>إضافة LMS غير نشطة، لذا عُلّقت المتطلبات: لن يصبح أي شيء متأخرًا ولن يُفرض أي شيء حتى يُعاد تنشيطها.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviewEmpty" xml:space="preserve">
     <value>لا أحد: لا يوجد عضو متأخر في متطلب مفروض.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviewHeader" xml:space="preserve">
     <value>مَن سيفقد أي دور اليوم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviewModeFormat" xml:space="preserve">
     <value>وضع فرض الشهادات: {0}. لا تُزال الأدوار إلا في وضع الفرض، بعد {1} يوم من انتهاء صلاحية الشهادة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgramsTitle" xml:space="preserve">
     <value>البرامج</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgressFormat" xml:space="preserve">
     <value>{0} من {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgressHeader" xml:space="preserve">
     <value>التقدّم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReasonLabel" xml:space="preserve">
     <value>السبب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Recurrence.OneTime" xml:space="preserve">
     <value>مرة واحدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Recurrence.RollingMonths" xml:space="preserve">
     <value>كل بضعة أشهر</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Recurrence.CalendarYear" xml:space="preserve">
     <value>كل سنة تقويمية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceCalendarYear" xml:space="preserve">
     <value>كل سنة تقويمية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceLabel" xml:space="preserve">
     <value>التكرار</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceOneTime" xml:space="preserve">
     <value>مرة واحدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceRolling" xml:space="preserve">
     <value>كل {0} أشهر</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoveStep" xml:space="preserve">
     <value>إزالة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Requirement" xml:space="preserve">
     <value>المتطلب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementIntro" xml:space="preserve">
     <value>ما يجب على الأعضاء إكماله، ومَن يجب عليه إكماله، وموعد ذلك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementTitle" xml:space="preserve">
     <value>المتطلب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementsIntro" xml:space="preserve">
     <value>الدورات والتدريبات والساعات والمسارات والتقييمات التي يجب على الأعضاء إكمالها، مع تواريخ استحقاق تبدأ من انضمامهم أو منحهم دورًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementsTitle" xml:space="preserve">
     <value>المتطلبات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RolesLabel" xml:space="preserve">
     <value>الأدوار</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RolesLost" xml:space="preserve">
     <value>الأدوار المفقودة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Save" xml:space="preserve">
     <value>حفظ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Saved" xml:space="preserve">
     <value>تم الحفظ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsHeader" xml:space="preserve">
     <value>الإعدادات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShiftsLabel" xml:space="preserve">
     <value>المناوبات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SkillCodeHelp" xml:space="preserve">
     <value>الرمز الذي تُسجَّل به تقييمات المهارة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SkillCodeLabel" xml:space="preserve">
     <value>رمز المهارة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Compliant" xml:space="preserve">
     <value>ممتثل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Pending" xml:space="preserve">
     <value>مستحق لاحقًا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.AtRisk" xml:space="preserve">
     <value>معرّض للخطر</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Overdue" xml:space="preserve">
     <value>متأخر</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Exempt" xml:space="preserve">
     <value>معفى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.OnLeave" xml:space="preserve">
     <value>في إجازة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.NotLicensed" xml:space="preserve">
     <value>غير مرخّص</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status" xml:space="preserve">
     <value>الحالة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepAvailable" xml:space="preserve">
     <value>متاحة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepDone" xml:space="preserve">
     <value>مكتملة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepElectiveLabel" xml:space="preserve">
     <value>المجموعة الاختيارية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepElectiveRequiredLabel" xml:space="preserve">
     <value>الخطوات الاختيارية المطلوبة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepKind.Course" xml:space="preserve">
     <value>دورة أو درس Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepKind.Training" xml:space="preserve">
     <value>تدريب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepKindLabel" xml:space="preserve">
     <value>النوع</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepLocked" xml:space="preserve">
     <value>مقفلة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepPrerequisitesLabel" xml:space="preserve">
     <value>الخطوات المطلوبة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepTargetLabel" xml:space="preserve">
     <value>الدورة أو التدريب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsDoneFormat" xml:space="preserve">
     <value>{0} من {1} خطوات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsHeader" xml:space="preserve">
     <value>الخطوات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsHelp" xml:space="preserve">
     <value>تُنفَّذ الخطوات بالترتيب. يسرد حقل الخطوات المطلوبة أرقام الخطوات السابقة (مثل 1,2) التي يجب إنجازها أولًا. والخطوات التي تحمل رقم المجموعة الاختيارية نفسه خطوات اختيارية: يحتاج المتعلم إلى عدد منها يساوي ما يحدده حقل الخطوات الاختيارية المطلوبة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubCompliance" xml:space="preserve">
     <value>الامتثال</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubEnforcement" xml:space="preserve">
     <value>الفرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubOnboarding" xml:space="preserve">
     <value>التهيئة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubPaths" xml:space="preserve">
     <value>المسارات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubRequirements" xml:space="preserve">
     <value>المتطلبات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrainingLabel" xml:space="preserve">
     <value>التدريب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Undo" xml:space="preserve">
     <value>تراجع</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.0" xml:space="preserve">
     <value>-</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.Completed" xml:space="preserve">
     <value>أُكمل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.Lapse" xml:space="preserve">
     <value>انتهت الإضافة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.NoLongerApplies" xml:space="preserve">
     <value>لم يعد ينطبق</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.Manual" xml:space="preserve">
-    <value>ألغاه أحد الضباط</value>
+    <value>ألغاه مسؤول التدريب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Undone" xml:space="preserve">
     <value>تم التراجع</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UntilLabel" xml:space="preserve">
     <value>حتى (اختياري)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatHeader" xml:space="preserve">
     <value>ماذا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhenHeader" xml:space="preserve">
     <value>متى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhoHeader" xml:space="preserve">
     <value>مَن</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WouldRefuseFormat" xml:space="preserve">
     <value>سيُرفض تشغيل اليوم، إذ سيزيل أكثر من {0}% من أعضاء هذه الأدوار.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubRecommendations" xml:space="preserve">
     <value>التوصيات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationsTitle" xml:space="preserve">
     <value>التوصيات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationsIntro" xml:space="preserve">
     <value>مسارات التعلّم والدورات التالية، بناءً على المتطلبات المفتوحة والمسارات الجارية وفجوات الكفاءة والدورات المعروضة لكل دور.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendedHeader" xml:space="preserve">
     <value>موصى به لك</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendedForFormat" xml:space="preserve">
     <value>موصى به لـ {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationsForMembersLink" xml:space="preserve">
     <value>أعضاؤك</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowRecommendationsButton" xml:space="preserve">
     <value>عرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationColumn" xml:space="preserve">
     <value>التوصية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReasonsColumn" xml:space="preserve">
     <value>السبب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>الإجراءات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindCourse" xml:space="preserve">
     <value>دورة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindPath" xml:space="preserve">
     <value>مسار تعلّم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindAcademy" xml:space="preserve">
     <value>درس من أكاديمية Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RequirementOverdue" xml:space="preserve">
     <value>المتطلب «{0}» متأخر</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RequirementAtRisk" xml:space="preserve">
     <value>المتطلب «{0}» معرّض للخطر</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RequirementDue" xml:space="preserve">
     <value>المتطلب «{0}» لم يُستوفَ بعد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.PathInProgress" xml:space="preserve">
     <value>مسار التعلّم «{0}» قيد التنفيذ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.CompetencyMissing" xml:space="preserve">
     <value>لا يوجد دليل بعد على الكفاءة {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.CompetencyAged" xml:space="preserve">
     <value>دليل الكفاءة {0} قديم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RoleAudience" xml:space="preserve">
     <value>معروض للدور {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationContinue" xml:space="preserve">
     <value>متابعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRecommendations" xml:space="preserve">
     <value>لا توجد توصيات حاليًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainButton" xml:space="preserve">
     <value>اشرح بالذكاء الاصطناعي</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Explaining" xml:space="preserve">
     <value>جارٍ الشرح…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainFailed" xml:space="preserve">
     <value>لا يتوفر شرح حاليًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainBusy" xml:space="preserve">
     <value>الذكاء الاصطناعي مشغول أو استُنفد رصيد هذا الشهر. حاول لاحقًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AiExplanationNotice" xml:space="preserve">
     <value>شرح بالذكاء الاصطناعي مكتوب فقط من الأسباب المعروضة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainPrivacyNote" xml:space="preserve">
     <value>تُرسل العناوين والأسباب أعلاه فقط إلى نموذج الذكاء الاصطناعي الخاص بالإدارة، ولا تُرسل الأسماء أبدًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicyLabel" xml:space="preserve">
     <value>عندما تنشر Resgrid Academy تحديثًا رئيسيًا لدرس يتطلبه هذا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicy.Notify" xml:space="preserve">
     <value>إبلاغ الأعضاء الذين أكملوه</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicy.Reassign" xml:space="preserve">
     <value>إعادة إسناده إلى الأعضاء الذين أكملوه، مستحقًا خلال أيام هذا المتطلب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicy.Nothing" xml:space="preserve">
     <value>لا تفعل شيئًا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicyHelp" xml:space="preserve">
     <value>ينطبق على دروس Resgrid Academy، مباشرةً أو ضمن المسار. تتبع دوراتك الخاصة الاختيار الذي يُتخذ عند نشر كل إصدار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedNotLicensedFormat" xml:space="preserve">
+    <value>{0} منهم ليس لديهم مقعد LMS ولم يتم تسجيلهم؛ فعّل وصولهم إلى نظام إدارة التعلم ثم أعد التعيين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Err.PathManagedBySet" xml:space="preserve">
+    <value>هذا المسار نسخة مُدارة من مجموعة دورات مؤسسة مرتبطة. لا يتغير إلا عبر المجموعة؛ ولا يزال بإمكانكم تعيينه.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

@@ -821,6 +821,11 @@ namespace Resgrid.Providers.Claims
 
 			if (HoldsTrainingRight(delete, isAdmin, isGroupAdmin, roles))
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete));
+
+			// Round 7B: Record Training Completions (135) has its own row; with none only department admins hold it (it never follows Create).
+			var record = permissions?.FirstOrDefault(x => x != null && x.PermissionType == (int)PermissionTypes.RecordTrainingCompletions);
+			if (isAdmin || (record?.Action != (int)PermissionActions.Everyone && HoldsTrainingRight(record, false, isGroupAdmin, roles)))
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.RecordCompletions));
 		}
 
 		/// <summary>Whether a member holds one training permission at all (no row: department admins only).</summary>

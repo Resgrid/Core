@@ -29,7 +29,7 @@ namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
 	/// Real-database proof for Training T0 and T1 on both engines: the whole migration chain into an isolated database, the T0
-	/// (M0338–M0340) and T1 (M0348–M0350) migrations re-run as no-ops and rolled back and forward again, the learning-record
+	/// (M0338–M0340) and T1 (M0344–M0346) migrations re-run as no-ops and rolled back and forward again, the learning-record
 	/// ledger's idempotency key (voided records free it, components and case-insensitive member ids), filters, groups,
 	/// categories, backfill claims, verification codes and derived-credit lookups, T0's repository SQL that had never run
 	/// against a database (the assignment insert's ON CONFLICT / UPDLOCK path, UpdateColumnsAsync, the notice-work query), and
@@ -207,7 +207,7 @@ namespace Resgrid.Tests.Repositories
 
 			(await ScalarAsync($"SELECT COUNT(*) FROM {T("FeatureFlags")} WHERE {T("FlagKey")} = 'Training.Lms' AND {T("IsEnabledGlobally")} = {(IsPostgres ? "false" : "0")}")).Should().Be(1, "Training.Lms is seeded off");
 			(await ScalarAsync($"SELECT COUNT(*) FROM {T("PlanAddons")} WHERE {T("AddonType")} = 9")).Should().Be(1,
-				"M0366 (LMS general availability) seeds the catalog row; general availability is still the operator switching the seeded-off flag on");
+				"M0351 (LMS general availability) seeds the catalog row; general availability is still the operator switching the seeded-off flag on");
 		}
 
 		[Test, Order(2)]
@@ -394,7 +394,7 @@ namespace Resgrid.Tests.Repositories
 			(await ScalarAsync($"SELECT COUNT(*) FROM {T("LearningRecords")} WHERE {T("DepartmentId")} = @D", new { D = _otherDepartment })).Should().Be(1, "another department's ledger is untouched");
 			(await ScalarAsync($"SELECT COUNT(*) FROM {T("TrainingCategories")} WHERE {T("DepartmentId")} = @D", new { D = _otherDepartment })).Should().Be(1);
 			(await ScalarAsync($"SELECT COUNT(*) FROM {T("Trainings")} WHERE {T("TrainingId")} = @Id AND {T("CategoryId")} IS NULL", new { Id = _training })).Should().Be(1,
-				"removing a category sets the training's category to null (M0349)");
+				"removing a category sets the training's category to null (M0345)");
 		}
 	}
 }

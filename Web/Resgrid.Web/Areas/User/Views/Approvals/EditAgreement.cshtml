@@ -23,7 +23,19 @@
     {
         @await Html.PartialAsync("~/Areas/User/Views/Shared/_ApprovalPanel.cshtml", Model.Approval)
     }
-    <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @approvalText["PartnerSignatureOwedNote"]</div>
+    @if (Model.RequiresCountersignature && Model.MutualAidAgreementId > 0)
+    {
+        @* Round 10 A3: where the partner department's countersignature over the link stands. *@
+        <div class="alert @(Model.CountersignStatus == (int)Resgrid.Model.Approvals.MutualAidCountersignStatuses.Countersigned ? "alert-success" : Model.CountersignStatus >= (int)Resgrid.Model.Approvals.MutualAidCountersignStatuses.Declined ? "alert-warning" : "alert-info")" role="status">
+            <i class="fa fa-handshake-o" aria-hidden="true"></i> @approvalText["Countersign" + (Resgrid.Model.Approvals.MutualAidCountersignStatuses)Model.CountersignStatus]
+            @if (Model.CountersignedOn.HasValue) { <span class="small">@Model.CountersignedOn.Value.ToString("yyyy-MM-dd HH:mm") UTC</span> }
+            @if (!string.IsNullOrWhiteSpace(Model.CountersignNote)) { <div class="small">@Model.CountersignNote</div> }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @approvalText["PartnerCountersignNote"]</div>
+    }
     <form asp-area="User" asp-controller="Approvals" asp-action="EditAgreement" method="post">
         @Html.AntiForgeryToken()
         <input type="hidden" name="MutualAidAgreementId" value="@Model.MutualAidAgreementId" />
@@ -46,6 +58,11 @@
                             <label for="agreement-partner">@approvalText["PartnerLabel"]</label>
                             <input id="agreement-partner" name="PartnerName" class="form-control" maxlength="200" value="@Model.PartnerName" />
                         </div>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="RequiresCountersignature" value="true" checked="@Model.RequiresCountersignature" /> @approvalText["RequiresCountersignatureLabel"]</label>
+                        <input type="hidden" name="RequiresCountersignature" value="false" />
+                        <span class="help-block small">@approvalText["RequiresCountersignatureHelp"]</span>
                     </div>
                     <div class="row">
                         <div class="col-sm-3 form-group">

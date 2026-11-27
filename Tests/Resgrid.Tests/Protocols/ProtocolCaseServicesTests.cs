@@ -7,6 +7,8 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Model.AdminAssist;
+using Resgrid.Model.AiDispatch;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -62,7 +64,7 @@ namespace Resgrid.Tests.Protocols
 			_ai = new Mock<IProtocolAiSuggestionService>();
 
 			_service = new ProtocolsService(_protocols.Object, attachments.Object, questions.Object, triggers.Object, Mock.Of<IDispatchProtocolQuestionAnswersRepository>(),
-				new Lazy<IDispatchTriggerFactsService>(() => Mock.Of<IDispatchTriggerFactsService>()), new Lazy<IProtocolAiSuggestionService>(() => _ai.Object),
+				new Lazy<IDispatchTriggerFactsService>(() => Mock.Of<IDispatchTriggerFactsService>()), new Lazy<IProtocolAiSuggestionService>(() => _ai.Object), new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()),
 				null, null, null, Mock.Of<ICallProtocolsRepository>(), Mock.Of<IDispatchProtocolSnapshotsRepository>(), _versions.Object);
 		}
 
@@ -150,6 +152,9 @@ namespace Resgrid.Tests.Protocols
 			public readonly Mock<IIntakeConversationService> Conversations = new Mock<IIntakeConversationService>();
 			public readonly Mock<ITtsAudioService> Tts = new Mock<ITtsAudioService>();
 			public readonly Mock<IEventAggregator> Events = new Mock<IEventAggregator>();
+			public readonly Mock<IProtectedReadService> ProtectedRead = new Mock<IProtectedReadService>();
+			public readonly Mock<IProtectedWriteService> ProtectedWrite = new Mock<IProtectedWriteService>();
+			public readonly Mock<IProtectedGrantContext> Grant = new Mock<IProtectedGrantContext>();
 			public readonly List<AuditEvent> Audits = new List<AuditEvent>();
 			public CallProtocol Row;
 			public string WrittenCase;
@@ -167,7 +172,8 @@ namespace Resgrid.Tests.Protocols
 			}
 
 			public ProtocolCaseService Service() => new ProtocolCaseService(Protocols.Object, Versions.Object, CallProtocols.Object,
-				new Lazy<IIntakeConversationService>(() => Conversations.Object), new Lazy<ITtsAudioService>(() => Tts.Object), Events.Object);
+				new Lazy<IIntakeConversationService>(() => Conversations.Object), new Lazy<ITtsAudioService>(() => Tts.Object), Events.Object,
+				new Lazy<IProtectedReadService>(() => ProtectedRead.Object), new Lazy<IProtectedWriteService>(() => ProtectedWrite.Object), Grant.Object);
 		}
 
 		[Test]
@@ -184,6 +190,38 @@ namespace Resgrid.Tests.Protocols
 			h.Audits.Should().ContainSingle(a => a.Type == AuditLogTypes.ProtocolDeterminantOverridden);
 
 			(await h.Service().OverrideDeterminantAsync(DepartmentId, 55, 999, "X", "y", "sup")).Outcome.Should().Be(ProtocolCaseUpdateOutcomes.NotFound);
+		}
+
+		[Test]
+		public async Task An_override_raises_determinant_changed_once_without_the_reason_and_a_refused_or_failed_one_raises_nothing()
+		{
+			// Round 7C, workflow trigger 254.
+			var h = new CaseHarness();
+			var raised = new List<Resgrid.Model.Events.DispatchCaseWorkflowEvent>();
+			h.Events.Setup(x => x.SendMessage(It.IsAny<Resgrid.Model.Events.DispatchCaseWorkflowEvent>())).Callback((Resgrid.Model.Events.DispatchCaseWorkflowEvent e) => raised.Add(e));
+			var before = h.Row.Determinant;
+
+			(await h.Service().OverrideDeterminantAsync(DepartmentId, 55, 70, "MED-A1", "", "sup")).Outcome.Should().Be(ProtocolCaseUpdateOutcomes.OverrideReasonRequired);
+			var stored = (h.Row.Determinant, h.Row.CaseJson);
+			h.CallProtocols.Setup(x => x.TryUpdateCaseAsync(DepartmentId, 70, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			(await h.Service().OverrideDeterminantAsync(DepartmentId, 55, 70, "MED-A1", "Patient now breathing", "sup")).Outcome.Should().Be(ProtocolCaseUpdateOutcomes.NotFound);
+			raised.Should().BeEmpty();
+
+			// The failed write stored nothing: the row reads as before.
+			(h.Row.Determinant, h.Row.CaseJson) = stored;
+			h.Row.OverrideReason = null;
+			h.CallProtocols.Setup(x => x.TryUpdateCaseAsync(DepartmentId, 70, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			(await h.Service().OverrideDeterminantAsync(DepartmentId, 55, 70, "MED-A1", "Patient now breathing", "sup")).Outcome.Should().Be(ProtocolCaseUpdateOutcomes.Done);
+
+			raised.Should().ContainSingle();
+			var changed = raised.Single();
+			changed.Trigger.Should().Be(WorkflowTriggerEventType.CallDeterminantChanged);
+			(changed.CallId, changed.CallProtocolId, changed.ProtocolId).Should().Be((55, 70, ProtocolId));
+			changed.Determinant.Should().Be("MED-A1");
+			changed.PreviousDeterminant.Should().Be(before);
+			changed.Overridden.Should().BeTrue();
+			changed.UserId.Should().Be("sup");
+			Newtonsoft.Json.JsonConvert.SerializeObject(changed).Should().NotContain("breathing", "the override reason can carry what the caller said");
 		}
 
 		[Test]
@@ -241,6 +279,8 @@ namespace Resgrid.Tests.Protocols
 			public readonly Mock<IIntakeConversationService> Conversations = new Mock<IIntakeConversationService>();
 			public readonly Mock<IProtocolAiSuggestionsRepository> Suggestions = new Mock<IProtocolAiSuggestionsRepository>();
 			public readonly Mock<IProtocolCaseSuggester> Suggester = new Mock<IProtocolCaseSuggester>();
+			public readonly Mock<IAiUsageMeter> Usage = new Mock<IAiUsageMeter>();
+			public readonly Mock<IAiBackgroundAdmission> Admission = new Mock<IAiBackgroundAdmission>();
 			public IReadOnlyList<ProtocolAiCandidate> Shown;
 
 			public AiHarness()
@@ -262,10 +302,16 @@ namespace Resgrid.Tests.Protocols
 					.ReturnsAsync(new ProtocolAiPick { ProtocolId = ProtocolId, Confidence = 0.9m, Rationale = "Not breathing", Answers = new Dictionary<string, string> { ["awake"] = "no", ["age"] = "sixty", ["unknown"] = "yes" } });
 				Suggestions.Setup(x => x.SaveOrUpdateAsync(It.IsAny<ProtocolAiSuggestion>(), It.IsAny<CancellationToken>(), true))
 					.ReturnsAsync((ProtocolAiSuggestion s, CancellationToken _, bool __) => { s.ProtocolAiSuggestionId = 77; return s; });
+				// Round 7A: the suggestion is charged to the Enhanced AI meter (the shared slot and the monthly budget).
+				Usage.Setup(x => x.RemainingAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(1_000_000);
+				Admission.Setup(x => x.ReserveBackgroundAsync(DepartmentId, ProtocolAiSuggestionService.Feature, It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<int>(),
+					It.IsAny<CancellationToken>(), It.IsAny<int?>()))
+					.ReturnsAsync((int d, string f, string t, DateTime n, int tokens, int limit, CancellationToken ct, int? p) => new AiUsageReservation("r1", DepartmentId, "background", tokens, DateTime.UtcNow.AddMinutes(2)));
 			}
 
 			public ProtocolAiSuggestionService Service() => new ProtocolAiSuggestionService(Access.Object, Protection.Object, Protocols.Object, Cases.Object,
-				new Lazy<ICallsService>(() => Calls.Object), new Lazy<IIntakeConversationService>(() => Conversations.Object), Suggestions.Object, Suggester.Object, Mock.Of<IEventAggregator>());
+				new Lazy<ICallsService>(() => Calls.Object), new Lazy<IIntakeConversationService>(() => Conversations.Object), Suggestions.Object, Suggester.Object, Mock.Of<IEventAggregator>(),
+				Usage.Object, Admission.Object, TimeProvider.System);
 		}
 
 		[Test]
@@ -334,6 +380,60 @@ namespace Resgrid.Tests.Protocols
 			(await h.Service().GetConfirmableAsync(DepartmentId, 55, 3, 9)).Should().BeNull("another protocol");
 			(await h.Service().GetConfirmableAsync(DepartmentId, 55, ProtocolId, 10)).Should().BeNull("already confirmed");
 			(await h.Service().GetConfirmableAsync(DepartmentId, 55, ProtocolId, 11)).Should().BeNull("unknown");
+		}
+
+		[Test]
+		public async Task A_suggestion_is_charged_to_the_enhanced_ai_meter_with_the_tokens_the_model_used()
+		{
+			var h = new AiHarness();
+			h.Suggester.Setup(x => x.SuggestAsync(DepartmentId, It.IsAny<string>(), It.IsAny<IReadOnlyList<ProtocolAiCandidate>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new ProtocolAiPick { ProtocolId = ProtocolId, Confidence = 0.9m, Answers = new Dictionary<string, string> { ["awake"] = "no" }, InputTokens = 700, OutputTokens = 60 });
+
+			(await h.Service().SuggestAsync(DepartmentId, 55, "dispatcher")).Outcome.Should().Be(ProtocolAiSuggestionOutcomes.Suggested);
+
+			h.Admission.Verify(x => x.ReserveBackgroundAsync(DepartmentId, "ProtocolSuggestion", It.IsAny<string>(), It.IsAny<DateTime>(), ProtocolAiSuggestionService.ReservedTokens,
+				It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<int?>()), Times.Once);
+			h.Usage.Verify(x => x.CompleteAsync(It.Is<AiUsageReservation>(r => r.Id == "r1"), 760, "Answered", It.IsAny<CancellationToken>()), Times.Once);
+
+			// Failed inference is reserved but not charged (the operator's outage, not the department's).
+			var down = new AiHarness();
+			down.Suggester.Setup(x => x.SuggestAsync(DepartmentId, It.IsAny<string>(), It.IsAny<IReadOnlyList<ProtocolAiCandidate>>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new TimeoutException());
+			(await down.Service().SuggestAsync(DepartmentId, 55, "d")).Outcome.Should().Be(ProtocolAiSuggestionOutcomes.Unavailable);
+			down.Usage.Verify(x => x.CompleteAsync(It.IsAny<AiUsageReservation>(), 0, "Unavailable", It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task Over_the_monthly_cap_there_is_no_suggestion_and_no_model_call_never_an_error()
+		{
+			var h = new AiHarness();
+			h.Usage.Setup(x => x.RemainingAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(100);
+
+			var result = await h.Service().SuggestAsync(DepartmentId, 55, "d");
+
+			result.Outcome.Should().Be(ProtocolAiSuggestionOutcomes.BudgetExhausted, "the dispatcher picks by hand with the trigger matches");
+			result.Suggestion.Should().BeNull();
+			h.Suggester.Verify(x => x.SuggestAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<ProtocolAiCandidate>>(), It.IsAny<CancellationToken>()), Times.Never);
+			h.Admission.Verify(x => x.ReserveBackgroundAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>(), It.IsAny<int?>()), Times.Never);
+			h.Suggestions.Verify(x => x.SaveOrUpdateAsync(It.IsAny<ProtocolAiSuggestion>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public void The_llm_suggester_reports_its_tokens_even_for_an_unusable_reply()
+		{
+			// The tokens of a reply that is no pick are still spent: the suggester returns a zero-confidence pick that carries them.
+			var llm = new Mock<Resgrid.Llm.ILlmClient>();
+			llm.Setup(x => x.CompleteAsync(It.IsAny<Resgrid.Llm.LlmRequest>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new Resgrid.Llm.LlmResult("no tool", Array.Empty<Resgrid.Llm.LlmToolCall>(), 321, 12, "stop"));
+			var suggester = new LlmProtocolCaseSuggester(new Lazy<Resgrid.Llm.ILlmClient>(() => llm.Object));
+
+			var pick = suggester.SuggestAsync(DepartmentId, "text", new List<ProtocolAiCandidate>(), CancellationToken.None).GetAwaiter().GetResult();
+
+			pick.Should().NotBeNull();
+			pick.Confidence.Should().Be(0m);
+			(pick.InputTokens + pick.OutputTokens).Should().Be(333);
+			ProtocolAiSuggestionService.Validate(pick, new List<ProtocolAiCandidate>()).Should().BeNull("a zero-confidence pick is no match");
 		}
 
 		[Test]

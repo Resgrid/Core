@@ -20,6 +20,12 @@ namespace Resgrid.Services.Wellness
 	/// rest as a workload caller when the department enforces protection, reads reveal for the caller's grant and show REDACTED
 	/// otherwise. Audit entries carry ids, categories and statuses, never a protected value. Nothing here is indexed for search or
 	/// sent to any AI feature (§16.3).
+	/// <para>
+	/// Workforce Pro (owner 2026-11-26): every read and write first asks the Workforce Pro gate (<see cref="WorkforceProAccess"/>). With the
+	/// Workforce.Pro flag off everything refuses (the routes 404); offered but not licensed, records stay readable by those already permitted
+	/// (a member always reads and exports their own) and nothing is created, edited or deleted; licensed, a record about a member is created
+	/// or edited only while that member holds a seat. The unattended GDPR archive and the retention erasure are legal duties and never gated.
+	/// </para>
 	/// </summary>
 	public partial class MemberWellnessService : IMemberWellnessService
 	{
@@ -44,6 +50,9 @@ namespace Resgrid.Services.Wellness
 		private readonly Lazy<IProtectedReadService> _protectedRead;
 		private readonly IProtectedGrantContext _grant;
 		private readonly IEventAggregator _events;
+		private readonly IUserProfileService _userProfiles;
+		private readonly WellnessRoleResolver _roleResolver;
+		private readonly IWorkforceProAccessService _workforcePro;
 
 		public MemberWellnessService(IRmsResponderExposuresRepository exposures, IRmsCallExposureFlagsRepository callFlags,
 			IRmsResponderScreeningFlagsRepository screeningFlags, IRmsRecordWorkAssignmentsRepository assignments, IRmsRecordLegalHoldsRepository legalHolds,
@@ -51,8 +60,10 @@ namespace Resgrid.Services.Wellness
 			Lazy<ICertificationService> certificationService, ICallsService callsService, Lazy<IAuthorizationService> authorizationService,
 			Lazy<IActionLogsService> actionLogsService, Lazy<IUnitsService> unitsService, Lazy<ICheckInTimerService> checkInService,
 			Lazy<ICommunicationService> communicationService, Lazy<IProtectedWriteService> protectedWrite, Lazy<IProtectedReadService> protectedRead,
-			IProtectedGrantContext grant, IEventAggregator events)
+			IProtectedGrantContext grant, IEventAggregator events, IUserProfileService userProfiles, IWorkforceProAccessService workforcePro)
 		{
+			_workforcePro = workforcePro;
+			_userProfiles = userProfiles;
 			_exposures = exposures;
 			_callFlags = callFlags;
 			_screeningFlags = screeningFlags;
@@ -72,6 +83,7 @@ namespace Resgrid.Services.Wellness
 			_protectedRead = protectedRead;
 			_grant = grant;
 			_events = events;
+			_roleResolver = new WellnessRoleResolver(departmentsService, rolesService, certificationService);
 		}
 
 		#region Access
@@ -80,15 +92,18 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<WellnessSettings> SaveSettingsAsync(int departmentId, string adminUserId, WellnessSettings settings, CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			if (!await IsDepartmentAdminAsync(departmentId, adminUserId))
 				throw new UnauthorizedAccessException("Only a department administrator may change the wellness settings.");
+			// Read-only while Workforce Pro is not licensed: the settings stay as they are.
+			await RequireWritableAsync(departmentId);
 
 			var stored = (settings ?? new WellnessSettings()).Normalized();
-			if (stored.WellnessOfficerRoleId > 0 || stored.DesignatedOfficerRoleId > 0)
+			if (stored.WellnessOfficerRoleId > 0 || stored.DesignatedOfficerRoleId > 0 || stored.PeerTeamRoleId > 0)
 			{
 				var roles = await _rolesService.GetRolesForDepartmentAsync(departmentId) ?? new List<PersonnelRole>();
-				// WL1: the designated officer role is checked like the wellness officer role.
-				foreach (var roleId in new[] { stored.WellnessOfficerRoleId, stored.DesignatedOfficerRoleId }.Where(id => id > 0))
+				// WL1: the designated officer role is checked like the wellness officer role; so is the peer support role (2026-11-26).
+				foreach (var roleId in new[] { stored.WellnessOfficerRoleId, stored.DesignatedOfficerRoleId, stored.PeerTeamRoleId }.Where(id => id > 0))
 					if (!roles.Any(r => r.PersonnelRoleId == roleId))
 						throw new MemberWellnessException("role_not_found");
 			}
@@ -99,8 +114,24 @@ namespace Resgrid.Services.Wellness
 				if (type == null || type.DepartmentId != departmentId)
 					throw new MemberWellnessException("certification_type_not_found");
 			}
+			// The officers' own certification types (2026-11-26) are person-scoped types of the department that still exist.
+			foreach (var typeId in new[] { stored.WellnessOfficerCertificationTypeId, stored.DesignatedOfficerCertificationTypeId }.Where(id => id > 0))
+				if (await _roleResolver.TypeAsync(departmentId, typeId) == null)
+					throw new MemberWellnessException("certification_type_not_found");
 
 			var before = await GetSettingsAsync(departmentId);
+			// Turning the switch on must not leave an officer role empty: logs and exposure reports would have nobody to go to.
+			if (stored.RequireCurrentCertification && before?.RequireCurrentCertification != true)
+			{
+				foreach (var kind in new[] { WellnessRoleKinds.WellnessOfficer, WellnessRoleKinds.DesignatedOfficer })
+				{
+					if (!WellnessRoleRules.RequiresCertification(stored, kind) || WellnessRoleRules.RoleIdFor(stored, kind) <= 0)
+						continue;
+					var roster = await _roleResolver.RosterAsync(departmentId, stored, kind);
+					if (!roster.CertificationTypeMissing && roster.ActingCount == 0)
+						throw new MemberWellnessException("certification_switch_leaves_no_officer");
+				}
+			}
 			await _settingsService.SetWellnessSettingsAsync(departmentId, stored, cancellationToken);
 			Audit(departmentId, adminUserId, AuditLogTypes.WellnessSettingsChanged, JsonConvert.SerializeObject(before), JsonConvert.SerializeObject(stored));
 			return stored;
@@ -118,7 +149,10 @@ namespace Resgrid.Services.Wellness
 				if (!await IsCurrentMemberAsync(departmentId, userId))
 					return false;
 				var roles = await _rolesService.GetRolesForUserAsync(userId, departmentId) ?? new List<PersonnelRole>();
-				return roles.Any(r => r != null && r.PersonnelRoleId == settings.WellnessOfficerRoleId);
+				if (!roles.Any(r => r != null && r.PersonnelRoleId == settings.WellnessOfficerRoleId))
+					return false;
+				// 2026-11-26: with the certification switch on, the role also needs a current certification of its linked type.
+				return await _roleResolver.PassesCertificationAsync(departmentId, settings, WellnessRoleKinds.WellnessOfficer, userId);
 			}
 			catch (Exception ex)
 			{
@@ -150,17 +184,20 @@ namespace Resgrid.Services.Wellness
 			catch (Exception ex) { Logging.LogException(ex); return false; }
 		}
 
-		public async Task<List<string>> GetPeerTeamUserIdsAsync(int departmentId)
+		public Task<List<string>> GetPeerTeamUserIdsAsync(int departmentId) => GetActingMemberIdsAsync(departmentId, WellnessRoleKinds.PeerSupportTeam);
+
+		public async Task<List<string>> GetActingMemberIdsAsync(int departmentId, WellnessRoleKinds kind)
 		{
-			var settings = await GetSettingsAsync(departmentId);
-			if (settings.PeerTeamCertificationTypeId <= 0)
-				return new List<string>();
-			var type = await _certificationService.Value.GetCertificationTypeByIdAsync(settings.PeerTeamCertificationTypeId);
-			if (type == null || type.DepartmentId != departmentId || string.IsNullOrWhiteSpace(type.Code))
-				return new List<string>();
-			var holders = await _certificationService.Value.GetUsersWithValidCertificationAsync(departmentId, new[] { type.Code }) ?? new List<string>();
-			var active = await _departmentsService.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			return holders.Where(h => !string.IsNullOrWhiteSpace(h) && active.Contains(h)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			var settings = await GetSettingsAsync(departmentId) ?? new WellnessSettings();
+			return await _roleResolver.ActingMembersAsync(departmentId, settings, kind);
+		}
+
+		public async Task<List<WellnessRoleRoster>> GetRosterAsync(int departmentId, string viewerUserId)
+		{
+			await RequireReadableAsync(departmentId);
+			if (!await IsDepartmentAdminAsync(departmentId, viewerUserId) && !await IsWellnessOfficerAsync(departmentId, viewerUserId))
+				throw new UnauthorizedAccessException("The wellness roster is for department administrators and wellness officers.");
+			return await _roleResolver.RostersAsync(departmentId, await GetSettingsAsync(departmentId) ?? new WellnessSettings());
 		}
 
 		private async Task<bool> IsCurrentMemberAsync(int departmentId, string userId)
@@ -172,6 +209,18 @@ namespace Resgrid.Services.Wellness
 		}
 
 		private static bool Same(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+
+		/// <summary>The Workforce Pro gate for the department (one evaluation per request, remembered by the access service).</summary>
+		private Task<WorkforceProAccess> WorkforceProAsync(int departmentId) => _workforcePro.GetAccessAsync(departmentId);
+
+		/// <summary>Refuses unless Workforce Pro is offered to the department (flag on).</summary>
+		private async Task RequireReadableAsync(int departmentId) => (await WorkforceProAsync(departmentId)).EnsureReadable();
+
+		/// <summary>Refuses unless Workforce Pro is licensed: department-level writes (settings, call flags).</summary>
+		private async Task RequireWritableAsync(int departmentId) => (await WorkforceProAsync(departmentId)).EnsureWritable();
+
+		/// <summary>Refuses unless Workforce Pro is licensed and the record's member holds a seat.</summary>
+		private async Task RequireWritableForAsync(int departmentId, string subjectUserId) => (await WorkforceProAsync(departmentId)).EnsureWritableFor(subjectUserId);
 
 		/// <summary>The member themselves (still a current member) or a wellness officer.</summary>
 		private async Task<bool> CanReadMemberAsync(int departmentId, string viewerUserId, string memberUserId)
@@ -195,6 +244,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<MemberWellnessOverview> GetOverviewAsync(int departmentId, string viewerUserId, string memberUserId)
 		{
+			await RequireReadableAsync(departmentId);
 			if (!await CanReadMemberAsync(departmentId, viewerUserId, memberUserId))
 				throw new UnauthorizedAccessException("Exposure entries are restricted to the member and the wellness officers.");
 
@@ -219,6 +269,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<RmsResponderExposure> GetEntryAsync(int departmentId, string viewerUserId, string exposureId)
 		{
+			await RequireReadableAsync(departmentId);
 			if (string.IsNullOrWhiteSpace(exposureId))
 				return null;
 			var row = await _exposures.GetByIdForDepartmentAsync(departmentId, exposureId);
@@ -233,9 +284,11 @@ namespace Resgrid.Services.Wellness
 			if (input == null)
 				throw new ArgumentNullException(nameof(input));
 			var memberUserId = string.IsNullOrWhiteSpace(input.UserId) ? actorUserId : input.UserId.Trim();
+			await RequireReadableAsync(departmentId);
 			await RequireWriterAsync(departmentId, actorUserId, memberUserId);
 			if (!await IsCurrentMemberAsync(departmentId, memberUserId))
 				throw new MemberWellnessException("member_not_found");
+			await RequireWritableForAsync(departmentId, memberUserId);
 			await ValidateAsync(departmentId, input);
 
 			var now = DateTime.UtcNow;
@@ -369,9 +422,11 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<RmsResponderExposure> SetRemindersAsync(int departmentId, string memberUserId, string exposureId, bool remindMember, bool remindPeerTeam, CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			var row = string.IsNullOrWhiteSpace(exposureId) ? null : await _exposures.GetByIdForDepartmentAsync(departmentId, exposureId);
 			if (row == null || !Same(row.UserId, memberUserId) || !await IsCurrentMemberAsync(departmentId, memberUserId))
 				throw new UnauthorizedAccessException("Only the member chooses anniversary reminders for their own entries.");
+			await RequireWritableForAsync(departmentId, row.UserId);
 			if (!row.Counts)
 				throw new MemberWellnessException("not_confirmed");
 			if ((remindMember || remindPeerTeam) && !MemberWellnessRules.OffersAnniversaryReminders(row.Category))
@@ -391,6 +446,8 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsResponderExposure>> GetOwnEntriesForExportAsync(int departmentId, string memberUserId)
 		{
+			// Read-only and lapsed departments keep the member's own export (their access right); only the flag hides it.
+			await RequireReadableAsync(departmentId);
 			if (!await IsCurrentMemberAsync(departmentId, memberUserId))
 				throw new UnauthorizedAccessException("Only a current member exports their own entries.");
 			var rows = (await _exposures.GetForUserAsync(departmentId, memberUserId) ?? Enumerable.Empty<RmsResponderExposure>())
@@ -403,7 +460,8 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<object> BuildGdprExportAsync(string userId, int departmentId)
 		{
-			// Unattended: no grant, so a sealed value stays an envelope and the archive's sanitizer redacts it. Only the member's rows.
+			// Unattended: no grant, so a sealed value stays an envelope and the archive's sanitizer redacts it. Only the member's rows. Never gated
+			// by Workforce Pro: the member's data access right holds whatever the add-on or the flag.
 			var rows = (await _exposures.GetForUserAsync(departmentId, userId) ?? Enumerable.Empty<RmsResponderExposure>())
 				.Where(r => Same(r.UserId, userId) && r.Status != (int)ResponderExposureStatuses.Dismissed)
 				.ToList();
@@ -444,10 +502,12 @@ namespace Resgrid.Services.Wellness
 
 		private async Task<RmsResponderExposure> LoadForWriteAsync(int departmentId, string actorUserId, string exposureId)
 		{
+			await RequireReadableAsync(departmentId);
 			var row = string.IsNullOrWhiteSpace(exposureId) ? null : await _exposures.GetByIdForDepartmentAsync(departmentId, exposureId);
 			if (row == null)
 				throw new MemberWellnessException("entry_not_found");
 			await RequireWriterAsync(departmentId, actorUserId, row.UserId);
+			await RequireWritableForAsync(departmentId, row.UserId);
 			return row;
 		}
 

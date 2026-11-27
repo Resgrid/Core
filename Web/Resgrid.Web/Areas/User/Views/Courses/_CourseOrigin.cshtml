@@ -1,0 +1,44 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model CourseOriginModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* Where a course came from (T5): a starter clone's attribution, or an AI draft's source and its lessons' citations (builder only). *@
+@{
+    var origin = Model.Origin;
+    var source = string.IsNullOrWhiteSpace(origin.SourceVersion) ? origin.SourceName : origin.SourceName + " " + origin.SourceVersion;
+}
+@if (origin.IsAiDraft)
+{
+    <div class="alert alert-warning" role="note">
+        <p><i class="fa fa-magic" aria-hidden="true"></i> <strong>@localizer["Studio.OriginAiHeader"]</strong>
+            @if (!string.IsNullOrWhiteSpace(origin.SourceUrl))
+            {
+                <a href="@origin.SourceUrl">@source</a>
+            }
+            else
+            {
+                @source
+            }
+        </p>
+        <p class="m-b-none">@localizer["Studio.OriginAiCheck"]</p>
+        @if (Model.ShowCitations && Model.Citations.Count > 0)
+        {
+            <details class="m-t-xs">
+                <summary>@string.Format(localizer["Studio.OriginCitationsFormat"].Value, Model.Citations.Count)</summary>
+                <ul class="small m-b-none">
+                    @foreach (var citation in Model.Citations)
+                    {
+                        <li><strong>@citation.LessonTitle</strong>: @string.Join("; ", citation.Labels)</li>
+                    }
+                </ul>
+            </details>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info" role="note">
+        <i class="fa fa-clone" aria-hidden="true"></i> <strong>@localizer["Studio.OriginStarterHeader"]</strong> @origin.Attribution
+        <span class="rgw-sub">@string.Format(localizer["Studio.OriginLicenceFormat"].Value, origin.License == LmsStarterCourseCatalog.ResgridLicense ? localizer["Studio.LicenceResgridStarter"].Value : origin.License)</span>
+    </div>
+}

@@ -132,7 +132,9 @@ namespace Resgrid.Services.Signatures
 				signer.AuthMethod = member
 					? (signer.RequiredLevel >= (int)SignatureLevels.StepUp ? (int)SignatureSignerAuthMethods.StepUp : (int)SignatureSignerAuthMethods.Session)
 					: remote ? (int)(step.OtpChannel == SignatureSignerAuthMethods.SmsOtp ? SignatureSignerAuthMethods.SmsOtp : SignatureSignerAuthMethods.EmailOtp) : (int)SignatureSignerAuthMethods.InPerson;
-				signers.Add(await _signers.InsertAsync(signer, cancellationToken, true));
+				var inserted = await _signers.InsertAsync(signer, cancellationToken, true);
+				await ProtectSignerAsync(request, inserted, cancellationToken);
+				signers.Add(inserted);
 			}
 
 			if (remote)
@@ -334,7 +336,8 @@ namespace Resgrid.Services.Signatures
 				StatementText = request.StatementText,
 				DepartmentLevel = (int)level,
 				RequirePasskey = input.RequirePasskey,
-				SignatureRequestId = request.SignatureRequestId
+				SignatureRequestId = request.SignatureRequestId,
+				StepUpArea = input.StepUpArea
 			}, input.Proof, cancellationToken);
 
 			if (signed == null || !signed.Succeeded)
@@ -637,6 +640,9 @@ namespace Resgrid.Services.Signatures
 					if (!string.IsNullOrWhiteSpace(signer.UserId) && !SameUser(signer.UserId, actingUserId))
 						notify.Add(signer.UserId);
 					await _signers.UpdateAsync(signer, cancellationToken, true);
+					// Workflow trigger 270 once the turn is stored (TurnStartedOn is set once per step); never for the member signing right now.
+					if (!string.IsNullOrWhiteSpace(signer.UserId) && !SameUser(signer.UserId, actingUserId))
+						ContentWorkflowContext.Publish(_eventAggregator, StepAssignedEvent(request, signer, now));
 					continue;
 				}
 
@@ -657,6 +663,23 @@ namespace Resgrid.Services.Signatures
 				await NotifyStepReadyAsync(request, notify, false, cancellationToken);
 			return undeliveredLink;
 		}
+
+		/// <summary>A member's step whose turn started (270): ids, the subject, the order and role; an outside signer is never named here.</summary>
+		public static SignatureStepWorkflowEvent StepAssignedEvent(SignatureRequestRecord request, SignatureRequestSigner signer, DateTime utcNow) => new SignatureStepWorkflowEvent
+		{
+			DepartmentId = request.DepartmentId,
+			SignatureRequestId = request.SignatureRequestId,
+			SignerId = signer.SignatureRequestSignerId,
+			SubjectKind = Enum.IsDefined(typeof(SignatureSubjectKinds), request.SubjectKind) ? ((SignatureSubjectKinds)request.SubjectKind).ToString() : null,
+			SubjectId = request.SubjectId,
+			RequestTitle = request.Title,
+			StepOrder = signer.SignerOrder,
+			SignerRole = Enum.IsDefined(typeof(SignatureSignerRoles), signer.Role) ? ((SignatureSignerRoles)signer.Role).ToString() : null,
+			UserId = signer.UserId,
+			RequestedByUserId = request.CreatedByUserId,
+			ExpiresOn = request.ExpiresOn,
+			OccurredOn = utcNow
+		};
 
 		public async Task<int> RemindDueAsync(DateTime utcNow, int batchSize, CancellationToken cancellationToken = default)
 		{

@@ -1,0 +1,170 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@model Resgrid.Web.Models.LmsLearn.LmsLearnMyModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    My learning: the learner's courses, class places, transcript with certificates, and their own data (download, delete). Only their own:
+    every read is keyed by the signed-in learner's id.
+*@
+@{
+    ViewData["Title"] = localizer["Portal.MyLearning"].Value;
+    var key = ViewData["PortalKey"] as string;
+    var branding = ViewData["Branding"] as LmsLearnerPortalBranding;
+    var culture = CultureInfo.CurrentCulture;
+    var now = DateTime.UtcNow;
+}
+<h1 class="h3">@localizer["Portal.MyLearning"] <small>@Model.Learner.Name</small></h1>
+
+<section class="rgl-panel" aria-labelledby="rgl-my-courses">
+    <h2 id="rgl-my-courses"><i class="fa fa-play-circle" aria-hidden="true"></i> @localizer["Portal.MyCourses"]</h2>
+    @if (Model.Mine.Courses.Count == 0)
+    {
+        <p class="text-muted">@localizer["Portal.NoLearning"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgl-table">
+                <thead><tr><th scope="col">@localizer["Course"]</th><th scope="col">@localizer["Status"]</th><th scope="col"><span class="sr-only">@localizer["Actions"]</span></th></tr></thead>
+                <tbody>
+                    @foreach (var course in Model.Mine.Courses)
+                    {
+                        <tr>
+                            <td>@(course.Version?.Title ?? course.Course.Title)</td>
+                            <td>@(course.Enrollment.IsOpen ? course.Enrollment.ProgressPercent.ToString(culture) + "%" : localizer["Portal.Completed"].Value)</td>
+                            <td class="text-right">
+                                @if (course.CanRun || !course.Enrollment.IsOpen)
+                                {
+                                    <a class="btn btn-rgl btn-xs" href="~/Learn/@key/Play/@course.Enrollment.LmsEnrollmentId"><i class="fa fa-play" aria-hidden="true"></i> @(course.Enrollment.IsOpen ? localizer["Portal.Continue"] : localizer["Portal.Open"])</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+<section class="rgl-panel" aria-labelledby="rgl-my-classes">
+    <h2 id="rgl-my-classes"><i class="fa fa-users" aria-hidden="true"></i> @localizer["Portal.MyClasses"]</h2>
+    @if (Model.Mine.Classes.Count == 0)
+    {
+        <p class="text-muted">@localizer["Portal.NoLearning"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgl-table">
+                <thead><tr><th scope="col">@localizer["Classes"]</th><th scope="col">@localizer["Portal.When"]</th><th scope="col">@localizer["Status"]</th><th scope="col"><span class="sr-only">@localizer["Actions"]</span></th></tr></thead>
+                <tbody>
+                    @foreach (var item in Model.Mine.Classes)
+                    {
+                        <tr>
+                            <td>@item.Session.Title @if (!string.IsNullOrWhiteSpace(item.Session.Location)) { <div class="rgl-meta">@item.Session.Location</div> }</td>
+                            <td>@((branding?.Local(item.Session.StartsOn) ?? item.Session.StartsOn).ToString("f", culture))</td>
+                            <td>
+                                @localizer["Roster." + (LmsClassEnrollmentStatuses)item.Mine.Status]
+                                @if (item.WaitlistPosition.HasValue)
+                                {
+                                    <div class="rgl-meta">@string.Format(culture, localizer["Portal.WaitlistPosition"].Value, item.WaitlistPosition.Value)</div>
+                                }
+                                @if (item.Mine.Attendance != (int)LmsClassAttendanceStates.Unmarked)
+                                {
+                                    <div class="rgl-meta">@localizer["Attendance." + (LmsClassAttendanceStates)item.Mine.Attendance]</div>
+                                }
+                            </td>
+                            <td class="text-right">
+                                @if (item.Mine.IsOnRoster && item.Session.IsScheduled && item.Session.StartsOn > now)
+                                {
+                                    <form method="post" action="~/Learn/@key/Class/@item.Session.LmsClassSessionId/Withdraw" data-submit-once>
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-default btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Portal.Withdraw"]</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+<section class="rgl-panel" aria-labelledby="rgl-preferences">
+    <h2 id="rgl-preferences"><i class="fa fa-envelope-o" aria-hidden="true"></i> @localizer["Portal.Preferences"]</h2>
+    <form method="post" action="~/Learn/@key/Preferences" data-submit-once>
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <label for="rgl-language">@localizer["Portal.EmailLanguage"]</label>
+            <select id="rgl-language" name="language" class="form-control" style="max-width: 320px;">
+                <option value="">@localizer["Portal.EmailLanguageDefault"]</option>
+                @foreach (var code in Model.Languages)
+                {
+                    var name = CultureInfo.GetCultureInfo(code).NativeName;
+                    if (string.Equals(Model.Learner.Language, code, StringComparison.OrdinalIgnoreCase))
+                    {
+                        <option value="@code" selected>@name</option>
+                    }
+                    else
+                    {
+                        <option value="@code">@name</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="remindersOff" value="true" @(Model.Learner.RemindersOptOut ? "checked" : null) />
+                @localizer["Portal.RemindersOff"]
+            </label>
+            <input type="hidden" name="remindersOff" value="false" />
+            <span class="help-block">@localizer["Portal.RemindersOffHelp"]</span>
+        </div>
+        <button type="submit" class="btn btn-default"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Portal.SavePreferences"]</button>
+    </form>
+</section>
+
+<section class="rgl-panel" aria-labelledby="rgl-transcript">
+    <h2 id="rgl-transcript"><i class="fa fa-id-card-o" aria-hidden="true"></i> @localizer["Portal.Transcript"]</h2>
+    @if (Model.Mine.Records.Count == 0)
+    {
+        <p class="text-muted">@localizer["Portal.NoLearning"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgl-table">
+                <thead><tr><th scope="col">@localizer["Portal.CompletedOn"]</th><th scope="col">@localizer["Course"]</th><th scope="col">@localizer["Portal.Hours"]</th><th scope="col"><span class="sr-only">@localizer["Actions"]</span></th></tr></thead>
+                <tbody>
+                    @foreach (var record in Model.Mine.Records)
+                    {
+                        <tr>
+                            <td>@((branding?.Local(record.CompletedOn) ?? record.CompletedOn).ToString("d", culture))</td>
+                            <td>@record.Title</td>
+                            <td>@record.Hours.ToString("0.##", culture)</td>
+                            <td class="text-right"><a class="btn btn-white btn-xs" href="~/Learn/@key/Certificate/@record.LearningRecordId"><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["Portal.Certificate"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+<section class="rgl-panel" aria-labelledby="rgl-mydata">
+    <h2 id="rgl-mydata"><i class="fa fa-user-secret" aria-hidden="true"></i> @localizer["Portal.MyData"]</h2>
+    <partial name="_PrivacyNotice" model="true" />
+    <p><a class="btn btn-default" href="~/Learn/@key/MyData"><i class="fa fa-download" aria-hidden="true"></i> @localizer["Portal.ExportMine"]</a></p>
+    <details>
+        <summary>@localizer["Portal.EraseMine"]</summary>
+        <p class="m-t-sm">@localizer["Portal.EraseMineHelp"]</p>
+        <form method="post" action="~/Learn/@key/MyData/Erase" data-submit-once class="form-inline">
+            @Html.AntiForgeryToken()
+            <label for="rgl-erase-password" class="sr-only">@localizer["Portal.Password"]</label>
+            <input id="rgl-erase-password" name="password" type="password" class="form-control" autocomplete="current-password" placeholder="@localizer["Portal.Password"]" required />
+            <button type="submit" class="btn btn-danger"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Portal.EraseMine"]</button>
+        </form>
+    </details>
+</section>

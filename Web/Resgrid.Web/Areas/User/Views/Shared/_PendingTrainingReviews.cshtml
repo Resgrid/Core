@@ -1,0 +1,43 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model PendingTrainingReviewsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> text
+@*
+    Round 9B: training hours submissions on home and My Training as rgw-next-action items: those waiting for this reviewer (count badge, the
+    oldest three) and the member's own that a reviewer sent back for more information.
+*@
+@if (Model.AwaitingCount > 0)
+{
+    <div class="rgw-next-action rg-pending-training-reviews" role="region" aria-label="@text["Next.ReviewsHeader"]">
+        <strong><i class="fa fa-inbox" aria-hidden="true"></i> @text["Next.ReviewsHeader"] <span class="badge badge-warning">@Model.AwaitingCount</span></strong>
+        <ul class="list-unstyled m-b-none m-t-xs">
+            @foreach (var record in Model.Waiting)
+            {
+                <li class="m-b-xs">
+                    <a asp-area="User" asp-controller="TrainingReviews" asp-action="Review" asp-route-id="@record.LearningRecordId">@record.Title</a>
+                    <span class="text-muted">@Model.NameOf(record.UserId) · @string.Format(text["Hours.Value"].Value, LearningRecordPresentation.Hours(record.Hours))</span>
+                    <span class="rgw-progress-honest">@string.Format(text["Next.WaitingSince"].Value, TrainingStatePresentation.LocalDate(TrainingSubmissionRules.WaitingSince(record), Model.Department))</span>
+                </li>
+            }
+        </ul>
+        <a asp-area="User" asp-controller="TrainingReviews" asp-action="Index">@text["Next.ReviewsAll"]</a>
+    </div>
+}
+@if (Model.InfoNeeded.Count > 0)
+{
+    <div class="rgw-next-action rg-training-info-needed" role="region" aria-label="@text["Next.InfoHeader"]">
+        <strong><i class="fa fa-question-circle" aria-hidden="true"></i> @text["Next.InfoHeader"] <span class="badge badge-info">@Model.InfoNeeded.Count</span></strong>
+        <ul class="list-unstyled m-b-none m-t-xs">
+            @foreach (var record in Model.InfoNeeded)
+            {
+                <li class="m-b-xs">
+                    <a asp-area="User" asp-controller="TrainingReviews" asp-action="Submission" asp-route-id="@record.LearningRecordId">@record.Title</a>
+                    @if (!string.IsNullOrWhiteSpace(record.ReviewNote))
+                    {
+                        <span class="text-muted">@record.ReviewNote</span>
+                    }
+                </li>
+            }
+        </ul>
+    </div>
+}

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	/// <summary>Sealed documents (S1, M0371). Every department read starts at the department; worker reads are due-work queries.</summary>
+	/// <summary>Sealed documents (S1, M0356). Every department read starts at the department; worker reads are due-work queries.</summary>
 	public interface ISealedDocumentsRepository : IRepository<SealedDocument>
 	{
 		Task<SealedDocument> GetByIdForDepartmentAsync(int departmentId, int sealedDocumentId);
@@ -29,7 +29,7 @@ namespace Resgrid.Model.Repositories
 		Task ReleaseAsync(int sealedDocumentId, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>Pending seal inputs (S1, M0371). Read one at a time, never in a list.</summary>
+	/// <summary>Pending seal inputs (S1, M0356). Read one at a time, never in a list.</summary>
 	public interface ISealedDocumentInputsRepository : IRepository<SealedDocumentInput>
 	{
 		Task<SealedDocumentInput> GetForDocumentAsync(int departmentId, int sealedDocumentId);
@@ -37,7 +37,7 @@ namespace Resgrid.Model.Repositories
 		Task<int> DeleteForDocumentAsync(int departmentId, int sealedDocumentId, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>Signature requests (S2, M0372).</summary>
+	/// <summary>Signature requests (S2, M0357).</summary>
 	public interface ISignatureRequestsRepository : IRepository<SignatureRequestRecord>
 	{
 		Task<SignatureRequestRecord> GetByIdForDepartmentAsync(int departmentId, int signatureRequestId);
@@ -61,7 +61,7 @@ namespace Resgrid.Model.Repositories
 		Task<List<SignatureRequestRecord>> GetByIdsAsync(int departmentId, IEnumerable<int> signatureRequestIds);
 	}
 
-	/// <summary>Signers of a request (S2, M0372).</summary>
+	/// <summary>Signers of a request (S2, M0357).</summary>
 	public interface ISignatureRequestSignersRepository : IRepository<SignatureRequestSigner>
 	{
 		Task<List<SignatureRequestSigner>> GetForRequestAsync(int departmentId, int signatureRequestId);
@@ -75,6 +75,28 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Consumes a link token once: sets LinkTokenUsedOn and the session only while the token is unused and unexpired.</summary>
 		Task<bool> ConsumeLinkTokenAsync(int signatureRequestSignerId, string linkTokenHash, string sessionHash, DateTime sessionExpiresOn, DateTime utcNow, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Security review M4 (2026-11-25): takes one one-time-code attempt in a single conditional statement (OtpAttempts + 1) while the
+		/// signer is unverified, still holds this unexpired code and is under <paramref name="maxAttempts"/>. Called before the code is compared,
+		/// so parallel posts can never compare more than the cap. True when this call took an attempt.
+		/// </summary>
+		Task<bool> TryCountOtpAttemptAsync(int signatureRequestSignerId, string otpHash, int maxAttempts, DateTime utcNow, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Security review M4: records a verified code (OtpVerifiedOn, the code wiped, Pending/Opened becomes Verified), touching only those
+		/// columns and only while the signer still holds this code unverified. True when this call recorded it.
+		/// </summary>
+		Task<bool> MarkOtpVerifiedAsync(int signatureRequestSignerId, string otpHash, DateTime utcNow, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Security review M4: stores a newly sent code (hash, expiry, attempts back to 0, sent time, channel), touching only those columns and
+		/// only while the signer is unverified, so a send racing a verification can never undo it. True when this call stored it.
+		/// </summary>
+		Task<bool> IssueOtpAsync(int signatureRequestSignerId, string otpHash, DateTime expiresOn, DateTime sentOn, int channel, CancellationToken cancellationToken = default);
+
+		/// <summary>Security review M4: wipes this code once its attempts reached the cap (a new one must be sent); never touches a verified signer.</summary>
+		Task WipeExhaustedOtpAsync(int signatureRequestSignerId, string otpHash, int maxAttempts, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// S3: the member steps named for the user that are still pending in the department's open (unexpired) requests. Whether it is
@@ -92,19 +114,19 @@ namespace Resgrid.Model.Repositories
 		Task<bool> ClaimReminderAsync(int signatureRequestSignerId, int expectedReminderCount, DateTime? nextReminderOn, DateTime utcNow, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>In-person captures (S2, M0373).</summary>
+	/// <summary>In-person captures (S2, M0358).</summary>
 	public interface ISignatureCapturesRepository : IRepository<SignatureCapture>
 	{
 		Task<List<SignatureCapture>> GetForRequestAsync(int departmentId, int signatureRequestId);
 	}
 
-	/// <summary>Department e-sign platform accounts (S2, M0374).</summary>
+	/// <summary>Department e-sign platform accounts (S2, M0359).</summary>
 	public interface IESignProviderAccountsRepository : IRepository<ESignProviderAccount>
 	{
 		Task<ESignProviderAccount> GetForDepartmentAsync(int departmentId, int providerKind);
 	}
 
-	/// <summary>Webhook hints (S2, M0374), idempotent by provider event id.</summary>
+	/// <summary>Webhook hints (S2, M0359), idempotent by provider event id.</summary>
 	public interface IESignWebhookEventsRepository : IRepository<ESignWebhookEvent>
 	{
 		/// <summary>Insert-if-absent (ON CONFLICT DO NOTHING / UPDLOCK, HOLDLOCK). True when this call inserted the row.</summary>

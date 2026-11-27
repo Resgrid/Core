@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
-	/// <summary>What a protocol version's content is (ProtocolVersions.ContentKind, M0353). Persisted: append only.</summary>
+	/// <summary>What a protocol version's content is (ProtocolVersions.ContentKind, M0347). Persisted: append only.</summary>
 	public enum ProtocolVersionContentKinds
 	{
 		/// <summary>Authored content: ContentJson blocks rendered to sanitized ContentHtml; the hash is of that HTML.</summary>
@@ -64,7 +64,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// The primary file of a document-backed protocol version (P1 R-P5, M0353): one per version, immutable once the version leaves
+	/// The primary file of a document-backed protocol version (P1 R-P5, M0347): one per version, immutable once the version leaves
 	/// draft. The bytes are only ever loaded by the one authorized file endpoint and by hashing; list reads select metadata.
 	/// </summary>
 	[Table("ProtocolVersionFiles")]
@@ -125,7 +125,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// The text extraction of one file (a version's primary file or an attachment, M0353): its status and, when extracted, its
+	/// The text extraction of one file (a version's primary file or an attachment, M0347): its status and, when extracted, its
 	/// pages in ProtocolFileTextPages (page-numbered so the knowledge index can chunk by page). One row per file.
 	/// </summary>
 	[Table("ProtocolFileTexts")]
@@ -188,7 +188,7 @@ namespace Resgrid.Model
 		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
 	}
 
-	/// <summary>One page of a file's extracted text (M0353). Plain text, never markup.</summary>
+	/// <summary>One page of a file's extracted text (M0347). Plain text, never markup.</summary>
 	[Table("ProtocolFileTextPages")]
 	public class ProtocolFileTextPage : IEntity
 	{

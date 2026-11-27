@@ -104,6 +104,12 @@ namespace Resgrid.Web.Areas.User.Models.TwoFactor
 		/// <summary>The guarded action's scope, as the guard named it (a display hint; every command checks it again).</summary>
 		public string Scope { get; set; }
 
+		/// <summary>
+		/// The password / provider confirmation page for the same held submission, when the department's step-up rule for the guarded area
+		/// allows it (owner decision 2026-11-26); null otherwise. A display link: the guard decides again on return.
+		/// </summary>
+		public string ReauthenticateUrl { get; set; }
+
 		/// <summary>The department being entered, when this verification is for entering it (plan section 7.6 row 5).</summary>
 		public int? EntryDepartmentId { get; set; }
 

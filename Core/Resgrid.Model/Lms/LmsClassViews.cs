@@ -56,6 +56,8 @@ namespace Resgrid.Model.Lms
 		public bool OnShift { get; set; }
 		/// <summary>The member is no longer active (left, disabled or hidden).</summary>
 		public bool Inactive { get; set; }
+		/// <summary>An external learner (T5), not a department member.</summary>
+		public bool IsExternal { get; set; }
 		/// <summary>A calendar check-in on the session's calendar item.</summary>
 		public CalendarItemCheckIn CalendarCheckIn { get; set; }
 		/// <summary>The hours a sign-off now would credit.</summary>

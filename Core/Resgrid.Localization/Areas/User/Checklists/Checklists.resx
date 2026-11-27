@@ -159,6 +159,9 @@
   <data name="Author" xml:space="preserve">
     <value>Author</value>
   </data>
+  <data name="FormerMember" xml:space="preserve">
+    <value>Former member</value>
+  </data>
   <data name="Submitted" xml:space="preserve">
     <value>Submitted</value>
   </data>

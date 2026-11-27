@@ -15,7 +15,7 @@ namespace Resgrid.Model.Lms
 
 	/// <summary>
 	/// The starter lesson plans (§13 T4 item 5, R-C6) for the sessions departments document most carefully: live-fire evolutions (the
-	/// burn-plan checks, roles and ratios a department records), emergency vehicle operation (hours and road miles), SCBA proficiency,
+	/// burn-plan checks, roles and ratios a department records), emergency vehicle operation (hours and distance driven), SCBA proficiency,
 	/// annual hose, ladder and pump evolutions, and a physical ability test of timed stations. Written by Resgrid as structure and
 	/// checklists in plain language; they paraphrase no standard. Applying one makes a department draft the department then edits.
 	/// </summary>
@@ -56,14 +56,14 @@ namespace Resgrid.Model.Lms
 					Objectives = { "Complete a pre-trip inspection of the apparatus", "Back the apparatus with a spotter using agreed signals",
 						"Drive a serpentine and a confined-space turnaround without touching a cone", "Clear an intersection safely in emergency mode", "Stop smoothly from speed in a marked distance" },
 					Roles = { "Lead driving instructor", "Spotters", "Course safety officer" },
-					Materials = { "Traffic cones and a measuring wheel", "Vehicle inspection check sheet", "Driver log for hours behind the wheel and road miles" },
+					Materials = { "Traffic cones and a measuring wheel", "Vehicle inspection check sheet", "Driver log for hours behind the wheel and distance driven" },
 					Props = { "Closed driving course", "Apparatus to be driven" },
 					StudentsPerInstructor = 2,
 					DurationMinutes = 180,
 					SafetyPlan = "The course is closed to other traffic. Course speeds are set before the session and briefed. Seatbelts are worn by everyone on board. Backing always uses a spotter in view of the driver's mirror; the driver stops whenever the spotter is out of sight.",
 					PreBriefChecklist = { "Pre-trip inspection completed and signed", "Course laid out and measured", "Spotter signals briefed", "Course speeds briefed", "Seatbelts on for everyone on board",
-						"Driver log ready to record hours and road miles" },
-					Notes = "Record for each driver the hours behind the wheel and the road miles driven."
+						"Driver log ready to record hours and distance driven" },
+					Notes = "Record for each driver the hours behind the wheel and the distance driven."
 				}
 			},
 			new LmsLessonPlanStarter
@@ -152,10 +152,97 @@ namespace Resgrid.Model.Lms
 						"EMS standing by" },
 					Notes = "Stations: stair climb with weight, hose drag, equipment carry, ladder raise and extension, forcible entry, search, rescue drag, ceiling pull. Set the times per station in the department's policy."
 				}
+			},
+			// Round 9C: starters for workplaces, industry, search and rescue, security and law enforcement.
+			new LmsLessonPlanStarter
+			{
+				Key = "evacuation-drill",
+				Title = "Evacuation drill",
+				Content = new LmsLessonPlanContent
+				{
+					Objectives = { "Everyone leaves by the nearest safe exit when the alarm sounds", "Wardens sweep their areas and report them clear",
+						"Everyone is accounted for at the assembly point", "People who need help to leave are assisted as planned" },
+					Roles = { "Drill coordinator", "Area wardens", "Assembly point lead", "Observers at exits" },
+					Materials = { "Warden vests or armbands", "Staff and visitor lists", "Stopwatch and observation sheets" },
+					Props = { "Blocked-exit signs for the scenario" },
+					StudentsPerInstructor = 25,
+					DurationMinutes = 45,
+					SafetyPlan = "Tell building management, the alarm monitoring company and anyone who could mistake the drill for a real emergency beforehand. Nobody uses lifts. Stop the drill at once if someone is hurt or a real emergency starts.",
+					PreBriefChecklist = { "Alarm monitoring company told about the drill", "Wardens briefed on their areas", "Observers placed at the exits", "Plan for people who need help to leave confirmed" },
+					Notes = "Record the time to clear the building and to account for everyone, what the observers saw and what will change before the next drill."
+				}
+			},
+			new LmsLessonPlanStarter
+			{
+				Key = "confined-space-rescue-drill",
+				Title = "Confined space rescue drill",
+				Content = new LmsLessonPlanContent
+				{
+					Objectives = { "Set up the rescue system for the space", "Monitor the air throughout the rescue", "Package and remove the casualty from the space",
+						"Communicate between the entrant, the attendant and the rescue lead" },
+					Roles = { "Rescue lead", "Rescue entrant", "Attendant", "Air monitor", "Safety officer" },
+					Materials = { "Gas detector, calibrated and bump tested", "Retrieval system and harnesses", "Breathing apparatus", "Rescue mannequin" },
+					Props = { "Training confined space or a space released for training" },
+					StudentsPerInstructor = 4,
+					DurationMinutes = 180,
+					SafetyPlan = "Use a training space or a space that has been isolated, cleaned, ventilated and tested. The safety officer has no other duty and may stop the drill at any time. Real rescue capability on site stays available throughout.",
+					PreBriefChecklist = { "Space isolated and tested; results recorded", "Retrieval system inspected", "Breathing apparatus checked", "Communication method agreed", "Stop signal briefed" },
+					Notes = "Record the time from the call to the casualty's removal and any problems with access, equipment or communication."
+				}
+			},
+			new LmsLessonPlanStarter
+			{
+				Key = "sar-field-exercise",
+				Title = "Search and rescue field exercise",
+				Content = new LmsLessonPlanContent
+				{
+					Objectives = { "Run a search from the first report to the find", "Task teams and track them on the map", "Find clues and record them",
+						"Package and move the subject to the access point" },
+					Roles = { "Exercise director", "Incident lead", "Planning and mapping", "Field teams", "Subject volunteer", "Safety officer" },
+					Materials = { "Maps and GPS units", "Radios on the exercise channel", "Clue markers", "Stretcher or litter" },
+					Props = { "Search area agreed with the landowner" },
+					StudentsPerInstructor = 8,
+					DurationMinutes = 360,
+					SafetyPlan = "The subject volunteer carries a radio and a way to get warm. Teams check in at set times; a team that misses a check-in is looked for first. The safety officer may end the exercise for weather or injury.",
+					PreBriefChecklist = { "Landowner permission confirmed", "Weather checked and recorded", "Subject volunteer briefed and equipped", "Radio check on the exercise channel", "Team check-in times set" },
+					Notes = "Record the time to find, the clues found and missed, and lessons for tasking and communication."
+				}
+			},
+			new LmsLessonPlanStarter
+			{
+				Key = "scenario-de-escalation",
+				Title = "De-escalation scenario training",
+				Content = new LmsLessonPlanContent
+				{
+					Objectives = { "Use time, distance and communication to reduce tension", "Recognize signs of crisis and ask for the right help",
+						"Coordinate with a partner", "Write an accurate report afterwards" },
+					Roles = { "Lead instructor", "Role players", "Safety officer", "Evaluators" },
+					Materials = { "Scenario cards", "Evaluation sheets", "Inert training equipment only" },
+					Props = { "Scenario room or area" },
+					StudentsPerInstructor = 4,
+					DurationMinutes = 120,
+					SafetyPlan = "Only inert training equipment enters the scenario area; everyone is checked at the entry point. Role players and participants agree a stop word. The safety officer may stop any scenario at any time.",
+					PreBriefChecklist = { "Everyone checked for live equipment at the entry point", "Stop word agreed", "Role players briefed on their scenarios", "Evaluators briefed on the rating scale" },
+					Notes = "Debrief each scenario with the participant before the next one and record the ratings on the de-escalation skill sheet."
+				}
 			}
 		};
 
 		public static LmsLessonPlanStarter Find(string key) =>
 			string.IsNullOrWhiteSpace(key) ? null : All.FirstOrDefault(s => string.Equals(s.Key, key.Trim(), StringComparison.OrdinalIgnoreCase));
+
+		/// <summary>The text fields of a starter (round 9C): its title and every objective, role, material, prop, check, the safety plan and notes.</summary>
+		public static readonly ISet<string> TextProperties =
+			SeedContentLocalization.Properties("Title", "Objectives", "Materials", "Props", "SafetyPlan", "PreBriefChecklist", "Roles", "Notes");
+
+		/// <summary>A starter in a language (a translated copy; the starter itself in English or when the language ships no variant).</summary>
+		public static LmsLessonPlanStarter Localized(LmsLessonPlanStarter starter, string culture) =>
+			SeedContentLocalization.Localize(starter, SeedContentLocalization.LessonPlans, culture, TextProperties, starter?.Key);
+
+		/// <summary>Every starter in a language, in catalog order.</summary>
+		public static IReadOnlyList<LmsLessonPlanStarter> AllFor(string culture) => All.Select(s => Localized(s, culture)).ToList();
+
+		/// <summary>Every English text of a starter (what the translations cover).</summary>
+		public static IReadOnlyList<string> TextOf(LmsLessonPlanStarter starter) => SeedContentLocalization.CollectObject(starter, TextProperties);
 	}
 }

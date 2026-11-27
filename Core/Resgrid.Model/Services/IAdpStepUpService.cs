@@ -41,6 +41,14 @@ namespace Resgrid.Model.Services
 			CancellationToken cancellationToken = default);
 
 		/// <summary>
+		/// A grant for a password or SSO reauthentication this session has just completed, only where the department allows that kind for
+		/// protected data (step-up policy, setting 153). It is issued in the non-MFA class (as an exemption grant: amr <c>pwd</c>), so it
+		/// opens protected values but never counts as MFA for ADP management, PIN enrolment or protected workflows. Bound to the session.
+		/// </summary>
+		Task<AdpGrantIssue> IssueForReauthenticationAsync(AdpStepUpCaller caller, MfaEvidenceMethod method, DateTime verifiedOnUtc,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
 		/// A grant without a second factor for a client the department exempted from the prompt (plan section 3.3). It is
 		/// never proof of MFA; <see cref="AdpGrantOutcome.StepUpRequired"/> for any other client.
 		/// </summary>

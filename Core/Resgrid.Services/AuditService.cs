@@ -428,6 +428,16 @@ namespace Resgrid.Services
 					return "Approval Superseded";
 				case AuditLogTypes.MutualAidAgreementChanged:
 					return "Mutual Aid Agreement Changed";
+				case AuditLogTypes.ContentSetChanged:
+					return "Content Set Changed";
+				case AuditLogTypes.ContentSetSubscriptionChanged:
+					return "Content Set Subscription Changed";
+				case AuditLogTypes.ContentSetUpdateDecided:
+					return "Content Set Update Decided";
+				case AuditLogTypes.LmsSponsorshipChanged:
+					return "LMS Sponsorship Changed";
+				case AuditLogTypes.RecordDeploymentPartnerChanged:
+					return "Deployment Partner Acceptance Changed";
 				case AuditLogTypes.ProtocolLearningSettingsChanged:
 					return "Protocol Learning Settings Changed";
 				case AuditLogTypes.LmsClassSessionChanged:
@@ -486,6 +496,106 @@ namespace Resgrid.Services
 					return "Task Book Closed";
 				case AuditLogTypes.LmsSkillSettingsChanged:
 					return "Skill Notice Settings Changed";
+				case AuditLogTypes.DispatchCasesSampled:
+					return "Dispatch Cases Sampled";
+				case AuditLogTypes.DispatchCaseReviewRemoved:
+					return "Dispatch Case Review Removed";
+				case AuditLogTypes.DispatchCaseReviewSent:
+					return "Dispatch Case Review Sent";
+				case AuditLogTypes.DispatchCaseReviewAcknowledged:
+					return "Dispatch Case Review Acknowledged";
+				case AuditLogTypes.DispatchCaseReviewReplied:
+					return "Dispatch Case Review Replied";
+				case AuditLogTypes.DispatchCaseRubricSaved:
+					return "Dispatch Case Rubric Saved";
+				case AuditLogTypes.LmsDataExportRequested:
+					return "Training Data Export Requested";
+				case AuditLogTypes.LmsDataExportDownloaded:
+					return "Training Data Export Downloaded";
+				case AuditLogTypes.LmsCeReportingSettingsChanged:
+					return "CE Reporting Settings Changed";
+				case AuditLogTypes.LmsCeExportDownloaded:
+					return "CE File Downloaded";
+				case AuditLogTypes.ProtocolPublicLinkCreated:
+					return "Protocol Public Page Created";
+				case AuditLogTypes.ProtocolPublicLinkRevoked:
+					return "Protocol Public Page Revoked";
+				case AuditLogTypes.ProtocolTemplateCloned:
+					return "Protocol Template Set Cloned";
+				case AuditLogTypes.ExchangeListingSubmitted:
+					return "Community Exchange Item Submitted";
+				case AuditLogTypes.ExchangeListingDecided:
+					return "Community Exchange Item Reviewed";
+				case AuditLogTypes.ExchangeListingWithdrawn:
+					return "Community Exchange Item Withdrawn";
+				case AuditLogTypes.ExchangeListingImported:
+					return "Community Exchange Item Imported";
+				case AuditLogTypes.ExchangeCommentHidden:
+					return "Community Exchange Comment Hidden";
+				case AuditLogTypes.ProtocolAnalyticsExported:
+					return "Protocol Analytics Exported";
+				case AuditLogTypes.LmsExternalLearnerInvited:
+					return "External Learner Invited";
+				case AuditLogTypes.LmsExternalLearnerRegistered:
+					return "External Learner Registered";
+				case AuditLogTypes.LmsExternalLearnerChanged:
+					return "External Learner Changed";
+				case AuditLogTypes.LmsExternalLearnerErased:
+					return "External Learner Erased";
+				case AuditLogTypes.LmsLearnerPortalChanged:
+					return "Learner Portal Changed";
+				case AuditLogTypes.LmsPublicClassChanged:
+					return "Public Class Changed";
+				case AuditLogTypes.LmsClassInvoicesRaised:
+					return "Class Invoices Raised";
+				case AuditLogTypes.LmsCourseDraftedWithAi:
+					return "Course Drafted With AI";
+				case AuditLogTypes.LmsStarterCourseCloned:
+					return "Starter Course Cloned";
+				case AuditLogTypes.LmsFlashcardsChanged:
+					return "Course Flashcards Changed";
+				case AuditLogTypes.LmsContentPackageUploaded:
+					return "Content Package Uploaded";
+				case AuditLogTypes.LmsContentPackageDeleted:
+					return "Content Package Removed";
+				case AuditLogTypes.LmsLtiToolChanged:
+					return "LTI Tool Changed";
+				case AuditLogTypes.LmsLtiPlatformKeyRotated:
+					return "LTI Platform Key Rotated";
+				case AuditLogTypes.LmsStandardsSettingsChanged:
+					return "xAPI Settings Changed";
+				case AuditLogTypes.ProtocolFlashcardsChanged:
+					return "Protocol Flashcards Changed";
+				case AuditLogTypes.ProtocolTrainingDraftedWithAi:
+					return "Training Drafted From Protocol With AI";
+				case AuditLogTypes.TrainingCompletionRecorded:
+					return "Training Completion Recorded";
+				case AuditLogTypes.TrainingCompletionRecordVoided:
+					return "Recorded Completion Voided";
+				case AuditLogTypes.LmsLearnerPreferencesChanged:
+					return "Learner E-mail Preferences Changed";
+				case AuditLogTypes.CertificationRequirementSetChanged:
+					return "Certification Requirement Set Changed";
+				case AuditLogTypes.CertificationIssuedByTraining:
+					return "Certification Issued By Training";
+				case AuditLogTypes.CertificationRolledBackByVoid:
+					return "Certification Rolled Back By Void";
+				case AuditLogTypes.TrainingSubmissionInfoRequested:
+					return "Training Submission More Information Requested";
+				case AuditLogTypes.TrainingSubmissionResubmitted:
+					return "Training Submission Resubmitted";
+				case AuditLogTypes.StepUpPolicyChanged:
+					return "Step-Up Policy Changed";
+				case AuditLogTypes.StepUpCompleted:
+					return "Step-Up Completed";
+				case AuditLogTypes.StepUpFailed:
+					return "Step-Up Failed";
+				case AuditLogTypes.LmsAppLaunchOpened:
+					return "LMS Lesson Opened In App";
+				case AuditLogTypes.WorkforceProSeatsChanged:
+					return "Workforce Pro Seats Changed";
+				case AuditLogTypes.WorkforceProPacksChanged:
+					return "Workforce Pro Packs Changed";
 				case AuditLogTypes.AdminAssistReviewChanged:
 					return "Admin Assist Review Changed";
 				case AuditLogTypes.DepartmentSettingsChanged:

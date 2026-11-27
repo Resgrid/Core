@@ -1,0 +1,1157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AckDetail" xml:space="preserve">
+    <value>{0} από {1} υπογεγραμμένες, {2} εκπρόθεσμες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>Όλα τα είδη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AlreadyImported" xml:space="preserve">
+    <value>Η υπηρεσία σας το έχει ήδη εισαγάγει στο παρελθόν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsHeader" xml:space="preserve">
+    <value>Αναλυτικά στοιχεία πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsIntro" xml:space="preserve">
+    <value>Πώς χρησιμοποιούνται τα πρωτόκολλα στις κλήσεις, πώς κωδικοποιούνται οι περιπτώσεις, πόσο χρόνο αφιερώνουν οι ομάδες σε αυτά, ποιοι τα έχουν αποδεχτεί και τι αναζητούν οι χρήστες χωρίς να το βρίσκουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsTab" xml:space="preserve">
+    <value>Αναλυτικά στοιχεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsTruncated" xml:space="preserve">
+    <value>Η περίοδος περιλαμβάνει περισσότερες από {0} χρήσεις πρωτοκόλλων σε κλήσεις· υπολογίζονται μόνο οι πιο πρόσφατες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsUnavailable" xml:space="preserve">
+    <value>Τα αναλυτικά στοιχεία είναι διαθέσιμα στους συντάκτες και τους εγκρίνοντες πρωτοκόλλων και στους διαχειριστές της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyButton" xml:space="preserve">
+    <value>Εφαρμογή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>Επιβεβαιώνω ότι έχουμε το δικαίωμα να το κοινοποιήσουμε και ότι δεν περιέχει περιεχόμενο με άδεια χρήσης (όπως MPDS ή IntelliComm) ούτε προσωπικά δεδομένα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionLicense" xml:space="preserve">
+    <value>Άδεια χρήσης:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionNameHelp" xml:space="preserve">
+    <value>Το όνομα που αναφέρει κάθε εισαγωγή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionNameLabel" xml:space="preserve">
+    <value>Αναφορά ως</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionSource" xml:space="preserve">
+    <value>Πηγή:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseItem" xml:space="preserve">
+    <value>Επιλογή…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnAddress" xml:space="preserve">
+    <value>Διεύθυνση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnContributor" xml:space="preserve">
+    <value>Συντελεστής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnCreated" xml:space="preserve">
+    <value>Δημιουργία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnDeterminant" xml:space="preserve">
+    <value>Κωδικός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnFlags" xml:space="preserve">
+    <value>Ευρήματα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnImports" xml:space="preserve">
+    <value>Εισαγωγές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnKind" xml:space="preserve">
+    <value>Είδος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnLicense" xml:space="preserve">
+    <value>Άδεια χρήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnListed" xml:space="preserve">
+    <value>Καταχώριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnQuery" xml:space="preserve">
+    <value>Αναζήτηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnRating" xml:space="preserve">
+    <value>Βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnShown" xml:space="preserve">
+    <value>Στη σελίδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSubmitted" xml:space="preserve">
+    <value>Υποβολή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnTimes" xml:space="preserve">
+    <value>Φορές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnTitle" xml:space="preserve">
+    <value>Τίτλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnWhere" xml:space="preserve">
+    <value>Πού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentButton" xml:space="preserve">
+    <value>Σχόλιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentHelp" xml:space="preserve">
+    <value>Απλό κείμενο. Τα σχόλια εμφανίζουν το όνομα της υπηρεσίας σας, όχι το δικό σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentHidden" xml:space="preserve">
+    <value>κρυφό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Προσθήκη σχολίου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsHeader" xml:space="preserve">
+    <value>Σχόλια ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckAssigned" xml:space="preserve">
+    <value>Οφειλόμενες επιβεβαιώσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckCompliance" xml:space="preserve">
+    <value>Συμμόρφωση επιβεβαιώσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckOverdue" xml:space="preserve">
+    <value>Εκπρόθεσμες επιβεβαιώσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckSigned" xml:space="preserve">
+    <value>Υπογεγραμμένες επιβεβαιώσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvButton" xml:space="preserve">
+    <value>CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvByAi" xml:space="preserve">
+    <value>Από πρόταση ΤΝ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvByDispatcher" xml:space="preserve">
+    <value>Από συντονιστή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvByTrigger" xml:space="preserve">
+    <value>Από κανόνα ενεργοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCalls" xml:space="preserve">
+    <value>Κλήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDeterminants" xml:space="preserve">
+    <value>Κωδικοί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvMeanMinutes" xml:space="preserve">
+    <value>Μέσα λεπτά στο πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvMedianMinutes" xml:space="preserve">
+    <value>Διάμεσα λεπτά στο πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvName" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvNumber" xml:space="preserve">
+    <value>Αριθμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverridden" xml:space="preserve">
+    <value>Με αλλαγή κωδικού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverrideRate" xml:space="preserve">
+    <value>Ποσοστό αλλαγής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκε από κλήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvTimedCalls" xml:space="preserve">
+    <value>Χρονομετρημένες κλήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvVersions" xml:space="preserve">
+    <value>Κλήσεις ανά έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvWithDeterminant" xml:space="preserve">
+    <value>Κλήσεις με κωδικό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHeader" xml:space="preserve">
+    <value>Έλεγχος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHelp" xml:space="preserve">
+    <value>Για την απόρριψη απαιτείται σημείωση· ο συντελεστής τη βλέπει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantsEmpty" xml:space="preserve">
+    <value>Καμία κλήση δεν κωδικοποιήθηκε με ροή περιστατικού σε αυτή την περίοδο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantsHeader" xml:space="preserve">
+    <value>Κατανομή κωδικών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityAudienceRestricted" xml:space="preserve">
+    <value>Περιορίζεται σε συγκεκριμένο κοινό, άρα δεν γίνεται ποτέ δημόσιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityDisabled" xml:space="preserve">
+    <value>Απενεργοποιημένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityDocumentBacked" xml:space="preserve">
+    <value>Οι εκδόσεις με μεταφορτωμένο έγγραφο δεν εμφανίζονται δημόσια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityEligible" xml:space="preserve">
+    <value>Μπορεί να γίνει δημόσιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityLicensedContent" xml:space="preserve">
+    <value>Το περιεχόμενο με άδεια χρήσης δεν γίνεται ποτέ δημόσιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityNotPublished" xml:space="preserve">
+    <value>Δεν έχει δημοσιευθεί (τα πρόχειρα δεν γίνονται ποτέ δημόσια)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeCommentHidden" xml:space="preserve">
+    <value>Το σχόλιο αποκρύφθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeCommented" xml:space="preserve">
+    <value>Το σχόλιο προστέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeCount" xml:space="preserve">
+    <value>{0} καταχωρισμένα στοιχεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν αποτελέσματα ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorAttestationRequired" xml:space="preserve">
+    <value>Επιβεβαιώστε τη δήλωση πριν από την υποβολή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorDocumentBacked" xml:space="preserve">
+    <value>Πρωτόκολλο του οποίου το περιεχόμενο είναι μεταφορτωμένο έγγραφο δεν μπορεί να κοινοποιηθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorImportFailed" xml:space="preserve">
+    <value>Η εισαγωγή δεν ολοκληρώθηκε. Δεν δημιουργήθηκε τίποτα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorInvalidInput" xml:space="preserve">
+    <value>Ελέγξτε τα στοιχεία που εισαγάγατε και δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorKindUnavailable" xml:space="preserve">
+    <value>Αυτό το είδος στοιχείου δεν είναι διαθέσιμο σε αυτόν τον διακομιστή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorLicenseRequired" xml:space="preserve">
+    <value>Επιλέξτε άδεια χρήσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorLicensedContent" xml:space="preserve">
+    <value>Περιεχόμενο με άδεια χρήσης (ή περιεχόμενο με σήμανση «χωρίς ΤΝ» επειδή υπόκειται σε άδεια) δεν μπορεί ποτέ να κοινοποιηθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorLmsRequired" xml:space="preserve">
+    <value>Αυτό το στοιχείο είναι τύπου LMS· η εισαγωγή του απαιτεί το πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNone" xml:space="preserve">
+    <value>Ολοκληρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNotAuthorized" xml:space="preserve">
+    <value>Δεν έχετε δικαιώματα για αυτή την ενέργεια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNotFound" xml:space="preserve">
+    <value>Το στοιχείο δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNotPublished" xml:space="preserve">
+    <value>Μπορεί να κοινοποιηθεί μόνο δημοσιευμένη έκδοση σε ισχύ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorOwnListing" xml:space="preserve">
+    <value>Μια υπηρεσία δεν μπορεί να βαθμολογήσει τη δική της συνεισφορά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorPayloadChanged" xml:space="preserve">
+    <value>Το στοιχείο δεν αντιστοιχεί πλέον σε αυτό που ελέγχθηκε· δεν μπορεί να εισαχθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorWrongStatus" xml:space="preserve">
+    <value>Αυτό δεν είναι δυνατό στην τρέχουσα κατάσταση του στοιχείου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeFreeNote" xml:space="preserve">
+    <value>Η κοινοτική ανταλλαγή είναι δωρεάν για κάθε υπηρεσία. Για τη χρήση εισαγόμενων στοιχείων LMS (φύλλα δεξιοτήτων, σχέδια μαθημάτων) απαιτείται το πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeHeader" xml:space="preserve">
+    <value>Κοινοτική ανταλλαγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeImported" xml:space="preserve">
+    <value>Εισήχθη. Ελέγξτε το, προσαρμόστε το και δημοσιεύστε το ως δικό σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeIntro" xml:space="preserve">
+    <value>Πρωτόκολλα και εκπαιδεύσεις που κοινοποιούν άλλες υπηρεσίες, ελεγμένα από το Resgrid πριν καταχωριστούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeListed" xml:space="preserve">
+    <value>Καταχωρίστηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeRated" xml:space="preserve">
+    <value>Σας ευχαριστούμε για τη βαθμολογία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeRejected" xml:space="preserve">
+    <value>Απορρίφθηκε· ο συντελεστής βλέπει τη σημείωσή σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeSubmitted" xml:space="preserve">
+    <value>Σας ευχαριστούμε. Η συνεισφορά σας αναμένει έλεγχο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeTab" xml:space="preserve">
+    <value>Κοινοτική ανταλλαγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeWithdrawn" xml:space="preserve">
+    <value>Αποσύρθηκε από την ανταλλαγή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportCount" xml:space="preserve">
+    <value>{0} πρωτόκολλα στη βιβλιοθήκη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportHeader" xml:space="preserve">
+    <value>Ανοιχτή μορφή και εξαγωγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportHtmlButton" xml:space="preserve">
+    <value>HTML</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportHtmlHelp" xml:space="preserve">
+    <value>HTML: ένα αυτόνομο αρχείο με τις ισχύουσες εκδόσεις που μπορείτε να διαβάσετε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportImportHint" xml:space="preserve">
+    <value>Οποιαδήποτε υπηρεσία Resgrid (ή άλλο σύστημα) μπορεί να εισαγάγει το αρχείο JSON:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportImportLink" xml:space="preserve">
+    <value>Εισαγωγή πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportIntro" xml:space="preserve">
+    <value>Πάρτε τα πρωτόκολλά σας μαζί σας: στην τεκμηριωμένη ανοιχτή μορφή JSON, ως ένα αρχείο HTML ή ως βιβλίο PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportJsonButton" xml:space="preserve">
+    <value>Ανοιχτή μορφή (JSON)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportJsonHelp" xml:space="preserve">
+    <value>JSON: μπλοκ, ιστορικό εκδόσεων, γράφημα αποφάσεων, εγκεκριμένες μεταφράσεις και λίστα συνημμένων (μορφή resgrid-protocols, έκδοση 2). Τα αρχεία απαριθμούνται, δεν περιλαμβάνονται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportLibraryTitle" xml:space="preserve">
+    <value>Βιβλιοθήκη πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Βιβλίο PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportPdfHelp" xml:space="preserve">
+    <value>PDF: το βιβλίο πρωτοκόλλων, σφραγισμένο όταν έχει ρυθμιστεί η σφράγιση εγγράφων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportSetLabel" xml:space="preserve">
+    <value>Σύνολο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportTab" xml:space="preserve">
+    <value>Ανοιχτή μορφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportWholeLibrary" xml:space="preserve">
+    <value>Ολόκληρη η βιβλιοθήκη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagAttachmentRemoved" xml:space="preserve">
+    <value>Το συνημμένο ή η μεταφορτωμένη εικόνα αφαιρέθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagConfigurationRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκαν κανόνες ενεργοποίησης, κοινό και αριθμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagContactRemoved" xml:space="preserve">
+    <value>Η επαφή ιατρικής εποπτείας αφαιρέθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagDepartmentNameRemoved" xml:space="preserve">
+    <value>Το όνομα της υπηρεσίας αντικαταστάθηκε με [Department]</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagEmailRemoved" xml:space="preserve">
+    <value>Η διεύθυνση e-mail αφαιρέθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagInternalLinkRemoved" xml:space="preserve">
+    <value>Ο σύνδεσμος προς τα αρχεία της υπηρεσίας αφαιρέθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagInventoryLinkRemoved" xml:space="preserve">
+    <value>Ο σύνδεσμος αποθέματος αφαιρέθηκε από φάρμακο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagPhoneNumber" xml:space="preserve">
+    <value>Βρέθηκε αριθμός τηλεφώνου (παραμένει· τον ελέγχει ο ελεγκτής)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagsHeader" xml:space="preserve">
+    <value>Τι αφαιρέθηκε ή επισημάνθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagsHelp" xml:space="preserve">
+    <value>Τα δεδομένα που αφορούν ειδικά την υπηρεσία αφαιρούνται πριν από την κοινοποίηση· οι αριθμοί τηλεφώνου παραμένουν και ελέγχονται από τον ελεγκτή. Τροποποιήστε το στοιχείο στη βιβλιοθήκη σας αν κάτι δεν πρέπει να κοινοποιηθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Από</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν αναζητήσεις χωρίς απάντηση σε αυτή την περίοδο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsHeader" xml:space="preserve">
+    <value>Κενά πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsHelp" xml:space="preserve">
+    <value>Αναζητήσεις στη βιβλιοθήκη πρωτοκόλλων χωρίς αποτέλεσμα: πρωτόκολλα που αναζητούν οι χρήστες και ίσως δεν υπάρχουν ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HideCommentButton" xml:space="preserve">
+    <value>Απόκρυψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Εισαγωγή αντιγράφου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportHeader" xml:space="preserve">
+    <value>Εισαγωγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Δημιουργεί αντίγραφο στην υπηρεσία σας ως πρόχειρο (ή ως νέα εκπαίδευση) που μπορείτε να τροποποιήσετε, διατηρώντας την αναφορά στον συντελεστή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportNeedsLms" xml:space="preserve">
+    <value>Αυτό είναι στοιχείο LMS: η εισαγωγή του απαιτεί το πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportNotAllowed" xml:space="preserve">
+    <value>Η εισαγωγή είναι δυνατή από συντάκτες πρωτοκόλλων (ή από δημιουργούς εκπαιδεύσεων, για τις εκπαιδεύσεις).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindLessonPlan" xml:space="preserve">
+    <value>Σχέδιο μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindProtocol" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindSkillSheet" xml:space="preserve">
+    <value>Φύλλο δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindTraining" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemLabel" xml:space="preserve">
+    <value>Στοιχείο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Είδος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicenseHelp" xml:space="preserve">
+    <value>Άλλες υπηρεσίες μπορούν να χρησιμοποιούν και να τροποποιούν τη συνεισφορά σας βάσει αυτής της άδειας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>Άδεια χρήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="License_CC010" xml:space="preserve">
+    <value>CC0 1.0 (κοινό κτήμα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="License_CCBY40" xml:space="preserve">
+    <value>CC BY 4.0 (αναφορά του συντελεστή)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="License_CCBYSA40" xml:space="preserve">
+    <value>CC BY-SA 4.0 (αναφορά, παρόμοια διανομή)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListButton" xml:space="preserve">
+    <value>Καταχώριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingContributed" xml:space="preserve">
+    <value>Συνεισφορά από {0} στις {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusListed" xml:space="preserve">
+    <value>Καταχωρισμένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusPendingReview" xml:space="preserve">
+    <value>Σε αναμονή ελέγχου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusRejected" xml:space="preserve">
+    <value>Δεν έγινε δεκτό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusWithdrawn" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingVersion" xml:space="preserve">
+    <value>Έκδοση {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinutesValue" xml:space="preserve">
+    <value>{0} λεπ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsEmpty" xml:space="preserve">
+    <value>Η υπηρεσία σας δεν έχει συνεισφέρει τίποτα ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Οι υποβολές μας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsIntro" xml:space="preserve">
+    <value>Τι έχει συνεισφέρει η υπηρεσία σας και σε ποιο στάδιο βρίσκεται κάθε στοιχείο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsTab" xml:space="preserve">
+    <value>Οι υποβολές μας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoComments" xml:space="preserve">
+    <value>Δεν υπάρχουν σχόλια ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>Δεν βρέθηκε τίποτα που να αφορά ειδικά την υπηρεσία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotRated" xml:space="preserve">
+    <value>Χωρίς βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PagingLabel" xml:space="preserve">
+    <value>Σελίδες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Προεπισκόπηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Τι δημιουργεί μια εισαγωγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCategoryLabel" xml:space="preserve">
+    <value>Κατηγορία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicContentCodeHelp" xml:space="preserve">
+    <value>Κωδικός περιεχομένου: αντιστοιχεί στο έντυπο αντίγραφο αυτής της έκδοσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicContents" xml:space="preserve">
+    <value>Περιεχόμενα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCreateButton" xml:space="preserve">
+    <value>Δημοσιοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCreateConfirm" xml:space="preserve">
+    <value>Οποιοσδήποτε έχει τη διεύθυνση θα μπορεί να το διαβάσει. Συνέχεια;</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCreated" xml:space="preserve">
+    <value>Η δημόσια σελίδα είναι ενεργή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicDisclaimer" xml:space="preserve">
+    <value>Δημοσιεύθηκε από {0}. Πρόκειται για τις οδηγίες της υπηρεσίας προς τα μέλη της· δεν αποτελεί ιατρική ή νομική συμβουλή για οποιονδήποτε άλλον.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEffective" xml:space="preserve">
+    <value>Σε ισχύ από {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEligibleCount" xml:space="preserve">
+    <value>Πρωτόκολλα που μπορούν να γίνουν δημόσια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedAnySite" xml:space="preserve">
+    <value>Οποιοσδήποτε ιστότοπος https μπορεί να την ενσωματώσει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedLabel" xml:space="preserve">
+    <value>Να επιτρέπεται η ενσωμάτωση σε άλλους ιστότοπους</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedSites" xml:space="preserve">
+    <value>Ενσωματώσιμη σε: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedSnippet" xml:space="preserve">
+    <value>Κώδικας ενσωμάτωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorAlreadyPublic" xml:space="preserve">
+    <value>Υπάρχει ήδη ενεργή δημόσια σελίδα για αυτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorInvalidOrigins" xml:space="preserve">
+    <value>Οι ιστότοποι ενσωμάτωσης πρέπει να είναι διευθύνσεις https, όπως https://www.example.org (έως 10).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNone" xml:space="preserve">
+    <value>Ολοκληρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNotAuthorized" xml:space="preserve">
+    <value>Τις δημόσιες σελίδες διαχειρίζονται μόνο οι εγκρίνοντες πρωτοκόλλων και οι διαχειριστές της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNotEligible" xml:space="preserve">
+    <value>Αυτό το πρωτόκολλο δεν μπορεί να γίνει δημόσιο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNotFound" xml:space="preserve">
+    <value>Το πρωτόκολλο ή η κατηγορία δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorTooManyLinks" xml:space="preserve">
+    <value>Η υπηρεσία έχει φτάσει τον μέγιστο αριθμό δημόσιων σελίδων· ανακαλέστε πρώτα μία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicHeader" xml:space="preserve">
+    <value>Δημόσιες σελίδες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicIntro" xml:space="preserve">
+    <value>Δημοσιεύστε ένα πρωτόκολλο ή μια κατηγορία σε δημόσια διεύθυνση, προαιρετικά με δυνατότητα ενσωμάτωσης στον ιστότοπό σας. Μπορείτε να την ανακαλέσετε ανά πάσα στιγμή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicKindCurrent" xml:space="preserve">
+    <value>Ισχύουσα έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicKindPinned" xml:space="preserve">
+    <value>Μόνο αυτή η έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicKindSet" xml:space="preserve">
+    <value>Σύνολο κατηγορίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicLinksHeader" xml:space="preserve">
+    <value>Οι δημόσιες σελίδες της υπηρεσίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicLiveCount" xml:space="preserve">
+    <value>Ενεργές δημόσιες σελίδες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicNoLinks" xml:space="preserve">
+    <value>Τίποτα δεν είναι δημόσιο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicNotEligibleHeader" xml:space="preserve">
+    <value>Πρωτόκολλα που δεν μπορούν να γίνουν δημόσια ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicNothingPublished" xml:space="preserve">
+    <value>Δεν έχει δημοσιευθεί τίποτα εδώ ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicOriginsHelp" xml:space="preserve">
+    <value>Διευθύνσεις https, χωρισμένες με κενά. Αφήστε το κενό για να επιτρέπεται οποιοσδήποτε ιστότοπος https.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicOriginsLabel" xml:space="preserve">
+    <value>Ιστότοποι που επιτρέπεται να την ενσωματώσουν</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPageTitle" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPinHelp" xml:space="preserve">
+    <value>Όταν δημοσιευθεί νεότερη έκδοση, η σελίδα αναφέρει ότι αυτή η έκδοση δεν ισχύει πλέον. Αφήστε το μη επιλεγμένο για να εμφανίζεται πάντα η ισχύουσα έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPinLabel" xml:space="preserve">
+    <value>Μόνο αυτή η έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPoweredBy" xml:space="preserve">
+    <value>Δημοσιεύθηκε με το Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicProtocolHeader" xml:space="preserve">
+    <value>Δημοσιοποίηση πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicProtocolLabel" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevokeButton" xml:space="preserve">
+    <value>Ανάκληση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevokeConfirm" xml:space="preserve">
+    <value>Ανάκληση αυτής της δημόσιας σελίδας; Η διεύθυνση θα σταματήσει να λειτουργεί αμέσως.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevoked" xml:space="preserve">
+    <value>Η δημόσια σελίδα ανακλήθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevokedLabel" xml:space="preserve">
+    <value>Ανακλήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSetCount" xml:space="preserve">
+    <value>{0} πρωτόκολλα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSetHeader" xml:space="preserve">
+    <value>Δημοσιοποίηση κατηγορίας ως συνόλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSetHelp" xml:space="preserve">
+    <value>Η σελίδα εμφανίζει κάθε ισχύον πρωτόκολλο της κατηγορίας και των υποκατηγοριών της που μπορεί να γίνει δημόσιο· τα υπόλοιπα παραλείπονται αυτόματα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicShownCount" xml:space="preserve">
+    <value>Εμφανίζονται {0} πρωτόκολλα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicShownLabel" xml:space="preserve">
+    <value>Εμφανίζονται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSuperseded" xml:space="preserve">
+    <value>Αυτή η έκδοση δεν ισχύει πλέον. Επικοινωνήστε με την υπηρεσία για την τρέχουσα έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicTab" xml:space="preserve">
+    <value>Δημόσιες σελίδες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicVersion" xml:space="preserve">
+    <value>Έκδοση {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RateButton" xml:space="preserve">
+    <value>Βαθμολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RateHeader" xml:space="preserve">
+    <value>Βαθμολογήστε το</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RateLabel" xml:space="preserve">
+    <value>Η βαθμολογία σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RatingValue" xml:space="preserve">
+    <value>{0} από 5 ({1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Απόρριψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Αφαίρεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewEmpty" xml:space="preserve">
+    <value>Δεν υπάρχει τίποτα σε αναμονή ελέγχου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>Ουρά ελέγχου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewIntro" xml:space="preserve">
+    <value>Συνεισφορές σε αναμονή ελέγχου από το Resgrid, οι παλαιότερες πρώτα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Σημείωση ελεγκτή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewTab" xml:space="preserve">
+    <value>Ουρά ελέγχου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Αναζήτηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Αναζήτηση στην ανταλλαγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Αναζήτηση σε τίτλους, περιλήψεις και ετικέτες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingTab" xml:space="preserve">
+    <value>Κοινή χρήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortImports" xml:space="preserve">
+    <value>Περισσότερες εισαγωγές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortLabel" xml:space="preserve">
+    <value>Ταξινόμηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortNewest" xml:space="preserve">
+    <value>Νεότερα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortRating" xml:space="preserve">
+    <value>Καλύτερη βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourcesDetail" xml:space="preserve">
+    <value>Κανόνας {0} · συντονιστής {1} · ΤΝ {2} · αφαιρέθηκαν {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StarsOption" xml:space="preserve">
+    <value>{0} από 5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitButton" xml:space="preserve">
+    <value>Υποβολή για έλεγχο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitChooseHelp" xml:space="preserve">
+    <value>Το περιεχόμενο με άδεια χρήσης, τα πρόχειρα και τα πρωτόκολλα με μεταφορτωμένο έγγραφο δεν μπορούν να κοινοποιηθούν και εμφανίζονται απενεργοποιημένα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>Συνεισφορά στην ανταλλαγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitIntro" xml:space="preserve">
+    <value>Κοινοποιήστε ένα δημοσιευμένο πρωτόκολλο ή μια εκπαίδευση σε κάθε υπηρεσία. Το Resgrid ελέγχει κάθε συνεισφορά πριν καταχωριστεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitStepChoose" xml:space="preserve">
+    <value>1. Επιλέξτε τι θα κοινοποιηθεί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitStepPreview" xml:space="preserve">
+    <value>2. Τι θα κοινοποιηθεί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitStepSend" xml:space="preserve">
+    <value>3. Άδεια χρήσης και υποβολή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitTab" xml:space="preserve">
+    <value>Συνεισφορά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Περίληψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>Αναζήτηση βιβλιοθήκης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceUnifiedSearch" xml:space="preserve">
+    <value>Αναζήτηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateAuthorsOnly" xml:space="preserve">
+    <value>Οι συντάκτες πρωτοκόλλων μπορούν να κλωνοποιούν πρότυπα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateChooseItems" xml:space="preserve">
+    <value>Στοιχεία προς κλωνοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCloneButton" xml:space="preserve">
+    <value>Κλωνοποίηση ως πρόχειρα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCloned" xml:space="preserve">
+    <value>Δημιουργήθηκαν {0} πρόχειρα από το σύνολο προτύπων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_not_authorized" xml:space="preserve">
+    <value>Μόνο οι συντάκτες πρωτοκόλλων μπορούν να κλωνοποιούν πρότυπα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_not_found" xml:space="preserve">
+    <value>Το σύνολο προτύπων δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_nothing_selected" xml:space="preserve">
+    <value>Επιλέξτε τουλάχιστον ένα στοιχείο για κλωνοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_too_many" xml:space="preserve">
+    <value>Πάρα πολλά στοιχεία ταυτόχρονα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_unknown_format" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάγνωση του συνόλου προτύπων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateMeta" xml:space="preserve">
+    <value>{0} · έκδοση {1} · {2} στοιχεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateSkipped" xml:space="preserve">
+    <value>{0} στοιχεία δεν ήταν δυνατό να δημιουργηθούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesDisclaimer" xml:space="preserve">
+    <value>Τα πρότυπα είναι σημεία εκκίνησης. Ελέγξτε το καθένα με βάση τις δικές σας πολιτικές, τη νομοθεσία, τη στελέχωση και την ιατρική καθοδήγηση πριν το δημοσιεύσετε. Το σύνολο για την προνοσοκομειακή φροντίδα (EMS) δεν περιέχει κλινικό κείμενο: το συντάσσει ο ιατρικός διευθυντής σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesHeader" xml:space="preserve">
+    <value>Βιβλιοθήκη προτύπων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>Αρχικά σύνολα που έχει συντάξει το Resgrid. Κλωνοποιήστε τα ως πρόχειρα, προσαρμόστε τα και, στη συνέχεια, ελέγξτε τα και δημοσιεύστε τα ως δικά σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesTab" xml:space="preserve">
+    <value>Πρότυπα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAckCompliance" xml:space="preserve">
+    <value>Συμμόρφωση επιβεβαιώσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAckDetail" xml:space="preserve">
+    <value>{0} από {1} υπογεγραμμένες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileCalls" xml:space="preserve">
+    <value>Κλήσεις με πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileGaps" xml:space="preserve">
+    <value>Αναζητήσεις χωρίς αποτέλεσμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileGapsDetail" xml:space="preserve">
+    <value>{0} ανοιχτά κενά γνώσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileMedianTime" xml:space="preserve">
+    <value>Διάμεσος χρόνος στο πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrideDetail" xml:space="preserve">
+    <value>{0} από {1} κωδικοποιημένες κλήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrideRate" xml:space="preserve">
+    <value>Ποσοστό αλλαγής κωδικού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimedDetail" xml:space="preserve">
+    <value>{0} χρονομετρημένες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Έως</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsageEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν πρωτόκολλα ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsageHeader" xml:space="preserve">
+    <value>Χρήση ανά πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Απόσυρση από την ανταλλαγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateSuggested" xml:space="preserve">
+    <value>Προτείνεται για τον οργανισμό σας</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

@@ -223,8 +223,15 @@ namespace Resgrid.Model
 		/// <summary>
 		/// LMS add-on operator rollout and kill switch (protocols-training-knowledge-plan §17.3). The LMS features built in wave 2
 		/// (formal ISO FSRS and NREMT NCCP reports, certificate verification code, QR and public verify page, custom certificate
-		/// templates) stay invisible and their routes 404 while it is off. The purchase is PlanAddonTypes.Lms. Seeded off by M0350.
+		/// templates) stay invisible and their routes 404 while it is off. The purchase is PlanAddonTypes.Lms. Seeded off by M0346.
 		/// </summary>
 		public const string TrainingLms = "Training.Lms";
+
+		/// <summary>
+		/// Workforce Pro add-on operator rollout and kill switch (shifts-scheduling-modernization-plan.md §7.4). Off: member wellness and
+		/// workplace exposure (the exposure log, exposure cases, injuries and medical clearances, their notices and sweeps) are hidden and
+		/// their routes return 404; the data is kept. The purchase is PlanAddonTypes.WorkforcePro. Seeded off by the Workforce Pro migration.
+		/// </summary>
+		public const string WorkforcePro = "Workforce.Pro";
 	}
 }

@@ -11,6 +11,8 @@
     var training = Model.Training;
     var assignment = Model.Assignment;
     var assigned = assignment != null && !assignment.RemovedOn.HasValue;
+    // Round 7B: holders of Record Training Completions (135) record that members completed it together.
+    var recordCompletions = Resgrid.Web.Helpers.ClaimsAuthorizationHelper.CanApplyTrainingCompletions();
 
     Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
         @if (Model.CanAuthor || Model.CanAssign)
@@ -21,8 +23,12 @@
         {
             <a class="btn btn-primary" asp-controller="Trainings" asp-action="Report" asp-route-area="User" asp-route-trainingId="@training.TrainingId"><i class="fa fa-bar-chart" aria-hidden="true"></i> @localizer["ReportButton"]</a>
         }
+        @if (recordCompletions)
+        {
+            <a class="btn btn-default" asp-controller="Trainings" asp-action="RecordCompletions" asp-route-area="User" asp-route-targetId="@training.TrainingId"><i class="fa fa-check-circle-o" aria-hidden="true"></i> @localizer["RecordCompletions.Title"]</a>
+        }
     </text>;
-    ViewData["HeaderActions"] = Model.CanAuthor || Model.CanAssign ? headerActions : null;
+    ViewData["HeaderActions"] = Model.CanAuthor || Model.CanAssign || recordCompletions ? headerActions : null;
 }
 
 @await Html.PartialAsync("_Shell")
@@ -100,6 +106,15 @@
                             }
                         </ul>
 
+                        @* Round 9A read and confirm: a training without a quiz that asks for it completes on the member's confirmation. *@
+                        if (training.RequiresAcknowledgment && !Model.HasQuiz && !assignment.Complete && !assignment.IsExemptOn(DateTime.UtcNow))
+                        {
+                            <form method="post" asp-controller="Trainings" asp-action="Acknowledge" asp-route-area="User" asp-route-trainingId="@training.TrainingId" class="m-b-sm">
+                                @Html.AntiForgeryToken()
+                                <div class="checkbox"><label><input type="checkbox" name="confirmed" value="true" required /> @localizer["AckStatement"]</label></div>
+                                <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-check" aria-hidden="true"></i> @localizer["AckButton"]</button>
+                            </form>
+                        }
                         if (Model.CanTakeQuiz)
                         {
                             <a class="btn btn-primary btn-block" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" asp-route-trainingId="@training.TrainingId">

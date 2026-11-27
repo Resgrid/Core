@@ -299,7 +299,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Sheets()
 		{
 			var actor = await ActorAsync();
-			var view = await PageAsync(new LmsSkillSheetsView { Templates = LmsSkillTemplateCatalog.Sheets }, "Sheets");
+			var view = await PageAsync(new LmsSkillSheetsView { Templates = LmsSkillTemplateCatalog.SheetsFor(CultureInfo.CurrentUICulture.Name) }, "Sheets");
 			view.Sheets = await _sheets.GetSheetsAsync(DepartmentId);
 			foreach (var sheet in view.Sheets)
 			{
@@ -337,7 +337,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> UseTemplate(string key, CancellationToken cancellationToken)
 		{
 			LmsSkillSheet created = null;
-			await TryAsync(async () => created = await _sheets.CreateFromTemplateAsync(await ActorAsync(), key, cancellationToken), "Skl.SheetCreated");
+			await TryAsync(async () => created = await _sheets.CreateFromTemplateAsync(await ActorAsync(), key, CultureInfo.CurrentUICulture.Name, cancellationToken), "Skl.SheetCreated");
 			return created == null ? RedirectToAction(nameof(Sheets)) : RedirectToAction(nameof(Sheet), new { id = created.LmsSkillSheetId });
 		}
 
@@ -771,7 +771,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!(await ActorAsync()).MayManage)
 				return Unauthorized();
-			var view = await PageAsync(new LmsTaskBookDefinitionsView { Templates = LmsSkillTemplateCatalog.TaskBooks }, "Definitions");
+			var view = await PageAsync(new LmsTaskBookDefinitionsView { Templates = LmsSkillTemplateCatalog.TaskBooksFor(CultureInfo.CurrentUICulture.Name) }, "Definitions");
 			view.Definitions = await _taskBooks.GetDefinitionsAsync(DepartmentId);
 			return View(view);
 		}
@@ -782,7 +782,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> UseTaskBookTemplate(string key, CancellationToken cancellationToken)
 		{
 			LmsTaskBookDefinition created = null;
-			await TryAsync(async () => created = await _taskBooks.CreateFromTemplateAsync(await ActorAsync(), key, cancellationToken), "Skl.DefinitionCreated");
+			await TryAsync(async () => created = await _taskBooks.CreateFromTemplateAsync(await ActorAsync(), key, CultureInfo.CurrentUICulture.Name, cancellationToken), "Skl.DefinitionCreated");
 			return created == null ? RedirectToAction(nameof(Definitions)) : RedirectToAction(nameof(Definition), new { id = created.LmsTaskBookDefinitionId });
 		}
 

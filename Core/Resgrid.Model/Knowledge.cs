@@ -33,7 +33,15 @@ namespace Resgrid.Model
 		Academy = 5,
 
 		/// <summary>A Documents module file, only when the department opts in (setting 139) and Advanced Data Protection is off.</summary>
-		Document = 6
+		Document = 6,
+
+		/// <summary>
+		/// The explanations of an LMS question bank's questions (item = the bank), never their options or answer keys. An explanation reveals
+		/// the answer, so only readers who can open the bank's answer keys in the bank editor retrieve it (department administrators and
+		/// Manage Courses holders, course editors for shared banks and their own): never a learner, whether or not they can still take the
+		/// assessment. Baseline training quizzes have no explanations, so nothing of theirs is indexed.
+		/// </summary>
+		QuestionExplanation = 7
 	}
 
 	/// <summary>Access recorded on a chunk at index time, beside its audience rules. Persisted: append only.</summary>
@@ -158,7 +166,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// One retrievable piece of department content (K1, M0368): where it came from (source kind, item, version, anchor and heading path),
+	/// One retrievable piece of department content (K1, M0353): where it came from (source kind, item, version, anchor and heading path),
 	/// when it is in effect, who may read it (audience rules and access flags, the P1/T0 audience kinds) and its embedding, stored as
 	/// little-endian float32 bytes beside the search index and scored exactly (cosine) after the department and audience filters
 	/// (§25.4a item 11). DepartmentId 0 is the system corpus (the Academy).
@@ -265,7 +273,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// The reindex queue (M0368): one row per item to rebuild, idempotent on (DepartmentId, SourceKind, ItemId). Publish and retire
+	/// The reindex queue (M0353): one row per item to rebuild, idempotent on (DepartmentId, SourceKind, ItemId). Publish and retire
 	/// enqueue the item; worker 89 drains it. SourceKind <see cref="KnowledgeIndexRequest.DepartmentRebuild"/> asks for the whole department.
 	/// </summary>
 	[Table("KnowledgeIndexRequests")]
@@ -315,7 +323,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// A department's knowledge index (M0368): the revision readers cache against, whether it is active, and when the nightly repair
+	/// A department's knowledge index (M0353): the revision readers cache against, whether it is active, and when the nightly repair
 	/// pass is next due. DepartmentId 0 is the system corpus.
 	/// </summary>
 	[Table("KnowledgeIndexStates")]
@@ -369,7 +377,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// A question the department's content failed to answer (§16.4, M0369): "not covered", or a thumbs-down on an answer. Training officers
+	/// A question the department's content failed to answer (§16.4, M0354): "not covered", or a thumbs-down on an answer. Training officers
 	/// and protocol owners see the report and turn a gap into a draft protocol change or a new training. While Advanced Data Protection is
 	/// on, the question text is not kept (only the reason, the asker's role and the nearest sources).
 	/// </summary>
@@ -827,6 +835,9 @@ namespace Resgrid.Model
 					// K3: the reader's own enrollment of the course opens at the lesson (Courses/Open), at the block inside it.
 					var lesson = TryParseCourseAnchor(anchor, out var lessonId, out var inner) ? "?lesson=" + lessonId.ToString(System.Globalization.CultureInfo.InvariantCulture) : string.Empty;
 					return "/User/Courses/Open/" + id + lesson + SafeAnchor(inner);
+				case KnowledgeSourceKinds.QuestionExplanation:
+					// The bank editor at the question (its anchor is "q{questionId}"); only readers who may open the bank retrieve these.
+					return "/User/Courses/Bank/" + id + (TryParseQuestionAnchor(anchor, out var questionId) ? "?question=" + questionId.ToString(System.Globalization.CultureInfo.InvariantCulture) : string.Empty);
 				default:
 					return null;
 			}
@@ -861,6 +872,24 @@ namespace Resgrid.Model
 				return false;
 			}
 			inner = dash < 0 || dash == anchor.Length - 1 ? null : anchor.Substring(dash + 1);
+			return true;
+		}
+
+		/// <summary>A question explanation chunk's anchor: "q{questionId}".</summary>
+		public static string QuestionAnchor(int questionId) =>
+			questionId > 0 ? "q" + questionId.ToString(System.Globalization.CultureInfo.InvariantCulture) : null;
+
+		/// <summary>Reads a <see cref="QuestionAnchor"/>.</summary>
+		public static bool TryParseQuestionAnchor(string anchor, out int questionId)
+		{
+			questionId = 0;
+			if (string.IsNullOrWhiteSpace(anchor) || anchor.Length < 2 || anchor.Length > 10 || anchor[0] != 'q')
+				return false;
+			if (!int.TryParse(anchor.Substring(1), System.Globalization.NumberStyles.None, System.Globalization.CultureInfo.InvariantCulture, out questionId) || questionId <= 0)
+			{
+				questionId = 0;
+				return false;
+			}
 			return true;
 		}
 

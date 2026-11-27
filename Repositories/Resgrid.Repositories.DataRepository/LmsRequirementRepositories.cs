@@ -13,7 +13,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	// Training T3 (M0383-M0385): learning requirements, their members, training-backed enforcement, worker 93's clock and learning paths.
+	// Training T3 (M0364-M0366): learning requirements, their members, training-backed enforcement, worker 93's clock and learning paths.
 	// Portable SQL through the RMS helpers; list parameters use InList (IN on SQL Server, = ANY on PostgreSQL).
 
 	public class LmsRequirementsRepository : LmsRepositoryBase<LmsRequirement>, ILmsRequirementsRepository
@@ -367,9 +367,24 @@ namespace Resgrid.Repositories.DataRepository
 			if (ids.Length == 0)
 				return new List<LmsRequirementFact>();
 			return (await QueryAsync<LmsRequirementFact>(
-				$"SELECT {Col("UserId")}, {Col("LmsCourseId")} AS {Col("RefId")}, {Col("CompletedOn")}, {Col("LearningRecordId")} FROM {Tbl("LmsEnrollments")} " +
+				$"SELECT {Col("UserId")}, {Col("LmsCourseId")} AS {Col("RefId")}, {Col("CompletedOn")}, {Col("LearningRecordId")}, {Col("CompletionMethod")} FROM {Tbl("LmsEnrollments")} " +
 				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Status")} = {(int)LmsEnrollmentStatuses.Completed} AND {Col("CompletedOn")} IS NOT NULL " +
 				$"AND {InList("LmsCourseId", "Ids")}", new { DepartmentId = departmentId, Ids = ids })).ToList();
+		}
+
+		public async Task<List<LmsRequirementFact>> GetCourseCompletionsWithRecordsAsync(int departmentId, IEnumerable<int> lmsCourseIds)
+		{
+			var ids = InListValue(lmsCourseIds);
+			if (ids.Length == 0)
+				return new List<LmsRequirementFact>();
+			var reference = Concat("'lms-enrollment:'", IntegerAsText("e." + Col("LmsEnrollmentId"))) + (IsPostgres ? "::citext" : string.Empty);
+			return (await QueryAsync<LmsRequirementFact>(
+				$"SELECT e.{Col("UserId")}, e.{Col("LmsCourseId")} AS {Col("RefId")}, e.{Col("CompletedOn")}, COALESCE(e.{Col("LearningRecordId")}, lr.{Col("LearningRecordId")}) AS {Col("LearningRecordId")}, " +
+				$"e.{Col("CompletionMethod")} FROM {Tbl("LmsEnrollments")} e LEFT JOIN {Tbl("LearningRecords")} lr ON lr.{Col("DepartmentId")} = e.{Col("DepartmentId")} " +
+				$"AND lr.{Col("SourceKind")} IN ({(int)LearningRecordSourceKinds.LmsCourseCompletion}, {(int)LearningRecordSourceKinds.AcademyLesson}) AND lr.{Col("SourceRefId")} = ({reference}) " +
+				$"AND lr.{Col("Status")} <> {(int)LearningRecordStatuses.Voided} " +
+				$"WHERE e.{Col("DepartmentId")} = {P}DepartmentId AND e.{Col("Status")} = {(int)LmsEnrollmentStatuses.Completed} AND e.{Col("CompletedOn")} IS NOT NULL " +
+				$"AND {InList("LmsCourseId", "Ids", "e")}", new { DepartmentId = departmentId, Ids = ids })).ToList();
 		}
 
 		public async Task<List<LmsRequirementFact>> GetTrainingCompletionsAsync(int departmentId, IEnumerable<int> trainingIds)
@@ -378,7 +393,7 @@ namespace Resgrid.Repositories.DataRepository
 			if (wanted.Count == 0)
 				return new List<LmsRequirementFact>();
 			var rows = await QueryAsync<LmsRequirementFact>(
-				$"SELECT {Col("UserId")}, {Col("SourceRefId")} AS {Col("Code")}, {Col("CompletedOn")}, {Col("LearningRecordId")} FROM {Tbl("LearningRecords")} " +
+				$"SELECT {Col("UserId")}, {Col("SourceRefId")} AS {Col("Code")}, {Col("CompletedOn")}, {Col("LearningRecordId")}, {Col("CompletionMethod")} FROM {Tbl("LearningRecords")} " +
 				$"WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("SourceKind")} = {(int)LearningRecordSourceKinds.CourseCompletion} AND {Col("Status")} = {Verified} " +
 				$"AND {Col("SourceRefId")} LIKE {P}Prefix", new { DepartmentId = departmentId, Prefix = TrainingRefPrefix + "%" });
 			var facts = new List<LmsRequirementFact>();

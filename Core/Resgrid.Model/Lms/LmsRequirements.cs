@@ -164,7 +164,7 @@ namespace Resgrid.Model.Lms
 		public bool IsActive { get; set; } = true;
 
 		/// <summary>
-		/// The department's choice for a requirement on a Resgrid Academy lesson, directly or through a path (§15 A2 release rule, M0417):
+		/// The department's choice for a requirement on a Resgrid Academy lesson, directly or through a path (§15 A2 release rule, M0387):
 		/// what a major Academy update of the lesson does here, as <see cref="LmsMajorChangePolicies"/> (Notify by default; Reassign
 		/// re-assigns the requirement's completed members with this requirement's due days; Nothing keeps completions quiet). Department
 		/// courses ignore it: their publisher chooses (R-L12).
@@ -472,5 +472,11 @@ namespace Resgrid.Model.Lms
 
 		/// <summary>The learning record behind it, when there is one (the enforcement cause).</summary>
 		public int? LearningRecordId { get; set; }
+
+		/// <summary>Round 7B: <see cref="LearningCompletionMethods"/> of the completion (RecordedByOther: recorded by an instructor).</summary>
+		public int CompletionMethod { get; set; }
+
+		/// <summary>Round 9A: every learning record behind a composite fact (a finished path's step completions); null for a single record.</summary>
+		public List<int> RecordIds { get; set; }
 	}
 }

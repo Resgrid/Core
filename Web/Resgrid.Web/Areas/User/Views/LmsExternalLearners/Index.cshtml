@@ -1,0 +1,150 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@model Resgrid.Web.Areas.User.Models.LmsExternalLearners.LmsExternalLearnersIndexModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    Trainings → External learners (T5, LMS): fair use (25% of purchased seats, minimum 25, then counted in packs), the learner portal's
+    address, the learners and the invitation form.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Title"];
+    ViewData["Title"] = localizer["Title"].Value;
+    ViewData["Subtitle"] = localizer["Intro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var culture = CultureInfo.CurrentCulture;
+}
+
+@functions {
+    private static string StatusCss(int status) => status switch
+    {
+        (int)LmsExternalLearnerStatuses.Active => "label-primary",
+        (int)LmsExternalLearnerStatuses.Invited => "label-info",
+        (int)LmsExternalLearnerStatuses.Suspended or (int)LmsExternalLearnerStatuses.Removed => "label-danger",
+        _ => "label-default"
+    };
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.FairUse.AddonActive)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["AddonInactive"]</div>
+    }
+    <div class="rgw-stat-tiles m-b-sm">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Stat.Learners"]</div><div class="rgw-stat-value">@Model.FairUse.CountedLearners</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Stat.Allowance"]</div><div class="rgw-stat-value">@Model.FairUse.Allowance</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Stat.InPacks"]</div><div class="rgw-stat-value">@Model.FairUse.Overflow</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Stat.FreeSeats"]</div><div class="rgw-stat-value">@Model.FairUse.FreeSeats</div></div>
+    </div>
+    <p class="text-muted">@localizer["FairUseNote"]</p>
+
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white btn-sm" asp-controller="LmsExternalLearners" asp-action="Settings" asp-route-area="User"><i class="fa fa-paint-brush" aria-hidden="true"></i> @localizer["PortalSettings"]</a>
+        <a class="btn btn-white btn-sm" asp-controller="LmsExternalLearners" asp-action="Courses" asp-route-area="User"><i class="fa fa-play-circle" aria-hidden="true"></i> @localizer["CourseAccess"]</a>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-content">
+            <h3>@localizer["PortalHeader"]</h3>
+            @if (Model.Portal == null || !Model.Portal.IsEnabled)
+            {
+                <p class="text-muted">@localizer["PortalOff"]</p>
+            }
+            else
+            {
+                <p><strong>@localizer["PortalLink"]:</strong> <a href="@Model.PortalUrl" target="_blank" rel="noopener">@Model.PortalUrl</a></p>
+            }
+        </div>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-content">
+            <h3>@localizer["Title"]</h3>
+            @if (Model.Learners.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoLearners"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead><tr><th>@localizer["Name"]</th><th>@localizer["Organization"]</th><th>@localizer["Status"]</th><th>@localizer["LastSignIn"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var learner in Model.Learners)
+                            {
+                                <tr>
+                                    <td>@learner.Name<span class="rgw-sub">@learner.Email</span></td>
+                                    <td>@learner.Organization</td>
+                                    <td><span class="label @StatusCss(learner.Status)">@localizer["Status." + (LmsExternalLearnerStatuses)learner.Status]</span><span class="rgw-sub">@localizer["Source." + (LmsExternalLearnerSources)learner.Source]</span></td>
+                                    <td>@(learner.LastSignInOn.HasValue ? Model.Local(learner.LastSignInOn.Value).ToString("g", culture) : localizer["Never"].Value)</td>
+                                    <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsExternalLearners" asp-action="Learner" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Open"]</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (Model.Portal != null && Model.Portal.IsEnabled && Model.CanAuthor)
+    {
+        <div class="ibox" id="invite">
+            <div class="ibox-content">
+                <h3>@localizer["InviteHeader"]</h3>
+                <form method="post" asp-controller="LmsExternalLearners" asp-action="Invite" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <div class="row">
+                        <div class="form-group col-sm-4"><label for="xl-email">@localizer["Email"]</label><input id="xl-email" name="email" type="email" class="form-control" maxlength="256" required /></div>
+                        <div class="form-group col-sm-4"><label for="xl-first">@localizer["FirstName"]</label><input id="xl-first" name="firstName" class="form-control" maxlength="100" required /></div>
+                        <div class="form-group col-sm-4"><label for="xl-last">@localizer["LastName"]</label><input id="xl-last" name="lastName" class="form-control" maxlength="100" required /></div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-6"><label for="xl-org">@localizer["Organization"]</label><input id="xl-org" name="organization" class="form-control" maxlength="200" /></div>
+                        @if (Model.Customers.Count > 0)
+                        {
+                            <div class="form-group col-sm-6">
+                                <label for="xl-sponsor">@localizer["Sponsor"]</label>
+                                <select id="xl-sponsor" name="sponsorContactId" class="form-control">
+                                    <option value="">@localizer["None"]</option>
+                                    @foreach (var customer in Model.Customers)
+                                    {
+                                        <option value="@customer.ContactId">@Model.CustomerNames[customer.ContactId]</option>
+                                    }
+                                </select>
+                            </div>
+                        }
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-sm-6">
+                            <label for="xl-courses">@localizer["Courses"]</label>
+                            <select id="xl-courses" name="courseIds" class="form-control" multiple size="5">
+                                @foreach (var course in Model.Courses)
+                                {
+                                    <option value="@course.LmsCourseId">@course.Title</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-sm-6">
+                            <label for="xl-classes">@localizer["Classes"]</label>
+                            <select id="xl-classes" name="classIds" class="form-control" multiple size="5">
+                                @foreach (var session in Model.Sessions)
+                                {
+                                    <option value="@session.LmsClassSessionId">@session.Title (@Model.Local(session.StartsOn).ToString("d", culture))</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["Invite"]</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

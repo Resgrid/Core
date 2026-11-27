@@ -30,7 +30,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for Protocols P1 and the signing layer (S0) on both engines: M0342-M0344 over P0 data (every protocol
+	/// Real-database proof for Protocols P1 and the signing layer (S0) on both engines: M0341-M0343 over P0 data (every protocol
 	/// gets version 1.0 from its text, older dispatched text becomes legacy versions, call rows cite the version they were
 	/// dispatched with, rows without a hash cite 1.0), re-running Up on the migrated schema changes nothing, Down removes it all
 	/// and Up again rebuilds the same mapping. Then the repository queries worker 84 and the lifecycle rely on: the conditional
@@ -87,20 +87,20 @@ namespace Resgrid.Tests.Repositories
 		private IMigration[] P1() => IsPostgres
 			? new IMigration[]
 			{
-				new Resgrid.Providers.MigrationsPg.Migrations.M0342_AddSignatureRecordsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0343_AddProtocolLibraryAndVersionsPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0344_BackfillProtocolVersionsPg(),
-				// e-Signature S2 (M0373): SignatureRecords gained the external-signer columns the entity now writes.
-				new Resgrid.Providers.MigrationsPg.Migrations.M0373_AddExternalSignatureColumnsPg(),
-				// Round 3 A: the version repository reads and writes ContentKind and QuizTrainingId (M0353, M0354).
-				new Resgrid.Providers.MigrationsPg.Migrations.M0353_AddProtocolDocumentsAndFileTextPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0354_AddProtocolAcknowledgmentsPg()
+				new Resgrid.Providers.MigrationsPg.Migrations.M0341_AddSignatureRecordsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0342_AddProtocolLibraryAndVersionsPg(),
+				new Resgrid.Providers.MigrationsPg.Migrations.M0343_BackfillProtocolVersionsPg(),
+				// e-Signature S2 (M0358): SignatureRecords gained the external-signer columns the entity now writes.
+				new Resgrid.Providers.MigrationsPg.Migrations.M0358_AddExternalSignatureColumnsPg(),
+				// Round 3 A: the version repository reads and writes ContentKind and QuizTrainingId (M0347, M0348).
+				new Resgrid.Providers.MigrationsPg.Migrations.M0347_AddProtocolDocumentsAndFileTextPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0348_AddProtocolAcknowledgmentsPg()
 			}
 			: new IMigration[]
 			{
-				new Resgrid.Providers.Migrations.Migrations.M0342_AddSignatureRecords(), new Resgrid.Providers.Migrations.Migrations.M0343_AddProtocolLibraryAndVersions(),
-				new Resgrid.Providers.Migrations.Migrations.M0344_BackfillProtocolVersions(),
-				// e-Signature S2 (M0373): SignatureRecords gained the external-signer columns the entity now writes.
-				new Resgrid.Providers.Migrations.Migrations.M0373_AddExternalSignatureColumns(),
-				new Resgrid.Providers.Migrations.Migrations.M0353_AddProtocolDocumentsAndFileText(), new Resgrid.Providers.Migrations.Migrations.M0354_AddProtocolAcknowledgments()
+				new Resgrid.Providers.Migrations.Migrations.M0341_AddSignatureRecords(), new Resgrid.Providers.Migrations.Migrations.M0342_AddProtocolLibraryAndVersions(),
+				new Resgrid.Providers.Migrations.Migrations.M0343_BackfillProtocolVersions(),
+				// e-Signature S2 (M0358): SignatureRecords gained the external-signer columns the entity now writes.
+				new Resgrid.Providers.Migrations.Migrations.M0358_AddExternalSignatureColumns(),
+				new Resgrid.Providers.Migrations.Migrations.M0347_AddProtocolDocumentsAndFileText(), new Resgrid.Providers.Migrations.Migrations.M0348_AddProtocolAcknowledgments()
 			};
 
 		[OneTimeSetUp]
@@ -276,8 +276,8 @@ INSERT INTO {T("CallProtocols")} ({T("CallId")}, {T("DispatchProtocolId")}, {T("
 			await using (var database = Connect(_connection))
 				// FluentMigrator's version table keeps its quoted mixed-case name on PostgreSQL.
 				await database.ExecuteAsync(IsPostgres
-					? "DELETE FROM \"VersionInfo\" WHERE \"Version\" IN (342, 343, 344)"
-					: "DELETE FROM [VersionInfo] WHERE [Version] IN (342, 343, 344)");
+					? "DELETE FROM \"VersionInfo\" WHERE \"Version\" IN (341, 342, 343)"
+					: "DELETE FROM [VersionInfo] WHERE [Version] IN (341, 342, 343)");
 
 			Migrate(P1(), r => r.MigrateUp());
 
@@ -289,7 +289,7 @@ INSERT INTO {T("CallProtocols")} ({T("CallId")}, {T("DispatchProtocolId")}, {T("
 		[Test, Order(3)]
 		public async Task Down_removes_the_library_and_up_again_rebuilds_the_same_mapping()
 		{
-			Migrate(P1(), r => r.MigrateDown(341));
+			Migrate(P1(), r => r.MigrateDown(340));
 
 			await using (var database = Connect(_connection))
 			{

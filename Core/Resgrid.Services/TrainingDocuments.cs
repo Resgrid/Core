@@ -28,7 +28,7 @@ namespace Resgrid.Services
 			"Doc.GeneratedOn", "Doc.NotCounted", "Doc.CertificateTitle", "Doc.CertifiesThat", "Doc.HasCompleted", "Doc.CompletedOn", "Doc.IssuedBy",
 			"Doc.VerificationCode", "Doc.VerifyAt", "Doc.HoursReport", "Doc.Records", "Doc.Members", "Doc.Target", "Doc.UnresolvedDuplicates",
 			"Doc.PendingRecords", "Doc.NotAccreditor", "Doc.FormerMember", "Doc.IsoReport", "Doc.NccpReport", "Doc.National", "Doc.Local", "Doc.Individual",
-			"Doc.Cycle", "Doc.Level"
+			"Doc.Cycle", "Doc.Level", "Doc.RecordedBy", "Doc.Provenance"
 		};
 
 		private static readonly IReadOnlyDictionary<string, string> English = new Dictionary<string, string>(StringComparer.Ordinal)
@@ -74,7 +74,9 @@ namespace Resgrid.Services
 			["Doc.Local"] = "Local",
 			["Doc.Individual"] = "Individual",
 			["Doc.Cycle"] = "Cycle",
-			["Doc.Level"] = "Level"
+			["Doc.Level"] = "Level",
+			["Doc.RecordedBy"] = "Recorded by instructor",
+			["Doc.Provenance"] = "How recorded"
 		};
 
 		private const string QrPrefix = "data:image/png;base64,";
@@ -130,11 +132,18 @@ namespace Resgrid.Services
 					ce.Add(L(context, "Doc.CeCourseNumber") + ": " + line.CeCourseNumber);
 				if (ce.Count > 0)
 					body.Append("<div class=\"small\">").Append(E(string.Join(" · ", ce))).Append("</div>");
+				// Round 7B: a completion recorded by an instructor says so on the transcript (never shown as the member's own).
+				if (!string.IsNullOrWhiteSpace(line.RecordedBy))
+					body.Append("<div class=\"small\"><span class=\"tag\">").Append(E(L(context, "Doc.RecordedBy"))).Append("</span> ").Append(E(line.RecordedBy)).Append("</div>");
 				body.Append("</td>");
 
 				Td(body, line.CourseCode);
 				Td(body, string.IsNullOrWhiteSpace(line.Category) ? L(context, "Doc.Uncategorized") : line.Category);
-				Td(body, line.Source);
+				// Round 9B: the source, and how the record came about (self-reported, reviewed, recorded by an instructor...).
+				body.Append("<td>").Append(E(line.Source));
+				if (!string.IsNullOrWhiteSpace(line.Provenance))
+					body.Append("<div class=\"small\">").Append(E(line.Provenance)).Append("</div>");
+				body.Append("</td>");
 
 				body.Append("<td>").Append(E(line.Status));
 				if (!line.Counts)
@@ -180,7 +189,7 @@ namespace Resgrid.Services
 			{
 				L(context, "Doc.Member"), L(context, "Doc.Date"), L(context, "Doc.Course"), L(context, "Doc.Code"), L(context, "Doc.Category"), L(context, "Doc.Source"),
 				L(context, "Doc.Status"), L(context, "Doc.Hours"), L(context, "Doc.CeHours"), L(context, "Doc.CeProvider"), L(context, "Doc.CeCourseNumber"),
-				L(context, "Doc.Method"), L(context, "Doc.Instructors"), L(context, "Doc.NotCounted")
+				L(context, "Doc.Method"), L(context, "Doc.Instructors"), L(context, "Doc.RecordedBy"), L(context, "Doc.Provenance"), L(context, "Doc.NotCounted")
 			});
 
 			foreach (var line in (document.Lines ?? new List<TranscriptLine>()).Where(l => l != null))
@@ -189,7 +198,7 @@ namespace Resgrid.Services
 				{
 					document.MemberName, Date(line.CompletedOn), line.Title, line.CourseCode,
 					string.IsNullOrWhiteSpace(line.Category) ? L(context, "Doc.Uncategorized") : line.Category,
-					line.Source, line.Status, Number(line.Hours), Number(line.CeHours), line.CeProvider, line.CeCourseNumber, line.Method, line.Instructors,
+					line.Source, line.Status, Number(line.Hours), Number(line.CeHours), line.CeProvider, line.CeCourseNumber, line.Method, line.Instructors, line.RecordedBy, line.Provenance,
 					line.Counts ? null : L(context, "Doc.NotCounted")
 				});
 			}
@@ -346,6 +355,45 @@ namespace Resgrid.Services
 		}
 
 		#endregion Certificate
+
+		#region Seal revisions
+
+		/// <summary>
+		/// The content a certificate seal binds to: the verified record as printed (never the print time or the viewer). Shared by the web
+		/// download and the v4 one (round 10), so a sealed copy made by one is the copy the other serves again.
+		/// </summary>
+		public static string CertificateRevisionSha256(LearningRecord record, string verificationCode) =>
+			SignaturePolicy.HashArtifact(Newtonsoft.Json.JsonConvert.SerializeObject(new
+			{
+				kind = "training-certificate/1",
+				id = record.LearningRecordId,
+				department = record.DepartmentId,
+				holder = (record.UserId ?? string.Empty).ToLowerInvariant(),
+				title = record.Title,
+				code = record.CourseCode,
+				completed = record.CompletedOn.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture),
+				hours = record.Hours,
+				ce = record.CeHours,
+				category = record.CategoryId,
+				verifiedBy = (record.VerifiedByUserId ?? string.Empty).ToLowerInvariant(),
+				verification = verificationCode
+			}));
+
+		/// <summary>The content a transcript seal binds to: its member, period, filters and lines (never the print time or the viewer).</summary>
+		public static string TranscriptRevisionSha256(string userId, TranscriptDocument document, int? categoryId, int? source) =>
+			SignaturePolicy.HashArtifact(Newtonsoft.Json.JsonConvert.SerializeObject(new
+			{
+				kind = "training-transcript/1",
+				member = (userId ?? string.Empty).ToLowerInvariant(),
+				from = document.FromUtc?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+				to = document.ToUtc?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+				categoryId,
+				source,
+				lines = document.Lines,
+				total = document.TotalHours
+			}));
+
+		#endregion Seal revisions
 
 		#region Hours report
 

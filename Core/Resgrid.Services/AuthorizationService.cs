@@ -653,6 +653,7 @@ namespace Resgrid.Services
 				scope.Author = new TrainingRightScope { ManagesAll = true, ManagesOwn = true };
 				scope.Assign = new TrainingRightScope { ManagesAll = true, ManagesOwn = true };
 				scope.Delete = new TrainingRightScope { ManagesAll = true, ManagesOwn = true };
+				scope.Record = new TrainingRightScope { ManagesAll = true, ManagesOwn = true };
 				return scope;
 			}
 
@@ -712,6 +713,11 @@ namespace Resgrid.Services
 			scope.Author = await RightAsync(create);
 			scope.Assign = await RightAsync(assign);
 			scope.Delete = await RightAsync(delete);
+
+			// Round 7B: Record Training Completions (135), its own row only. "Everyone" is not offered for it; a stray Everyone row records for
+			// nobody (a member never records a completion for the department at large).
+			var record = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.RecordTrainingCompletions);
+			scope.Record = record == null || record.Action == (int)PermissionActions.Everyone ? new TrainingRightScope() : await RightAsync(record);
 
 			return scope;
 		}

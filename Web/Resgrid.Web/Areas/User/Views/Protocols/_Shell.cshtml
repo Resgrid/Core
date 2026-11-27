@@ -1,5 +1,8 @@
 @using Resgrid.Web.Areas.User.Models
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatchCaseReviews.DispatchCaseReviews> caseReviewLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> sharingText
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> setText
 @*
     Page heading shared by the protocol screens (module-workspace.css): title, breadcrumb and an optional line under it,
     the page's actions (ViewData["HeaderActions"]), and the module's sections in a strip underneath (Shared/_ModuleTabs).
@@ -7,6 +10,8 @@
     Settings, Import or Editor; ViewData["CanCreate"] shows New and Import; ViewData["IsManager"] the review queue and
     categories; ViewData["IsAdmin"] the settings. P2: every member gets "My acknowledgments"; ViewData["ManagesAcknowledgments"]
     (Manage Protocol Acknowledgments 130, approvers, admins) the compliance grid; managers the bulletins; authors the bulk upload.
+    P5 QA: every member gets "My case reviews"; ViewData["ReviewsDispatchCases"] (Review Dispatch Cases 134; admins when a page does not
+    say) the dispatch case review queue.
 *@
 @{
     var moduleName = localizer["ProtocolsHeader"].Value;
@@ -17,6 +22,7 @@
     var isManager = ViewData["IsManager"] as bool? ?? false;
     var isAdmin = ViewData["IsAdmin"] as bool? ?? false;
     var managesAcknowledgments = ViewData["ManagesAcknowledgments"] as bool? ?? isManager;
+    var reviewsDispatchCases = ViewData["ReviewsDispatchCases"] as bool? ?? isAdmin;
     var isRoot = string.Equals(title, moduleName, StringComparison.Ordinal);
     // Optional status pill beside the title (the detail page): text, label class and icon.
     var status = ViewData["TitleStatus"] as string;
@@ -38,6 +44,21 @@
     if (isManager || section == "Bulletins")
     {
         sections.Tabs.Add(new ModuleTab(localizer["BulletinsTab"].Value, "fa-bullhorn", "ProtocolAcknowledgments", "Bulletins", section == "Bulletins"));
+    }
+    if (reviewsDispatchCases || section == "CaseReviews")
+    {
+        sections.Tabs.Add(new ModuleTab(caseReviewLocalizer["CaseReviewsTab"].Value, "fa-clipboard", "DispatchCaseReviews", "Index", section == "CaseReviews"));
+    }
+    sections.Tabs.Add(new ModuleTab(caseReviewLocalizer["MyCaseReviewsTab"].Value, "fa-commenting-o", "DispatchCaseReviews", "Mine", section == "MyCaseReviews"));
+    // P5: the community exchange and template library (every member browses), public pages and export (approvers, managers); analytics (managers).
+    sections.Tabs.Add(new ModuleTab(sharingText["SharingTab"].Value, "fa-share-alt", "ProtocolSharing", "Exchange", section == "Sharing"));
+    // Round 10 A3: protocol sets over Department Links (publish, subscribe, the update inbox).
+    var setsTab = new ModuleTab(setText["ProtocolSetsTab"].Value, "fa-sitemap", "ContentSets", "Index", section == "Sets");
+    setsTab.RouteValues["kind"] = "0";
+    sections.Tabs.Add(setsTab);
+    if (isManager || section == "Analytics")
+    {
+        sections.Tabs.Add(new ModuleTab(sharingText["AnalyticsTab"].Value, "fa-bar-chart", "ProtocolSharing", "Analytics", section == "Analytics"));
     }
     // P3: the PDF book of the library or a category; every member can export what they can read.
     sections.Tabs.Add(new ModuleTab(localizer["BookTab"].Value, "fa-file-pdf-o", "ProtocolTools", "Book", section == "Book"));

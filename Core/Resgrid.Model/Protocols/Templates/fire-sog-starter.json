@@ -1,0 +1,187 @@
+{
+  "format": "resgrid-protocols",
+  "version": 2,
+  "exportedOn": "2026-11-25T00:00:00Z",
+  "set": {
+    "key": "fire-sog-starter",
+    "title": "Fire suppression SOG starter set",
+    "description": "Six fireground standard operating guidelines written by Resgrid as a starting point: Mayday, personnel accountability, rapid intervention, two-in/two-out, emergency traffic and evacuation, and rehabilitation. Review every guideline against your department's policies, staffing, local law and your authority having jurisdiction before you publish it.",
+    "publisher": "Resgrid",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "setVersion": "1.0"
+  },
+  "protocols": [
+    {
+      "code": "SOG-101",
+      "name": "Mayday",
+      "kind": "Sog",
+      "tags": "mayday,firefighter safety,rit",
+      "description": "How a member in trouble calls a Mayday, and what command, dispatch and every other crew do next.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "heading", "key": "purpose", "text": "Purpose", "level": 2 },
+          { "type": "paragraph", "key": "purposep", "html": "<p>To make sure a firefighter who is lost, trapped, out of air or injured gets help at once, and that radio traffic is cleared so the rescue can be run.</p>" },
+          { "type": "heading", "key": "when", "text": "When to call a Mayday", "level": 2 },
+          { "type": "paragraph", "key": "whenp", "html": "<p>Call it early. Any member who is lost or disoriented, trapped or entangled, low on or out of air, injured and unable to self-rescue, or caught in a collapse or a fall through a floor calls a Mayday without waiting for permission.</p>" },
+          { "type": "steps", "key": "member", "title": "The member in trouble", "items": [
+            { "key": "m1", "html": "<p>Say \"Mayday, Mayday, Mayday\" on the assigned tactical channel.</p>" },
+            { "key": "m2", "html": "<p>Give LUNAR: Location, Unit, Name, Assignment and Resources needed (air remaining, injuries).</p>" },
+            { "key": "m3", "html": "<p>Activate the PASS device and manage air: slow breathing, stay low, stay in contact with a wall or hose line.</p>" },
+            { "key": "m4", "html": "<p>Try to self-rescue toward a known exit only if it is safe; otherwise stay put and make noise or shine a light.</p>" }
+          ] },
+          { "type": "steps", "key": "command", "title": "Incident command", "items": [
+            { "key": "c1", "html": "<p>Acknowledge the Mayday and declare emergency traffic: only the member in trouble, the rescue crews and command transmit.</p>" },
+            { "key": "c2", "html": "<p>Deploy the rapid intervention crew with the LUNAR information.</p>" },
+            { "key": "c3", "html": "<p>Call for a personnel accountability report, request additional alarms and an additional rapid intervention crew, and request EMS.</p>" },
+            { "key": "c4", "html": "<p>Keep fire attack going where it protects the member; consider moving other operations to a second channel.</p>" }
+          ] },
+          { "type": "caution", "key": "radio", "title": "Radio discipline", "html": "<p>Every crew not working the rescue stays off the air until command releases the emergency traffic.</p>" },
+          { "type": "paragraph", "key": "dispatchp", "html": "<p><strong>Dispatch:</strong> repeat the Mayday to command, record the time, alert the next due companies and keep the channel clear.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SOG-102",
+      "name": "Personnel accountability",
+      "kind": "Sog",
+      "tags": "accountability,par,firefighter safety",
+      "description": "Tracking who is working where on the fireground, and when to take a personnel accountability report (PAR).",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "heading", "key": "purpose", "text": "Purpose", "level": 2 },
+          { "type": "paragraph", "key": "purposep", "html": "<p>Command must know at every moment which members are on scene, which crew they are with and where that crew is working.</p>" },
+          { "type": "steps", "key": "system", "title": "Accountability system", "items": [
+            { "key": "a1", "html": "<p>Every member checks in with the accountability officer or the apparatus before taking an assignment.</p>" },
+            { "key": "a2", "html": "<p>Crews enter and leave the hazard area together, and report entry and exit to their supervisor.</p>" },
+            { "key": "a3", "html": "<p>Company officers know the location and condition of every member of their crew at all times.</p>" }
+          ] },
+          { "type": "heading", "key": "par", "text": "When to take a PAR", "level": 2 },
+          { "type": "steps", "key": "partimes", "title": "Take a PAR", "items": [
+            { "key": "p1", "html": "<p>After a Mayday or an emergency evacuation.</p>" },
+            { "key": "p2", "html": "<p>When the strategy changes from offensive to defensive.</p>" },
+            { "key": "p3", "html": "<p>After a collapse, explosion or other sudden change in conditions.</p>" },
+            { "key": "p4", "html": "<p>At the benchmark intervals your department sets, and when the fire is declared under control.</p>" }
+          ] },
+          { "type": "warning", "key": "missing", "title": "A member not accounted for", "html": "<p>A member who cannot be accounted for is treated as a Mayday until found.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SOG-103",
+      "name": "Rapid intervention crew",
+      "kind": "Sog",
+      "tags": "rit,ric,firefighter safety",
+      "description": "Staffing, equipment and duties of the crew that stands by to rescue firefighters.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "heading", "key": "purpose", "text": "Purpose", "level": 2 },
+          { "type": "paragraph", "key": "purposep", "html": "<p>A rapid intervention crew stands ready to locate and remove members who are lost, trapped or in trouble.</p>" },
+          { "type": "steps", "key": "duties", "title": "On arrival", "items": [
+            { "key": "r1", "html": "<p>Report to command and stage near the main entry point with the rapid intervention equipment.</p>" },
+            { "key": "r2", "html": "<p>Size up the building: walk the perimeter, find secondary exits, ladder upper floors and note hazards.</p>" },
+            { "key": "r3", "html": "<p>Monitor the tactical channel continuously and track where crews are working.</p>" },
+            { "key": "r4", "html": "<p>Stay ready: the crew is not given other tasks that take it away from rescue readiness.</p>" }
+          ] },
+          { "type": "table", "key": "kit", "title": "Minimum equipment (adapt to your department)", "headerRow": true, "rows": [
+            [ "Item", "Purpose" ],
+            [ "Rapid intervention air pack", "Supply air to a member in trouble" ],
+            [ "Thermal imaging camera", "Locate the member" ],
+            [ "Search rope", "Keep the crew oriented" ],
+            [ "Forcible entry and cutting tools", "Free a trapped member" ]
+          ] },
+          { "type": "caution", "key": "activation", "title": "Activation", "html": "<p>When a Mayday is called, command deploys the crew and immediately assigns a new rapid intervention crew.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SOG-104",
+      "name": "Two in, two out",
+      "kind": "Sog",
+      "tags": "two-in two-out,interior operations,firefighter safety",
+      "description": "Minimum outside standby before an interior attack in an atmosphere immediately dangerous to life or health.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "heading", "key": "rule", "text": "The rule", "level": 2 },
+          { "type": "paragraph", "key": "rulep", "html": "<p>Members enter an atmosphere that is immediately dangerous to life or health in teams of at least two who stay in contact, and at least two fully equipped members stay outside, ready to go in after them.</p>" },
+          { "type": "steps", "key": "outside", "title": "The outside members", "items": [
+            { "key": "o1", "html": "<p>Wear full protective equipment and breathing apparatus.</p>" },
+            { "key": "o2", "html": "<p>Keep track of the interior team and stay in radio contact with it.</p>" },
+            { "key": "o3", "html": "<p>One may take another role (pump operator, command) only if that role can be dropped at once to make a rescue.</p>" }
+          ] },
+          { "type": "heading", "key": "exception", "text": "Exception: known life hazard", "level": 2 },
+          { "type": "paragraph", "key": "exceptionp", "html": "<p>Entry before the outside team is in place is allowed only to rescue a person in imminent danger who can be saved. The officer who makes that decision reports it to command and dispatch, and it is reviewed after the incident.</p>" },
+          { "type": "warning", "key": "local", "title": "Check your local rules", "html": "<p>This guideline reflects a common occupational safety rule. Confirm the exact requirements that apply to your department before you publish it.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SOG-105",
+      "name": "Emergency traffic and evacuation",
+      "kind": "Sog",
+      "tags": "emergency traffic,evacuation,collapse",
+      "description": "How command orders every crew out of a building and confirms that everyone is out.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "heading", "key": "when", "text": "When to evacuate", "level": 2 },
+          { "type": "paragraph", "key": "whenp", "html": "<p>Command orders an evacuation when conditions threaten the crews inside: signs of collapse, rapid fire spread, loss of water supply or any other change that makes interior work unsafe.</p>" },
+          { "type": "steps", "key": "order", "title": "Ordering the evacuation", "items": [
+            { "key": "e1", "html": "<p>Command announces \"Emergency traffic, emergency traffic\" and orders all crews out of the building.</p>" },
+            { "key": "e2", "html": "<p>Dispatch repeats the order and sounds the evacuation tone if your system has one.</p>" },
+            { "key": "e3", "html": "<p>Apparatus operators sound air horns in the pattern your department uses.</p>" },
+            { "key": "e4", "html": "<p>Crews leave together by the quickest safe route, taking hose lines only if it does not slow them down.</p>" },
+            { "key": "e5", "html": "<p>Command takes a personnel accountability report as soon as crews are out.</p>" }
+          ] },
+          { "type": "caution", "key": "par", "title": "No re-entry", "html": "<p>Nobody re-enters until command has a complete accountability report and gives a new assignment.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SOG-106",
+      "name": "Rehabilitation",
+      "kind": "Sog",
+      "tags": "rehab,health,firefighter safety",
+      "description": "Rest, hydration, cooling or warming and medical monitoring for members during long or demanding incidents.",
+      "requiresAcknowledgment": false,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "heading", "key": "purpose", "text": "Purpose", "level": 2 },
+          { "type": "paragraph", "key": "purposep", "html": "<p>Members who work hard in protective equipment lose fluid, overheat or get cold, and tire. Rehabilitation gives them rest and checks that they are fit to return to work.</p>" },
+          { "type": "steps", "key": "setup", "title": "Setting up rehab", "items": [
+            { "key": "s1", "html": "<p>Command establishes rehab early at incidents expected to be long, in extreme weather, or after crews use two air cylinders.</p>" },
+            { "key": "s2", "html": "<p>Place it away from smoke and traffic, with shade or shelter, seating, fluids and food.</p>" },
+            { "key": "s3", "html": "<p>Staff it with EMS personnel able to check vital signs.</p>" }
+          ] },
+          { "type": "steps", "key": "inrehab", "title": "In rehab", "items": [
+            { "key": "i1", "html": "<p>Crews check in and out together through the accountability system.</p>" },
+            { "key": "i2", "html": "<p>Remove protective layers, rehydrate and rest for the time your department sets.</p>" },
+            { "key": "i3", "html": "<p>EMS checks each member and releases them, holds them for more rest, or transports them following your medical protocols.</p>" }
+          ] }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,1353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers &amp; schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment; machine-translated</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+        <comment>machine-translated</comment>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment; machine-translated</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Access" xml:space="preserve">
+    <value>Зовнішні слухачі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Access.Assigned" xml:space="preserve">
+    <value>Підрозділ записує слухачів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Access.Catalog" xml:space="preserve">
+    <value>Показано на порталі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Access.None" xml:space="preserve">
+    <value>Лише члени</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>Не вдалося. Спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Дії</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddonInactive" xml:space="preserve">
+    <value>Доповнення LMS неактивне: зовнішні слухачі не можуть увійти, і нових додати не можна.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance" xml:space="preserve">
+    <value>Відвідування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Absent" xml:space="preserve">
+    <value>Відсутній</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Attended" xml:space="preserve">
+    <value>Був присутній</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Excused" xml:space="preserve">
+    <value>Поважна причина</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Unmarked" xml:space="preserve">
+    <value>Не позначено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BillingCustomer" xml:space="preserve">
+    <value>Власний клієнт слухача</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Currency" xml:space="preserve">
+    <value>Валюта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Due" xml:space="preserve">
+    <value>Плата до сплати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Export" xml:space="preserve">
+    <value>Експорт списку (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Fee" xml:space="preserve">
+    <value>Плата за зовнішнього слухача</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.FeeHelp" xml:space="preserve">
+    <value>Залиште порожнім для безкоштовного заняття. Resgrid не приймає оплату: експортуйте список або виставте рахунки через Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Header" xml:space="preserve">
+    <value>Відкрите заняття та плата</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Invoiced" xml:space="preserve">
+    <value>Виставлено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.InvoicesRaised" xml:space="preserve">
+    <value>Створено {0} чернеток рахунків для {1} слухачів. Перевірте й надішліть їх у Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Mode.PerLearner" xml:space="preserve">
+    <value>Один рахунок на слухача</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Mode.PerOrganization" xml:space="preserve">
+    <value>Один рахунок на організацію-спонсора</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.NoInvoicing" xml:space="preserve">
+    <value>Виставлення рахунків Business Operations неактивне для підрозділу: експортуйте список для власного обліку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Public" xml:space="preserve">
+    <value>Показати це заняття на порталі слухача</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.RaiseInvoices" xml:space="preserve">
+    <value>Виставити рахунки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.RateItem" xml:space="preserve">
+    <value>Тарифна позиція Business Operations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Roster" xml:space="preserve">
+    <value>Список і плата</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Skipped" xml:space="preserve">
+    <value>Не виставлено:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Classes" xml:space="preserve">
+    <value>Заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Course" xml:space="preserve">
+    <value>Курс</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseAccess" xml:space="preserve">
+    <value>Курси для зовнішніх слухачів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Courses" xml:space="preserve">
+    <value>Курси</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Attendance" xml:space="preserve">
+    <value>Відвідування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Currency" xml:space="preserve">
+    <value>Валюта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Email" xml:space="preserve">
+    <value>Ел. пошта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Fee" xml:space="preserve">
+    <value>Плата</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.FeeStatus" xml:space="preserve">
+    <value>Статус плати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Hours" xml:space="preserve">
+    <value>Години</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Invoice" xml:space="preserve">
+    <value>Рахунок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Kind" xml:space="preserve">
+    <value>Тип</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Learner" xml:space="preserve">
+    <value>Слухач</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Organization" xml:space="preserve">
+    <value>Організація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Roster" xml:space="preserve">
+    <value>Список</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Електронна пошта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollClass" xml:space="preserve">
+    <value>Записати на заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollCourse" xml:space="preserve">
+    <value>Записати на курс</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrolled" xml:space="preserve">
+    <value>Записано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Erase" xml:space="preserve">
+    <value>Стерти слухача</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseConfirm" xml:space="preserve">
+    <value>Я розумію, що це неможливо скасувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseConfirmRequired" xml:space="preserve">
+    <value>Позначте підтвердження, щоб стерти слухача.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Erased" xml:space="preserve">
+    <value>Слухача стерто.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseHeader" xml:space="preserve">
+    <value>Дані та стирання (GDPR)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseHelp" xml:space="preserve">
+    <value>Стирання видаляє обліковий запис, прогрес у курсах, спроби, записи про навчання та сертифікати, а також ім'я зі списків занять. Уже виставлені рахунки залишаються в Business Operations. Скасувати неможливо.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportData" xml:space="preserve">
+    <value>Експорт даних (GDPR)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FairUseNote" xml:space="preserve">
+    <value>Зовнішні слухачі включені до 25% придбаних місць (щонайменше 25). Понад це кожен займає місце, як член.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Fee" xml:space="preserve">
+    <value>Плата</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus" xml:space="preserve">
+    <value>Статус плати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.Due" xml:space="preserve">
+    <value>До сплати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.Invoiced" xml:space="preserve">
+    <value>Виставлено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.NotDue" xml:space="preserve">
+    <value>Не нараховано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.Waived" xml:space="preserve">
+    <value>Звільнено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>Ім'я</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>Люди поза підрозділом (партнери взаємодопомоги, підрядники, волонтери та громадськість) проходять ваші курси й відкриті заняття на порталі слухача, не стаючи членами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Надіслати запрошення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>Запрошення надіслано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InviteHeader" xml:space="preserve">
+    <value>Запросити зовнішнього слухача</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Тип</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.External" xml:space="preserve">
+    <value>Зовнішній слухач</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Member" xml:space="preserve">
+    <value>Член</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Прізвище</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LastSignIn" xml:space="preserve">
+    <value>Останній вхід</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearnerHeader" xml:space="preserve">
+    <value>Слухач</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_closed" xml:space="preserve">
+    <value>Реєстрацію на це заняття закрито.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_cutoff" xml:space="preserve">
+    <value>Реєстрацію закрито незадовго до заняття.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_full" xml:space="preserve">
+    <value>Усі місця на занятті зайняті.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_enrolled" xml:space="preserve">
+    <value>Вас немає у списку цього заняття.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_found" xml:space="preserve">
+    <value>Заняття не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_member" xml:space="preserve">
+    <value>Так можна записати лише зовнішніх слухачів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_open" xml:space="preserve">
+    <value>Реєстрацію на це заняття закрито.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_signed_off" xml:space="preserve">
+    <value>Заняття закрито; список змінити не можна.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_unenroll_closed" xml:space="preserve">
+    <value>З цього заняття не можна відписатися; зверніться до підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_accent_invalid" xml:space="preserve">
+    <value>Введіть колір у форматі #rrggbb.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_addon_inactive" xml:space="preserve">
+    <value>Доповнення LMS неактивне, тому зараз не можна додавати чи навчати зовнішніх слухачів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_closed" xml:space="preserve">
+    <value>Цей курс недоступний для зовнішніх слухачів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_not_found" xml:space="preserve">
+    <value>Курс не знайдено або не опубліковано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_refused" xml:space="preserve">
+    <value>Записатися не вдалося.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_customer_invalid" xml:space="preserve">
+    <value>Виберіть клієнта з Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_email_invalid" xml:space="preserve">
+    <value>Введіть дійсну адресу ел. пошти.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_exists" xml:space="preserve">
+    <value>Зовнішній слухач із цією адресою вже існує.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_fee_invalid" xml:space="preserve">
+    <value>Введіть плату від 0 до 100 000.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_fee_invoiced" xml:space="preserve">
+    <value>Цю плату вже виставлено; змініть її в Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_fee_not_found" xml:space="preserve">
+    <value>Плату не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_invoice_failed" xml:space="preserve">
+    <value>рахунок не вдалося створити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_invoicing_unavailable" xml:space="preserve">
+    <value>Виставлення рахунків Business Operations неактивне для підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_locked" xml:space="preserve">
+    <value>Забагато невірних паролів. Спробуйте через 15 хвилин.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_name_required" xml:space="preserve">
+    <value>Введіть ім'я та прізвище.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_no_customer" xml:space="preserve">
+    <value>немає клієнта Business Operations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_no_sponsor" xml:space="preserve">
+    <value>немає організації-спонсора</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_not_found" xml:space="preserve">
+    <value>Слухача не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_not_invited" xml:space="preserve">
+    <value>Повторно можна надіслати лише неприйняте запрошення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_not_verified" xml:space="preserve">
+    <value>Спершу підтвердьте адресу за посиланням, яке ми надіслали.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_password_length" xml:space="preserve">
+    <value>Пароль має містити від 8 до 128 символів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_password_weak" xml:space="preserve">
+    <value>Пароль має містити велику й малу літеру та цифру.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_portal_full" xml:space="preserve">
+    <value>Реєстрація зараз недоступна. Зверніться до підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_portal_off" xml:space="preserve">
+    <value>Спочатку увімкніть портал слухача.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_rate_item_invalid" xml:space="preserve">
+    <value>Виберіть тарифну позицію з Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_registration_closed" xml:space="preserve">
+    <value>Реєстрація на цьому порталі закрита.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_seats_full" xml:space="preserve">
+    <value>Понад безкоштовну квоту кожен зовнішній слухач займає місце, а вільних немає. Додайте {0} пакет(и), щоб запросити більше.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_signin_failed" xml:space="preserve">
+    <value>Неправильна адреса або пароль.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_status_invalid" xml:space="preserve">
+    <value>Така зміна неможлива.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_suspended" xml:space="preserve">
+    <value>Ваш доступ призупинено. Зверніться до підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_token_invalid" xml:space="preserve">
+    <value>Це посилання вже недійсне. Попросіть нове.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Ім'я</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Ніколи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Опублікованих курсів ще немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLearners" xml:space="preserve">
+    <value>Зовнішніх слухачів ще немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Немає</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Відкрити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Organization" xml:space="preserve">
+    <value>Організація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Attest" xml:space="preserve">
+    <value>Підтверджую, що проходжу тест самостійно, без допомоги.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Back" xml:space="preserve">
+    <value>Назад</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Catalog" xml:space="preserve">
+    <value>Відкриті заняття та курси</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.CatalogCourses" xml:space="preserve">
+    <value>Курси</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Certificate" xml:space="preserve">
+    <value>Сертифікат</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ChoosePassword" xml:space="preserve">
+    <value>Оберіть пароль</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Completed" xml:space="preserve">
+    <value>Завершено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.CompletedOn" xml:space="preserve">
+    <value>Завершено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ConfirmPassword" xml:space="preserve">
+    <value>Підтвердьте пароль</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Continue" xml:space="preserve">
+    <value>Продовжити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.CourseDone" xml:space="preserve">
+    <value>Курс завершено. Він є у вашій історії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Enroll" xml:space="preserve">
+    <value>Записатися</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EnrolledMessage" xml:space="preserve">
+    <value>Вас записано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EraseMine" xml:space="preserve">
+    <value>Видалити мій обліковий запис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EraseMineDone" xml:space="preserve">
+    <value>Ваш обліковий запис видалено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EraseMineHelp" xml:space="preserve">
+    <value>Видаляє обліковий запис, прогрес, записи про навчання та сертифікати в цьому підрозділі. Підтвердьте паролем. Скасувати неможливо.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.FileTooLarge" xml:space="preserve">
+    <value>Файл завеликий.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Lesson" xml:space="preserve">
+    <value>Цей урок зараз не можна завершити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Locked" xml:space="preserve">
+    <value>Спершу завершіть попередні уроки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Requirement" xml:space="preserve">
+    <value>Спершу складіть тест або дайте відповіді на опитування.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Response" xml:space="preserve">
+    <value>Спершу напишіть відповідь.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.SeatTime" xml:space="preserve">
+    <value>Спершу приділіть уроку трохи більше часу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ExportMine" xml:space="preserve">
+    <value>Завантажити мої дані</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.FeeLabel" xml:space="preserve">
+    <value>Плата</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Forgot" xml:space="preserve">
+    <value>Забули пароль?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ForgotSent" xml:space="preserve">
+    <value>Якщо ця адреса має обліковий запис, посилання для скидання вже надіслано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Free" xml:space="preserve">
+    <value>Безкоштовно</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Full" xml:space="preserve">
+    <value>Немає місць</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Hours" xml:space="preserve">
+    <value>Години</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.LessonDone" xml:space="preserve">
+    <value>Урок завершено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Lessons" xml:space="preserve">
+    <value>Уроки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Locked" xml:space="preserve">
+    <value>заблоковано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MarkComplete" xml:space="preserve">
+    <value>Позначити завершеним</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyClasses" xml:space="preserve">
+    <value>Мої заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyCourses" xml:space="preserve">
+    <value>Мої курси</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyData" xml:space="preserve">
+    <value>Мої дані</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyLearning" xml:space="preserve">
+    <value>Моє навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Next" xml:space="preserve">
+    <value>Наступний</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NoClasses" xml:space="preserve">
+    <value>Зараз немає відкритих занять.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NoCourses" xml:space="preserve">
+    <value>Зараз немає відкритих курсів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NoLearning" xml:space="preserve">
+    <value>Тут поки нічого немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NotPassed" xml:space="preserve">
+    <value>Не складено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Open" xml:space="preserve">
+    <value>Відкрити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.OpenDocument" xml:space="preserve">
+    <value>Відкрити документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Order" xml:space="preserve">
+    <value>Розташуйте за порядком (літери через кому)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Organization" xml:space="preserve">
+    <value>Організація (необов'язково)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Passed" xml:space="preserve">
+    <value>Складено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Password" xml:space="preserve">
+    <value>Пароль</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PasswordHelp" xml:space="preserve">
+    <value>Щонайменше 8 символів із великою й малою літерою та цифрою.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PasswordMismatch" xml:space="preserve">
+    <value>Паролі не збігаються.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PasswordSet" xml:space="preserve">
+    <value>Пароль встановлено. Увійдіть, щоб продовжити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PoweredBy" xml:space="preserve">
+    <value>Працює на Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Previous" xml:space="preserve">
+    <value>Попередній</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PrivacyNote" xml:space="preserve">
+    <value>Ваші дані використовує лише {0} для обліку навчання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PublicClasses" xml:space="preserve">
+    <value>Відкриті заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Register" xml:space="preserve">
+    <value>Створити обліковий запис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RegisteredMessage" xml:space="preserve">
+    <value>Ваше місце записано. Статус дивіться нижче.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RegisterForClass" xml:space="preserve">
+    <value>Записатися</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RegisterSent" xml:space="preserve">
+    <value>Перевірте пошту: ми надіслали посилання для підтвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Score" xml:space="preserve">
+    <value>Результат: {0}%</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SeatsLeft" xml:space="preserve">
+    <value>Залишилось місць: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SeatTime" xml:space="preserve">
+    <value>Не закривайте сторінку; час зараховується до уроку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SendResetLink" xml:space="preserve">
+    <value>Надіслати посилання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SetPassword" xml:space="preserve">
+    <value>Встановити пароль</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SignIn" xml:space="preserve">
+    <value>Увійти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SignInToRegister" xml:space="preserve">
+    <value>Увійдіть або створіть обліковий запис, щоб записатися.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SignOut" xml:space="preserve">
+    <value>Вийти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Skip" xml:space="preserve">
+    <value>Перейти до вмісту</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.StartTest" xml:space="preserve">
+    <value>Почати тест</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SubmitSurvey" xml:space="preserve">
+    <value>Надіслати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SubmitTest" xml:space="preserve">
+    <value>Надіслати відповіді</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Throttled" xml:space="preserve">
+    <value>Забагато спроб із вашої мережі. Зачекайте й спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Title" xml:space="preserve">
+    <value>Навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Transcript" xml:space="preserve">
+    <value>Історія та сертифікати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Unavailable" xml:space="preserve">
+    <value>Цей навчальний портал зараз недоступний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Verified" xml:space="preserve">
+    <value>Адресу підтверджено. Увійдіть, щоб продовжити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Waitlist" xml:space="preserve">
+    <value>Стати в чергу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.WatchVideo" xml:space="preserve">
+    <value>Дивитися відео</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.When" xml:space="preserve">
+    <value>Коли</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Where" xml:space="preserve">
+    <value>Де</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Withdraw" xml:space="preserve">
+    <value>Відписатися</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.WithdrawnMessage" xml:space="preserve">
+    <value>Ви відписалися від заняття.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalHeader" xml:space="preserve">
+    <value>Портал слухача</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalLink" xml:space="preserve">
+    <value>Адреса порталу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalOff" xml:space="preserve">
+    <value>Портал слухача вимкнено. Увімкніть його в налаштуваннях порталу, щоб запрошувати слухачів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalSettings" xml:space="preserve">
+    <value>Налаштування порталу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicFeesLink" xml:space="preserve">
+    <value>Відкрите заняття та плата</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Відновити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Видалити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResendInvite" xml:space="preserve">
+    <value>Надіслати запрошення повторно</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster" xml:space="preserve">
+    <value>Список</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Declined" xml:space="preserve">
+    <value>Відхилено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Enrolled" xml:space="preserve">
+    <value>Записано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.PendingApproval" xml:space="preserve">
+    <value>Очікує схвалення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Removed" xml:space="preserve">
+    <value>Видалено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Waitlisted" xml:space="preserve">
+    <value>У списку очікування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Withdrawn" xml:space="preserve">
+    <value>Відкликано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Accent" xml:space="preserve">
+    <value>Акцентний колір</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.AccentHelp" xml:space="preserve">
+    <value>Колір на кшталт #1ab394. Залиште порожнім для кольору Resgrid. Логотип береться з профілю підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Enabled" xml:space="preserve">
+    <value>Увімкнути портал слухача</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.HideLogo" xml:space="preserve">
+    <value>Приховати логотип підрозділу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Preview" xml:space="preserve">
+    <value>Попередній перегляд</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.PublicListing" xml:space="preserve">
+    <value>Показувати відкриті заняття та курси каталогу відвідувачам без входу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Regenerate" xml:space="preserve">
+    <value>Змінити адресу порталу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.RegenerateHelp" xml:space="preserve">
+    <value>Старі посилання перестануть працювати, а слухачі вийдуть із системи.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.SelfRegistration" xml:space="preserve">
+    <value>Дозволити самостійно створювати обліковий запис слухача (відкриті заняття та курси з каталогу)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Welcome" xml:space="preserve">
+    <value>Текст привітання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Source.Invited" xml:space="preserve">
+    <value>Запрошено підрозділом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Source.SelfRegistered" xml:space="preserve">
+    <value>Зареєстровано на порталі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Sponsor" xml:space="preserve">
+    <value>Організація-спонсор (клієнт Business Operations)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Allowance" xml:space="preserve">
+    <value>Включено безкоштовно</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.FreeSeats" xml:space="preserve">
+    <value>Вільні місця</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.InPacks" xml:space="preserve">
+    <value>Враховано в пакетах</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Learners" xml:space="preserve">
+    <value>Зовнішні слухачі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Active" xml:space="preserve">
+    <value>Активний</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Erased" xml:space="preserve">
+    <value>Стерто</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Invited" xml:space="preserve">
+    <value>Запрошено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Pending" xml:space="preserve">
+    <value>Не підтверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Removed" xml:space="preserve">
+    <value>Видалено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Suspended" xml:space="preserve">
+    <value>Призупинено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Призупинити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Зовнішні слухачі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Transcript" xml:space="preserve">
+    <value>Навчальна історія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Waive" xml:space="preserve">
+    <value>Звільнено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Greeting" xml:space="preserve">
+    <value>Вітаємо, {0}!</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Enrolled.Subject" xml:space="preserve">
+    <value>Ваше місце підтверджено: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Enrolled.Body" xml:space="preserve">
+    <value>Ваше місце на {0} {1} підтверджено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Waitlisted.Subject" xml:space="preserve">
+    <value>Ви в списку очікування: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Waitlisted.Body" xml:space="preserve">
+    <value>{0} {1} заповнено. Ви номер {2} у списку очікування. Ми напишемо вам, якщо для вас звільниться місце.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Promoted.Subject" xml:space="preserve">
+    <value>Для вас звільнилося місце: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Promoted.Body" xml:space="preserve">
+    <value>На {0} {1} звільнилося місце, і воно ваше: ваше місце підтверджено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Reminder.Subject" xml:space="preserve">
+    <value>Нагадування: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Reminder.Body" xml:space="preserve">
+    <value>Нагадуємо, що {0} починається {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Changed.Subject" xml:space="preserve">
+    <value>Зміни в занятті: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Changed.Body" xml:space="preserve">
+    <value>Заняття {0} змінено. Тепер воно відбудеться {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Cancelled.Subject" xml:space="preserve">
+    <value>Заняття скасовано: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Cancelled.Body" xml:space="preserve">
+    <value>Заняття {0} {1} скасовано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.CancelReason" xml:space="preserve">
+    <value>Причина: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.SignedOff.Subject" xml:space="preserve">
+    <value>Ваш навчальний запис: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.SignedOff.Body" xml:space="preserve">
+    <value>Вашу присутність на {0} зареєстровано. Ваш навчальний запис і сертифікат (якщо є) — у розділі «Моє навчання».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.CompletionRecorded.Subject" xml:space="preserve">
+    <value>Курс завершено: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.CompletionRecorded.Body" xml:space="preserve">
+    <value>Ваш інструктор зареєстрував, що ви завершили {0}. Це є у вашому навчальному записі в розділі «Моє навчання».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Where" xml:space="preserve">
+    <value>Де: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Online" xml:space="preserve">
+    <value>Приєднатися онлайн: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.OpenPortal" xml:space="preserve">
+    <value>Відкрити «Моє навчання»</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Footer" xml:space="preserve">
+    <value>Надіслано {0} через Resgrid, тому що у вас є місце на цьому занятті.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Unsubscribe" xml:space="preserve">
+    <value>Припинити нагадування про заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Resend" xml:space="preserve">
+    <value>Надіслати лист ще раз</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendHelp" xml:space="preserve">
+    <value>Не отримали листа для підтвердження адреси або запрошення? Введіть свою адресу, і ми надішлемо його ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendSend" xml:space="preserve">
+    <value>Надіслати ще раз</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendSent" xml:space="preserve">
+    <value>Якщо на цю адресу очікує обліковий запис, ми надіслали лист ще раз. Перевірте вхідні та папку «Спам».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendLink" xml:space="preserve">
+    <value>Не отримали листа?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Unsubscribe" xml:space="preserve">
+    <value>Нагадування про заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.UnsubscribeHelp" xml:space="preserve">
+    <value>Припинити нагадування про заняття? Листи про ваші місця (підтверджені, в очікуванні, змінені чи скасовані) надходитимуть і далі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.UnsubscribeConfirm" xml:space="preserve">
+    <value>Припинити нагадування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.UnsubscribeDone" xml:space="preserve">
+    <value>Ви більше не отримуватимете нагадувань про заняття. Увімкнути їх знову можна в розділі «Моє навчання».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Preferences" xml:space="preserve">
+    <value>Налаштування листів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EmailLanguage" xml:space="preserve">
+    <value>Мова листів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EmailLanguageDefault" xml:space="preserve">
+    <value>Мова підрозділу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RemindersOff" xml:space="preserve">
+    <value>Не надсилати мені нагадування про заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RemindersOffHelp" xml:space="preserve">
+    <value>Листи про ваші місця (підтверджені, в очікуванні, змінені чи скасовані) надсилаються завжди.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SavePreferences" xml:space="preserve">
+    <value>Зберегти налаштування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PreferencesSaved" xml:space="preserve">
+    <value>Ваші налаштування збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.WaitlistPosition" xml:space="preserve">
+    <value>Номер {0} у списку очікування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Title" xml:space="preserve">
+    <value>Як використовуються ваші дані</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Link" xml:space="preserve">
+    <value>Конфіденційність</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Short" xml:space="preserve">
+    <value>{0} відповідає за дані, які ви тут вказуєте, і використовує їх лише для вашого навчання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Controller" xml:space="preserve">
+    <value>{0} керує цим навчальним порталом, вирішує, як використовуються ваші дані, і відповідає за них. Resgrid надає портал від імені {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.WhatKept" xml:space="preserve">
+    <value>Що зберігається: ваше ім'я, адреса електронної пошти та організація (якщо ви її вказали); мова листів і налаштування нагадувань; ваші реєстрації, відвідуваність, прогрес у курсах, відповіді та результати тестів; а також записи про навчання і сертифікати, які ви отримуєте.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Why" xml:space="preserve">
+    <value>Навіщо: щоб проводити ваше навчання та вести облік навчання, потрібний {0}. Ваші дані не використовуються для реклами чи маркетингу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Rights" xml:space="preserve">
+    <value>Ваш вибір: у розділі «Моє навчання» ви будь-коли можете завантажити копію своїх даних або видалити обліковий запис, а також вимкнути нагадування про заняття електронною поштою.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Retention" xml:space="preserve">
+    <value>Деякі записи можуть залишитися після видалення облікового запису, наприклад уже виставлені рахунки, якщо {0} має зберігати їх за законом або власними правилами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Contact" xml:space="preserve">
+    <value>З будь-якими іншими питаннями чи запитами щодо ваших даних, наприклад щодо їх виправлення, звертайтеся до {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.WelcomeHelp" xml:space="preserve">
+    <value>Показується вгорі порталу. Тут можна додати контакт із питань захисту даних або посилання на вашу політику конфіденційності.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.PrivacyHelp" xml:space="preserve">
+    <value>Ваш підрозділ або організація відповідає за дані слухачів. Портал показує слухачам сторінку конфіденційності, яка називає вас, пояснює, що зберігається і навіщо, і дозволяє завантажити свої дані або видалити обліковий запис. Додайте контакт із питань захисту даних до тексту привітання, якщо цього вимагають ваші правила.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyTitle" xml:space="preserve">
+    <value>Підтвердіть свою адресу електронної пошти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyHelp" xml:space="preserve">
+    <value>Підтвердьте навчальний обліковий запис, зареєстрований {0} на ім'я {1}. Якщо ви не створювали цей обліковий запис, закрийте цю сторінку: нічого не зміниться.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyConfirm" xml:space="preserve">
+    <value>Підтвердити мою адресу електронної пошти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.ProtocolWithheld" xml:space="preserve">
+    <value>Цей протокол не можна показати на порталі слухачів. Зверніться до підрозділу, який проводить цей курс.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_licensed" xml:space="preserve">
+    <value>Цей курс містить протокол з ліцензованим вмістом, який не можна показувати зовнішнім слухачам. Видаліть цей урок, перш ніж відкрити їм курс.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_audience" xml:space="preserve">
+    <value>Цей курс містить протокол, обмежений аудиторією, до якої зовнішні слухачі ніколи не належать. Видаліть цей урок або обмеження аудиторії протоколу, перш ніж відкрити їм курс.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_document" xml:space="preserve">
+    <value>Цей курс містить протокол на основі документа, який не можна показати зовнішнім слухачам. Використайте складену версію протоколу або видаліть цей урок, перш ніж відкрити їм курс.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_unavailable" xml:space="preserve">
+    <value>Цей курс містить протокол, який вимкнено або який більше не чинний, тому його не можна показати зовнішнім слухачам. Оновіть урок до чинної версії або видаліть його, перш ніж відкрити їм курс.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyPasswordHelp" xml:space="preserve">
+    <value>Виберіть пароль, з яким ви входитимете. Діє лише пароль, вибраний тут: пароль, введений під час реєстрації облікового запису, не зберігається.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_busy" xml:space="preserve">
+    <value>Обліковий запис змінено в ту саму мить. Спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

@@ -17,6 +17,9 @@ namespace Resgrid.Workers.Framework.Logic
 		public int Completed { get; set; }
 		public int Written { get; set; }
 		public int Failures { get; set; }
+
+		/// <summary>Round 9B: reviewer digest notices sent.</summary>
+		public int DigestNotices { get; set; }
 	}
 
 	/// <summary>
@@ -34,7 +37,30 @@ namespace Resgrid.Workers.Framework.Logic
 		public async Task<TrainingRecordsRunResult> Process(CancellationToken cancellationToken = default)
 		{
 			using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
-			return await Process(scope.Resolve<ILearningRecordBackfillsRepository>(), scope.Resolve<ILearningRecordBackfillService>(), DateTime.UtcNow, cancellationToken);
+			var result = await Process(scope.Resolve<ILearningRecordBackfillsRepository>(), scope.Resolve<ILearningRecordBackfillService>(), DateTime.UtcNow, cancellationToken);
+			result.DigestNotices = await SendDigests(scope.Resolve<ITrainingSubmissionService>(), DateTime.UtcNow, cancellationToken);
+			return result;
+		}
+
+		/// <summary>
+		/// Round 9B: the daily reviewer digest of training hours submissions, for the departments that chose it. Reads only departments with
+		/// submissions waiting; claimed per department and local day, so the five-minute schedule sends each day once.
+		/// </summary>
+		public static async Task<int> SendDigests(ITrainingSubmissionService submissions, DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				return await submissions.SendReviewerDigestsAsync(utcNow, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Training review digests stopped.");
+				return 0;
+			}
 		}
 
 		/// <summary>The run itself, with its services passed in (tests).</summary>

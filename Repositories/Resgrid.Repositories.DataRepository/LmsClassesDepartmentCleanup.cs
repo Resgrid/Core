@@ -6,7 +6,7 @@ using Resgrid.Config;
 namespace Resgrid.Repositories.DataRepository
 {
 	/// <summary>
-	/// The department's Training T4 part 1 rows (round 5B, M0403-M0405) in the caller's transaction, children first, for both databases:
+	/// The department's Training T4 part 1 rows (round 5B, M0378-M0380) in the caller's transaction, children first, for both databases:
 	/// resource bookings, cost lines, instructors and rosters before their class sessions, training resources, and lesson plan versions
 	/// before their plans. No foreign keys (LMS tables reference baseline ids only, §17.3). Department deletion purges every roster
 	/// whatever its retention (the retention hold stops the roster purge, not the department's deletion).

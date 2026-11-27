@@ -13,7 +13,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 namespace Resgrid.Repositories.DataRepository
 {
 	/// <summary>
-	/// Member exposure and critical-incident entries (§13b WL0, M0376). Portable SQL through <see cref="RmsRepositoryBase{T}"/>; the
+	/// Member exposure and critical-incident entries (§13b WL0, M0360). Portable SQL through <see cref="RmsRepositoryBase{T}"/>; the
 	/// member id is citext on PostgreSQL and compared through <c>CaseInsensitive</c>. The worker queries read operational columns only.
 	/// </summary>
 	public class RmsResponderExposuresRepository : RmsRepositoryBase<RmsResponderExposure>, IRmsResponderExposuresRepository
@@ -151,7 +151,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Post-call critical-incident and exposure flags (§13b WL0, M0376).</summary>
+	/// <summary>Post-call critical-incident and exposure flags (§13b WL0, M0360).</summary>
 	public class RmsCallExposureFlagsRepository : RmsRepositoryBase<RmsCallExposureFlag>, IRmsCallExposureFlagsRepository
 	{
 		public RmsCallExposureFlagsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -218,7 +218,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>At-risk screening flags (§13b WL0, M0376).</summary>
+	/// <summary>At-risk screening flags (§13b WL0, M0360).</summary>
 	public class RmsResponderScreeningFlagsRepository : RmsRepositoryBase<RmsResponderScreeningFlag>, IRmsResponderScreeningFlagsRepository
 	{
 		public RmsResponderScreeningFlagsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)

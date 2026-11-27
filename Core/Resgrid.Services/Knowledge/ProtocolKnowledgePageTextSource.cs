@@ -11,7 +11,7 @@ using Resgrid.Model.Services;
 namespace Resgrid.Services.Knowledge
 {
 	/// <summary>
-	/// The page text of protocol files for the knowledge index: the extracted pages (ProtocolFileTexts, M0353) of the cited version's
+	/// The page text of protocol files for the knowledge index: the extracted pages (ProtocolFileTexts, M0347) of the cited version's
 	/// primary file and of the protocol's attachments. Only finished extractions are read; a file still queued, marked "no text"
 	/// (encrypted, scanned) or failed contributes nothing. Other source kinds (training files, documents) have no extraction store yet
 	/// and yield no pages, as before.

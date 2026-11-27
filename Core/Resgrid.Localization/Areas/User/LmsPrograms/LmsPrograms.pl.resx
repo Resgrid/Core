@@ -60,782 +60,1050 @@
   </resheader>
   <data name="AcademyPathsHeader" xml:space="preserve">
     <value>Ścieżki ról Resgrid Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyPathsIntro" xml:space="preserve">
     <value>Bezpłatne dla każdego oddziału. Resgrid utrzymuje ich kroki; możesz je przypisywać i używać w wymaganiach.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyPrefix" xml:space="preserve">
     <value>Academy:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActedOn" xml:space="preserve">
     <value>Data</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActiveLabel" xml:space="preserve">
     <value>Aktywny</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddStep" xml:space="preserve">
     <value>Dodaj krok</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddStepNoScript" xml:space="preserve">
     <value>Zapisz, aby dodać kolejne kroki.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonNotice" xml:space="preserve">
     <value>Wymagania szkoleniowe są częścią dodatku LMS. Możesz je przeglądać; tworzenie i zmienianie ich wymaga dodatku.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertOnCompletionLabel" xml:space="preserve">
     <value>Powiadamiaj ich także, gdy członek je ukończy lub odnowi</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertSupervisorsLabel" xml:space="preserve">
     <value>Powiadamiaj administratorów grup członka, gdy członek jest po terminie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertUsersLabel" xml:space="preserve">
     <value>Powiadamiaj także te osoby</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertsHeader" xml:space="preserve">
     <value>Powiadomienia</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllGroups" xml:space="preserve">
     <value>Wszystkie grupy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllRequirements" xml:space="preserve">
     <value>Wszystkie wymagania</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllStates" xml:space="preserve">
     <value>Wszystkie stany</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AndMoreFormat" xml:space="preserve">
     <value>i {0} więcej</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignAction" xml:space="preserve">
     <value>Przypisz ścieżkę</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignHeader" xml:space="preserve">
     <value>Przypisz tę ścieżkę</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignedFormat" xml:space="preserve">
     <value>Przypisano członkom: {0}; mieli ją już wcześniej: {1}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AtRiskDaysLabel" xml:space="preserve">
     <value>Ostrzegaj tyle dni przed terminem</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceHelp" xml:space="preserve">
     <value>Członkowie dowolnej wybranej roli, grupy, certyfikatu lub zmiany. Osoby, które później dołączą, otrzymają rolę lub w inny sposób wejdą do grupy docelowej, dostają własny termin.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceMember" xml:space="preserve">
     <value>członek</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceOther" xml:space="preserve">
     <value>inne</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AutoAssignLabel" xml:space="preserve">
     <value>Przypisuj kurs lub ścieżkę każdemu członkowi automatycznie (wdrożenie)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AutoAssigns" xml:space="preserve">
     <value>Przypisuje automatycznie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BacksHelp" xml:space="preserve">
     <value>Egzekwowanie oparte na szkoleniach: gdy członek jest po terminie dłużej niż okres karencji, jego certyfikat tego typu może zostać oznaczony jako wygasły. Wymienione są tylko typy certyfikatów, które wygasają.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BacksLabel" xml:space="preserve">
     <value>Powiązany certyfikat</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BreachFormat" xml:space="preserve">
     <value>{0}: {1} z {2} członków ({3}%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Anuluj</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CategoryLabel" xml:space="preserve">
     <value>Kategoria szkolenia</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CertificationExpires" xml:space="preserve">
     <value>Certyfikat, który wygasa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CertificationsLabel" xml:space="preserve">
     <value>Certyfikaty</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChangeMember" xml:space="preserve">
     <value>Zwolnij lub przedłuż</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChooseOption" xml:space="preserve">
     <value>Wybierz...</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColActions" xml:space="preserve">
     <value>Akcje</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColHowOften" xml:space="preserve">
     <value>Jak często</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColMembers" xml:space="preserve">
     <value>Członkowie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColRequirement" xml:space="preserve">
     <value>Wymaganie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColWhat" xml:space="preserve">
     <value>Co</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColWho" xml:space="preserve">
     <value>Kto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ComplianceIntro" xml:space="preserve">
     <value>Każdy aktywny członek wobec każdego wymagania, które go dotyczy. Członkowie bez miejsca w LMS są oznaczeni jako bez licencji i nigdy nie są po terminie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ComplianceTitle" xml:space="preserve">
     <value>Zgodność</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmDelete" xml:space="preserve">
     <value>Usunąć to wymaganie? Historia członków zostanie zachowana, a wszystkie podjęte przez nie działania egzekwujące zostaną cofnięte.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmDeletePath" xml:space="preserve">
     <value>Usunąć tę ścieżkę? Przypisania i ukończenia zostaną zachowane.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmPreviewLabel" xml:space="preserve">
     <value>Potwierdzam przegląd, kto straciłby którą rolę (wymagane do włączenia egzekwowania)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmRequired" xml:space="preserve">
     <value>Przejrzyj podgląd poniżej i potwierdź go, aby włączyć egzekwowanie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmUndo" xml:space="preserve">
     <value>Cofnąć to działanie? Certyfikat i odebrane role zostaną przywrócone.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CountFormat" xml:space="preserve">
     <value>Oceny: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CountLabel" xml:space="preserve">
     <value>Wymagana liczba zaliczonych ocen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CourseLabel" xml:space="preserve">
     <value>Kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DefaultAtRiskLabel" xml:space="preserve">
     <value>Domyślne ostrzeżenie dla nowych wymagań (dni przed terminem)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Usuń</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Deleted" xml:space="preserve">
     <value>Usunięto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DepartmentPathsHeader" xml:space="preserve">
     <value>Ścieżki oddziału</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DescriptionLabel" xml:space="preserve">
     <value>Opis</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDateLabel" xml:space="preserve">
     <value>Termin</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDaysFormat" xml:space="preserve">
     <value>Dni na ukończenie: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDaysHelp" xml:space="preserve">
     <value>Liczone od dnia, w którym członek dołącza, otrzymuje rolę lub w inny sposób wchodzi do grupy docelowej.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDaysLabel" xml:space="preserve">
     <value>Dni na ukończenie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueFormat" xml:space="preserve">
     <value>Termin {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueOn" xml:space="preserve">
     <value>Termin</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Edytuj</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ElectiveBadge" xml:space="preserve">
     <value>fakultatywny</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ElectiveFormat" xml:space="preserve">
     <value>grupa fakultatywna {0}, wymagane: {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforceHelp" xml:space="preserve">
     <value>Wymaga też włączenia egzekwowania dla oddziału (Egzekwowanie). Role wymagające certyfikatu są wtedy odbierane przez moduł certyfikatów po jego własnym okresie karencji, a wszystko jest przywracane, gdy członek ukończy wymaganie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforceLabel" xml:space="preserve">
     <value>Egzekwuj: niech certyfikat wygaśnie, gdy członek jest po terminie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcedBadge" xml:space="preserve">
     <value>Egzekwowane</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementEnabledHelp" xml:space="preserve">
     <value>Domyślnie wyłączone. Każde wymaganie musi też zostać do tego włączone. Nic nie jest egzekwowane, gdy dodatek LMS jest nieaktywny.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementEnabledLabel" xml:space="preserve">
     <value>Włącz egzekwowanie oparte na szkoleniach</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementHeader" xml:space="preserve">
     <value>Egzekwowanie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementIntro" xml:space="preserve">
     <value>Pozwól, by szkolenie odświeżające po terminie powodowało wygaśnięcie powiązanego certyfikatu, z zabezpieczeniem, które zatrzymuje każde uruchomienie mogące opróżnić rolę.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementTitle" xml:space="preserve">
     <value>Egzekwowanie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enforcing" xml:space="preserve">
     <value>Egzekwuje</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.AddonRequired" xml:space="preserve">
     <value>To wymaga dodatku LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.AudienceRequired" xml:space="preserve">
     <value>Wybierz, kogo dotyczy wymaganie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.CertificationType" xml:space="preserve">
     <value>Wybierz typ certyfikatu dla osób, który wygasa.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.CountRequired" xml:space="preserve">
     <value>Podaj, ile zaliczonych ocen jest wymaganych (od 1 do 1000).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.DaysRange" xml:space="preserve">
     <value>Liczba dni musi wynosić od 0 do 3650 (karencja i ostrzeżenie do 365).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.ExtensionInvalid" xml:space="preserve">
     <value>Wybierz przyszłą datę i podaj powód.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.HoursRequired" xml:space="preserve">
     <value>Podaj wymaganą liczbę godzin (więcej niż 0).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.IntervalRequired" xml:space="preserve">
     <value>Podaj liczbę miesięcy (od 1 do 120).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.Invalid" xml:space="preserve">
     <value>Nie udało się zapisać. Sprawdź formularz.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.NameRequired" xml:space="preserve">
     <value>Podaj nazwę.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.NotAuthorized" xml:space="preserve">
     <value>Nie masz uprawnień do tej operacji.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.NotFound" xml:space="preserve">
     <value>Nie znaleziono elementu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathDuplicateStep" xml:space="preserve">
     <value>Ten sam kurs lub szkolenie występuje dwukrotnie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathElectiveCount" xml:space="preserve">
     <value>Grupa fakultatywna wymaga co najmniej 1 kroku fakultatywnego i nie więcej, niż zawiera.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathInvalidOrder" xml:space="preserve">
     <value>Kolejność kroków jest nieprawidłowa.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathInvalidStep" xml:space="preserve">
     <value>Krok nie jest kursem ani szkoleniem, z którego ten oddział może korzystać.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathNoSteps" xml:space="preserve">
     <value>Dodaj co najmniej jeden krok.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathPrerequisiteNotEarlier" xml:space="preserve">
     <value>Krok może wymagać tylko wcześniejszych kroków.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathTooManySteps" xml:space="preserve">
     <value>Ścieżka może mieć najwyżej 60 kroków.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.ReasonRequired" xml:space="preserve">
     <value>Podaj powód.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.SkillRequired" xml:space="preserve">
     <value>Podaj kod umiejętności.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.TargetRequired" xml:space="preserve">
     <value>Wybierz, co obejmuje wymaganie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Everyone" xml:space="preserve">
     <value>Wszyscy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExemptAction" xml:space="preserve">
     <value>Zwolnij</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportCsv" xml:space="preserve">
     <value>CSV</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportPdf" xml:space="preserve">
     <value>PDF</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExtendAction" xml:space="preserve">
     <value>Przedłuż</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Filter" xml:space="preserve">
     <value>Filtruj</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterGroup" xml:space="preserve">
     <value>Grupa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterRequirement" xml:space="preserve">
     <value>Wymaganie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterState" xml:space="preserve">
     <value>Stan</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GraceDaysHelp" xml:space="preserve">
     <value>Po terminie członek jest oznaczony jako zagrożony przez tyle dni, a potem jako po terminie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GraceDaysLabel" xml:space="preserve">
     <value>Dni karencji</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GroupsLabel" xml:space="preserve">
     <value>Grupy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HistoryHeader" xml:space="preserve">
     <value>Historia egzekwowania</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursFormat" xml:space="preserve">
     <value>Godziny: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursLabel" xml:space="preserve">
     <value>Wymagane godziny na okres</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InForce" xml:space="preserve">
     <value>Obowiązuje</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Inactive" xml:space="preserve">
     <value>Nieaktywny</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntervalLabel" xml:space="preserve">
     <value>Co ile miesięcy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IssuesCertificationBadge" xml:space="preserve">
     <value>Wydaje certyfikat</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IssuesCertificationLabel" xml:space="preserve">
     <value>Wydaj certyfikat po ukończeniu</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Course" xml:space="preserve">
     <value>Ukończ kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Training" xml:space="preserve">
     <value>Ukończ szkolenie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.CategoryHours" xml:space="preserve">
     <value>Zarejestruj godziny w kategorii</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Path" xml:space="preserve">
     <value>Ukończ ścieżkę szkoleniową</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Evaluations" xml:space="preserve">
     <value>Zalicz oceny umiejętności</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindLabel" xml:space="preserve">
     <value>Typ wymagania</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LastCompleted" xml:space="preserve">
     <value>Ukończono</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LegendOther" xml:space="preserve">
     <value>Zwolniony, na urlopie lub bez licencji</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LiftExemption" xml:space="preserve">
     <value>Cofnij zwolnienie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MaxShareHelp" xml:space="preserve">
     <value>Uruchomienie, które usunęłoby więcej niż ten odsetek członków roli, zostaje odrzucone, a administratorzy są powiadamiani.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MaxShareLabel" xml:space="preserve">
     <value>Największy odsetek członków roli, który może usunąć jedno uruchomienie (%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Member" xml:space="preserve">
     <value>Członek</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MembersLabel" xml:space="preserve">
     <value>Członkowie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Mode.Off" xml:space="preserve">
     <value>wyłączone</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Mode.WarnOnly" xml:space="preserve">
     <value>tylko ostrzegaj</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Mode.Enforce" xml:space="preserve">
     <value>Egzekwuj</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyRequirementsHeader" xml:space="preserve">
     <value>Moje wymagania</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NameLabel" xml:space="preserve">
     <value>Nazwa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NeedsStepsFormat" xml:space="preserve">
     <value>wymaga kroku {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewDueDateLabel" xml:space="preserve">
     <value>Nowy termin</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewMembersOnlyLabel" xml:space="preserve">
     <value>Tylko członkowie, którzy od teraz wejdą do grupy docelowej (wdrożenie)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewOnboarding" xml:space="preserve">
     <value>Nowe wdrożenie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewPath" xml:space="preserve">
     <value>Nowa ścieżka</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewRequirement" xml:space="preserve">
     <value>Nowe wymaganie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextRequirementHeader" xml:space="preserve">
     <value>Następne wymaganie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoAssignees" xml:space="preserve">
     <value>Tej ścieżki nie przypisano jeszcze nikomu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoHistory" xml:space="preserve">
     <value>Brak działań egzekwujących.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoMatrixRows" xml:space="preserve">
     <value>Brak pasujących członków.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoOnboarding" xml:space="preserve">
     <value>Brak wdrożeń. Dodaj ścieżkę dla każdej roli, przypisywaną, gdy ktoś dołącza lub otrzymuje rolę.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPaths" xml:space="preserve">
     <value>Brak ścieżek oddziału.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRequirements" xml:space="preserve">
     <value>Brak wymagań.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRolesLost" xml:space="preserve">
     <value>brak</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoneOption" xml:space="preserve">
     <value>Brak</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotApplicable" xml:space="preserve">
     <value>Nie dotyczy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnboardingIntro" xml:space="preserve">
     <value>Ścieżka szkoleniowa dla każdej roli, przypisywana automatycznie z terminem, gdy ktoś dołącza lub otrzymuje rolę.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnboardingTitle" xml:space="preserve">
     <value>Wdrożenie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenCourses" xml:space="preserve">
     <value>Moje kursy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenTraining" xml:space="preserve">
     <value>Otwórz</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathCompletedFormat" xml:space="preserve">
     <value>Ukończono {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathCountsFormat" xml:space="preserve">
     <value>Kroki: {0} · przypisani: {1} · ukończyli: {2}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathIntro" xml:space="preserve">
     <value>Kroki z wymaganiami wstępnymi i krokami fakultatywnymi; ukończenie ścieżki może wydać certyfikat.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathLabel" xml:space="preserve">
     <value>Ścieżka szkoleniowa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathsIntro" xml:space="preserve">
     <value>Kursy, lekcje Academy i szkolenia w ustalonej kolejności, z wymaganiami wstępnymi i krokami fakultatywnymi.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathsTitle" xml:space="preserve">
     <value>Ścieżki szkoleniowe</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PausedNotice" xml:space="preserve">
     <value>Dodatek LMS jest nieaktywny, więc wymagania są wstrzymane: nic nie przechodzi w stan po terminie i nic nie jest egzekwowane, dopóki dodatek nie zostanie ponownie aktywowany.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviewEmpty" xml:space="preserve">
     <value>Nikt: żaden członek nie jest po terminie w wymaganiu z egzekwowaniem.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviewHeader" xml:space="preserve">
     <value>Kto straciłby którą rolę dzisiaj</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviewModeFormat" xml:space="preserve">
     <value>Tryb egzekwowania certyfikatów: {0}. Role są odbierane tylko w trybie Egzekwuj, {1} dni po wygaśnięciu certyfikatu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgramsTitle" xml:space="preserve">
     <value>Programy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgressFormat" xml:space="preserve">
     <value>{0} z {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgressHeader" xml:space="preserve">
     <value>Postęp</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReasonLabel" xml:space="preserve">
     <value>Powód</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Recurrence.OneTime" xml:space="preserve">
     <value>Jednorazowo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Recurrence.RollingMonths" xml:space="preserve">
     <value>Co kilka miesięcy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Recurrence.CalendarYear" xml:space="preserve">
     <value>Co rok kalendarzowy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceCalendarYear" xml:space="preserve">
     <value>Co rok kalendarzowy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceLabel" xml:space="preserve">
     <value>Jak często</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceOneTime" xml:space="preserve">
     <value>Jednorazowo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceRolling" xml:space="preserve">
     <value>Co {0} mies.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoveStep" xml:space="preserve">
     <value>Usuń</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Requirement" xml:space="preserve">
     <value>Wymaganie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementIntro" xml:space="preserve">
     <value>Co członkowie muszą ukończyć, kto musi to zrobić i do kiedy.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementTitle" xml:space="preserve">
     <value>Wymaganie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementsIntro" xml:space="preserve">
     <value>Kursy, szkolenia, godziny, ścieżki i oceny, które członkowie muszą ukończyć, z terminami liczonymi od dołączenia lub otrzymania roli.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementsTitle" xml:space="preserve">
     <value>Wymagania</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RolesLabel" xml:space="preserve">
     <value>Role</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RolesLost" xml:space="preserve">
     <value>Utracone role</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Zapisz</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Saved" xml:space="preserve">
     <value>Zapisano.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsHeader" xml:space="preserve">
     <value>Ustawienia</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShiftsLabel" xml:space="preserve">
     <value>Zmiany</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SkillCodeHelp" xml:space="preserve">
     <value>Kod, pod którym rejestrowane są oceny umiejętności.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SkillCodeLabel" xml:space="preserve">
     <value>Kod umiejętności</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Compliant" xml:space="preserve">
     <value>Zgodny</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Pending" xml:space="preserve">
     <value>Termin później</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.AtRisk" xml:space="preserve">
     <value>Zagrożony</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Overdue" xml:space="preserve">
     <value>Po terminie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Exempt" xml:space="preserve">
     <value>Zwolniony</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.OnLeave" xml:space="preserve">
     <value>Na urlopie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.NotLicensed" xml:space="preserve">
     <value>Bez licencji</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Stan</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepAvailable" xml:space="preserve">
     <value>dostępny</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepDone" xml:space="preserve">
     <value>ukończony</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepElectiveLabel" xml:space="preserve">
     <value>Grupa fakultatywna</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepElectiveRequiredLabel" xml:space="preserve">
     <value>Wymagane fakultatywne</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepKind.Course" xml:space="preserve">
     <value>Kurs lub lekcja Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepKind.Training" xml:space="preserve">
     <value>Szkolenie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepKindLabel" xml:space="preserve">
     <value>Typ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepLocked" xml:space="preserve">
     <value>zablokowany</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepPrerequisitesLabel" xml:space="preserve">
     <value>Wymaga kroków</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepTargetLabel" xml:space="preserve">
     <value>Kurs lub szkolenie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsDoneFormat" xml:space="preserve">
     <value>{0} z {1} kroków</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsHeader" xml:space="preserve">
     <value>Kroki</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsHelp" xml:space="preserve">
     <value>Kroki są wykonywane po kolei. Pole Wymaga kroków zawiera numery wcześniejszych kroków (np. 1,2), które trzeba najpierw ukończyć. Kroki z tym samym numerem grupy fakultatywnej są fakultatywne: uczestnik musi ukończyć ich tyle, ile wskazuje pole Wymagane fakultatywne.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubCompliance" xml:space="preserve">
     <value>Zgodność</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubEnforcement" xml:space="preserve">
     <value>Egzekwowanie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubOnboarding" xml:space="preserve">
     <value>Wdrożenie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubPaths" xml:space="preserve">
     <value>Ścieżki</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubRequirements" xml:space="preserve">
     <value>Wymagania</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrainingLabel" xml:space="preserve">
     <value>Szkolenie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Undo" xml:space="preserve">
     <value>Cofnij</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.0" xml:space="preserve">
     <value>-</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.Completed" xml:space="preserve">
     <value>ukończono</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.Lapse" xml:space="preserve">
     <value>dodatek wygasł</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.NoLongerApplies" xml:space="preserve">
     <value>już nie dotyczy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.Manual" xml:space="preserve">
-    <value>cofnięte przez przełożonego</value>
+    <value>cofnięte przez osobę odpowiedzialną za szkolenia</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Undone" xml:space="preserve">
     <value>Cofnięto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UntilLabel" xml:space="preserve">
     <value>Do (opcjonalnie)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatHeader" xml:space="preserve">
     <value>Co</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhenHeader" xml:space="preserve">
     <value>Kiedy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhoHeader" xml:space="preserve">
     <value>Kto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WouldRefuseFormat" xml:space="preserve">
     <value>Dzisiejsze uruchomienie zostałoby odrzucone: usunęłoby ponad {0}% członków tych ról.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubRecommendations" xml:space="preserve">
     <value>Rekomendacje</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationsTitle" xml:space="preserve">
     <value>Rekomendacje</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationsIntro" xml:space="preserve">
     <value>Ścieżki nauki i kursy do realizacji na podstawie otwartych wymagań, trwających ścieżek, luk kompetencyjnych i kursów oferowanych każdej roli.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendedHeader" xml:space="preserve">
     <value>Polecane dla Ciebie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendedForFormat" xml:space="preserve">
     <value>Polecane dla: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationsForMembersLink" xml:space="preserve">
     <value>Twoi członkowie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowRecommendationsButton" xml:space="preserve">
     <value>Pokaż</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationColumn" xml:space="preserve">
     <value>Rekomendacja</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReasonsColumn" xml:space="preserve">
     <value>Dlaczego</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>Działania</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindCourse" xml:space="preserve">
     <value>Kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindPath" xml:space="preserve">
     <value>Ścieżka nauki</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindAcademy" xml:space="preserve">
     <value>Lekcja Resgrid Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RequirementOverdue" xml:space="preserve">
     <value>Wymaganie „{0}” jest po terminie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RequirementAtRisk" xml:space="preserve">
     <value>Wymaganie „{0}” jest zagrożone</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RequirementDue" xml:space="preserve">
     <value>Wymaganie „{0}” nie jest jeszcze spełnione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.PathInProgress" xml:space="preserve">
     <value>Ścieżka nauki „{0}” jest w toku</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.CompetencyMissing" xml:space="preserve">
     <value>Brak jeszcze dowodu kompetencji {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.CompetencyAged" xml:space="preserve">
     <value>Dowód kompetencji {0} jest nieaktualny</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RoleAudience" xml:space="preserve">
     <value>Oferowany roli {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationContinue" xml:space="preserve">
     <value>Kontynuuj</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRecommendations" xml:space="preserve">
     <value>Na razie brak rekomendacji.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainButton" xml:space="preserve">
     <value>Wyjaśnij z AI</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Explaining" xml:space="preserve">
     <value>Wyjaśnianie…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainFailed" xml:space="preserve">
     <value>Wyjaśnienie jest teraz niedostępne.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainBusy" xml:space="preserve">
     <value>AI jest zajęta lub limit na ten miesiąc został wykorzystany. Spróbuj później.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AiExplanationNotice" xml:space="preserve">
     <value>Wyjaśnienie AI napisane wyłącznie na podstawie pokazanych powodów.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainPrivacyNote" xml:space="preserve">
     <value>Do modelu AI jednostki trafiają tylko powyższe tytuły i powody, nigdy nazwiska.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicyLabel" xml:space="preserve">
     <value>Gdy Resgrid Academy opublikuje dużą aktualizację lekcji wymaganej tutaj</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicy.Notify" xml:space="preserve">
     <value>Powiadomić członków, którzy ją ukończyli</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicy.Reassign" xml:space="preserve">
     <value>Przypisać ją ponownie członkom, którzy ją ukończyli, z terminem według dni tego wymogu</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicy.Nothing" xml:space="preserve">
     <value>Nic nie robić</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicyHelp" xml:space="preserve">
     <value>Dotyczy lekcji Resgrid Academy, bezpośrednio lub na ścieżce. Twoje własne kursy stosują wybór dokonany przy publikacji każdej wersji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedNotLicensedFormat" xml:space="preserve">
+    <value>{0} z nich nie ma miejsca LMS i nie zostało zapisanych; włącz im dostęp do LMS, a następnie przypisz ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Err.PathManagedBySet" xml:space="preserve">
+    <value>Ta ścieżka jest zarządzaną kopią z zestawu kursów powiązanej organizacji. Zmienia się tylko poprzez zestaw; nadal można ją przypisywać.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

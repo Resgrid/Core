@@ -40,11 +40,16 @@ namespace Resgrid.Services
 		private readonly ITrainingService _trainings;
 		private readonly ICertificationService _certifications;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly ILmsGateService _gate;
+		private readonly IContentSetCopyLocks _setLocks;
 
 		public LmsPathService(ILmsPathsRepository paths, ILmsPathStepsRepository steps, ILmsPathAssignmentsRepository assignments, ILmsEnrollmentsRepository enrollments,
 			ILmsCoursesRepository courses, ILmsRequirementFactsRepository facts, ILmsLearnerService learner, ILmsAcademyService academy, ILmsEntitlementService entitlements,
-			IContentAudienceService audienceService, ITrainingService trainings, ICertificationService certifications, IEventAggregator eventAggregator)
+			IContentAudienceService audienceService, ITrainingService trainings, ICertificationService certifications, IEventAggregator eventAggregator, ILmsGateService gate,
+			IContentSetCopyLocks setLocks)
 		{
+			_gate = gate;
+			_setLocks = setLocks;
 			_paths = paths;
 			_steps = steps;
 			_assignments = assignments;
@@ -198,7 +203,7 @@ namespace Resgrid.Services
 		}
 
 		private static bool CanAssign(LmsActor actor, LmsPath path) =>
-			actor != null && actor.MayAssignAcademy && LmsLapseRules.CanAssignNew(actor.Gate, path.IsSystem);
+			actor != null && actor.MayAssignAcademy && LmsLapseRules.CanAssignNew(path.IsSystem ? actor.Gate : actor.Gate?.ForPath(path.LmsPathId), path.IsSystem);
 
 		private async Task<Dictionary<int, string>> StepTitlesAsync(int departmentId, IEnumerable<LmsPathStep> steps, string locale)
 		{
@@ -241,6 +246,9 @@ namespace Resgrid.Services
 				path = await _paths.GetVisibleByIdAsync(actor.DepartmentId, input.LmsPathId);
 				if (path == null || path.IsDeleted || path.IsSystem || path.DepartmentId != actor.DepartmentId)
 					return LmsResult.Fail(LmsErrors.NotFound);
+				// A managed copy of a linked department's course set (round 10 A3) changes only through the set.
+				if (await _setLocks.IsManagedCopyAsync(actor.DepartmentId, ContentSetItemKinds.LmsPath, path.LmsPathId))
+					return new LmsResult { Error = LmsErrors.InvalidInput, Value = "Err.PathManagedBySet" };
 			}
 			else
 				path = new LmsPath { DepartmentId = actor.DepartmentId, CreatedOn = DateTime.UtcNow, CreatedByUserId = actor.UserId };
@@ -357,6 +365,10 @@ namespace Resgrid.Services
 			var resolution = await _audienceService.ResolveAsync(actor.DepartmentId, rules);
 			outcome.Skipped = resolution?.Skipped ?? new List<ContentAudienceSkip>();
 			var members = resolution?.MemberUserIds ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			// Round 10 A7 (§17.4): a member without an LMS seat cannot be put on a department path (skipped as NotLicensed, never notified);
+			// an Academy path stays assignable to everyone.
+			if (!path.IsSystem && members.Count > 0)
+				members = LmsLearnerSeats.SkipUnseated(members, await _gate.SeatHoldersAsync(actor), outcome.Skipped);
 			if (members.Count == 0)
 				return outcome;
 
@@ -389,7 +401,7 @@ namespace Resgrid.Services
 
 			if (added.Count > 0)
 			{
-				await AdvanceAsync(actor.DepartmentId, path, added, actor.Gate, actor.UserId, now, cancellationToken);
+				await AdvanceAsync(actor.DepartmentId, path, added, actor.Gate, actor.UserId, now, cancellationToken, actor);
 				Audit(actor.DepartmentId, actor.UserId, AuditLogTypes.LmsPathAssigned, null,
 					JsonConvert.SerializeObject(new { path.LmsPathId, path = path.AssignmentKey, members = added.Count, dueOnUtc, lmsRequirementId }));
 				foreach (var assignment in added)
@@ -479,11 +491,13 @@ namespace Resgrid.Services
 
 			var paths = await _paths.GetVisibleAsync(departmentId) ?? new List<LmsPath>();
 			var advanced = 0;
+			// Round 10 A7: the department's seat holders are read at most once for the run (R-L9), shared by every path's step enrolments.
+			var seats = new LmsActor { DepartmentId = departmentId };
 			foreach (var path in paths)
 			{
 				var assignments = open.Where(a => Belongs(a, path)).ToList();
 				if (assignments.Count > 0)
-					advanced += await AdvanceAsync(departmentId, path, assignments, gate, null, utcNow, cancellationToken);
+					advanced += await AdvanceAsync(departmentId, path, assignments, gate, null, utcNow, cancellationToken, seats);
 			}
 
 			return advanced;
@@ -494,7 +508,7 @@ namespace Resgrid.Services
 		/// paths enroll only while new LMS assignments are allowed (rule 3); Academy paths always. Returns the assignments that changed.
 		/// </summary>
 		private async Task<int> AdvanceAsync(int departmentId, LmsPath path, IReadOnlyList<LmsPathAssignment> assignments, LmsDepartmentGate gate, string assignedBy, DateTime utcNow,
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken, LmsActor seats = null)
 		{
 			var steps = await _steps.GetForPathsAsync(new[] { path.LmsPathId }) ?? new List<LmsPathStep>();
 			if (steps.Count == 0)
@@ -521,8 +535,10 @@ namespace Resgrid.Services
 					{
 						try
 						{
+							// Round 9A: ledgered with the path and its steps' learning records, so a void of one takes the certification back.
 							certificationId = await _learner.IssueOrRenewCertificationAsync(departmentId, assignment.UserId, path.IssuesCertificationTypeId.Value, progress.CompletedOn ?? utcNow,
-								cancellationToken);
+								LmsCertificationIssueSources.PathCompletion, LmsCertificationIssuanceRules.PathRef(path.LmsPathId),
+								await StepRecordIdsAsync(departmentId, steps, assignment.UserId), assignedBy ?? assignment.UserId, cancellationToken);
 						}
 						catch (Exception ex)
 						{
@@ -557,6 +573,11 @@ namespace Resgrid.Services
 					who.Add((assignment.UserId, assignment.DueOn.HasValue && assignment.DueOn.Value > utcNow ? assignment.DueOn : null));
 				}
 			}
+
+			// Round 10 A7: a department path's course steps enrol only members holding an LMS seat (the learner service skips the others as
+			// NotLicensed; a member who gains a seat is enrolled on the next run). The holders are read once and shared (R-L9).
+			if (toEnroll.Count > 0 && !path.IsSystem)
+				actor.SeatHolders = await _gate.SeatHoldersAsync(seats ?? actor);
 
 			foreach (var pair in toEnroll)
 				foreach (var byDue in pair.Value.GroupBy(w => w.Due))
@@ -604,6 +625,29 @@ namespace Resgrid.Services
 			if (trainingIds.Count > 0)
 				Add((int)LmsPathStepKinds.Training, await _facts.GetTrainingCompletionsAsync(departmentId, trainingIds));
 			return result;
+		}
+
+		/// <summary>Round 9A: the learning records of a member's latest completion of each step (the basis of the certification a path issues).</summary>
+		private async Task<List<int>> StepRecordIdsAsync(int departmentId, IReadOnlyCollection<LmsPathStep> steps, string userId)
+		{
+			var ids = new List<int>();
+			try
+			{
+				var facts = new List<LmsRequirementFact>();
+				var courseIds = steps.Where(s => s.Kind == (int)LmsPathStepKinds.Course).Select(s => s.TargetRefId).Distinct().ToList();
+				if (courseIds.Count > 0)
+					facts.AddRange((await _facts.GetCourseCompletionsWithRecordsAsync(departmentId, courseIds) ?? new List<LmsRequirementFact>()).Select(f => { f.Code = "c"; return f; }));
+				var trainingIds = steps.Where(s => s.Kind == (int)LmsPathStepKinds.Training).Select(s => s.TargetRefId).Distinct().ToList();
+				if (trainingIds.Count > 0)
+					facts.AddRange((await _facts.GetTrainingCompletionsAsync(departmentId, trainingIds) ?? new List<LmsRequirementFact>()).Select(f => { f.Code = "t"; return f; }));
+				ids.AddRange(facts.Where(f => string.Equals(f.UserId, userId, StringComparison.OrdinalIgnoreCase) && f.LearningRecordId.HasValue)
+					.GroupBy(f => (f.Code, f.RefId)).Select(g => g.OrderByDescending(f => f.CompletedOn).First().LearningRecordId.Value).Distinct());
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"The step records of a learning path could not be read for {userId}.");
+			}
+			return ids;
 		}
 
 		public async Task<List<LmsRequirementFact>> GetCompletionFactsAsync(int departmentId, IEnumerable<int> lmsPathIds)

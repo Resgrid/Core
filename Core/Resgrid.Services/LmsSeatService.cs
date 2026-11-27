@@ -8,6 +8,7 @@ using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
+using Resgrid.Model.Lms;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -29,10 +30,14 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departments;
 		private readonly IDepartmentGroupsService _groups;
 		private readonly IEventAggregator _events;
+		private readonly ILmsExternalLearnersRepository _externalLearners;
+		private readonly ILmsSponsorshipService _sponsorships;
 
 		public LmsSeatService(ILmsMemberSeatsRepository seats, ILmsAccessService access, IDepartmentsService departments, IDepartmentGroupsService groups,
-			IEventAggregator events)
+			IEventAggregator events, ILmsExternalLearnersRepository externalLearners, ILmsSponsorshipService sponsorships)
 		{
+			_externalLearners = externalLearners;
+			_sponsorships = sponsorships;
 			_seats = seats;
 			_access = access;
 			_departments = departments;
@@ -49,11 +54,37 @@ namespace Resgrid.Services
 			return (rows.Where(r => r != null && r.DepartmentId == departmentId).ToList(), new HashSet<string>(active, StringComparer.OrdinalIgnoreCase));
 		}
 
-		private static LmsSeatSummary Summarize(LmsSubscriptionSnapshot subscription, List<LmsMemberSeat> rows, HashSet<string> active)
+		/// <summary>External learners counted for fair use (T5): invited or active.</summary>
+		private async Task<int> CountLearnersAsync(int departmentId) => Math.Max(0, await _externalLearners.CountCountedAsync(departmentId));
+
+		private static LmsSeatSummary Summarize(LmsSubscriptionSnapshot subscription, List<LmsMemberSeat> rows, HashSet<string> active, int learners,
+			LmsSponsorshipGrant grant = null, int sponsoredSeats = 0)
 		{
 			var counted = LmsSeatRules.CountedSeats(rows, active);
 			var holders = rows.Select(r => r.UserId).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.OrdinalIgnoreCase).Count();
 			var packs = subscription?.Packs ?? 0;
+			if (grant?.Sponsorship != null)
+			{
+				// T5 item 2a: no add-on of its own; the sponsor's packs seat the department's members up to what the sponsorship leaves it.
+				var capacity = Math.Max(0, grant.Capacity);
+				return new LmsSeatSummary
+				{
+					State = LmsSubscriptionStates.Active,
+					PurchasedPacks = 0,
+					PackSize = PackSize,
+					SponsoredCapacity = capacity,
+					SponsorDepartmentId = grant.Sponsorship.SponsorDepartmentId,
+					SponsorName = grant.SponsorName,
+					EnabledSeats = counted.Count,
+					DormantSeats = Math.Max(0, holders - counted.Count),
+					EnabledUserIds = new HashSet<string>(counted.Select(s => s.UserId), StringComparer.OrdinalIgnoreCase),
+					LicensedUserIds = LmsSponsorshipRules.Licensed(rows, active, capacity),
+					ExternalLearnerSeats = 0,
+					MinimumPacks = 0
+				};
+			}
+
+			// The sponsor's own members come first; its sponsored departments' seats take what is left of its packs.
 			return new LmsSeatSummary
 			{
 				State = subscription?.State ?? LmsSubscriptionStates.Unknown,
@@ -65,15 +96,53 @@ namespace Resgrid.Services
 				DormantSeats = Math.Max(0, holders - counted.Count),
 				EnabledUserIds = new HashSet<string>(counted.Select(s => s.UserId), StringComparer.OrdinalIgnoreCase),
 				LicensedUserIds = LmsSeatRules.Licensed(rows, active, packs * PackSize, subscription?.IsEntitled == true),
-				MinimumPacks = Math.Max(LmsAddonConfig.MinimumPacks, (int)Math.Ceiling(counted.Count / (double)PackSize))
+				ExternalLearnerSeats = LmsExternalLearnerRules.SeatsTaken(learners, packs * PackSize),
+				SponsoredSeats = Math.Max(0, sponsoredSeats),
+				MinimumPacks = LmsExternalLearnerRules.MinimumPacks(counted.Count + Math.Max(0, sponsoredSeats), learners, PackSize, LmsAddonConfig.MinimumPacks)
 			};
+		}
+
+		/// <summary>
+		/// The department's add-on state for seating: its own subscription; or, without an entitled add-on of its own, an active sponsorship whose
+		/// sponsor's add-on is entitled (T5 item 2a); and, for a department on its own add-on, the seats its sponsored departments hold in it.
+		/// </summary>
+		private async Task<(LmsSubscriptionSnapshot Subscription, LmsSponsorshipGrant Grant, int SponsoredSeats)> ResolveAsync(int departmentId)
+		{
+			var subscription = await _access.GetSubscriptionAsync(departmentId);
+			if (subscription.IsEntitled)
+			{
+				var sponsored = 0;
+				try
+				{
+					sponsored = _sponsorships == null ? 0 : await _sponsorships.GetSponsoredSeatsAsync(departmentId);
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex, "Sponsored seats could not be counted; the sponsor's own seats stand.");
+				}
+
+				return (subscription, null, sponsored);
+			}
+
+			LmsSponsorshipGrant grant = null;
+			try
+			{
+				grant = _sponsorships == null ? null : await _sponsorships.GetGrantAsync(departmentId);
+			}
+			catch (Exception ex)
+			{
+				// Fail closed: without the sponsorship read the department has no seats it does not pay for.
+				Framework.Logging.LogException(ex, "The department's LMS sponsorship could not be read.");
+			}
+
+			return (grant?.Sponsorship != null ? new LmsSubscriptionSnapshot { State = LmsSubscriptionStates.Active } : subscription, grant, 0);
 		}
 
 		public async Task<LmsSeatSummary> GetSummaryAsync(int departmentId)
 		{
-			var subscription = await _access.GetSubscriptionAsync(departmentId);
+			var (subscription, grant, sponsored) = await ResolveAsync(departmentId);
 			var (rows, active) = await ReadAsync(departmentId);
-			return Summarize(subscription, rows, active);
+			return Summarize(subscription, rows, active, await CountLearnersAsync(departmentId), grant, sponsored);
 		}
 
 		public async Task<HashSet<string>> GetLicensedUserIdsAsync(int departmentId) => (await GetSummaryAsync(departmentId)).LicensedUserIds;
@@ -81,7 +150,18 @@ namespace Resgrid.Services
 		public async Task<int> GetMinimumPacksAsync(int departmentId)
 		{
 			var (rows, active) = await ReadAsync(departmentId);
-			return Math.Max(LmsAddonConfig.MinimumPacks, (int)Math.Ceiling(LmsSeatRules.CountedSeats(rows, active).Count / (double)PackSize));
+			var sponsored = 0;
+			try
+			{
+				sponsored = _sponsorships == null ? 0 : await _sponsorships.GetSponsoredSeatsAsync(departmentId);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
+
+			// The seats the department sponsors are its own packs' too: a pack decrease never strands them.
+			return LmsExternalLearnerRules.MinimumPacks(LmsSeatRules.CountedSeats(rows, active).Count + sponsored, await CountLearnersAsync(departmentId), PackSize, LmsAddonConfig.MinimumPacks);
 		}
 
 		public async Task<LmsSeatChangeResult> CanEnableAsync(int departmentId, int additional = 1)
@@ -93,7 +173,7 @@ namespace Resgrid.Services
 			if (summary.State != LmsSubscriptionStates.Active && summary.State != LmsSubscriptionStates.DunningGrace)
 				return new LmsSeatChangeResult { Outcome = LmsSeatOutcomes.AddonInactive, Summary = summary };
 
-			var wanted = summary.EnabledSeats + Math.Max(1, additional);
+			var wanted = summary.EnabledSeats + summary.ExternalLearnerSeats + summary.SponsoredSeats + Math.Max(1, additional);
 			return wanted > summary.PurchasedSeats
 				? new LmsSeatChangeResult { Outcome = LmsSeatOutcomes.SeatsFull, Summary = summary, PacksNeeded = LmsSeatRules.PacksNeeded(wanted, summary.PurchasedSeats, PackSize) }
 				: new LmsSeatChangeResult { Outcome = LmsSeatOutcomes.Enabled, Summary = summary };
@@ -112,8 +192,9 @@ namespace Resgrid.Services
 				if (held.Count == 0)
 					return new LmsSeatChangeResult { Outcome = LmsSeatOutcomes.Unchanged };
 
-				await _seats.RemoveAsync(departmentId, new[] { userId }, cancellationToken);
+				var removed = await _seats.RemoveAsync(departmentId, new[] { userId }, cancellationToken);
 				Audit(departmentId, actingUserId, new { enabled = true, userIds = new[] { userId } }, new { enabled = false, userIds = new[] { userId } });
+				RaiseSeatsChanged(departmentId, 0, removed, Remaining(rows, active, new[] { userId }), 0, actingUserId);
 				return new LmsSeatChangeResult { Outcome = LmsSeatOutcomes.Disabled };
 			}
 
@@ -126,21 +207,24 @@ namespace Resgrid.Services
 			if (held.Count > 0)
 				return new LmsSeatChangeResult { Outcome = LmsSeatOutcomes.Unchanged };
 
-			var subscription = await _access.GetSubscriptionAsync(departmentId);
-			var summary = Summarize(subscription, rows, active);
+			var (subscription, grant, sponsoredSeats) = await ResolveAsync(departmentId);
+			var summary = Summarize(subscription, rows, active, await CountLearnersAsync(departmentId), grant, sponsoredSeats);
 			if (!subscription.IsEntitled)
 				return new LmsSeatChangeResult { Outcome = LmsSeatOutcomes.AddonInactive, Summary = summary };
 
-			if (summary.EnabledSeats + 1 > summary.PurchasedSeats)
+			if (summary.EnabledSeats + summary.ExternalLearnerSeats + summary.SponsoredSeats + 1 > summary.PurchasedSeats)
 				return new LmsSeatChangeResult
 				{
 					Outcome = LmsSeatOutcomes.SeatsFull,
 					Summary = summary,
-					PacksNeeded = LmsSeatRules.PacksNeeded(summary.EnabledSeats + 1, summary.PurchasedSeats, PackSize)
+					// A sponsored department cannot buy packs for its sponsor: it is told the sponsor's seats are full instead.
+					PacksNeeded = grant != null ? 0 : LmsSeatRules.PacksNeeded(summary.EnabledSeats + summary.ExternalLearnerSeats + summary.SponsoredSeats + 1, summary.PurchasedSeats, PackSize)
 				};
 
-			await _seats.AddAsync(new LmsMemberSeat { DepartmentId = departmentId, UserId = member.UserId, EnabledOn = DateTime.UtcNow, EnabledByUserId = actingUserId }, cancellationToken);
+			var added = await _seats.AddAsync(new LmsMemberSeat { DepartmentId = departmentId, UserId = member.UserId, EnabledOn = DateTime.UtcNow, EnabledByUserId = actingUserId }, cancellationToken);
 			Audit(departmentId, actingUserId, new { enabled = false, userIds = new[] { member.UserId } }, new { enabled = true, userIds = new[] { member.UserId } });
+			if (added)
+				RaiseSeatsChanged(departmentId, 1, 0, summary.EnabledSeats + 1, summary.PurchasedPacks, actingUserId);
 			return new LmsSeatChangeResult { Outcome = LmsSeatOutcomes.Enabled };
 		}
 
@@ -165,8 +249,9 @@ namespace Resgrid.Services
 				var remove = memberIds.Where(holders.Contains).ToList();
 				if (remove.Count > 0)
 				{
-					await _seats.RemoveAsync(departmentId, remove, cancellationToken);
+					var removed = await _seats.RemoveAsync(departmentId, remove, cancellationToken);
 					Audit(departmentId, actingUserId, new { enabled = true, groupId = departmentGroupId, userIds = remove }, new { enabled = false, groupId = departmentGroupId, userIds = remove });
+					RaiseSeatsChanged(departmentId, 0, removed, Remaining(rows, active, remove), 0, actingUserId);
 				}
 
 				return new LmsSeatBulkResult
@@ -177,8 +262,8 @@ namespace Resgrid.Services
 				};
 			}
 
-			var subscription = await _access.GetSubscriptionAsync(departmentId);
-			var summary = Summarize(subscription, rows, active);
+			var (subscription, grant, sponsoredSeats) = await ResolveAsync(departmentId);
+			var summary = Summarize(subscription, rows, active, await CountLearnersAsync(departmentId), grant, sponsoredSeats);
 			if (!subscription.IsEntitled)
 				return new LmsSeatBulkResult { Outcome = LmsSeatOutcomes.AddonInactive, Summary = summary };
 
@@ -193,15 +278,19 @@ namespace Resgrid.Services
 				.ThenBy(id => id, StringComparer.OrdinalIgnoreCase)
 				.ToList();
 
-			var capacity = Math.Max(0, summary.PurchasedSeats - summary.EnabledSeats);
+			var capacity = Math.Max(0, summary.PurchasedSeats - summary.EnabledSeats - summary.ExternalLearnerSeats - summary.SponsoredSeats);
 			var enable = candidates.Take(capacity).ToList();
 			var refused = candidates.Count - enable.Count;
 			var now = DateTime.UtcNow;
+			var addedCount = 0;
 			foreach (var userId in enable)
-				await _seats.AddAsync(new LmsMemberSeat { DepartmentId = departmentId, UserId = userId, EnabledOn = now, EnabledByUserId = actingUserId }, cancellationToken);
+				if (await _seats.AddAsync(new LmsMemberSeat { DepartmentId = departmentId, UserId = userId, EnabledOn = now, EnabledByUserId = actingUserId }, cancellationToken))
+					addedCount++;
 
 			if (enable.Count > 0)
 				Audit(departmentId, actingUserId, new { enabled = false, groupId = departmentGroupId, userIds = enable }, new { enabled = true, groupId = departmentGroupId, userIds = enable });
+			if (addedCount > 0)
+				RaiseSeatsChanged(departmentId, addedCount, 0, summary.EnabledSeats + addedCount, summary.PurchasedPacks, actingUserId);
 
 			return new LmsSeatBulkResult
 			{
@@ -210,9 +299,24 @@ namespace Resgrid.Services
 				AlreadySet = already,
 				SkippedInactive = inactive,
 				RefusedForSeats = refused,
-				PacksNeeded = LmsSeatRules.PacksNeeded(summary.EnabledSeats + candidates.Count, summary.PurchasedSeats, PackSize),
+				PacksNeeded = grant != null ? 0 : LmsSeatRules.PacksNeeded(summary.EnabledSeats + summary.ExternalLearnerSeats + summary.SponsoredSeats + candidates.Count, summary.PurchasedSeats, PackSize),
 				Summary = summary
 			};
+		}
+
+		/// <summary>Member seats in use once the given members' seats are gone (read rows, no second query).</summary>
+		private static int Remaining(List<LmsMemberSeat> rows, HashSet<string> active, IEnumerable<string> removedUserIds)
+		{
+			var removed = new HashSet<string>(removedUserIds ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+			return LmsSeatRules.CountedSeats(rows.Where(r => !removed.Contains(r.UserId ?? string.Empty)).ToList(), active).Count;
+		}
+
+		/// <summary>Workflow trigger 274 after the seat rows were written: counts only, never which members.</summary>
+		private void RaiseSeatsChanged(int departmentId, int added, int removed, int enabledSeats, int packs, string actingUserId)
+		{
+			if (added <= 0 && removed <= 0)
+				return;
+			ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.SeatsChanged(departmentId, added, removed, enabledSeats, packs, null, actingUserId, DateTime.UtcNow));
 		}
 
 		private void Audit(int departmentId, string userId, object before, object after)

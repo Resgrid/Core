@@ -158,7 +158,10 @@ namespace Resgrid.Web.Helpers
 		private static readonly HashSet<string> EverywhereTerms = new HashSet<string>(StringComparer.Ordinal)
 		{
 			DepartmentTerms.Calls, DepartmentTerms.Personnel, DepartmentTerms.Units, DepartmentTerms.Shifts, DepartmentTerms.Inventory,
-			DepartmentTerms.Readiness, DepartmentTerms.WorkOrders, DepartmentTerms.Checklists, DepartmentTerms.WorkforceBusiness
+			DepartmentTerms.Readiness, DepartmentTerms.WorkOrders, DepartmentTerms.Checklists, DepartmentTerms.WorkforceBusiness,
+			// The wellness roles (2026-11-26): phrases that only ever mean that role, so the wellness pages, Admin Assist's help and the
+			// call screen's wellness button all carry the department's word.
+			DepartmentTerms.WellnessOfficers, DepartmentTerms.DesignatedOfficers, DepartmentTerms.PeerSupportTeam
 		};
 
 		/// <summary>The resources (localization classes) of each term's own module, where every one of its words is replaced.</summary>
@@ -176,10 +179,13 @@ namespace Resgrid.Web.Helpers
 			{ DepartmentTerms.Documents, Set("Documents") },
 			{ DepartmentTerms.Calendar, Set("Calendar") },
 			{ DepartmentTerms.Notes, Set("Note") },
-			{ DepartmentTerms.Trainings, Set("Trainings") },
+			// Round 9C: the LMS pages are the Training module too, so a department's own word for training reaches them.
+			{ DepartmentTerms.Trainings, Set("Trainings", "Courses", "LmsPrograms", "LmsClasses", "LmsSkills", "LmsExports", "LmsStandards") },
 			{ DepartmentTerms.Inventory, Set("Inventory") },
 			{ DepartmentTerms.WorkOrders, Set("WorkOrders") },
-			{ DepartmentTerms.Checklists, Set("Checklists") }
+			{ DepartmentTerms.Checklists, Set("Checklists") },
+			// "Wellness" is an everyday word elsewhere: replaced on the wellness and member health pages and in Admin Assist's wellness help.
+			{ DepartmentTerms.Wellness, Set("Wellness", "MemberHealth", "AdminAssist") }
 		};
 
 		/// <summary>Terms whose item word is generic outside the module: "the person who", "per person".</summary>

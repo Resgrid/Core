@@ -80,6 +80,10 @@
                         </div>
                         <div class="alert alert-danger" id="mfaChoiceError" role="alert" style="display: none;"></div>
                     </form>
+                    @if (!string.IsNullOrEmpty(Model.ReauthenticateUrl))
+                    {
+                        <p id="stepUpUseReauthentication"><a href="@Model.ReauthenticateUrl"><i class="fa fa-unlock-alt" aria-hidden="true"></i> @localizer["StepUpUseReauthenticationLink"]</a></p>
+                    }
                     @if (Model.FederatedAvailable)
                     {
                         <form asp-area="" asp-controller="Account" asp-action="SsoSessionBegin" method="post" id="verifyProviderForm">

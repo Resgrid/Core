@@ -11,8 +11,9 @@ namespace Resgrid.Model.Services
 	/// opt-in anniversary reminders, the member's own export and the 30-year retention.
 	/// <para>
 	/// The restricted tier: a member always reads and exports their own entries; a wellness officer (a member of the role named in
-	/// <see cref="WellnessSettings.WellnessOfficerRoleId"/>) reads everyone's and keeps screening flags. Department administration
-	/// alone opens nothing beyond the settings. Every read and write refuses a caller outside the tier with
+	/// <see cref="WellnessSettings.WellnessOfficerRoleId"/>, who with <see cref="WellnessSettings.RequireCurrentCertification"/> on must also
+	/// hold a current certification of the linked type: <see cref="WellnessRoleRules"/>) reads everyone's and keeps screening flags.
+	/// Department administration alone opens nothing beyond the settings. Every read and write refuses a caller outside the tier with
 	/// <see cref="UnauthorizedAccessException"/>; a rule refusal throws <see cref="MemberWellnessException"/>.
 	/// </para>
 	/// </summary>
@@ -25,7 +26,10 @@ namespace Resgrid.Model.Services
 		/// <summary>Department administrators only. Audited.</summary>
 		Task<WellnessSettings> SaveSettingsAsync(int departmentId, string adminUserId, WellnessSettings settings, CancellationToken cancellationToken = default);
 
-		/// <summary>A current member holding the department's wellness officer role. Administration alone is not enough.</summary>
+		/// <summary>
+		/// A current member holding the department's wellness officer role (and, with the certification switch on, a current certification of
+		/// the role's linked type). Administration alone is not enough.
+		/// </summary>
 		Task<bool> IsWellnessOfficerAsync(int departmentId, string userId);
 
 		Task<bool> IsDepartmentAdminAsync(int departmentId, string userId);
@@ -33,8 +37,20 @@ namespace Resgrid.Model.Services
 		/// <summary>A wellness officer, a department administrator, or someone who may edit the call.</summary>
 		Task<bool> CanFlagCallAsync(int departmentId, string userId, int callId);
 
-		/// <summary>Active members holding a valid certification of the peer support team's type (empty when none is set).</summary>
+		/// <summary>
+		/// The active peer support team: the members of its role (with the certification switch on, those holding a current certification
+		/// of its type), or, with no role named, the holders of a valid certification of its type. Empty when neither is set.
+		/// </summary>
 		Task<List<string>> GetPeerTeamUserIdsAsync(int departmentId);
+
+		/// <summary>The active members acting in a wellness role today (<see cref="WellnessRoleRules"/>): follow-up assignees, notice recipients.</summary>
+		Task<List<string>> GetActingMemberIdsAsync(int departmentId, WellnessRoleKinds kind);
+
+		/// <summary>
+		/// Each wellness role's members with their certification status of the role's linked type and whether they act: department
+		/// administrators (the settings page) and wellness officers (the report). Certification status is operational, never health data.
+		/// </summary>
+		Task<List<WellnessRoleRoster>> GetRosterAsync(int departmentId, string viewerUserId);
 
 		// ---- Entries --------------------------------------------------------------------------------------------------------
 

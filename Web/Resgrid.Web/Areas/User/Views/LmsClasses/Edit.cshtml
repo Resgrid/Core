@@ -177,7 +177,7 @@
                         <span class="help-block">@localizer["Field.PostEvaluationHelp"]</span>
                     </div>
                     <div class="form-group"><label for="c-retention">@localizer["Field.RetentionYears"]</label><input id="c-retention" name="RetentionYears" type="number" min="0" max="75" class="form-control" value="@input.RetentionYears" /><span class="help-block">@localizer["Field.RetentionYearsHelp"]</span></div>
-                    <div class="form-group"><label for="c-currency">@localizer["Field.Currency"]</label><input id="c-currency" name="Currency" class="form-control" maxlength="3" value="@(input.Currency ?? "USD")" /></div>
+                    <div class="form-group"><label for="c-currency">@localizer["Field.Currency"]</label><input id="c-currency" name="Currency" class="form-control" maxlength="3" value="@input.Currency" placeholder="@Model.DefaultCurrency" aria-describedby="c-currency-help" /><span id="c-currency-help" class="help-block">@string.Format(System.Globalization.CultureInfo.CurrentCulture, localizer["Field.CurrencyHelp"].Value, Model.DefaultCurrency)</span></div>
                 </div>
             </div>
         </div>

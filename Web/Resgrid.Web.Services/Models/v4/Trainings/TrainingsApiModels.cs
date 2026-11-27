@@ -130,6 +130,11 @@ namespace Resgrid.Web.Services.Models.v4.Trainings
 		public string CeProvider { get; set; }
 		public string CeCourseNumber { get; set; }
 		public bool HasQuiz { get; set; }
+		/// <summary>
+		/// Round 9A read and confirm (optional, additive): a training without a quiz completes only when the member confirms they read and
+		/// reviewed it (POST AcknowledgeTraining), not on opening it. Older apps ignore it; the member confirms on the web or in Omni.
+		/// </summary>
+		public bool RequiresAcknowledgment { get; set; }
 		/// <summary>The member's assignment; null when they read an open training they are not assigned to.</summary>
 		public TrainingAssignmentData Assignment { get; set; }
 		public List<TrainingAttachmentData> Attachments { get; set; } = new List<TrainingAttachmentData>();
@@ -295,6 +300,29 @@ namespace Resgrid.Web.Services.Models.v4.Trainings
 		public bool IsBackfill { get; set; }
 		/// <summary>The record may duplicate another one of the member's records and an officer has not resolved it yet.</summary>
 		public bool PossibleDuplicate { get; set; }
+		/// <summary>Round 7B: LearningCompletionMethods name ("Self" or "RecordedByOther": recorded for the member by an instructor). Optional.</summary>
+		public string CompletionMethod { get; set; }
+		/// <summary>Round 7B: who recorded the completion for the member (RecordedByOther only).</summary>
+		public string RecordedByUserId { get; set; }
+		/// <summary>Round 7B: when it was recorded (UTC; RecordedByOther only).</summary>
+		public DateTime? RecordedOn { get; set; }
+		/// <summary>Round 7B: the recording's source: "manual" or "class:{sessionId}" (RecordedByOther only).</summary>
+		public string RecordedSource { get; set; }
+		/// <summary>Round 7B: the recorder's note (RecordedByOther only).</summary>
+		public string RecordedNote { get; set; }
+		/// <summary>Round 7B: the attestation statement version the recorder accepted (RecordedByOther only).</summary>
+		public string AttestationVersion { get; set; }
+		/// <summary>
+		/// Round 9B: how the record came about: System (recorded from its source), SelfReported (the member's, not reviewed), Reviewed (a reviewer
+		/// or officer approved it), RecordedByOther (an instructor recorded it), Imported. Optional.
+		/// </summary>
+		public string Provenance { get; set; }
+		/// <summary>Round 9B: a member submission's review state: AwaitingReview, InfoRequested, Approved, Denied or SelfReported (null otherwise).</summary>
+		public string ReviewState { get; set; }
+		/// <summary>Round 9B: when the submission was last handed to reviewers (UTC).</summary>
+		public DateTime? SubmittedOn { get; set; }
+		/// <summary>Round 9B: the reviewer's latest note on a submission (the reason of a denial, what more information is needed).</summary>
+		public string ReviewNote { get; set; }
 	}
 
 	public class LearningRecordsResult : StandardApiResponseV4Base
@@ -346,12 +374,31 @@ namespace Resgrid.Web.Services.Models.v4.Trainings
 		public string ContentType { get; set; }
 		/// <summary>The evidence file, base64.</summary>
 		public string Data { get; set; }
+		/// <summary>
+		/// Round 9B: more evidence files (optional; with or instead of <see cref="Data"/>): at most 5 in one submission, 10 MB each, 30 MB
+		/// together; PDF, JPG, JPEG, PNG, GIF, WEBP, DOC, DOCX or ODT.
+		/// </summary>
+		public List<TrainingEvidenceFileInput> Files { get; set; }
+	}
+
+	/// <summary>Round 9B: one evidence file (base64) of a training hours submission or resubmission.</summary>
+	public class TrainingEvidenceFileInput
+	{
+		public string FileName { get; set; }
+		/// <summary>Informational; the stored type follows the file name's extension.</summary>
+		public string ContentType { get; set; }
+		/// <summary>The file, base64.</summary>
+		public string Data { get; set; }
+		/// <summary>TrainingEvidenceKinds: 0 other, 1 certificate, 2 photo, 3 document, 4 receipt.</summary>
+		public int Kind { get; set; }
 	}
 
 	public class ExternalTrainingSubmissionResult : StandardApiResponseV4Base
 	{
-		/// <summary>The Pending record; null when the submission was refused.</summary>
+		/// <summary>The submission (Pending when it waits for a reviewer, Verified when accepted as self-reported); null when refused.</summary>
 		public LearningRecordData Data { get; set; }
+		/// <summary>Round 9B: true when the submission waits for a reviewer, false when it was accepted at once as self-reported.</summary>
+		public bool ReviewRequired { get; set; }
 		/// <summary>
 		/// Why the submission was refused: submissions_disabled, title_required, title_too_long, date_invalid, hours_invalid,
 		/// ce_hours_invalid, category_invalid, method_invalid, text_too_long, file_name_required, file_type_not_allowed, file_too_large,

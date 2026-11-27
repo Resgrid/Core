@@ -2,6 +2,7 @@
 @using Resgrid.Web.Areas.User.Models.Training
 @model TrainingRecordQueueView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> reviewText
 @*
     The officer queue (Training T1): records waiting for review (outside certificates, calendar check-ins without a check-out) and
     possible duplicates nobody resolved yet. An officer never reviews their own record; a group admin sees their group's members.
@@ -19,6 +20,11 @@
 @await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
 
 <div class="wrapper wrapper-content rgw-page">
+    @* Round 9B: members' training hours submissions are reviewed in Training reviews (evidence inline, more information, bulk approve). *@
+    <div class="rgw-next-action" role="status">
+        <i class="fa fa-inbox" aria-hidden="true"></i> @string.Format(reviewText["Queue.SubmissionsMoved"].Value, Model.SubmissionsAwaiting)
+        <a class="m-l-xs" asp-controller="TrainingReviews" asp-action="Index" asp-route-area="User">@reviewText["Next.ReviewsAll"]</a>
+    </div>
     <div class="rgw-stat-tiles" role="list">
         <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @localizer["Rec.WaitingForReview"]</div><div class="rgw-stat-value">@Model.Pending.Count</div></div>
         <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Rec.PossibleDuplicatesHeader"]</div><div class="rgw-stat-value">@Model.Duplicates.Count</div></div>

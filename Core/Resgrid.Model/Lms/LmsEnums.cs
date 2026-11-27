@@ -28,10 +28,10 @@ namespace Resgrid.Model.Lms
 		/// <summary>A published protocol version, embedded as it was published.</summary>
 		ProtocolVersion = 3,
 
-		/// <summary>Reserved (T5): a SCORM package. Not built.</summary>
+		/// <summary>T5: a SCORM 1.2 or 2004 package (LmsLessons.LmsContentPackageId) played in the sandboxed runtime player.</summary>
 		Scorm = 4,
 
-		/// <summary>Reserved (T5): a cmi5 package. Not built.</summary>
+		/// <summary>T5: a cmi5 package (LmsLessons.LmsContentPackageId); its AUs report to the minimal LRS of the launch.</summary>
 		Cmi5 = 5,
 
 		/// <summary>An assessment drawn from a question bank; scored on the server.</summary>
@@ -41,7 +41,10 @@ namespace Resgrid.Model.Lms
 		Survey = 7,
 
 		/// <summary>Reserved (T4): a live class session. Not built.</summary>
-		LiveSession = 8
+		LiveSession = 8,
+
+		/// <summary>T5: an LTI 1.3 tool launch (LmsLessons.LmsLtiToolId), completed by the score the tool passes back (AGS).</summary>
+		LtiLink = 9
 	}
 
 	/// <summary>Where a video lesson's media comes from (LmsLessons.VideoSource). Persisted: append only.</summary>
@@ -120,7 +123,10 @@ namespace Resgrid.Model.Lms
 		Reassigned = 3,
 
 		/// <summary>The member scanned a crew-viewing QR (R-C4).</summary>
-		CrewViewing = 4
+		CrewViewing = 4,
+
+		/// <summary>Round 7B: an instructor recorded the course completed for the member (permission 135).</summary>
+		RecordedCompletion = 5
 	}
 
 	/// <summary>An enrollment's state (LmsEnrollments.Status). Persisted: append only.</summary>
@@ -243,6 +249,12 @@ namespace Resgrid.Model.Lms
 		CodeExpired,
 
 		FileTooLarge,
-		UnsupportedFile
+		UnsupportedFile,
+
+		/// <summary>
+		/// Round 10 A7 (owner decision 2026-11-26): the acting member holds no LMS seat, so they cannot act as a learner on department LMS
+		/// content (the Academy, the free baseline and their own completed records stay open). The v4 API reports it as "NotLicensed".
+		/// </summary>
+		NotLicensed
 	}
 }

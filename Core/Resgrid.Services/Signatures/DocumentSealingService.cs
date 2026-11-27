@@ -36,10 +36,20 @@ namespace Resgrid.Services.Signatures
 		private readonly IPdfProvider _pdf;
 		private readonly IEncryptionService _encryption;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IDepartmentDataProtectionService _protection;
+
+		/// <summary>
+		/// Subjects whose rendering carries a Records revision's or disclosure's values as the requesting member revealed them. For a department
+		/// that encrypts new writes (ADP) their sealed copy is never kept: ADP's rule for exports is that a stored copy inherits its source's
+		/// protection (RmsExportRuns.Data, RmsDisclosureProductions.ArtifactJson are sealed), and the sealed store keeps plain PDFs that the
+		/// unattended re-timestamping and retry steps read without a grant. The member still gets the sealed file; Resgrid keeps its hash.
+		/// </summary>
+		public static readonly System.Collections.Generic.IReadOnlyList<SignatureSubjectKinds> ProtectedContentKinds = new[] { SignatureSubjectKinds.RecordsDocument, SignatureSubjectKinds.RecordsDisclosure };
 
 		public DocumentSealingService(ISealedDocumentsRepository documents, ISealedDocumentInputsRepository inputs, IDssClient dss, ISigningKeyProvider keys,
-			ISealedDocumentStore store, IPdfProvider pdf, IEncryptionService encryption, IEventAggregator eventAggregator)
+			ISealedDocumentStore store, IPdfProvider pdf, IEncryptionService encryption, IEventAggregator eventAggregator, IDepartmentDataProtectionService protection)
 		{
+			_protection = protection;
 			_documents = documents;
 			_inputs = inputs;
 			_dss = dss;
@@ -109,6 +119,25 @@ namespace Resgrid.Services.Signatures
 				throw new ArgumentException("The document is not a PDF.", nameof(request));
 
 			var revision = SignaturePolicy.IsSha256(request.RevisionSha256) ? request.RevisionSha256.ToLowerInvariant() : SealingPolicy.Sha256(request.Pdf);
+			if (await KeepsNoCopyAsync(request.DepartmentId, request.SubjectKind))
+				return await SealWithoutCopyAsync(new SealedDocument
+				{
+					DepartmentId = request.DepartmentId,
+					SubjectKind = (int)request.SubjectKind,
+					SubjectId = Truncate(request.SubjectId, 128),
+					RevisionId = Truncate(request.RevisionId, 128),
+					RevisionSha256 = revision,
+					Role = (int)request.Role,
+					SignatureRequestId = request.SignatureRequestId,
+					Title = Truncate(request.Title, 256),
+					FileName = Truncate(SafeFileName(request.FileName), 256),
+					Status = (int)SealedDocumentStatuses.Pending,
+					PadesLevel = (int)SealingPolicy.LevelFor(request.RetentionYears, request.LongTermSubject),
+					RetentionYears = request.RetentionYears,
+					AuditPageIncluded = false,
+					CreatedByUserId = request.RequestedByUserId,
+					CreatedOn = DateTime.UtcNow
+				}, request.Pdf, cancellationToken);
 			if (request.ReuseExisting)
 			{
 				var reused = await ReuseAsync(request.DepartmentId, request.SubjectKind, request.SubjectId, (int)request.Role, revision, cancellationToken);
@@ -454,6 +483,17 @@ namespace Resgrid.Services.Signatures
 		/// <summary>One sealing attempt on a claimed row: sign remotely, require a timestamp, store, mark sealed.</summary>
 		private async Task<bool> TrySealAsync(SealedDocument document, byte[] pdf, CancellationToken cancellationToken)
 		{
+			var (sealedPdf, timestamp) = await SignAsync(document, pdf, cancellationToken);
+			await StoreSealedAsync(document, sealedPdf, timestamp, DateTime.UtcNow, cancellationToken);
+			await _inputs.DeleteForDocumentAsync(document.DepartmentId, document.SealedDocumentId, cancellationToken);
+			Audit(document, AuditLogTypes.DocumentSealed, true);
+			RaiseWorkflow(document, DocumentSealingWorkflowChanges.Sealed);
+			return true;
+		}
+
+		/// <summary>Signs remotely and requires a timestamp (never a local-time seal); sets the certificate thumbprint on the row.</summary>
+		private async Task<(byte[] SealedPdf, DssSignatureResult Timestamp)> SignAsync(SealedDocument document, byte[] pdf, CancellationToken cancellationToken)
+		{
 			var certificate = await _keys.GetCertificateAsync(cancellationToken);
 			var level = SealingPolicy.DssName((PadesLevels)document.PadesLevel);
 			var signingDate = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
@@ -465,10 +505,102 @@ namespace Resgrid.Services.Signatures
 			var timestamp = await RequireTimestampAsync(sealedPdf, fileName, cancellationToken);
 
 			document.SigningCertThumbprint = Truncate(certificate.Thumbprint, 128);
-			await StoreSealedAsync(document, sealedPdf, timestamp, DateTime.UtcNow, cancellationToken);
-			await _inputs.DeleteForDocumentAsync(document.DepartmentId, document.SealedDocumentId, cancellationToken);
-			Audit(document, AuditLogTypes.DocumentSealed, true);
-			return true;
+			return (sealedPdf, timestamp);
+		}
+
+		/// <summary>True when the subject's sealed copy must not be kept: a protected-content kind of a department that encrypts new writes.</summary>
+		private async Task<bool> KeepsNoCopyAsync(int departmentId, SignatureSubjectKinds kind)
+		{
+			if (!ProtectedContentKinds.Contains(kind))
+				return false;
+			if (_protection == null)
+				return false;
+			try
+			{
+				return await _protection.ShouldEncryptNewWritesAsync(departmentId);
+			}
+			catch (Exception ex)
+			{
+				// Unknown state: keep nothing (a kept plaintext copy is the one direction that cannot be taken back).
+				Logging.LogException(ex, $"The protection state of department {departmentId} could not be read; the sealed copy is not kept.");
+				return true;
+			}
+		}
+
+		/// <summary>
+		/// ADP: seals now and hands the sealed bytes back without keeping them (no store object, no queued input, no re-timestamp schedule);
+		/// the row keeps the hash so the copy still verifies as issued. When sealing is not available now, nothing is kept or queued and the
+		/// unsealed rendering is returned.
+		/// </summary>
+		private async Task<SealOutcome> SealWithoutCopyAsync(SealedDocument document, byte[] pdf, CancellationToken cancellationToken)
+		{
+			var availability = GetAvailability();
+			if (!(availability.SidecarConfigured && availability.TimestampAuthorityConfigured && availability.SigningKeyConfigured))
+				return new SealOutcome { Bytes = pdf, Reason = availability.MissingPart };
+
+			try
+			{
+				var (sealedPdf, timestamp) = await SignAsync(document, pdf, cancellationToken);
+				var utcNow = DateTime.UtcNow;
+				document.Status = (int)SealedDocumentStatuses.Sealed;
+				document.Sha256 = SealingPolicy.Sha256(sealedPdf);
+				document.SizeBytes = sealedPdf.LongLength;
+				document.TimestampedOn = timestamp?.TimestampTime;
+				document.SealedOn = utcNow;
+				document.StorageKey = null;
+				document.RetimestampDueOn = null;
+				document = await _documents.InsertAsync(document, cancellationToken, true);
+				Audit(document, AuditLogTypes.DocumentSealed, true);
+				return new SealOutcome { Document = document, Bytes = sealedPdf };
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Sealing failed; the protected copy is returned unsealed and nothing is kept.");
+				return new SealOutcome { Bytes = pdf, Reason = ErrorCode(ex.Message) };
+			}
+		}
+
+		/// <summary>
+		/// Workflow triggers 218-219 after the document's state is stored (a retry holds the row's claim, so once per document). Records
+		/// documents and disclosures raise nothing here (the Records module's own events cover them and they can belong to restricted
+		/// records); the raw error text never leaves, only a short code.
+		/// </summary>
+		private void RaiseWorkflow(SealedDocument document, DocumentSealingWorkflowChanges change)
+		{
+			if (document == null || !RaisesWorkflow(document.SubjectKind))
+				return;
+
+			ContentWorkflowContext.Publish(_eventAggregator, WorkflowEvent(document, change, DateTime.UtcNow));
+		}
+
+		/// <summary>Whether a sealed document of this subject kind raises the sealing workflow events (not Records documents or disclosures).</summary>
+		public static bool RaisesWorkflow(int subjectKind) =>
+			subjectKind != (int)SignatureSubjectKinds.RecordsDocument && subjectKind != (int)SignatureSubjectKinds.RecordsDisclosure;
+
+		public static DocumentSealingWorkflowEvent WorkflowEvent(SealedDocument document, DocumentSealingWorkflowChanges change, DateTime utcNow) => new DocumentSealingWorkflowEvent
+		{
+			DepartmentId = document.DepartmentId,
+			Change = change,
+			SealedDocumentId = document.SealedDocumentId,
+			SubjectKind = Enum.IsDefined(typeof(SignatureSubjectKinds), document.SubjectKind) ? ((SignatureSubjectKinds)document.SubjectKind).ToString() : null,
+			SubjectId = document.SubjectId,
+			DocumentTitle = document.Title,
+			DocumentRole = Enum.IsDefined(typeof(SealedDocumentRoles), document.Role) ? ((SealedDocumentRoles)document.Role).ToString() : null,
+			SignatureRequestId = document.SignatureRequestId,
+			Status = Enum.IsDefined(typeof(SealedDocumentStatuses), document.Status) ? ((SealedDocumentStatuses)document.Status).ToString() : null,
+			PadesLevel = Enum.IsDefined(typeof(PadesLevels), document.PadesLevel) ? ((PadesLevels)document.PadesLevel).ToString() : null,
+			Attempts = document.Attempts,
+			ErrorCode = change == DocumentSealingWorkflowChanges.Failed ? ErrorCode(document.LastError) : null,
+			SealedOn = document.SealedOn,
+			UserId = document.CreatedByUserId,
+			OccurredOn = utcNow
+		};
+
+		/// <summary>A stored error that is one of the service's own codes ("sealing_no_timestamp") passes; any other text reads "sealing_error".</summary>
+		public static string ErrorCode(string error)
+		{
+			var code = (error ?? string.Empty).Trim();
+			return code.Length > 0 && code.Length <= 64 && code.All(c => (c >= 'a' && c <= 'z') || c == '_' || (c >= '0' && c <= '9')) ? code : "sealing_error";
 		}
 
 		/// <summary>Validates sealed bytes and returns the timestamp evidence; refuses a result without one (never a local-time seal).</summary>
@@ -527,6 +659,7 @@ namespace Resgrid.Services.Signatures
 				document.NextAttemptOn = null;
 				await _documents.UpdateAsync(document, CancellationToken.None, true);
 				Audit(document, AuditLogTypes.DocumentSealingFailed, false);
+				RaiseWorkflow(document, DocumentSealingWorkflowChanges.Failed);
 				return;
 			}
 
@@ -542,6 +675,7 @@ namespace Resgrid.Services.Signatures
 			document.ClaimedOn = null;
 			await _documents.UpdateAsync(document, cancellationToken, true);
 			Audit(document, AuditLogTypes.DocumentSealingFailed, false);
+			RaiseWorkflow(document, DocumentSealingWorkflowChanges.Failed);
 		}
 
 		private static string StorageKey(SealedDocument document, string sha, string extension) =>

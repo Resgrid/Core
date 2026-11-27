@@ -83,7 +83,7 @@ namespace Resgrid.Tests.Services
 			});
 
 			_service = new SignatureService(_records.Object, _versions.Object, _certifications.Object, _profiles.Object, _roles.Object, _events.Object,
-				Mock.Of<IProtocolVersionFilesRepository>());
+				Mock.Of<IProtocolVersionFilesRepository>(), Resgrid.Tests.Security.StepUpTestPolicies.Strict());
 		}
 
 		[TearDown]

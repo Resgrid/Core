@@ -23,9 +23,18 @@ namespace Resgrid.Services
 		private readonly ICallsService _callsService;
 		private readonly ICallProtocolsRepository _callProtocols;
 		private readonly IProtocolAccessService _access;
+		private readonly ICallProtocolStepNotesRepository _stepNotes;
+		private readonly Lazy<IProtectedReadService> _protectedRead;
+		private readonly Lazy<IProtectedWriteService> _protectedWrite;
+		private readonly IProtectedGrantContext _grant;
 
-		public ProtocolStepThroughService(IProtocolsService protocolsService, ICallsService callsService, ICallProtocolsRepository callProtocols, IProtocolAccessService access)
+		public ProtocolStepThroughService(IProtocolsService protocolsService, ICallsService callsService, ICallProtocolsRepository callProtocols, IProtocolAccessService access,
+			ICallProtocolStepNotesRepository stepNotes, Lazy<IProtectedReadService> protectedRead, Lazy<IProtectedWriteService> protectedWrite, IProtectedGrantContext grant)
 		{
+			_stepNotes = stepNotes;
+			_protectedRead = protectedRead;
+			_protectedWrite = protectedWrite;
+			_grant = grant;
 			_protocolsService = protocolsService;
 			_callsService = callsService;
 			_callProtocols = callProtocols;
@@ -58,6 +67,7 @@ namespace Resgrid.Services
 					lists.Add(checklist);
 			}
 
+			await RevealNotesAsync(departmentId, lists);
 			return lists;
 		}
 
@@ -77,7 +87,9 @@ namespace Resgrid.Services
 			var version = row.ProtocolVersionId.HasValue
 				? (await _protocolsService.GetCitedVersionsAsync(departmentId, new[] { row.ProtocolVersionId.Value })).FirstOrDefault()
 				: null;
-			return Build(row, protocol, version);
+			var checklist = Build(row, protocol, version);
+			await RevealNotesAsync(departmentId, new[] { checklist });
+			return checklist;
 		}
 
 		public async Task<List<DispatchProtocol>> GetSopLibraryAsync(int departmentId, string userId)
@@ -173,7 +185,18 @@ namespace Resgrid.Services
 			if (checklist.Log != null && checklist.Log.HasClientStep(cid))
 				return new ProtocolStepResult { Checklist = checklist };
 
-			return await WriteAsync(departmentId, callId, callProtocolId, (log, now) =>
+			// ADP catalog 39 (M0403): the note is call narrative and goes to its own row (sealed for a department whose ADP is on); the log keeps
+			// only the pointer, so it stays appendable by clients that never decrypt. A replay of the same event finds its row.
+			CallProtocolStepNote stored = null;
+			var created = false;
+			if (cleanNote != null)
+			{
+				(stored, created) = await StoreNoteAsync(departmentId, callId, callProtocolId, stepId, cid, userId, cleanNote, cancellationToken);
+				if (stored == null)
+					return ProtocolStepResult.Fail(ProtocolStepErrors.Conflict);
+			}
+
+			var written = await WriteAsync(departmentId, callId, callProtocolId, (log, now) =>
 			{
 				log ??= new ProtocolStepLog { ProtocolVersionId = checklist.Version?.ProtocolVersionId, StartedOn = now, StartedByUserId = userId };
 				// Re-checked on the row as read for the write: two replays of the same event at once record it once.
@@ -191,11 +214,104 @@ namespace Resgrid.Services
 					// A device time is kept only as what the device said; it never orders the log (the server time does).
 					DeviceAt = deviceAtUtc.HasValue && deviceAtUtc.Value <= now.AddMinutes(5) ? DateTime.SpecifyKind(deviceAtUtc.Value, DateTimeKind.Utc) : (DateTime?)null,
 					UserId = userId,
-					Note = cleanNote,
+					NoteId = stored?.CallProtocolStepNoteId,
 					ClientStepId = cid
 				});
 				return (log, ProtocolStepErrors.None);
 			}, cancellationToken);
+
+			// A note row whose event was not recorded (the log was finished or full meanwhile) is not left behind.
+			if (created && !written.Succeeded)
+			{
+				try { await _stepNotes.DeleteAsync(stored, CancellationToken.None); }
+				catch (Exception ex) { Logging.LogException(ex, $"An unused step note of call protocol {callProtocolId} could not be removed."); }
+			}
+
+			return written;
+		}
+
+		/// <summary>
+		/// The note's own row: an offline replay (same client step id) gets the row it already wrote; a new note is sealed through the protected
+		/// seam's workload lane BEFORE it is inserted (its key is assigned first), so a protected department never stores it in plaintext. Null
+		/// when the seam refuses the write (fails closed).
+		/// </summary>
+		private async Task<(CallProtocolStepNote Note, bool Created)> StoreNoteAsync(int departmentId, int callId, int callProtocolId, string stepId, string clientStepId,
+			string userId, string text, CancellationToken cancellationToken)
+		{
+			if (clientStepId != null)
+			{
+				var replayed = await _stepNotes.GetByClientStepIdAsync(departmentId, callProtocolId, clientStepId);
+				if (replayed != null)
+					return (replayed, false);
+			}
+
+			var note = new CallProtocolStepNote
+			{
+				CallProtocolStepNoteId = Guid.NewGuid().ToString("D"),
+				DepartmentId = departmentId,
+				CallId = callId,
+				CallProtocolId = callProtocolId,
+				StepId = stepId,
+				ClientStepId = clientStepId,
+				UserId = userId,
+				Note = text,
+				CreatedOn = DateTime.UtcNow
+			};
+
+			var write = await _protectedWrite.Value.PrepareRecordsEntityWriteAsync(departmentId, note, null, note.CallProtocolStepNoteId, ContentProtectedFields.StepNotes,
+				() => note.IsProtected = true, null, null, workloadCaller: true, cancellationToken);
+			if (write != null && !write.Success)
+			{
+				Logging.LogError($"A step note of call protocol {callProtocolId} was not stored: the protected write was blocked ({write.Reason}).");
+				return (null, false);
+			}
+
+			try
+			{
+				return (await _stepNotes.InsertAsync(note, cancellationToken, true) ?? note, true);
+			}
+			catch (Exception) when (clientStepId != null)
+			{
+				// Two replays of one offline event at once: the unique index let one through; this one uses that row.
+				var replayed = await _stepNotes.GetByClientStepIdAsync(departmentId, callProtocolId, clientStepId);
+				if (replayed != null)
+					return (replayed, false);
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Fills each log entry's note from its row as this reader may see it: plaintext for a department without ADP or for a caller holding a
+		/// grant, REDACTED otherwise (never an envelope). Display only: the stored log is never written from here.
+		/// </summary>
+		private async Task RevealNotesAsync(int departmentId, IEnumerable<ProtocolCallChecklist> checklists)
+		{
+			var entries = (checklists ?? Enumerable.Empty<ProtocolCallChecklist>()).Where(c => c?.Log?.Entries != null).SelectMany(c => c.Log.Entries)
+				.Where(e => e != null && !string.IsNullOrEmpty(e.NoteId)).ToList();
+			if (entries.Count == 0 || _stepNotes == null)
+				return;
+
+			var rows = await _stepNotes.GetByIdsAsync(departmentId, entries.Select(e => e.NoteId).Distinct(StringComparer.Ordinal).ToList()) ?? new List<CallProtocolStepNote>();
+			var sealedRows = rows.Where(r => r != null && ProtectedDataEnvelope.HasEnvelopePrefix(r.Note)).ToList();
+			if (sealedRows.Count > 0)
+			{
+				try
+				{
+					await _protectedRead.Value.ResolveRecordsEntitiesForReadAsync(departmentId, sealedRows.Select(r => (r, r.CallProtocolStepNoteId)).ToList(), ContentProtectedFields.StepNotes,
+						_grant?.GrantToken, _grant?.UserId);
+				}
+				catch (Exception ex) when (ex is not OperationCanceledException)
+				{
+					Logging.LogException(ex, $"Step notes could not be resolved for department {departmentId}; they are withheld.");
+				}
+				foreach (var row in sealedRows.Where(r => ProtectedDataEnvelope.HasEnvelopePrefix(r.Note)))
+					row.Note = ProtectedDataEnvelope.RedactionValue;
+			}
+
+			var byId = rows.Where(r => r?.CallProtocolStepNoteId != null && r.DepartmentId == departmentId).GroupBy(r => r.CallProtocolStepNoteId, StringComparer.Ordinal)
+				.ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+			foreach (var entry in entries)
+				entry.Note = byId.TryGetValue(entry.NoteId, out var row) ? row.Note : null;
 		}
 
 		public async Task<ProtocolStepResult> CompleteAsync(int departmentId, int callId, int callProtocolId, string userId, CancellationToken cancellationToken = default)

@@ -31,6 +31,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public partial class SignaturesController : V4AuthenticatedApiControllerbase
 	{
 		private readonly ISignatureRequestService _requests;
+		private readonly IStepUpCapabilityService _stepUp;
 		private readonly IFeatureToggleService _flags;
 		private readonly ITimeTrackingService _timeTracking;
 		private readonly IDeploymentService _deployments;
@@ -44,8 +45,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IBusinessOperationsAccessService businessOperations, IRecordsCutoverService cutover, IRecordsInvestigationsService investigations, AspNetAuthorization authorization,
 			IReadinessAccessService readiness, IWorkOrderAuthorizationService workOrderAuthorization, IInventoryAuthorizationService inventoryAuthorization,
 			IDepartmentGroupsService groups, IUserProfileService profiles, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy,
-			IEnumerable<ISignatureSubjectAccessRule> accessRules)
+			IEnumerable<ISignatureSubjectAccessRule> accessRules, IStepUpCapabilityService stepUp)
 		{
+			_stepUp = stepUp;
 			_accessRules = (accessRules ?? Enumerable.Empty<ISignatureSubjectAccessRule>()).ToList();
 			_readiness = readiness;
 			_workOrderAuthorization = workOrderAuthorization;

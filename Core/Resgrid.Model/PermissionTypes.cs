@@ -352,7 +352,31 @@ ViewChecklistResults = 113,
 		/// Training T2 (registry 133): the manual grading queue for short answers, per-question answers of attempts and item
 		/// analysis (R-T12: the training-supervisor right). No-row default: department admins only.
 		/// </summary>
-		GradeAssessments = 133
+		GradeAssessments = 133,
+
+		/// <summary>
+		/// Protocols P5 QA (registry 134): sample calls for dispatch case review, score the recorded case against a dispatch case rubric, send
+		/// the review to the dispatcher and read the compliance report. Records QA rights (Review Records 52) cannot express it: they are
+		/// Records-module rights over Records, while this reviews calls. Nobody reviews their own calls. No-row default: department admins only.
+		/// </summary>
+		ReviewDispatchCases = 134,
+
+		/// <summary>
+		/// Round 7B (registry 135, product-owner decision 2026-11-25): record that members completed a training they took together: from a
+		/// class roster (the session's LMS course or baseline training) or from a course's enrolment list and a training's assignee list (with a
+		/// note). The completion is written to each member's record as "recorded by instructor", with the attestation the recorder accepted, and
+		/// can be voided with a reason. Group admins (Department and group admins) record only for their own group's members. No-row default:
+		/// department admins only.
+		/// </summary>
+		RecordTrainingCompletions = 135,
+
+		/// <summary>
+		/// Round 10 A3 (Protocols P5 regional publisher/subscriber, Training T5 shared course sets and sponsored seats): publish protocol and
+		/// course sets to linked departments and answer their proposals, sponsor a linked department's LMS seats, and on the subscribing side
+		/// subscribe to a linked department's sets, decide the pending-update inbox (accept, defer, decline) and customize the blocks the
+		/// publisher left open. Any member who can read a set copy may propose a change upstream. No-row default: department admins only.
+		/// </summary>
+		ManageContentSets = 136
 	}
 
 }

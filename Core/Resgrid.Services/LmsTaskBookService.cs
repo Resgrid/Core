@@ -150,10 +150,14 @@ namespace Resgrid.Services
 			return target;
 		}
 
-		public async Task<LmsTaskBookDefinition> CreateFromTemplateAsync(LmsActor actor, string templateKey, CancellationToken cancellationToken = default)
+		public Task<LmsTaskBookDefinition> CreateFromTemplateAsync(LmsActor actor, string templateKey, CancellationToken cancellationToken = default) =>
+			CreateFromTemplateAsync(actor, templateKey, null, cancellationToken);
+
+		public async Task<LmsTaskBookDefinition> CreateFromTemplateAsync(LmsActor actor, string templateKey, string culture, CancellationToken cancellationToken = default)
 		{
 			RequireManager(actor, true);
-			var template = LmsSkillTemplateCatalog.FindTaskBook(templateKey) ?? throw new InvalidOperationException("lms_skill_template_not_found");
+			// Round 9C: names in the author's language (English when none ships); position codes and task numbers stay.
+			var template = LmsSkillTemplateCatalog.Localized(LmsSkillTemplateCatalog.FindTaskBook(templateKey), culture) ?? throw new InvalidOperationException("lms_skill_template_not_found");
 			return await SaveDefinitionAsync(actor, new LmsTaskBookDefinition
 			{
 				Name = template.Name,
@@ -252,8 +256,9 @@ namespace Resgrid.Services
 			book.PersonnelCertificationId = await OpenTraineeRecordAsync(actor.DepartmentId, trainee, definition.CertificationTypeId, cancellationToken);
 			book = await _books.InsertAsync(book, cancellationToken, true);
 
+			// Queued as ContentNotices keys: worker 96 writes them in each recipient's language (round 9C).
 			await _notifications.QueueAsync(book.DepartmentId, LmsSkillNotificationKinds.TaskBookInitiated,
-				"Task book " + book.PositionCode + " (" + book.Name + ") initiated, valid until " + book.ExpiresOn.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) + ". " + Link(book.LmsTaskBookId),
+				LmsSkillNoticeText.Encode("Skill.TaskBookInitiated", book.PositionCode, book.Name, book.ExpiresOn.Date, Link(book.LmsTaskBookId)),
 				new[] { book.UserId }, true, cancellationToken);
 			Audit(book.DepartmentId, actor.UserId, AuditLogTypes.LmsTaskBookInitiated, null,
 				new { book.LmsTaskBookId, book.LmsTaskBookDefinitionId, book.UserId, book.PositionCode, book.InitiatedOn, book.ExpiresOn, book.PersonnelCertificationId });
@@ -373,7 +378,7 @@ namespace Resgrid.Services
 			await _books.TryUpdateAsync(book, stored, CancellationToken.None);
 
 			await _notifications.QueueAsync(book.DepartmentId, LmsSkillNotificationKinds.TaskBookCertificationRequested,
-				"Task book " + book.PositionCode + " is complete and waiting for the final evaluator and the certifying official. " + Link(book.LmsTaskBookId), new[] { book.UserId }, true, cancellationToken);
+				LmsSkillNoticeText.Encode("Skill.TaskBookCertificationRequested", book.PositionCode, Link(book.LmsTaskBookId)), new[] { book.UserId }, true, cancellationToken);
 			Audit(book.DepartmentId, actor.UserId, AuditLogTypes.LmsTaskBookCertificationRequested, null, new { book.LmsTaskBookId, book.SignatureRequestId, final, certifying });
 			return book;
 		}
@@ -408,6 +413,8 @@ namespace Resgrid.Services
 				catch (Exception ex) { Logging.LogException(ex, "The task book certification request could not be withdrawn."); }
 			}
 			Audit(book.DepartmentId, actor.UserId, AuditLogTypes.LmsTaskBookClosed, null, new { book.LmsTaskBookId, status = book.Status, why });
+			// Workflow trigger 263 (Cancelled); the reason stays in the book.
+			ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.TaskBookClosed(book, actor.UserId, DateTime.UtcNow));
 			return book;
 		}
 
@@ -469,9 +476,11 @@ namespace Resgrid.Services
 			}
 
 			await _notifications.QueueAsync(book.DepartmentId, LmsSkillNotificationKinds.TaskBookCertified,
-				"Task book " + book.PositionCode + " (" + book.Name + ") certified. " + Link(book.LmsTaskBookId), new[] { book.UserId }, true, cancellationToken);
+				LmsSkillNoticeText.Encode("Skill.TaskBookCertified", book.PositionCode, book.Name, Link(book.LmsTaskBookId)), new[] { book.UserId }, true, cancellationToken);
 			Audit(book.DepartmentId, book.CertifiedByUserId, AuditLogTypes.LmsTaskBookCertified, null,
 				new { book.LmsTaskBookId, book.UserId, book.PositionCode, book.CertifiedOn, book.PersonnelCertificationId, book.SignatureRequestId });
+			// Workflow trigger 263 (Certified), once: the book's compare-and-set above.
+			ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.TaskBookClosed(book, book.CertifiedByUserId, now));
 			return true;
 		}
 
@@ -612,8 +621,9 @@ namespace Resgrid.Services
 						continue;
 					expired++;
 					await _notifications.QueueAsync(book.DepartmentId, LmsSkillNotificationKinds.TaskBookExpired,
-						"Task book " + book.PositionCode + " (" + book.Name + ") expired before it was certified. " + Link(book.LmsTaskBookId), new[] { book.UserId }, true, cancellationToken);
+						LmsSkillNoticeText.Encode("Skill.TaskBookExpired", book.PositionCode, book.Name, Link(book.LmsTaskBookId)), new[] { book.UserId }, true, cancellationToken);
 					Audit(book.DepartmentId, null, AuditLogTypes.LmsTaskBookClosed, null, new { book.LmsTaskBookId, status = book.Status, book.CloseReason });
+					ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.TaskBookClosed(book, null, utcNow));
 				}
 				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
 				{
@@ -635,10 +645,9 @@ namespace Resgrid.Services
 			if (view?.Book == null || view.Book.Status != (int)LmsTaskBookStatuses.Open)
 				return;
 			var task = view.Tasks.FirstOrDefault(t => string.Equals(t.Task.Key, evaluation.TaskKey, StringComparison.OrdinalIgnoreCase));
-			var text = "Task book " + view.Book.PositionCode + ": task " + (task?.Task.Number ?? evaluation.TaskKey) + " signed (" +
-				(task?.Counted ?? 0).ToString(CultureInfo.InvariantCulture) + " of " + Math.Max(1, task?.Task.RequiredEvaluations ?? 1).ToString(CultureInfo.InvariantCulture) + "); " +
-				view.CompleteCount.ToString(CultureInfo.InvariantCulture) + " of " + view.Tasks.Count.ToString(CultureInfo.InvariantCulture) + " tasks complete" +
-				(view.AllTasksComplete ? ", ready for certification" : string.Empty) + ". " + Link(view.Book.LmsTaskBookId);
+			var text = LmsSkillNoticeText.Encode(view.AllTasksComplete ? "Skill.TaskSignedReady" : "Skill.TaskSigned", view.Book.PositionCode,
+				task?.Task.Number ?? evaluation.TaskKey, task?.Counted ?? 0, Math.Max(1, task?.Task.RequiredEvaluations ?? 1), view.CompleteCount, view.Tasks.Count,
+				Link(view.Book.LmsTaskBookId));
 			await _notifications.QueueAsync(view.Book.DepartmentId, LmsSkillNotificationKinds.TaskSigned, text, new[] { view.Book.UserId }, view.AllTasksComplete, cancellationToken);
 		}
 

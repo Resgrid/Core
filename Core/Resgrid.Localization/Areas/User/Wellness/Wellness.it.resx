@@ -60,641 +60,1042 @@
   </resheader>
   <data name="PersonnelLink" xml:space="preserve">
     <value>Personale</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HomeLink" xml:space="preserve">
     <value>Home</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessModuleLabel" xml:space="preserve">
     <value>Benessere</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyExposuresTab" xml:space="preserve">
     <value>Le mie esposizioni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportTab" xml:space="preserve">
     <value>Rapporto membri</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallTab" xml:space="preserve">
     <value>Segnalazioni post-intervento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsTab" xml:space="preserve">
     <value>Impostazioni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyExposuresTitle" xml:space="preserve">
     <value>Le mie esposizioni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberExposuresTitle" xml:space="preserve">
     <value>Registro esposizioni: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyExposuresIntro" xml:space="preserve">
     <value>Il tuo registro personale di esposizioni e interventi difficili. Solo tu e i referenti per il benessere del tuo dipartimento potete vederlo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberExposuresIntro" xml:space="preserve">
     <value>Il registro delle esposizioni e degli eventi critici di questo membro. Trattalo con cura: solo il membro e i referenti per il benessere possono vederlo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LogExposureButton" xml:space="preserve">
     <value>Registra un'esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportPdfButton" xml:space="preserve">
     <value>Esporta PDF</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportCsvButton" xml:space="preserve">
     <value>Esporta CSV</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedWithheldNotice" xml:space="preserve">
     <value>Alcuni dettagli sono protetti dalla Protezione avanzata dei dati del tuo dipartimento e non sono mostrati qui.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmedEntriesLabel" xml:space="preserve">
     <value>Voci confermate</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CriticalIncidentsLabel" xml:space="preserve">
     <value>Eventi critici</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AwaitingReviewLabel" xml:space="preserve">
     <value>In attesa di revisione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsHeader" xml:space="preserve">
     <value>Suggerite dagli interventi recenti</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsHelp" xml:space="preserve">
     <value>Sono state suggerite dai dati di intervento dopo la segnalazione di una chiamata. Nulla viene registrato finché non lo esamini e lo confermi. Se non ti riguarda, scartalo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DateColumn" xml:space="preserve">
     <value>Data</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CategoryColumn" xml:space="preserve">
     <value>Categoria</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CallColumn" xml:space="preserve">
     <value>Intervento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DurationColumn" xml:space="preserve">
     <value>Durata (h:mm)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>Azioni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestedFromLabel" xml:space="preserve">
     <value>Suggerito da</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewButton" xml:space="preserve">
     <value>Esamina</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissButton" xml:space="preserve">
     <value>Scarta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningHeader" xml:space="preserve">
     <value>Screening rafforzato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningSelfText" xml:space="preserve">
     <value>Il referente per il benessere del tuo dipartimento ti ha suggerito alcuni controlli di salute aggiuntivi. I passaggi qui sotto ti aiutano a tenerne traccia.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningOfficerText" xml:space="preserve">
     <value>Questo membro è segnalato per uno screening rafforzato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewOnLabel" xml:space="preserve">
     <value>Prossima revisione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PlanNotesLabel" xml:space="preserve">
     <value>Piano di follow-up</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithheldValue" xml:space="preserve">
     <value>Protetto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpColumn" xml:space="preserve">
     <value>Follow-up</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssigneeColumn" xml:space="preserve">
     <value>Assegnato a</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueColumn" xml:space="preserve">
     <value>Scadenza</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StateColumn" xml:space="preserve">
     <value>Stato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompleteButton" xml:space="preserve">
     <value>Segna come fatto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Annulla</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningManageHeader" xml:space="preserve">
     <value>Screening e follow-up</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningManageHelp" xml:space="preserve">
     <value>Segnala questo membro per uno screening rafforzato e tieni un piano di follow-up. Il piano è protetto e visibile solo al membro e ai referenti per il benessere.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningCategoryLabel" xml:space="preserve">
     <value>Motivo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCategoryOption" xml:space="preserve">
     <value>Non specificato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedFieldHelp" xml:space="preserve">
     <value>Protetto: visibile solo al membro e ai referenti per il benessere.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagForScreeningButton" xml:space="preserve">
     <value>Segnala per screening rafforzato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveScreeningButton" xml:space="preserve">
     <value>Salva screening</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearScreeningButton" xml:space="preserve">
     <value>Termina screening rafforzato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddFollowUpHeader" xml:space="preserve">
     <value>Aggiungi un follow-up</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpPrivacyHelp" xml:space="preserve">
     <value>I follow-up registrano solo il tipo di passaggio e se è stato fatto. Conserva eventuali dettagli di salute nel piano protetto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddFollowUpButton" xml:space="preserve">
     <value>Aggiungi follow-up</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EntriesHeader" xml:space="preserve">
     <value>Voci</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoEntriesSelf" xml:space="preserve">
     <value>Non hai ancora voci. Puoi registrare un'esposizione in qualsiasi momento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoEntriesMember" xml:space="preserve">
     <value>Questo membro non ha voci.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionNotice" xml:space="preserve">
     <value>Le voci sono conservate per almeno 30 anni. Una voce registrata per errore può essere contrassegnata come tale; resta conservata ma non viene più conteggiata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusColumn" xml:space="preserve">
     <value>Stato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AnniversaryReminderOnLabel" xml:space="preserve">
     <value>Promemoria di anniversario attivo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenButton" xml:space="preserve">
     <value>Apri</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidButton" xml:space="preserve">
     <value>Registrato per errore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidHelp" xml:space="preserve">
     <value>La voce resta nel registro per il periodo di conservazione ma non viene più conteggiata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidConfirmButton" xml:space="preserve">
     <value>Conferma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SupportNote" xml:space="preserve">
     <value>Se qualcosa di un intervento continua a pesarti, non devi affrontarlo da solo. Il tuo team di supporto tra pari e le risorse per il benessere del tuo dipartimento sono a tua disposizione.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LogExposureTitle" xml:space="preserve">
     <value>Registra un'esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewSuggestionTitle" xml:space="preserve">
     <value>Esamina una voce suggerita</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EntryTitle" xml:space="preserve">
     <value>Voce di esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EntryIntro" xml:space="preserve">
     <value>Descrivi con parole tue cosa è successo. Solo categoria, data, intervento e durata vengono usati nei conteggi; tutto il resto è protetto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionReviewNotice" xml:space="preserve">
     <value>Questa voce è stata suggerita dai dati di intervento. Controlla i dettagli, aggiungi ciò che vuoi e confermala, oppure scartala se non ti riguarda.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatHappenedHeader" xml:space="preserve">
     <value>Quando e cosa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberLabel" xml:space="preserve">
     <value>Membro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OccurredOnLabel" xml:space="preserve">
     <value>Data e ora</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DurationMinutesLabel" xml:space="preserve">
     <value>Durata (minuti)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCallOption" xml:space="preserve">
     <value>Nessun intervento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DetailsHeader" xml:space="preserve">
     <value>Dettagli (protetti)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DetailsHelp" xml:space="preserve">
     <value>Questi dettagli sono protetti: solo tu e i referenti per il benessere del tuo dipartimento potete leggerli, e non vengono mai usati dalla ricerca né da funzioni di IA.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubstanceLabel" xml:space="preserve">
     <value>Sostanza o agente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PpeWornLabel" xml:space="preserve">
     <value>Dispositivi di protezione indossati</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DecontaminationLabel" xml:space="preserve">
     <value>Decontaminazione successiva</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NarrativeLabel" xml:space="preserve">
     <value>Cosa è successo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthDetailsLabel" xml:space="preserve">
     <value>Dettagli di salute</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthDetailsHelp" xml:space="preserve">
     <value>Facoltativo. Sintomi, trattamento o qualsiasi cosa tu voglia registrare. Non è una valutazione medica.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindersHeader" xml:space="preserve">
     <value>Promemoria di anniversario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindersHelp" xml:space="preserve">
     <value>Per gli eventi critici puoi scegliere un promemoria discreto prima di ogni anniversario, per te e/o per avvisare il team di supporto tra pari. Puoi cambiarlo in qualsiasi momento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindMemberLabel" xml:space="preserve">
     <value>Ricordamelo prima dell'anniversario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindPeerTeamLabel" xml:space="preserve">
     <value>Avvisa il team di supporto tra pari prima dell'anniversario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPeerTeamHelp" xml:space="preserve">
     <value>Il tuo dipartimento non ha ancora configurato un team di supporto tra pari.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmButton" xml:space="preserve">
     <value>Conferma voce</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveForLaterButton" xml:space="preserve">
     <value>Salva senza confermare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Salva</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackButton" xml:space="preserve">
     <value>Indietro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissLongButton" xml:space="preserve">
     <value>Non mi riguarda - scarta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportTitle" xml:space="preserve">
     <value>Rapporto esposizioni dei membri</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportIntro" xml:space="preserve">
     <value>Conteggi per membro per i referenti per il benessere. I dettagli restano nel registro di ciascun membro.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterLabel" xml:space="preserve">
     <value>Filtra il rapporto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FromLabel" xml:space="preserve">
     <value>Dal</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToLabel" xml:space="preserve">
     <value>Al</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterButton" xml:space="preserve">
     <value>Filtra</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MembersHeader" xml:space="preserve">
     <value>Membri</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoReportRows" xml:space="preserve">
     <value>Nessuna voce in questo periodo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LastExposureLabel" xml:space="preserve">
     <value>Più recente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningFlaggedLabel" xml:space="preserve">
     <value>Screening rafforzato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenFollowUpsValue" xml:space="preserve">
     <value>{0} follow-up aperti</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenLogButton" xml:space="preserve">
     <value>Apri registro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecentFlagsHeader" xml:space="preserve">
     <value>Segnalazioni post-intervento recenti</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoFlags" xml:space="preserve">
     <value>Nessun intervento è stato segnalato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlaggedOnLabel" xml:space="preserve">
     <value>Segnalato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsColumn" xml:space="preserve">
     <value>Suggerimenti</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagClearedLabel" xml:space="preserve">
     <value>Rimossa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsBuiltValue" xml:space="preserve">
     <value>{0} suggerite</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsPendingLabel" xml:space="preserve">
     <value>In attesa della fine dell'intervento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallTitle" xml:space="preserve">
     <value>Follow-up benessere: intervento {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallPickerTitle" xml:space="preserve">
     <value>Segnalazioni post-intervento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallIntro" xml:space="preserve">
     <value>Segnala un intervento come evento critico o esposizione. Al termine, a ogni persona che i dati di intervento collocano sul posto viene proposta una voce da esaminare. Nessuno viene registrato senza conferma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecentCallsHeader" xml:space="preserve">
     <value>Interventi recenti</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRecentCalls" xml:space="preserve">
     <value>Nessun intervento negli ultimi 30 giorni.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CallActiveNotice" xml:space="preserve">
     <value>Questo intervento è ancora attivo. I suggerimenti vengono creati al termine.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CriticalIncidentHelp" xml:space="preserve">
     <value>Un intervento potenzialmente traumatico. È separato dalla priorità di invio.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotFlaggedLabel" xml:space="preserve">
     <value>Non segnalato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagButton" xml:space="preserve">
     <value>Segnala</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearFlagButton" xml:space="preserve">
     <value>Rimuovi segnalazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagPrivacyHelp" xml:space="preserve">
     <value>La segnalazione registra solo l'intervento e la categoria. Ogni membro decide cosa aggiungere al proprio registro.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackToCallButton" xml:space="preserve">
     <value>Torna all'intervento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
     <value>Impostazioni benessere</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsIntro" xml:space="preserve">
     <value>Chi legge i registri delle esposizioni, chi fa parte del team di supporto tra pari e per quanto tempo si conservano le voci.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessOfficerRoleLabel" xml:space="preserve">
     <value>Ruolo di referente per il benessere</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessOfficerRoleHelp" xml:space="preserve">
     <value>I membri di questo ruolo possono leggere il registro di ogni membro e gestire le segnalazioni di screening. Gli amministratori non possono leggere i registri senza questo ruolo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoneOption" xml:space="preserve">
     <value>Nessuno</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PeerTeamLabel" xml:space="preserve">
     <value>Certificazione del team di supporto tra pari</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PeerTeamHelp" xml:space="preserve">
-    <value>I membri con una certificazione valida di questo tipo ricevono i promemoria di anniversario che i membri scelgono di condividere.</value>
+    <value>Il tipo di certificazione del team di supporto tra pari, ad esempio dal modello Membro del team di supporto tra pari. Con un ruolo sopra, lo stato di ogni membro del team è mostrato sotto; senza ruolo, i titolari attuali formano il team e ricevono i promemoria di anniversario che i membri scelgono di condividere.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionYearsLabel" xml:space="preserve">
     <value>Conserva le voci per (anni)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionYearsHelp" xml:space="preserve">
     <value>Almeno 30 anni (OSHA 29 CFR 1910.1020). Le voci sotto vincolo legale sono conservate più a lungo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessFollowUpButton" xml:space="preserve">
     <value>Follow-up benessere</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessFollowUpHelp" xml:space="preserve">
     <value>Segnala questo intervento come evento critico o esposizione, così i membri possono aggiungerlo al proprio registro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Recorded" xml:space="preserve">
     <value>La voce è stata registrata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Confirmed" xml:space="preserve">
     <value>La voce è stata confermata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Saved" xml:space="preserve">
     <value>Salvato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Dismissed" xml:space="preserve">
     <value>Il suggerimento è stato scartato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Voided" xml:space="preserve">
     <value>La voce è stata contrassegnata come registrata per errore.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.RemindersSaved" xml:space="preserve">
     <value>Le tue scelte sui promemoria sono state salvate.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ScreeningSaved" xml:space="preserve">
     <value>La segnalazione di screening è stata salvata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ScreeningCleared" xml:space="preserve">
     <value>Lo screening rafforzato è terminato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpAdded" xml:space="preserve">
     <value>Il follow-up è stato aggiunto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCompleted" xml:space="preserve">
     <value>Il follow-up è stato segnato come fatto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCancelled" xml:space="preserve">
     <value>Il follow-up è stato annullato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.CallFlagged" xml:space="preserve">
     <value>L'intervento è stato segnalato. I suggerimenti saranno proposti al termine.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.CallFlagCleared" xml:space="preserve">
     <value>La segnalazione è stata rimossa. I suggerimenti non confermati sono stati eliminati.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.SettingsSaved" xml:space="preserve">
     <value>Le impostazioni benessere sono state salvate.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.Generic" xml:space="preserve">
     <value>Impossibile salvare. Controlla la voce e riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.NotAllowed" xml:space="preserve">
     <value>Non hai accesso a questo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.ExportFailed" xml:space="preserve">
     <value>Impossibile creare l'esportazione. Riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.role_not_found" xml:space="preserve">
     <value>Ruolo non trovato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.certification_type_not_found" xml:space="preserve">
     <value>Tipo di certificazione non trovato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.member_not_found" xml:space="preserve">
     <value>Membro non trovato in questo dipartimento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_not_found" xml:space="preserve">
     <value>Voce non trovata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_closed" xml:space="preserve">
     <value>Questa voce è chiusa e non può più essere modificata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_changed" xml:space="preserve">
     <value>Qualcun altro ha modificato questa voce. Riaprila e riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.not_a_suggestion" xml:space="preserve">
     <value>Solo una voce suggerita può essere confermata o scartata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.not_confirmed" xml:space="preserve">
     <value>Solo una voce confermata può essere modificata in questo modo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.reminders_critical_incident_only" xml:space="preserve">
     <value>I promemoria di anniversario sono disponibili solo per gli eventi critici.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.category_required" xml:space="preserve">
     <value>Scegli una categoria.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.date_invalid" xml:space="preserve">
     <value>Inserisci una data valida.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.duration_invalid" xml:space="preserve">
     <value>Inserisci una durata tra 0 e 10.080 minuti.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.call_not_found" xml:space="preserve">
     <value>Intervento non trovato in questo dipartimento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.protected_write_refused" xml:space="preserve">
     <value>Impossibile salvare i dettagli protetti. Riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.flag_not_found" xml:space="preserve">
     <value>Segnalazione non trovata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_kind_required" xml:space="preserve">
     <value>Scegli il tipo di follow-up.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
     <value>Un follow-up può essere assegnato al membro o a un referente per il benessere.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_closed" xml:space="preserve">
     <value>Questo follow-up è già chiuso.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_not_found" xml:space="preserve">
     <value>Follow-up non trovato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.Carcinogen" xml:space="preserve">
     <value>Cancerogeno</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.BloodbornePathogen" xml:space="preserve">
     <value>Patogeno a trasmissione ematica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.HazardousSubstance" xml:space="preserve">
     <value>Sostanza pericolosa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.CriticalIncident" xml:space="preserve">
     <value>Evento critico</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.Other" xml:space="preserve">
     <value>Altro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Suggested" xml:space="preserve">
     <value>In attesa di revisione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Confirmed" xml:space="preserve">
     <value>Confermata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Dismissed" xml:space="preserve">
     <value>Scartata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Voided" xml:space="preserve">
     <value>Registrata per errore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.screening_appointment" xml:space="preserve">
     <value>Appuntamento di screening</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.baseline_test" xml:space="preserve">
     <value>Esame di riferimento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.medical_review" xml:space="preserve">
     <value>Revisione medica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.wellness_check_in" xml:space="preserve">
     <value>Colloquio sul benessere</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.other" xml:space="preserve">
     <value>Altro follow-up</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Open" xml:space="preserve">
     <value>Aperto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Acknowledged" xml:space="preserve">
     <value>Preso in carico</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Completed" xml:space="preserve">
     <value>Fatto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Cancelled" xml:space="preserve">
     <value>Annullato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.status" xml:space="preserve">
     <value>stato del personale</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.unit_crew" xml:space="preserve">
     <value>equipaggio dell'unità</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.check_in" xml:space="preserve">
     <value>check-in</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.unit_response" xml:space="preserve">
     <value>tempi di risposta dell'unità</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Title" xml:space="preserve">
     <value>Registro di esposizioni ed eventi critici</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Member" xml:space="preserve">
     <value>Membro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Date" xml:space="preserve">
     <value>Data</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Category" xml:space="preserve">
     <value>Categoria</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Status" xml:space="preserve">
     <value>Stato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Call" xml:space="preserve">
     <value>Intervento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Duration" xml:space="preserve">
     <value>Durata (h:mm)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Substance" xml:space="preserve">
     <value>Sostanza o agente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.PpeWorn" xml:space="preserve">
     <value>DPI indossati</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Decontamination" xml:space="preserve">
     <value>Decontaminazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Narrative" xml:space="preserve">
     <value>Cosa è successo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.HealthDetails" xml:space="preserve">
     <value>Dettagli di salute</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Withheld" xml:space="preserve">
     <value>Non mostrato (protetto)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.GeneratedOn" xml:space="preserve">
     <value>Generato il {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Retention" xml:space="preserve">
     <value>Il tuo dipartimento conserva questi dati per almeno 30 anni.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.CriticalIncidents" xml:space="preserve">
     <value>Eventi critici</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.ReportTitle" xml:space="preserve">
     <value>Rapporto esposizioni dei membri</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Total" xml:space="preserve">
     <value>Voci confermate</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.PendingSuggestions" xml:space="preserve">
     <value>In attesa di revisione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.LastExposure" xml:space="preserve">
     <value>Più recente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.ScreeningFlagged" xml:space="preserve">
     <value>Screening rafforzato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.OpenFollowUps" xml:space="preserve">
     <value>Follow-up aperti</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Yes" xml:space="preserve">
     <value>Sì</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessOfficerCertificationLabel" xml:space="preserve">
+    <value>Certificazione del referente per il benessere</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessOfficerCertificationHelp" xml:space="preserve">
+    <value>Facoltativo. Uno dei tuoi tipi di certificazione, ad esempio dal modello Referente per il benessere, con i corsi, le ore di formazione continua o le sessioni di addestramento e la validità decisi dalla tua organizzazione. Lo stato di ogni referente è mostrato sotto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerTeamRoleLabel" xml:space="preserve">
+    <value>Ruolo del team di supporto tra pari</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerTeamRoleHelp" xml:space="preserve">
+    <value>I membri di questo ruolo formano il team di supporto tra pari. Senza ruolo, il team è formato dai membri con una certificazione valida del tipo qui sotto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerTeamByCertificationOption" xml:space="preserve">
+    <value>Nessun ruolo: i titolari della certificazione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCertificationHeader" xml:space="preserve">
+    <value>Certificazione dei ruoli del benessere</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequireCertificationLabel" xml:space="preserve">
+    <value>Solo i membri con una certificazione valida agiscono in questi ruoli</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequireCertificationHelp" xml:space="preserve">
+    <value>Disattivato: il ruolo decide chi legge i registri e riceve segnalazioni e promemoria; la certificazione è mostrata come stato. Attivato: un membro del ruolo deve avere anche una certificazione valida del tipo collegato al ruolo. Un ruolo senza tipo collegato non è interessato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditCertificationTypeLink" xml:space="preserve">
+    <value>Modifica il tipo e la sua validità</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationRequirementsLink" xml:space="preserve">
+    <value>Imposta i requisiti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationTemplatesHint" xml:space="preserve">
+    <value>Aggiungi il tipo Referente per il benessere, Membro del team di supporto tra pari o Referente designato per il controllo delle esposizioni dai modelli di certificazione, poi collegalo sopra.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationTypesLink" xml:space="preserve">
+    <value>Tipi di certificazione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Chi agisce in ciascun ruolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterIntro" xml:space="preserve">
+    <value>L'appartenenza al ruolo decide chi agisce. La certificazione di ogni membro per il tipo collegato al ruolo è mostrata come valida, in scadenza, scaduta o mancante.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterMemberColumn" xml:space="preserve">
+    <value>Membro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterCertificationColumn" xml:space="preserve">
+    <value>Stato della certificazione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterActsColumn" xml:space="preserve">
+    <value>Agisce nel ruolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterKind.WellnessOfficer" xml:space="preserve">
+    <value>Referenti per il benessere</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterKind.DesignatedOfficer" xml:space="preserve">
+    <value>Referenti designati</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterKind.PeerSupportTeam" xml:space="preserve">
+    <value>Team di supporto tra pari</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNoRole" xml:space="preserve">
+    <value>Nessun ruolo scelto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNoMembers" xml:space="preserve">
+    <value>Nessuno ha questo ruolo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterFallsBack" xml:space="preserve">
+    <value>Non è scelto alcun ruolo di referente designato, quindi agisce il ruolo di referente per il benessere.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterByCertification" xml:space="preserve">
+    <value>Nessun ruolo scelto: i titolari attuali della certificazione formano il team.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNoType" xml:space="preserve">
+    <value>Nessuna certificazione collegata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterTypeMissing" xml:space="preserve">
+    <value>Il tipo di certificazione collegato non esiste più, quindi decide solo il ruolo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNobodyActs" xml:space="preserve">
+    <value>Al momento nessuno agisce in questo ruolo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterRequiresCertification" xml:space="preserve">
+    <value>Agiscono solo i membri con una certificazione valida.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Current" xml:space="preserve">
+    <value>Valida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.CurrentUntil" xml:space="preserve">
+    <value>Valida fino al {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Expiring" xml:space="preserve">
+    <value>Scade il {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Expired" xml:space="preserve">
+    <value>Scaduta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.ExpiredOn" xml:space="preserve">
+    <value>Scaduta il {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Missing" xml:space="preserve">
+    <value>Mancante</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActsYes" xml:space="preserve">
+    <value>Sì</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActsNo" xml:space="preserve">
+    <value>No: nessuna certificazione valida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.certification_switch_leaves_no_officer" xml:space="preserve">
+    <value>Nessuno nel ruolo di referente per il benessere o di referente designato ha ancora una certificazione valida del tipo collegato, quindi nessuno agirebbe. Registra prima le certificazioni, poi attiva questa opzione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>Per aggiungere o modificare registri di benessere serve il componente Workforce Pro. I registri esistenti restano consultabili.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>Workforce Pro non è attivo per questo membro, quindi i suoi registri sono di sola lettura.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>Il benessere dei membri non è disponibile per questa organizzazione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.RequiredTitle" xml:space="preserve">
+    <value>Workforce Pro necessario.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.ReadOnly" xml:space="preserve">
+    <value>Il benessere dei membri e l’esposizione sul lavoro fanno parte del componente Workforce Pro, che questa organizzazione al momento non ha. I registri esistenti sono di sola lettura: ogni membro può ancora vedere ed esportare i propri e i responsabili vedono ciò che il loro ruolo apre. Non si può aggiungere né modificare nulla.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.ViewAddon" xml:space="preserve">
+    <value>Vedi il componente Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.Grace" xml:space="preserve">
+    <value>Un pagamento di Workforce Pro non è andato a buon fine. Tutto continua a funzionare fino al {0} mentre il pagamento viene ritentato; dopo, i record diventano di sola lettura finché il componente aggiuntivo non viene pagato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.ManageSeats" xml:space="preserve">
+    <value>Gestisci i posti Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.SeatMissingSelf" xml:space="preserve">
+    <value>Workforce Pro non è attivo per lei, quindi i suoi registri qui sono di sola lettura. Chieda a un amministratore di attivarlo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.SeatMissing" xml:space="preserve">
+    <value>Workforce Pro non è attivo per {0}, quindi i suoi registri sono di sola lettura.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

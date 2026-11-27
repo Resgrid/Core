@@ -13,7 +13,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 namespace Resgrid.Repositories.DataRepository
 {
 	/// <summary>
-	/// BBP / infectious-disease exposure cases (§13b WL1, M0394). Portable SQL through <see cref="RmsRepositoryBase{T}"/>; member ids are
+	/// BBP / infectious-disease exposure cases (§13b WL1, M0372). Portable SQL through <see cref="RmsRepositoryBase{T}"/>; member ids are
 	/// citext on PostgreSQL and compared through <c>CaseInsensitive</c>. The worker queries read operational columns only.
 	/// </summary>
 	public class RmsExposureIncidentsRepository : RmsRepositoryBase<RmsExposureIncident>, IRmsExposureIncidentsRepository
@@ -109,7 +109,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Member injuries with the OSHA 300/301 facts (§13b WL1, M0395).</summary>
+	/// <summary>Member injuries with the OSHA 300/301 facts (§13b WL1, M0373).</summary>
 	public class RmsMemberInjuriesRepository : RmsRepositoryBase<RmsMemberInjury>, IRmsMemberInjuriesRepository
 	{
 		public RmsMemberInjuriesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -220,7 +220,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>The duty status history of injuries (§13b WL1, M0395).</summary>
+	/// <summary>The duty status history of injuries (§13b WL1, M0373).</summary>
 	public class RmsInjuryDutyPeriodsRepository : RmsRepositoryBase<RmsInjuryDutyPeriod>, IRmsInjuryDutyPeriodsRepository
 	{
 		public RmsInjuryDutyPeriodsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -253,7 +253,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>NFPA 1582 medical clearances (§13b WL1, M0396).</summary>
+	/// <summary>NFPA 1582 medical clearances (§13b WL1, M0374).</summary>
 	public class RmsMedicalClearancesRepository : RmsRepositoryBase<RmsMedicalClearance>, IRmsMedicalClearancesRepository
 	{
 		public RmsMedicalClearancesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)

@@ -60,6 +60,8 @@ namespace Resgrid.Web.Areas.User.Models.LmsClasses
 		public List<DepartmentGroup> Groups { get; set; } = new List<DepartmentGroup>();
 		public List<KeyValuePair<string, string>> Members { get; set; } = new List<KeyValuePair<string, string>>();
 		public bool IsNew => Session == null;
+		/// <summary>The department's training currency (Programs → Settings) a class without its own currency uses.</summary>
+		public string DefaultCurrency { get; set; }
 	}
 
 	public sealed class LmsClassSessionView : LmsClassPageView
@@ -76,6 +78,8 @@ namespace Resgrid.Web.Areas.User.Models.LmsClasses
 		public bool TimecardAvailable { get; set; }
 		public DateTime UtcNow { get; set; }
 		public LmsClassSession Session => Detail?.Session;
+		/// <summary>Round 7B: the "Record completion" panel (permission 135), when the viewer holds the right.</summary>
+		public LmsClassRecordingView Recording { get; set; }
 	}
 
 	public sealed class LmsClassKioskView : LmsClassPageView

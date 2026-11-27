@@ -1709,6 +1709,249 @@
   <data name="AuditLogTypeLmsSkillSettingsChanged" xml:space="preserve">
     <value>Skill Notice Settings Changed</value>
   </data>
+  <data name="PermReviewDispatchCasesLabel" xml:space="preserve">
+    <value>Review Dispatch Cases</value>
+  </data>
+  <data name="PermReviewDispatchCasesNote" xml:space="preserve">
+    <value>Sample calls for dispatch case review, score the recorded case against a dispatch case rubric, send the review to the dispatcher and read the compliance report. Nobody reviews their own calls. Department admins always can.</value>
+  </data>
+  <data name="AuditLogTypeDispatchCasesSampled" xml:space="preserve">
+    <value>Dispatch Cases Sampled</value>
+  </data>
+  <data name="AuditLogTypeDispatchCaseReviewRemoved" xml:space="preserve">
+    <value>Dispatch Case Review Removed</value>
+  </data>
+  <data name="AuditLogTypeDispatchCaseReviewSent" xml:space="preserve">
+    <value>Dispatch Case Review Sent</value>
+  </data>
+  <data name="AuditLogTypeDispatchCaseReviewAcknowledged" xml:space="preserve">
+    <value>Dispatch Case Review Acknowledged</value>
+  </data>
+  <data name="AuditLogTypeDispatchCaseReviewReplied" xml:space="preserve">
+    <value>Dispatch Case Review Replied</value>
+  </data>
+  <data name="AuditLogTypeDispatchCaseRubricSaved" xml:space="preserve">
+    <value>Dispatch Case Rubric Saved</value>
+  </data>
+  <data name="AuditLogTypeLmsDataExportRequested" xml:space="preserve">
+    <value>Training Data Export Requested</value>
+  </data>
+  <data name="AuditLogTypeLmsDataExportDownloaded" xml:space="preserve">
+    <value>Training Data Export Downloaded</value>
+  </data>
+  <data name="AuditLogTypeLmsCeReportingSettingsChanged" xml:space="preserve">
+    <value>CE Reporting Settings Changed</value>
+  </data>
+  <data name="AuditLogTypeLmsCeExportDownloaded" xml:space="preserve">
+    <value>CE File Downloaded</value>
+  </data>
+  <data name="AuditLogTypeLmsExternalLearnerInvited" xml:space="preserve">
+    <value>External Learner Invited</value>
+  </data>
+  <data name="AuditLogTypeLmsExternalLearnerRegistered" xml:space="preserve">
+    <value>External Learner Registered</value>
+  </data>
+  <data name="AuditLogTypeLmsExternalLearnerChanged" xml:space="preserve">
+    <value>External Learner Changed</value>
+  </data>
+  <data name="AuditLogTypeLmsExternalLearnerErased" xml:space="preserve">
+    <value>External Learner Erased</value>
+  </data>
+  <data name="AuditLogTypeLmsLearnerPortalChanged" xml:space="preserve">
+    <value>Learner Portal Changed</value>
+  </data>
+  <data name="AuditLogTypeLmsPublicClassChanged" xml:space="preserve">
+    <value>Public Class Changed</value>
+  </data>
+  <data name="AuditLogTypeLmsClassInvoicesRaised" xml:space="preserve">
+    <value>Class Invoices Raised</value>
+  </data>
+  <data name="AuditLogTypeLmsCourseDraftedWithAi" xml:space="preserve">
+    <value>Course Drafted With AI</value>
+  </data>
+  <data name="AuditLogTypeLmsStarterCourseCloned" xml:space="preserve">
+    <value>Starter Course Cloned</value>
+  </data>
+  <data name="AuditLogTypeLmsFlashcardsChanged" xml:space="preserve">
+    <value>Course Flashcards Changed</value>
+  </data>
+  <data name="AuditLogTypeProtocolFlashcardsChanged" xml:space="preserve">
+    <value>Protocol Flashcards Changed</value>
+  </data>
+  <data name="AuditLogTypeProtocolTrainingDraftedWithAi" xml:space="preserve">
+    <value>Training Drafted From Protocol With AI</value>
+  </data>
+  <data name="PermRecordTrainingCompletionsLabel" xml:space="preserve">
+    <value>Record Training Completions</value>
+  </data>
+  <data name="PermRecordTrainingCompletionsNote" xml:space="preserve">
+    <value>Allows recording that members completed a training or LMS course they took together (from a class roster, or from a course's enrolment list or a training's assignee list with a note). Each record shows it was recorded by an instructor, and the recorder can void it with a reason. Group admins record only for their own group's members. With no saved rule only department administrators may.</value>
+  </data>
+  <data name="AuditLogTypeTrainingCompletionRecorded" xml:space="preserve">
+    <value>Training Completion Recorded</value>
+  </data>
+  <data name="AuditLogTypeTrainingCompletionRecordVoided" xml:space="preserve">
+    <value>Recorded Completion Voided</value>
+  </data>
+  <data name="AuditLogTypeLmsLearnerPreferencesChanged" xml:space="preserve">
+    <value>Learner E-mail Preferences Changed</value>
+  </data>
+  <data name="AuditLogTypeCertificationRequirementSetChanged" xml:space="preserve">
+    <value>Certification Requirement Set Changed</value>
+  </data>
+  <data name="AuditLogTypeCertificationIssuedByTraining" xml:space="preserve">
+    <value>Certification Issued By Training</value>
+  </data>
+  <data name="AuditLogTypeCertificationRolledBackByVoid" xml:space="preserve">
+    <value>Certification Rolled Back By Void</value>
+  </data>
+  <data name="AuditLogTypeTrainingSubmissionInfoRequested" xml:space="preserve">
+    <value>Training Submission More Information Requested</value>
+  </data>
+  <data name="AuditLogTypeTrainingSubmissionResubmitted" xml:space="preserve">
+    <value>Training Submission Resubmitted</value>
+  </data>
+  <data name="PermManageContentSetsLabel" xml:space="preserve">
+    <value>Manage Content Sets</value>
+  </data>
+  <data name="PermManageContentSetsNote" xml:space="preserve">
+    <value>Publish protocol and course sets to linked departments, subscribe to theirs, decide the update inbox, customize open blocks and sponsor LMS seats. Any member can propose a change upstream.</value>
+  </data>
+  <data name="StepUpPageTitle" xml:space="preserve">
+    <value>Step-up verification</value>
+  </data>
+  <data name="StepUpPageIntro" xml:space="preserve">
+    <value>Choose where members must confirm it is them again before an action, and how they may do it. Two-factor authentication (an authenticator app, a passkey or a Responder approval) is always accepted.</value>
+  </data>
+  <data name="StepUpSecurityBreadcrumb" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="StepUpSecurityIndexLinkHelp" xml:space="preserve">
+    <value>Where members must verify again, and whether a password or a sign-in with your identity provider may be used</value>
+  </data>
+  <data name="StepUpAreaSignatures" xml:space="preserve">
+    <value>Signatures</value>
+  </data>
+  <data name="StepUpAreaSignaturesHelp" xml:space="preserve">
+    <value>Protocol, course and translation approvals, review stamps, certification verification, checklist witnesses, signature requests and skill evaluations.</value>
+  </data>
+  <data name="StepUpAreaAcknowledgments" xml:space="preserve">
+    <value>Read-and-sign acknowledgments</value>
+  </data>
+  <data name="StepUpAreaAcknowledgmentsHelp" xml:space="preserve">
+    <value>Members confirming they have read a protocol or bulletin. This is the same switch as in the protocol library settings.</value>
+  </data>
+  <data name="StepUpAreaApprovals" xml:space="preserve">
+    <value>Approval decisions</value>
+  </data>
+  <data name="StepUpAreaApprovalsHelp" xml:space="preserve">
+    <value>Approving a purchase, work order, payroll or any other request in an approval chain.</value>
+  </data>
+  <data name="StepUpAreaProtectedData" xml:space="preserve">
+    <value>Protected data</value>
+  </data>
+  <data name="StepUpAreaProtectedDataHelp" xml:space="preserve">
+    <value>Revealing values protected by Advanced Data Protection.</value>
+  </data>
+  <data name="StepUpRequiredLabel" xml:space="preserve">
+    <value>Require step-up verification</value>
+  </data>
+  <data name="StepUpProtectedDataRequiredNote" xml:space="preserve">
+    <value>Which apps are asked to verify is set per app in the data protection settings.</value>
+  </data>
+  <data name="StepUpDataProtectionLink" xml:space="preserve">
+    <value>Data protection settings</value>
+  </data>
+  <data name="StepUpNoDataProtection" xml:space="preserve">
+    <value>Advanced Data Protection is not enabled for this organization.</value>
+  </data>
+  <data name="StepUpMethodsLegend" xml:space="preserve">
+    <value>Accepted verification</value>
+  </data>
+  <data name="StepUpMethodMfa" xml:space="preserve">
+    <value>Two-factor authentication (always accepted)</value>
+  </data>
+  <data name="StepUpMethodSso" xml:space="preserve">
+    <value>Signing in again with your organization's identity provider</value>
+  </data>
+  <data name="StepUpMethodPassword" xml:space="preserve">
+    <value>Entering the account password again</value>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Only the managing member can change how protected data may be verified.</value>
+  </data>
+  <data name="StepUpPasswordWarning" xml:space="preserve">
+    <value>A password or an identity provider sign-in is not a second factor: allowing it makes this verification weaker. Signatures made this way are recorded as a password or provider confirmation.</value>
+  </data>
+  <data name="StepUpOptionalLowersLevel" xml:space="preserve">
+    <value>When step-up is not required here, members can sign without verifying again. Those signatures are recorded with the signed-in session (L1) instead of a fresh identity check (L2); a member who does verify still signs at L2.</value>
+  </data>
+  <data name="StepUpProtectedDataWeakerNote" xml:space="preserve">
+    <value>Both are off by default for protected data. A password or a provider sign-in opens protected values for the verification window, but it never counts as two-factor authentication for managing data protection, PIN enrolment or protected workflows.</value>
+  </data>
+  <data name="StepUpWarningTitle" xml:space="preserve">
+    <value>{0} member(s) cannot complete this step-up verification</value>
+  </data>
+  <data name="StepUpWarningIfRequired" xml:space="preserve">
+    <value>If you require step-up verification here, {0} member(s) could not complete it</value>
+  </data>
+  <data name="StepUpWarningBody" xml:space="preserve">
+    <value>They have no two-factor authentication set up and no other accepted verification is available to them, so they cannot finish these actions until they set up two-factor authentication.</value>
+  </data>
+  <data name="StepUpWarningMore" xml:space="preserve">
+    <value>and {0} more</value>
+  </data>
+  <data name="StepUpWarningLinkEnforce" xml:space="preserve">
+    <value>Require two-factor authentication</value>
+  </data>
+  <data name="StepUpWarningLinkPolicy" xml:space="preserve">
+    <value>Security policy</value>
+  </data>
+  <data name="StepUpReasonNoSecondFactor" xml:space="preserve">
+    <value>no two-factor authentication</value>
+  </data>
+  <data name="StepUpReasonNoPassword" xml:space="preserve">
+    <value>no two-factor authentication; signs in only through the identity provider</value>
+  </data>
+  <data name="StepUpReasonNoSsoLink" xml:space="preserve">
+    <value>no two-factor authentication; not linked to the identity provider</value>
+  </data>
+  <data name="StepUpSaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="StepUpCancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="StepUpSaved" xml:space="preserve">
+    <value>Step-up verification settings saved.</value>
+  </data>
+  <data name="StepUpUnchanged" xml:space="preserve">
+    <value>There were no changes to save.</value>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>The step-up verification settings could not be saved. Try again.</value>
+  </data>
+  <data name="StepUpManagingMemberRequired" xml:space="preserve">
+    <value>Only the managing member can change how protected data may be verified.</value>
+  </data>
+  <data name="AuditLogTypeStepUpPolicyChanged" xml:space="preserve">
+    <value>Step-Up Policy Changed</value>
+  </data>
+  <data name="AuditLogTypeStepUpCompleted" xml:space="preserve">
+    <value>Step-Up Completed</value>
+  </data>
+  <data name="AuditLogTypeStepUpFailed" xml:space="preserve">
+    <value>Step-Up Failed</value>
+  </data>
+  <data name="AuditLogTypeLmsAppLaunchOpened" xml:space="preserve">
+    <value>LMS Lesson Opened In App</value>
+  </data>
+  <data name="AuditLogTypeWorkforceProSeatsChanged" xml:space="preserve">
+    <value>Workforce Pro Seats Changed</value>
+  </data>
+  <data name="AuditLogTypeWorkforceProPacksChanged" xml:space="preserve">
+    <value>Workforce Pro Packs Changed</value>
+  </data>
 </root>
 
 

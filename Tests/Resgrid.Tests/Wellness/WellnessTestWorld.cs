@@ -28,6 +28,10 @@ namespace Resgrid.Tests.Wellness
 		public const string Hidden = "hidden-user";
 		public const int OfficerRoleId = 41;
 		public const int PeerCertificationTypeId = 77;
+		/// <summary>2026-11-26: the wellness officers' own certification type and a peer support role.</summary>
+		public const int OfficerCertificationTypeId = 78;
+		public const int PeerRoleId = 43;
+		public const int UnitTypeId = 79;
 
 		public readonly List<RmsResponderExposure> Exposures = new List<RmsResponderExposure>();
 		public readonly List<RmsCallExposureFlag> Flags = new List<RmsCallExposureFlag>();
@@ -42,6 +46,12 @@ namespace Resgrid.Tests.Wellness
 		public readonly List<CheckInRecord> CheckIns = new List<CheckInRecord>();
 		public readonly List<string> PeerTeam = new List<string> { Peer };
 		public WellnessSettings Settings = new WellnessSettings { WellnessOfficerRoleId = OfficerRoleId, PeerTeamCertificationTypeId = PeerCertificationTypeId };
+		/// <summary>Personnel role memberships (role id to members); a member in none holds the plain "Engine" role 5.</summary>
+		public readonly Dictionary<int, List<string>> RoleMembers = new Dictionary<int, List<string>> { [OfficerRoleId] = new List<string> { Officer } };
+		/// <summary>Certification records the certification service serves.</summary>
+		public readonly List<PersonnelCertification> Certifications_ = new List<PersonnelCertification>();
+		/// <summary>Department terminology (setting 118).</summary>
+		public DepartmentTerminologyConfig Terminology = new DepartmentTerminologyConfig();
 		public string TimeZone = "Etc/UTC";
 		public bool ClaimSucceeds = true;
 		public Func<string, int, bool> CanEditCall = (userId, callId) => false;
@@ -61,10 +71,13 @@ namespace Resgrid.Tests.Wellness
 		public readonly Mock<IUnitsService> Units = new Mock<IUnitsService>();
 		public readonly Mock<ICheckInTimerService> CheckInService = new Mock<ICheckInTimerService>();
 		public readonly Mock<ICommunicationService> Communication = new Mock<ICommunicationService>();
+		public readonly Mock<IUserProfileService> UserProfiles = new Mock<IUserProfileService>();
 		public readonly Mock<IProtectedWriteService> ProtectedWrite = new Mock<IProtectedWriteService>();
 		public readonly Mock<IProtectedReadService> ProtectedRead = new Mock<IProtectedReadService>();
 		public readonly Mock<IProtectedGrantContext> Grant = new Mock<IProtectedGrantContext>();
 		public readonly Mock<IEventAggregator> Events = new Mock<IEventAggregator>();
+		/// <summary>Workforce Pro (2026-11-26): licensed with every member seated unless a test says otherwise.</summary>
+		public readonly FakeWorkforcePro WorkforcePro = new FakeWorkforcePro();
 
 		public WellnessTestWorld()
 		{
@@ -87,16 +100,37 @@ namespace Resgrid.Tests.Wellness
 
 			SettingsService.Setup(s => s.GetWellnessSettingsAsync(DepartmentId)).ReturnsAsync(() => Settings.Normalized());
 			SettingsService.Setup(s => s.GetTextToCallNumberForDepartmentAsync(It.IsAny<int>())).ReturnsAsync((string)null);
+			SettingsService.Setup(s => s.GetDepartmentTerminologyAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(() => Terminology);
+			SettingsService.Setup(s => s.SetWellnessSettingsAsync(DepartmentId, It.IsAny<WellnessSettings>(), It.IsAny<CancellationToken>()))
+				.Callback((int _, WellnessSettings s, CancellationToken _) => Settings = s)
+				.ReturnsAsync(new DepartmentSetting());
 
 			Roles.Setup(r => r.GetRolesForUserAsync(It.IsAny<string>(), DepartmentId))
-				.ReturnsAsync((string userId, int _) => string.Equals(userId, Officer, StringComparison.OrdinalIgnoreCase)
-					? new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = OfficerRoleId, DepartmentId = DepartmentId, Name = "Wellness" } }
-					: new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = 5, DepartmentId = DepartmentId, Name = "Engine" } });
+				.ReturnsAsync((string userId, int _) =>
+				{
+					var held = RoleMembers.Where(p => p.Value.Contains(userId, StringComparer.OrdinalIgnoreCase))
+						.Select(p => new PersonnelRole { PersonnelRoleId = p.Key, DepartmentId = DepartmentId, Name = "Role " + p.Key }).ToList();
+					return held.Count > 0 ? held : new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = 5, DepartmentId = DepartmentId, Name = "Engine" } };
+				});
+			Roles.Setup(r => r.GetAllMembersOfRoleAsync(It.IsAny<int>()))
+				.ReturnsAsync((int roleId) => (RoleMembers.TryGetValue(roleId, out var ids) ? ids : new List<string>())
+					.Select(u => new PersonnelRoleUser { PersonnelRoleId = roleId, UserId = u, DepartmentId = DepartmentId }).ToList());
 			Roles.Setup(r => r.GetRolesForDepartmentAsync(DepartmentId))
-				.ReturnsAsync(new List<PersonnelRole> { new PersonnelRole { PersonnelRoleId = OfficerRoleId, DepartmentId = DepartmentId }, new PersonnelRole { PersonnelRoleId = 5, DepartmentId = DepartmentId } });
+				.ReturnsAsync(new List<PersonnelRole>
+				{
+					new PersonnelRole { PersonnelRoleId = OfficerRoleId, DepartmentId = DepartmentId }, new PersonnelRole { PersonnelRoleId = 5, DepartmentId = DepartmentId },
+					new PersonnelRole { PersonnelRoleId = PeerRoleId, DepartmentId = DepartmentId }
+				});
 
 			Certifications.Setup(c => c.GetCertificationTypeByIdAsync(PeerCertificationTypeId))
 				.ReturnsAsync(new DepartmentCertificationType { DepartmentCertificationTypeId = PeerCertificationTypeId, DepartmentId = DepartmentId, Code = "PEER", Type = "Peer support" });
+			Certifications.Setup(c => c.GetCertificationTypeByIdAsync(OfficerCertificationTypeId))
+				.ReturnsAsync(new DepartmentCertificationType { DepartmentCertificationTypeId = OfficerCertificationTypeId, DepartmentId = DepartmentId, Code = "WELLNESS-OFFICER", Type = "Wellness Officer", DefaultValidityMonths = 24 });
+			Certifications.Setup(c => c.GetCertificationTypeByIdAsync(UnitTypeId))
+				.ReturnsAsync(new DepartmentCertificationType { DepartmentCertificationTypeId = UnitTypeId, DepartmentId = DepartmentId, Code = "PUMP", Type = "Pump test", AppliesTo = (int)CertificationAppliesTo.Unit });
+			Certifications.Setup(c => c.GetCertificationsForDepartmentAsync(DepartmentId, It.IsAny<IEnumerable<string>>()))
+				.ReturnsAsync((int _, IEnumerable<string> userIds) => Certifications_
+					.Where(c => userIds == null || userIds.Contains(c.UserId, StringComparer.OrdinalIgnoreCase)).ToList());
 			Certifications.Setup(c => c.GetUsersWithValidCertificationAsync(DepartmentId, It.IsAny<IEnumerable<string>>(), It.IsAny<bool>()))
 				.ReturnsAsync(() => PeerTeam.ToList());
 
@@ -223,7 +257,7 @@ namespace Resgrid.Tests.Wellness
 			new Lazy<ICertificationService>(() => Certifications.Object), CallsService.Object, new Lazy<IAuthorizationService>(() => Authorization.Object),
 			new Lazy<IActionLogsService>(() => ActionLogs.Object), new Lazy<IUnitsService>(() => Units.Object), new Lazy<ICheckInTimerService>(() => CheckInService.Object),
 			new Lazy<ICommunicationService>(() => Communication.Object), new Lazy<IProtectedWriteService>(() => ProtectedWrite.Object),
-			new Lazy<IProtectedReadService>(() => ProtectedRead.Object), Grant.Object, Events.Object);
+			new Lazy<IProtectedReadService>(() => ProtectedRead.Object), Grant.Object, Events.Object, UserProfiles.Object, WorkforcePro);
 
 		public RmsResponderExposure AddExposure(string userId, ResponderExposureCategories category, ResponderExposureStatuses status, DateTime occurredOn, int departmentId = DepartmentId,
 			string substance = "Diesel exhaust", int? callId = null)

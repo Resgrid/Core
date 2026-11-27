@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
+using Resgrid.Localization.Areas.User.ContentNotices;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
@@ -23,7 +24,7 @@ namespace Resgrid.Services
 	/// effective date (worker 84), when DispatchProtocols.ProtocolText becomes its text, so every older reader (v4, the older apps,
 	/// the P0 call snapshots) sees exactly the published content.
 	/// </summary>
-	public class ProtocolLibraryService : IProtocolLibraryService
+	public partial class ProtocolLibraryService : IProtocolLibraryService
 	{
 		public const int MaxRecent = 8;
 		public const int WorkerBatch = 200;
@@ -55,6 +56,12 @@ namespace Resgrid.Services
 		private readonly IProtocolFileTextsRepository _fileTexts;
 		private readonly Lazy<IProtocolAcknowledgmentService> _acknowledgments;
 		private readonly Lazy<IProtocolNotificationService> _notifications;
+		private readonly IContentAttributionsRepository _attributions;
+		private readonly IDispatchProtocolAttachmentRepository _attachmentHashes;
+		private readonly IProtocolVersionTranslationsRepository _translations;
+		private readonly IEnumerable<IContentVersionPublishedHook> _publishedHooks;
+		private readonly IUserProfileService _userProfiles;
+		private readonly IContentSetCopyLocks _setLocks;
 
 		public ProtocolLibraryService(IProtocolsService protocolsService, IDispatchProtocolRepository protocols, IProtocolVersionsRepository versions,
 			IProtocolVersionApprovalsRepository approvals, IProtocolAudiencesRepository audiences, IProtocolCommentsRepository comments,
@@ -64,8 +71,12 @@ namespace Resgrid.Services
 			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, Lazy<ICallsService> callsService, Lazy<IShiftsService> shiftsService,
 			Lazy<ICommunicationService> communicationService, Lazy<IDocumentNumberingService> numbering,
 			Lazy<Model.Services.ISearchProjectionService> searchProjections, IKnowledgeIndexQueue knowledgeQueue, IProtocolVersionFilesRepository files, IProtocolFileTextsRepository fileTexts,
-			Lazy<IProtocolAcknowledgmentService> acknowledgments, Lazy<IProtocolNotificationService> notifications)
+			Lazy<IProtocolAcknowledgmentService> acknowledgments, Lazy<IProtocolNotificationService> notifications,
+			IContentAttributionsRepository attributions, IDispatchProtocolAttachmentRepository attachmentHashes, IProtocolVersionTranslationsRepository translations,
+			IEnumerable<IContentVersionPublishedHook> publishedHooks, IUserProfileService userProfiles, IContentSetCopyLocks setLocks)
 		{
+			_userProfiles = userProfiles;
+			_setLocks = setLocks;
 			_protocolsService = protocolsService;
 			_protocols = protocols;
 			_versions = versions;
@@ -93,6 +104,10 @@ namespace Resgrid.Services
 			_fileTexts = fileTexts;
 			_acknowledgments = acknowledgments;
 			_notifications = notifications;
+			_attributions = attributions;
+			_attachmentHashes = attachmentHashes;
+			_translations = translations;
+			_publishedHooks = publishedHooks ?? Enumerable.Empty<IContentVersionPublishedHook>();
 		}
 
 		#region Reading
@@ -353,6 +368,10 @@ namespace Resgrid.Services
 				UpdatedByUserId = request.UserId
 			}, cancellationToken, true);
 
+			// P5: content from the template library, the community exchange or an attributed file keeps its attribution on the version.
+			if (request.Attribution != null)
+				await KeepAttributionAsync(request.Attribution, draft, request.UserId, now, cancellationToken);
+
 			var rules = ContentAudienceMatcher.Normalize(request.Audience);
 			if (rules.Count > 0 && rules.All(r => r.Kind != (int)ContentAudienceKinds.Everyone))
 				await _audiences.ReplaceForProtocolAsync(request.DepartmentId, saved.DispatchProtocolId, rules.Select(r => Audience(request.DepartmentId, saved.DispatchProtocolId, r)).ToList(), cancellationToken);
@@ -366,6 +385,8 @@ namespace Resgrid.Services
 			var (protocol, error) = await AuthorableAsync(reader, protocolId);
 			if (error != ProtocolLifecycleErrors.None)
 				return ProtocolLifecycleResult.Fail(error);
+			if (await ManagedBySetAsync(reader.DepartmentId, protocolId))
+				return new ProtocolLifecycleResult { Error = ProtocolLifecycleErrors.ManagedBySet, Protocol = protocol };
 
 			var open = await GetOpenDraftAsync(reader.DepartmentId, protocolId);
 			if (open != null)
@@ -406,6 +427,10 @@ namespace Resgrid.Services
 				}
 			}
 
+			// P5: "import and modify" keeps the attribution: the new draft carries the one of the version it was started from.
+			if (current != null)
+				await KeepAttributionAsync(await GetAttributionAsync(reader.DepartmentId, current.ProtocolVersionId), draft, reader.UserId, now, cancellationToken);
+
 			return new ProtocolLifecycleResult { Protocol = protocol, Version = draft };
 		}
 
@@ -417,6 +442,8 @@ namespace Resgrid.Services
 			var (protocol, error) = await AuthorableAsync(reader, protocolId);
 			if (error != ProtocolLifecycleErrors.None)
 				return ProtocolLifecycleResult.Fail(error);
+			if (await ManagedBySetAsync(reader.DepartmentId, protocolId))
+				return new ProtocolLifecycleResult { Error = ProtocolLifecycleErrors.ManagedBySet, Protocol = protocol };
 
 			var draft = await GetOpenDraftAsync(reader.DepartmentId, protocolId);
 			if (draft == null)
@@ -475,6 +502,8 @@ namespace Resgrid.Services
 			var (protocol, error) = await AuthorableAsync(reader, protocolId);
 			if (error != ProtocolLifecycleErrors.None)
 				return ProtocolLifecycleResult.Fail(error);
+			if (await ManagedBySetAsync(reader.DepartmentId, protocolId))
+				return new ProtocolLifecycleResult { Error = ProtocolLifecycleErrors.ManagedBySet, Protocol = protocol };
 
 			var draft = await GetOpenDraftAsync(reader.DepartmentId, protocolId);
 			if (draft == null)
@@ -676,7 +705,9 @@ namespace Resgrid.Services
 				ContentJson = sourceVersion != null && !sourceVersion.IsDocument && (ProtocolContentDocument.Parse(sourceVersion.ContentJson, null).IsBlockModel
 					|| ProtocolContentDocument.Parse(sourceVersion.ContentJson, null).HasGraph) ? sourceVersion.ContentJson : null,
 				UserId = reader.UserId,
-				Audience = audience.Select(a => new ContentAudienceRule { Kind = a.Kind, RefId = a.RefId }).ToList()
+				Audience = audience.Select(a => new ContentAudienceRule { Kind = a.Kind, RefId = a.RefId }).ToList(),
+				// P5: a copy of attributed content stays attributed.
+				Attribution = sourceVersion == null ? null : await GetAttributionAsync(reader.DepartmentId, sourceVersion.ProtocolVersionId)
 			}, cancellationToken);
 
 			if (created.Succeeded && sourceVersion != null && sourceVersion.IsDocument)
@@ -716,6 +747,8 @@ namespace Resgrid.Services
 			var (protocol, error) = await AuthorableAsync(reader, version.DispatchProtocolId);
 			if (error != ProtocolLifecycleErrors.None)
 				return ProtocolLifecycleResult.Fail(error);
+			if (await ManagedBySetAsync(reader.DepartmentId, version.DispatchProtocolId))
+				return new ProtocolLifecycleResult { Error = ProtocolLifecycleErrors.ManagedBySet, Version = version, Protocol = protocol };
 
 			if (!ProtocolLifecycle.CanMove(version.Status, (int)ProtocolVersionStatuses.InReview))
 				return new ProtocolLifecycleResult { Error = ProtocolLifecycleErrors.NotDraft, Version = version, Protocol = protocol };
@@ -730,11 +763,12 @@ namespace Resgrid.Services
 			else if (string.IsNullOrWhiteSpace(StringHelpers.HtmlToPlainText(version.ContentHtml ?? string.Empty)))
 			{
 				return new ProtocolLifecycleResult { Error = ProtocolLifecycleErrors.EmptyContent, Version = version, Protocol = protocol };
+			}
 
-			// P4: a decision graph goes to review only when it validates (one first step, every path to an outcome, no loops).
+			// P4: a decision graph goes to review only when it validates (one first step, every path to an outcome, no loops). This is the server's
+			// only gate: at dispatch an invalid graph is treated as no graph, so a version published with one would silently lose its case flow.
 			if (!version.IsDocument && ProtocolDecisionGraphs.Validate(ProtocolContentDocument.Parse(version.ContentJson, null).Graph).Count > 0)
 				return new ProtocolLifecycleResult { Error = ProtocolLifecycleErrors.DecisionGraphInvalid, Version = version, Protocol = protocol };
-			}
 
 			var category = protocol.CategoryId.HasValue ? await _categories.GetByIdForDepartmentAsync(reader.DepartmentId, protocol.CategoryId.Value) : null;
 			var steps = category?.ApprovalSteps ?? new List<ProtocolApprovalStep>();
@@ -1058,6 +1092,7 @@ namespace Resgrid.Services
 				return published;
 
 			Audit(reader.DepartmentId, reader.UserId, AuditLogTypes.ProtocolVersionPublished, null, Snapshot(published.Protocol, published.Version));
+			ContentWorkflowContext.Publish(_eventAggregator, ProtocolWorkflowEvent.For(published.Protocol, published.Version, ProtocolWorkflowChanges.Published, reader.UserId, now));
 			return published;
 		}
 
@@ -1149,6 +1184,12 @@ namespace Resgrid.Services
 			await AfterLibraryChangeAsync(protocol, cancellationToken);
 			// P2: open acknowledgments of earlier versions are superseded; the audience owes this one (a minor carries signed ones).
 			await AcknowledgmentHookAsync(() => _acknowledgments.Value.OnVersionActivatedAsync(protocol, version, now, cancellationToken), version, cancellationToken);
+			// T5: content drafted from an earlier version (course flashcards) is flagged for review; never fatal to the publish.
+			await PublishedHooksAsync(new ContentVersionPublished
+			{
+				DepartmentId = protocol.DepartmentId, Kind = ContentVersionKinds.ProtocolVersion, ItemId = protocol.DispatchProtocolId, VersionId = version.ProtocolVersionId,
+				VersionLabel = version.Label, PublishedOnUtc = now
+			}, cancellationToken);
 			return new ProtocolLifecycleResult { Protocol = protocol, Version = version };
 		}
 
@@ -1168,6 +1209,26 @@ namespace Resgrid.Services
 			catch (Exception ex)
 			{
 				Logging.LogException(ex, $"Acknowledgments of protocol version {version?.ProtocolVersionId} could not be assigned.");
+			}
+		}
+
+		/// <summary>The registered <see cref="IContentVersionPublishedHook"/>s after a version went into force: each one's failure is logged, never fatal.</summary>
+		private async Task PublishedHooksAsync(ContentVersionPublished published, CancellationToken cancellationToken)
+		{
+			foreach (var hook in _publishedHooks)
+			{
+				try
+				{
+					await hook.OnVersionPublishedAsync(published, cancellationToken);
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"A publish hook failed for protocol version {published.VersionId}.");
+				}
 			}
 		}
 
@@ -1238,21 +1299,29 @@ namespace Resgrid.Services
 			if (protocol == null || protocol.DepartmentId != reader.DepartmentId || protocol.IsDeleted)
 				return ProtocolLifecycleResult.Fail(ProtocolLifecycleErrors.NotFound);
 
-			return await RetireCoreAsync(protocol, reader.UserId, DateTime.UtcNow, AuditLogTypes.ProtocolRetired, cancellationToken);
+			// A priority bulletin taken out of force by hand is withdrawn (the bulletin composer's Withdraw comes through here too).
+			return await RetireCoreAsync(protocol, reader.UserId, DateTime.UtcNow, AuditLogTypes.ProtocolRetired, cancellationToken,
+				protocol.IsBulletin ? ProtocolWorkflowChanges.BulletinWithdrawn : ProtocolWorkflowChanges.Retired);
 		}
 
-		private async Task<ProtocolLifecycleResult> RetireCoreAsync(DispatchProtocol protocol, string userId, DateTime now, AuditLogTypes audit, CancellationToken cancellationToken)
+		private async Task<ProtocolLifecycleResult> RetireCoreAsync(DispatchProtocol protocol, string userId, DateTime now, AuditLogTypes audit, CancellationToken cancellationToken,
+			ProtocolWorkflowChanges workflowChange)
 		{
+			// The workflow event fires once, for what was in force: the version's compare-and-set decides between two workers or requests.
+			var wasPublished = protocol.Status == (int)ProtocolStatuses.Published;
+			var versionInForce = false;
+			var versionRetired = false;
 			ProtocolVersion version = null;
 			if (protocol.CurrentVersionId.HasValue)
 			{
 				version = await GetVersionAsync(protocol.DepartmentId, protocol.CurrentVersionId.Value);
 				if (version != null && version.Status == (int)ProtocolVersionStatuses.Published)
 				{
+					versionInForce = true;
 					var expected = version.RowVersion;
 					version.Status = (int)ProtocolVersionStatuses.Retired;
 					version.RetiredOn = now;
-					await _versions.TryUpdateAsync(version, expected, cancellationToken);
+					versionRetired = await _versions.TryUpdateAsync(version, expected, cancellationToken);
 				}
 			}
 
@@ -1268,6 +1337,8 @@ namespace Resgrid.Services
 			await AcknowledgmentHookAsync(() => _acknowledgments.Value.OnProtocolRetiredAsync(protocol, now, cancellationToken), version, cancellationToken);
 
 			Audit(protocol.DepartmentId, userId, audit, null, Snapshot(protocol, version));
+			if (wasPublished && (!versionInForce || versionRetired))
+				ContentWorkflowContext.Publish(_eventAggregator, ProtocolWorkflowEvent.For(protocol, version, workflowChange, userId, now));
 			return new ProtocolLifecycleResult { Protocol = protocol, Version = version };
 		}
 
@@ -1484,12 +1555,49 @@ namespace Resgrid.Services
 			var groups = (await _departmentGroupsService.GetAllGroupsForDepartmentAsync(reader.DepartmentId) ?? new List<DepartmentGroup>()).ToDictionary(g => g.DepartmentGroupId.ToString(CultureInfo.InvariantCulture), g => g.Name);
 			var roles = (await _personnelRolesService.GetRolesForDepartmentAsync(reader.DepartmentId) ?? new List<PersonnelRole>()).ToDictionary(r => r.PersonnelRoleId.ToString(CultureInfo.InvariantCulture), r => r.Name);
 			var shifts = (await _shiftsService.Value.GetAllShiftsByDepartmentAsync(reader.DepartmentId) ?? new List<Shift>()).ToDictionary(s => s.ShiftId.ToString(CultureInfo.InvariantCulture), s => s.Name);
+			// Version 2 (P5): history, attribution, approved translations and the attachments manifest, each read once for the department.
+			var headers = (await _versions.GetHeadersForDepartmentAsync(reader.DepartmentId) ?? new List<ProtocolVersion>()).Where(v => v.DepartmentId == reader.DepartmentId).ToLookup(v => v.DispatchProtocolId);
+			var attachmentHashes = (await _attachmentHashes.GetAttachmentHashesByDepartmentIdAsync(reader.DepartmentId) ?? Enumerable.Empty<DispatchProtocolAttachment>()).ToLookup(a => a.DispatchProtocolId);
+			document.Schema = ProtocolExchangeDocument.SchemaId;
 
 			foreach (var protocol in protocols)
 			{
 				var version = protocol.CurrentVersionId.HasValue ? await GetVersionAsync(reader.DepartmentId, protocol.CurrentVersionId.Value) : await GetOpenDraftAsync(reader.DepartmentId, protocol.DispatchProtocolId);
+				var attribution = version == null ? null : await GetAttributionAsync(reader.DepartmentId, version.ProtocolVersionId);
+				var translations = version == null ? new List<ProtocolVersionTranslation>() : (await _translations.GetForVersionAsync(reader.DepartmentId, version.ProtocolVersionId, true) ?? new List<ProtocolVersionTranslation>())
+					.Where(t => t.DepartmentId == reader.DepartmentId && t.IsApproved && string.Equals(t.SourceContentHash, version.ContentHash, StringComparison.OrdinalIgnoreCase)).ToList();
+				var history = headers[protocol.DispatchProtocolId].Where(v => v.Status == (int)ProtocolVersionStatuses.Published || v.Status == (int)ProtocolVersionStatuses.Superseded ||
+					v.Status == (int)ProtocolVersionStatuses.Retired).OrderByDescending(v => v.Major).ThenByDescending(v => v.Minor).ThenByDescending(v => v.ProtocolVersionId).ToList();
+				var files = new List<ProtocolExchangeAttachment>();
+				if (version != null && version.IsDocument)
+				{
+					var primary = await _files.GetMetadataForVersionAsync(reader.DepartmentId, version.ProtocolVersionId);
+					if (primary != null)
+						files.Add(new ProtocolExchangeAttachment { Kind = "document", FileName = primary.FileName, ContentType = primary.ContentType, Size = primary.Size, Sha256 = primary.Sha256 });
+				}
+				files.AddRange(attachmentHashes[protocol.DispatchProtocolId].Select(a => new ProtocolExchangeAttachment
+				{
+					Kind = "attachment", FileName = a.FileName, ContentType = a.FileType, Size = a.Size, Sha256 = a.Sha256
+				}));
 				document.Protocols.Add(new ProtocolExchangeItem
 				{
+					Attribution = attribution == null ? null : new ProtocolExchangeAttribution
+					{
+						Source = attribution.SourceName, Author = attribution.Author, License = attribution.License, LicenseUrl = attribution.LicenseUrl, SourceVersion = attribution.SourceVersion
+					},
+					Locale = version?.Locale,
+					EffectiveOn = version?.EffectiveOn,
+					ContentHash = version?.ContentHash,
+					History = history.Count == 0 ? null : history.Select(v => new ProtocolExchangeVersion
+					{
+						Label = v.Label, Status = ((ProtocolVersionStatuses)v.Status).ToString(), EffectiveOn = v.EffectiveOn, SupersededOn = v.SupersededOn ?? v.RetiredOn,
+						ChangeSummary = v.ChangeSummary, ContentHash = v.ContentHash
+					}).ToList(),
+					Translations = translations.Count == 0 ? null : translations.Select(t => new ProtocolExchangeTranslation
+					{
+						Locale = t.Locale, Content = ProtocolContentDocument.Parse(t.ContentJson, t.ContentHtml), ContentHash = t.ContentHash, SourceContentHash = t.SourceContentHash
+					}).ToList(),
+					Attachments = files.Count == 0 ? null : files,
 					Code = protocol.Code,
 					Name = protocol.Name,
 					Kind = ((ProtocolKinds)protocol.Kind).ToString(),
@@ -1549,7 +1657,7 @@ namespace Resgrid.Services
 				return result;
 			}
 
-			if (document == null || !string.Equals(document.Format, ProtocolExchangeDocument.FormatName, StringComparison.Ordinal) || document.Version != ProtocolExchangeDocument.CurrentVersion)
+			if (document == null || !string.Equals(document.Format, ProtocolExchangeDocument.FormatName, StringComparison.Ordinal) || !ProtocolExchangeDocument.IsSupportedVersion(document.Version))
 			{
 				result.Error = "unknown_format";
 				return result;
@@ -1668,13 +1776,19 @@ namespace Resgrid.Services
 					ContentJson = item.Content != null && (item.Content.IsBlockModel || item.Content.HasGraph) ? item.Content.ToJson() : null,
 					RequiresAcknowledgment = item.RequiresAcknowledgment,
 					UserId = reader.UserId,
-					Audience = audience
+					Audience = audience,
+					Locale = item.Locale,
+					// Version 2 (P5): the file's attribution is kept on the imported version.
+					Attribution = AttributionFrom(item.Attribution, document, reader.DepartmentId)
 				}, cancellationToken);
 
 				if (created.Succeeded)
 				{
 					result.Created++;
 					result.Names.Add(label);
+					result.CreatedProtocolIds.Add(created.Protocol.DispatchProtocolId);
+					if (item.Translations != null && item.Translations.Count > 0)
+						result.Warnings.Add(label + ": " + item.Translations.Count.ToString(CultureInfo.InvariantCulture) + " translation(s) not imported; translate the version after it is published");
 				}
 				else
 				{
@@ -1685,6 +1799,58 @@ namespace Resgrid.Services
 			if (!dryRun)
 				Audit(reader.DepartmentId, reader.UserId, AuditLogTypes.ProtocolsImported, null, JsonConvert.SerializeObject(new { result.Created, Skipped = result.Skipped.Count, Warnings = result.Warnings.Count }));
 			return result;
+		}
+
+		public async Task<ContentAttribution> GetAttributionAsync(int departmentId, int protocolVersionId)
+		{
+			if (departmentId <= 0 || protocolVersionId <= 0)
+				return null;
+			try
+			{
+				return await _attributions.GetForSubjectAsync(departmentId, ContentAttributionSubjects.ProtocolVersion, protocolVersionId);
+			}
+			catch (Exception ex)
+			{
+				// Attribution is shown beside the content; a read failure never stops the content being read.
+				Logging.LogException(ex, "Protocol attribution could not be read.");
+				return null;
+			}
+		}
+
+		/// <summary>The attribution a version 2 item carries, as the row the imported version keeps (null without a source).</summary>
+		private static ContentAttribution AttributionFrom(ProtocolExchangeAttribution attribution, ProtocolExchangeDocument document, int departmentId)
+		{
+			if (attribution == null || string.IsNullOrWhiteSpace(attribution.Source))
+				return null;
+			return new ContentAttribution
+			{
+				DepartmentId = departmentId,
+				SubjectKind = (int)ContentAttributionSubjects.ProtocolVersion,
+				SourceKind = (int)(document.AttributionSource ?? ContentAttributionSources.FileImport),
+				SourceRef = document.AttributionSourceRef,
+				SourceName = attribution.Source,
+				Author = attribution.Author,
+				License = attribution.License,
+				LicenseUrl = attribution.LicenseUrl,
+				SourceVersion = attribution.SourceVersion
+			};
+		}
+
+		/// <summary>Writes a copy of <paramref name="attribution"/> for <paramref name="version"/>; never fails the step that called it.</summary>
+		private async Task KeepAttributionAsync(ContentAttribution attribution, ProtocolVersion version, string userId, DateTime now, CancellationToken cancellationToken)
+		{
+			if (attribution == null || version == null || version.ProtocolVersionId <= 0)
+				return;
+			try
+			{
+				var copy = attribution.CopyFor(ContentAttributionSubjects.ProtocolVersion, version.ProtocolVersionId, userId, now);
+				copy.DepartmentId = version.DepartmentId;
+				await _attributions.SaveForSubjectAsync(copy, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Protocol attribution could not be kept on the version.");
+			}
 		}
 
 		#endregion Exchange
@@ -1724,6 +1890,8 @@ namespace Resgrid.Services
 					{
 						activated++;
 						Audit(protocol.DepartmentId, version.PublishedByUserId, AuditLogTypes.ProtocolVersionPublished, null, Snapshot(result.Protocol, result.Version));
+						ContentWorkflowContext.Publish(_eventAggregator, ProtocolWorkflowEvent.For(result.Protocol, result.Version, ProtocolWorkflowChanges.Published,
+							version.PublishedByUserId, utcNow));
 					}
 				}
 				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -1752,7 +1920,7 @@ namespace Resgrid.Services
 
 					if (protocol.CurrentVersionId == due.ProtocolVersionId && protocol.Status == (int)ProtocolStatuses.Published)
 					{
-						await RetireCoreAsync(protocol, null, utcNow, AuditLogTypes.ProtocolRetired, cancellationToken);
+						await RetireCoreAsync(protocol, null, utcNow, AuditLogTypes.ProtocolRetired, cancellationToken, ProtocolWorkflowChanges.Expired);
 						expired++;
 					}
 					else
@@ -1764,7 +1932,10 @@ namespace Resgrid.Services
 							version.Status = (int)ProtocolVersionStatuses.Retired;
 							version.RetiredOn = utcNow;
 							if (await _versions.TryUpdateAsync(version, expected, cancellationToken))
+							{
 								expired++;
+								ContentWorkflowContext.Publish(_eventAggregator, ProtocolWorkflowEvent.For(protocol, version, ProtocolWorkflowChanges.Expired, null, utcNow));
+							}
 						}
 					}
 				}
@@ -1796,6 +1967,7 @@ namespace Resgrid.Services
 					var active = await _departmentsService.GetActiveMemberUserIdsAsync(department.Key) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 					var canTransmit = ConfigHelper.CanTransmit(department.Key);
 					string departmentNumber = null;
+					ContentNoticeCultures cultures = null;
 
 					foreach (var item in department)
 					{
@@ -1807,6 +1979,21 @@ namespace Resgrid.Services
 						if (!await _library.MarkReviewReminderAsync(item.DepartmentId, item.DispatchProtocolId, item.NextReviewOn, (int)stage, cancellationToken))
 							continue;
 
+						// The claimed stage is the department's workflow event too (once per stage); an owner who left is not named.
+						var ownerActive = !string.IsNullOrWhiteSpace(item.OwnerUserId) && active.Contains(item.OwnerUserId);
+						ContentWorkflowContext.Publish(_eventAggregator, new ProtocolWorkflowEvent
+						{
+							DepartmentId = item.DepartmentId,
+							Change = stage == ProtocolReviewReminderStages.Overdue ? ProtocolWorkflowChanges.ReviewOverdue : ProtocolWorkflowChanges.ReviewDue,
+							ProtocolId = item.DispatchProtocolId,
+							ProtocolCode = item.Code,
+							ProtocolName = item.Name,
+							NextReviewOn = item.NextReviewOn,
+							ReviewStage = stage.ToString(),
+							OwnerUserId = ownerActive ? item.OwnerUserId : null,
+							OccurredOn = utcNow
+						});
+
 						// The owner, or the department's active admins when the owner left or was never set (inactive-member policy).
 						var recipients = !string.IsNullOrWhiteSpace(item.OwnerUserId) && active.Contains(item.OwnerUserId)
 							? new List<string> { item.OwnerUserId }
@@ -1816,15 +2003,14 @@ namespace Resgrid.Services
 							continue;
 
 						departmentNumber ??= await _settingsService.GetTextToCallNumberForDepartmentAsync(department.Key);
-						var localDue = DateTime.SpecifyKind(item.NextReviewOn, DateTimeKind.Utc).TimeConverter(dept).ToShortDateString();
-						var title = stage == ProtocolReviewReminderStages.Overdue ? "Protocol review overdue" : "Protocol review due";
-						var message = stage == ProtocolReviewReminderStages.Overdue
-							? $"The review of protocol {item.Code} {item.Name} was due on {localDue}. Record it in the protocol library, with or without a new version."
-							: $"Protocol {item.Code} {item.Name} is due for review on {localDue}.";
+						cultures ??= new ContentNoticeCultures(_userProfiles, dept);
 
+						// Each recipient reads it in their own language, the date in the department's zone written their way (round 9C).
 						foreach (var userId in recipients.Distinct(StringComparer.OrdinalIgnoreCase))
 						{
-							await _communicationService.Value.SendNotificationAsync(userId, department.Key, message, departmentNumber, dept, title);
+							var (culture, profile) = await cultures.ForMemberAsync(userId);
+							var notice = ReviewReminderNotice(item.Code, item.Name, item.NextReviewOn, stage, dept, culture);
+							await _communicationService.Value.SendNotificationAsync(userId, department.Key, notice.Message, departmentNumber, dept, notice.Title, profile);
 							sent++;
 						}
 					}
@@ -1840,6 +2026,16 @@ namespace Resgrid.Services
 			}
 
 			return sent;
+		}
+
+		/// <summary>The review due / overdue reminder in <paramref name="culture"/>, the date in the department's zone (round 9C).</summary>
+		public static ContentNoticeDelivery.Notice ReviewReminderNotice(string code, string name, DateTime nextReviewOnUtc, ProtocolReviewReminderStages stage,
+			Department department, CultureInfo culture)
+		{
+			var due = ContentNoticeCultures.LocalDate(nextReviewOnUtc, department, culture);
+			return stage == ProtocolReviewReminderStages.Overdue
+				? new ContentNoticeDelivery.Notice(ContentNoticeText.Get("Protocol.ReviewOverdue.Title", culture), ContentNoticeText.Format("Protocol.ReviewOverdue.Message", culture, code, name, due))
+				: new ContentNoticeDelivery.Notice(ContentNoticeText.Get("Protocol.ReviewDue.Title", culture), ContentNoticeText.Format("Protocol.ReviewDue.Message", culture, code, name, due));
 		}
 
 		public async Task<int> PurgeExpiredRetentionAsync(DateTime utcNow, CancellationToken cancellationToken = default)

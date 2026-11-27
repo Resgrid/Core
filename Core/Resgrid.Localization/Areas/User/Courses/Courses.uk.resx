@@ -60,1346 +60,2322 @@
   </resheader>
   <data name="Academy.CategoryDescription" xml:space="preserve">
     <value>Уроки Академії Resgrid (без кредитів безперервної освіти).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Academy.CategoryName" xml:space="preserve">
     <value>Навчання роботі із системами</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyBadge" xml:space="preserve">
     <value>Академія</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyCompletedTile" xml:space="preserve">
     <value>Завершено вами</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyIntro" xml:space="preserve">
     <value>Короткі уроки про кожну частину Resgrid, безкоштовні для кожного підрозділу. Кожен має швидку перевірку й зараховується до вашої залікової книжки.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyLessonsHeader" xml:space="preserve">
     <value>Уроки та покрокові огляди</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyLessonsTile" xml:space="preserve">
     <value>Доступні уроки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademySiteLink" xml:space="preserve">
     <value>Відкрити academy.resgrid.com</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyTitle" xml:space="preserve">
     <value>Академія Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>Дії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddLessonLabel" xml:space="preserve">
     <value>Додати урок:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddModuleButton" xml:space="preserve">
     <value>Додати модуль</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonNotice" xml:space="preserve">
     <value>Створення та призначення курсів потребує доповнення LMS. Академія Resgrid безкоштовна для всіх.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddOwnerButton" xml:space="preserve">
     <value>Додати відповідального</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AiCaptionsNote" xml:space="preserve">
     <value>Автоматичні субтитри з’являться з Enhanced AI; поки що завантажте файл WebVTT.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AnswerKeyCopy" xml:space="preserve">
     <value>Примірник із відповідями</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AnswersHiddenNote" xml:space="preserve">
     <value>Відповіді цього оцінювання не показуються після спроби.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApprovalHeader" xml:space="preserve">
     <value>Затвердити цю версію</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApprovalRoundFormat" xml:space="preserve">
     <value>Раунд {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApprovalsHeader" xml:space="preserve">
     <value>Затвердження та підписи</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApprovedMessage" xml:space="preserve">
     <value>Затверджено та підписано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApproveSignButton" xml:space="preserve">
     <value>Затвердити й підписати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApproveStepUpHelp" xml:space="preserve">
     <value>Перед підписанням ви знову підтверджуєте особу; підпис стосується саме цієї версії.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssessmentHelp" xml:space="preserve">
     <value>Питання вибираються й оцінюються на сервері; ключ відповідей ніколи не потрапляє до браузера чи застосунків.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssessmentPassed" xml:space="preserve">
     <value>Ви склали це оцінювання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssessmentTitle" xml:space="preserve">
     <value>Оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignButton" xml:space="preserve">
     <value>Призначити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignedMessage" xml:space="preserve">
     <value>Призначено {0} учасникам ({1} уже мали його, {2} не вдалося призначити).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignHeader" xml:space="preserve">
     <value>Призначити цей курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignLessonHeader" xml:space="preserve">
     <value>Призначити урок «{0}»</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignPathButton" xml:space="preserve">
     <value>Призначити шлях</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignPathHeader" xml:space="preserve">
     <value>Призначити рольовий шлях «{0}»</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignToLabel" xml:space="preserve">
     <value>Призначити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AttemptLimitLabel" xml:space="preserve">
     <value>Дозволені спроби (0 = без обмежень)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AttemptsAllowedFormat" xml:space="preserve">
     <value>Дозволено спроб: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AttemptsTile" xml:space="preserve">
     <value>Завершені спроби</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AttemptsUnlimited" xml:space="preserve">
     <value>Необмежена кількість спроб</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AttestationLabel" xml:space="preserve">
     <value>Просити учня підтвердити, що він проходить самостійно</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AttestationText" xml:space="preserve">
     <value>Я проходжу це оцінювання самостійно.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceCurrentFormat" xml:space="preserve">
     <value>Збережено правил аудиторії: {0}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceHeader" xml:space="preserve">
     <value>Хто бачить його в каталозі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceHelp" xml:space="preserve">
     <value>Нікого не вибирайте, щоб його бачив увесь підрозділ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AvailableOfflineLabel" xml:space="preserve">
     <value>Доступно офлайн (Omni може зберігати одну копію на пристрій)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AverageRatingFormat" xml:space="preserve">
     <value>Середня оцінка: {0} з 5</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AwaitingGradeBadge" xml:space="preserve">
     <value>Очікує оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackToAcademy" xml:space="preserve">
     <value>Назад до академії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackToCourse" xml:space="preserve">
     <value>Назад до курсу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackToCourseDetail" xml:space="preserve">
     <value>Курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BankLabel" xml:space="preserve">
     <value>Банк питань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BanksIntro" xml:space="preserve">
     <value>Набори питань, що випадково вибираються для кожної спроби. Спільні банки відкриті всім авторам курсів, приватні — лише власнику.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BanksTitle" xml:space="preserve">
     <value>Банки питань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BrowseAcademyLink" xml:space="preserve">
     <value>Переглянути Resgrid Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BuilderTitle" xml:space="preserve">
     <value>Конструктор курсу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Скасувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaptionsFileLabel" xml:space="preserve">
     <value>Файл WebVTT</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaptionsLabelLabel" xml:space="preserve">
     <value>Підпис субтитрів</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaptionsLocaleLabel" xml:space="preserve">
     <value>Мова субтитрів</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CatalogFieldsHeader" xml:space="preserve">
     <value>Відомості про курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CatalogHeader" xml:space="preserve">
     <value>Курси, до яких можна приєднатися</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CategoryLabel" xml:space="preserve">
     <value>Категорія навчання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CeDisclaimer" xml:space="preserve">
     <value>Resgrid не акредитує безперервну освіту: постачальник і номер зберігаються так, як ви їх ввели.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CeNumberLabel" xml:space="preserve">
     <value>Номер курсу безперервної освіти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CeProviderLabel" xml:space="preserve">
     <value>Постачальник безперервної освіти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CertificateTemplateLabel" xml:space="preserve">
     <value>Шаблон сертифіката</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChangeSummaryLabel" xml:space="preserve">
     <value>Що змінилося</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChooseAllHelp" xml:space="preserve">
     <value>Виберіть усі, що підходять.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChooseMember" xml:space="preserve">
     <value>Виберіть учасника…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChooseOption" xml:space="preserve">
     <value>Виберіть…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CodeLabel" xml:space="preserve">
     <value>Код курсу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CommentLabel" xml:space="preserve">
     <value>Коментар</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompletedBadge" xml:space="preserve">
     <value>Завершено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompletedColumn" xml:space="preserve">
     <value>Завершено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompletedHeader" xml:space="preserve">
     <value>Завершені</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompletedOfFormat" xml:space="preserve">
     <value>{0} з {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ContentHelp" xml:space="preserve">
     <value>Форматований текст (HTML). Під час збереження його очищують; вбудовування YouTube, Vimeo та Google Docs дозволені.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ContentLabel" xml:space="preserve">
     <value>Зміст уроку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CooldownFormat" xml:space="preserve">
     <value>Зачекайте {0} год між спробами</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CooldownLabel" xml:space="preserve">
     <value>Годин між спробами</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CorrectAnswerLabel" xml:space="preserve">
     <value>правильна відповідь</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CorrectLabel" xml:space="preserve">
     <value>Правильно</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CorrectOrderLabel" xml:space="preserve">
     <value>Правильний порядок:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CourseColumn" xml:space="preserve">
     <value>Курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CourseCompletedMessage" xml:space="preserve">
     <value>Курс завершено. Він є у вашій заліковій книжці.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CoursesHeader" xml:space="preserve">
     <value>Курси</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CreateBankButton" xml:space="preserve">
     <value>Створити банк</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CreateCourseButton" xml:space="preserve">
     <value>Створити курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CrewEndedMessage" xml:space="preserve">
     <value>Цей груповий перегляд завершено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CrewQrAlt" xml:space="preserve">
     <value>Код групового перегляду</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CrewQrRotates" xml:space="preserve">
     <value>Код змінюється кожні 30 секунд, тож його фото перестає працювати.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CrewScanConfirm" xml:space="preserve">
-    <value>Позначити себе присутнім на цьому перегляді? Показаний урок зараховується як переглянутий; тест ви пройдете на власному телефоні.</value>
+    <value>Відзначити свою присутність на цьому груповому перегляді? Показаний урок зараховується як переглянутий; потім ви проходите тест на власному телефоні.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CrewScanInstruction" xml:space="preserve">
     <value>Відскануйте цей код власним телефоном, щоб вас позначили присутнім.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CrewViewingTitle" xml:space="preserve">
     <value>Груповий перегляд</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DateLine" xml:space="preserve">
     <value>Дата:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Decision.Approved" xml:space="preserve">
     <value>затверджено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Decision.Pending" xml:space="preserve">
     <value>очікує</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Decision.Rejected" xml:space="preserve">
     <value>повернуто</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Decision.Withdrawn" xml:space="preserve">
     <value>відкликано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeleteButton" xml:space="preserve">
     <value>Видалити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeletedMessage" xml:space="preserve">
     <value>Видалено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeleteLessonConfirm" xml:space="preserve">
     <value>Видалити цей урок?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeleteModuleConfirm" xml:space="preserve">
     <value>Видалити цей модуль і його уроки?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DifficultyColumn" xml:space="preserve">
     <value>Складність (p)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DifficultyHelp" xml:space="preserve">
     <value>Частка правильних відповідей: вища — легше.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiscardButton" xml:space="preserve">
     <value>Відхилити чернетку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiscardConfirm" xml:space="preserve">
     <value>Відхилити цю чернетку? Її не подавали, тож нічого не збережеться.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiscardedMessage" xml:space="preserve">
     <value>Чернетку відхилено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiscriminationColumn" xml:space="preserve">
     <value>Дискримінативність (D)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiscriminationHelp" xml:space="preserve">
     <value>Частка правильних у найкращих 27% спроб мінус у найгірших 27%: нижче 0,2 варто переглянути.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DocumentNameLabel" xml:space="preserve">
     <value>Назва документа</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DocumentUrlLabel" xml:space="preserve">
     <value>Посилання на документ (https)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DrawCountLabel" xml:space="preserve">
     <value>Питань за спробу (0 = усі)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DrawTagsLabel" xml:space="preserve">
     <value>Лише питання з мітками</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueColumn" xml:space="preserve">
     <value>Термін</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDateHelp" xml:space="preserve">
     <value>Необов’язково. Кінець цього дня в часовому поясі підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDateLabel" xml:space="preserve">
     <value>Кінцевий термін</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueFormat" xml:space="preserve">
     <value>Термін {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditButton" xml:space="preserve">
     <value>Редагувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditDraftButton" xml:space="preserve">
     <value>Редагувати чернетку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditQuestionHeader" xml:space="preserve">
     <value>Редагувати питання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EndCrewViewingButton" xml:space="preserve">
     <value>Завершити перегляд</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrollButton" xml:space="preserve">
     <value>Записатися</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrolledColumn" xml:space="preserve">
     <value>Записано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrolledMessage" xml:space="preserve">
     <value>Вас записано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrollmentsHeader" xml:space="preserve">
     <value>Записи</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrollmentStatus.Completed" xml:space="preserve">
     <value>Завершено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrollmentStatus.InProgress" xml:space="preserve">
     <value>Триває</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrollmentStatus.NotStarted" xml:space="preserve">
     <value>Не розпочато</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrollmentStatus.Withdrawn" xml:space="preserve">
     <value>Відкликано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.AddonRequired" xml:space="preserve">
     <value>Для цього потрібне доповнення LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.AlreadySubmitted" xml:space="preserve">
     <value>Це вже надіслано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.AttemptLimitReached" xml:space="preserve">
     <value>Ви використали всі дозволені спроби.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.CodeExpired" xml:space="preserve">
     <value>Цей код змінився. Відскануйте код на екрані ще раз.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.CooldownActive" xml:space="preserve">
     <value>Зачекайте перед наступною спробою.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.FileTooLarge" xml:space="preserve">
     <value>Файл завеликий.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.InvalidInput" xml:space="preserve">
     <value>Деякі дані відсутні або недійсні.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.LapseWindowEnded" xml:space="preserve">
     <value>Доповнення LMS завершилося, і строк завершення цього курсу минув.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.LessonLocked" xml:space="preserve">
     <value>Спершу завершіть попередні уроки.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.MediaUnavailable" xml:space="preserve">
     <value>Сховище відео зараз недоступне.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.None" xml:space="preserve">
     <value>Готово.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.NotAuthorized" xml:space="preserve">
     <value>У вас немає на це права.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.NotDraft" xml:space="preserve">
     <value>Змінювати можна лише чернетку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.NotEntitled" xml:space="preserve">
     <value>Цей урок стосується модуля чи доповнення, якого немає у вашого підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.NotFound" xml:space="preserve">
     <value>Елемент не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.RequirementNotMet" xml:space="preserve">
     <value>Цей крок ще не завершено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.ResponseRequired" xml:space="preserve">
     <value>Виконайте завдання (або додайте потрібний файл), щоб завершити урок.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.SeatTimeNotMet" xml:space="preserve">
     <value>Приділіть цьому уроку трохи більше часу перед завершенням.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.StaleCopy" xml:space="preserve">
     <value>Хтось інший змінив це після відкриття. Оновіть і спробуйте знову.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.TimeExpired" xml:space="preserve">
     <value>Час на цю спробу вичерпано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.UnsupportedFile" xml:space="preserve">
     <value>Такий тип файлу не приймається.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EveryoneOption" xml:space="preserve">
     <value>Усі в підрозділі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExpiredBadge" xml:space="preserve">
     <value>Час вичерпано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplanationLabel" xml:space="preserve">
     <value>Пояснення (показується після спроби; зразкова відповідь для коротких відповідей)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FailedBadge" xml:space="preserve">
     <value>Не складено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FileColumn" xml:space="preserve">
     <value>Файл</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FileRequestHelp" xml:space="preserve">
     <value>PDF, зображення, текст, Word або Excel, до 10 МБ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FileRequestLabel" xml:space="preserve">
     <value>Запит файлу (необов’язково)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FingerprintFormat" xml:space="preserve">
     <value>відбиток {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FreeResponseLabel" xml:space="preserve">
     <value>Завдання з вільною відповіддю (необов’язково)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GradedMessage" xml:space="preserve">
     <value>Оцінку збережено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GraderNotesLabel" xml:space="preserve">
     <value>Нотатки оцінювача</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GradingEmpty" xml:space="preserve">
     <value>Нічого не очікує оцінювання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GradingIntro" xml:space="preserve">
     <value>Короткі відповіді, що очікують оцінювання. Ніхто не оцінює власну спробу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GradingTitle" xml:space="preserve">
     <value>Черга оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GroupsLabel" xml:space="preserve">
     <value>Групи</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HostedVideoLabel" xml:space="preserve">
     <value>Завантажене відео</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursColumn" xml:space="preserve">
     <value>Години</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursFormat" xml:space="preserve">
     <value>{0} год</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursLabel" xml:space="preserve">
     <value>Зараховані години</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImageUrlLabel" xml:space="preserve">
     <value>Посилання на зображення (https, необов’язково)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IncludedTile" xml:space="preserve">
     <value>Включено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IncorrectLabel" xml:space="preserve">
     <value>Неправильно</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InForceFormat" xml:space="preserve">
     <value>Чинна версія {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InProgressBadge" xml:space="preserve">
     <value>Триває</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InProgressHeader" xml:space="preserve">
     <value>Призначені та в процесі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IssuesCertificationLabel" xml:space="preserve">
     <value>Завершення видає або подовжує</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ItemAnalysisFootnote" xml:space="preserve">
     <value>Для дискримінативності потрібно щонайменше 10 завершених спроб. Спроби, що чекають оцінювання, не враховуються.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ItemAnalysisIntro" xml:space="preserve">
     <value>Як кожне питання показало себе в завершених спробах.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ItemAnalysisTitle" xml:space="preserve">
     <value>Аналіз завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Assessment" xml:space="preserve">
     <value>Оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Blocks" xml:space="preserve">
     <value>Читання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Cmi5" xml:space="preserve">
     <value>Пакет cmi5</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Document" xml:space="preserve">
     <value>Документ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.LiveSession" xml:space="preserve">
     <value>Живе заняття</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.ProtocolVersion" xml:space="preserve">
     <value>Протокол</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Scorm" xml:space="preserve">
     <value>Пакет SCORM</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Survey" xml:space="preserve">
     <value>Оцінка курсу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Video" xml:space="preserve">
     <value>Відео</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LapsedNotice" xml:space="preserve">
     <value>Доповнення LMS завершилося: курси та записи залишаються доступними для читання, призначені курси відкриті до терміну (або 30 днів), розміщене відео доступне лише для перегляду 90 днів, а нові курси чи призначення знову потребують доповнення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LengthColumn" xml:space="preserve">
     <value>Тривалість</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonBadge" xml:space="preserve">
     <value>Урок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonColumn" xml:space="preserve">
     <value>Урок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonCompletedMessage" xml:space="preserve">
     <value>Урок завершено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonDoneLabel" xml:space="preserve">
     <value>Ви завершили цей урок.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LibraryIntro" xml:space="preserve">
     <value>Курси вашого підрозділу: створення, затвердження, публікація, призначення та звіти.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LibraryTitle" xml:space="preserve">
     <value>Бібліотека курсів</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.AlreadyDecided" xml:space="preserve">
     <value>Цей крок уже вирішено або ви вже затвердили цей раунд.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.ArtifactChanged" xml:space="preserve">
     <value>Версія змінилася після подання чи підпису; подайте її знову.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.ChangeSummaryRequired" xml:space="preserve">
     <value>Перед публікацією опишіть, що змінилося.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.DraftExists" xml:space="preserve">
     <value>Для цього курсу вже відкрито чернетку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.EffectiveDateInPast" xml:space="preserve">
     <value>Дата набрання чинності в минулому.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.EmptyContent" xml:space="preserve">
     <value>Додайте щонайменше один урок перед поданням.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.InvalidInput" xml:space="preserve">
     <value>Деякі дані відсутні або недійсні.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.None" xml:space="preserve">
     <value>Готово.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.NotApproved" xml:space="preserve">
     <value>Опублікувати можна лише затверджену версію.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.NotAuthorized" xml:space="preserve">
     <value>У вас немає на це права.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.NotDraft" xml:space="preserve">
     <value>Подати можна лише чернетку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.NotFound" xml:space="preserve">
     <value>Версію не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.NotInReview" xml:space="preserve">
     <value>Ця версія не очікує затвердження.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.NotPublished" xml:space="preserve">
     <value>Ще нічого не опубліковано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.OpenComments" xml:space="preserve">
     <value>Спершу вирішіть відкриті коментарі рецензії.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.PasskeyRequired" xml:space="preserve">
     <value>Ваш підрозділ вимагає ключ доступу для цього підпису.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.RetentionProtected" xml:space="preserve">
     <value>Подану версію зберігають, і її не можна відхилити.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.SignatureRequired" xml:space="preserve">
     <value>Підтвердьте особу, щоб підписати затвердження.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Lifecycle.StaleCopy" xml:space="preserve">
     <value>Хтось інший змінив це після відкриття. Оновіть і спробуйте знову.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LockedBadge" xml:space="preserve">
     <value>заблоковано до завершення попередніх уроків</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MajorPolicyLabel" xml:space="preserve">
     <value>Для основної версії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MajorVersionOption" xml:space="preserve">
     <value>Основна версія: виберіть, що буде з тими, хто її завершив</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkCompleteButton" xml:space="preserve">
     <value>Позначити завершеним</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkPresentButton" xml:space="preserve">
     <value>Я тут</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MediaNotConfigured" xml:space="preserve">
     <value>На цій інсталяції не налаштовано сховище відео, тож завантажувати відео не можна. Посилання на YouTube і Vimeo працюють.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MediaStatus.Archived" xml:space="preserve">
     <value>Архівовано (доповнення завершилося)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MediaStatus.Failed" xml:space="preserve">
     <value>Не вдалося обробити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MediaStatus.Queued" xml:space="preserve">
     <value>Очікує обробки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MediaStatus.Ready" xml:space="preserve">
     <value>Готово</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MediaStatus.Transcoding" xml:space="preserve">
     <value>Обробка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MediaStatus.Uploading" xml:space="preserve">
     <value>Завантаження</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberColumn" xml:space="preserve">
     <value>Учасник</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MembersLabel" xml:space="preserve">
     <value>Учасники</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MinimumSeatLabel" xml:space="preserve">
     <value>Мінімальний час на уроці (секунди)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MinorVersionOption" xml:space="preserve">
     <value>Незначна версія: завершення залишаються чинними</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MinutesFormat" xml:space="preserve">
     <value>{0} хв</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ModelAnswerLabel" xml:space="preserve">
     <value>Зразкова відповідь:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ModuleLabel" xml:space="preserve">
     <value>Модуль</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ModuleNumberFormat" xml:space="preserve">
     <value>Модуль {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ModuleTitleLabel" xml:space="preserve">
     <value>Назва модуля</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MoveUpButton" xml:space="preserve">
     <value>Перемістити вгору</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyCoursesIntro" xml:space="preserve">
     <value>Призначені вам курси, Resgrid Academy та курси, до яких можна приєднатися.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyCoursesTitle" xml:space="preserve">
     <value>Мої курси</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NameLabel" xml:space="preserve">
     <value>Назва</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NameLine" xml:space="preserve">
     <value>Ім’я:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewBankHeader" xml:space="preserve">
     <value>Новий банк питань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewCourseHeader" xml:space="preserve">
     <value>Новий курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewLessonFormat" xml:space="preserve">
     <value>Новий урок: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewQuestionHeader" xml:space="preserve">
     <value>Нове питання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewVersionButton" xml:space="preserve">
     <value>Почати нову версію</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextAttemptFormat" xml:space="preserve">
     <value>Наступна спроба з {0}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextButton" xml:space="preserve">
     <value>Далі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextUpLabel" xml:space="preserve">
     <value>Далі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoBanks" xml:space="preserve">
     <value>Банків питань ще немає.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCourses" xml:space="preserve">
     <value>Курсів ще немає.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoneOption" xml:space="preserve">
     <value>Немає</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoOpenCourses" xml:space="preserve">
     <value>У вас немає відкритих курсів.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NothingToPlay" xml:space="preserve">
     <value>Цей курс не має уроків для показу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.CourseAssigned" xml:space="preserve">
     <value>Вам призначено курс "{0}". Відкрити: {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.CourseAssigned.Title" xml:space="preserve">
     <value>Призначено новий курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.CourseNewVersion" xml:space="preserve">
     <value>Опубліковано нову основну версію ({1}) курсу "{0}", який ви завершили.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.CourseNewVersion.Title" xml:space="preserve">
     <value>Курс оновлено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.CourseReassigned" xml:space="preserve">
     <value>Курс "{0}" має нову основну версію ({1}) і його знову призначено вам.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.CourseReassigned.Title" xml:space="preserve">
     <value>Курс призначено знову</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.InProgressReminder" xml:space="preserve">
     <value>Ви не завершили курс "{0}". Продовжте з місця, де зупинилися: {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.InProgressReminder.Title" xml:space="preserve">
     <value>Нагадування про курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotStartedBadge" xml:space="preserve">
     <value>Не розпочато</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OfflineCapLabel" xml:space="preserve">
     <value>Обмеження розміру офлайн (МБ)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OfflineExpiryLabel" xml:space="preserve">
     <value>Офлайн-копія зберігається (днів)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenButton" xml:space="preserve">
     <value>Відкрити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenDocumentButton" xml:space="preserve">
     <value>Відкрити документ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OptionalBadge" xml:space="preserve">
     <value>необов’язковий</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OptionCountsColumn" xml:space="preserve">
     <value>Вибрані варіанти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OptionNumberFormat" xml:space="preserve">
     <value>Варіант {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OptionsHelp" xml:space="preserve">
     <value>Позначте правильні варіанти. Для впорядкування вкажіть їх у правильному порядку. Правда/неправда використовує перші два. Короткі відповіді не потребують варіантів.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OptionsLabel" xml:space="preserve">
     <value>Варіанти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OrderHelp" xml:space="preserve">
     <value>Розставте елементи в правильному порядку: виберіть перший, потім другий і так далі.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutlineLabel" xml:space="preserve">
     <value>Структура курсу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OverdueBadge" xml:space="preserve">
     <value>прострочено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OverIncludedNote" xml:space="preserve">
     <value>Сховище перевищує включений обсяг. Наразі за це не стягується плата; розгляньте видалення старих відео.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OverviewLabel" xml:space="preserve">
     <value>Огляд</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OwnersHeader" xml:space="preserve">
     <value>Відповідальні за курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PassedBadge" xml:space="preserve">
     <value>Складено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PassMarkFormat" xml:space="preserve">
     <value>Прохідний бал {0}%</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PassMarkLabel" xml:space="preserve">
     <value>Прохідний бал</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PassRateTile" xml:space="preserve">
     <value>Частка складених</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathLessonsFormat" xml:space="preserve">
     <value>Уроків: {0} · завершено вами: {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathNobodyAssigned" xml:space="preserve">
     <value>Цей шлях ще нікому не призначено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathProgressButton" xml:space="preserve">
     <value>Прогрес (призначено: {0})</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathProgressIntro" xml:space="preserve">
     <value>Прогрес кожного призначеного учасника за уроками шляху.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PlaybackSpeedLabel" xml:space="preserve">
     <value>Швидкість відтворення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PlayerTitle" xml:space="preserve">
     <value>Курс</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PointsAwardedFormat" xml:space="preserve">
     <value>Нараховані бали (з {0})</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PointsLabel" xml:space="preserve">
     <value>Бали</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PointsShort" xml:space="preserve">
     <value>бал.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Policy.Nothing" xml:space="preserve">
     <value>Нічого: завершення чинні</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Policy.Notify" xml:space="preserve">
     <value>Повідомити тих, хто завершив</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Policy.Reassign" xml:space="preserve">
     <value>Призначити знову тим, хто завершив</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PresentHeader" xml:space="preserve">
     <value>Присутні</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PresentMessage" xml:space="preserve">
     <value>Вас позначено присутнім. Продовжуйте наступний урок на телефоні.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreTestLabel" xml:space="preserve">
     <value>Попередній тест (складання завершує курс)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreTestNote" xml:space="preserve">
     <value>Попередній тест: його складання завершує весь курс.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviousButton" xml:space="preserve">
     <value>Попередній</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrintHint" xml:space="preserve">
     <value>Скористайтеся командою друку браузера, щоб надрукувати цей тест.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrintKeyButton" xml:space="preserve">
     <value>З відповідями</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrintTestButton" xml:space="preserve">
     <value>Тест для друку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrivateBadge" xml:space="preserve">
     <value>Приватний</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgressColumn" xml:space="preserve">
     <value>Прогрес</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgressHonest" xml:space="preserve">
     <value>Завершено {0}% обов’язкових уроків</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgressLabel" xml:space="preserve">
     <value>Прогрес</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtocolUnavailable" xml:space="preserve">
     <value>Ця версія протоколу більше недоступна.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtocolVersionFormat" xml:space="preserve">
     <value>Версія протоколу {0} у тому вигляді, як її опубліковано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtocolVersionHelp" xml:space="preserve">
     <value>Урок показує цю версію в опублікованому вигляді, навіть якщо протокол зміниться.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtocolVersionLabel" xml:space="preserve">
     <value>Версія протоколу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PublishBeforeAssign" xml:space="preserve">
     <value>Опублікуйте версію, перш ніж призначати курс.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PublishButton" xml:space="preserve">
     <value>Опублікувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PublishedColumn" xml:space="preserve">
     <value>Опубліковано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PublishedMessage" xml:space="preserve">
     <value>Версію опубліковано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PublishHeader" xml:space="preserve">
     <value>Опублікувати цю версію</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PublishHelp" xml:space="preserve">
     <value>Ті, хто проходить курс, зберігають розпочату версію; ті, хто не почав, переходять на цю.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionColumn" xml:space="preserve">
     <value>Питання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionKind.MultiChoice" xml:space="preserve">
     <value>Кілька варіантів</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionKind.Ordering" xml:space="preserve">
     <value>Упорядкувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionKind.ShortAnswer" xml:space="preserve">
     <value>Коротка відповідь (оцінюється вручну)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionKind.SingleChoice" xml:space="preserve">
     <value>Один варіант</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionKind.TrueFalse" xml:space="preserve">
     <value>Правда чи неправда</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionKindLabel" xml:space="preserve">
     <value>Тип питання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionNumberFormat" xml:space="preserve">
     <value>Питання {0} з {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionsCountFormat" xml:space="preserve">
     <value>Питань: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionTextLabel" xml:space="preserve">
     <value>Питання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RandomizeLabel" xml:space="preserve">
     <value>Перемішувати порядок відповідей</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RatingHelp" xml:space="preserve">
     <value>1 — погано, 5 — чудово.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReassignDaysLabel" xml:space="preserve">
     <value>Днів на завершення при повторному призначенні</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RejectButton" xml:space="preserve">
     <value>Повернути на доопрацювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RejectedMessage" xml:space="preserve">
     <value>Версію повернуто на доопрацювання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RejectReasonLabel" xml:space="preserve">
     <value>Причина повернення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoveButton" xml:space="preserve">
     <value>Вилучити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RenameButton" xml:space="preserve">
     <value>Перейменувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequiredLabel" xml:space="preserve">
     <value>Обов’язковий для завершення курсу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequiredWatchLabel" xml:space="preserve">
     <value>Переглянути щонайменше (%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResponsesColumn" xml:space="preserve">
     <value>Відповіді</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResponsesFormat" xml:space="preserve">
     <value>Анонімних відповідей: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResultColumn" xml:space="preserve">
     <value>Підсумок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResultTitle" xml:space="preserve">
     <value>Підсумок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResumeAttemptButton" xml:space="preserve">
     <value>Продовжити спробу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResumeButton" xml:space="preserve">
     <value>Продовжити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetakeButton" xml:space="preserve">
     <value>Спробувати знову</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetireButton" xml:space="preserve">
     <value>Зняти з обігу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetireConfirm" xml:space="preserve">
     <value>Зняти цей курс з обігу? Він зникне з каталогу; уже записані учасники зможуть його завершити.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetiredBadge" xml:space="preserve">
     <value>знято з обігу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetiredMessage" xml:space="preserve">
     <value>Курс знято з обігу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetiredQuestionMessage" xml:space="preserve">
     <value>Питання вилучено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetireQuestionConfirm" xml:space="preserve">
     <value>Вилучити це питання? Спроби, де воно трапилося, зберігають свою копію.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewButton" xml:space="preserve">
     <value>Переглянути</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewQueueHeader" xml:space="preserve">
     <value>Очікує затвердження</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RightAssign" xml:space="preserve">
     <value>призначення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RightEdit" xml:space="preserve">
     <value>редагування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RightReport" xml:space="preserve">
     <value>звіти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RightsColumn" xml:space="preserve">
     <value>Права</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RolePathsHeader" xml:space="preserve">
     <value>Рольові шляхи</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RolePathsIntro" xml:space="preserve">
     <value>Упорядковані списки уроків академії для ролі. Призначення шляху призначає кожен урок у ньому, доступний вашому підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RolesLabel" xml:space="preserve">
     <value>Ролі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Зберегти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SavedMessage" xml:space="preserve">
     <value>Збережено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveGradeButton" xml:space="preserve">
     <value>Зберегти оцінку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveLessonButton" xml:space="preserve">
     <value>Зберегти урок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScoreColumn" xml:space="preserve">
     <value>Бал</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeatTimeRequirement" xml:space="preserve">
     <value>Цей урок потребує щонайменше {0} хв (у вас {1} хв).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SelfEnrollLabel" xml:space="preserve">
     <value>Учасники можуть записуватися самі з каталогу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SharedBadge" xml:space="preserve">
     <value>Спільний</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SharedBankLabel" xml:space="preserve">
     <value>Спільний для всіх авторів курсів</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SharingColumn" xml:space="preserve">
     <value>Доступ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowAnswers.AfterPassing" xml:space="preserve">
     <value>Ключ, після складання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowAnswers.Always" xml:space="preserve">
     <value>Ключ після кожної спроби</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowAnswers.CorrectnessOnly" xml:space="preserve">
     <value>Які відповіді правильні, без ключа</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowAnswers.Never" xml:space="preserve">
     <value>Лише бал</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowAnswersLabel" xml:space="preserve">
     <value>Показувати відповіді</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Signature.ArtifactChanged" xml:space="preserve">
     <value>версія змінилася після підпису</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Signature.SubjectMissing" xml:space="preserve">
     <value>версії більше не існує</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Signature.Valid" xml:space="preserve">
     <value>відповідає цій версії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Signature.Voided" xml:space="preserve">
     <value>анульовано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SizeColumn" xml:space="preserve">
     <value>Розмір</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StandardOption" xml:space="preserve">
     <value>Стандартний</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StartAssessmentButton" xml:space="preserve">
     <value>Почати оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StartButton" xml:space="preserve">
     <value>Почати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StartCrewViewingButton" xml:space="preserve">
     <value>Дивитися разом (груповий перегляд)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusColumn" xml:space="preserve">
     <value>Стан</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StorageIntro" xml:space="preserve">
     <value>Відео, що зберігається для вашого підрозділу, порівняно зі 100 ГБ, включеними в доповнення LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StorageTitle" xml:space="preserve">
     <value>Сховище відео</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmitAttemptButton" xml:space="preserve">
     <value>Надіслати відповіді</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmitConfirm" xml:space="preserve">
     <value>Надіслати відповіді? Змінити їх потім не вийде.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmitForApprovalButton" xml:space="preserve">
     <value>Подати на затвердження</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmitSurveyButton" xml:space="preserve">
     <value>Надіслати відповіді</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmittedColumn" xml:space="preserve">
     <value>Надіслано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmittedMessage" xml:space="preserve">
     <value>Версію подано на затвердження.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SummaryLabel" xml:space="preserve">
     <value>Короткий опис</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurveyAnonymous" xml:space="preserve">
     <value>Ваші відповіді анонімні: керівники бачать лише підсумки, від трьох відповідей.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurveyFormatHelp" xml:space="preserve">
     <value>Одне в рядку: "rating: текст", "text: текст" або "choice: текст | варіант | варіант".</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurveyQuestionsLabel" xml:space="preserve">
     <value>Питання опитування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurveyResultsTitle" xml:space="preserve">
     <value>Оцінка курсу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurveyThanksMessage" xml:space="preserve">
     <value>Дякуємо, ваші відповіді записано анонімно.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurveyTooFew" xml:space="preserve">
     <value>Результати показуються від {0} відповідей, щоб жодну не можна було пов’язати з учасником.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TagsLabel" xml:space="preserve">
     <value>Мітки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TestedOutBadge" xml:space="preserve">
     <value>Зараховано за попереднім тестом</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TimeLimitFormat" xml:space="preserve">
     <value>Обмеження часу {0} хв</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TimeLimitLabel" xml:space="preserve">
     <value>Обмеження часу (хвилини, 0 = немає)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TimeRemainingFormat" xml:space="preserve">
     <value>Залишилося {0} хв</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TitleLabel" xml:space="preserve">
     <value>Назва</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TooFewAttempts" xml:space="preserve">
     <value>замало спроб</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TranscriptHeader" xml:space="preserve">
     <value>Стенограма</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TranscriptLink" xml:space="preserve">
     <value>Залікова книжка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UploadButton" xml:space="preserve">
     <value>Завантажити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UploadCaptionsButton" xml:space="preserve">
     <value>Завантажити субтитри</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UploadedColumn" xml:space="preserve">
     <value>Завантажено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UploadedMessage" xml:space="preserve">
     <value>Завантажено. Відео обробляються у фоні й відтворюються, щойно будуть готові.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UploadVideoLabel" xml:space="preserve">
     <value>Завантажити відео</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UsedTile" xml:space="preserve">
     <value>Використано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionColumn" xml:space="preserve">
     <value>Версія</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionLabelFormat" xml:space="preserve">
     <value>Версія {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionSettingsHeader" xml:space="preserve">
     <value>Налаштування версії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionsHeader" xml:space="preserve">
     <value>Версії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Approved" xml:space="preserve">
     <value>Затверджено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Draft" xml:space="preserve">
     <value>Чернетка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.InReview" xml:space="preserve">
     <value>На розгляді</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Legacy" xml:space="preserve">
     <value>Застаріла</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Published" xml:space="preserve">
     <value>Опубліковано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Retired" xml:space="preserve">
     <value>Знято з обігу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Superseded" xml:space="preserve">
     <value>Замінено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VideoHelp" xml:space="preserve">
     <value>Посилання на YouTube і Vimeo працюють усюди. Завантажене відео — частина доповнення LMS: його перекодовують у HLS і транслюють через підписані посилання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VideoSource.Embed" xml:space="preserve">
     <value>YouTube або Vimeo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VideoSource.Hosted" xml:space="preserve">
     <value>Завантажене (LMS)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VideoSourceLabel" xml:space="preserve">
     <value>Джерело відео</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VideosTile" xml:space="preserve">
     <value>Відео</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VideoUnavailable" xml:space="preserve">
     <value>Це відео зараз недоступне.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VideoUrlLabel" xml:space="preserve">
     <value>Посилання на YouTube або Vimeo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WalkthroughBadge" xml:space="preserve">
     <value>Покроковий огляд</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WatchAgainButton" xml:space="preserve">
     <value>Переглянути знову</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WatchRequirement" xml:space="preserve">
     <value>Перегляньте щонайменше {0}% (переглянуто {1}%).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithdrawButton" xml:space="preserve">
     <value>Відкликати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithdrawConfirm" xml:space="preserve">
     <value>Відкликати цього учасника з курсу? Його прогрес збережеться.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithdrawDraftButton" xml:space="preserve">
     <value>Повернути в чернетку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithdrawnDraftMessage" xml:space="preserve">
     <value>Версія знову є чернеткою.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithdrawnMessage" xml:space="preserve">
     <value>Учасника відкликано з курсу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="YourAnswerLabel" xml:space="preserve">
     <value>ваша відповідь</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="YourAttemptsHeader" xml:space="preserve">
     <value>Ваші спроби</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AidNothingAccepted" xml:space="preserve">
     <value>Нічого не прийнято.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AidBankNameFormat" xml:space="preserve">
     <value>Чернетки запитань: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AidBankDescription" xml:space="preserve">
     <value>Запитання, прийняті з помічників для чернеток. Перевірте їх перед використанням в оцінюванні.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AidQuestionsSaved" xml:space="preserve">
     <value>Додано {0} запит. до банку "{1}".</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AidOpenBank" xml:space="preserve">
     <value>Відкрити банк</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AidOutlineSaved" xml:space="preserve">
     <value>Додано {0} модул(ів) до цієї чернетки.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.MicroLearning" xml:space="preserve">
     <value>Щотижневе питання до протоколу ({0}) готове. Дайте відповідь у розділі Протоколи, Мої підтвердження, Щотижневі питання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notify.MicroLearning.Title" xml:space="preserve">
     <value>Щотижневе питання до протоколу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.TabsLabel" xml:space="preserve">
+    <value>Розділи бібліотеки курсів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersTab" xml:space="preserve">
+    <value>Стартові курси</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTab" xml:space="preserve">
+    <value>Чернетка з ШІ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotEntitled" xml:space="preserve">
+    <value>Для чернеток курсів і карток потрібні Enhanced AI з відповідями на основі знань і доповнення LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotAllowed" xml:space="preserve">
+    <value>Для цього потрібні право «Керування курсами» (або право редагування курсу) і доступ до джерела.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotFound" xml:space="preserve">
+    <value>Джерело або курс не знайдено, або його не опубліковано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Excluded" xml:space="preserve">
+    <value>Цей протокол позначено «без ШІ» або він є ліцензованим вмістом, тому його ніколи не надсилають до моделі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.KeptLocal" xml:space="preserve">
+    <value>Advanced Data Protection зберігає вміст підрозділу локально, тому чернетку створити неможливо.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NoContent" xml:space="preserve">
+    <value>У джерелі не знайдено тексту для читання (сканований PDF не має текстового шару).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Unconfigured" xml:space="preserve">
+    <value>Модель ШІ не налаштовано в цій системі. Зверніться до свого оператора Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Unavailable" xml:space="preserve">
+    <value>Модель ШІ зараз недоступна. Спробуйте ще раз за кілька хвилин.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Busy" xml:space="preserve">
+    <value>Модель ШІ зайнята. Спробуйте ще раз за хвилину.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Ліміт Enhanced AI вашого підрозділу на цей місяць вичерпано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Refused" xml:space="preserve">
+    <value>Чернетку відхилено: нічого з написаного не вдалося перевірити за цитованими розділами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Invalid" xml:space="preserve">
+    <value>Запит недійсний. Перевірте тип файлу (PDF, DOCX або TXT) і його розмір.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotSaved" xml:space="preserve">
+    <value>Чернетку не вдалося зберегти як курс. Нічого не збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Drafted" xml:space="preserve">
+    <value>Чернетка готова.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Created" xml:space="preserve">
+    <value>Готово.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterCloned" xml:space="preserve">
+    <value>Стартовий курс скопійовано як чернетку: {0} уроків і {1} запитань. Адаптуйте його, а потім надішліть на затвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Drafted" xml:space="preserve">
+    <value>Створено чернетку курсу: {0} модулів, {1} уроків і {2} запитань. Перевірте кожен урок за цитованим розділом, а потім надішліть на затвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftDropped" xml:space="preserve">
+    <value>Пропущено {0} елементів, бо вони не цитували жодного розділу або містили число, якого немає в джерелі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTruncated" xml:space="preserve">
+    <value>Джерело було довгим, тому використано лише його перші розділи.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsDropped" xml:space="preserve">
+    <value>Пропущено {0} карток, бо вони містили число, якого немає в їхньому розділі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsAccepted" xml:space="preserve">
+    <value>Додано карток: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardSaved" xml:space="preserve">
+    <value>Картку збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardReviewed" xml:space="preserve">
+    <value>Картку перевірено за чинною версією, і вона знову доступна слухачам.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardRemoved" xml:space="preserve">
+    <value>Картку видалено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftOverviewNote" xml:space="preserve">
+    <value>Чернетку створено за допомогою Enhanced AI на основі: {0}. Перш ніж надіслати курс, перевірте кожен урок за цитованим розділом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTag" xml:space="preserve">
+    <value>чернетка-ші</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftBankName" xml:space="preserve">
+    <value>{0} — чернетки запитань</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftBankDescription" xml:space="preserve">
+    <value>Запитання, складені Enhanced AI на основі джерела курсу. Перегляньте їх, перш ніж використовувати в оцінюванні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CheckModuleTitle" xml:space="preserve">
+    <value>Перевірте розуміння</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CheckLessonTitle" xml:space="preserve">
+    <value>Перевірка курсу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.KeyPoints" xml:space="preserve">
+    <value>Ключові пункти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FromTheSource" xml:space="preserve">
+    <value>Із джерела</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CitedLabel" xml:space="preserve">
+    <value>Джерело:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftAttribution" xml:space="preserve">
+    <value>Чернетку створено Enhanced AI на основі: {0}; вміст із власного джерела підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterAttribution" xml:space="preserve">
+    <value>На основі стартового курсу Resgrid «{0}» (редакція {1}). Будь-який підрозділ Resgrid може вільно використовувати й адаптувати цей вміст; він не дає акредитації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterBankName" xml:space="preserve">
+    <value>{0} — контрольні запитання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersTitle" xml:space="preserve">
+    <value>Стартові курси</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersIntro" xml:space="preserve">
+    <value>Курси від Resgrid для швидкого старту. Скопіюйте курс у свій підрозділ як чернетку, адаптуйте та опублікуйте через звичайне затвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.AuthorNeeded" xml:space="preserve">
+    <value>Щоб скопіювати стартовий курс, потрібні право «Керування курсами» та активне доповнення LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersLicence" xml:space="preserve">
+    <value>Стартові курси — це власні тексти Resgrid простою мовою: без тексту стандартів і без акредитації. Ваша копія зберігає зазначення авторства.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterFacts" xml:space="preserve">
+    <value>Модулів: {0} · уроків: {1} · годин: {2} · редакція {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.LicenceResgridStarter" xml:space="preserve">
+    <value>Стартова ліцензія Resgrid: вільне використання й адаптація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CloneButton" xml:space="preserve">
+    <value>Копіювати як чернетку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PartnerHeader" xml:space="preserve">
+    <value>Вміст партнерів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PartnerIntro" xml:space="preserve">
+    <value>Акредитоване безперервне навчання залишається за партнером, який має акредитацію. Resgrid запускає його та фіксує завершення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PartnerComing" xml:space="preserve">
+    <value>З'явиться разом із підтримкою стандартів (LTI, SCORM і cmi5).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.resgrid-onboarding.Title" xml:space="preserve">
+    <value>Початок роботи з Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.resgrid-onboarding.Summary" xml:space="preserve">
+    <value>Перший курс нового члена: обліковий запис, статус і доступність, реагування на виклики, повідомлення, календар і навчання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.incident-safety-basics.Title" xml:space="preserve">
+    <value>Основи безпеки на подіях</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.incident-safety-basics.Summary" xml:space="preserve">
+    <value>Звички безпеки для кожної події: ситуаційна обізнаність, засоби захисту, облік особового складу та відновлення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.hazmat-awareness-outline.Title" xml:space="preserve">
+    <value>Обізнаність щодо небезпечних матеріалів (план)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.hazmat-awareness-outline.Summary" xml:space="preserve">
+    <value>План, який слід доповнити вашими процедурами: розпізнати, ізолювати та не допускати, повідомити, захистити себе.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.driver-evo-basics.Title" xml:space="preserve">
+    <value>Основи керування аварійно-рятувальним транспортом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.driver-evo-basics.Summary" xml:space="preserve">
+    <value>Огляд транспортного засобу, екстрена їзда, перехрестя та рух заднім ходом із регулювальником. Поєднуйте з практичним заняттям.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-ce-lti.Title" xml:space="preserve">
+    <value>Безперервне навчання від партнерів (LTI 1.3)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-ce-lti.Summary" xml:space="preserve">
+    <value>Акредитовані курси від партнера з вмісту, що запускаються з Resgrid; завершення записуються в навчальну картку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-packages-scorm.Title" xml:space="preserve">
+    <value>Пакети курсів партнерів (SCORM / cmi5)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-packages-scorm.Summary" xml:space="preserve">
+    <value>Пакети, придбані в партнера або експортовані з іншої навчальної системи, що відтворюються в ізольованому програвачі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTitle" xml:space="preserve">
+    <value>Чернетка курсу з ШІ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftIntro" xml:space="preserve">
+    <value>Перетворіть опублікований протокол або документ процедури на чернетку курсу. Кожен урок цитує джерело; нічого не публікується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftNeeds" xml:space="preserve">
+    <value>Для чернеток курсів потрібні Enhanced AI з відповідями на основі знань, доповнення LMS і право «Керування курсами».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftHeader" xml:space="preserve">
+    <value>Створити чернетку курсу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Drafting" xml:space="preserve">
+    <value>Створення чернетки… це може тривати хвилину.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceLegend" xml:space="preserve">
+    <value>Чернетка на основі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceProtocol" xml:space="preserve">
+    <value>Опублікованого протоколу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceDocument" xml:space="preserve">
+    <value>Документа процедури (PDF, DOCX або TXT)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ProtocolLabel" xml:space="preserve">
+    <value>Протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NoProtocols" xml:space="preserve">
+    <value>Жоден опублікований протокол, автором якого ви є, не можна використати з ШІ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ProtocolHelp" xml:space="preserve">
+    <value>Використовується чинна версія. Протоколи з позначкою «без ШІ» та ліцензований вміст не показано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DocumentLabel" xml:space="preserve">
+    <value>Документ процедури</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DocumentHelp" xml:space="preserve">
+    <value>До {0} МБ. Зчитується лише текст; файл не зберігається.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.TitleLabel" xml:space="preserve">
+    <value>Назва курсу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.TitleHelp" xml:space="preserve">
+    <value>Залиште порожнім, щоб використати запропоновану назву.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.QuestionsLabel" xml:space="preserve">
+    <value>Кількість тестових запитань</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftButton" xml:space="preserve">
+    <value>Створити чернетку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.HowItWorks" xml:space="preserve">
+    <value>Як працюють чернетки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Draft" xml:space="preserve">
+    <value>Результат — нова чернетка курсу. Ви редагуєте її та надсилаєте на звичайне затвердження; нічого не публікується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Citations" xml:space="preserve">
+    <value>Кожен урок цитує розділи, на основі яких його написано, і показує їхній текст так, як його подає джерело.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Numbers" xml:space="preserve">
+    <value>Кожне число, яке пише ШІ, має бути в цитованих розділах; дози чи частоту ніколи не обчислюють.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.NoAi" xml:space="preserve">
+    <value>Протоколи з позначкою «без ШІ», ліцензований вміст і підрозділи з Advanced Data Protection ніколи не надсилаються до моделі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Logged" xml:space="preserve">
+    <value>Кожну чернетку журналюють із моделлю та версією запиту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsTitle" xml:space="preserve">
+    <value>Картки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsTitleFormat" xml:space="preserve">
+    <value>Картки: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsIntro" xml:space="preserve">
+    <value>Картки для практики в програвачі курсу. Картку позначають для перевірки, коли змінюється її джерело.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsActive" xml:space="preserve">
+    <value>Видимі слухачам</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsFlagged" xml:space="preserve">
+    <value>Потребують перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NoCardSources" xml:space="preserve">
+    <value>Опублікуйте курс (або створіть його з протоколу), щоб створювати з нього картки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.AcceptCardsButton" xml:space="preserve">
+    <value>Додати позначені картки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NothingTicked" xml:space="preserve">
+    <value>Позначте принаймні одну картку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardSourceFormat" xml:space="preserve">
+    <value>На основі: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftCardsHeader" xml:space="preserve">
+    <value>Чернетки карток із ШІ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardSourceLabel" xml:space="preserve">
+    <value>Джерело</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ThisCourse" xml:space="preserve">
+    <value>Цей курс</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardCountLabel" xml:space="preserve">
+    <value>Картки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftCardsButton" xml:space="preserve">
+    <value>Створити картки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsRule" xml:space="preserve">
+    <value>Кожна картка цитує один розділ, і кожне число на ній має бути в цьому розділі. Практику ніколи не оцінюють і не записують.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsHeader" xml:space="preserve">
+    <value>Картки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NoCards" xml:space="preserve">
+    <value>Карток ще немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FrontColumn" xml:space="preserve">
+    <value>Лицьовий бік</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.BackColumn" xml:space="preserve">
+    <value>Зворотний бік</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceColumn" xml:space="preserve">
+    <value>Джерело</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SaveCardButton" xml:space="preserve">
+    <value>Зберегти картку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardActive" xml:space="preserve">
+    <value>Активна</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardNeedsReview" xml:space="preserve">
+    <value>Потребує перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlagUnavailable" xml:space="preserve">
+    <value>Її джерело більше не можна прочитати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlagSuperseded" xml:space="preserve">
+    <value>Чинна новіша версія її джерела.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ReviewCardButton" xml:space="preserve">
+    <value>Позначити перевіреною</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.EditCardButton" xml:space="preserve">
+    <value>Редагувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.RemoveCardConfirm" xml:space="preserve">
+    <value>Видалити цю картку?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.RemoveCardButton" xml:space="preserve">
+    <value>Видалити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginAiHeader" xml:space="preserve">
+    <value>Чернетку ШІ створено на основі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginAiCheck" xml:space="preserve">
+    <value>Перш ніж надіслати курс на затвердження, перевірте кожен урок за цитованим розділом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginCitationsFormat" xml:space="preserve">
+    <value>Посилання {0} уроків із чернетки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginStarterHeader" xml:space="preserve">
+    <value>Стартовий курс.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginLicenceFormat" xml:space="preserve">
+    <value>Ліцензія: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeCardFormat" xml:space="preserve">
+    <value>Відомо карток: {0} з {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeDone" xml:space="preserve">
+    <value>Наразі ви знаєте всі картки. Поверніться пізніше або почніть знову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeSource" xml:space="preserve">
+    <value>Із:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeHeader" xml:space="preserve">
+    <value>Картки для практики</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeIntro" xml:space="preserve">
+    <value>Лише практика: нічого тут не оцінюється і не записується до навчальної картки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeShow" xml:space="preserve">
+    <value>Показати відповідь</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeAgain" xml:space="preserve">
+    <value>Ще раз</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeKnown" xml:space="preserve">
+    <value>Знаю</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeRestart" xml:space="preserve">
+    <value>Почати знову</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsButton" xml:space="preserve">
+    <value>Картки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.LtiLink" xml:space="preserve">
+    <value>Інструмент LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterSuggested" xml:space="preserve">
+    <value>Рекомендовано для вашої організації</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotLicensed" xml:space="preserve">
+    <value>Для цього потрібне місце LMS. Попросіть адміністратора увімкнути вам доступ до LMS. Академія та ваші записи про навчання залишаються доступними.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedNotLicensedMessage" xml:space="preserve">
+    <value>{0} з них не мають місця LMS і не були записані; увімкніть їм доступ до LMS, а потім призначте знову.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

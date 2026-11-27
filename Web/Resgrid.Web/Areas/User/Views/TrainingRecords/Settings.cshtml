@@ -2,6 +2,7 @@
 @using Resgrid.Web.Areas.User.Models.Training
 @model TrainingRecordSettingsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> reviewText
 @*
     Trainings → Records settings (department setting 135): how calendar check-in/out hours are rounded, whether members may submit
     outside certificates, and the default minimum years a record is kept after its member leaves. Field names are fixed: Admin
@@ -63,6 +64,61 @@
                     </label>
                 </div>
                 <span class="help-block" id="MemberSubmissionsDisabled-help">@localizer["Rec.SubmissionsDisabledSettingHelp"]</span>
+            </div>
+        </div>
+
+        @* Round 9B: the optional review of members' training hours submissions (field names fixed: Admin Assist links to them). *@
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-inbox" aria-hidden="true"></i> @reviewText["Settings.Header"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@reviewText["Settings.Help"]</p>
+                <fieldset class="form-group">
+                    <legend class="control-label">@reviewText["Settings.Mode"]</legend>
+                    @foreach (var mode in Enum.GetValues<TrainingSubmissionReviewModes>())
+                    {
+                        <div class="radio">
+                            <label>
+                                <input type="radio" id="SubmissionReviewMode-@((int)mode)" name="SubmissionReviewMode" value="@((int)mode)" checked="@(settings.SubmissionReviewMode == (int)mode)" />
+                                @reviewText["Settings.Mode." + mode]
+                            </label>
+                        </div>
+                    }
+                </fieldset>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="ReviewCategoryIds">@reviewText["Settings.Categories"]</label>
+                        <select id="ReviewCategoryIds" name="ReviewCategoryIds" class="form-control" multiple size="6" aria-describedby="ReviewCategoryIds-help">
+                            @foreach (var category in Model.LiveCategories)
+                            {
+                                <option value="@category.TrainingCategoryId" selected="@((settings.ReviewCategoryIds ?? new List<int>()).Contains(category.TrainingCategoryId))">@category.Name</option>
+                            }
+                        </select>
+                        <span class="help-block" id="ReviewCategoryIds-help">@reviewText["Settings.CategoriesHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <input type="hidden" name="__Invariant" value="ReviewAboveHours" />
+                        <label for="ReviewAboveHours">@reviewText["Settings.AboveHours"]</label>
+                        <input id="ReviewAboveHours" name="ReviewAboveHours" type="number" min="0" max="999" step="0.25" class="form-control" value="@LearningRecordPresentation.Invariant(settings.ReviewAboveHours)" aria-describedby="ReviewAboveHours-help" />
+                        <span class="help-block" id="ReviewAboveHours-help">@reviewText["Settings.AboveHoursHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="ReviewerNotices">@reviewText["Settings.ReviewerNotices"]</label>
+                        <select id="ReviewerNotices" name="ReviewerNotices" class="form-control">
+                            @foreach (var notice in Enum.GetValues<TrainingReviewerNoticeModes>())
+                            {
+                                <option value="@((int)notice)" selected="@(settings.ReviewerNotices == (int)notice)">@reviewText["Settings.ReviewerNotices." + notice]</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="RoleReviewersOwnGroupOnly" name="RoleReviewersOwnGroupOnly" value="true" checked="@settings.RoleReviewersOwnGroupOnly" aria-describedby="RoleReviewersOwnGroupOnly-help" />
+                        <input type="hidden" name="RoleReviewersOwnGroupOnly" value="false" />
+                        @reviewText["Settings.OwnGroupOnly"]
+                    </label>
+                </div>
+                <span class="help-block" id="RoleReviewersOwnGroupOnly-help">@reviewText["Settings.OwnGroupOnlyHelp"]</span>
             </div>
         </div>
 

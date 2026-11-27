@@ -44,6 +44,8 @@ namespace Resgrid.Tests.KnowledgeK3
 			_access.Setup(a => a.IsFlagEnabledAsync(Dept)).ReturnsAsync(true);
 			_gate = new Mock<ILmsGateService>();
 			_gate.Setup(g => g.GetActorAsync(Dept, It.IsAny<string>())).ReturnsAsync((int d, string user) => _world.Actor(user));
+			// Round 10 A7: a learner reads department course content only with an LMS seat (the world seats every member by default).
+			_gate.Setup(g => g.HoldsLearnerSeatAsync(Dept, It.IsAny<string>())).ReturnsAsync((int d, string user) => _world.SeatedMembers.Contains(user));
 			_protocolVersions = new Mock<IProtocolVersionsRepository>();
 			_protocolVersions.Setup(v => v.GetByIdsAsync(Dept, It.IsAny<IEnumerable<int>>(), true)).ReturnsAsync(new List<ProtocolVersion>
 			{
@@ -270,5 +272,29 @@ namespace Resgrid.Tests.KnowledgeK3
 			KnowledgeLinks.WebPath((int)KnowledgeSourceKinds.Course, "7", "9", null).Should().Be("/User/Courses/Open/7");
 			KnowledgeLinks.TryParseCourseAnchor("x42-b", out _, out _).Should().BeFalse();
 		}
-	}
+	
+		[Test]
+		public async Task Round_10_a7_a_learner_reads_a_department_course_only_with_an_lms_seat_and_a_manager_by_permission()
+		{
+			var (course, _, _) = await CourseAsync(selfEnrollable: false);
+			var id = course.LmsCourseId.ToString();
+
+			async Task<bool> Reads(string user)
+			{
+				var scope = new KnowledgeReaderScope { DepartmentId = Dept, UserId = user, IsCurrentMember = true };
+				await _source.AddReadableAsync(Reader(user), scope);
+				return scope.ReadableItems.TryGetValue(KnowledgeSourceKinds.Course, out var set) && set.Contains(id);
+			}
+
+			(await Reads(LmsWorld.Member2)).Should().BeTrue("enrolled and seated");
+			_world.SeatedMembers.Remove(LmsWorld.Member2);
+			(await Reads(LmsWorld.Member2)).Should().BeFalse("reading a course through knowledge is being trained on it");
+			(await _source.LoadForReaderAsync(Reader(LmsWorld.Member2), KnowledgeSourceKinds.Course, id, null)).Outcome.Should().Be(KnowledgeOutcomes.NotEntitled,
+				"the course tutor is a learner item");
+
+			_gate.Setup(g => g.GetActorAsync(Dept, LmsWorld.Member2)).ReturnsAsync(() => _world.Actor(LmsWorld.Member2, manage: true));
+			(await Reads(LmsWorld.Member2)).Should().BeTrue("a course manager reads by permission, never a seat");
+			(await _source.LoadForReaderAsync(Reader(LmsWorld.Member2), KnowledgeSourceKinds.Course, id, null)).Outcome.Should().BeNull();
+		}
+}
 }

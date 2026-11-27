@@ -102,6 +102,10 @@
                 <a class="btn btn-default top-button" asp-controller="Security" asp-action="SecurityPolicy" asp-route-area="User">
                     Security Policy
                 </a>
+                <a class="btn btn-default top-button" asp-controller="StepUpSettings" asp-action="Index" asp-route-area="User" id="stepUpSettingsLink"
+                   title="@localizer["StepUpSecurityIndexLinkHelp"]">
+                    @localizer["StepUpPageTitle"]
+                </a>
                 <a class="btn btn-default top-button" asp-controller="Security" asp-action="ApiKeys" asp-route-area="User">
                     @localizer["ApiKeysButton"]
                 </a>
@@ -267,6 +271,36 @@
                                         <td>
                                             <span id="gradeAssessmentsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
                                             <div id="gradeAssessmentsRolesDiv" style="display: none;"><select id="gradeAssessmentsRoles" name="gradeAssessmentsRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermReviewDispatchCasesLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermReviewDispatchCasesNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ReviewDispatchCases, Model.ReviewDispatchCasesPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="reviewDispatchCasesNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="reviewDispatchCasesRolesDiv" style="display: none;"><select id="reviewDispatchCasesRoles" name="reviewDispatchCasesRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermRecordTrainingCompletionsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermRecordTrainingCompletionsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.RecordTrainingCompletions, Model.RecordTrainingCompletionsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="recordTrainingCompletionsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="recordTrainingCompletionsRolesDiv" style="display: none;"><select id="recordTrainingCompletionsRoles" name="recordTrainingCompletionsRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermManageContentSetsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermManageContentSetsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ManageContentSets, Model.ManageContentSetsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="manageContentSetsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="manageContentSetsRolesDiv" style="display: none;"><select id="manageContentSetsRoles" name="manageContentSetsRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>

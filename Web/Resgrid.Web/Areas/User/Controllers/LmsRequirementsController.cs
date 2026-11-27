@@ -208,7 +208,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			foreach (var group in await GroupOptionsAsync()) model.AudienceNames["1:" + group.Value] = group.Text;
 			foreach (var type in await CertificationOptionsAsync(false)) model.AudienceNames["3:" + type.Value] = type.Text;
 			foreach (var shift in await _shifts.GetAllShiftsByDepartmentAsync(DepartmentId) ?? new List<Shift>()) model.AudienceNames["5:" + shift.ShiftId.ToString(CultureInfo.InvariantCulture)] = shift.Name;
-			return View(model);
+			// Named: Onboarding() renders through here, and an unnamed View() would look for an Onboarding view that does not exist.
+			return View(nameof(Index), model);
 		}
 
 		[HttpGet]
@@ -558,7 +559,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var outcome = await _paths.AssignAsync(_actor, id, who?.Rules() ?? new List<ContentAudienceRule>(), LocalDateToUtcEnd(who?.DueOn), null, cancellationToken);
 			if (outcome.Error == LmsErrors.None)
-				TempData[MessageKey] = string.Format(Text("AssignedFormat"), outcome.Created, outcome.AlreadyEnrolled);
+				TempData[MessageKey] = string.Format(Text("AssignedFormat"), outcome.Created, outcome.AlreadyEnrolled) +
+					// Round 10 A7 (§17.4): members without an LMS seat are not put on a department path.
+					(outcome.NotLicensed > 0 ? " " + string.Format(Text("AssignedNotLicensedFormat"), outcome.NotLicensed) : string.Empty);
 			else
 				TempData[ErrorKey] = ErrorText(new LmsResult { Error = outcome.Error });
 			return RedirectToAction(nameof(Path), new { id });

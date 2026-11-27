@@ -85,7 +85,10 @@ namespace Resgrid.Config
 		/// </summary>
 		public static string WebhookAllowedNetworks = "";
 
-		/// <summary>The shared secret Documenso sends in X-Documenso-Secret (checked as well as the network). Blank = not checked.</summary>
+		/// <summary>
+		/// The shared secret Documenso sends in X-Documenso-Secret (checked as well as the network). Required: blank = every hint is refused
+		/// (security review L3, 2026-11-25), so set the same value here and in the Documenso webhook.
+		/// </summary>
 		public static string WebhookSecret = "";
 
 		/// <summary>Signing links expire after this many days unless the request says less.</summary>

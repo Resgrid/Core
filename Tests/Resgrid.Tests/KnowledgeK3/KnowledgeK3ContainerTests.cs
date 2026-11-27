@@ -18,7 +18,8 @@ namespace Resgrid.Tests.KnowledgeK3
 			Resolve<ILmsRecommendationService>().Should().NotBeNull();
 			Resolve<IKnowledgeCallContextService>().Should().NotBeNull();
 			Resolve<IKnowledgeCallDeterminantSource>().Should().NotBeNull();
-			ResolveAll<IKnowledgeCorpusSource>().Select(s => s.GetType().Name).Should().Contain("LmsCourseKnowledgeSource");
+			ResolveAll<IKnowledgeCorpusSource>().Select(s => s.GetType().Name).Should().Contain("LmsCourseKnowledgeSource").And.Contain("LmsQuestionExplanationKnowledgeSource");
+			Resolve<ILmsQuestionBankService>().Should().NotBeNull();
 			ResolveAll<IKnowledgeVersionContentSource>().SelectMany(s => s.VersionKinds).Should().Contain(KnowledgeSourceKinds.Course);
 		}
 	}

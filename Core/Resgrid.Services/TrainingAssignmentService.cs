@@ -24,7 +24,8 @@ namespace Resgrid.Services
 		private static readonly string[] ResetColumns =
 		{
 			"Viewed", "ViewedOn", "Complete", "CompletedOn", "Score", "Passed", "AttemptCount", "Cycle", "AssignedOn", "DueOn", "NotifiedOn",
-			"RemindedOn", "LastReminderLeadDays", "OverdueNotifiedOn", "OriginalDueOn", "ExtensionReason", "ExtendedByUserId", "ExtendedOn"
+			"RemindedOn", "LastReminderLeadDays", "OverdueNotifiedOn", "OriginalDueOn", "ExtensionReason", "ExtendedByUserId", "ExtendedOn",
+			"CompletionMethod", "RecordedCompletionId"
 		};
 
 		private readonly ITrainingRepository _trainingRepository;
@@ -329,6 +330,8 @@ namespace Resgrid.Services
 				row.CompletedOn = null;
 				row.Score = 0;
 				row.Passed = null;
+				row.CompletionMethod = (int)LearningCompletionMethods.Self;
+				row.RecordedCompletionId = null;
 			}
 
 			row.AttemptCount = 0;

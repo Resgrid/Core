@@ -619,6 +619,87 @@ ChecklistReminderSettingsUpdated,
 		LmsTaskBookCertificationRequested,
 		LmsTaskBookCertified,
 		LmsTaskBookClosed,
-		LmsSkillSettingsChanged
+		LmsSkillSettingsChanged,
+		// Protocols P5 QA (round 6 B): dispatch case review — a sample queued, a review taken out of the queue, a review sent to the
+		// dispatcher, the dispatcher's acknowledgment and reply, and a dispatch case rubric saved
+		DispatchCasesSampled,
+		DispatchCaseReviewRemoved,
+		DispatchCaseReviewSent,
+		DispatchCaseReviewAcknowledged,
+		DispatchCaseReviewReplied,
+		DispatchCaseRubricSaved,
+		// Training T5 data exit and CE reporting (round 6D): a department data export requested and downloaded, the CE reporting settings
+		// and column maps changed, a CE file (CAPCE, state CE, state roster) downloaded
+		LmsDataExportRequested,
+		LmsDataExportDownloaded,
+		LmsCeReportingSettingsChanged,
+		LmsCeExportDownloaded,
+		// Protocols P5 (round 6 A): opt-in public pages (a link made or revoked), a template library set cloned into the department, the
+		// community exchange (a submission, the reviewer's decision, a withdrawal, an import, a comment hidden) and the analytics CSV export
+		ProtocolPublicLinkCreated,
+		ProtocolPublicLinkRevoked,
+		ProtocolTemplateCloned,
+		ExchangeListingSubmitted,
+		ExchangeListingDecided,
+		ExchangeListingWithdrawn,
+		ExchangeListingImported,
+		ExchangeCommentHidden,
+		ProtocolAnalyticsExported,
+		LmsExternalLearnerInvited,
+		LmsExternalLearnerRegistered,
+		LmsExternalLearnerChanged,
+		LmsExternalLearnerErased,
+		LmsLearnerPortalChanged,
+		LmsPublicClassChanged,
+		LmsClassInvoicesRaised,
+		// Training T5 AI and content (round 6F): a course drafted by Enhanced AI from a protocol version or an SOP (a draft only), a Resgrid
+		// starter course cloned into the department with its attribution, and course flashcards accepted, edited, reviewed or removed
+		LmsCourseDraftedWithAi,
+		LmsStarterCourseCloned,
+		LmsFlashcardsChanged,
+		// Training T5 standards (round 6C): SCORM / cmi5 packages uploaded or removed, LTI tool registrations and platform key rotation, and
+		// the xAPI (LRS) settings
+		LmsContentPackageUploaded,
+		LmsContentPackageDeleted,
+		LmsLtiToolChanged,
+		LmsLtiPlatformKeyRotated,
+		LmsStandardsSettingsChanged,
+		// Enhanced AI on protocols (round 7A): protocol flashcards accepted, edited, reviewed or removed, and a baseline training created from an
+		// Enhanced AI draft of a protocol version
+		ProtocolFlashcardsChanged,
+		ProtocolTrainingDraftedWithAi,
+		// Round 7B: completions recorded for members by an instructor (permission 135) and their voids; an external learner's e-mail
+		// preferences (language, class reminders unsubscribed or back on)
+		TrainingCompletionRecorded,
+		TrainingCompletionRecordVoided,
+		LmsLearnerPreferencesChanged,
+		// Round 9A: a certification type's requirement set (LMS courses, sets, trainings, supervised practicals, CE hours) saved or removed; a
+		// certification issued or renewed by the training engine; and one taken back (or kept) because a completion behind it was voided
+		CertificationRequirementSetChanged,
+		CertificationIssuedByTraining,
+		CertificationRolledBackByVoid,
+		// Round 9B: a reviewer asked a member for more information on an hours submission, and the member resubmitted it (submissions,
+		// approvals and denials keep T1's ExternalTrainingSubmitted, LearningRecordVerified and LearningRecordRejected)
+		TrainingSubmissionInfoRequested,
+		TrainingSubmissionResubmitted,
+		// Round 10 A3: a protocol or course set saved, archived or its items changed; a subscription started, ended or suspended; an inbox
+		// update accepted, deferred, declined or applied, a set copy customized and a proposal made or answered; an LMS sponsorship started,
+		// changed or ended
+		ContentSetChanged,
+		ContentSetSubscriptionChanged,
+		ContentSetUpdateDecided,
+		LmsSponsorshipChanged,
+		// Round 10 (A5): department step-up policy saved (per area: required, and SSO / password allowed besides a second factor), and a
+		// member completing or failing a step-up for an area (method and area only; never a code or password)
+		StepUpPolicyChanged,
+		StepUpCompleted,
+		StepUpFailed,
+		// Round 10 A3 follow-up: a Records deployment order's partner (a Department Link) set, changed or cleared
+		RecordDeploymentPartnerChanged,
+		// Round 10 (A8): a member opened a SCORM, cmi5 or LTI lesson in the app (its single-use launch link exchanged by the in-app launch page)
+		LmsAppLaunchOpened,
+		// Round 11 (Workforce Pro): a member's Workforce Pro seat switched on or off, and the add-on's pack quantity changed
+		WorkforceProSeatsChanged,
+		WorkforceProPacksChanged
 	}
 }

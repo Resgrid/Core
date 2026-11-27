@@ -207,6 +207,14 @@ namespace Resgrid.Services
 			}
 
 			Audit(reader, AuditLogTypes.ProtocolTranslationApproved, null, translation);
+			// Workflow trigger 249: the compare-and-set above stored the approval once; the protocol may be unreadable to this reader (ids only then).
+			var approvedEvent = ProtocolWorkflowEvent.For(protocol != null && protocol.DepartmentId == reader.DepartmentId ? protocol : null, version,
+				ProtocolWorkflowChanges.TranslationApproved, reader.UserId, translation.ApprovedOn ?? DateTime.UtcNow);
+			approvedEvent.DepartmentId = reader.DepartmentId;
+			approvedEvent.ProtocolId = translation.DispatchProtocolId;
+			approvedEvent.Locale = translation.Locale;
+			approvedEvent.TranslationId = translation.ProtocolVersionTranslationId;
+			ContentWorkflowContext.Publish(_eventAggregator, approvedEvent);
 			await AfterTranslationChangeAsync(reader.DepartmentId, translation.DispatchProtocolId, cancellationToken);
 			return new ProtocolTranslationResult { Translation = translation, Signature = signed.Record };
 		}

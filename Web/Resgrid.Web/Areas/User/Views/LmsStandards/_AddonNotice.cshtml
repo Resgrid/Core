@@ -1,0 +1,8 @@
+@using Resgrid.Web.Areas.User.Models.LmsStandards
+@model LmsStandardsPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsStandards.LmsStandards> localizer
+@* The LMS add-on state for the Standards pages: lapsed or not active (everything stays readable; nothing can be changed). *@
+@if (!Model.CanAuthor)
+{
+    <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @(Model.IsLapsed ? localizer["Std.LapsedNotice"] : localizer["Std.AddonNotice"])</div>
+}

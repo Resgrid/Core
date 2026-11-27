@@ -43,13 +43,14 @@ namespace Resgrid.Model
 		/// <summary>
 		/// Add-ons sold through their own monthly Billing API checkout (not the legacy PTT quantity flow), each with a
 		/// dedicated backend, billing-account table and live/test price pair: Readiness Pro, Business Operations, Enhanced AI,
-		/// Incident Back Office, Dedicated Number, and the LMS (the pack add-on path: its own subscription with a pack quantity,
-		/// protocols-training-knowledge-plan §17.3 R-L10).
+		/// Incident Back Office, Dedicated Number, the LMS and Workforce Pro (the pack add-on path: its own subscription with a pack
+		/// quantity, protocols-training-knowledge-plan §17.3 R-L10; shifts-scheduling-modernization-plan.md §7).
 		/// </summary>
 		public static bool IsDedicatedMonthlyAddon(int addonType) =>
 			addonType == (int)PlanAddonTypes.ReadinessPro || addonType == (int)PlanAddonTypes.BusinessOperations ||
 			addonType == (int)PlanAddonTypes.EnhancedAi || addonType == (int)PlanAddonTypes.IncidentBackOffice ||
-			addonType == (int)PlanAddonTypes.DedicatedNumber || addonType == (int)PlanAddonTypes.Lms;
+			addonType == (int)PlanAddonTypes.DedicatedNumber || addonType == (int)PlanAddonTypes.Lms ||
+			addonType == (int)PlanAddonTypes.WorkforcePro;
 
 		/// <summary>
 		/// The Advanced Data Protection yearly checkout row (M0298). ADP has two catalog rows: the legacy item on the base Stripe
@@ -153,6 +154,8 @@ namespace Resgrid.Model
 					return "Private Inbound Dispatch Number";
 				case PlanAddonTypes.Lms:
 					return "LMS";
+				case PlanAddonTypes.WorkforcePro:
+					return "Workforce Pro";
 				default:
 					throw new ArgumentOutOfRangeException();
 			}

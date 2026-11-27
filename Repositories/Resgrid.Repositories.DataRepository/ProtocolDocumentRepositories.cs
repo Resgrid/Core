@@ -13,7 +13,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>Primary files of document-backed protocol versions (M0353). Metadata reads never select Data.</summary>
+	/// <summary>Primary files of document-backed protocol versions (M0347). Metadata reads never select Data.</summary>
 	public class ProtocolVersionFilesRepository : RmsRepositoryBase<ProtocolVersionFile>, IProtocolVersionFilesRepository
 	{
 		private static readonly string[] MetadataColumns =
@@ -80,7 +80,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>File text extractions and their pages (M0353).</summary>
+	/// <summary>File text extractions and their pages (M0347).</summary>
 	public class ProtocolFileTextsRepository : RmsRepositoryBase<ProtocolFileText>, IProtocolFileTextsRepository
 	{
 		/// <summary>Pages read per file for the search projection (its text is capped anyway).</summary>
@@ -296,7 +296,7 @@ namespace Resgrid.Repositories.DataRepository
 		private static string Take() => IsPostgres ? "LIMIT @Take" : "OFFSET 0 ROWS FETCH NEXT @Take ROWS ONLY";
 	}
 
-	/// <summary>Protocol acknowledgments (P2, M0354).</summary>
+	/// <summary>Protocol acknowledgments (P2, M0348).</summary>
 	public class ProtocolAcknowledgmentsRepository : RmsRepositoryBase<ProtocolAcknowledgment>, IProtocolAcknowledgmentsRepository
 	{
 		public ProtocolAcknowledgmentsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)

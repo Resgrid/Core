@@ -77,8 +77,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public TrainingRecordsController(ILearningRecordService learningRecords, ITrainingHistoryImportService historyImport, ILmsAccessService lmsAccess,
 			ILmsTrainingService lmsTraining, IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			IDepartmentSettingsService departmentSettingsService, ICertificationService certificationService, IPdfProvider pdfProvider,
-			IDocumentSealingService sealing, IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer)
+			IDocumentSealingService sealing, IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer,
+			ITrainingCompletionRecordingService recordings, ITrainingSubmissionService submissions)
 		{
+			_submissions = submissions;
+			_recordings = recordings;
 			_learningRecords = learningRecords;
 			_historyImport = historyImport;
 			_lmsAccess = lmsAccess;
@@ -90,6 +93,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_pdfProvider = pdfProvider;
 			_sealing = sealing;
 			_localizer = localizer;
+		}
+
+		private readonly ITrainingCompletionRecordingService _recordings;
+
+		/// <summary>Round 9B: members' training hours submissions with evidence and their optional review (notices, history, workflow).</summary>
+		private readonly ITrainingSubmissionService _submissions;
+
+		/// <summary>Round 9B: a TrainingReviews string (provenance labels, refusal codes of the evidence checks) in the current UI language.</summary>
+		private static string ReviewText(string key) =>
+			Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviewTexts.Get(key, CultureInfo.CurrentUICulture.Name) ?? key;
+
+		/// <summary>Round 7B: "recorded by" text of a completion an instructor recorded (who, when, from where, the note), localized; null otherwise.</summary>
+		private string RecordedByText(LearningRecord record, IReadOnlyDictionary<int, TrainingCompletionRecording> recordings, IReadOnlyDictionary<string, string> names,
+			Department department)
+		{
+			if (record == null || !record.IsRecordedByOther)
+				return null;
+			TrainingCompletionRecording recording = null;
+			if (record.RecordedCompletionId.HasValue && recordings != null)
+				recordings.TryGetValue(record.RecordedCompletionId.Value, out recording);
+			var by = record.RecordedByUserId ?? recording?.RecordedByUserId;
+			var name = by != null && names != null && names.TryGetValue(by, out var n) && !string.IsNullOrWhiteSpace(n) ? n : by;
+			var on = record.RecordedOn ?? recording?.RecordedOn;
+			var text = string.Format(CultureInfo.CurrentCulture, L("RecordCompletions.RecordedByFormat"), name,
+				on.HasValue ? DateTime.SpecifyKind(on.Value, DateTimeKind.Utc).TimeConverter(department).ToString("d", CultureInfo.CurrentCulture) : string.Empty);
+			if (recording != null)
+				text += " · " + L("RecordCompletions.Source." + (TrainingCompletionRecordingSources)recording.SourceKind) +
+					(string.IsNullOrWhiteSpace(recording.Note) ? string.Empty : " · " + recording.Note.Trim());
+			return text;
 		}
 
 		#region Gates
@@ -220,7 +252,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (string.IsNullOrWhiteSpace(code))
 				return L("Rec.ActionFailed");
 			var text = _localizer?[code];
-			return text == null || text.ResourceNotFound || string.IsNullOrEmpty(text.Value) ? L("Rec.ActionFailed") : text.Value;
+			if (text != null && !text.ResourceNotFound && !string.IsNullOrEmpty(text.Value))
+				return text.Value;
+			// Round 9B: the evidence checks' and the review's codes live with the TrainingReviews strings.
+			var review = Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviewTexts.Get(code, CultureInfo.CurrentUICulture.Name);
+			return string.IsNullOrEmpty(review) ? L("Rec.ActionFailed") : review;
 		}
 
 		private static bool IsServiceCode(InvalidOperationException ex) =>
@@ -263,6 +299,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (await CanReviewAnyAsync())
 				Add("Rec.QueueTab", "fa-check-square-o", "Queue");
+			// Round 9B: members' training hours submissions are reviewed in Training reviews.
+			if (scope.CanReviewSubmissions)
+				tabs.Tabs.Add(new ModuleTab(ReviewText("Reviews.Tab"), "fa-inbox", "TrainingReviews", "Index", false));
 
 			if (scope.CanManageRecords)
 			{
@@ -281,6 +320,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Add("Rec.CertificateTemplatesTab", "fa-id-badge", "CertificateTemplates");
 				}
 			}
+
+			// Training T5 data exit (round 6D): department owners and admins export every record at any time (free, §17.2), with the LMS
+			// content when the department has any; the page works without the LMS flag or add-on.
+			if (User?.HasClaim(ResgridClaimTypes.Resources.Department, ResgridClaimTypes.Actions.Update) == true)
+				tabs.Tabs.Add(new ModuleTab(Resgrid.Localization.Areas.User.LmsExports.LmsExportTexts.Get("Exit.Tab", CultureInfo.CurrentUICulture.Name), "fa-archive", "LmsExports", "Index", false));
 
 			return tabs;
 		}
@@ -367,36 +411,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		/// <summary>The content a certificate seal binds to: the verified record as printed (never the print time or the viewer).</summary>
+		/// <remarks>Round 10: shared with the v4 download (TrainingDocuments), so either one's sealed copy is the one the other serves again.</remarks>
 		public static string CertificateRevisionSha256(LearningRecord record, string verificationCode) =>
-			SignaturePolicy.HashArtifact(Newtonsoft.Json.JsonConvert.SerializeObject(new
-			{
-				kind = "training-certificate/1",
-				id = record.LearningRecordId,
-				department = record.DepartmentId,
-				holder = (record.UserId ?? string.Empty).ToLowerInvariant(),
-				title = record.Title,
-				code = record.CourseCode,
-				completed = record.CompletedOn.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture),
-				hours = record.Hours,
-				ce = record.CeHours,
-				category = record.CategoryId,
-				verifiedBy = (record.VerifiedByUserId ?? string.Empty).ToLowerInvariant(),
-				verification = verificationCode
-			}));
+			Resgrid.Services.TrainingDocuments.CertificateRevisionSha256(record, verificationCode);
 
 		/// <summary>The content a transcript seal binds to: its member, period, filters and lines (never the print time or the viewer).</summary>
 		public static string TranscriptRevisionSha256(string userId, TranscriptDocument document, int? categoryId, int? source) =>
-			SignaturePolicy.HashArtifact(Newtonsoft.Json.JsonConvert.SerializeObject(new
-			{
-				kind = "training-transcript/1",
-				member = (userId ?? string.Empty).ToLowerInvariant(),
-				from = document.FromUtc?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-				to = document.ToUtc?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
-				categoryId,
-				source,
-				lines = document.Lines,
-				total = document.TotalHours
-			}));
+			Resgrid.Services.TrainingDocuments.TranscriptRevisionSha256(userId, document, categoryId, source);
 
 		private IActionResult CsvFile(string csv, string fileName)
 		{
@@ -494,6 +515,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.MemberName = model.NameOf(access.Target);
 			model.IsFormerMember = model.IsFormer(access.Target);
 			model.Records = await TranscriptRecordsAsync(access.Target, from, to, categoryId, model.Source, audit);
+			// Round 7B: completions recorded by an instructor show who recorded them (never as the member's own).
+			if (model.Records.Any(r => r.IsRecordedByOther))
+			{
+				model.Recordings = await _recordings.GetForRecordsAsync(DepartmentId, model.Records) ?? new Dictionary<int, TrainingCompletionRecording>();
+				model.RecorderNames = await NamesAsync();
+			}
 
 			if (access.Self)
 			{
@@ -560,6 +587,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var names = await NamesAsync();
 			var categories = await _learningRecords.GetCategoriesAsync(DepartmentId, true) ?? new List<TrainingCategory>();
 			var records = await TranscriptRecordsAsync(target, from, to, categoryId, source, false);
+			var recordings = records.Any(r => r.IsRecordedByOther) ? await _recordings.GetForRecordsAsync(DepartmentId, records) ?? new Dictionary<int, TrainingCompletionRecording>()
+				: new Dictionary<int, TrainingCompletionRecording>();
 
 			var document = new TranscriptDocument
 			{
@@ -586,7 +615,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					CeCourseNumber = record.CeCourseNumber,
 					Method = methodKey == null ? null : L(methodKey),
 					Instructors = InstructorsOf(record, names),
-					Counts = record.Counts
+					Counts = record.Counts,
+					RecordedBy = RecordedByText(record, recordings, names, department),
+					// Round 9B: self-reported vs reviewed vs recorded by an instructor (or by the system, or imported).
+					Provenance = ReviewText("Provenance." + TrainingSubmissionRules.ProvenanceOf(record))
 				});
 			}
 
@@ -768,6 +800,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = await PageAsync(new TrainingRecordSubmitView
 			{
 				SubmissionsDisabled = settings.MemberSubmissionsDisabled,
+				ReviewMode = settings.SubmissionReviewMode,
 				Today = LocalToday(department).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
 			});
 			model.Input.CompletedOn = model.Today;
@@ -779,9 +812,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Training_View)]
 		[RequestSizeLimit(MaxEvidenceRequestBytes)]
 		[RequestFormLimits(MultipartBodyLengthLimit = MaxEvidenceRequestBytes)]
-		public async Task<IActionResult> Submit(LearningRecordSubmitInput input, IFormFile evidence, CancellationToken cancellationToken)
+		public async Task<IActionResult> Submit(LearningRecordSubmitInput input, List<IFormFile> evidence, int evidenceKind, CancellationToken cancellationToken)
 		{
 			input ??= new LearningRecordSubmitInput();
+			var reviewMode = ((await _learningRecords.GetSettingsAsync(DepartmentId)) ?? new TrainingRecordSettings()).SubmissionReviewMode;
 			var department = await DepartmentAsync();
 			var today = LocalToday(department);
 			var categories = await _learningRecords.GetCategoriesAsync(DepartmentId, false) ?? new List<TrainingCategory>();
@@ -811,24 +845,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var ceNumber = Bounded(input.CeCourseNumber, 100, nameof(input.CeCourseNumber));
 			var notes = Bounded(input.Notes, LearningRecord.MaxNotesLength, nameof(input.Notes));
 
-			byte[] data = null;
-			string fileName = null, contentType = null;
-			if (evidence != null && evidence.Length > 0)
-			{
-				fileName = System.IO.Path.GetFileName(evidence.FileName ?? string.Empty);
-				var extension = System.IO.Path.GetExtension(fileName).TrimStart('.');
-				if (!EvidenceTypes.TryGetValue(extension, out contentType))
-					ModelState.AddModelError("evidence", L("Rec.EvidenceTypeError"));
-				else if (evidence.Length > LearningRecordFile.MaxBytes)
-					ModelState.AddModelError("evidence", L("Rec.EvidenceSizeError"));
-				else
-				{
-					using var stream = evidence.OpenReadStream();
-					using var memory = new System.IO.MemoryStream();
-					await stream.CopyToAsync(memory, cancellationToken);
-					data = memory.ToArray();
-				}
-			}
+			// Round 9B: several evidence files (a certificate, photos, a document, a receipt), the kind the member chose for them.
+			var (files, fileRefusal) = await TrainingReviewsController.ReadEvidenceAsync(evidence, evidenceKind, cancellationToken);
+			if (fileRefusal != null)
+				ModelState.AddModelError("evidence", ErrorText(fileRefusal));
 
 			if (ModelState.IsValid)
 			{
@@ -847,26 +867,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 					Status = LearningRecordStatuses.Pending
 				};
 
-				try
+				// Round 9B: through the submission service (the review decision, the history, the notices and the workflow triggers).
+				var outcome = await _submissions.SubmitAsync(DepartmentId, UserId, draft, files, cancellationToken);
+				if (outcome?.Record != null && outcome.Refusal == null)
 				{
-					var saved = await _learningRecords.SubmitExternalAsync(DepartmentId, UserId, draft, fileName, contentType, data, cancellationToken);
-					if (saved != null)
-					{
-						Flash(L("Rec.SubmittedMessage"));
-						return RedirectToAction("Transcript");
-					}
+					TempData["TrainingReviewsMessage"] = ReviewText(outcome.ReviewRequired ? "Message.Submitted" : "Message.Accepted");
+					return RedirectToAction("Submission", "TrainingReviews", new { id = outcome.Record.LearningRecordId });
+				}
 
-					// Null: the department switched member submissions off.
-					var disabled = await PageAsync(new TrainingRecordSubmitView { Input = input, SubmissionsDisabled = true, Today = today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) });
+				if (outcome?.Refusal == "learning_record_submissions_disabled")
+				{
+					// The department switched member submissions off.
+					var disabled = await PageAsync(new TrainingRecordSubmitView { Input = input, SubmissionsDisabled = true, ReviewMode = reviewMode, Today = today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) });
 					return View(disabled);
 				}
-				catch (InvalidOperationException ex) when (IsServiceCode(ex))
-				{
-					ModelState.AddModelError(string.Empty, ErrorText(ex.Message));
-				}
+
+				ModelState.AddModelError(string.Empty, ErrorText(outcome?.Refusal));
 			}
 
-			var model = await PageAsync(new TrainingRecordSubmitView { Input = input, Today = today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) });
+			var model = await PageAsync(new TrainingRecordSubmitView { Input = input, ReviewMode = reviewMode, Today = today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) });
 			return View(model);
 		}
 
@@ -898,9 +917,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var scope = await ScopeAsync();
 			var model = await PageAsync(new TrainingRecordQueueView { CurrentUserId = UserId }, "Queue");
 
+			// Round 9B: members' hours submissions are reviewed in Training reviews (evidence inline, more information, bulk approve); the
+			// queue keeps open check-ins and the other pending records, and says how many submissions wait there.
 			model.Pending = (await _learningRecords.GetPendingAsync(DepartmentId) ?? new List<LearningRecord>())
-				.Where(r => r != null && r.DepartmentId == DepartmentId && r.Status == (int)LearningRecordStatuses.Pending && scope.CanReviewRecordsOf(r.UserId))
+				.Where(r => r != null && r.DepartmentId == DepartmentId && r.Status == (int)LearningRecordStatuses.Pending && scope.CanReviewRecordsOf(r.UserId) &&
+					!TrainingSubmissionRules.IsSubmission(r))
 				.OrderBy(r => r.CreatedOn).ToList();
+			model.SubmissionsAwaiting = await _submissions.CountAwaitingAsync(DepartmentId, UserId);
 
 			var duplicates = (await _learningRecords.QueryAsync(new LearningRecordQuery { DepartmentId = DepartmentId, UnresolvedDuplicatesOnly = true, Take = 500 }) ?? new List<LearningRecord>())
 				.Where(r => r != null && r.DepartmentId == DepartmentId && r.HasUnresolvedDuplicate && scope.CanReviewRecordsOf(r.UserId))
@@ -952,6 +975,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Queue");
 			}
 
+			if (TrainingSubmissionRules.IsSubmission(record))
+			{
+				// Round 9B: a member submission is decided through the review service (the member is told, the history is kept).
+				var approved = await _submissions.ApproveAsync(DepartmentId, record.LearningRecordId, UserId, Note(note), hours.HasValue ? Math.Round(hours.Value, 2) : (decimal?)null, cancellationToken);
+				Flash(approved?.Refusal == null ? L("Rec.VerifiedMessage") : null, approved?.Refusal != null ? ErrorText(approved.Refusal) : null);
+				return RedirectToAction("Queue");
+			}
+
 			try
 			{
 				var verified = await _learningRecords.VerifyAsync(DepartmentId, record.LearningRecordId, UserId, Note(note), hours.HasValue ? Math.Round(hours.Value, 2) : (decimal?)null, cancellationToken);
@@ -977,6 +1008,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (string.IsNullOrWhiteSpace(note))
 			{
 				Flash(null, L("Rec.RejectNoteRequired"));
+				return RedirectToAction("Queue");
+			}
+
+			if (TrainingSubmissionRules.IsSubmission(record))
+			{
+				var denied = await _submissions.DenyAsync(DepartmentId, record.LearningRecordId, UserId, Note(note), cancellationToken);
+				Flash(denied?.Refusal == null ? L("Rec.RejectedMessage") : null, denied?.Refusal != null ? ErrorText(denied.Refusal) : null);
 				return RedirectToAction("Queue");
 			}
 
@@ -1104,7 +1142,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private async Task<TrainingCategoriesView> CategoriesPageAsync(TrainingCategoryInput input)
 		{
-			var model = await PageAsync(new TrainingCategoriesView { Templates = TrainingCategoryTemplateCatalog.All }, "Categories");
+			// Round 9C: templates in the reader's language; the ones the operating profile suggests come first (nothing is hidden).
+			var profile = await _departmentSettingsService.GetOperatingProfileAsync(DepartmentId);
+			var templates = TrainingCategoryTemplateCatalog.AllFor(CultureInfo.CurrentUICulture.Name);
+			var model = await PageAsync(new TrainingCategoriesView
+			{
+				Templates = SeedSectorRecommendations.SuggestedFirst(templates, SeedContentLocalization.CategoryTemplates, t => t.Key, profile),
+				Suggested = SeedSectorRecommendations.Suggested(SeedContentLocalization.CategoryTemplates, templates.Select(t => t.Key), profile)
+			}, "Categories");
 			model.Input = input ?? new TrainingCategoryInput();
 			model.Codes = new HashSet<string>(model.LiveCategories.Where(c => !string.IsNullOrWhiteSpace(c.Code)).Select(c => c.Code), StringComparer.OrdinalIgnoreCase);
 			return model;
@@ -1213,7 +1258,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			try
 			{
-				var added = await _learningRecords.ApplyCategoryTemplateAsync(DepartmentId, template.Key, UserId, cancellationToken);
+				var added = await _learningRecords.ApplyCategoryTemplateAsync(DepartmentId, template.Key, UserId, CultureInfo.CurrentUICulture.Name, cancellationToken);
 				Flash(string.Format(L("Rec.TemplateAppliedMessage"), added));
 			}
 			catch (InvalidOperationException ex) when (IsServiceCode(ex))
@@ -1762,7 +1807,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Training_View)]
-		public async Task<IActionResult> Settings(int hoursRoundingMinutes, int hoursRoundingMode, bool memberSubmissionsDisabled, int defaultRetentionYears, CancellationToken cancellationToken)
+		public async Task<IActionResult> Settings(int hoursRoundingMinutes, int hoursRoundingMode, bool memberSubmissionsDisabled, int defaultRetentionYears,
+			int submissionReviewMode, int[] reviewCategoryIds, decimal? reviewAboveHours, bool roleReviewersOwnGroupOnly, int reviewerNotices, CancellationToken cancellationToken)
 		{
 			if (!(await ScopeAsync()).CanManageRecords)
 				return Unauthorized();
@@ -1772,8 +1818,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 				HoursRoundingMinutes = hoursRoundingMinutes,
 				HoursRoundingMode = hoursRoundingMode,
 				MemberSubmissionsDisabled = memberSubmissionsDisabled,
-				DefaultRetentionYears = defaultRetentionYears
+				DefaultRetentionYears = defaultRetentionYears,
+				// Round 9B: the optional review of members' hours submissions
+				SubmissionReviewMode = submissionReviewMode,
+				ReviewCategoryIds = (reviewCategoryIds ?? Array.Empty<int>()).Where(id => id > 0).Distinct().ToList(),
+				ReviewAboveHours = reviewAboveHours ?? 0m,
+				RoleReviewersOwnGroupOnly = roleReviewersOwnGroupOnly,
+				ReviewerNotices = reviewerNotices
 			};
+
+			if (!Enum.IsDefined(typeof(TrainingSubmissionReviewModes), submissionReviewMode))
+				ModelState.AddModelError("SubmissionReviewMode", ReviewText("Settings.ModeInvalid"));
+			if (!Enum.IsDefined(typeof(TrainingReviewerNoticeModes), reviewerNotices))
+				ModelState.AddModelError("ReviewerNotices", ReviewText("Settings.ModeInvalid"));
+			if (reviewAboveHours.HasValue && (reviewAboveHours.Value < 0 || reviewAboveHours.Value > TrainingRecordSettings.MaxReviewAboveHours))
+				ModelState.AddModelError("ReviewAboveHours", L("HoursRange"));
+			var liveCategories = (await _learningRecords.GetCategoriesAsync(DepartmentId, false) ?? new List<TrainingCategory>()).Select(c => c.TrainingCategoryId).ToHashSet();
+			settings.ReviewCategoryIds = settings.ReviewCategoryIds.Where(liveCategories.Contains).ToList();
+			if (submissionReviewMode == (int)TrainingSubmissionReviewModes.Selected && settings.ReviewCategoryIds.Count == 0 && settings.ReviewAboveHours <= 0)
+				ModelState.AddModelError("ReviewCategoryIds", ReviewText("Settings.SelectedRequired"));
 
 			if (!TrainingRecordSettings.AllowedRoundingMinutes.Contains(hoursRoundingMinutes))
 				ModelState.AddModelError("HoursRoundingMinutes", L("Rec.RoundingInvalid"));

@@ -1,0 +1,64 @@
+{
+  "key": "confined-space-awareness",
+  "revision": 1,
+  "kind": "course",
+  "title": "Confined space awareness",
+  "code": "RG-CSA",
+  "summary": "Awareness for everyone who works near confined spaces: recognizing a confined space, why its hazards kill would-be rescuers, and the permit, the attendant and the rescue plan. Pair it with your site's entry procedure and hands-on training before anyone enters.",
+  "tags": "confined space, industrial, safety, awareness, starter",
+  "hours": 0.5,
+  "license": "resgrid-starter",
+  "overview": "<p>A starter course written by Resgrid in plain language. It is awareness only and does not qualify anyone to enter, attend or rescue. Your site's entry procedure and the occupational safety rules where you operate come first.</p>",
+  "modules": [
+    {
+      "title": "Recognize",
+      "lessons": [
+        {
+          "title": "What makes a space confined",
+          "html": "<p>A confined space is large enough to enter, has limited ways in and out, and is not designed for people to work in. Tanks, silos, pits, vaults, sewers and vessels are common examples.</p><p><em>Add your site's list of confined spaces and how they are marked.</em></p>"
+        },
+        {
+          "title": "The hazards",
+          "html": "<p>The air inside can lack oxygen or hold toxic or flammable gases that you cannot see or smell. Other hazards include engulfment, moving parts and heat.</p><ul><li>Most confined space deaths are people who went in to help someone else.</li></ul>"
+        }
+      ]
+    },
+    {
+      "title": "Entry is controlled",
+      "lessons": [
+        {
+          "title": "Permit, attendant and rescue plan",
+          "html": "<p>Entry into a space that needs a permit happens only with a valid permit, tested air, an attendant outside and a rescue plan in place.</p><ul><li>The attendant stays outside and calls the rescue team.</li><li>Never enter a confined space to rescue someone unless you are trained, equipped and part of the rescue plan.</li></ul>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Confined space awareness check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "A coworker collapses inside a tank. What should you do?",
+        "kind": "single",
+        "options": [ "Call the rescue team and stay outside", "Go in at once to pull them out", "Wait to see if they recover" ],
+        "correct": 0,
+        "explanation": "Never enter a confined space to rescue someone unless you are trained, equipped and part of the rescue plan."
+      },
+      {
+        "text": "You can tell that the air in a confined space is safe by its smell.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 1,
+        "explanation": "The air inside can lack oxygen or hold toxic or flammable gases that you cannot see or smell."
+      },
+      {
+        "text": "Where does the attendant stay during an entry?",
+        "kind": "single",
+        "options": [ "Outside the space", "Inside with the entrant", "In the control room" ],
+        "correct": 0,
+        "explanation": "The attendant stays outside and calls the rescue team."
+      }
+    ]
+  }
+}

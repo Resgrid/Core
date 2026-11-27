@@ -12,7 +12,9 @@ namespace Resgrid.Services.Wellness
 {
 	/// <summary>
 	/// Worker 91's WL1 steps. Each starts from a query for due work (overdue Ryan White answers, injuries whose expected return passed,
-	/// records older than their minimum retention), never from a sweep of every department, and asks no billing gate (WL1 is free).
+	/// records older than their minimum retention), never from a sweep of every department. Workforce Pro (2026-11-26): the gate is asked once
+	/// per department with due work; a department that is not licensed (or whose flag is off) gets no notices, and in a licensed department no
+	/// notice is sent about a member without a seat (claimed and skipped, so nothing bursts out later). Retention erasure is never gated.
 	/// Every notice is claimed before it is sent. A record about a member who left, was disabled or is hidden is claimed and then skipped:
 	/// nobody is told about them (inactive-member policy), and recipients are active members only.
 	/// </summary>
@@ -24,6 +26,14 @@ namespace Resgrid.Services.Wellness
 		{
 			var sent = 0;
 			var activeByDepartment = new Dictionary<int, HashSet<string>>();
+			var gates = new Dictionary<int, WorkforceProAccess>();
+
+			async Task<bool> SeatedAsync(int departmentId, string userId)
+			{
+				if (!gates.TryGetValue(departmentId, out var gate))
+					gates[departmentId] = gate = await WorkforceProAsync(departmentId);
+				return gate.HoldsSeat(userId);
+			}
 
 			async Task<HashSet<string>> ActiveAsync(int departmentId)
 			{
@@ -47,12 +57,16 @@ namespace Resgrid.Services.Wellness
 						continue;
 					if (!(await ActiveAsync(incident.DepartmentId)).Contains(incident.UserId))
 						continue;
+					if (!await SeatedAsync(incident.DepartmentId, incident.UserId))
+						continue;
 
 					var department = await DepartmentAsync(incident.DepartmentId);
-					var requested = incident.NotificationRequestedOn.HasValue ? LocalDate(incident.NotificationRequestedOn.Value, department).ToString("d", CultureInfo.InvariantCulture) : null;
+					DateTime? requested = incident.NotificationRequestedOn.HasValue ? LocalDate(incident.NotificationRequestedOn.Value, department) : null;
 					var name = await NameOfAsync(incident.DepartmentId, incident.UserId);
-					sent += await NotifyAsync(incident.DepartmentId, await DesignatedOfficersAsync(incident.DepartmentId), "Exposure notification overdue",
-						$"The medical facility has not answered the exposure notification request for {name}{(requested == null ? string.Empty : " sent on " + requested)}. Ryan White asks for an answer within 48 hours. {Link("/User/MemberHealth/Case?id=" + incident.RmsExposureIncidentId)}",
+					var caseLink = Link("/User/MemberHealth/Case?id=" + incident.RmsExposureIncidentId);
+					sent += await NotifyAsync(incident.DepartmentId, await DesignatedOfficersAsync(incident.DepartmentId), "Health.NotificationOverdue.Title",
+						requested.HasValue ? "Health.NotificationOverdue.MessageSent" : "Health.NotificationOverdue.Message", name,
+						() => requested.HasValue ? new object[] { requested.Value, caseLink } : new object[] { caseLink },
 						EventTypes.ExposureIncidentNotice, incident.RmsExposureIncidentId, cancellationToken);
 				}
 				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -76,10 +90,13 @@ namespace Resgrid.Services.Wellness
 						continue;
 					if (!(await ActiveAsync(injury.DepartmentId)).Contains(injury.UserId))
 						continue;
+					if (!await SeatedAsync(injury.DepartmentId, injury.UserId))
+						continue;
 
 					var name = await NameOfAsync(injury.DepartmentId, injury.UserId);
-					sent += await NotifyAsync(injury.DepartmentId, await HealthOfficersAsync(injury.DepartmentId), "Return to duty review",
-						$"{name} was expected back on {injury.ExpectedReturnOn.Value.ToString("d", CultureInfo.InvariantCulture)}. Please review the duty status. {Link("/User/MemberHealth/Injury?id=" + injury.RmsMemberInjuryId)}",
+					var expected = injury.ExpectedReturnOn.Value;
+					sent += await NotifyAsync(injury.DepartmentId, await HealthOfficersAsync(injury.DepartmentId), "Health.ReturnReview.Title", "Health.ReturnReview.Message", name,
+						() => new object[] { expected, Link("/User/MemberHealth/Injury?id=" + injury.RmsMemberInjuryId) },
 						EventTypes.DutyStatusNotice, injury.RmsMemberInjuryId, cancellationToken);
 				}
 				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)

@@ -1,0 +1,64 @@
+@using Resgrid.Model.Lms
+@model Resgrid.Web.Areas.User.Models.LmsExternalLearners.LmsExternalCoursesModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@* Which published department courses external learners may take: members only (default), enrolled by the department, or listed on the portal. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CourseAccess"];
+    ViewData["Title"] = localizer["CourseAccess"].Value;
+    ViewData["Subtitle"] = localizer["Intro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white btn-sm" asp-controller="LmsExternalLearners" asp-action="Index" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Title"]</a>
+    </div>
+    <div class="ibox"><div class="ibox-content">
+        @if (Model.Courses.Count == 0)
+        {
+            <p class="text-muted">@localizer["NoCourses"]</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table rgw-table">
+                    <thead><tr><th>@localizer["Course"]</th><th>@localizer["Access"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var course in Model.Courses)
+                        {
+                            var current = Model.Access.TryGetValue(course.LmsCourseId, out var a) ? a : (int)LmsExternalCourseAccessKinds.None;
+                            <tr>
+                                <td>@course.Title<span class="rgw-sub">@course.Code</span></td>
+                                <td>
+                                    <form method="post" asp-controller="LmsExternalLearners" asp-action="SetCourseAccess" asp-route-area="User" class="form-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="courseId" value="@course.LmsCourseId" />
+                                        <label class="sr-only" for="xl-access-@course.LmsCourseId">@localizer["Access"]</label>
+                                        <select id="xl-access-@course.LmsCourseId" name="access" class="form-control input-sm" disabled="@(!Model.CanAuthor)">
+                                            @foreach (LmsExternalCourseAccessKinds kind in Enum.GetValues(typeof(LmsExternalCourseAccessKinds)))
+                                            {
+                                                <option value="@kind" selected="@((int)kind == current)">@localizer["Access." + kind]</option>
+                                            }
+                                        </select>
+                                        @if (Model.CanAuthor)
+                                        {
+                                            <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Save"]</button>
+                                        }
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div></div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

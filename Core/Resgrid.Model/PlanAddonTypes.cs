@@ -13,10 +13,16 @@
 		IncidentBackOffice = 6,
 		/// <summary>Dedicated department phone number (call-intake-and-ai-destinations-plan.md, M0323): monthly add-on (USD 15 Stripe US/CA / EUR 20 Paddle EU) for departments with an active paid entity plan; inbound SMS intake and Enhanced AI voice intake.</summary>
 		DedicatedNumber = 7,
-		// 8 is reserved for Workforce Pro (shifts plan, registry); do not use it here.
+		/// <summary>
+		/// Workforce Pro add-on (shifts-scheduling-modernization-plan.md §7, decision D23; owner 2026-11-26: all member wellness and workplace
+		/// exposure moved here): a pack add-on like the LMS, 25-member packs, graduated, monthly, with a per-member seat. The PlanAddons row is
+		/// WorkforceProAddonConfig.PlanAddonId; general availability is the operator switching the Workforce.Pro flag on (seeded off). The gate
+		/// (IWorkforceProAccessService) fails closed.
+		/// </summary>
+		WorkforcePro = 8,
 		/// <summary>
 		/// LMS add-on (protocols-training-knowledge-plan.md §17): courses, requirements, classes and the formal training reports.
-		/// A pack add-on (§17.4): 25-member packs, graduated, monthly, with a per-member seat. The PlanAddons row is M0366
+		/// A pack add-on (§17.4): 25-member packs, graduated, monthly, with a per-member seat. The PlanAddons row is M0351
 		/// (LmsAddonConfig.PlanAddonId); general availability is the operator switching the Training.Lms flag on (seeded off),
 		/// not code (§25.4a item 7). The gate (ILmsAccessService) fails closed.
 		/// </summary>

@@ -42,13 +42,19 @@ namespace Resgrid.Services
 		private readonly ICalendarItemTypeRepository _calendarTypes;
 		private readonly IDepartmentSettingsService _settings;
 		private readonly IEventAggregator _events;
+		private readonly Lazy<IEnumerable<ILearningRecordObserver>> _observers;
+
+		/// <summary>An observer's own work never notifies again (a certification issued from a write is not a new learning record).</summary>
+		private static readonly System.Threading.AsyncLocal<int> NotifyDepth = new System.Threading.AsyncLocal<int>();
 
 		public LearningRecordWriter(ILearningRecordsRepository records, ICategoryCreditMappingsRepository mappings, ITrainingCategoriesRepository categories,
 			IPersonnelCertificationRepository certificationRecords, IPersonnelCertificationCreditsRepository credits, Lazy<ICertificationService> certifications,
 			ITrainingRepository trainings, ITrainingUserRepository trainingUsers, ITrainingCompletionHistoriesRepository histories, ILogUsersRepository logUsers,
 			IRmsOperationalRecordsRepository rmsRecords, IRmsRecordParticipantsRepository rmsParticipants, ICalendarItemsRepository calendarItems,
-			ICalendarItemTypeRepository calendarTypes, IDepartmentSettingsService settings, IEventAggregator events)
+			ICalendarItemTypeRepository calendarTypes, IDepartmentSettingsService settings, IEventAggregator events,
+			Lazy<IEnumerable<ILearningRecordObserver>> observers)
 		{
+			_observers = observers;
 			_records = records;
 			_mappings = mappings;
 			_categories = categories;
@@ -84,6 +90,7 @@ namespace Resgrid.Services
 				.Select(g => g.First())
 				.ToList();
 			var matched = new HashSet<int>();
+			var voided = new List<LearningRecord>();
 
 			foreach (var draft in wanted)
 			{
@@ -113,10 +120,19 @@ namespace Resgrid.Services
 					// an officer gave the old record carries over when the source has none.
 					await _records.VoidAsync(departmentId, existing.LearningRecordId, "source_changed", actingUserId ?? SystemUserId, now, cancellationToken);
 					existing.Status = (int)LearningRecordStatuses.Voided;
+					voided.Add(existing);
 					result.Voided++;
 					result.CreditsRemoved += await RemoveCreditsAsync(existing, actingUserId, cancellationToken);
 
 					draft.CategoryId ??= existing.CategoryId;
+					// Round 7B: a completion recorded by an instructor stays one when its source is rewritten (who recorded it, when, and
+					// the recording row carry over; the source row only knows the method).
+					if (draft.CompletionMethod == existing.CompletionMethod && draft.CompletionMethod == (int)LearningCompletionMethods.RecordedByOther)
+					{
+						draft.RecordedByUserId ??= existing.RecordedByUserId;
+						draft.RecordedOn ??= existing.RecordedOn;
+						draft.RecordedCompletionId ??= existing.RecordedCompletionId;
+					}
 					var replacement = await InsertAsync(departmentId, kind, sourceRefId, draft, existing.LearningRecordId, actingUserId, now, cancellationToken);
 					if (replacement != null)
 					{
@@ -145,6 +161,7 @@ namespace Resgrid.Services
 				if (await _records.VoidAsync(departmentId, stale.LearningRecordId, "source_removed", actingUserId ?? SystemUserId, now, cancellationToken))
 				{
 					stale.Status = (int)LearningRecordStatuses.Voided;
+					voided.Add(stale);
 					result.Voided++;
 					result.CreditsRemoved += await RemoveCreditsAsync(stale, actingUserId, cancellationToken);
 				}
@@ -158,6 +175,8 @@ namespace Resgrid.Services
 					result.CreditsAdded += await ApplyCreditsAsync(record, false, actingUserId, cancellationToken);
 			}
 
+			// Round 9A: the certification engine hears about it once the whole source is reconciled (a replacement is already stored).
+			await NotifyChangedAsync(departmentId, result.Records, voided, actingUserId, cancellationToken);
 			return result;
 		}
 
@@ -169,15 +188,18 @@ namespace Resgrid.Services
 				return result;
 
 			var now = DateTime.UtcNow;
+			var voided = new List<LearningRecord>();
 			foreach (var record in (await _records.GetBySourceAsync(departmentId, (int)kind, sourceRefId) ?? new List<LearningRecord>()).Where(r => !r.IsVoided))
 			{
 				if (!await _records.VoidAsync(departmentId, record.LearningRecordId, reason ?? "source_removed", actingUserId ?? SystemUserId, now, cancellationToken))
 					continue;
 				record.Status = (int)LearningRecordStatuses.Voided;
+				voided.Add(record);
 				result.Voided++;
 				result.CreditsRemoved += await RemoveCreditsAsync(record, actingUserId, cancellationToken);
 			}
 
+			await NotifyChangedAsync(departmentId, null, voided, actingUserId, cancellationToken);
 			return result;
 		}
 
@@ -219,6 +241,21 @@ namespace Resgrid.Services
 				CreatedOn = now,
 				CreatedByUserId = actingUserId ?? SystemUserId
 			};
+			// Round 7B: a completion recorded by someone else (permission 135) says so, and by whom; never presented as the member's own.
+			if (draft.CompletionMethod == (int)LearningCompletionMethods.RecordedByOther)
+			{
+				record.CompletionMethod = draft.CompletionMethod;
+				record.RecordedByUserId = LearningRecordRules.Trim(draft.RecordedByUserId, 128);
+				record.RecordedOn = draft.RecordedOn;
+				record.RecordedCompletionId = draft.RecordedCompletionId;
+			}
+			// Round 9B: a member submission carries its review state; one written by another path (an LMS training request's completion) that
+			// is pending waits for a reviewer like any other submission.
+			if (kind == LearningRecordSourceKinds.ExternalSubmission)
+			{
+				record.ReviewState = draft.ReviewState ?? (draft.Status == LearningRecordStatuses.Pending ? (int)TrainingSubmissionReviewStates.AwaitingReview : (int?)null);
+				record.SubmittedOn = draft.SubmittedOn ?? now;
+			}
 
 			var (stored, inserted) = await _records.InsertIfAbsentAsync(record, cancellationToken);
 			return inserted ? stored : null;
@@ -256,6 +293,7 @@ namespace Resgrid.Services
 					continue;
 				lower.Status = (int)LearningRecordStatuses.Voided;
 				result.Voided++;
+				await NotifyChangedAsync(lower.DepartmentId, null, new[] { lower }, actingUserId, ct);
 				result.CreditsRemoved += await RemoveCreditsAsync(lower, actingUserId, ct);
 
 				var copy = new LearningRecordDraft
@@ -290,6 +328,61 @@ namespace Resgrid.Services
 
 		private static string Key(string userId, string componentKey) =>
 			(userId ?? string.Empty).Trim().ToUpperInvariant() + "|" + (componentKey ?? string.Empty).Trim().ToUpperInvariant();
+
+		/// <summary>
+		/// Round 9A: the observers (the LMS certification engine) hear about records that now count and records that were voided. Backfilled
+		/// records and pending ones are left out; an observer's own work never notifies again; a failure is logged and never undoes the write.
+		/// </summary>
+		public async Task NotifyChangedAsync(int departmentId, IReadOnlyCollection<LearningRecord> written, IReadOnlyCollection<LearningRecord> voided, string actingUserId,
+			CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || NotifyDepth.Value > 0)
+				return;
+			var change = new LearningRecordChange
+			{
+				DepartmentId = departmentId,
+				ActingUserId = actingUserId,
+				Written = (written ?? Array.Empty<LearningRecord>()).Where(r => r != null && !r.IsBackfill && r.Status == (int)LearningRecordStatuses.Verified).ToList(),
+				Voided = (voided ?? Array.Empty<LearningRecord>()).Where(r => r != null && r.LearningRecordId > 0 && !r.IsBackfill).ToList()
+			};
+			if (change.IsEmpty)
+				return;
+
+			IEnumerable<ILearningRecordObserver> observers;
+			try
+			{
+				observers = _observers?.Value ?? Enumerable.Empty<ILearningRecordObserver>();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Learning record observers could not be resolved.");
+				return;
+			}
+
+			NotifyDepth.Value++;
+			try
+			{
+				foreach (var observer in observers)
+				{
+					try
+					{
+						await observer.OnLearningRecordsChangedAsync(change, cancellationToken);
+					}
+					catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+					{
+						throw;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, $"A learning record observer failed for department {departmentId}.");
+					}
+				}
+			}
+			finally
+			{
+				NotifyDepth.Value--;
+			}
+		}
 
 		#endregion
 
@@ -411,10 +504,25 @@ namespace Resgrid.Services
 				}
 
 				result.Add(await WriteSourceAsync(departmentId, LearningRecordSourceKinds.CourseCompletion, reference,
-					new[] { CompletionDraft(training, member, completedOn, isBackfill) }, isBackfill ? SystemUserId : member, cancellationToken));
+					new[] { CompletionDraft(training, member, completedOn, isBackfill, live != null && live.Cycle == cycle ? live : null) }, isBackfill ? SystemUserId : member, cancellationToken));
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// The transcript draft of a baseline training completion. <paramref name="recordedFrom"/> is the live assignment row of the cycle: when
+		/// an instructor recorded that completion (round 7B), the draft carries the method and the recording row.
+		/// </summary>
+		public static LearningRecordDraft CompletionDraft(Training training, string userId, DateTime completedOn, bool isBackfill, TrainingUser recordedFrom = null)
+		{
+			var draft = CompletionDraft(training, userId, completedOn, isBackfill);
+			if (recordedFrom != null && recordedFrom.CompletionMethod == (int)LearningCompletionMethods.RecordedByOther)
+			{
+				draft.CompletionMethod = recordedFrom.CompletionMethod;
+				draft.RecordedCompletionId = recordedFrom.RecordedCompletionId;
+			}
+			return draft;
 		}
 
 		public static LearningRecordDraft CompletionDraft(Training training, string userId, DateTime completedOn, bool isBackfill)

@@ -33,7 +33,7 @@ namespace Resgrid.Tests.Wellness
 				}, "test"))
 			};
 			ClaimsAuthorizationHelper._httpContextAccessor = new HttpContextAccessor { HttpContext = httpContext };
-			return new ApiMemberHealthController(world.Service()) { ControllerContext = new ControllerContext { HttpContext = httpContext } };
+			return new ApiMemberHealthController(world.Service(), world.WorkforcePro) { ControllerContext = new ControllerContext { HttpContext = httpContext } };
 		}
 
 		[SetUp]

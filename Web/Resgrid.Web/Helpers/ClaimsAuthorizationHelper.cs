@@ -164,6 +164,12 @@ namespace Resgrid.Web.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update);
 		}
 
+		/// <summary>Round 7B: holds Record Training Completions (135) somewhere (which members is decided per member by the recording service).</summary>
+		public static bool CanApplyTrainingCompletions()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.RecordCompletions);
+		}
+
 		/// <summary>Holds the Delete Training right somewhere (archive and delete; scoped per training).</summary>
 		public static bool CanDeleteTraining()
 		{

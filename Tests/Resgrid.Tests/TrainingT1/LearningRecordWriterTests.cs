@@ -40,6 +40,8 @@ namespace Resgrid.Tests.TrainingT1
 		private List<PersonnelCertification> _holders;
 		private List<PersonnelCertificationCredit> _creditRows;
 		private LearningRecordWriter _writer;
+		/// <summary>Round 9A: the observers the writer tells about written and voided records.</summary>
+		private readonly List<ILearningRecordObserver> _observers = new List<ILearningRecordObserver>();
 
 		[SetUp]
 		public void SetUp()
@@ -77,7 +79,8 @@ namespace Resgrid.Tests.TrainingT1
 
 			_writer = new LearningRecordWriter(_records, _mappings.Object, _categories.Object, _certificationRecords.Object, _credits.Object,
 				new Lazy<ICertificationService>(() => _certifications.Object), _trainings.Object, _trainingUsers.Object, _histories.Object, Mock.Of<ILogUsersRepository>(),
-				Mock.Of<IRmsOperationalRecordsRepository>(), Mock.Of<IRmsRecordParticipantsRepository>(), _calendarItems.Object, _calendarTypes.Object, _settings.Object, Mock.Of<IEventAggregator>());
+				Mock.Of<IRmsOperationalRecordsRepository>(), Mock.Of<IRmsRecordParticipantsRepository>(), _calendarItems.Object, _calendarTypes.Object, _settings.Object, Mock.Of<IEventAggregator>(),
+				new Lazy<IEnumerable<ILearningRecordObserver>>(() => _observers));
 		}
 
 		private static LearningRecordDraft Draft(string user = Member, decimal hours = 2m, string component = "", string session = null, DateTime? start = null, int? category = null) => new LearningRecordDraft

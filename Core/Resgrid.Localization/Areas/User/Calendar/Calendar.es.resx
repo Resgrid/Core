@@ -413,14 +413,18 @@
   </data>
   <data name="CountsAsTrainingLabel" xml:space="preserve">
     <value>Cuenta como formación</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CountsAsTrainingHelp" xml:space="preserve">
     <value>La entrada y salida en eventos de este tipo se convierte en horas de formación en los expedientes de los asistentes. Una entrada sin salida espera a un responsable.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrainingCategoryLabel" xml:space="preserve">
     <value>Categoría de formación</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrainingCategoryNone" xml:space="preserve">
     <value>Sin categoría</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

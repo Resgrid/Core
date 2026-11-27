@@ -274,7 +274,7 @@ namespace Resgrid.Services.Knowledge
 
 	/// <summary>
 	/// Trainings (§16.1): a started, unarchived training's name, description, objectives and text by heading section, and its files by page.
-	/// Never its quiz: questions, answer keys, attempts and learner data are not read here. Trainings marked "no AI" (M0370) are excluded.
+	/// Never its quiz: questions, answer keys, attempts and learner data are not read here. Trainings marked "no AI" (M0355) are excluded.
 	/// Readers: the Trainings pages' own rule (<see cref="TrainingManagementScope.CanOpen(Training)"/>: assignees, managers, open trainings).
 	/// </summary>
 	public sealed class TrainingKnowledgeSource : IKnowledgeCorpusSource

@@ -1,0 +1,212 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ProtocolPublicLinksModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@*
+    Public pages (P5, decision 6), approvers and department admins: make a published protocol (its version in force, or this version only) or a
+    category (as a set) public at an unguessable address, optionally embeddable on chosen https sites, and revoke it at any time. Drafts,
+    audience-restricted, licensed and document-backed protocols are never shown; a protocol that becomes one of those drops off its page by itself.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["PublicHeader"];
+    ViewData["Title"] = text["PublicHeader"].Value;
+    ViewData["Subtitle"] = text["PublicIntro"].Value;
+    ViewData["Section"] = "Sharing";
+    ViewData["SharingSection"] = "Public";
+    ViewData["IsManager"] = Model.IsManager;
+    ViewData["CanCreate"] = Model.CanAuthor;
+    var live = Model.Links.Where(l => !l.Link.IsRevoked).ToList();
+    var revoked = Model.Links.Where(l => l.Link.IsRevoked).ToList();
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_SharingTabs", Model)
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label">@text["PublicLiveCount"]</div>
+            <div class="rgw-stat-value">@live.Count</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label">@text["PublicEligibleCount"]</div>
+            <div class="rgw-stat-value">@Model.Eligible.Count</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-file-text-o" aria-hidden="true"></i> @text["PublicProtocolHeader"]</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-controller="ProtocolSharing" asp-action="CreatePublicLink" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label class="control-label required" for="protocolId">@text["PublicProtocolLabel"]</label>
+                            <select id="protocolId" name="protocolId" class="form-control" required>
+                                <option value="">@text["ChooseItem"]</option>
+                                @foreach (var protocol in Model.Eligible)
+                                {
+                                    <option value="@protocol.DispatchProtocolId">@((string.IsNullOrWhiteSpace(protocol.Number) ? protocol.Code : protocol.Number) + " " + protocol.Name)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="pinVersion" value="true" /> @text["PublicPinLabel"]</label>
+                            <input type="hidden" name="pinVersion" value="false" />
+                            <span class="help-block small">@text["PublicPinHelp"]</span>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="embedEnabled" value="true" /> @text["PublicEmbedLabel"]</label>
+                            <input type="hidden" name="embedEnabled" value="false" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="embedOrigins">@text["PublicOriginsLabel"]</label>
+                            <input id="embedOrigins" name="embedOrigins" class="form-control" maxlength="@ProtocolPublicLink.EmbedOriginsMaxLength" placeholder="https://www.example.org" />
+                            <span class="help-block small">@text["PublicOriginsHelp"]</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary" data-confirm="@text["PublicCreateConfirm"]"><i class="fa fa-globe" aria-hidden="true"></i> @text["PublicCreateButton"]</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-folder-open-o" aria-hidden="true"></i> @text["PublicSetHeader"]</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-controller="ProtocolSharing" asp-action="CreatePublicSetLink" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label class="control-label required" for="categoryId">@text["PublicCategoryLabel"]</label>
+                            <select id="categoryId" name="categoryId" class="form-control" required>
+                                <option value="">@text["ChooseItem"]</option>
+                                @foreach (var category in Model.Categories.OrderBy(c => c.SortOrder).ThenBy(c => c.Name))
+                                {
+                                    <option value="@category.ProtocolCategoryId">@category.Name</option>
+                                }
+                            </select>
+                            <span class="help-block small">@text["PublicSetHelp"]</span>
+                        </div>
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="embedEnabled" value="true" /> @text["PublicEmbedLabel"]</label>
+                            <input type="hidden" name="embedEnabled" value="false" />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="setEmbedOrigins">@text["PublicOriginsLabel"]</label>
+                            <input id="setEmbedOrigins" name="embedOrigins" class="form-control" maxlength="@ProtocolPublicLink.EmbedOriginsMaxLength" placeholder="https://www.example.org" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" data-confirm="@text["PublicCreateConfirm"]"><i class="fa fa-globe" aria-hidden="true"></i> @text["PublicCreateButton"]</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-link" aria-hidden="true"></i> @text["PublicLinksHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Links.Count == 0)
+            {
+                <p class="text-muted">@text["PublicNoLinks"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@text["ColumnTitle"]</th>
+                                <th scope="col">@text["ColumnShown"]</th>
+                                <th scope="col">@text["ColumnAddress"]</th>
+                                <th scope="col">@text["ColumnCreated"]</th>
+                                <th scope="col"><span class="sr-only">@text["ColumnActions"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var view in live.Concat(revoked))
+                            {
+                                var link = view.Link;
+                                var pageUrl = Model.BaseUrl + "/public/protocols/" + link.Token;
+                                var embedUrl = pageUrl + "/embed";
+                                <tr class="@(link.IsRevoked ? "text-muted" : null)">
+                                    <td>
+                                        <i class="fa @(link.Kind == (int)ProtocolPublicLinkKinds.Category ? "fa-folder-open-o" : "fa-file-text-o")" aria-hidden="true"></i>
+                                        @(view.Title ?? "-")
+                                        <div class="rgw-sub">
+                                            @text[link.Kind == (int)ProtocolPublicLinkKinds.Category ? "PublicKindSet" : (link.ProtocolVersionId.HasValue ? "PublicKindPinned" : "PublicKindCurrent")]
+                                            @if (!string.IsNullOrWhiteSpace(view.VersionLabel))
+                                            {
+                                                <span>· v@(view.VersionLabel)</span>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        @if (link.IsRevoked)
+                                        {
+                                            <span class="label label-default">@text["PublicRevokedLabel"]</span>
+                                        }
+                                        else if (link.Kind == (int)ProtocolPublicLinkKinds.Category)
+                                        {
+                                            @string.Format(text["PublicShownCount"].Value, view.ShownCount)
+                                        }
+                                        else if (view.Eligibility == ProtocolPublicEligibility.Eligible)
+                                        {
+                                            <span class="label label-primary">@text["PublicShownLabel"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-warning">@text["Eligibility" + view.Eligibility]</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (!link.IsRevoked)
+                                        {
+                                            <a href="@pageUrl" target="_blank" rel="noopener noreferrer">@pageUrl</a>
+                                            @if (link.EmbedEnabled)
+                                            {
+                                                <label class="small" for="embed-@link.ProtocolPublicLinkId">@text["PublicEmbedSnippet"]</label>
+                                                <textarea id="embed-@link.ProtocolPublicLinkId" class="form-control input-sm" rows="2" readonly>@ProtocolPublicPages.EmbedSnippet(embedUrl, view.Title)</textarea>
+                                                <span class="help-block small">@(string.IsNullOrWhiteSpace(link.EmbedOrigins) ? text["PublicEmbedAnySite"].Value : string.Format(text["PublicEmbedSites"].Value, link.EmbedOrigins))</span>
+                                            }
+                                        }
+                                    </td>
+                                    <td>@link.CreatedOn.ToString("yyyy-MM-dd") <div class="rgw-sub">@view.CreatedByName</div></td>
+                                    <td class="rgw-row-actions">
+                                        @if (!link.IsRevoked)
+                                        {
+                                            <form method="post" asp-controller="ProtocolSharing" asp-action="RevokePublicLink" asp-route-area="User">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@link.ProtocolPublicLinkId" />
+                                                <button type="submit" class="btn btn-xs btn-danger" data-confirm="@text["PublicRevokeConfirm"]"><i class="fa fa-ban" aria-hidden="true"></i> @text["PublicRevokeButton"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (Model.NotEligible.Count > 0)
+    {
+        <div class="ibox collapsed">
+            <div class="ibox-title"><h5><i class="fa fa-info-circle" aria-hidden="true"></i> @string.Format(text["PublicNotEligibleHeader"].Value, Model.NotEligible.Count)</h5></div>
+            <div class="ibox-content">
+                <ul class="small">
+                    @foreach (var pair in Model.NotEligible.Take(200))
+                    {
+                        <li>@pair.Key.Name — @text["Eligibility" + pair.Value]</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

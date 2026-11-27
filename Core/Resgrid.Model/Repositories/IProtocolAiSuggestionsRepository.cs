@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	/// <summary>Enhanced AI protocol suggestions for calls (Protocols P4, M0400).</summary>
+	/// <summary>Enhanced AI protocol suggestions for calls (Protocols P4, M0377).</summary>
 	public interface IProtocolAiSuggestionsRepository : IRepository<ProtocolAiSuggestion>
 	{
 		/// <summary>The department's suggestion by id, or null (another department's never comes back).</summary>

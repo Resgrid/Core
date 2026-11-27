@@ -119,10 +119,14 @@ namespace Resgrid.Services
 			return sheet;
 		}
 
-		public async Task<LmsSkillSheet> CreateFromTemplateAsync(LmsActor actor, string templateKey, CancellationToken cancellationToken = default)
+		public Task<LmsSkillSheet> CreateFromTemplateAsync(LmsActor actor, string templateKey, CancellationToken cancellationToken = default) =>
+			CreateFromTemplateAsync(actor, templateKey, null, cancellationToken);
+
+		public async Task<LmsSkillSheet> CreateFromTemplateAsync(LmsActor actor, string templateKey, string culture, CancellationToken cancellationToken = default)
 		{
 			RequireAuthor(actor);
-			var template = LmsSkillTemplateCatalog.FindSheet(templateKey) ?? throw new InvalidOperationException("lms_skill_template_not_found");
+			// Round 9C: the draft carries the starter's text in the author's language (English when none ships).
+			var template = LmsSkillTemplateCatalog.Localized(LmsSkillTemplateCatalog.FindSheet(templateKey), culture) ?? throw new InvalidOperationException("lms_skill_template_not_found");
 			var now = DateTime.UtcNow;
 			var sheet = await _sheets.InsertAsync(new LmsSkillSheet
 			{

@@ -505,7 +505,9 @@ namespace Resgrid.Services.Approvals
 				DepartmentId = departmentId,
 				SignatureRequestId = approval.SignatureRequestId.Value,
 				Proof = proof,
-				RequirePasskey = requirePasskey
+				RequirePasskey = requirePasskey,
+				// Approval decisions follow the department's approvals step-up rule, not the signatures one.
+				StepUpArea = Resgrid.Model.Security.StepUpArea.Approvals
 			}, cancellationToken);
 			if (!signed.Succeeded)
 			{

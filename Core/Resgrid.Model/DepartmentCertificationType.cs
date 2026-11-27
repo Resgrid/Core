@@ -54,6 +54,28 @@ namespace Resgrid.Model
 		/// <summary>New records stay PendingVerification until a supervisor signs them off (person-scoped only).</summary>
 		public bool RequiresVerification { get; set; }
 
+		// ---- Round 9A validity rules (M0404, additive): how a record of the type expires when the training engine issues or renews it, and
+		// which completions count toward the next renewal (Certifications.CertificationValidity). RollingMonths (0) is the behaviour before
+		// M0404: DefaultValidityMonths from the issue date.
+
+		/// <summary><see cref="Certifications.CertificationValidityRules"/>.</summary>
+		public int ValidityRule { get; set; }
+
+		/// <summary>FiscalYearEnd: the month (1-12) of the department's year end.</summary>
+		public int? ValidityYearEndMonth { get; set; }
+
+		/// <summary>FiscalYearEnd: the day of that month (29 February falls on the 28th in common years).</summary>
+		public int? ValidityYearEndDay { get; set; }
+
+		/// <summary>FixedDate: the date every record of the type expires on.</summary>
+		public DateTime? ValidityFixedDate { get; set; }
+
+		/// <summary>Days after expiry in which completing the requirements still renews the same cycle (null: none).</summary>
+		public int? RenewalGraceDays { get; set; }
+
+		/// <summary>Only completions within this many months before the expiry count toward a renewal (null: the whole cycle).</summary>
+		public int? RenewalWindowMonths { get; set; }
+
 		public bool IsActive { get; set; } = true;
 
 		public bool IsDeleted { get; set; }

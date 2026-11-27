@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	/// <summary>Primary files of document-backed protocol versions (M0353). Metadata reads never select the bytes.</summary>
+	/// <summary>Primary files of document-backed protocol versions (M0347). Metadata reads never select the bytes.</summary>
 	public interface IProtocolVersionFilesRepository : IRepository<ProtocolVersionFile>
 	{
 		/// <summary>The version's file without its bytes; null when the version has none.</summary>
@@ -27,7 +27,7 @@ namespace Resgrid.Model.Repositories
 			CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>File text extractions and their pages (M0353).</summary>
+	/// <summary>File text extractions and their pages (M0347).</summary>
 	public interface IProtocolFileTextsRepository : IRepository<ProtocolFileText>
 	{
 		Task<ProtocolFileText> GetForSourceAsync(int departmentId, int sourceKind, int sourceId);
@@ -86,7 +86,7 @@ namespace Resgrid.Model.Repositories
 		public int ReminderStage { get; set; }
 	}
 
-	/// <summary>Protocol acknowledgments (M0354). Every read starts at the department.</summary>
+	/// <summary>Protocol acknowledgments (M0348). Every read starts at the department.</summary>
 	public interface IProtocolAcknowledgmentsRepository : IRepository<ProtocolAcknowledgment>
 	{
 		Task<ProtocolAcknowledgment> GetByIdForDepartmentAsync(int departmentId, int protocolAcknowledgmentId);

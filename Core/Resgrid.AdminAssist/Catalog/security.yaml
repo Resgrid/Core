@@ -1471,6 +1471,105 @@
       "Availability": "available"
     },
     {
+      "Id": "permission.ReviewDispatchCases",
+      "AreaId": "security",
+      "LabelKey": "Permission.ReviewDispatchCases",
+      "HelpKey": "PermissionHelp.ReviewDispatchCases",
+      "Binding": "PermissionTypes.ReviewDispatchCases",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "ReviewDispatchCases"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.ReviewDispatchCases",
+      "DefaultValue": "No permission row: department admins only",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ProtocolAccessService (ProtocolReader.CanReviewDispatchCases / MayReviewDispatchCases) read by DispatchCaseReviewService on the MVC DispatchCaseReviewsController queue, sample, review, report and rubric actions; DispatchCaseReviewService refuses a reviewer's own call (attached, reported or overridden by them)",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.RecordTrainingCompletions",
+      "AreaId": "security",
+      "LabelKey": "Permission.RecordTrainingCompletions",
+      "HelpKey": "PermissionHelp.RecordTrainingCompletions",
+      "Binding": "PermissionTypes.RecordTrainingCompletions",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "RecordTrainingCompletions"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.RecordTrainingCompletions",
+      "DefaultValue": "No permission row: department admins only",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ClaimsLogic.AddTrainingClaims (Training:RecordCompletions, policy Training_RecordCompletions) on the MVC LmsClasses, Courses and Trainings RecordCompletions/VoidRecordedCompletion actions and the v4 LmsClasses record endpoints; AuthorizationService.GetTrainingManagementScopeAsync (TrainingManagementScope.Record, CanRecordFor: a group admin only for their own group's members, never for themselves) read by TrainingCompletionRecordingService and LmsCompletionRecordingService",
+      "Availability": "available"
+    },
+    {
+      "Id": "permission.ManageContentSets",
+      "AreaId": "security",
+      "LabelKey": "Permission.ManageContentSets",
+      "HelpKey": "PermissionHelp.ManageContentSets",
+      "Binding": "PermissionTypes.ManageContentSets",
+      "ValueType": "permission",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Security",
+        "Action": "Index",
+        "Field": "ManageContentSets"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.PermissionTiming",
+        "ReversibilityKey": "Impact.PermissionReversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "permission.ManageContentSets",
+      "DefaultValue": "No permission row: department admins only",
+      "AllowedValues": "Actions 0, 1, 2 and selected department role IDs for action 2; no group lock",
+      "EvidenceSource": "ContentSetService.GetActorAsync (ContentSetActor.CanManage) read by ContentSetService and LmsSponsorshipService on the MVC ContentSetsController set, subscription, inbox, customize, proposal and sponsorship actions; proposing a change upstream needs only a current member",
+      "Availability": "available"
+    },
+    {
       "Id": "permission.CreateDocument",
       "AreaId": "security",
       "LabelKey": "Permission.CreateDocument",
@@ -7048,6 +7147,179 @@
       "AllowedValues": "Validated by the owning configuration workflow",
       "EvidenceSource": "DepartmentTermOverride",
       "Availability": "reference-only"
+    },
+    {
+      "Id": "setting.StepUpPolicy",
+      "AreaId": "security",
+      "LabelKey": "Setting.StepUpPolicy",
+      "HelpKey": "SettingHelp.StepUpPolicy",
+      "Binding": "DepartmentSettingTypes.StepUpPolicy",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "StepUpSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.StepUpPolicy",
+      "DefaultValue": "missing = today's behaviour: signatures and approvals require two-factor step-up, read-and-sign follows the protocol library switch, protected data follows the ADP exemptions",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.DepartmentStepUpPolicy.Areas",
+      "AreaId": "security",
+      "LabelKey": "Field.DepartmentStepUpPolicy.Areas",
+      "HelpKey": "FieldHelp.DepartmentStepUpPolicy.Areas",
+      "Binding": "DepartmentStepUpPolicy.Areas",
+      "ValueType": "list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "StepUpSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.StepUpPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.DepartmentStepUpPolicy.Areas",
+      "DefaultValue": "empty (every area at its default)",
+      "AllowedValues": "At most one entry per area",
+      "EvidenceSource": "DepartmentStepUpPolicy",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.StepUpAreaSetting.Area",
+      "AreaId": "security",
+      "LabelKey": "Field.StepUpAreaSetting.Area",
+      "HelpKey": "FieldHelp.StepUpAreaSetting.Area",
+      "Binding": "StepUpAreaSetting.Area",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "StepUpSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.StepUpPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.StepUpAreaSetting.Area",
+      "DefaultValue": "unset",
+      "AllowedValues": "StepUpArea: 1 Signatures, 2 Acknowledgments, 3 Approvals, 4 ProtectedData",
+      "EvidenceSource": "StepUpAreaSetting",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.StepUpAreaSetting.Optional",
+      "AreaId": "security",
+      "LabelKey": "Field.StepUpAreaSetting.Optional",
+      "HelpKey": "FieldHelp.StepUpAreaSetting.Optional",
+      "Binding": "StepUpAreaSetting.Optional",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "StepUpSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.StepUpPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.StepUpAreaSetting.Optional",
+      "DefaultValue": "false (required)",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "StepUpAreaSetting",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.StepUpAreaSetting.AlternativeMethods",
+      "AreaId": "security",
+      "LabelKey": "Field.StepUpAreaSetting.AlternativeMethods",
+      "HelpKey": "FieldHelp.StepUpAreaSetting.AlternativeMethods",
+      "Binding": "StepUpAreaSetting.AlternativeMethods",
+      "ValueType": "flags",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "StepUpSettings",
+        "Action": "Index",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Critical",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.security",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.StepUpPolicy"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.StepUpAreaSetting.AlternativeMethods",
+      "DefaultValue": "0 (two-factor authentication only)",
+      "AllowedValues": "StepUpMethodClasses flags: 2 Sso, 4 Password",
+      "EvidenceSource": "StepUpAreaSetting",
+      "Availability": "reference-only"
     }
   ],
   "Capabilities": [
@@ -8126,6 +8398,39 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "permission.ReviewDispatchCases",
+      "Locale": "en",
+      "TitleKey": "Permission.ReviewDispatchCases",
+      "Body": "Review Dispatch Cases. Allows sampling calls for dispatch case review, scoring the recorded case against a dispatch case rubric, sending the review to the dispatcher and reading the compliance report. Nobody reviews their own calls. With no saved rule only department administrators may.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-reviewdispatchcases",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "permission.RecordTrainingCompletions",
+      "Locale": "en",
+      "TitleKey": "Permission.RecordTrainingCompletions",
+      "Body": "Record Training Completions. Allows recording that members completed a training or LMS course they took together (from a class roster, or from a course's enrolment list or a training's assignee list with a note). Each record shows it was recorded by an instructor, and the recorder can void it with a reason. Group admins record only for their own group's members. With no saved rule only department administrators may.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-recordtrainingcompletions",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "permission.ManageContentSets",
+      "Locale": "en",
+      "TitleKey": "Permission.ManageContentSets",
+      "Body": "Manage Content Sets. Allows publishing protocol and course sets to linked departments, subscribing to theirs, deciding the update inbox, customizing the blocks a publisher left open, answering proposals and sponsoring a linked department's LMS seats. Any member can propose a change upstream. With no saved rule only department administrators may.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "permission-managecontentsets",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
     },
     {
       "Id": "permission.CreateDocument",
@@ -10150,6 +10455,61 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "setting.StepUpPolicy",
+      "Locale": "en",
+      "TitleKey": "Setting.StepUpPolicy",
+      "Body": "Step-Up Verification Policy. Where members must confirm it is them again (signatures, read-and-sign, approvals, protected data), whether it is optional, and whether a password or an identity provider sign-in may be used besides two-factor authentication. Check the members without two-factor authentication the page lists before requiring it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-stepuppolicy",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "field.DepartmentStepUpPolicy.Areas",
+      "Locale": "en",
+      "TitleKey": "Field.DepartmentStepUpPolicy.Areas",
+      "Body": "Step-Up Verification Policy / Areas. One entry per area that differs from the default. An area with no entry requires two-factor step-up where it did before.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-departmentstepuppolicy-areas",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "field.StepUpAreaSetting.Area",
+      "Locale": "en",
+      "TitleKey": "Field.StepUpAreaSetting.Area",
+      "Body": "Step-Up Area / Area. Which actions the entry is for: 1 signatures, 2 read-and-sign acknowledgments, 3 approval decisions, 4 protected data.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-stepupareasetting-area",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "field.StepUpAreaSetting.Optional",
+      "Locale": "en",
+      "TitleKey": "Field.StepUpAreaSetting.Optional",
+      "Body": "Step-Up Area / Optional. Step-up is not required for signatures or approval decisions: they are signed with the signed-in session unless the member has verified recently. Read-and-sign uses the protocol library switch and protected data the ADP exemptions instead.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-stepupareasetting-optional",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "field.StepUpAreaSetting.AlternativeMethods",
+      "Locale": "en",
+      "TitleKey": "Field.StepUpAreaSetting.AlternativeMethods",
+      "Body": "Step-Up Area / Alternative Methods. Kinds of verification accepted besides two-factor authentication: 2 a fresh sign-in with the identity provider, 4 the account password entered again. Neither is a second factor; for protected data only the managing member can change this, and a change ends the grants already issued.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-stepupareasetting-alternativemethods",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
     }
   ]
 }

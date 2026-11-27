@@ -586,16 +586,27 @@ namespace Resgrid.Services
 			bindings.AddRange(Resgrid.Model.IncidentLogistics.IncidentBackOfficeProtectedFields.All().GroupBy(f => f.Table).Select(table =>
 				AdpTableBinding.Direct(table.Key, Resgrid.Model.IncidentLogistics.IncidentBackOfficeTables.All.First(t => t.Table == table.Key).Key, false, "DepartmentId",
 					table.Select(f => Text(table.Key, f.Column)).ToArray()) with { ProtectedMarkerColumn = "IsProtected" }));
-			// Member wellness WL0 (ADP catalog 37, M0376): the health facts of an exposure entry and the screening plan. The member,
+			// Member wellness WL0 (ADP catalog 37, M0360): the health facts of an exposure entry and the screening plan. The member,
 			// call, category, dates and statuses stay plaintext (§25.4 item 4c).
 			bindings.AddRange(Resgrid.Model.WellnessProtectedFields.All().GroupBy(f => f.Table).Select(table =>
 				AdpTableBinding.Direct(table.Key, table.Key == "RmsResponderExposures" ? "RmsResponderExposureId" : "RmsResponderScreeningFlagId", false, "DepartmentId",
 					table.Select(f => Text(table.Key, f.Column)).ToArray()) with { ProtectedMarkerColumn = "IsProtected" }));
-			// Member wellness WL1 (ADP catalog 38, M0394-M0396): exposure case notes, injury details and the clearance restriction detail.
+			// Member wellness WL1 (ADP catalog 38, M0372-M0374): exposure case notes, injury details and the clearance restriction detail.
 			// Member, call, dates, stage, duty and clearance status stay plaintext (§25.4 item 4c).
 			bindings.AddRange(Resgrid.Model.MemberHealthProtectedFields.All().GroupBy(f => f.Table).Select(table =>
 				AdpTableBinding.Direct(table.Key, Resgrid.Model.MemberHealthProtectedFields.KeyColumn(table.Key), false, "DepartmentId",
 					table.Select(f => Text(table.Key, f.Column)).ToArray()) with { ProtectedMarkerColumn = "IsProtected" }));
+			// Protocols + Training/LMS under ADP (catalog 39, round 8). A call's case content derives its department through the call (like
+			// CallReferences); the signature tables are scoped through their request, and only requests on a Records-owned subject
+			// (RecordsInspection, CustodyTransfer) are swept: a customer's, vendor's or outside evaluator's name is never encrypted.
+			var content = Resgrid.Model.ContentProtectedFields.All().GroupBy(f => f.Table).ToDictionary(g => g.Key, g => g.Select(f => Text(g.Key, f.Column)).ToArray());
+			bindings.Add(AdpTableBinding.ViaParent("CallProtocols", "CallProtocolId", pkIsNumeric: true, "CallId", "Calls", "CallId", content["CallProtocols"]));
+			// Step-through notes (M0403): their own rows, department-scoped, string key, IsProtected marker.
+			bindings.Add(AdpTableBinding.Direct("CallProtocolStepNotes", "CallProtocolStepNoteId", pkIsNumeric: false, "DepartmentId", content["CallProtocolStepNotes"])
+				with { ProtectedMarkerColumn = "IsProtected" });
+			foreach (var table in new[] { "SignatureRequestSigners", "SignatureRecords", "SignatureCaptures" })
+				bindings.Add(AdpTableBinding.ViaParent(table, Resgrid.Model.ContentProtectedFields.KeyColumn(table), pkIsNumeric: true, "SignatureRequestId", "SignatureRequests", "SignatureRequestId", content[table])
+					with { Discriminator = new AdpRowDiscriminator("SubjectKind", Resgrid.Model.ContentProtectedFields.RecordsSignatureSubjectKinds, OnParent: true) });
 			bindings.AddRange(Resgrid.Model.WorkOrders.WorkOrderTables.All.Values.Where(Resgrid.Model.WorkOrders.WorkOrderTables.ProtectedContent.Contains).Select(table =>
 				AdpTableBinding.Direct(table, "Id", false, "DepartmentId", table == "WorkOrderFiles" ? new[] { Text(table, "Content"), Binary(table, "Data") } : new[] { Text(table, Resgrid.Model.WorkOrders.WorkOrderTables.SealedColumn(table)) }) with { ProtectedMarkerColumn = "IsProtected" }));
 			// Inventory transactions use their stable GUID public Id for field AAD, independently of the bigint EntryId ledger key.

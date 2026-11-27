@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using OpenIddict.Validation.AspNetCore;
+using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Services.Hubs
@@ -38,25 +40,39 @@ namespace Resgrid.Web.Services.Hubs
 			await Clients.Caller.SendAsync("onConnected", Context.ConnectionId);
 		}
 
+		/// <summary>
+		/// Joins the per-kind share groups of the other department for the kinds it shares toward the caller over an
+		/// enabled link — never the other department's own group, which carries all of its traffic. The groups carry the
+		/// other department's access epoch, so disabling, deleting or narrowing the link later strands this subscription.
+		/// </summary>
 		public async Task SubscribeToDepartmentLink(int linkId)
 		{
-			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
-			var linkedDepartmentId = GetLinkedDepartmentForCaller(link);
-			if (link == null || !link.LinkEnabled || !linkedDepartmentId.HasValue)
+			var shareGroups = await _departmentLinksService.GetShareGroupsForSubscriberAsync(linkId, GetDepartmentId());
+			if (shareGroups == null)
+				throw new HubException("Department link updates are temporarily unavailable.");
+			if (shareGroups.Count == 0)
 				throw new HubException("Not authorized for this department link.");
 
 			if (ConnectionClosed)
 				return;
 
-			await Groups.AddToGroupAsync(Context.ConnectionId, linkedDepartmentId.Value.ToString());
+			foreach (var shareGroup in shareGroups)
+				await Groups.AddToGroupAsync(Context.ConnectionId, shareGroup);
+
+			DepartmentLinkSharing.RecordSubscription(Context.Items, linkId, shareGroups);
 		}
 
+		/// <summary>
+		/// Leaves the groups this connection joined for the link. Nothing is looked up: the link may be gone and the
+		/// epoch rotated since, and a connection that never subscribed has nothing to leave.
+		/// </summary>
 		public async Task UnsubscribeToDepartmentLink(int linkId)
 		{
-			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
-			var linkedDepartmentId = GetLinkedDepartmentForCaller(link);
-			if (linkedDepartmentId.HasValue && !ConnectionClosed)
-				await Groups.RemoveFromGroupAsync(Context.ConnectionId, linkedDepartmentId.Value.ToString());
+			if (ConnectionClosed)
+				return;
+
+			foreach (var shareGroup in DepartmentLinkSharing.TakeSubscription(Context.Items, linkId))
+				await Groups.RemoveFromGroupAsync(Context.ConnectionId, shareGroup);
 		}
 
 		/// <summary>
@@ -67,21 +83,26 @@ namespace Resgrid.Web.Services.Hubs
 		private bool ConnectionClosed => Context.ConnectionAborted.IsCancellationRequested;
 
 		public Task PersonnelStatusUpdated(int departmentId, int id) =>
-			PublishAsync("personnelStatusUpdated", departmentId, id);
+			PublishAsync("personnelStatusUpdated", departmentId, id, DepartmentLinkShareTypes.Personnel);
 
 		public Task PersonnelStaffingUpdated(int departmentId, int id) =>
-			PublishAsync("personnelStaffingUpdated", departmentId, id);
+			PublishAsync("personnelStaffingUpdated", departmentId, id, DepartmentLinkShareTypes.Personnel);
 
 		public Task UnitStatusUpdated(int departmentId, int id) =>
-			PublishAsync("unitStatusUpdated", departmentId, id);
+			PublishAsync("unitStatusUpdated", departmentId, id, DepartmentLinkShareTypes.Units);
 
 		public Task CallsUpdated(int departmentId, int id) =>
-			PublishAsync("callsUpdated", departmentId, id);
+			PublishAsync("callsUpdated", departmentId, id, DepartmentLinkShareTypes.Calls);
 
-		private Task PublishAsync(string method, int departmentId, int id)
+		private async Task PublishAsync(string method, int departmentId, int id, DepartmentLinkShareTypes shareType)
 		{
 			DemandInternalPublisher();
-			return Clients.Group(departmentId.ToString()).SendAsync(method, id);
+			await Clients.Group(departmentId.ToString()).SendAsync(method, id);
+
+			// The current epoch's group only; null when no epoch exists (nobody subscribed) or the cache is unavailable.
+			var shareGroup = await _departmentLinksService.GetShareGroupNameAsync(departmentId, shareType);
+			if (shareGroup != null)
+				await Clients.Group(shareGroup).SendAsync(method, id);
 		}
 
 		private void DemandInternalPublisher()
@@ -96,18 +117,6 @@ namespace Resgrid.Web.Services.Hubs
 		{
 			var claim = Context.User?.FindFirst(ClaimTypes.PrimaryGroupSid);
 			return claim != null && int.TryParse(claim.Value, out var departmentId) ? departmentId : 0;
-		}
-
-		private int? GetLinkedDepartmentForCaller(Resgrid.Model.DepartmentLink link)
-		{
-			if (link == null)
-				return null;
-			var departmentId = GetDepartmentId();
-			if (link.DepartmentId == departmentId)
-				return link.LinkedDepartmentId;
-			if (link.LinkedDepartmentId == departmentId)
-				return link.DepartmentId;
-			return null;
 		}
 	}
 }

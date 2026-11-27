@@ -13,7 +13,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	// Training T3 part 2 (round 4C, M0387–M0390). Portable SQL over RmsRepositoryBase; member ids are citext on PostgreSQL, so their
+	// Training T3 part 2 (round 4C, M0367–M0370). Portable SQL over RmsRepositoryBase; member ids are citext on PostgreSQL, so their
 	// parameters are cast (pg-citext-text-param-equality); list parameters use InList (postgres-dapper-in-list).
 
 	public class LmsTrainingPlansRepository : RmsRepositoryBase<LmsTrainingPlan>, ILmsTrainingPlansRepository
@@ -447,6 +447,29 @@ namespace Resgrid.Repositories.DataRepository
 			return ExecuteAsync(
 				$"UPDATE {Tbl("LmsProgramStates")} SET {Col("CycleSweepLocalDate")} = {P}Previous WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("CycleSweepLocalDate")} = {P}Day",
 				parameters, cancellationToken);
+		}
+
+		public async Task<bool> TryClaimRequirementSetSweepAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default)
+		{
+			await EnsureRowAsync(departmentId, cancellationToken);
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Day", DatabaseTimestamp(localDate.Date), System.Data.DbType.DateTime2);
+			parameters.Add("Now", DatabaseTimestamp(DateTime.UtcNow), System.Data.DbType.DateTime2);
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("LmsProgramStates")} SET {Col("RequirementSetSweepLocalDate")} = {P}Day, {Col("UpdatedOn")} = {P}Now WHERE {Col("DepartmentId")} = {P}DepartmentId " +
+				$"AND ({Col("RequirementSetSweepLocalDate")} IS NULL OR {Col("RequirementSetSweepLocalDate")} < {P}Day)", parameters, cancellationToken) == 1;
+		}
+
+		public Task ReleaseRequirementSetSweepAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default)
+		{
+			var parameters = new DynamicParameters();
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Day", DatabaseTimestamp(localDate.Date), System.Data.DbType.DateTime2);
+			parameters.Add("Previous", DatabaseTimestamp(localDate.Date.AddDays(-1)), System.Data.DbType.DateTime2);
+			return ExecuteAsync(
+				$"UPDATE {Tbl("LmsProgramStates")} SET {Col("RequirementSetSweepLocalDate")} = {P}Previous WHERE {Col("DepartmentId")} = {P}DepartmentId " +
+				$"AND {Col("RequirementSetSweepLocalDate")} = {P}Day", parameters, cancellationToken);
 		}
 
 		public async Task SetFamiliarizationScannedThroughAsync(int departmentId, DateTime scannedThroughUtc, CancellationToken cancellationToken = default)

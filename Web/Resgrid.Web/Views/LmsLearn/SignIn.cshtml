@@ -1,0 +1,29 @@
+@model Resgrid.Web.Models.LmsLearn.LmsLearnSignInModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@{
+    ViewData["Title"] = localizer["Portal.SignIn"].Value;
+    var key = ViewData["PortalKey"] as string;
+}
+<div class="rgl-panel" style="max-width: 480px; margin: 0 auto;">
+    <h2><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["Portal.SignIn"]</h2>
+    <form method="post" action="~/Learn/@key/SignIn" data-submit-once autocomplete="on">
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+        <div class="form-group">
+            <label asp-for="Email">@localizer["Email"]</label>
+            <input asp-for="Email" class="form-control" type="email" autocomplete="username" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Password">@localizer["Portal.Password"]</label>
+            <input asp-for="Password" class="form-control" autocomplete="current-password" required />
+        </div>
+        <button type="submit" class="btn btn-rgl"><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["Portal.SignIn"]</button>
+        <a class="btn btn-link" href="~/Learn/@key/Forgot">@localizer["Portal.Forgot"]</a>
+        <a class="btn btn-link" href="~/Learn/@key/Resend">@localizer["Portal.ResendLink"]</a>
+    </form>
+    @if (ViewData["SelfRegistration"] as bool? == true)
+    {
+        <hr />
+        <a class="btn btn-default" href="~/Learn/@key/Register"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["Portal.Register"]</a>
+    }
+</div>

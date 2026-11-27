@@ -5,8 +5,10 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> healthLocalizer
 @*
     Wellness settings (setting 141, department administrators): the wellness officer role - its members read every member's exposure
-    log and keep screening flags; administration alone does not - the peer support team's certification type, and how many years
-    entries are kept (never below 30).
+    log and keep screening flags; administration alone does not - the peer support team (a role, or the holders of its certification
+    type), and how many years entries are kept (never below 30).
+    2026-11-26: each wellness role can also link a certification type of the department's own (requirements and validity set on the
+    type and its requirement set), shown as each member's status; the switch makes a current certification a condition of acting.
 *@
 @{
     var title = localizer["SettingsTitle"].Value;
@@ -16,6 +18,30 @@
     ViewData["Subtitle"] = localizer["SettingsIntro"].Value;
     ViewData["Message"] = Model.Message;
     ViewData["Error"] = Model.Error;
+}
+
+@functions {
+    // Where a linked certification type's validity and requirements are set: the type editor, and the LMS requirement set editor.
+    private Microsoft.AspNetCore.Html.IHtmlContent TypeLinks(int typeId)
+    {
+        if (typeId <= 0)
+        {
+            return Microsoft.AspNetCore.Html.HtmlString.Empty;
+        }
+        var builder = new Microsoft.AspNetCore.Html.HtmlContentBuilder();
+        builder.AppendHtml("<div class=\"small m-t-xs wellness-type-links\">");
+        builder.AppendHtml("<a href=\"" + System.Text.Encodings.Web.HtmlEncoder.Default.Encode(Url.Action("EditType", "Certifications", new { area = "User", id = typeId })) + "\"><i class=\"fa fa-pencil\" aria-hidden=\"true\"></i> ");
+        builder.Append(localizer["EditCertificationTypeLink"].Value);
+        builder.AppendHtml("</a>");
+        if (Model.RequirementSetsAvailable)
+        {
+            builder.AppendHtml(" &middot; <a href=\"" + System.Text.Encodings.Web.HtmlEncoder.Default.Encode(Url.Action("EditCertificationRequirements", "LmsPrograms", new { area = "User", typeId })) + "\"><i class=\"fa fa-list-ol\" aria-hidden=\"true\"></i> ");
+            builder.Append(localizer["CertificationRequirementsLink"].Value);
+            builder.AppendHtml("</a>");
+        }
+        builder.AppendHtml("</div>");
+        return builder;
+    }
 }
 
 @await Html.PartialAsync("_Shell")
@@ -36,6 +62,29 @@
                 <small class="text-muted">@localizer["WellnessOfficerRoleHelp"]</small>
             </div>
             <div class="form-group">
+                <label for="settings-officer-certification">@localizer["WellnessOfficerCertificationLabel"]</label>
+                <select id="settings-officer-certification" asp-for="WellnessOfficerCertificationTypeId" class="form-control">
+                    <option value="0">@localizer["NoneOption"]</option>
+                    @foreach (var type in Model.PersonCertificationTypes)
+                    {
+                        <option value="@type.DepartmentCertificationTypeId" selected="@(Model.WellnessOfficerCertificationTypeId == type.DepartmentCertificationTypeId)">@type.Type</option>
+                    }
+                </select>
+                <small class="text-muted">@localizer["WellnessOfficerCertificationHelp"]</small>
+                @TypeLinks(Model.WellnessOfficerCertificationTypeId)
+            </div>
+            <div class="form-group">
+                <label for="settings-peer-role">@localizer["PeerTeamRoleLabel"]</label>
+                <select id="settings-peer-role" asp-for="PeerTeamRoleId" class="form-control">
+                    <option value="0">@localizer["PeerTeamByCertificationOption"]</option>
+                    @foreach (var role in Model.Roles)
+                    {
+                        <option value="@role.PersonnelRoleId" selected="@(Model.PeerTeamRoleId == role.PersonnelRoleId)">@role.Name</option>
+                    }
+                </select>
+                <small class="text-muted">@localizer["PeerTeamRoleHelp"]</small>
+            </div>
+            <div class="form-group">
                 <label for="settings-peer-team">@localizer["PeerTeamLabel"]</label>
                 <select id="settings-peer-team" asp-for="PeerTeamCertificationTypeId" class="form-control">
                     <option value="0">@localizer["NoneOption"]</option>
@@ -45,6 +94,7 @@
                     }
                 </select>
                 <small class="text-muted">@localizer["PeerTeamHelp"]</small>
+                @TypeLinks(Model.PeerTeamCertificationTypeId)
             </div>
             <div class="form-group">
                 <label for="settings-retention">@localizer["RetentionYearsLabel"]</label>
@@ -52,7 +102,7 @@
                 <small class="text-muted">@localizer["RetentionYearsHelp"]</small>
             </div>
         </div>
-        @* Member wellness WL1: the designated officer, the BBP training and medical clearance certification types, injury retention. *@
+        @* Member wellness WL1: the designated officer (and its certification), the BBP training and medical clearance certification types, injury retention. *@
         <div class="ibox-title"><h5><i class="fa fa-medkit" aria-hidden="true"></i> @healthLocalizer["HealthSettingsHeader"]</h5></div>
         <div class="ibox-content">
             <div class="form-group">
@@ -65,6 +115,18 @@
                     }
                 </select>
                 <small class="text-muted">@healthLocalizer["DesignatedOfficerRoleHelp"]</small>
+            </div>
+            <div class="form-group">
+                <label for="settings-designated-certification">@healthLocalizer["DesignatedOfficerCertificationLabel"]</label>
+                <select id="settings-designated-certification" asp-for="DesignatedOfficerCertificationTypeId" class="form-control">
+                    <option value="0">@localizer["NoneOption"]</option>
+                    @foreach (var type in Model.PersonCertificationTypes)
+                    {
+                        <option value="@type.DepartmentCertificationTypeId" selected="@(Model.DesignatedOfficerCertificationTypeId == type.DepartmentCertificationTypeId)">@type.Type</option>
+                    }
+                </select>
+                <small class="text-muted">@healthLocalizer["DesignatedOfficerCertificationHelp"]</small>
+                @TypeLinks(Model.DesignatedOfficerCertificationTypeId)
             </div>
             <div class="form-group">
                 <label for="settings-bbp-type">@healthLocalizer["BbpTrainingTypeLabel"]</label>
@@ -93,6 +155,23 @@
                 <input id="settings-injury-retention" asp-for="InjuryRetentionYears" type="number" class="form-control" min="@OshaRules.MinimumRetentionYears" max="@OshaRules.MaximumRetentionYears" />
                 <small class="text-muted">@healthLocalizer["InjuryRetentionYearsHelp"]</small>
             </div>
+        </div>
+        @* 2026-11-26: whether a wellness role also needs a current certification, and who acts in each role today. *@
+        <div class="ibox-title"><h5><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["RoleCertificationHeader"]</h5></div>
+        <div class="ibox-content">
+            <div class="form-group">
+                <admin-assist-help-after>
+                    <div class="checkbox">
+                        <label><input type="checkbox" asp-for="RequireCurrentCertification" /> @localizer["RequireCertificationLabel"]</label>
+                    </div>
+                </admin-assist-help-after>
+                <small class="text-muted">@localizer["RequireCertificationHelp"]</small>
+            </div>
+            <p class="text-muted">
+                <i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["CertificationTemplatesHint"]
+                <a asp-controller="Certifications" asp-action="Types" asp-route-area="User">@localizer["CertificationTypesLink"]</a>
+            </p>
+            @await Html.PartialAsync("_Roster", new WellnessRosterView { Roster = Model.Roster, Names = Model.Names, Department = Model.Department })
         </div>
         <div class="ibox-content rgw-toolbar">
             <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveButton"]</button>

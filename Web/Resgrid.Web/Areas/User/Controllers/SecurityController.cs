@@ -139,6 +139,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.GradeAssessments = Value(PermissionTypes.GradeAssessments);
 			model.GradeAssessmentsPermissions = Options(PermissionTypes.GradeAssessments);
 
+			// Protocols P5 QA (134): with no row, department admins only.
+			model.ReviewDispatchCases = Value(PermissionTypes.ReviewDispatchCases);
+			model.ReviewDispatchCasesPermissions = Options(PermissionTypes.ReviewDispatchCases);
+
+			// Round 7B (135): record training completions for members. With no row, department admins only.
+			model.RecordTrainingCompletions = Value(PermissionTypes.RecordTrainingCompletions);
+			model.RecordTrainingCompletionsPermissions = Options(PermissionTypes.RecordTrainingCompletions);
+
+			// Round 10 A3 (136): publish and subscribe to protocol and course sets, decide the set inbox, sponsor LMS seats. No row: admins only.
+			model.ManageContentSets = Value(PermissionTypes.ManageContentSets);
+			model.ManageContentSetsPermissions = Options(PermissionTypes.ManageContentSets);
+
 			model.CreateDocument = Value(PermissionTypes.CreateDocument);
 			model.CreateDocumentPermissions = Options(PermissionTypes.CreateDocument);
 

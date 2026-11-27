@@ -81,6 +81,30 @@ namespace Resgrid.Tests.Localization
 			"Areas/User/Approvals/Approvals",
 			// Trainings → Skills: skill sheets, evaluator mode, task books and skill notice settings (T4 part 2, 2026-11-25) shipped fully translated.
 			"Areas/User/LmsSkills/LmsSkills",
+			// Protocols P5 QA: dispatch case review (queue, sampling, the review page, My case reviews, reports, rubrics; 2026-11-25).
+			"Areas/User/DispatchCaseReviews/DispatchCaseReviews",
+			// Trainings → Programs → Data export and CE reporting (T5 data exit, CAPCE and state CE files; 2026-11-25) shipped fully translated.
+			"Areas/User/LmsExports/LmsExports",
+			// Training reviews: members' training hours submissions, the reviewer inbox, review settings and the member and reviewer
+			// notices (round 9B, 2026-11-25) shipped fully translated.
+			"Areas/User/TrainingReviews/TrainingReviews",
+			// Round 9C translation sweep (2026-11-25): every remaining Protocols + Training/LMS area, machine translated as a first pass
+			// (each non-English value carries the resx comment "machine-translated" until a human review removes it).
+			"Areas/User/Academy/AcademyGuidance",
+			"Areas/User/Knowledge/Knowledge",
+			"Areas/User/Knowledge/AuthoringAids",
+			"Areas/User/LmsClasses/LmsClasses",
+			"Areas/User/LmsExternalLearners/LmsExternalLearners",
+			"Areas/User/LmsPrograms/LmsPrograms",
+			"Areas/User/LmsStandards/LmsStandards",
+			"Areas/User/ProtocolAi/ProtocolAi",
+			// Round 10 A3 (2026-11-26): protocol and course sets over Department Links, LMS sponsorship and their notices, machine translated.
+			"Areas/User/ContentSets/ContentSets",
+			"Areas/User/ProtocolSharing/ProtocolSharing",
+			"Areas/User/Trainings/Trainings",
+			"Areas/User/Addons/Addons",
+			// Outbound e-mail, push and SMS text of the Protocols + Training/LMS work, in the recipient's language (round 9C).
+			"Areas/User/ContentNotices/ContentNotices",
 		};
 
 		private static string LocalizationRoot()
@@ -140,6 +164,14 @@ namespace Resgrid.Tests.Localization
 			"DispatcherDesk|BreakTooltipFormat",
 			// Approval chains (2026-11-25): the step order column header is "#" in every language.
 			"Approvals|StepOrderColumn",
+			// Round 9C, checked side by side: file formats (CSV, PDF, HTML), e-learning standards (SCORM, cmi5, xAPI), the LMS and add-on
+			// product names kept in English like the other add-ons, and the "-" placeholder.
+			"LmsPrograms|ExportCsv", "LmsPrograms|ExportPdf", "LmsPrograms|UndoReason.0", "LmsStandards|Std.Standard.Cmi5",
+			"LmsStandards|Std.Standard.Scorm12", "LmsStandards|Std.Standard.Scorm2004", "LmsStandards|Std.Tab.Xapi", "ProtocolSharing|CsvButton",
+			"ProtocolSharing|ExportHtmlButton", "Trainings|Prg.Tier.Lms", "Addons|AdpTitle", "Addons|BusinessOpsTitle", "Addons|DedicatedNumberTitle",
+			"Addons|EnhancedAiTitle", "Addons|IncidentBackOfficeTitle", "Addons|LmsTitle", "Addons|PttTitle", "Addons|ReadinessProTitle",
+			// Workforce Pro (2026-11-26): the add-on name, kept in English like the other add-ons.
+			"Addons|WorkforceProTitle", "DashboardWidgets|W.admin.plan.Addon.WorkforcePro",
 		};
 
 		private static readonly HashSet<string> KnownIdentical = new HashSet<string>(StringComparer.Ordinal)
@@ -153,6 +185,8 @@ namespace Resgrid.Tests.Localization
 			// Dispatcher desk (2026-11-19), checked side by side: "{0} min" is the same minutes abbreviation in these languages.
 			"DispatcherDesk|es|MinutesShortFormat", "DispatcherDesk|fr|MinutesShortFormat", "DispatcherDesk|it|MinutesShortFormat",
 			"DispatcherDesk|pl|MinutesShortFormat", "DispatcherDesk|sv|MinutesShortFormat",
+			// Training reviews (round 9B), checked side by side: "{0} h" is the same hours abbreviation, and "Actions" the same French word.
+			"TrainingReviews|es|Hours.Value", "TrainingReviews|fr|Hours.Value", "TrainingReviews|it|Hours.Value", "TrainingReviews|fr|Col.Actions",
 			// Home dashboard (2026-10-31), checked side by side: the same word in that language (Status, Budget, Personnel,
 			// Normal, Chat, Spam, compass letters), the module's own wording (Messages it "Inbox", sv "Poll"), or a proper name
 			// (Cal OES Attachment A). Product names, sizes and format-only strings are in KnownIdenticalEverywhere.
@@ -448,6 +482,8 @@ namespace Resgrid.Tests.Localization
 			// Swedish; Details in German; No in Spanish and Italian; Signatures as French writes it.
 			"Signatures|de|StatusLabel", "Signatures|pl|StatusLabel", "Signatures|sv|StatusLabel", "Signatures|de|VerifyFormatColumn", "Signatures|fr|VerifyFormatColumn",
 			"Signatures|pl|VerifyFormatColumn", "Signatures|sv|VerifyFormatColumn", "Signatures|de|ViewRequestLink", "Signatures|es|No", "Signatures|it|No",
+			// Dispatch case review (P5 QA, 2026-11-25), checked side by side: No in Spanish and Italian.
+			"DispatchCaseReviews|es|No", "DispatchCaseReviews|it|No",
 			"Signatures|fr|SignaturePageTitle", "Signatures|fr|SignaturesHeading", "Signatures|fr|SignaturesModuleTitle",
 			// Courses and the Academy (2026-11-25), checked side by side: Name, Option, Version and Videos in German; French
 			// Discrimination (D), Version and "pts"; Italian File; Swedish Version; Administrator in German and Polish.
@@ -466,6 +502,72 @@ namespace Resgrid.Tests.Localization
 			"MemberHealth|fr|DateColumn", "MemberHealth|fr|ActionsColumn", "MemberHealth|es|Osha.No", "MemberHealth|it|Osha.No",
 			// Approval chains (2026-11-25), checked side by side: Actions in French; Status in German, Polish and Swedish.
 			"Approvals|fr|ActionsColumn", "Approvals|de|StatusLabel", "Approvals|pl|StatusLabel", "Approvals|sv|StatusLabel",
+			// Round 9C areas, checked side by side: the same word in that language (Status, Version, Details, Name, Plan, Code, Index, Quiz,
+			// Import, Start, Folder, Tag; French Actions, Description, Question(s), Notes, Date, Sources, Licence, Total, Absent, Latitude,
+			// Longitude, Certification, Cycle, National, Local, Score; Spanish Instructor, Virtual, Total, Manual, Individual, Local, No),
+			// "E-mail"/"Password" as French, Italian and Polish write them, "{0} min" / "{0} h", the Resgrid Academy name, and the ISO FSRS,
+			// NREMT NCCP and OSHA programme names.
+			"AcademyGuidance|es|LessonMinutes", "AcademyGuidance|fr|LessonMinutes", "AcademyGuidance|it|LessonMinutes", "AcademyGuidance|pl|LessonMinutes",
+			"AcademyGuidance|sv|LessonMinutes", "AcademyGuidance|fr|OpenDocs", "Knowledge|fr|ColumnActions", "Knowledge|fr|ColumnQuestion",
+			"Knowledge|fr|CorpusHeader", "Knowledge|de|IndexHeader", "Knowledge|fr|IndexHeader", "Knowledge|sv|IndexHeader", "Knowledge|de|KindAcademy",
+			"Knowledge|es|KindAcademy", "Knowledge|fr|KindAcademy", "Knowledge|it|KindAcademy", "Knowledge|pl|KindAcademy", "Knowledge|sv|KindAcademy",
+			"Knowledge|uk|KindAcademy", "Knowledge|el|KindAcademy", "Knowledge|fr|KindDocument", "Knowledge|fr|NoteLabel",
+			"Knowledge|it|PracticeScenarioLabel", "Knowledge|sv|PracticeScenarioLabel", "Knowledge|fr|SourcesLabel", "Knowledge|de|StatusFilterLabel",
+			"Knowledge|pl|StatusFilterLabel", "Knowledge|sv|StatusFilterLabel", "Knowledge|fr|SurfaceAssistant", "Knowledge|fr|VersionLabel",
+			"Knowledge|sv|VersionLabel", "AuthoringAids|fr|ModuleNumber", "AuthoringAids|fr|QuestionCountOption", "AuthoringAids|fr|QuestionNumber",
+			"LmsClasses|fr|Actions", "LmsClasses|fr|Attendance.Absent", "LmsClasses|fr|Col.Date", "LmsClasses|es|Col.Instructor",
+			"LmsClasses|fr|Col.Qualifications", "LmsClasses|fr|Col.Sessions", "LmsClasses|de|Col.Status", "LmsClasses|pl|Col.Status",
+			"LmsClasses|sv|Col.Status", "LmsClasses|es|Cost.Instructor", "LmsClasses|fr|Field.Description", "LmsClasses|fr|Field.Latitude",
+			"LmsClasses|fr|Field.Longitude", "LmsClasses|fr|Field.Notes", "LmsClasses|es|MinutesFormat", "LmsClasses|fr|MinutesFormat",
+			"LmsClasses|it|MinutesFormat", "LmsClasses|pl|MinutesFormat", "LmsClasses|sv|MinutesFormat", "LmsClasses|de|Section.Details",
+			"LmsClasses|pl|TagFilter", "LmsClasses|es|Total", "LmsClasses|fr|Total", "LmsClasses|de|VersionLabel", "LmsClasses|fr|VersionLabel",
+			"LmsClasses|sv|VersionLabel", "LmsClasses|fr|VersionsHeader", "LmsClasses|es|Virtual", "LmsClasses|fr|WaitlistPositionFormat",
+			"LmsExternalLearners|fr|Actions", "LmsExternalLearners|fr|Attendance.Absent", "LmsExternalLearners|fr|Csv.Email",
+			"LmsExternalLearners|it|Csv.Email", "LmsExternalLearners|pl|Csv.Email", "LmsExternalLearners|fr|Email", "LmsExternalLearners|it|Email",
+			"LmsExternalLearners|pl|Email", "LmsExternalLearners|de|Name", "LmsExternalLearners|it|Portal.Password", "LmsExternalLearners|de|Status",
+			"LmsExternalLearners|pl|Status", "LmsExternalLearners|sv|Status", "LmsPrograms|de|AcademyPrefix", "LmsPrograms|es|AcademyPrefix",
+			"LmsPrograms|it|AcademyPrefix", "LmsPrograms|pl|AcademyPrefix", "LmsPrograms|sv|AcademyPrefix", "LmsPrograms|fr|ActionsColumn",
+			"LmsStandards|fr|Std.Col.Actions", "LmsStandards|de|Std.Col.Items", "LmsStandards|de|Std.Col.Name", "LmsStandards|de|Std.Col.Standard",
+			"LmsStandards|it|Std.Col.Standard", "LmsStandards|pl|Std.Col.Standard", "LmsStandards|sv|Std.Col.Standard", "LmsStandards|de|Std.Col.Statement",
+			"LmsStandards|de|Std.Col.Status", "LmsStandards|sv|Std.Col.Status", "LmsStandards|es|Std.No", "LmsStandards|it|Std.No",
+			"ProtocolAi|fr|ActionsColumn", "ProtocolAi|fr|FrontColumn", "ProtocolAi|fr|QuestionsHeaderFormat", "ProtocolAi|fr|SourceColumn",
+			"ProtocolAi|de|StatusColumn", "ProtocolAi|pl|StatusColumn", "ProtocolAi|sv|StatusColumn", "ProtocolAi|de|VersionFormat",
+			"ProtocolAi|fr|VersionFormat", "ProtocolAi|sv|VersionFormat", "ProtocolSharing|fr|ColumnActions", "ProtocolSharing|fr|ColumnLicense",
+			"ProtocolSharing|de|ColumnStatus", "ProtocolSharing|pl|ColumnStatus", "ProtocolSharing|sv|ColumnStatus", "ProtocolSharing|pl|ImportHeader",
+			"ProtocolSharing|fr|LicenseLabel", "ProtocolSharing|de|ListingVersion", "ProtocolSharing|fr|ListingVersion", "ProtocolSharing|sv|ListingVersion",
+			"ProtocolSharing|es|MinutesValue", "ProtocolSharing|fr|MinutesValue", "ProtocolSharing|it|MinutesValue", "ProtocolSharing|pl|MinutesValue",
+			"ProtocolSharing|sv|MinutesValue", "ProtocolSharing|de|PublicVersion", "ProtocolSharing|fr|PublicVersion", "ProtocolSharing|sv|PublicVersion",
+			"Trainings|de|AcademyTab", "Trainings|es|AcademyTab", "Trainings|fr|AcademyTab", "Trainings|it|AcademyTab", "Trainings|pl|AcademyTab",
+			"Trainings|sv|AcademyTab", "Trainings|fr|ActionColumn", "Trainings|es|CategoryKind.IsoFsrs", "Trainings|fr|CategoryKind.IsoFsrs",
+			"Trainings|it|CategoryKind.IsoFsrs", "Trainings|pl|CategoryKind.IsoFsrs", "Trainings|sv|CategoryKind.IsoFsrs",
+			"Trainings|uk|CategoryKind.IsoFsrs", "Trainings|el|CategoryKind.IsoFsrs", "Trainings|ar|CategoryKind.IsoFsrs", "Trainings|es|CategoryKind.Nccp",
+			"Trainings|fr|CategoryKind.Nccp", "Trainings|it|CategoryKind.Nccp", "Trainings|pl|CategoryKind.Nccp", "Trainings|sv|CategoryKind.Nccp",
+			"Trainings|uk|CategoryKind.Nccp", "Trainings|el|CategoryKind.Nccp", "Trainings|ar|CategoryKind.Nccp", "Trainings|es|CategoryKind.Osha",
+			"Trainings|fr|CategoryKind.Osha", "Trainings|it|CategoryKind.Osha", "Trainings|pl|CategoryKind.Osha", "Trainings|sv|CategoryKind.Osha",
+			"Trainings|uk|CategoryKind.Osha", "Trainings|el|CategoryKind.Osha", "Trainings|ar|CategoryKind.Osha", "Trainings|fr|CertificationColumn",
+			"Trainings|fr|DescriptionColumn", "Trainings|fr|DescriptionLabel", "Trainings|de|DetailsHeader", "Trainings|fr|Doc.Code",
+			"Trainings|fr|Doc.Cycle", "Trainings|fr|Doc.Date", "Trainings|es|Doc.Individual", "Trainings|es|Doc.Local", "Trainings|fr|Doc.Local",
+			"Trainings|de|Doc.National", "Trainings|fr|Doc.National", "Trainings|sv|Doc.Period", "Trainings|sv|Doc.Status", "Trainings|pl|HistoryReasonReset",
+			"Trainings|it|HomeLink", "Trainings|es|HoursValue", "Trainings|fr|HoursValue", "Trainings|it|HoursValue", "Trainings|fr|LeaveNoteLabel",
+			"Trainings|de|NameColumn", "Trainings|fr|Prg.Actions", "Trainings|fr|Prg.Col.Certification", "Trainings|de|Prg.Col.Code",
+			"Trainings|fr|Prg.Col.Code", "Trainings|fr|Prg.Col.Date", "Trainings|es|Prg.Col.NccpIndividual", "Trainings|es|Prg.Col.NccpLocal",
+			"Trainings|fr|Prg.Col.NccpLocal", "Trainings|de|Prg.Col.NccpNational", "Trainings|fr|Prg.Col.NccpNational", "Trainings|de|Prg.Col.Status",
+			"Trainings|pl|Prg.Col.Status", "Trainings|sv|Prg.Col.Status", "Trainings|fr|Prg.Description", "Trainings|pl|Prg.Folder", "Trainings|de|Prg.Name",
+			"Trainings|fr|Prg.Notes", "Trainings|fr|Prg.Notify.CertTitle", "Trainings|sv|Prg.Parent", "Trainings|sv|Prg.Period", "Trainings|de|Prg.Plan",
+			"Trainings|es|Prg.Plan", "Trainings|fr|Prg.Plan", "Trainings|pl|Prg.Plan", "Trainings|sv|Prg.Plan", "Trainings|fr|Prg.Source",
+			"Trainings|fr|Prg.Subject.CertificationType", "Trainings|fr|QuestionColumn", "Trainings|fr|QuestionCountValue",
+			"Trainings|fr|QuestionNumberLabel", "Trainings|fr|QuestionTab", "Trainings|fr|QuestionsLabel", "Trainings|de|QuizSection",
+			"Trainings|fr|QuizSection", "Trainings|it|QuizSection", "Trainings|pl|QuizSection", "Trainings|sv|QuizSection", "Trainings|fr|Rec.DatesColumn",
+			"Trainings|de|Rec.ImportTab", "Trainings|pl|Rec.ImportTab", "Trainings|es|Rec.ManualCreditLabel", "Trainings|fr|Rec.NotesLabel",
+			"Trainings|fr|Rec.RoundingMinutesValue", "Trainings|es|Rec.TargetValue", "Trainings|fr|Rec.TargetValue", "Trainings|it|Rec.TargetValue",
+			"Trainings|de|Rec.TemplateBodyLabel", "Trainings|de|RecordCompletions.NoteOptional", "Trainings|fr|ScoreColumn", "Trainings|de|StartTab",
+			"Trainings|pl|StartTab", "Trainings|sv|StartTab", "Trainings|de|StatusLabel", "Trainings|pl|StatusLabel", "Trainings|sv|StatusLabel",
+			"Trainings|de|Std.Tab.Standards", "Trainings|de|Verify.Member", "Trainings|sv|Verify.Status", "Addons|de|AddonsHeader", "Addons|de|BillingLinks",
+			"ContentNotices|fr|Requirement.Enforced.Certification",
+			// 2026-11-26 certification sweep notices: "Certification" is the French word too (the notice title).
+			"ContentNotices|fr|Certification.Title",
+			// Round 9A certification requirements, checked side by side: "Certification" and "Type" are the French words too.
+			"Trainings|fr|CertReq.Col.Certification", "Trainings|fr|CertReq.ItemKind",
 		};
 
 		[Test]

@@ -16,6 +16,9 @@ namespace Resgrid.Model.Services
 	{
 		Task<List<LmsClassSession>> GetSessionsAsync(int departmentId, DateTime? fromUtc, DateTime? toUtc);
 		Task<LmsClassSession> GetSessionAsync(int departmentId, int lmsClassSessionId);
+
+		/// <summary>The department's training currency (Programs → Settings, setting 144) new classes, costs and fees default to.</summary>
+		Task<string> GetTrainingCurrencyAsync(int departmentId);
 		Task<LmsClassSession> GetSessionForCalendarItemAsync(int departmentId, int calendarItemId);
 		Task<LmsClassSessionDetail> GetDetailAsync(int departmentId, int lmsClassSessionId, DateTime utcNow);
 		Task<List<LmsClassSession>> GetSeriesAsync(int departmentId, string seriesKey);
@@ -57,6 +60,9 @@ namespace Resgrid.Model.Services
 		/// <summary>A class manager enrols a member (no approval; over capacity only when there is no waitlist).</summary>
 		Task<LmsClassEnrollment> EnrollMemberAsync(int departmentId, int lmsClassSessionId, string memberUserId, string managerUserId, DateTime utcNow,
 			CancellationToken cancellationToken = default);
+		/// <summary>T5: an external learner ("xl-" id) on the roster under the session's rules, with the name and organization as the roster snapshot.</summary>
+		Task<LmsClassEnrollment> PlaceExternalAsync(int departmentId, int lmsClassSessionId, string learnerUserId, string name, string organization, string actingUserId,
+			bool byManager, DateTime utcNow, CancellationToken cancellationToken = default);
 		Task<LmsClassEnrollment> UnenrollSelfAsync(int departmentId, int lmsClassSessionId, string userId, DateTime utcNow, CancellationToken cancellationToken = default);
 		Task<LmsClassEnrollment> RemoveMemberAsync(int departmentId, int lmsClassEnrollmentId, string managerUserId, DateTime utcNow, CancellationToken cancellationToken = default);
 		Task<LmsClassEnrollment> DecideAsync(int departmentId, int lmsClassEnrollmentId, bool approve, string managerUserId, DateTime utcNow, CancellationToken cancellationToken = default);
@@ -92,6 +98,8 @@ namespace Resgrid.Model.Services
 	public interface ILmsLessonPlanService
 	{
 		IReadOnlyList<LmsLessonPlanStarter> GetStarters();
+		/// <summary>The starter plans in a language (round 9C: machine-translated variants, English when the language ships none).</summary>
+		IReadOnlyList<LmsLessonPlanStarter> GetStarters(string culture);
 		Task<List<LmsLessonPlan>> GetPlansAsync(int departmentId);
 		Task<LmsLessonPlan> GetPlanAsync(int departmentId, int lmsLessonPlanId);
 		Task<List<LmsLessonPlanVersion>> GetVersionsAsync(int departmentId, int lmsLessonPlanId);
@@ -99,6 +107,8 @@ namespace Resgrid.Model.Services
 		Task<LmsLessonPlan> CreateAsync(int departmentId, string title, LmsLessonPlanContent content, string userId, CancellationToken cancellationToken = default);
 		/// <summary>Copies a starter plan into a new department draft.</summary>
 		Task<LmsLessonPlan> ApplyStarterAsync(int departmentId, string starterKey, string userId, CancellationToken cancellationToken = default);
+		/// <summary>Copies a starter plan into a new department draft, its text in a language (English when none ships).</summary>
+		Task<LmsLessonPlan> ApplyStarterAsync(int departmentId, string starterKey, string userId, string culture, CancellationToken cancellationToken = default);
 		Task<LmsLessonPlanVersion> SaveDraftAsync(int departmentId, int lmsLessonPlanVersionId, string title, LmsLessonPlanContent content, string userId,
 			CancellationToken cancellationToken = default);
 		Task<LmsLessonPlanVersion> SubmitAsync(int departmentId, int lmsLessonPlanVersionId, string changeSummary, string userId, CancellationToken cancellationToken = default);

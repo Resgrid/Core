@@ -31,7 +31,7 @@
                             }
                         </select>
                     </div>
-                    @if (kind != LmsLessonKinds.Assessment && kind != LmsLessonKinds.Survey)
+                    @if (kind != LmsLessonKinds.Assessment && kind != LmsLessonKinds.Survey && kind != LmsLessonKinds.Scorm && kind != LmsLessonKinds.Cmi5 && kind != LmsLessonKinds.LtiLink)
                     {
                         <div class="form-group"><label for="l-seat">@localizer["MinimumSeatLabel"]</label><input id="l-seat" name="MinimumSeatSeconds" type="number" min="0" max="86400" class="form-control" value="@lesson.MinimumSeatSeconds" /></div>
                     }
@@ -117,6 +117,13 @@
                             <div class="checkbox"><label><input type="checkbox" name="RequireAttestation" value="true" checked="@lesson.RequireAttestation" /> @localizer["AttestationLabel"]</label></div>
                         </div>
                         <p class="help-block">@localizer["AssessmentHelp"]</p>
+                        break;
+
+                    case LmsLessonKinds.Scorm:
+                    case LmsLessonKinds.Cmi5:
+                    case LmsLessonKinds.LtiLink:
+                        @* T5: the package or LTI tool (the standards view component lists the department's own). *@
+                        @await Component.InvokeAsync("LmsStandardsLessonFields", new { lesson = Model.Lesson, kind = lesson.Kind })
                         break;
 
                     case LmsLessonKinds.Survey:

@@ -127,6 +127,9 @@ namespace Resgrid.Web.Areas.User.Models.Training
 
 		public bool OneQuestionPerPage { get; set; }
 
+		/// <summary>Round 9A read and confirm: a training without a quiz completes only when the member confirms they read and reviewed it.</summary>
+		public bool RequiresAcknowledgment { get; set; }
+
 		public string ReminderLeadDaysCsv { get; set; }
 
 		public bool SendOverdueNotices { get; set; } = true;

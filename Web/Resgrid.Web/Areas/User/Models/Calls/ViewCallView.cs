@@ -40,6 +40,12 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 
 		/// <summary>The outcome of the last protocol removal ("Removed", "ReasonRequired"), shown once.</summary>
 		public string CallProtocolMessage { get; set; }
+
+		/// <summary>
+		/// ADP catalog 39: a protocol's case record, answers or reasons are sealed and this render had no grant (REDACTED). The page then
+		/// re-renders the protocols tab through the reveal flow after step-up.
+		/// </summary>
+		public bool ProtocolContentWithheld { get; set; }
 		public List<CallReference> ChildCalls { get; set; }
 		public List<Contact> Contacts { get; set; }
 

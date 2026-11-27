@@ -239,56 +239,74 @@
   </data>
   <data name="CredentialAudienceLabel" xml:space="preserve">
     <value>Por certificación</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceNone" xml:space="preserve">
     <value>Nadie por certificación</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceStatus" xml:space="preserve">
     <value>Estado de la certificación</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceExpired" xml:space="preserve">
     <value>ha vencido</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceExpiring" xml:space="preserve">
     <value>vence en los días indicados</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceMissing" xml:space="preserve">
     <value>nunca la tuvo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceDays" xml:space="preserve">
     <value>Días</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceHelp" xml:space="preserve">
     <value>Añade a los miembros activos cuya certificación coincide, junto con los destinatarios elegidos arriba.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceNoMatch" xml:space="preserve">
     <value>Ningún miembro coincide con el estado de certificación elegido.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceLabel" xml:space="preserve">
     <value>Lista de la clase</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceNone" xml:space="preserve">
     <value>Ninguna clase</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceStatus" xml:space="preserve">
     <value>Estado en la lista</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceEnrolled" xml:space="preserve">
     <value>Inscritos</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceAttended" xml:space="preserve">
     <value>Asistieron</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceAbsent" xml:space="preserve">
     <value>Ausentes</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceWaitlisted" xml:space="preserve">
     <value>En lista de espera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceHelp" xml:space="preserve">
     <value>Añade a los destinatarios los miembros activos de la clase con ese estado.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceNoMatch" xml:space="preserve">
     <value>Nadie en la lista de esa clase tiene ese estado.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

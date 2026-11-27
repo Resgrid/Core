@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>LMS seats (M0366). Member ids are citext on PostgreSQL, so their parameters are cast (pg-citext-text-param-equality).</summary>
+	/// <summary>LMS seats (M0351). Member ids are citext on PostgreSQL, so their parameters are cast (pg-citext-text-param-equality).</summary>
 	public class LmsMemberSeatsRepository : RmsRepositoryBase<LmsMemberSeat>, ILmsMemberSeatsRepository
 	{
 		private static readonly string[] Columns = { "DepartmentId", "UserId", "EnabledOn", "EnabledByUserId" };
@@ -70,7 +70,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>What the LMS gate last saw of each department's add-on (M0367); one row per department.</summary>
+	/// <summary>What the LMS gate last saw of each department's add-on (M0352); one row per department.</summary>
 	public class LmsAddonStatesRepository : RmsRepositoryBase<LmsAddonState>, ILmsAddonStatesRepository
 	{
 		private static readonly string[] Columns = { "DepartmentId", "Packs", "PaidThroughUtc", "RenewalCancelled", "LastActiveOn", "LapsedSinceUtc", "UpdatedOn" };
@@ -80,6 +80,15 @@ namespace Resgrid.Repositories.DataRepository
 
 		public Task<LmsAddonState> GetForDepartmentAsync(int departmentId) =>
 			QueryFirstOrDefaultAsync<LmsAddonState>($"SELECT * FROM {Tbl("LmsAddonStates")} WHERE {Col("DepartmentId")} = {P}DepartmentId", new { DepartmentId = departmentId });
+
+		public async Task<bool> TryChangePacksAsync(int departmentId, int expectedPacks, int packs, CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || expectedPacks == packs)
+				return false;
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("LmsAddonStates")} SET {Col("Packs")} = {P}Packs WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("Packs")} = {P}ExpectedPacks",
+				new { DepartmentId = departmentId, Packs = packs, ExpectedPacks = expectedPacks }, cancellationToken) > 0;
+		}
 
 		public async Task SaveForDepartmentAsync(LmsAddonState state, CancellationToken cancellationToken = default)
 		{
@@ -117,7 +126,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>LMS add-on lapse periods (M0367); at most one open per department (filtered unique index).</summary>
+	/// <summary>LMS add-on lapse periods (M0352); at most one open per department (filtered unique index).</summary>
 	public class LmsAddonLapsesRepository : RmsRepositoryBase<LmsAddonLapse>, ILmsAddonLapsesRepository
 	{
 		private static readonly string[] Columns = { "DepartmentId", "StartedOn", "EndedOn", "PaidThroughUtc", "Reason", "Packs", "DetectedOn" };

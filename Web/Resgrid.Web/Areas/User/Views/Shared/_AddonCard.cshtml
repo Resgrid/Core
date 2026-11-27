@@ -33,6 +33,9 @@
         case PlanAddonTypes.Lms:
             actionUrl = Url.Action("Index", "LmsBilling", new { Area = "User" });
             break;
+        case PlanAddonTypes.WorkforcePro:
+            actionUrl = Url.Action("Index", "WorkforceProBilling", new { Area = "User" });
+            break;
         default:
             actionUrl = Url.Action("Index", "AiBilling", new { Area = "User" });
             break;

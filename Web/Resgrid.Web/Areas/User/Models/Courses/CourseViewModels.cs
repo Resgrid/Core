@@ -220,6 +220,9 @@ namespace Resgrid.Web.Areas.User.Models.Courses
 				case LmsLessonKinds.ProtocolVersion: return "fa-book";
 				case LmsLessonKinds.Assessment: return "fa-check-square-o";
 				case LmsLessonKinds.Survey: return "fa-comments-o";
+				case LmsLessonKinds.Scorm: return "fa-archive";
+				case LmsLessonKinds.Cmi5: return "fa-cubes";
+				case LmsLessonKinds.LtiLink: return "fa-plug";
 				default: return "fa-align-left";
 			}
 		}

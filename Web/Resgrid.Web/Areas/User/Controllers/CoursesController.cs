@@ -17,6 +17,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Lms;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Courses;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.Helpers;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
@@ -57,13 +58,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private LmsActor _actor;
 		private Department _department;
+		private readonly ILmsCompletionRecordingService _recordings;
+		private readonly ITrainingCompletionRecordingService _recorded;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> _trainingLocalizer;
 
 		public CoursesController(ILmsGateService gate, ILmsCourseService courses, ILmsQuestionBankService banks, ILmsLearnerService learner, ILmsAssessmentService assessments,
 			ILmsMediaService media, ILmsCrewViewingService crew, ILmsAcademyService academy, ILmsAccessService access, ILmsTrainingService lmsTraining,
 			IDepartmentsService departmentsService, IDepartmentGroupsService groupsService, IPersonnelRolesService rolesService, ILearningRecordService learningRecords,
 			ICertificationService certificationService, IProtocolLibraryService protocolLibrary, IProtocolsService protocolsService, IAuthorizationService authorizationService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer, ILmsCompletionRecordingService recordings, ITrainingCompletionRecordingService recorded,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> trainingLocalizer)
 		{
+			_recordings = recordings;
+			_recorded = recorded;
+			_trainingLocalizer = trainingLocalizer;
 			_gate = gate;
 			_courses = courses;
 			_banks = banks;
@@ -84,6 +92,89 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_authorizationService = authorizationService;
 			_localizer = localizer;
 		}
+
+		#region Recorded completions (round 7B, permission 135)
+
+		private string RecordText(string key)
+		{
+			var value = _trainingLocalizer?[key];
+			return value == null || value.ResourceNotFound || string.IsNullOrEmpty(value.Value) ? key : value.Value;
+		}
+
+		/// <summary>Record that members completed this course's current version together (the enrolment list first); voids of earlier ones.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		public async Task<IActionResult> RecordCompletions(int targetId)
+		{
+			var actor = await ActorAsync();
+			if (actor?.Gate == null || !actor.Gate.FlagOn)
+				return NotFound();
+			var view = await _recordings.GetCourseRecordingViewAsync(DepartmentId, targetId, UserId);
+			if (view == null)
+				return NotFound();
+			if (!view.CanRecord)
+				return Unauthorized();
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			return View(new Resgrid.Web.Areas.User.Models.RecordCompletionsPageView
+			{
+				View = view,
+				Controller = "Courses",
+				Names = await NamesAsync(),
+				Local = d => department == null ? d : DateTime.SpecifyKind(d, DateTimeKind.Utc).TimeConverter(department),
+				Message = TempData?["CourseMessage"] as string,
+				Error = TempData?["CourseError"] as string
+			});
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		public async Task<IActionResult> RecordCompletions(int targetId, List<string> userIds, string note, bool attested, string attestationVersion, CancellationToken cancellationToken)
+		{
+			var outcome = await _recordings.RecordCourseAsync(DepartmentId, targetId, new TrainingCompletionRecordingRequest
+			{
+				RecorderUserId = UserId,
+				MemberUserIds = userIds ?? new List<string>(),
+				Note = note,
+				Attested = attested,
+				AttestationVersion = string.IsNullOrWhiteSpace(attestationVersion) ? TrainingCompletionAttestation.CurrentVersion : attestationVersion,
+				Source = TrainingCompletionRecordingSources.Manual
+			}, cancellationToken);
+			if (TempData != null)
+			{
+				if (!outcome.Succeeded)
+					TempData["CourseError"] = RecordText(outcome.Error);
+				else
+				{
+					TempData["CourseMessage"] = string.Format(CultureInfo.CurrentCulture, RecordText("RecordCompletions.ResultFormat"), outcome.Recorded, outcome.Refused);
+					var refusals = outcome.Results.Where(r => !r.Recorded).GroupBy(r => r.Refusal).Select(g => RecordText(g.Key) + " (" + g.Count().ToString(CultureInfo.CurrentCulture) + ")").ToList();
+					if (refusals.Count > 0)
+						TempData["CourseError"] = string.Join(" ", refusals);
+				}
+			}
+			return RedirectToAction("RecordCompletions", new { targetId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		public async Task<IActionResult> VoidRecordedCompletion(int targetId, int recordingId, string reason, CancellationToken cancellationToken)
+		{
+			var recording = await _recorded.GetAsync(DepartmentId, recordingId);
+			if (recording == null || recording.TargetKind != (int)TrainingCompletionRecordingTargets.Course || recording.TargetId != targetId)
+				return NotFound();
+			var result = await _recorded.VoidAsync(DepartmentId, recordingId, UserId, reason, cancellationToken);
+			if (TempData != null)
+			{
+				if (result.Refusal == null)
+					TempData["CourseMessage"] = RecordText("RecordCompletions.VoidDone");
+				else
+					TempData["CourseError"] = RecordText(result.Refusal);
+			}
+			return RedirectToAction("RecordCompletions", new { targetId });
+		}
+
+		#endregion Recorded completions (round 7B, permission 135)
 
 		#region K2 drafting aids (accept)
 
@@ -275,6 +366,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		private string Locale => CultureInfo.CurrentUICulture.Name;
 
+		/// <summary>The assignment summary; round 10 A7: how many were not enrolled for want of an LMS seat (enable their LMS access, then assign again).</summary>
+		private string AssignedText(LmsAssignOutcome outcome)
+		{
+			var text = string.Format(CultureInfo.CurrentCulture, Text("AssignedMessage"), outcome.Created, outcome.AlreadyEnrolled, outcome.Skipped.Count);
+			return outcome.NotLicensed > 0 ? text + " " + string.Format(CultureInfo.CurrentCulture, Text("AssignedNotLicensedMessage"), outcome.NotLicensed) : text;
+		}
+
 		#endregion Gates and helpers
 
 		#region My courses and the Academy
@@ -333,7 +431,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				? await _academy.AssignPathAsync(actor, pathKey, rules, due, cancellationToken)
 				: await _academy.AssignLessonAsync(actor, lessonId, rules, due, cancellationToken);
 			if (outcome.Error == LmsErrors.None)
-				TempData["CourseMessage"] = string.Format(CultureInfo.CurrentCulture, Text("AssignedMessage"), outcome.Created, outcome.AlreadyEnrolled, outcome.Skipped.Count);
+				TempData["CourseMessage"] = AssignedText(outcome);
 			else
 				TempData["CourseError"] = Text(CourseLabels.Error(outcome.Error));
 			return RedirectToAction("Academy");
@@ -485,7 +583,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var player = await _learner.GetPlayerAsync(DepartmentId, UserId, id, lesson);
 			if (player.Error != LmsErrors.None || player.Lesson?.LmsLessonId != lesson || !player.HostedVideoPlayable || player.Media == null)
 				return NotFound();
-			var playlist = await _media.GetSignedPlaylistAsync(await _gate.GetGateAsync(DepartmentId), player.Media, DateTime.UtcNow);
+			var playlist = await _media.GetSignedPlaylistAsync((await _gate.GetGateAsync(DepartmentId)).For(player.Enrollment?.LmsCourseId ?? 0), player.Media, DateTime.UtcNow);
 			if (playlist == null)
 				return NotFound();
 			Response.Headers["Cache-Control"] = "no-store";
@@ -498,7 +596,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var player = await _learner.GetPlayerAsync(DepartmentId, UserId, id, lesson);
 			if (player.Error != LmsErrors.None || player.Lesson?.LmsLessonId != lesson || !player.HostedVideoPlayable || player.Media == null)
 				return NotFound();
-			var url = await _media.GetSignedMp4UrlAsync(await _gate.GetGateAsync(DepartmentId), player.Media, DateTime.UtcNow);
+			var url = await _media.GetSignedMp4UrlAsync((await _gate.GetGateAsync(DepartmentId)).For(player.Enrollment?.LmsCourseId ?? 0), player.Media, DateTime.UtcNow);
 			return url == null ? NotFound() : Redirect(url);
 		}
 
@@ -548,6 +646,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 			if (view.Error == LmsErrors.AlreadySubmitted)
 				return RedirectToAction("Result", new { id });
+			// Round 10 A7: without an LMS seat an open attempt is not shown; the player says why (read-only enrollment).
+			if (view.Error == LmsErrors.NotLicensed)
+			{
+				TempData["CourseError"] = Text(CourseLabels.Error(view.Error));
+				return RedirectToAction("Play", new { id = view.Attempt.LmsEnrollmentId });
+			}
 			return View(Page(new AttemptModel { View = view, EnrollmentId = view.Attempt.LmsEnrollmentId }));
 		}
 
@@ -575,6 +679,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var result = await _assessments.SubmitAttemptAsync(DepartmentId, UserId, id, answers, cancellationToken);
 			if (result.Error == LmsErrors.NotFound)
 				return NotFound();
+			// Round 10 A7: nothing was scored without an LMS seat; back to the (read-only) player with the reason.
+			if (result.Error == LmsErrors.NotLicensed && result.Attempt != null)
+			{
+				TempData["CourseError"] = Text(CourseLabels.Error(result.Error));
+				return RedirectToAction("Play", new { id = result.Attempt.LmsEnrollmentId });
+			}
 			if (result.Error != LmsErrors.None && result.Error != LmsErrors.AlreadySubmitted)
 				TempData["CourseError"] = Text(CourseLabels.Error(result.Error));
 			else if (result.CourseCompleted)
@@ -822,7 +932,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Audience = await _courses.GetAudienceAsync(DepartmentId, id),
 				Names = await NamesAsync(),
 				Who = rights.Assign ? await WhoListsAsync() : null,
-				CanAssignNew = rights.Assign && LmsLapseRules.CanAssignNew(actor.Gate, false)
+				CanAssignNew = rights.Assign && LmsLapseRules.CanAssignNew(actor.Gate.For(course.LmsCourseId), false)
 			});
 			return View(model);
 		}
@@ -845,10 +955,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Assign(int id, CourseWhoInput who, CancellationToken cancellationToken = default)
 		{
-			var outcome = await _learner.AssignAsync(await ActorAsync(), id, who?.Rules() ?? new List<ContentAudienceRule>(), await DueUtcAsync(who?.DueOn),
-				LmsEnrollmentSources.Assigned, null, cancellationToken);
+			var outcome = await _learner.AssignDirectAsync(await ActorAsync(), id, who?.Rules() ?? new List<ContentAudienceRule>(), await DueUtcAsync(who?.DueOn),
+				cancellationToken);
 			if (outcome.Error == LmsErrors.None)
-				TempData["CourseMessage"] = string.Format(CultureInfo.CurrentCulture, Text("AssignedMessage"), outcome.Created, outcome.AlreadyEnrolled, outcome.Skipped.Count);
+				TempData["CourseMessage"] = AssignedText(outcome);
 			else
 				TempData["CourseError"] = Text(CourseLabels.Error(outcome.Error));
 			return RedirectToAction("Course", new { id });
@@ -1087,12 +1197,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// <summary>Approves with an L2 signature: this session's fresh step-up (RequiresRecentTwoFactor) bound to the version's hash.</summary>
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true)]
+		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Signatures)]
 		public async Task<IActionResult> Approve(int id, string comment, CancellationToken cancellationToken = default)
 		{
 			var proof = SignatureProof.SessionOnly(UserId, IpAddressHelper.GetRequestIP(Request, true), Request?.Headers["User-Agent"].ToString());
 			// Set by RequiresRecentTwoFactor(RequireForOperation = true) from this session's server-side evidence.
-			proof.StepUpVerifiedOnUtc = HttpContext?.Items["mfa_verified_at"] as DateTime?;
+			Resgrid.Web.Helpers.WebStepUpProof.Apply(proof, HttpContext);
 			Flash(await _courses.ApproveAsync(await ActorAsync(), id, comment, proof, cancellationToken), "ApprovedMessage");
 			return RedirectToAction("Builder", new { id });
 		}

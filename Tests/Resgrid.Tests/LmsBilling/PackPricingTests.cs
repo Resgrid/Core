@@ -117,8 +117,8 @@ namespace Resgrid.Tests.LmsBilling
 			LmsAddonConfig.ThirdTierFirstPack.Should().Be(21);
 			LmsAddonConfig.DunningGraceDays.Should().Be(7, "the platform's failed monthly renewal grace (PlanAddon.GetEndDateFromNow)");
 			LmsAddonConfig.ReactivationGraceDays.Should().Be(14, "lapse rule 12's default");
-			LmsAddonConfig.PlanAddonId.Should().Be(Resgrid.Providers.Migrations.Migrations.M0366_AddLmsPackBillingAndSeats.LmsAddonId)
-				.And.Be(Resgrid.Providers.MigrationsPg.Migrations.M0366_AddLmsPackBillingAndSeatsPg.LmsAddonId);
+			LmsAddonConfig.PlanAddonId.Should().Be(Resgrid.Providers.Migrations.Migrations.M0351_AddLmsPackBillingAndSeats.LmsAddonId)
+				.And.Be(Resgrid.Providers.MigrationsPg.Migrations.M0351_AddLmsPackBillingAndSeatsPg.LmsAddonId);
 		}
 
 		#region Quantity change preview
@@ -198,7 +198,8 @@ namespace Resgrid.Tests.LmsBilling
 			lms.StripeAmount().Should().Be(79m, "the card shows the first pack's price");
 			lms.PaddleAmount().Should().Be(99m);
 			lms.Slug.Should().Be("lms");
-			AddonCatalog.All.Where(a => a.IsPackAddon).Select(a => a.Type).Should().Equal(PlanAddonTypes.Lms);
+			// Workforce Pro (2026-11-26) is the second pack add-on on the same billing path.
+			AddonCatalog.All.Where(a => a.IsPackAddon).Select(a => a.Type).Should().Equal(PlanAddonTypes.Lms, PlanAddonTypes.WorkforcePro);
 		}
 
 		[TestCase(false, false, false)]

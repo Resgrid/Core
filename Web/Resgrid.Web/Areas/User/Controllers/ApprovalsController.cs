@@ -37,11 +37,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentLinksService _links;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> _text;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> _signatureText;
+		private readonly IMutualAidCountersignService _countersign;
 
 		public ApprovalsController(IApprovalChainService approvals, IMutualAidAgreementService agreements, IDepartmentsService departments, IPersonnelRolesService roles,
 			IDepartmentGroupsService groups, ICertificationService certifications, IDepartmentLinksService links,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> text, IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> text, IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText,
+			IMutualAidCountersignService countersign)
 		{
+			_countersign = countersign;
 			_approvals = approvals;
 			_agreements = agreements;
 			_departments = departments;
@@ -131,11 +134,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		/// <summary>Approve the member's step at L2 after a fresh step-up (the form is held across the step-up and replayed).</summary>
 		[HttpPost, ValidateAntiForgeryToken]
-		[RequiresRecentTwoFactor(RequireForOperation = true)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Approvals)]
 		public async Task<IActionResult> Approve(int approvalId, CancellationToken cancellationToken)
 		{
 			var proof = SignatureProof.SessionOnly(UserId, Ip, Agent);
-			proof.StepUpVerifiedOnUtc = HttpContext?.Items["mfa_verified_at"] as DateTime?;
+			Resgrid.Web.Helpers.WebStepUpProof.Apply(proof, HttpContext);
 			var result = await _approvals.ApproveAsync(DepartmentId, approvalId, proof, false, cancellationToken);
 			TempData[result.Succeeded ? "ApprovalMessage" : "ApprovalError"] = result.Succeeded ? _text["ApprovedMessage"].Value : RefusalText(result.Refusal);
 			return RedirectToAction("Detail", new { id = approvalId });
@@ -382,6 +385,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.ExpiresOn = agreement.ExpiresOn;
 				model.Status = agreement.Status;
 				model.Approval = await _approvals.GetSubjectStatusAsync(DepartmentId, SignatureSubjectKinds.MutualAidAgreementApproval, id.ToString(CultureInfo.InvariantCulture), UserId, true);
+				// Round 10 A3: the partner's countersignature over the link (a declined, expired or voided request is recorded on read).
+				agreement = await _countersign.RefreshAsync(agreement, HttpContext?.RequestAborted ?? default);
+				model.RequiresCountersignature = agreement.RequiresCountersignature;
+				model.CountersignStatus = agreement.CountersignStatus;
+				model.CountersignRequestedOn = agreement.CountersignRequestedOn;
+				model.CountersignedOn = agreement.CountersignedOn;
+				model.CountersignNote = agreement.CountersignNote;
 			}
 			model.Links = await LinkOptionsAsync();
 			return View(model);
@@ -404,7 +414,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				PartnerName = string.IsNullOrWhiteSpace(model.PartnerName) ? (link == null ? null : (link.DepartmentId == DepartmentId ? link.LinkedDepartment?.Name : link.Department?.Name)) : model.PartnerName,
 				Terms = model.Terms,
 				EffectiveOn = model.EffectiveOn,
-				ExpiresOn = model.ExpiresOn
+				ExpiresOn = model.ExpiresOn,
+				RequiresCountersignature = model.RequiresCountersignature && link != null
 			}, UserId, cancellationToken);
 			if (saved == null)
 			{

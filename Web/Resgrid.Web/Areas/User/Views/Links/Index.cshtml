@@ -61,7 +61,7 @@
 				  {
                     <tr>
                       <td>
-                        <span>@l.Department.Name</span>
+                        <span>@l.Department?.Name</span>
                       </td>
                       <td>
                         @if (l.DepartmentId != Model.DepartmentId && !String.IsNullOrWhiteSpace(l.DepartmentColor))
@@ -74,7 +74,7 @@
 						}
                       </td>
                       <td>
-                        <span>@l.LinkedDepartment.Name</span>
+                        <span>@l.LinkedDepartment?.Name</span>
                       </td>
                       <td>
                         @if (l.LinkEnabled)
@@ -137,6 +137,25 @@
 							  data = data + "," + localizer["Orders"];
 							}
 						  }
+
+						  // Round 10 A3: the Protocols and Training share kinds, and what the linked department shares back.
+						  if (l.DepartmentShareProtocols)
+						  {
+							data = data.Length <= 0 ? localizer["Protocols"].Value : data + "," + localizer["Protocols"];
+						  }
+
+						  if (l.DepartmentShareTraining)
+						  {
+							data = data.Length <= 0 ? localizer["Training"].Value : data + "," + localizer["Training"];
+						  }
+
+						  var back = new System.Collections.Generic.List<string>();
+						  if (l.LinkedDepartmentShareCalls) { back.Add(localizer["Calls"].Value); }
+						  if (l.LinkedDepartmentSharePersonnel) { back.Add(localizer["Personnel"].Value); }
+						  if (l.LinkedDepartmentShareUnits) { back.Add(localizer["Units"].Value); }
+						  if (l.LinkedDepartmentShareOrders) { back.Add(localizer["Orders"].Value); }
+						  if (l.LinkedDepartmentShareProtocols) { back.Add(localizer["Protocols"].Value); }
+						  if (l.LinkedDepartmentShareTraining) { back.Add(localizer["Training"].Value); }
                         }
 
                         @if (!String.IsNullOrWhiteSpace(data))
@@ -146,6 +165,10 @@
 						else
 						{
                           <span>@localizer["NoDataShared"]</span>
+						}
+                        @if (back.Count > 0)
+						{
+                          <div class="small text-muted">@localizer["SharedBack"] @string.Join(",", back)</div>
 						}
                       </td>
                       <td>
@@ -157,16 +180,18 @@
 						}
 						else if (l.DepartmentId != Model.DepartmentId && l.LinkEnabled && ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 						{
-                          <a href="@Url.Action("DisableLink", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-warning'>
-                            @localizer["Disable"]
-                          </a>
+                          <form class="department-link-disable-form" asp-controller="Links" asp-action="DisableLink" asp-route-area="User" asp-antiforgery="true" method="post" style="display:inline;">
+                            <input type="hidden" name="linkId" value="@l.DepartmentLinkId" />
+                            <button type="submit" class='btn btn-xs btn-warning'>@localizer["Disable"]</button>
+                          </form>
 						}
 
                         @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 						{
-                          <a href="@Url.Action("DeleteLink", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteLinkConfirm"]" rel="nofollow">
-                            @localizer["Delete"]
-                          </a>
+                          <form class="department-link-delete-form" asp-controller="Links" asp-action="DeleteLink" asp-route-area="User" asp-antiforgery="true" method="post" style="display:inline;" onsubmit="return confirm('@JsEncoder.Encode(localizer["DeleteLinkConfirm"])');">
+                            <input type="hidden" name="linkId" value="@l.DepartmentLinkId" />
+                            <button type="submit" class='btn btn-xs btn-danger'>@localizer["Delete"]</button>
+                          </form>
 						}
 
 
@@ -176,12 +201,39 @@
                             @localizer["ViewData"]
                           </a>
 						}
+
+                        @* Round 10 A3: each side sets what it shares; the other side's published protocols when it shares them toward us. *@
+                        @if (l.LinkEnabled && ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+						{
+                          <a href="@Url.Action("Sharing", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-white'>
+                            @localizer["EditSharing"]
+                          </a>
+						}
+                        @if (Resgrid.Model.Helpers.DepartmentLinkSharing.GetSharedDepartmentId(l, Model.DepartmentId, Resgrid.Model.DepartmentLinkShareTypes.Protocols).HasValue)
+						{
+                          <a href="@Url.Action("Protocols", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-info'>
+                            @localizer["ViewProtocols"]
+                          </a>
+						}
                       </td>
                     </tr>
 						  }
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-3">
+      <div class="wrapper wrapper-content">
+        <div class="ibox">
+          <div class="ibox-content">
+            <p class="small text-muted">@localizer["SetsIntro"]</p>
+            <a class="btn btn-sm btn-white btn-block" href="@Url.Action("Index", "ContentSets", new { area = "User", kind = 0 })"><i class="fa fa-book" aria-hidden="true"></i> @localizer["ProtocolSetsLink"]</a>
+            <a class="btn btn-sm btn-white btn-block" href="@Url.Action("Index", "ContentSets", new { area = "User", kind = 1 })"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["CourseSetsLink"]</a>
+            <a class="btn btn-sm btn-white btn-block" href="@Url.Action("Agreements", "Links", new { area = "User" })"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["PartnerAgreementsLink"]</a>
           </div>
         </div>
       </div>

@@ -158,7 +158,7 @@ namespace Resgrid.Tests.Approvals
 			var profiles = new Mock<IUserProfileService>();
 			profiles.Setup(x => x.GetProfileByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync((string id, bool _) => new UserProfile { UserId = id, FirstName = "M", LastName = id.Substring(0, 4) });
 			var memberSignatures = new SignatureService(records.Object, Mock.Of<IProtocolVersionsRepository>(), Mock.Of<IPersonnelCertificationRepository>(), profiles.Object,
-				Mock.Of<IPersonnelRolesService>(), Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>());
+				Mock.Of<IPersonnelRolesService>(), Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>(), Resgrid.Tests.Security.StepUpTestPolicies.Strict());
 
 			var sources = new IApprovalSubjectSource[] { _subject };
 			ApprovalChainService service = null;
@@ -167,7 +167,7 @@ namespace Resgrid.Tests.Approvals
 				Mock.Of<IRmsSignaturesRepository>(), new ISignatureSubjectSource[] { adapter }, Mock.Of<IESignProvider>(), Mock.Of<IESignAccountService>(), sealing.Object, pdf.Object,
 				Mock.Of<IEncryptionService>(), Mock.Of<IEmailSender>(), Mock.Of<ITextMessageProvider>(), departments.Object, Mock.Of<IDepartmentSettingsService>(),
 				Mock.Of<IBusinessOperationsAccessService>(), Mock.Of<IReadinessAccessService>(), Mock.Of<IIncidentBackOfficeAccessService>(), Mock.Of<ILmsAccessService>(),
-				Mock.Of<ICacheProvider>(), events.Object, memberSignatures, eligibility.Object, Mock.Of<ISignatureNotificationService>());
+				Mock.Of<ICacheProvider>(), events.Object, memberSignatures, eligibility.Object, Mock.Of<ISignatureNotificationService>(), Mock.Of<IDepartmentDataProtectionService>(), new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()));
 
 			// --- Approval stores ---
 			var chains = new Mock<IApprovalChainsRepository>();
@@ -581,7 +581,7 @@ namespace Resgrid.Tests.Approvals
 				new Lazy<IIncidentLedgerService<IncidentPlanVersion>>(() => null));
 			var invoices = new InvoiceApprovalSource(Mock.Of<IInvoiceRepository>(), Mock.Of<IInvoiceLineItemRepository>(), business.Object);
 			var mars = new CalOesMarsPackageApprovalSource(Mock.Of<ICalOesMarsWorkItemRepository>(), business.Object);
-			var agreements = new MutualAidAgreementApprovalSource(Mock.Of<IMutualAidAgreementsRepository>());
+			var agreements = new MutualAidAgreementApprovalSource(Mock.Of<IMutualAidAgreementsRepository>(), new System.Lazy<IMutualAidCountersignService>(() => null));
 
 			(await requisitions.IsAvailableAsync(Dept)).Should().BeFalse();
 			(await plans.IsAvailableAsync(Dept)).Should().BeFalse();
@@ -679,7 +679,7 @@ namespace Resgrid.Tests.Approvals
 				.ReturnsAsync((MutualAidAgreement a, CancellationToken _, bool __) => { a.MutualAidAgreementId = store.Count + 1; store.Add(a); return a; });
 			repo.Setup(x => x.UpdateAsync(It.IsAny<MutualAidAgreement>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((MutualAidAgreement a, CancellationToken _, bool __) => a);
 			repo.Setup(x => x.GetForDepartmentAsync(Dept, It.IsAny<int>())).ReturnsAsync((int d, int id) => store.FirstOrDefault(a => a.MutualAidAgreementId == id && !a.IsDeleted));
-			var service = new MutualAidAgreementService(repo.Object, Mock.Of<IEventAggregator>());
+			var service = new MutualAidAgreementService(repo.Object, Mock.Of<IEventAggregator>(), Mock.Of<IDepartmentLinksService>());
 
 			var draft = await service.SaveAsync(new MutualAidAgreement { DepartmentId = Dept, Title = "County mutual aid", Terms = "Each party responds within 30 minutes." }, Chief);
 			draft.Status.Should().Be((int)MutualAidAgreementStatuses.Draft);

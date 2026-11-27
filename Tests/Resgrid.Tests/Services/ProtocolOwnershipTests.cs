@@ -46,7 +46,7 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IDispatchProtocolQuestionsRepository>(),
 				Mock.Of<IDispatchProtocolTriggersRepository>(),
 				Mock.Of<IDispatchProtocolQuestionAnswersRepository>(), new Lazy<IDispatchTriggerFactsService>(() => Mock.Of<IDispatchTriggerFactsService>()),
-				new Lazy<IProtocolAiSuggestionService>(() => Mock.Of<IProtocolAiSuggestionService>()));
+				new Lazy<IProtocolAiSuggestionService>(() => Mock.Of<IProtocolAiSuggestionService>()), new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()));
 		}
 
 		[Test]

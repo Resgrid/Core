@@ -259,15 +259,25 @@ namespace Resgrid.Services
 		public async Task<List<LmsOfflineVideo>> GetOfflineManifestAsync(int departmentId, string userId, DateTime utcNow)
 		{
 			var result = new List<LmsOfflineVideo>();
-			var gate = await _gate.GetGateAsync(departmentId);
-			if (!IsStoreConfigured || !LmsLapseRules.CanStreamHostedVideo(gate, utcNow))
+			var departmentGate = await _gate.GetGateAsync(departmentId);
+			if (!IsStoreConfigured)
 				return result;
 
+			bool? seated = null;
 			foreach (var enrollment in (await _enrollments.GetForUserAsync(departmentId, userId) ?? new List<LmsEnrollment>()).Where(e => e.IsOpen))
 			{
 				var course = await _courses.GetVisibleByIdAsync(departmentId, enrollment.LmsCourseId);
-				if (course == null || course.IsSystem || !LmsLapseRules.CanRun(gate, false, enrollment, utcNow))
+				// A sponsored set copy streams under the sponsor's add-on (round 10 A3); every other course under the department's own.
+				var gate = departmentGate.For(enrollment.LmsCourseId);
+				if (course == null || course.IsSystem || !LmsLapseRules.CanStreamHostedVideo(gate, utcNow) || !LmsLapseRules.CanRun(gate, false, enrollment, utcNow))
 					continue;
+				// Round 10 A7: hosted video of a department course goes only to a member holding an LMS seat (one read per request).
+				if (LmsLearnerSeats.Needed(course, userId))
+				{
+					seated ??= await _gate.HoldsLearnerSeatAsync(departmentId, userId);
+					if (seated != true)
+						return result;
+				}
 				foreach (var lesson in (await _lessons.GetForVersionAsync(departmentId, enrollment.LmsCourseVersionId) ?? new List<LmsLesson>())
 					.Where(l => l.Kind == (int)LmsLessonKinds.Video && l.VideoSource == (int)LmsVideoSources.Hosted && l.AvailableOffline && l.LmsMediaAssetId.HasValue))
 				{
@@ -404,7 +414,9 @@ namespace Resgrid.Services
 					var gate = await _gate.GetGateAsync(departmentId);
 					if (!LmsLapseRules.ShouldArchiveHostedMedia(gate, utcNow))
 						continue;
-					foreach (var asset in (await _assets.GetForDepartmentAsync(departmentId) ?? new List<LmsMediaAsset>()).Where(a => a.Status == (int)LmsMediaStatuses.Ready))
+					// A row shared from a course set (round 10 A3) follows the set's sponsorship or the subscriber's own gate per course, not this sweep.
+					foreach (var asset in (await _assets.GetForDepartmentAsync(departmentId) ?? new List<LmsMediaAsset>())
+						.Where(a => a.Status == (int)LmsMediaStatuses.Ready && !a.SharedFromDepartmentId.HasValue))
 					{
 						asset.Status = (int)LmsMediaStatuses.Archived;
 						asset.ArchivedOn = utcNow;

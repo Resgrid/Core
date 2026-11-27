@@ -51,7 +51,7 @@ namespace Resgrid.Model.Helpers
 	/// <item>nothing goes to completed, exempt, removed or inactive members, members on leave, or before a scheduled
 	/// start.</item>
 	/// </list>
-	/// Notices are English (outbound messages are English-only by design).
+	/// The planner decides what is sent; the text is rendered in each recipient's language by TrainingNoticeText (round 9C, ContentNotices resources).
 	/// </summary>
 	public static class TrainingNoticePlanner
 	{

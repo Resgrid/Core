@@ -1,0 +1,121 @@
+{
+  "format": "resgrid-protocols",
+  "version": 2,
+  "exportedOn": "2026-11-25T00:00:00Z",
+  "set": {
+    "key": "sar-starter",
+    "title": "Search and rescue starter set",
+    "description": "Four search and rescue procedures written by Resgrid as a starting point: missing person intake, search urgency, initial response for a lost person, and team check-in and check-out. Adapt them to your team's training, your area and the agency that holds search authority.",
+    "publisher": "Resgrid",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "setVersion": "1.0"
+  },
+  "protocols": [
+    {
+      "code": "SAR-101",
+      "name": "Missing person intake",
+      "kind": "Procedure",
+      "tags": "sar,missing person,intake",
+      "description": "What to ask the reporting party and record before teams are sent.",
+      "requiresAcknowledgment": false,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "heading", "key": "subject", "text": "About the missing person", "level": 2 },
+          { "type": "steps", "key": "who", "title": "Record", "items": [
+            { "key": "w1", "html": "<p>Name, age, sex, height, build and a recent photograph if one is available.</p>" },
+            { "key": "w2", "html": "<p>Clothing, footwear (with sole pattern if known), equipment and colours.</p>" },
+            { "key": "w3", "html": "<p>Medical conditions, medicines needed, and any cognitive or mental health concerns.</p>" },
+            { "key": "w4", "html": "<p>Experience in the outdoors and the area; known habits when lost.</p>" }
+          ] },
+          { "type": "heading", "key": "where", "text": "Point last seen", "level": 2 },
+          { "type": "steps", "key": "pls", "title": "Record", "items": [
+            { "key": "p1", "html": "<p>Where and when the person was last seen or last known to be, and by whom.</p>" },
+            { "key": "p2", "html": "<p>Intended route and destination, and the vehicle and where it is parked.</p>" },
+            { "key": "p3", "html": "<p>Mobile phone number and carrier, and when the phone was last used.</p>" }
+          ] },
+          { "type": "caution", "key": "privacy", "title": "Personal information", "html": "<p>Share the subject's medical and personal details only with the people working the search.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SAR-102",
+      "name": "Search urgency assessment",
+      "kind": "Procedure",
+      "tags": "sar,urgency,planning",
+      "description": "A quick way to decide how urgent the response is, from the subject, the weather, the terrain and time.",
+      "requiresAcknowledgment": false,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "paragraph", "key": "intro", "html": "<p>Score each factor from 1 (most urgent) to 3 (least urgent) and add them up. A lower total means a faster, larger response. Use your team's own scale if it has one.</p>" },
+          { "type": "table", "key": "factors", "title": "Factors", "headerRow": true, "rows": [
+            [ "Factor", "1 - most urgent", "3 - least urgent" ],
+            [ "Age", "Very young or elderly", "Adult" ],
+            [ "Medical condition", "Known illness or injury", "Healthy" ],
+            [ "Number of subjects", "One alone", "A group" ],
+            [ "Experience", "None, not equipped", "Experienced and equipped" ],
+            [ "Weather", "Severe now or forecast", "Mild" ],
+            [ "Terrain and hazards", "Water, cliffs, avalanche ground", "Few hazards" ],
+            [ "Time missing", "Overnight or longer", "A few hours" ]
+          ] },
+          { "type": "warning", "key": "child", "title": "Always urgent", "html": "<p>A missing child, a person at risk of self-harm and a person with dementia are urgent whatever the total.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SAR-103",
+      "name": "Initial response to a lost person",
+      "kind": "Procedure",
+      "tags": "sar,hasty search,containment",
+      "description": "The first hours: hasty search of likely spots, containment of the search area and setting up command.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "first", "title": "First actions", "items": [
+            { "key": "f1", "html": "<p>Set up command at or near the point last seen, out of the search area, and start a log.</p>" },
+            { "key": "f2", "html": "<p>Protect the point last seen and any tracks or scent articles from being disturbed.</p>" },
+            { "key": "f3", "html": "<p>Send hasty teams to the most likely places: trails, drainages, decision points, water and shelters.</p>" },
+            { "key": "f4", "html": "<p>Contain the area: post people at trailheads, road crossings and other exits, and light or mark attraction points.</p>" },
+            { "key": "f5", "html": "<p>Request more resources early if the urgency is high; it is easier to stand teams down than to call them in late.</p>" }
+          ] },
+          { "type": "caution", "key": "teams", "title": "Team safety", "html": "<p>No team searches alone or without communications, and every team checks in and out with command.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SAR-104",
+      "name": "Team check-in and check-out",
+      "kind": "Procedure",
+      "tags": "sar,accountability,briefing",
+      "description": "Accountability for every searcher: check-in, briefing, assignment, debriefing and check-out.",
+      "requiresAcknowledgment": false,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "in", "title": "Check-in", "items": [
+            { "key": "i1", "html": "<p>Record each searcher's name, team, qualifications, contact number and expected time out.</p>" },
+            { "key": "i2", "html": "<p>Check equipment and communications before the team leaves.</p>" }
+          ] },
+          { "type": "steps", "key": "brief", "title": "Briefing and assignment", "items": [
+            { "key": "b1", "html": "<p>Give the subject's description, the assignment area, the search method, hazards, radio channels and the check-in times.</p>" }
+          ] },
+          { "type": "steps", "key": "out", "title": "Debriefing and check-out", "items": [
+            { "key": "o1", "html": "<p>Debrief every team: area covered, how well it was searched, clues found, hazards met.</p>" },
+            { "key": "o2", "html": "<p>Check each searcher out by name; nobody leaves without checking out.</p>" }
+          ] }
+        ]
+      }
+    }
+  ]
+}

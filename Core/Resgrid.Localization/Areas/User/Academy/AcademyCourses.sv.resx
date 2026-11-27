@@ -60,59 +60,78 @@
   </resheader>
   <data name="Check.Title" xml:space="preserve">
     <value>Kontrollera din förståelse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.administrator" xml:space="preserve">
     <value>Administratör</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.administrator.Audience" xml:space="preserve">
     <value>Organisationens administratörer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.business" xml:space="preserve">
     <value>Ekonomi och administration</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.business.Audience" xml:space="preserve">
     <value>Ansvariga för ekonomi och administration</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.dispatcher" xml:space="preserve">
     <value>Larmoperatör</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.dispatcher.Audience" xml:space="preserve">
     <value>Larmcentralens personal</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.logistics" xml:space="preserve">
     <value>Logistik och beredskap</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.logistics.Audience" xml:space="preserve">
     <value>Ansvariga för logistik och beredskap</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.member" xml:space="preserve">
     <value>Medlem / Utryckande</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.member.Audience" xml:space="preserve">
     <value>Alla</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.officer" xml:space="preserve">
     <value>Befäl / Insatsledning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.officer.Audience" xml:space="preserve">
     <value>Befäl och insatsledare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.records" xml:space="preserve">
     <value>Rapporter och dokumentation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.records.Audience" xml:space="preserve">
     <value>Rapportskrivare och granskare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.training-officer" xml:space="preserve">
     <value>Utbildningsansvarig</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.training-officer.Audience" xml:space="preserve">
     <value>Utbildningspersonal</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrueFalse.f" xml:space="preserve">
     <value>Falskt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrueFalse.t" xml:space="preserve">
     <value>Sant</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

@@ -14,6 +14,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<MemberExposureSummary>> GetDepartmentSummaryAsync(int departmentId, string officerUserId, DateTime? fromUtc, DateTime? toUtc)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireOfficerAsync(departmentId, officerUserId);
 
 			// Operational columns only: the report counts, it never reveals a protected value.
@@ -66,6 +67,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsResponderExposure>> GetDepartmentEntriesAsync(int departmentId, string officerUserId, DateTime? fromUtc, DateTime? toUtc)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireOfficerAsync(departmentId, officerUserId);
 			var rows = (await _exposures.GetForDepartmentAsync(departmentId, fromUtc, toUtc) ?? Enumerable.Empty<RmsResponderExposure>())
 				.Where(r => r.Counts)
@@ -83,6 +85,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<RmsCallExposureFlag> FlagCallAsync(int departmentId, string actorUserId, int callId, int category, CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			if (!MemberWellnessRules.IsKnownCategory(category))
 				throw new MemberWellnessException("category_required");
 			var call = await _callsService.GetCallByIdAsync(callId);
@@ -90,6 +93,8 @@ namespace Resgrid.Services.Wellness
 				throw new MemberWellnessException("call_not_found");
 			if (!await CanFlagCallAsync(departmentId, actorUserId, callId))
 				throw new UnauthorizedAccessException("Flagging a call needs the wellness officer role, department administration or the right to edit the call.");
+			// A flag builds suggestions (records) for the members on the call: only while Workforce Pro is licensed, and only for seat holders.
+			await RequireWritableAsync(departmentId);
 
 			var now = DateTime.UtcNow;
 			var existing = (await _callFlags.GetForCallAsync(departmentId, callId) ?? Enumerable.Empty<RmsCallExposureFlag>()).FirstOrDefault(f => f.Category == category);
@@ -127,11 +132,13 @@ namespace Resgrid.Services.Wellness
 
 		public async Task ClearCallFlagAsync(int departmentId, string actorUserId, string flagId, CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			var flag = string.IsNullOrWhiteSpace(flagId) ? null : await _callFlags.GetByIdForDepartmentAsync(departmentId, flagId);
 			if (flag == null)
 				throw new MemberWellnessException("flag_not_found");
 			if (!await CanFlagCallAsync(departmentId, actorUserId, flag.CallId))
 				throw new UnauthorizedAccessException("Clearing a call flag needs the same right as setting it.");
+			await RequireWritableAsync(departmentId);
 			if (!flag.IsActive)
 				return;
 
@@ -146,6 +153,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsCallExposureFlag>> GetCallFlagsAsync(int departmentId, string actorUserId, int callId)
 		{
+			await RequireReadableAsync(departmentId);
 			if (!await CanFlagCallAsync(departmentId, actorUserId, callId))
 				throw new UnauthorizedAccessException("Reading a call's wellness flags needs the right to set them.");
 			return (await _callFlags.GetForCallAsync(departmentId, callId) ?? Enumerable.Empty<RmsCallExposureFlag>()).ToList();
@@ -153,6 +161,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsCallExposureFlag>> GetRecentFlagsAsync(int departmentId, string officerUserId, int take)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireOfficerAsync(departmentId, officerUserId);
 			return (await _callFlags.GetRecentForDepartmentAsync(departmentId, Math.Max(1, Math.Min(200, take))) ?? Enumerable.Empty<RmsCallExposureFlag>()).ToList();
 		}
@@ -172,9 +181,11 @@ namespace Resgrid.Services.Wellness
 		public async Task<RmsResponderScreeningFlag> SetScreeningFlagAsync(int departmentId, string officerUserId, string memberUserId, int? category, DateTime? reviewOn,
 			string planNotes, CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireOfficerAsync(departmentId, officerUserId);
 			if (!await IsCurrentMemberAsync(departmentId, memberUserId))
 				throw new MemberWellnessException("member_not_found");
+			await RequireWritableForAsync(departmentId, memberUserId);
 			if (category.HasValue && !MemberWellnessRules.IsKnownCategory(category.Value))
 				throw new MemberWellnessException("category_required");
 
@@ -224,10 +235,12 @@ namespace Resgrid.Services.Wellness
 
 		public async Task ClearScreeningFlagAsync(int departmentId, string officerUserId, string flagId, CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireOfficerAsync(departmentId, officerUserId);
 			var flag = string.IsNullOrWhiteSpace(flagId) ? null : await _screeningFlags.GetByIdForDepartmentAsync(departmentId, flagId);
 			if (flag == null)
 				throw new MemberWellnessException("flag_not_found");
+			await RequireWritableForAsync(departmentId, flag.UserId);
 			if (!flag.IsActive)
 				return;
 
@@ -263,10 +276,12 @@ namespace Resgrid.Services.Wellness
 		public async Task<RmsRecordWorkAssignment> AddFollowUpAsync(int departmentId, string officerUserId, string flagId, string kind, string assigneeUserId, DateTime? dueOn,
 			CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireOfficerAsync(departmentId, officerUserId);
 			var flag = string.IsNullOrWhiteSpace(flagId) ? null : await _screeningFlags.GetByIdForDepartmentAsync(departmentId, flagId);
 			if (flag == null || !flag.IsActive)
 				throw new MemberWellnessException("flag_not_found");
+			await RequireWritableForAsync(departmentId, flag.UserId);
 			if (!ResponderFollowUpTaskKinds.IsKnown(kind))
 				throw new MemberWellnessException("follow_up_kind_required");
 
@@ -309,6 +324,7 @@ namespace Resgrid.Services.Wellness
 				throw new UnauthorizedAccessException("Only the assignee or a wellness officer completes a follow-up.");
 			if (!await IsCurrentMemberAsync(departmentId, actorUserId))
 				throw new UnauthorizedAccessException("Only a current member completes a follow-up.");
+			await RequireWritableForFollowUpAsync(departmentId, task);
 			if (!task.IsOpen)
 				throw new MemberWellnessException("follow_up_closed");
 
@@ -328,6 +344,7 @@ namespace Resgrid.Services.Wellness
 		{
 			await RequireOfficerAsync(departmentId, officerUserId);
 			var task = await LoadFollowUpAsync(departmentId, assignmentId);
+			await RequireWritableForFollowUpAsync(departmentId, task);
 			if (!task.IsOpen)
 				throw new MemberWellnessException("follow_up_closed");
 
@@ -343,8 +360,19 @@ namespace Resgrid.Services.Wellness
 			return task;
 		}
 
+		/// <summary>A follow-up is part of the member's screening record: editable only while that member holds a seat.</summary>
+		private async Task RequireWritableForFollowUpAsync(int departmentId, RmsRecordWorkAssignment task)
+		{
+			var flag = string.IsNullOrWhiteSpace(task?.RecordId) ? null : await _screeningFlags.GetByIdForDepartmentAsync(departmentId, task.RecordId);
+			if (flag != null)
+				await RequireWritableForAsync(departmentId, flag.UserId);
+			else
+				await RequireWritableAsync(departmentId);
+		}
+
 		private async Task<RmsRecordWorkAssignment> LoadFollowUpAsync(int departmentId, string assignmentId)
 		{
+			await RequireReadableAsync(departmentId);
 			var task = string.IsNullOrWhiteSpace(assignmentId) ? null : await _assignments.GetByIdForDepartmentAsync(departmentId, assignmentId);
 			// Only the wellness purpose is reachable here; a Record's own work assignment is never touched by this service.
 			if (task == null || task.DeletedOn.HasValue || !string.Equals(task.Purpose, RmsWorkAssignmentPurposes.WellnessFollowUp, StringComparison.Ordinal))

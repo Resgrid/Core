@@ -109,12 +109,32 @@ namespace Resgrid.Model
 	/// </code>
 	/// Priorities, call types and audience groups and roles travel by name and are matched to the importing department's by name;
 	/// anything that does not match is left out and reported.
+	/// <para>
+	/// Version 2 (Protocols P5, the documented open format in docs/protocols/open-format.md with its JSON schema) adds, all optional: a
+	/// <c>set</c> header (a category or template set), and per protocol its <c>attribution</c> (source, licence, source version), the version's
+	/// <c>locale</c>, <c>effectiveOn</c> and <c>contentHash</c>, its published <c>history</c>, approved <c>translations</c> and an
+	/// <c>attachments</c> manifest (names, types, sizes and SHA-256; never bytes). A version 1 file reads and imports exactly as before.
+	/// </para>
 	/// </summary>
 	public sealed class ProtocolExchangeDocument
 	{
 		public const string FormatName = "resgrid-protocols";
-		public const int CurrentVersion = 1;
+
+		/// <summary>The version the library writes (P5: 2). Files of every version from <see cref="MinimumVersion"/> up import.</summary>
+		public const int CurrentVersion = 2;
+
+		/// <summary>The oldest version still read (P1's version 1 files keep importing).</summary>
+		public const int MinimumVersion = 1;
+
 		public const int MaxProtocolsPerImport = 500;
+
+		/// <summary>The schema's address as written into exported files (informational; nothing is fetched).</summary>
+		public const string SchemaId = "https://resgrid.com/schemas/resgrid-protocols-2.schema.json";
+
+		public static bool IsSupportedVersion(int version) => version >= MinimumVersion && version <= CurrentVersion;
+
+		[JsonProperty("$schema", NullValueHandling = NullValueHandling.Ignore)]
+		public string Schema { get; set; }
 
 		[JsonProperty("format")]
 		public string Format { get; set; } = FormatName;
@@ -125,8 +145,20 @@ namespace Resgrid.Model
 		[JsonProperty("exportedOn")]
 		public DateTime ExportedOn { get; set; }
 
+		/// <summary>Version 2: the set the file holds (a category exported as a set, a template library set); null for a plain export.</summary>
+		[JsonProperty("set", NullValueHandling = NullValueHandling.Ignore)]
+		public ProtocolExchangeSet Set { get; set; }
+
 		[JsonProperty("protocols")]
 		public List<ProtocolExchangeItem> Protocols { get; set; } = new List<ProtocolExchangeItem>();
+
+		/// <summary>Set by the importer's caller, never read from a file: where attributed items came from (default: an attributed file).</summary>
+		[JsonIgnore]
+		public ContentAttributionSources? AttributionSource { get; set; }
+
+		/// <summary>Set by the importer's caller, never read from a file: the template set key or exchange listing id.</summary>
+		[JsonIgnore]
+		public string AttributionSourceRef { get; set; }
 
 		/// <summary>
 		/// Reads a document in this format (the one serializer every importer uses: the library's Import page and the department
@@ -169,6 +201,81 @@ namespace Resgrid.Model
 		[JsonProperty("triggers")] public List<ProtocolExchangeTrigger> Triggers { get; set; } = new List<ProtocolExchangeTrigger>();
 		[JsonProperty("questions")] public List<ProtocolExchangeQuestion> Questions { get; set; } = new List<ProtocolExchangeQuestion>();
 		[JsonProperty("audience")] public List<ProtocolExchangeAudience> Audience { get; set; } = new List<ProtocolExchangeAudience>();
+
+		// ---- version 2 (P5), all optional ------------------------------------------------------------------------------------------
+
+		/// <summary>Where the content came from; kept on the imported version (template library, community exchange, another agency).</summary>
+		[JsonProperty("attribution", NullValueHandling = NullValueHandling.Ignore)] public ProtocolExchangeAttribution Attribution { get; set; }
+
+		/// <summary>The content language (BCP 47) of <see cref="Content"/>.</summary>
+		[JsonProperty("locale", NullValueHandling = NullValueHandling.Ignore)] public string Locale { get; set; }
+
+		[JsonProperty("effectiveOn", NullValueHandling = NullValueHandling.Ignore)] public DateTime? EffectiveOn { get; set; }
+
+		/// <summary>SHA-256 (lower-case hex) of the version's stored HTML, as the department computed it (informational on import).</summary>
+		[JsonProperty("contentHash", NullValueHandling = NullValueHandling.Ignore)] public string ContentHash { get; set; }
+
+		/// <summary>The protocol's published versions, newest first: numbers, dates, change summaries and hashes (no content).</summary>
+		[JsonProperty("history", NullValueHandling = NullValueHandling.Ignore)] public List<ProtocolExchangeVersion> History { get; set; }
+
+		/// <summary>Approved translations of the exported version (imported versions start untranslated; listed for the reviewer).</summary>
+		[JsonProperty("translations", NullValueHandling = NullValueHandling.Ignore)] public List<ProtocolExchangeTranslation> Translations { get; set; }
+
+		/// <summary>The files the version refers to (manifest only; files are not carried in the JSON).</summary>
+		[JsonProperty("attachments", NullValueHandling = NullValueHandling.Ignore)] public List<ProtocolExchangeAttachment> Attachments { get; set; }
+	}
+
+	/// <summary>Version 2: the set a file holds.</summary>
+	public sealed class ProtocolExchangeSet
+	{
+		[JsonProperty("key", NullValueHandling = NullValueHandling.Ignore)] public string Key { get; set; }
+		[JsonProperty("title")] public string Title { get; set; }
+		[JsonProperty("description", NullValueHandling = NullValueHandling.Ignore)] public string Description { get; set; }
+		[JsonProperty("publisher", NullValueHandling = NullValueHandling.Ignore)] public string Publisher { get; set; }
+		[JsonProperty("license", NullValueHandling = NullValueHandling.Ignore)] public string License { get; set; }
+		[JsonProperty("licenseUrl", NullValueHandling = NullValueHandling.Ignore)] public string LicenseUrl { get; set; }
+		[JsonProperty("setVersion", NullValueHandling = NullValueHandling.Ignore)] public string SetVersion { get; set; }
+	}
+
+	/// <summary>Version 2: attribution of one protocol.</summary>
+	public sealed class ProtocolExchangeAttribution
+	{
+		[JsonProperty("source")] public string Source { get; set; }
+		[JsonProperty("author", NullValueHandling = NullValueHandling.Ignore)] public string Author { get; set; }
+		[JsonProperty("license", NullValueHandling = NullValueHandling.Ignore)] public string License { get; set; }
+		[JsonProperty("licenseUrl", NullValueHandling = NullValueHandling.Ignore)] public string LicenseUrl { get; set; }
+		[JsonProperty("sourceVersion", NullValueHandling = NullValueHandling.Ignore)] public string SourceVersion { get; set; }
+	}
+
+	/// <summary>Version 2: one published version in a protocol's history.</summary>
+	public sealed class ProtocolExchangeVersion
+	{
+		[JsonProperty("label")] public string Label { get; set; }
+		[JsonProperty("status")] public string Status { get; set; }
+		[JsonProperty("effectiveOn", NullValueHandling = NullValueHandling.Ignore)] public DateTime? EffectiveOn { get; set; }
+		[JsonProperty("supersededOn", NullValueHandling = NullValueHandling.Ignore)] public DateTime? SupersededOn { get; set; }
+		[JsonProperty("changeSummary", NullValueHandling = NullValueHandling.Ignore)] public string ChangeSummary { get; set; }
+		[JsonProperty("contentHash", NullValueHandling = NullValueHandling.Ignore)] public string ContentHash { get; set; }
+	}
+
+	/// <summary>Version 2: an approved translation of the exported version.</summary>
+	public sealed class ProtocolExchangeTranslation
+	{
+		[JsonProperty("locale")] public string Locale { get; set; }
+		[JsonProperty("content")] public ProtocolContentDocument Content { get; set; }
+		[JsonProperty("contentHash", NullValueHandling = NullValueHandling.Ignore)] public string ContentHash { get; set; }
+		[JsonProperty("sourceContentHash", NullValueHandling = NullValueHandling.Ignore)] public string SourceContentHash { get; set; }
+	}
+
+	/// <summary>Version 2: one file of the version (manifest entry).</summary>
+	public sealed class ProtocolExchangeAttachment
+	{
+		/// <summary>"attachment" (a protocol attachment) or "document" (the primary file of a document-backed version).</summary>
+		[JsonProperty("kind")] public string Kind { get; set; }
+		[JsonProperty("fileName")] public string FileName { get; set; }
+		[JsonProperty("contentType", NullValueHandling = NullValueHandling.Ignore)] public string ContentType { get; set; }
+		[JsonProperty("size", NullValueHandling = NullValueHandling.Ignore)] public long? Size { get; set; }
+		[JsonProperty("sha256", NullValueHandling = NullValueHandling.Ignore)] public string Sha256 { get; set; }
 	}
 
 	public sealed class ProtocolExchangeTrigger
@@ -211,6 +318,10 @@ namespace Resgrid.Model
 		public List<string> Names { get; set; } = new List<string>();
 
 		public int Created { get; set; }
+
+		/// <summary>The protocols created (empty for a preview), in the order of the file.</summary>
+		public List<int> CreatedProtocolIds { get; set; } = new List<int>();
+
 		public List<string> Skipped { get; set; } = new List<string>();
 		public List<string> Warnings { get; set; } = new List<string>();
 		public string Error { get; set; }

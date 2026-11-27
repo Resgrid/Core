@@ -30,8 +30,8 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for Protocols P4 on both engines: M0399 (CallProtocols case columns and the shared trigger engine's criteria on
-	/// DispatchProtocolTriggers and RunCardTriggers) and M0400 (ProtocolAiSuggestions) over the P0/P1/P3 schema; Up again is a no-op, Down
+	/// Real-database proof for Protocols P4 on both engines: M0376 (CallProtocols case columns and the shared trigger engine's criteria on
+	/// DispatchProtocolTriggers and RunCardTriggers) and M0377 (ProtocolAiSuggestions) over the P0/P1/P3 schema; Up again is a no-op, Down
 	/// removes them and Up rebuilds them. Then the repositories and engines on rows read back from the database: the department-scoped case
 	/// write, AI suggestions (department scope, confirmed once), trigger criteria evaluated by the one engine for protocols and run cards,
 	/// and the department cleanup taking AI suggestions.
@@ -71,32 +71,32 @@ namespace Resgrid.Tests.Repositories
 			? new IMigration[]
 			{
 				new Resgrid.Providers.MigrationsPg.Migrations.M0336_ProtocolFoundationPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocolsPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0342_AddSignatureRecordsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0343_AddProtocolLibraryAndVersionsPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0344_BackfillProtocolVersionsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0353_AddProtocolDocumentsAndFileTextPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0354_AddProtocolAcknowledgmentsPg()
+				new Resgrid.Providers.MigrationsPg.Migrations.M0341_AddSignatureRecordsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0342_AddProtocolLibraryAndVersionsPg(),
+				new Resgrid.Providers.MigrationsPg.Migrations.M0343_BackfillProtocolVersionsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0347_AddProtocolDocumentsAndFileTextPg(),
+				new Resgrid.Providers.MigrationsPg.Migrations.M0348_AddProtocolAcknowledgmentsPg()
 			}
 			: new IMigration[]
 			{
 				new Resgrid.Providers.Migrations.Migrations.M0336_ProtocolFoundation(), new Resgrid.Providers.Migrations.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocols(),
-				new Resgrid.Providers.Migrations.Migrations.M0342_AddSignatureRecords(), new Resgrid.Providers.Migrations.Migrations.M0343_AddProtocolLibraryAndVersions(),
-				new Resgrid.Providers.Migrations.Migrations.M0344_BackfillProtocolVersions(), new Resgrid.Providers.Migrations.Migrations.M0353_AddProtocolDocumentsAndFileText(),
-				new Resgrid.Providers.Migrations.Migrations.M0354_AddProtocolAcknowledgments()
+				new Resgrid.Providers.Migrations.Migrations.M0341_AddSignatureRecords(), new Resgrid.Providers.Migrations.Migrations.M0342_AddProtocolLibraryAndVersions(),
+				new Resgrid.Providers.Migrations.Migrations.M0343_BackfillProtocolVersions(), new Resgrid.Providers.Migrations.Migrations.M0347_AddProtocolDocumentsAndFileText(),
+				new Resgrid.Providers.Migrations.Migrations.M0348_AddProtocolAcknowledgments()
 			};
 
 		private IMigration[] P4() => IsPostgres
-			? new IMigration[] { new Resgrid.Providers.MigrationsPg.Migrations.M0399_AddProtocolDecisionEnginePg(), new Resgrid.Providers.MigrationsPg.Migrations.M0400_AddProtocolAiSuggestionsPg() }
-			: new IMigration[] { new Resgrid.Providers.Migrations.Migrations.M0399_AddProtocolDecisionEngine(), new Resgrid.Providers.Migrations.Migrations.M0400_AddProtocolAiSuggestions() };
+			? new IMigration[] { new Resgrid.Providers.MigrationsPg.Migrations.M0376_AddProtocolDecisionEnginePg(), new Resgrid.Providers.MigrationsPg.Migrations.M0377_AddProtocolAiSuggestionsPg() }
+			: new IMigration[] { new Resgrid.Providers.Migrations.Migrations.M0376_AddProtocolDecisionEngine(), new Resgrid.Providers.Migrations.Migrations.M0377_AddProtocolAiSuggestions() };
 
 		private IMigration[] P3() => IsPostgres
 			? new IMigration[]
 			{
-				new Resgrid.Providers.MigrationsPg.Migrations.M0379_AddCallProtocolStepLogPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0380_AddProtocolVersionTranslationsPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0381_AddProtocolAttachmentSha256Pg()
+				new Resgrid.Providers.MigrationsPg.Migrations.M0361_AddCallProtocolStepLogPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0362_AddProtocolVersionTranslationsPg(),
+				new Resgrid.Providers.MigrationsPg.Migrations.M0363_AddProtocolAttachmentSha256Pg()
 			}
 			: new IMigration[]
 			{
-				new Resgrid.Providers.Migrations.Migrations.M0379_AddCallProtocolStepLog(), new Resgrid.Providers.Migrations.Migrations.M0380_AddProtocolVersionTranslations(),
-				new Resgrid.Providers.Migrations.Migrations.M0381_AddProtocolAttachmentSha256()
+				new Resgrid.Providers.Migrations.Migrations.M0361_AddCallProtocolStepLog(), new Resgrid.Providers.Migrations.Migrations.M0362_AddProtocolVersionTranslations(),
+				new Resgrid.Providers.Migrations.Migrations.M0363_AddProtocolAttachmentSha256()
 			};
 
 		private void Migrate(IMigration[] migrations, Action<IMigrationRunner> run)
@@ -204,7 +204,7 @@ INSERT INTO {T("Calls")} ({T("DepartmentId")}, {T("LoggedOn")}, {T("Number")}, {
 		{
 			(await CountSchemaAsync()).Should().Be(Expected);
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync(IsPostgres ? "DELETE FROM \"VersionInfo\" WHERE \"Version\" IN (399, 400)" : "DELETE FROM [VersionInfo] WHERE [Version] IN (399, 400)");
+				await database.ExecuteAsync(IsPostgres ? "DELETE FROM \"VersionInfo\" WHERE \"Version\" IN (376, 377)" : "DELETE FROM [VersionInfo] WHERE [Version] IN (376, 377)");
 
 			Migrate(P4(), r => r.MigrateUp());
 			(await CountSchemaAsync()).Should().Be(Expected);
@@ -213,7 +213,7 @@ INSERT INTO {T("Calls")} ({T("DepartmentId")}, {T("LoggedOn")}, {T("Number")}, {
 		[Test, Order(2)]
 		public async Task Down_removes_them_and_up_again_rebuilds_them()
 		{
-			Migrate(Base().Concat(P3()).Concat(P4()).ToArray(), r => r.MigrateDown(381));
+			Migrate(Base().Concat(P3()).Concat(P4()).ToArray(), r => r.MigrateDown(363));
 			(await CountSchemaAsync()).Should().Be(0);
 
 			Migrate(P4(), r => r.MigrateUp());

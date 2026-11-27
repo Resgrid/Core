@@ -712,13 +712,19 @@ namespace Resgrid.Services
 				catch (Exception ex) { Logging.LogException(ex, "The task book could not be told about an evaluation."); }
 			}
 
-			var result = evaluation.Result == (int)LmsSkillEvaluationResults.Passed ? "passed" : "not passed";
-			var score = evaluation.Score.HasValue ? " (score " + evaluation.Score.Value.ToString("0.#", CultureInfo.InvariantCulture) + "%)" : string.Empty;
-			await _notifications.QueueAsync(evaluation.DepartmentId, LmsSkillNotificationKinds.EvaluationCompleted,
-				"Skill evaluation " + evaluation.Title + ": " + result + score + ". " + Link(evaluation.LmsSkillEvaluationId), members.Select(m => m.UserId), true, cancellationToken);
+			// Queued as a ContentNotices key: worker 96 writes it in each recipient's language (round 9C).
+			var passed = evaluation.Result == (int)LmsSkillEvaluationResults.Passed;
+			var notice = evaluation.Score.HasValue
+				? LmsSkillNoticeText.Encode(passed ? "Skill.EvaluationPassedScore" : "Skill.EvaluationNotPassedScore", evaluation.Title, evaluation.Score.Value, Link(evaluation.LmsSkillEvaluationId))
+				: LmsSkillNoticeText.Encode(passed ? "Skill.EvaluationPassed" : "Skill.EvaluationNotPassed", evaluation.Title, Link(evaluation.LmsSkillEvaluationId));
+			await _notifications.QueueAsync(evaluation.DepartmentId, LmsSkillNotificationKinds.EvaluationCompleted, notice, members.Select(m => m.UserId), true, cancellationToken);
 
 			Audit(evaluation.DepartmentId, request.CreatedByUserId, AuditLogTypes.LmsSkillEvaluationCompleted, null,
 				new { evaluation.LmsSkillEvaluationId, evaluation.Result, evaluation.SignatureRequestId, members = members.Count });
+			// Workflow trigger 262, one per evaluated member (the compare-and-set above completed it once): pass or fail and the score.
+			var raisedOn = DateTime.UtcNow;
+			foreach (var member in members.Where(m => !string.IsNullOrWhiteSpace(m.UserId)).GroupBy(m => m.UserId, StringComparer.OrdinalIgnoreCase).Select(g => g.First()))
+				ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.EvaluationCompleted(evaluation, member.UserId, members.Count, raisedOn));
 			return true;
 		}
 

@@ -27,7 +27,7 @@ namespace Resgrid.Model.Repositories
 		Task<CallProtocol> GetForDepartmentCallAsync(int departmentId, int callId, int callProtocolId);
 
 		/// <summary>
-		/// Writes a call protocol's step log (P3, M0379) when its revision is still <paramref name="expectedRevision"/>, bumping it; false
+		/// Writes a call protocol's step log (P3, M0361) when its revision is still <paramref name="expectedRevision"/>, bumping it; false
 		/// when someone wrote it in between (the caller re-reads and re-applies). Touches only the step-log columns.
 		/// </summary>
 		Task<bool> TryUpdateStepLogAsync(int callProtocolId, string stepLogJson, int expectedRevision, System.Threading.CancellationToken cancellationToken = default);
@@ -38,5 +38,11 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<bool> TryUpdateCaseAsync(int departmentId, int callProtocolId, string determinant, string overrideReason, string caseJson,
 			System.Threading.CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// ADP catalog 39: writes a call protocol's protected columns (case record, questionnaire in words, override reason) alone, as the
+		/// write net enveloped them. False when the row is not on one of the department's calls.
+		/// </summary>
+		Task<bool> UpdateProtectedContentAsync(int departmentId, CallProtocol row, System.Threading.CancellationToken cancellationToken = default);
 	}
 }

@@ -45,7 +45,7 @@ namespace Resgrid.Model
 		public string FileName { get; set; }
 		public string ContentType { get; set; }
 		public long? Size { get; set; }
-		/// <summary>Lower-case hex SHA-256 of the bytes; null only for an attachment stored before M0381 that has not been hashed yet.</summary>
+		/// <summary>Lower-case hex SHA-256 of the bytes; null only for an attachment stored before M0363 that has not been hashed yet.</summary>
 		public string Sha256 { get; set; }
 	}
 

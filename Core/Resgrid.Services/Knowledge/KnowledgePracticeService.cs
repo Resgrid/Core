@@ -19,8 +19,9 @@ namespace Resgrid.Services.Knowledge
 {
 	/// <summary>
 	/// Scenario practice from a protocol version (K3 tutor; protocols-training-knowledge-plan §13a, §16.3, §17.2 row "AI"). In order:
-	/// 1. the gate: K1's (<see cref="IAiKnowledgeService.IsEntitledAsync"/>, Enhanced AI with Ai.Knowledge) and the LMS add-on (the tutor needs
-	///    both), a current member who may view protocols, the operator's model configured; fails closed;
+	/// 1. the gate: K1's (<see cref="IAiKnowledgeService.IsEntitledAsync"/>, Enhanced AI with Ai.Knowledge), a current member who may view
+	///    protocols, the operator's model configured; fails closed. Round 7A (product decision 2026-11-25): protocol practice needs only Enhanced
+	///    AI, never the LMS (protocols live outside the LMS); "Ask this course" (the course-scoped tutor in AiKnowledgeService) still needs both;
 	/// 2. the protocol must be readable by the member (the library's rule), published, not "no AI" and not licensed (decision 14); the
 	///    version in force is chunked by block exactly as the knowledge index cuts it;
 	/// 3. Advanced Data Protection in any state but Disabled keeps department content local: no practice;
@@ -39,7 +40,6 @@ namespace Resgrid.Services.Knowledge
 		public const int MinimumContentCharacters = 80;
 
 		private readonly IAiKnowledgeService _knowledge;
-		private readonly ILmsAccessService _lms;
 		private readonly IDepartmentsService _departments;
 		private readonly IDepartmentDataProtectionService _protection;
 		private readonly IProtocolAccessService _protocolAccess;
@@ -52,13 +52,12 @@ namespace Resgrid.Services.Knowledge
 		private readonly IDepartmentSettingsRepository _settings;
 		private readonly TimeProvider _clock;
 
-		public KnowledgePracticeService(IAiKnowledgeService knowledge, ILmsAccessService lms, IDepartmentsService departments, IDepartmentDataProtectionService protection,
+		public KnowledgePracticeService(IAiKnowledgeService knowledge, IDepartmentsService departments, IDepartmentDataProtectionService protection,
 			IProtocolAccessService protocolAccess, IProtocolVersionsRepository versions, IAdminAssistConversationProtection conversationProtection,
 			IAiBackgroundAdmission admission, IAiUsageMeter usage, Lazy<ILlmClient> client, IKnowledgeGapsRepository generations, IDepartmentSettingsRepository settings,
 			TimeProvider clock)
 		{
 			_knowledge = knowledge;
-			_lms = lms;
 			_departments = departments;
 			_protection = protection;
 			_protocolAccess = protocolAccess;
@@ -74,36 +73,21 @@ namespace Resgrid.Services.Knowledge
 
 		#region Gate
 
-		/// <summary>The tutor's gate, cheapest first; null when open, else the refusal.</summary>
+		/// <summary>The practice gate, cheapest first (Enhanced AI only, no LMS); null when open, else the refusal.</summary>
 		private async Task<string> GateAsync(KnowledgeReader reader)
 		{
 			if (reader == null || reader.DepartmentId <= 0 || string.IsNullOrWhiteSpace(reader.UserId))
 				return KnowledgeOutcomes.Invalid;
 			if (!reader.CanViewProtocols)
 				return KnowledgeOutcomes.NotEntitled;
-			if (!await _knowledge.IsEntitledAsync(reader.DepartmentId))
-				return KnowledgeOutcomes.NotEntitled;
-			if (!await LmsOpenAsync(reader.DepartmentId))
+			// Enhanced AI only (an unreadable entitlement is closed); the LMS is not part of this gate.
+			if (!await ProtocolAiGate.EntitledAsync(_knowledge, reader.DepartmentId))
 				return KnowledgeOutcomes.NotEntitled;
 			if (!await KnowledgeModelCalls.IsCurrentMemberAsync(_departments, reader.DepartmentId, reader.UserId))
 				return KnowledgeOutcomes.NotEntitled;
 			if (!AiKnowledgeService.OperatorConfigured())
 				return KnowledgeOutcomes.Unconfigured;
 			return null;
-		}
-
-		/// <summary>The LMS half of the tutor's gate (§17.2: the tutor needs both Enhanced AI and the LMS): the flag and an active add-on.</summary>
-		private async Task<bool> LmsOpenAsync(int departmentId)
-		{
-			try
-			{
-				return await _lms.CanRunItemAsync(departmentId, LmsRunnableOrigins.Department);
-			}
-			catch (Exception ex)
-			{
-				Logging.LogException(ex, $"The LMS gate could not be read for department {departmentId}.");
-				return false;
-			}
 		}
 
 		public async Task<KnowledgePracticeStatus> GetStatusAsync(KnowledgeReader reader, CancellationToken cancellationToken = default)

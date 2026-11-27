@@ -1,0 +1,70 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model StarterLibraryModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* The Resgrid starter course library (T5 item 4): Resgrid-authored starters cloned into a draft course with attribution, and the partner content
+   slots (LTI 1.3 / SCORM / cmi5) that the standards work launches. A clone is a draft: edit it, then submit it through the normal approval. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Studio.StartersTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = localizer["Studio.StartersTitle"].Value;
+    ViewData["Subtitle"] = localizer["Studio.StartersIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    string Local(string key, string fallback) { var value = localizer[key]; return value.ResourceNotFound ? fallback : value.Value; }
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.Status.CanAuthor)
+    {
+        <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Studio.AuthorNeeded"]</div>
+    }
+
+    <p class="text-muted">@localizer["Studio.StartersLicence"]</p>
+
+    <div class="rgw-card-grid m-b-md">
+        @foreach (var starter in Model.Starters)
+        {
+            <div class="rgw-card">
+                <h4>@Local("Studio.Starter." + starter.Key + ".Title", starter.Title)</h4>
+                @if (Model.Suggested.Contains(starter.Key))
+                {
+                    <div class="rgw-card-meta"><span class="label label-primary"><i class="fa fa-star" aria-hidden="true"></i> @localizer["Studio.StarterSuggested"]</span></div>
+                }
+                <div class="rgw-card-meta">@Local("Studio.Starter." + starter.Key + ".Summary", starter.Summary)</div>
+                <div class="rgw-card-meta">@string.Format(localizer["Studio.StarterFacts"].Value, starter.Modules.Count, starter.LessonCount, starter.Hours.ToString("0.##"), starter.Revision)</div>
+                <div class="rgw-card-meta"><i class="fa fa-balance-scale" aria-hidden="true"></i> @localizer["Studio.LicenceResgridStarter"]</div>
+                @if (Model.Status.CanAuthor)
+                {
+                    <div class="rgw-card-action">
+                        <form method="post" asp-controller="LmsStudio" asp-action="CloneStarter" asp-route-area="User" class="inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="key" value="@starter.Key" />
+                            <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Studio.CloneButton"]</button>
+                        </form>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <h3>@localizer["Studio.PartnerHeader"]</h3>
+    <p class="text-muted">@localizer["Studio.PartnerIntro"]</p>
+    <div class="rgw-card-grid m-b-md">
+        @foreach (var slot in Model.PartnerSlots)
+        {
+            <div class="rgw-card">
+                <h4>@Local("Studio.Starter." + slot.Key + ".Title", slot.Title)</h4>
+                <div class="rgw-card-meta">@Local("Studio.Starter." + slot.Key + ".Summary", slot.Summary)</div>
+                <div class="rgw-card-meta"><span class="label label-default">@(slot.Launch == "lti13" ? "LTI 1.3" : slot.Launch == "cmi5" ? "cmi5" : "SCORM")</span> @localizer["Studio.PartnerComing"]</div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

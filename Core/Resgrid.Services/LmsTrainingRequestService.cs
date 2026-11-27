@@ -199,6 +199,8 @@ namespace Resgrid.Services
 
 			var saved = await _requests.SaveOrUpdateAsync(stored, cancellationToken, true);
 			Audit(departmentId, userId, AuditLogTypes.LmsTrainingRequestSubmitted, null, JsonConvert.SerializeObject(saved));
+			// Workflow trigger 265 (with no approval steps it is stored Approved; its status says so).
+			ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.TrainingRequest(saved ?? stored, TrainingRequestWorkflowChanges.Submitted, now));
 
 			if (saved.CurrentStep.HasValue)
 				await NotifyStepAsync(saved, cancellationToken);
@@ -277,7 +279,11 @@ namespace Resgrid.Services
 			if (request.Status == (int)LmsTrainingRequestStatuses.Submitted)
 				await NotifyStepAsync(request, cancellationToken);
 			else
+			{
+				// Workflow trigger 266 on the final decision only (a step passed on is still Submitted); the transition above decided it once.
+				ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.TrainingRequest(request, TrainingRequestWorkflowChanges.Decided, now));
 				await NotifyRequesterAsync(request, approve ? "Prg.Notify.RequestApproved" : "Prg.Notify.RequestRejected", cancellationToken);
+			}
 			return request;
 		}
 

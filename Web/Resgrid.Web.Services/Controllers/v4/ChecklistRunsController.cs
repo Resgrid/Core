@@ -21,8 +21,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IMfaEvidenceService _evidence;
 		private readonly IMfaPolicyService _mfaPolicy;
 		public ChecklistRunsController(IChecklistsService checklists, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings, IReadinessAccessService access, IDepartmentDataProtectionService protection,
-			IChecklistWitnessSignatureService witness, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy) : base(checklists, strings)
-		{ _access = access; _protection = protection; _witness = witness; _evidence = evidence; _mfaPolicy = mfaPolicy; }
+			IChecklistWitnessSignatureService witness, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy, IStepUpCapabilityService stepUp) : base(checklists, strings)
+		{ _access = access; _protection = protection; _witness = witness; _evidence = evidence; _mfaPolicy = mfaPolicy; _stepUp = stepUp; }
+		private readonly IStepUpCapabilityService _stepUp;
 		/// <summary>Fresh value-free scope and access state for secure local drafts. A mutation always repeats authorization and grant validation.</summary>
 		[HttpGet("GetChecklistAccess")]
 		public async Task<IActionResult> GetChecklistAccess()
@@ -77,6 +78,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			Required(input);
 			var proof = await Resgrid.Web.Services.Helpers.ApiSignatureProof.BuildAsync(HttpContext, UserId, DepartmentId, _evidence, _mfaPolicy, cancellationToken);
 			var outcome = await _witness.SignAsync(Actor, input.Id, input.SubmissionHash, input.Attestation, proof, System.Globalization.CultureInfo.CurrentUICulture.Name, cancellationToken);
+			if (outcome == Resgrid.Model.SignatureOutcomes.StepUpRequired)
+				return await Resgrid.Web.Services.Helpers.ApiStepUp.RefuseAsync(HttpContext, _stepUp, DepartmentId, UserId, Resgrid.Model.Security.StepUpArea.Signatures,
+					cancellationToken);
 			if (outcome != Resgrid.Model.SignatureOutcomes.Signed)
 			{
 				// StepUpRequired tells the app to step up and retry; the run still awaits its witness.

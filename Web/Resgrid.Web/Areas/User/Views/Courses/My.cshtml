@@ -90,7 +90,12 @@
                     }
                     <div class="rgw-card-meta">@string.Format(localizer["HoursFormat"].Value, (entry.Version?.Hours ?? 0).ToString("0.##"))</div>
                     <div class="rgw-card-action">
-                        @if (entry.OpenEnrollment != null)
+                        @if (entry.BlockedBy != LmsErrors.None)
+                        {
+                            @* Round 10 A7: no LMS seat: say so (ask your administrator) instead of offering Enroll or Resume. *@
+                            <span class="text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer[CourseLabels.Error(entry.BlockedBy)]</span>
+                        }
+                        else if (entry.OpenEnrollment != null)
                         {
                             <a class="btn btn-white btn-sm" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@entry.OpenEnrollment.LmsEnrollmentId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["ResumeButton"]</a>
                         }

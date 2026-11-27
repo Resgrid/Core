@@ -66,6 +66,7 @@ namespace Resgrid.Services
 			reader.CanAuthor = PermissionRights.Holds(await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.AuthorProtocols), reader.IsDepartmentAdmin, isGroupAdmin, roleIds);
 			reader.CanApprove = PermissionRights.Holds(await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ApproveProtocols), reader.IsDepartmentAdmin, isGroupAdmin, roleIds);
 			reader.CanManageAcknowledgments = PermissionRights.Holds(await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ManageProtocolAcknowledgments), reader.IsDepartmentAdmin, isGroupAdmin, roleIds);
+			reader.CanReviewDispatchCases = PermissionRights.Holds(await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.ReviewDispatchCases), reader.IsDepartmentAdmin, isGroupAdmin, roleIds);
 
 			try
 			{

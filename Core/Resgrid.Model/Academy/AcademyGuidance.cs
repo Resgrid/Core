@@ -36,7 +36,7 @@ namespace Resgrid.Model.Academy
 	}
 
 	/// <summary>
-	/// A3 in-product guidance remembered per member (M0397): one row per member and guidance key ("tour:member", "whatsnew:2026.12"), with
+	/// A3 in-product guidance remembered per member (M0375): one row per member and guidance key ("tour:member", "whatsnew:2026.12"), with
 	/// the tour tasks done and the manifest revision the state belongs to. Department-owned (purged with the department); it holds no content.
 	/// </summary>
 	[Table("AcademyGuidanceStates")]
@@ -97,7 +97,7 @@ namespace Resgrid.Model.Academy
 	}
 
 	/// <summary>
-	/// A major revision of an Academy lesson waiting for its policy (M0397, system-level, not department-owned): the seed records it when it
+	/// A major revision of an Academy lesson waiting for its policy (M0375, system-level, not department-owned): the seed records it when it
 	/// publishes the new major version; worker 88 then notifies, or re-assigns, the completed learners of every department that assigned
 	/// the lesson, department by department (<see cref="AppliedThroughDepartmentId"/> is the cursor, so a stopped run resumes without
 	/// telling anyone twice).

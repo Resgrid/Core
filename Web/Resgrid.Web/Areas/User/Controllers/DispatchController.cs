@@ -2119,7 +2119,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DepartmentId = DepartmentId,
 				UserId = UserId,
 				Type = AuditLogTypes.CallProtocolRemoved,
-				After = Newtonsoft.Json.JsonConvert.SerializeObject(new { removed.CallId, removed.CallProtocolId, removed.DispatchProtocolId, Code = removed.Data, removed.RemovedReason, removed.RemovedOn }),
+				// The removal reason is free text about the call (ADP catalog 39): the audit says one was given, never what it was.
+				After = Newtonsoft.Json.JsonConvert.SerializeObject(new { removed.CallId, removed.CallProtocolId, removed.DispatchProtocolId, Code = removed.Data, HasReason = !string.IsNullOrWhiteSpace(removed.RemovedReason), removed.RemovedOn }),
 				Successful = true,
 				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
 				ServerName = Environment.MachineName,
@@ -2128,6 +2129,68 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			TempData["CallProtocolMessage"] = "Removed";
 			return RedirectToAction("ViewCall", new { callId });
+		}
+
+		/// <summary>
+		/// ADP catalog 39 reveal: the call's protocols tab rendered again with the grant the reveal module presents in the request header (after
+		/// step-up), so the case record, answers and the override and removal reasons show as written; without a valid grant they stay REDACTED.
+		/// The page swaps the tab in place, so the call fields it already revealed stay revealed.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> CallProtocolsRevealed([FromForm] int callId)
+		{
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var model = new ViewCallView { Call = call, Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false) };
+			await FillCallProtocolsAsync(model, callId, Request.Headers[HttpProtectedGrantContext.HeaderName].ToString());
+			Response.Headers["Cache-Control"] = "no-store";
+			return PartialView("_CallProtocols", model);
+		}
+
+		/// <summary>
+		/// The protocols tab of a call: the department's protocols (plus any deleted one the call still cites), the call's rows with what was
+		/// recorded on them (answers, score, source, hash, removal) resolved for this reader, the snapshots and the cited versions.
+		/// </summary>
+		private async Task FillCallProtocolsAsync(ViewCallView model, int callId, string grantToken)
+		{
+			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
+
+			if (model.Call != null)
+			{
+				model.Call.Protocols = await _callsService.GetCallProtocolsByCallIdAsync(callId) ?? new List<CallProtocol>();
+				await Resgrid.Services.CallProtocolProtection.ResolveAsync(_protectedReadService, DepartmentId, model.Call.Protocols, string.IsNullOrWhiteSpace(grantToken) ? null : grantToken, UserId);
+			}
+
+			// "Text as dispatched": the snapshot each row's content hash points at (D5).
+			model.ProtocolSnapshots = (await _protocolsService.GetSnapshotsAsync(DepartmentId, model.Call?.Protocols?.Select(x => x.ContentHash)))
+				.GroupBy(x => x.DispatchProtocolId + ":" + x.ContentHash)
+				.ToDictionary(x => x.Key, x => x.First());
+			// P1: the version each row cites (calls cite versions, never live rows).
+			model.ProtocolVersions = (await _protocolsService.GetCitedVersionsAsync(DepartmentId, model.Call?.Protocols?.Where(x => x.ProtocolVersionId.HasValue).Select(x => x.ProtocolVersionId.Value)) ?? new List<ProtocolVersion>())
+				.ToDictionary(x => x.ProtocolVersionId);
+			model.CanRemoveProtocols = model.Call != null && await _authorizationService.CanUserEditCallAsync(UserId, callId) &&
+									   User.HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.Update);
+			model.ProtocolContentWithheld = model.Call?.Protocols != null && model.Call.Protocols.Any(Resgrid.Services.CallProtocolProtection.IsWithheld);
+
+			// A protocol deleted since the call is no longer in the department's current set, but the call still cites it:
+			// load those by id (this department's only) so the call keeps showing what was attached.
+			foreach (var callProtocol in model.Call?.Protocols ?? Enumerable.Empty<CallProtocol>())
+			{
+				if (model.Protocols.Any(x => x.DispatchProtocolId == callProtocol.DispatchProtocolId))
+					continue;
+
+				var attached = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
+
+				if (attached != null && attached.DepartmentId == DepartmentId)
+					model.Protocols.Add(attached);
+			}
 		}
 
 		[Authorize(Policy = ResgridResources.Call_View)]
@@ -2143,35 +2206,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model = await FillViewCallView(model);
 			model.CallPriority = (CallPriority)model.Call.Priority;
 			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
-			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
-
-			// The call's protocol rows with what was recorded on them (answers, score, source, hash, removal).
-			if (model.Call != null)
-				model.Call.Protocols = await _callsService.GetCallProtocolsByCallIdAsync(callId) ?? new List<CallProtocol>();
-
-			// "Text as dispatched": the snapshot each row's content hash points at (D5).
-			model.ProtocolSnapshots = (await _protocolsService.GetSnapshotsAsync(DepartmentId, model.Call?.Protocols?.Select(x => x.ContentHash)))
-				.GroupBy(x => x.DispatchProtocolId + ":" + x.ContentHash)
-				.ToDictionary(x => x.Key, x => x.First());
-			// P1: the version each row cites (calls cite versions, never live rows).
-			model.ProtocolVersions = (await _protocolsService.GetCitedVersionsAsync(DepartmentId, model.Call?.Protocols?.Where(x => x.ProtocolVersionId.HasValue).Select(x => x.ProtocolVersionId.Value)) ?? new List<ProtocolVersion>())
-				.ToDictionary(x => x.ProtocolVersionId);
-			model.CanRemoveProtocols = model.Call != null && await _authorizationService.CanUserEditCallAsync(UserId, callId) &&
-									   User.HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.Update);
+			// ADP catalog 39: a page load carries no grant, so the case record, answers and reasons render REDACTED for a protected department;
+			// the reveal flow re-renders the protocols tab through CallProtocolsRevealed.
+			await FillCallProtocolsAsync(model, callId, null);
 			model.CallProtocolMessage = TempData["CallProtocolMessage"] as string;
 
-			// A protocol deleted since the call is no longer in the department's current set, but the call still cites it:
-			// load those by id (this department's only) so the call keeps showing what was attached.
-			foreach (var callProtocol in model.Call?.Protocols ?? Enumerable.Empty<CallProtocol>())
-			{
-				if (model.Protocols.Any(x => x.DispatchProtocolId == callProtocol.DispatchProtocolId))
-					continue;
-
-				var attached = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
-
-				if (attached != null && attached.DepartmentId == DepartmentId)
-					model.Protocols.Add(attached);
-			}
 
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 

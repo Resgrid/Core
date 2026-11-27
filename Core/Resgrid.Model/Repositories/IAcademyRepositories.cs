@@ -6,7 +6,7 @@ using Resgrid.Model.Academy;
 
 namespace Resgrid.Model.Repositories
 {
-	/// <summary>A3 guidance remembered per member (AcademyGuidanceStates, M0397).</summary>
+	/// <summary>A3 guidance remembered per member (AcademyGuidanceStates, M0375).</summary>
 	public interface IAcademyGuidanceStatesRepository : IRepository<AcademyGuidanceState>
 	{
 		/// <summary>Every guidance state the member has in this department (a handful of rows).</summary>
@@ -16,7 +16,7 @@ namespace Resgrid.Model.Repositories
 		Task<AcademyGuidanceState> UpsertAsync(AcademyGuidanceState state, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>Major Academy lesson revisions waiting for worker 88 (AcademyLessonUpdates, M0397; system-level).</summary>
+	/// <summary>Major Academy lesson revisions waiting for worker 88 (AcademyLessonUpdates, M0375; system-level).</summary>
 	public interface IAcademyLessonUpdatesRepository : IRepository<AcademyLessonUpdate>
 	{
 		/// <summary>Records a major revision once; false when that course and revision are already recorded.</summary>

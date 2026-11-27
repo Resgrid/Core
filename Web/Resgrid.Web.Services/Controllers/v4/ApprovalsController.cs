@@ -31,8 +31,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IMfaEvidenceService _evidence;
 		private readonly IMfaPolicyService _mfaPolicy;
 
-		public ApprovalsController(IApprovalChainService approvals, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy)
+		private readonly IStepUpCapabilityService _stepUp;
+
+		public ApprovalsController(IApprovalChainService approvals, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy, IStepUpCapabilityService stepUp)
 		{
+			_stepUp = stepUp;
 			_approvals = approvals;
 			_evidence = evidence;
 			_mfaPolicy = mfaPolicy;
@@ -101,7 +104,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null || input.ApprovalRequestId <= 0)
 				return BadRequest();
 			var proof = await ApiSignatureProof.BuildAsync(HttpContext, UserId, DepartmentId, _evidence, _mfaPolicy, cancellationToken);
-			return Outcome(await _approvals.ApproveAsync(DepartmentId, input.ApprovalRequestId, proof, false, cancellationToken));
+			var outcome = await _approvals.ApproveAsync(DepartmentId, input.ApprovalRequestId, proof, false, cancellationToken);
+			// The one step-up refusal (403 step_up_required, area approvals): verify with StepUp/Verify and send the same request again.
+			if (outcome.Refusal == ApprovalRefusals.StepUpRequired)
+				return await ApiStepUp.RefuseAsync(HttpContext, _stepUp, DepartmentId, UserId, Model.Security.StepUpArea.Approvals, cancellationToken);
+			return Outcome(outcome);
 		}
 
 		/// <summary>Reject the member's step; a reason is required.</summary>

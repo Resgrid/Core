@@ -4053,4 +4053,7 @@
   <data name="W.ibo.finance.OfBudget" xml:space="preserve">
     <value>Used of {0} budget</value>
   </data>
+  <data name="W.admin.plan.Addon.WorkforcePro" xml:space="preserve">
+    <value>Workforce Pro</value>
+  </data>
 </root>

@@ -283,7 +283,7 @@ namespace Resgrid.Tests.Wellness
 		{
 			var root = new System.IO.DirectoryInfo(TestContext.CurrentContext.TestDirectory);
 			while (root != null && !System.IO.File.Exists(System.IO.Path.Combine(root.FullName, "Resgrid.sln"))) root = root.Parent;
-			foreach (var name in new[] { "M0394_AddExposureIncidents", "M0395_AddMemberInjuries", "M0396_AddMedicalClearances" })
+			foreach (var name in new[] { "M0372_AddExposureIncidents", "M0373_AddMemberInjuries", "M0374_AddMedicalClearances" })
 			{
 				foreach (var file in new[]
 				{

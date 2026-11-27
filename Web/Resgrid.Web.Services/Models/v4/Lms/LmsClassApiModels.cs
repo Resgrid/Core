@@ -118,4 +118,75 @@ namespace Resgrid.Web.Services.Models.v4.Lms
 		public int RecordsVoided { get; set; }
 		public string Error { get; set; }
 	}
+
+	// Round 7B (permission 135): an instructor records from the roster that the attendees completed the class's LMS course or baseline training
+	// (Omni). New endpoints only; existing contracts are unchanged.
+
+	/// <summary>One roster row of the record panel: whether a completion can be recorded and the one already recorded.</summary>
+	public class LmsClassRecordingRowData
+	{
+		public string UserId { get; set; }
+		public string Name { get; set; }
+		public bool IsExternalLearner { get; set; }
+		public bool Attended { get; set; }
+		/// <summary>Ticked by default: attended and recordable.</summary>
+		public bool Selected { get; set; }
+		/// <summary>Why it cannot be recorded ("training_record_*"); null when it can.</summary>
+		public string Refusal { get; set; }
+		public int? RecordingId { get; set; }
+		public string RecordedByUserId { get; set; }
+		public DateTime? RecordedOn { get; set; }
+	}
+
+	public class LmsClassRecordingData
+	{
+		public int ClassSessionId { get; set; }
+		/// <summary>"Course" or "Training"; null when the class links neither.</summary>
+		public string TargetKind { get; set; }
+		public int? TargetId { get; set; }
+		public string TargetName { get; set; }
+		/// <summary>Why nothing can be recorded from this class now; null when it can.</summary>
+		public string Refusal { get; set; }
+		public string AttestationVersion { get; set; }
+		public List<LmsClassRecordingRowData> Rows { get; set; } = new List<LmsClassRecordingRowData>();
+	}
+
+	public class LmsClassRecordingResult : StandardApiResponseV4Base
+	{
+		public LmsClassRecordingData Data { get; set; }
+		public string Error { get; set; }
+	}
+
+	public class LmsClassRecordCompletionsInput
+	{
+		public int ClassSessionId { get; set; }
+		public List<string> UserIds { get; set; } = new List<string>();
+		public string Note { get; set; }
+		/// <summary>The instructor accepted the attestation statement of <see cref="AttestationVersion"/>.</summary>
+		public bool Attested { get; set; }
+		public string AttestationVersion { get; set; }
+	}
+
+	public class LmsRecordedCompletionData
+	{
+		public string UserId { get; set; }
+		public bool Recorded { get; set; }
+		public string Refusal { get; set; }
+		public int? RecordingId { get; set; }
+		public int? LearningRecordId { get; set; }
+	}
+
+	public class LmsClassRecordCompletionsResult : StandardApiResponseV4Base
+	{
+		public int Recorded { get; set; }
+		public int Refused { get; set; }
+		public List<LmsRecordedCompletionData> Results { get; set; } = new List<LmsRecordedCompletionData>();
+		public string Error { get; set; }
+	}
+
+	public class LmsVoidRecordedCompletionInput
+	{
+		public int RecordingId { get; set; }
+		public string Reason { get; set; }
+	}
 }

@@ -54,6 +54,9 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>LMS: a record by its certificate verification code (any department), or null.</summary>
 		Task<LearningRecord> GetByVerificationCodeAsync(string verificationCode);
+
+		/// <summary>Round 9B (worker 85 digest): departments with member submissions waiting for a reviewer, at most <paramref name="take"/>.</summary>
+		Task<List<int>> GetDepartmentIdsAwaitingReviewAsync(int take);
 	}
 
 	/// <summary>Evidence files of external submissions.</summary>
@@ -61,6 +64,35 @@ namespace Resgrid.Model.Repositories
 	{
 		/// <summary>The file with its bytes, or null when it is not the department's.</summary>
 		Task<LearningRecordFile> GetWithDataAsync(int departmentId, int learningRecordFileId);
+
+		/// <summary>Round 9B: the evidence of these submissions without the bytes (linked rows, and the T1 single file by its id), oldest first.</summary>
+		Task<List<LearningRecordFile>> GetForRecordsAsync(int departmentId, IEnumerable<int> learningRecordIds);
+
+		/// <summary>Round 9B: a member's evidence files without the bytes (GDPR export).</summary>
+		Task<List<LearningRecordFile>> GetForUserAsync(int departmentId, string userId);
+
+		/// <summary>Round 9B: links uploaded files (still unlinked, the department's) to their submission.</summary>
+		Task<int> LinkToRecordAsync(int departmentId, IEnumerable<int> learningRecordFileIds, int learningRecordId, CancellationToken cancellationToken = default);
+	}
+
+	/// <summary>Round 9B: the review history of member submissions (M0409).</summary>
+	public interface ILearningRecordReviewEventsRepository : IRepository<LearningRecordReviewEvent>
+	{
+		/// <summary>One submission's steps, oldest first.</summary>
+		Task<List<LearningRecordReviewEvent>> GetForRecordAsync(int departmentId, int learningRecordId);
+
+		/// <summary>A member's steps on their submissions (GDPR export), oldest first.</summary>
+		Task<List<LearningRecordReviewEvent>> GetForUserAsync(int departmentId, string userId);
+	}
+
+	/// <summary>Round 9B: the daily reviewer digest claims (M0410).</summary>
+	public interface ITrainingReviewDigestsRepository : IRepository<TrainingReviewDigest>
+	{
+		/// <summary>Claims the department's digest for a local day: true for the first caller, false when it was already sent (or claimed).</summary>
+		Task<bool> TryClaimAsync(int departmentId, DateTime digestDate, DateTime utcNow, CancellationToken cancellationToken = default);
+
+		/// <summary>Records how many reviewers and submissions the claimed digest covered.</summary>
+		Task<int> SaveCountsAsync(int departmentId, DateTime digestDate, int reviewers, int submissions, CancellationToken cancellationToken = default);
 	}
 
 	public interface ITrainingCategoriesRepository : IRepository<TrainingCategory>

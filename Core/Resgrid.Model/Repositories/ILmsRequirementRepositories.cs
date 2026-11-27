@@ -7,7 +7,7 @@ using Resgrid.Model.Lms;
 namespace Resgrid.Model.Repositories
 {
 	// Training T3 (LMS): learning requirements, their members, training-backed enforcement, worker 93's clock and learning paths
-	// (M0383-M0385). LMS tables reference baseline rows by id only (§17.3).
+	// (M0364-M0366). LMS tables reference baseline rows by id only (§17.3).
 
 	public interface ILmsRequirementsRepository : IRepository<LmsRequirement>
 	{
@@ -116,6 +116,13 @@ namespace Resgrid.Model.Repositories
 	public interface ILmsRequirementFactsRepository
 	{
 		Task<List<LmsRequirementFact>> GetCourseCompletionsAsync(int departmentId, IEnumerable<int> lmsCourseIds);
+
+		/// <summary>
+		/// Round 9A: as <see cref="GetCourseCompletionsAsync"/>, with the learning record of each completed enrolment found in the ledger when
+		/// the enrolment does not name it yet (the certification engine runs while the completion is being written, before the enrolment is
+		/// stamped with its record).
+		/// </summary>
+		Task<List<LmsRequirementFact>> GetCourseCompletionsWithRecordsAsync(int departmentId, IEnumerable<int> lmsCourseIds) => GetCourseCompletionsAsync(departmentId, lmsCourseIds);
 
 		/// <summary>Verified baseline training completions (RefId = TrainingId) of the department.</summary>
 		Task<List<LmsRequirementFact>> GetTrainingCompletionsAsync(int departmentId, IEnumerable<int> trainingIds);

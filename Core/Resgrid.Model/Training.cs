@@ -54,7 +54,7 @@ namespace Resgrid.Model
 
 		/// <summary>
 		/// Never indexed for department knowledge answers (K1, decision 14: the per-item "no AI" flag, e.g. licensed material whose
-		/// license forbids processing). M0370.
+		/// license forbids processing). M0355.
 		/// </summary>
 		public bool ExcludeFromAi { get; set; }
 
@@ -85,6 +85,13 @@ namespace Resgrid.Model
 		/// <summary>When the next repeat runs, UTC. Set from <see cref="RepeatMonths"/> on save and advanced by each run.</summary>
 		public DateTime? NextRepeatOn { get; set; }
 
+		/// <summary>
+		/// Round 9A (M0407): read and confirm. A training without a quiz completes only when the member confirms they have read and
+		/// reviewed it ("I have read and reviewed this"), not on opening it: a yearly handbook or policy review with an end date. A training
+		/// with a quiz ignores it (passing the quiz is the confirmation).
+		/// </summary>
+		public bool RequiresAcknowledgment { get; set; }
+
 		/// <summary>The most quiz attempts one member may submit per assignment cycle. Null is unlimited.</summary>
 		public int? QuizAttemptLimit { get; set; }
 
@@ -113,7 +120,7 @@ namespace Resgrid.Model
 
 		public string CeCourseNumber { get; set; }
 
-		/// <summary>The training category (TrainingCategories, M0349 foreign key, set to null when the category is removed).</summary>
+		/// <summary>The training category (TrainingCategories, M0345 foreign key, set to null when the category is removed).</summary>
 		public int? CategoryId { get; set; }
 
 		/// <summary><see cref="MethodsOfTraining"/> the completion is recorded with (T1, §13a).</summary>

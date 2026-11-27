@@ -41,8 +41,26 @@ namespace Resgrid.Tests.AdminAssist
 			Assert.That(Catalog.IsListed(lms), Is.False);
 			Assert.That(Catalog.ListedAreas().Select(a => a.Id), Does.Not.Contain(lms.Id));
 			Assert.That(Catalog.ListedCapabilities().Select(c => c.AreaId), Does.Not.Contain(lms.Id));
-			// Every other module, released add-ons included, is still listed.
-			Assert.That(Catalog.ListedAreas().Select(a => a.Id), Is.EquivalentTo(Catalog.Areas.Where(a => a.Id != lms.Id).Select(a => a.Id)));
+			// Every other module, released add-ons included, is still listed (Workforce Pro is dark too until the owner releases it).
+			var workforcePro = Catalog.Areas.Single(a => a.Addon == nameof(PlanAddonTypes.WorkforcePro));
+			Assert.That(Catalog.ListedAreas().Select(a => a.Id), Is.EquivalentTo(Catalog.Areas.Where(a => a.Id != lms.Id && a.Id != workforcePro.Id).Select(a => a.Id)));
+		}
+
+		[Test]
+		public void The_Workforce_Pro_add_on_holds_member_wellness_and_is_inventoried_but_not_listed_until_released()
+		{
+			var area = Catalog.Areas.Single(a => a.Addon == nameof(PlanAddonTypes.WorkforcePro));
+			var features = Catalog.Capabilities.Where(c => c.AreaId == area.Id).ToArray();
+
+			Assert.That(area.Tier, Is.EqualTo(ProductArea.AddOn));
+			Assert.That(features.Select(c => c.Id), Is.SupersetOf(new[] { "addon-workforce-pro", "workforce-pro-seats", "member-wellness" }));
+			Assert.That(features.All(c => c.ReleaseStatus == "planned" && !c.IsKey), Is.True, "Nothing about Workforce Pro is offered or taught before it is released.");
+			Assert.That(features.All(c => c.Requirements.Any(r => r.Kind == "flag" && r.Id == FeatureFlagKeys.WorkforcePro) &&
+				c.Requirements.Any(r => r.Kind == "addon" && r.Id == nameof(PlanAddonTypes.WorkforcePro))), Is.True);
+			// The wellness settings are Workforce Pro settings now, not Personnel ones.
+			Assert.That(Catalog.Settings.Where(s => s.Binding.StartsWith("WellnessSettings.") || s.Id == "setting.WellnessSettings").Select(s => s.AreaId).Distinct(), Is.EqualTo(new[] { area.Id }));
+			Assert.That(Catalog.IsListed(area), Is.False);
+			Assert.That(Catalog.ListedCapabilities().Select(c => c.Id), Does.Not.Contain("member-wellness"));
 		}
 
 		[Test]
@@ -96,8 +114,8 @@ namespace Resgrid.Tests.AdminAssist
 				using var json = JsonDocument.Parse(((ContentResult)result).Content);
 				var areas = json.RootElement.GetProperty("areas").EnumerateArray().Select(a => a.GetProperty("id").GetString()).ToArray();
 				var features = json.RootElement.GetProperty("capabilities").EnumerateArray().Select(c => c.GetProperty("id").GetString()).ToArray();
-				Assert.That(areas, Does.Not.Contain("lms").And.Contain("training").And.Contain("ai"));
-				Assert.That(features, Does.Not.Contain("addon-lms").And.Contain("addon-ai").And.Contain("training-transcript"));
+				Assert.That(areas, Does.Not.Contain("lms").And.Not.Contain("workforce-pro").And.Contain("training").And.Contain("ai"));
+				Assert.That(features, Does.Not.Contain("addon-lms").And.Not.Contain("member-wellness").And.Contain("addon-ai").And.Contain("training-transcript"));
 			}
 			finally { ClaimsAuthorizationHelper._httpContextAccessor = previous; }
 		}

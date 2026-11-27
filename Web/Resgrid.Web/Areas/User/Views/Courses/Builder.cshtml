@@ -20,7 +20,9 @@
     var editing = Model.Lesson;
     var newLesson = editing == null && Model.ModuleForNewLesson.HasValue;
     var lessonKind = editing?.Kind ?? Model.NewLessonKind;
-    var kinds = new[] { LmsLessonKinds.Blocks, LmsLessonKinds.Video, LmsLessonKinds.Document, LmsLessonKinds.ProtocolVersion, LmsLessonKinds.Assessment, LmsLessonKinds.Survey };
+    // T5: SCORM, cmi5 and LTI lessons play a package or launch a registered tool (Trainings → Standards).
+    var kinds = new[] { LmsLessonKinds.Blocks, LmsLessonKinds.Video, LmsLessonKinds.Document, LmsLessonKinds.ProtocolVersion, LmsLessonKinds.Assessment, LmsLessonKinds.Survey,
+        LmsLessonKinds.Scorm, LmsLessonKinds.Cmi5, LmsLessonKinds.LtiLink };
 }
 
 @await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
@@ -44,6 +46,9 @@
             </form>
         }
     </div>
+
+    @* T5: a starter's attribution, or an AI draft's source with each drafted lesson's citations (check every lesson against them). *@
+    @await Component.InvokeAsync("LmsCourseOrigin", new { courseId = outline.Course.LmsCourseId, showCitations = Model.Editable })
 
     @if (Model.Editable)
     {

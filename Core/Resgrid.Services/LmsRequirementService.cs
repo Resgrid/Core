@@ -659,7 +659,8 @@ namespace Resgrid.Services
 						Counted = requirement.IsCounted,
 						ExemptReason = status.State == LmsRequirementStates.Exempt ? member.ExemptReason : null,
 						ExtendedDueUtc = member.ExtendedDueOn,
-						Enforced = open.Contains((requirement.LmsRequirementId, member.UserId))
+						Enforced = open.Contains((requirement.LmsRequirementId, member.UserId)),
+						RecordedByOther = status.LastRecordedByOther
 					};
 					matrix.Totals[status.State] = matrix.Totals.TryGetValue(status.State, out var total) ? total + 1 : 1;
 				}
@@ -1046,6 +1047,9 @@ namespace Resgrid.Services
 			try
 			{
 				var actor = SystemActor(snapshot.DepartmentId, requirement, gate);
+				// Round 10 A7: the licensed members this run already read stand in for the seat holders (no second billing read per member, R-L9);
+				// a member without a seat was skipped above (state NotLicensed) and is assigned on a later run once a seat is enabled.
+				actor.SeatHolders = snapshot.Licensed;
 				var who = new[] { new ContentAudienceRule(ContentAudienceKinds.User, member.UserId) };
 				var due = dueKey > snapshot.UtcNow ? dueKey : (DateTime?)null;
 				LmsAssignOutcome outcome = null;
@@ -1478,6 +1482,9 @@ namespace Resgrid.Services
 			});
 
 			var requirement = await _requirements.GetByIdForDepartmentAsync(departmentId, action.LmsRequirementId);
+			// Workflow trigger 264, once: TryMarkUndoneAsync above let only this call undo it. The system's own undo names no actor.
+			ContentWorkflowContext.Publish(_eventAggregator, LmsWorkflowEvents.EnforcementUndone(action, requirement, reason, restoredRoles.Count,
+				string.Equals(actingUserId, SystemUserId, StringComparison.OrdinalIgnoreCase) ? null : actingUserId, utcNow));
 			if (requirement != null)
 				await SafeAsync(() => _notifier.NotifyEnforcementAsync(departmentId, action.UserId, requirement, null, true, cancellationToken));
 			return true;

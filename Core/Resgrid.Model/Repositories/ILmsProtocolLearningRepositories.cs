@@ -6,7 +6,7 @@ using Resgrid.Model.Lms;
 
 namespace Resgrid.Model.Repositories
 {
-	/// <summary>Per-protocol LMS learning settings (LmsProtocolLearnings, M0417), unique per department and protocol.</summary>
+	/// <summary>Per-protocol LMS learning settings (LmsProtocolLearnings, M0387), unique per department and protocol.</summary>
 	public interface ILmsProtocolLearningsRepository : IRepository<LmsProtocolLearning>
 	{
 		Task<LmsProtocolLearning> GetForProtocolAsync(int departmentId, int dispatchProtocolId);
@@ -17,7 +17,7 @@ namespace Resgrid.Model.Repositories
 		Task<List<int>> GetMicroLearningDueDepartmentIdsAsync(DateTime utcNow, int take, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>Protocol acknowledgment quiz attempts (LmsProtocolQuizAttempts, M0417).</summary>
+	/// <summary>Protocol acknowledgment quiz attempts (LmsProtocolQuizAttempts, M0387).</summary>
 	public interface ILmsProtocolQuizAttemptsRepository : IRepository<LmsProtocolQuizAttempt>
 	{
 		Task<LmsProtocolQuizAttempt> GetByIdForDepartmentAsync(int departmentId, int lmsProtocolQuizAttemptId);
@@ -32,7 +32,7 @@ namespace Resgrid.Model.Repositories
 		Task<bool> TryUpdateAsync(LmsProtocolQuizAttempt attempt, long expectedRowVersion, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>Weekly micro-learning questions and the per-department clock (LmsMicroLearningItems, LmsMicroLearningRuns; M0417).</summary>
+	/// <summary>Weekly micro-learning questions and the per-department clock (LmsMicroLearningItems, LmsMicroLearningRuns; M0387).</summary>
 	public interface ILmsMicroLearningRepository : IRepository<LmsMicroLearningItem>
 	{
 		/// <summary>

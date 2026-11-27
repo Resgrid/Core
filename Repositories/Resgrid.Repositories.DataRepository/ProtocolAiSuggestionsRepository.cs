@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>Enhanced AI protocol suggestions (Protocols P4, M0400). Every read is scoped to the department.</summary>
+	/// <summary>Enhanced AI protocol suggestions (Protocols P4, M0377). Every read is scoped to the department.</summary>
 	public class ProtocolAiSuggestionsRepository : RmsRepositoryBase<ProtocolAiSuggestion>, IProtocolAiSuggestionsRepository
 	{
 		public ProtocolAiSuggestionsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)

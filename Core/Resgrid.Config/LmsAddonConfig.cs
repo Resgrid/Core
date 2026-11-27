@@ -9,7 +9,7 @@ namespace Resgrid.Config
 	/// </summary>
 	public static class LmsAddonConfig
 	{
-		/// <summary>Fixed PlanAddons row id (M0366) so every data center's catalog row matches.</summary>
+		/// <summary>Fixed PlanAddons row id (M0351) so every data center's catalog row matches.</summary>
 		public const string PlanAddonId = "7d4e2b91-3c58-4f0a-9e16-5b8a2c4d7f93";
 
 		/// <summary>Members per pack (decision 7). Shared with Workforce Pro (Shifts plan §7), which reuses the pack billing path.</summary>

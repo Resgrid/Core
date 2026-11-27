@@ -60,7 +60,7 @@
                                     }
                                     else
                                     {
-                                        @(s.ExternalName ?? "—") <small class="rgw-sub text-muted">@s.ContactMasked</small>
+                                        @(s.ExternalNameForDisplay ?? "—") <small class="rgw-sub text-muted">@s.ContactMasked</small>
                                     }
                                     @if (s.Status == (int)SignatureSignerStatuses.Declined && !string.IsNullOrWhiteSpace(s.DeclineReason))
                                     {

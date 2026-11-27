@@ -28,12 +28,14 @@ namespace Resgrid.Services
 		private readonly IAdpAuditRepository _audit;
 		private readonly IPasskeyFeatureGates _gates;
 		private readonly TimeProvider _time;
+		private readonly IStepUpPolicyService _stepUp;
 
 		public AdpStepUpService(IProtectedDataGrantService grants, IDepartmentDataProtectionService protection, IMfaPolicyService policy,
 			IMfaEvidenceService evidence, IPasskeyService passkeys, IMfaApprovalService approvals, ISsoBrokerService broker,
 			IDepartmentSsoService departmentSso, IMfaCredentialStateService credentials, IMfaActivityService activity, IAdpAuditRepository audit,
-			IPasskeyFeatureGates gates, TimeProvider time)
+			IPasskeyFeatureGates gates, TimeProvider time, IStepUpPolicyService stepUp)
 		{
+			_stepUp = stepUp;
 			_grants = grants;
 			_protection = protection;
 			_policy = policy;
@@ -233,6 +235,63 @@ namespace Resgrid.Services
 				request.NotAfterUtc = caller.Session.SessionExpiresOnUtc;
 
 			return await SignAsync(caller, request, window, "step-up-exempt", ProtectedDataGrantMfaMethods.None, decision.PolicyEpoch);
+		}
+
+		// ── Password or SSO entered again (department choice, owner decision 2026-11-26) ───────────────
+
+		public async Task<AdpGrantIssue> IssueForReauthenticationAsync(AdpStepUpCaller caller, MfaEvidenceMethod method, DateTime verifiedOnUtc,
+			CancellationToken cancellationToken = default)
+		{
+			ArgumentNullException.ThrowIfNull(caller);
+			if (method is not (MfaEvidenceMethod.Password or MfaEvidenceMethod.Sso))
+				return AdpGrantIssue.Of(AdpGrantOutcome.InvalidRequest);
+			if (!_grants.CanIssueGrants)
+				return AdpGrantIssue.Of(AdpGrantOutcome.NotConfigured);
+			// Bound to the tracked session that just reauthenticated, like every method other than a code.
+			if (caller.Session == null || string.IsNullOrWhiteSpace(caller.Session.SessionId))
+				return AdpGrantIssue.Of(AdpGrantOutcome.SessionRequired);
+
+			// Only where the department's managing member chose to allow this kind for protected data; read at issue time, never cached.
+			var rule = await _stepUp.GetRuleAsync(caller.DepartmentId, StepUpArea.ProtectedData, cancellationToken);
+			if (rule == null || !rule.Allows(StepUpMethodNames.ClassOf(method)))
+				return AdpGrantIssue.Of(AdpGrantOutcome.MethodNotAllowed);
+
+			// The exemption snapshot gives the epoch and window together (as IssueExemptAsync), so a policy change in between cannot be missed.
+			var decision = await _protection.GetStepUpDecisionForClientAsync(caller.DepartmentId, caller.Client);
+			var window = ProtectedGrantBinding.EffectiveWindowMinutes(decision.StepUpWindowMinutes);
+			var now = Now;
+			var skew = TimeSpan.FromSeconds(Math.Max(0, DataProtectionConfig.GrantClockSkewSeconds));
+			verifiedOnUtc = DateTime.SpecifyKind(verifiedOnUtc, DateTimeKind.Utc);
+			// Issued only for a verification made just now: the grant runs from issuance, so an older one would outlive its window.
+			if (verifiedOnUtc > now.Add(skew) || now - verifiedOnUtc > skew + TimeSpan.FromMinutes(2))
+				return AdpGrantIssue.Of(AdpGrantOutcome.StepUpRequired);
+
+			// No second factor was used, so the grant is in the non-MFA class (amr "pwd", step_up_exempt): it unlocks protected reads and
+			// writes like any grant, but never counts as MFA for ADP management, PIN enrolment or protected workflows.
+			var request = ProtectedGrantIssueRequests.ForSession(new ProtectedDataGrantIssueRequest
+			{
+				UserId = caller.UserId,
+				DepartmentId = caller.DepartmentId,
+				SessionId = caller.Session.SessionId,
+				ClientApp = (int)caller.Client,
+				PolicyEpoch = decision.PolicyEpoch,
+				WindowMinutes = window,
+				Scopes = Scopes,
+				MfaAtUtc = verifiedOnUtc,
+				StepUpExempt = true
+			}, caller.Session, ProtectedDataGrantMfaMethods.None, _gates.EmitGrantV2);
+			if (request.Version == 2)
+			{
+				var limit = verifiedOnUtc.AddMinutes(window);
+				request.NotAfterUtc = caller.Session.SessionExpiresOnUtc is DateTime sessionEnd && sessionEnd < limit ? sessionEnd : limit;
+			}
+
+			var outcome = method == MfaEvidenceMethod.Password ? "password-reauth" : "sso-reauth";
+			await _audit.AppendAsync(new AdpAuditEvent
+			{
+				DepartmentId = caller.DepartmentId, Layer = "identity", Operation = "reauth-verify", Outcome = outcome, ActorId = caller.UserId
+			});
+			return await SignAsync(caller, request, window, outcome, ProtectedDataGrantMfaMethods.None, decision.PolicyEpoch);
 		}
 
 		// ── Shared orchestration ──────────────────────────────────────────────────────

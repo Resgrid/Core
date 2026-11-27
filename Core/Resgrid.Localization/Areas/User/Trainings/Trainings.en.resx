@@ -1222,7 +1222,7 @@
     <value>True</value>
   </data>
   <data name="UnitTypesLabel" xml:space="preserve">
-    <value>Crews of unit types</value>
+    <value>Members of unit types</value>
   </data>
   <data name="UnpinButton" xml:space="preserve">
     <value>Unpin</value>
@@ -1453,7 +1453,7 @@
     <value>OSHA</value>
   </data>
   <data name="CategoryKind.State" xml:space="preserve">
-    <value>State</value>
+    <value>State or province</value>
   </data>
   <data name="BackfillState.Queued" xml:space="preserve">
     <value>Queued</value>
@@ -1873,7 +1873,7 @@
     <value>External code</value>
   </data>
   <data name="Rec.ExternalCodeHelp" xml:space="preserve">
-    <value>The code state or third-party exports use for this category.</value>
+    <value>The code a regulator, licensing body or third-party export uses for this category.</value>
   </data>
   <data name="Rec.YearsValue" xml:space="preserve">
     <value>{0} years</value>
@@ -1900,7 +1900,7 @@
     <value>Target applies to</value>
   </data>
   <data name="Rec.AppliesToPlaceholder" xml:space="preserve">
-    <value>e.g. per firefighter</value>
+    <value>e.g. per member, per licensed officer</value>
   </data>
   <data name="Rec.SaveCategoryButton" xml:space="preserve">
     <value>Save category</value>
@@ -2851,7 +2851,7 @@
     <value>Import a CASE 1.1 framework</value>
   </data>
   <data name="Prg.ImportCaseHelp" xml:space="preserve">
-    <value>Upload the JSON package (CFDocument, CFItems and CFAssociations) a state or college publishes. Importing the same document again updates it.</value>
+    <value>Upload the JSON package (CFDocument, CFItems and CFAssociations) a regulator, standards body or college publishes. Importing the same document again updates it.</value>
   </data>
   <data name="Prg.CaseFile" xml:space="preserve">
     <value>CASE JSON file</value>
@@ -3517,7 +3517,7 @@
     <value>With both on, the supervisor decides first. With both off, requests are approved as they are submitted.</value>
   </data>
   <data name="Prg.Set.RequestCurrency" xml:space="preserve">
-    <value>Currency (ISO code)</value>
+    <value>Training currency (ISO code, e.g. EUR, CAD, USD)</value>
   </data>
   <data name="Prg.Set.Familiarization" xml:space="preserve">
     <value>Building familiarization</value>
@@ -3833,5 +3833,497 @@
   </data>
   <data name="Skl.Col.Highest" xml:space="preserve">
     <value>Highest</value>
+  </data>
+  <data name="Ext.Tab.External" xml:space="preserve">
+    <value>External learners</value>
+  </data>
+  <data name="Std.Tab.Standards" xml:space="preserve">
+    <value>Standards</value>
+  </data>
+  <data name="RecordCompletions.Title" xml:space="preserve">
+    <value>Record completion</value>
+  </data>
+  <data name="RecordCompletions.Help" xml:space="preserve">
+    <value>Record that the selected members completed {0} together, for example in a class or a group viewing. Each member's record will show that you recorded it; it is never shown as their own completion.</value>
+  </data>
+  <data name="RecordCompletions.Attendees" xml:space="preserve">
+    <value>Members</value>
+  </data>
+  <data name="RecordCompletions.Select" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="RecordCompletions.State" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="RecordCompletions.Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="RecordCompletions.NoteOptional" xml:space="preserve">
+    <value>(optional)</value>
+  </data>
+  <data name="RecordCompletions.NoteHelp" xml:space="preserve">
+    <value>Required: say how and when the training was completed.</value>
+  </data>
+  <data name="RecordCompletions.Attestation.2026-11-25" xml:space="preserve">
+    <value>I attest that these members completed this training under my instruction or supervision.</value>
+  </data>
+  <data name="RecordCompletions.Submit" xml:space="preserve">
+    <value>Record completion</value>
+  </data>
+  <data name="RecordCompletions.ResultFormat" xml:space="preserve">
+    <value>Recorded for {0} member(s); {1} not recorded.</value>
+  </data>
+  <data name="RecordCompletions.Method" xml:space="preserve">
+    <value>Recorded by instructor</value>
+  </data>
+  <data name="RecordCompletions.RecordedByFormat" xml:space="preserve">
+    <value>Recorded by {0} on {1}</value>
+  </data>
+  <data name="RecordCompletions.Void" xml:space="preserve">
+    <value>Void</value>
+  </data>
+  <data name="RecordCompletions.VoidReason" xml:space="preserve">
+    <value>Reason for voiding</value>
+  </data>
+  <data name="RecordCompletions.Voided" xml:space="preserve">
+    <value>Voided</value>
+  </data>
+  <data name="RecordCompletions.VoidedFormat" xml:space="preserve">
+    <value>Voided by {0} on {1}: {2}</value>
+  </data>
+  <data name="RecordCompletions.VoidDone" xml:space="preserve">
+    <value>The recorded completion was voided.</value>
+  </data>
+  <data name="RecordCompletions.History" xml:space="preserve">
+    <value>Recorded completions</value>
+  </data>
+  <data name="RecordCompletions.QuizWaived" xml:space="preserve">
+    <value>Quiz waived</value>
+  </data>
+  <data name="RecordCompletions.QuizWaivedHelp" xml:space="preserve">
+    <value>This training has a quiz. A recorded completion notes the quiz as waived (not taken).</value>
+  </data>
+  <data name="RecordCompletions.Source.Manual" xml:space="preserve">
+    <value>Recorded manually</value>
+  </data>
+  <data name="RecordCompletions.Source.ClassSession" xml:space="preserve">
+    <value>Recorded from a class</value>
+  </data>
+  <data name="RecordCompletions.Attended" xml:space="preserve">
+    <value>Attended</value>
+  </data>
+  <data name="RecordCompletions.External" xml:space="preserve">
+    <value>External learner</value>
+  </data>
+  <data name="RecordCompletions.None" xml:space="preserve">
+    <value>There is no one to record.</value>
+  </data>
+  <data name="RecordCompletions.OnList" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="RecordCompletions.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Doc.RecordedBy" xml:space="preserve">
+    <value>Recorded by instructor</value>
+  </data>
+  <data name="training_record_not_authorized" xml:space="preserve">
+    <value>You are not allowed to record training completions.</value>
+  </data>
+  <data name="training_record_attestation_required" xml:space="preserve">
+    <value>Confirm the attestation to record the completion.</value>
+  </data>
+  <data name="training_record_note_required" xml:space="preserve">
+    <value>A note is required.</value>
+  </data>
+  <data name="training_record_no_members" xml:space="preserve">
+    <value>Select at least one member (500 at most).</value>
+  </data>
+  <data name="training_record_not_found" xml:space="preserve">
+    <value>The training or class was not found, or cannot be completed now.</value>
+  </data>
+  <data name="training_record_not_active" xml:space="preserve">
+    <value>Not an active member</value>
+  </data>
+  <data name="training_record_outside_scope" xml:space="preserve">
+    <value>Not a member of your group</value>
+  </data>
+  <data name="training_record_self" xml:space="preserve">
+    <value>You cannot record your own completion</value>
+  </data>
+  <data name="training_record_already_complete" xml:space="preserve">
+    <value>Already completed</value>
+  </data>
+  <data name="training_record_no_seat" xml:space="preserve">
+    <value>No LMS seat</value>
+  </data>
+  <data name="training_record_addon_required" xml:space="preserve">
+    <value>The LMS add-on is not active</value>
+  </data>
+  <data name="training_record_not_on_roster" xml:space="preserve">
+    <value>Not on the class roster</value>
+  </data>
+  <data name="training_record_external" xml:space="preserve">
+    <value>External learners can only be recorded for a course from a class roster</value>
+  </data>
+  <data name="training_record_no_linked_training" xml:space="preserve">
+    <value>This class is not linked to a course or a training.</value>
+  </data>
+  <data name="training_record_class_not_started" xml:space="preserve">
+    <value>The class has not started yet.</value>
+  </data>
+  <data name="training_record_class_cancelled" xml:space="preserve">
+    <value>The class was cancelled.</value>
+  </data>
+  <data name="training_record_reason_required" xml:space="preserve">
+    <value>A reason is required.</value>
+  </data>
+  <data name="training_record_already_voided" xml:space="preserve">
+    <value>This recording was already voided.</value>
+  </data>
+  <data name="training_record_failed" xml:space="preserve">
+    <value>The completion could not be recorded. Please try again.</value>
+  </data>
+  <data name="CertReq.Tab" xml:space="preserve">
+    <value>Certification requirements</value>
+  </data>
+  <data name="CertReq.Title" xml:space="preserve">
+    <value>Certification requirements</value>
+  </data>
+  <data name="CertReq.Intro" xml:space="preserve">
+    <value>Choose what a member must complete in each cycle to be issued a certification or to keep it: LMS courses, a course set, trainings, a supervised practical recorded by an instructor, skill evaluations or continuing-education hours.</value>
+  </data>
+  <data name="CertReq.StatSets" xml:space="preserve">
+    <value>Requirement sets</value>
+  </data>
+  <data name="CertReq.StatDueSoon" xml:space="preserve">
+    <value>Due soon</value>
+  </data>
+  <data name="CertReq.StatInGrace" xml:space="preserve">
+    <value>In grace period</value>
+  </data>
+  <data name="CertReq.Col.Certification" xml:space="preserve">
+    <value>Certification</value>
+  </data>
+  <data name="CertReq.Col.Requires" xml:space="preserve">
+    <value>Requires</value>
+  </data>
+  <data name="CertReq.Col.Holders" xml:space="preserve">
+    <value>Holders</value>
+  </data>
+  <data name="CertReq.Col.Attention" xml:space="preserve">
+    <value>Needs attention</value>
+  </data>
+  <data name="CertReq.Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="CertReq.NoSet" xml:space="preserve">
+    <value>No requirement set</value>
+  </data>
+  <data name="CertReq.Practical" xml:space="preserve">
+    <value>supervised practical</value>
+  </data>
+  <data name="CertReq.DueSoonCount" xml:space="preserve">
+    <value>{0} due soon</value>
+  </data>
+  <data name="CertReq.InGraceCount" xml:space="preserve">
+    <value>{0} in grace</value>
+  </data>
+  <data name="CertReq.Progress" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="CertReq.Define" xml:space="preserve">
+    <value>Define</value>
+  </data>
+  <data name="CertReq.Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="CertReq.Kind.Course" xml:space="preserve">
+    <value>LMS course</value>
+  </data>
+  <data name="CertReq.Kind.Training" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="CertReq.Kind.CategoryHours" xml:space="preserve">
+    <value>Continuing-education hours</value>
+  </data>
+  <data name="CertReq.Kind.Path" xml:space="preserve">
+    <value>Course set or series (learning path)</value>
+  </data>
+  <data name="CertReq.Kind.Evaluations" xml:space="preserve">
+    <value>Skill evaluations</value>
+  </data>
+  <data name="CertReq.EditTitle" xml:space="preserve">
+    <value>Requirements for {0}</value>
+  </data>
+  <data name="CertReq.EditIntro" xml:space="preserve">
+    <value>Every item must be completed inside the cycle window to issue or renew the certification. The window follows the certification type's validity rule.</value>
+  </data>
+  <data name="CertReq.IsActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="CertReq.IssueToNonHolders" xml:space="preserve">
+    <value>Issue it to members who complete every item</value>
+  </data>
+  <data name="CertReq.RenewHolders" xml:space="preserve">
+    <value>Renew it for holders who complete every item</value>
+  </data>
+  <data name="CertReq.NotifyMembers" xml:space="preserve">
+    <value>Tell members (push and email)</value>
+  </data>
+  <data name="CertReq.DueSoonDays" xml:space="preserve">
+    <value>Remind holders this many days before expiry</value>
+  </data>
+  <data name="CertReq.DueSoonDaysHelp" xml:space="preserve">
+    <value>Holders with items still open are told once. 0 turns the reminder off.</value>
+  </data>
+  <data name="CertReq.WindowNote" xml:space="preserve">
+    <value>Completions count when they fall inside the current cycle: from the start of the cycle that ends at the holder's expiry (or the renewal window set on the certification type) to the end of its grace period. For a first issue, the last cycle length counts.</value>
+  </data>
+  <data name="CertReq.Items" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="CertReq.ItemsIntro" xml:space="preserve">
+    <value>Add up to 25 items. Leave a row's type empty to skip it.</value>
+  </data>
+  <data name="CertReq.ItemLegend" xml:space="preserve">
+    <value>Item {0}</value>
+  </data>
+  <data name="CertReq.ItemKind" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CertReq.ItemNone" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="CertReq.ItemTarget" xml:space="preserve">
+    <value>Course, training, category or path</value>
+  </data>
+  <data name="CertReq.ItemChoose" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="CertReq.ItemHours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="CertReq.ItemCode" xml:space="preserve">
+    <value>Skill sheet code</value>
+  </data>
+  <data name="CertReq.ItemCount" xml:space="preserve">
+    <value>Passed evaluations</value>
+  </data>
+  <data name="CertReq.ItemLabel" xml:space="preserve">
+    <value>Name shown to members</value>
+  </data>
+  <data name="CertReq.ItemLabelPlaceholder" xml:space="preserve">
+    <value>e.g. Slow speed course</value>
+  </data>
+  <data name="CertReq.ItemPractical" xml:space="preserve">
+    <value>Supervised practical: only a completion recorded by an authorized instructor counts</value>
+  </data>
+  <data name="CertReq.ItemPracticalHelp" xml:space="preserve">
+    <value>The instructor records it from the training's or course's Record completion page, or from a class roster.</value>
+  </data>
+  <data name="CertReq.MaxItems" xml:space="preserve">
+    <value>A set holds at most {0} items.</value>
+  </data>
+  <data name="CertReq.MoreRowsNote" xml:space="preserve">
+    <value>Save to get more empty rows.</value>
+  </data>
+  <data name="CertReq.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="CertReq.DeleteConfirm" xml:space="preserve">
+    <value>Remove this requirement set? Certifications already issued stay as they are.</value>
+  </data>
+  <data name="CertReq.Delete" xml:space="preserve">
+    <value>Remove the requirement set</value>
+  </data>
+  <data name="CertReq.ProgressTitle" xml:space="preserve">
+    <value>Who holds {0}</value>
+  </data>
+  <data name="CertReq.ProgressIntro" xml:space="preserve">
+    <value>Members closest to lapsing first: in the grace period, then due soon, with what is still open.</value>
+  </data>
+  <data name="CertReq.NoHolders" xml:space="preserve">
+    <value>Nobody holds this certification or has started its requirements yet.</value>
+  </data>
+  <data name="CertReq.Col.State" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="CertReq.Col.Done" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="CertReq.Col.Expires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="CertReq.Col.Open" xml:space="preserve">
+    <value>Still open</value>
+  </data>
+  <data name="CertReq.State.NotHeld" xml:space="preserve">
+    <value>Not held</value>
+  </data>
+  <data name="CertReq.State.Current" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="CertReq.State.DueSoon" xml:space="preserve">
+    <value>Due soon</value>
+  </data>
+  <data name="CertReq.State.InGrace" xml:space="preserve">
+    <value>In grace period</value>
+  </data>
+  <data name="CertReq.State.Lapsed" xml:space="preserve">
+    <value>Lapsed</value>
+  </data>
+  <data name="CertReq.State.Blocked" xml:space="preserve">
+    <value>Suspended or revoked</value>
+  </data>
+  <data name="CertReq.State.Complete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="CertReq.DoneOf" xml:space="preserve">
+    <value>{0} of {1} done</value>
+  </data>
+  <data name="CertReq.DaysLeft" xml:space="preserve">
+    <value>{0} days left</value>
+  </data>
+  <data name="CertReq.DaysAgo" xml:space="preserve">
+    <value>{0} days ago</value>
+  </data>
+  <data name="CertReq.PanelTitle" xml:space="preserve">
+    <value>Certification requirements</value>
+  </data>
+  <data name="CertReq.Paused" xml:space="preserve">
+    <value>The LMS add-on is not active: nothing is issued or renewed automatically until it is.</value>
+  </data>
+  <data name="CertReq.ExpiresOn" xml:space="preserve">
+    <value>expires {0}</value>
+  </data>
+  <data name="CertReq.WindowFrom" xml:space="preserve">
+    <value>counting {0} to {1}</value>
+  </data>
+  <data name="CertReq.ItemDone" xml:space="preserve">
+    <value>Done:</value>
+  </data>
+  <data name="CertReq.ItemOpen" xml:space="preserve">
+    <value>Open:</value>
+  </data>
+  <data name="CertReq.RecordedByInstructor" xml:space="preserve">
+    <value>Recorded by instructor</value>
+  </data>
+  <data name="CertReq.WillRenew" xml:space="preserve">
+    <value>Complete: issued or renewed to {0}.</value>
+  </data>
+  <data name="CertReq.Notify.Title" xml:space="preserve">
+    <value>Certification update</value>
+  </data>
+  <data name="CertReq.Notify.Issued" xml:space="preserve">
+    <value>Your {0} certification was issued: you completed what it requires. It is valid until {1}.</value>
+  </data>
+  <data name="CertReq.Notify.IssuedNoExpiry" xml:space="preserve">
+    <value>Your {0} certification was issued: you completed what it requires.</value>
+  </data>
+  <data name="CertReq.Notify.Renewed" xml:space="preserve">
+    <value>Your {0} certification was renewed: you completed what it requires. It is now valid until {1}.</value>
+  </data>
+  <data name="CertReq.Notify.Withdrawn" xml:space="preserve">
+    <value>A completion behind your {0} certification was voided, so the certification it issued was withdrawn. Complete the requirements again to be issued it.</value>
+  </data>
+  <data name="CertReq.Notify.Restored" xml:space="preserve">
+    <value>A completion behind your {0} certification was voided, so its renewal was taken back. Its expiry is {1} again.</value>
+  </data>
+  <data name="CertReq.Notify.Adjusted" xml:space="preserve">
+    <value>A completion behind your {0} certification was voided. Another completion still covers it, so it now expires on {1}.</value>
+  </data>
+  <data name="CertReq.Notify.DueTitle" xml:space="preserve">
+    <value>Certification requirements due</value>
+  </data>
+  <data name="CertReq.Notify.Due" xml:space="preserve">
+    <value>Your {0} certification expires on {1}. {2} of {3} requirements are done: complete the rest to keep it.</value>
+  </data>
+  <data name="CertReq.Notify.DueGrace" xml:space="preserve">
+    <value>Your {0} certification expired on {1}. {2} of {3} requirements are done: complete the rest by {4} to renew it.</value>
+  </data>
+  <data name="lms_cert_req_invalid" xml:space="preserve">
+    <value>The requirement set could not be saved.</value>
+  </data>
+  <data name="lms_cert_req_type_invalid" xml:space="preserve">
+    <value>Choose a certification held by people.</value>
+  </data>
+  <data name="lms_cert_req_items_required" xml:space="preserve">
+    <value>Add at least one item.</value>
+  </data>
+  <data name="lms_cert_req_too_many_items" xml:space="preserve">
+    <value>A requirement set holds at most 25 items.</value>
+  </data>
+  <data name="lms_cert_req_due_days_invalid" xml:space="preserve">
+    <value>The reminder days must be between 0 and 180.</value>
+  </data>
+  <data name="lms_cert_req_nothing_to_do" xml:space="preserve">
+    <value>Choose to issue, to renew, or both.</value>
+  </data>
+  <data name="lms_cert_req_item_invalid" xml:space="preserve">
+    <value>An item's type is not valid.</value>
+  </data>
+  <data name="lms_cert_req_item_code_required" xml:space="preserve">
+    <value>Enter the skill sheet code (up to 100 characters).</value>
+  </data>
+  <data name="lms_cert_req_item_count_invalid" xml:space="preserve">
+    <value>Passed evaluations must be between 1 and 100.</value>
+  </data>
+  <data name="lms_cert_req_item_target_required" xml:space="preserve">
+    <value>Choose the course, training, category or path of each item.</value>
+  </data>
+  <data name="lms_cert_req_item_hours_invalid" xml:space="preserve">
+    <value>Enter the hours (more than 0).</value>
+  </data>
+  <data name="lms_cert_req_item_practical_kind" xml:space="preserve">
+    <value>Only a training or a course can be a supervised practical.</value>
+  </data>
+  <data name="lms_cert_req_item_label_too_long" xml:space="preserve">
+    <value>An item's name is longer than 200 characters.</value>
+  </data>
+  <data name="lms_cert_req_duplicate_item" xml:space="preserve">
+    <value>The same item is listed twice.</value>
+  </data>
+  <data name="AckLabel" xml:space="preserve">
+    <value>Members confirm they have read and reviewed it</value>
+  </data>
+  <data name="AckHelp" xml:space="preserve">
+    <value>For handbooks, policies and notices: opening the training is not enough, each member confirms they read and reviewed it. With a quiz, passing the quiz completes it instead.</value>
+  </data>
+  <data name="AckStatement" xml:space="preserve">
+    <value>I have read and reviewed this training.</value>
+  </data>
+  <data name="AckButton" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="AckDone" xml:space="preserve">
+    <value>Thank you: your confirmation is recorded.</value>
+  </data>
+  <data name="AckRequired" xml:space="preserve">
+    <value>Tick the statement to confirm.</value>
+  </data>
+  <data name="AckError" xml:space="preserve">
+    <value>This training could not be confirmed.</value>
+  </data>
+  <data name="HandbookHintTitle" xml:space="preserve">
+    <value>A yearly required reading?</value>
+  </data>
+  <data name="HandbookHintTraining" xml:space="preserve">
+    <value>For an employee handbook, a code of conduct or a site rule each member reviews every year: attach or write it here, tick "Members confirm they have read and reviewed it", set a due date and repeat every 12 months.</value>
+  </data>
+  <data name="HandbookHintProtocol" xml:space="preserve">
+    <value>For a versioned policy members sign (read and sign), publish it in Protocols as a Policy with acknowledgment and a due date.</value>
+  </data>
+  <data name="HandbookHintProtocolLink" xml:space="preserve">
+    <value>New policy</value>
+  </data>
+  <data name="Doc.Provenance" xml:space="preserve">
+    <value>How recorded</value>
+  </data>
+  <data name="Rec.TemplateSuggested" xml:space="preserve">
+    <value>Suggested for your organization</value>
+  </data>
+  <data name="ManagedBySetMessage" xml:space="preserve">
+    <value>This training is a managed copy from a linked organization's course set. Its content and quiz change only through the set; you can still assign it, report on it or copy it into a training of your own.</value>
   </data>
 </root>

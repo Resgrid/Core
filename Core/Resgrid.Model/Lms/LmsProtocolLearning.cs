@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Resgrid.Model.Lms
 {
 	/// <summary>
-	/// The LMS learning settings of one protocol (P2 LMS parts, §17.2, M0417): the question bank linked to it, whether its acknowledgment
+	/// The LMS learning settings of one protocol (P2 LMS parts, §17.2, M0387): the question bank linked to it, whether its acknowledgment
 	/// requires passing a quiz drawn from that bank (how many questions, the pass mark, an optional tag filter), and whether it takes
 	/// part in the department's weekly micro-learning. LMS table: references the protocol by id only (§17.3); the baseline protocol
 	/// tables never reference it.
@@ -92,7 +92,7 @@ namespace Resgrid.Model.Lms
 	}
 
 	/// <summary>
-	/// One attempt at a protocol version's acknowledgment quiz (M0417). Drawn and scored on the server only: <see cref="SnapshotJson"/>
+	/// One attempt at a protocol version's acknowledgment quiz (M0387). Drawn and scored on the server only: <see cref="SnapshotJson"/>
 	/// holds the drawn questions in the order shown with the key (R-T6/R-T11) and never leaves the server; the learner receives questions
 	/// and options. Attempts are per version, so a major version asks again.
 	/// </summary>
@@ -166,7 +166,7 @@ namespace Resgrid.Model.Lms
 	}
 
 	/// <summary>
-	/// One member's weekly micro-learning question (M0417): a single scenario question drawn from the banks tagged to one of the
+	/// One member's weekly micro-learning question (M0387): a single scenario question drawn from the banks tagged to one of the
 	/// department's micro-learning protocols, unique per department, member and week. The snapshot (with its key) stays on the server
 	/// until the member has answered.
 	/// </summary>
@@ -224,7 +224,7 @@ namespace Resgrid.Model.Lms
 	}
 
 	/// <summary>
-	/// Worker 86's micro-learning clock per department (M0417): when the next weekly question is due (Monday 09:00 department-local).
+	/// Worker 86's micro-learning clock per department (M0387): when the next weekly question is due (Monday 09:00 department-local).
 	/// The due-work query reads only departments with a micro-learning protocol whose clock has run out (or has none yet); a run claims
 	/// the department by moving the clock before anything is sent.
 	/// </summary>

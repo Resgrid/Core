@@ -30,11 +30,13 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departments;
 		private readonly ILmsAccessService _access;
 		private readonly ILmsSeatService _seats;
+		private readonly ILmsExternalLearnersRepository _externalLearners;
 
 		public LmsTrainingService(ILearningRecordsRepository records, ITrainingCategoriesRepository categories, ILmsCertificateTemplatesRepository templates,
 			ICertificationService certifications, IPersonnelCertificationRepository certificationRecords, IDepartmentsService departments, ILmsAccessService access,
-			ILmsSeatService seats)
+			ILmsSeatService seats, ILmsExternalLearnersRepository externalLearners)
 		{
+			_externalLearners = externalLearners;
 			_records = records;
 			_categories = categories;
 			_templates = templates;
@@ -222,9 +224,15 @@ namespace Resgrid.Services
 
 			var department = await _departments.GetDepartmentByIdAsync(record.DepartmentId, false);
 			var names = await NamesAsync(record.DepartmentId);
+			if (!names.TryGetValue(record.UserId ?? string.Empty, out var name) && Resgrid.Model.Lms.LmsExternalLearnerIds.IsExternal(record.UserId))
+			{
+				// An external learner's certificate (T5) names the learner; an erased learner's shows no name.
+				var learner = await _externalLearners.GetByLearnerUserIdAsync(record.DepartmentId, record.UserId);
+				name = string.IsNullOrWhiteSpace(learner?.Name) ? null : learner.Name;
+			}
 			return new CertificateVerification
 			{
-				MemberName = names.TryGetValue(record.UserId ?? string.Empty, out var name) ? name : null,
+				MemberName = name,
 				Course = record.Title,
 				CompletedOn = record.CompletedOn,
 				DepartmentName = department?.Name,

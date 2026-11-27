@@ -60,59 +60,78 @@
   </resheader>
   <data name="Check.Title" xml:space="preserve">
     <value>Vérifiez vos acquis</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.administrator" xml:space="preserve">
     <value>Administrateur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.administrator.Audience" xml:space="preserve">
     <value>Administrateurs du service</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.business" xml:space="preserve">
     <value>Gestion et finances</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.business.Audience" xml:space="preserve">
     <value>Responsables financiers et administratifs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.dispatcher" xml:space="preserve">
     <value>Opérateur d’alerte</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.dispatcher.Audience" xml:space="preserve">
     <value>Personnel du centre d’alerte</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.logistics" xml:space="preserve">
     <value>Logistique et disponibilité</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.logistics.Audience" xml:space="preserve">
     <value>Responsables logistique et disponibilité</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.member" xml:space="preserve">
     <value>Membre / Intervenant</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.member.Audience" xml:space="preserve">
     <value>Tout le monde</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.officer" xml:space="preserve">
     <value>Officier / Commandement des opérations</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.officer.Audience" xml:space="preserve">
     <value>Officiers et commandants</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.records" xml:space="preserve">
     <value>Rapports et archives</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.records.Audience" xml:space="preserve">
     <value>Rédacteurs et relecteurs de rapports</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.training-officer" xml:space="preserve">
     <value>Responsable de la formation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Path.training-officer.Audience" xml:space="preserve">
     <value>Équipe de formation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrueFalse.f" xml:space="preserve">
     <value>Faux</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrueFalse.t" xml:space="preserve">
     <value>Vrai</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

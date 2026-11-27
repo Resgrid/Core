@@ -29,7 +29,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for Training T3 (learning requirements, enforcement, learning paths) on both engines: M0383-M0385 re-run as
+	/// Real-database proof for Training T3 (learning requirements, enforcement, learning paths) on both engines: M0364-M0366 re-run as
 	/// no-ops, rolled back and applied again; the one-open-row keys (requirement members, enforcement actions), the notice and assignment
 	/// claims, the per-day claim of worker 93 (insert and update paths, release), the due-work union, the fact projections over LMS
 	/// enrollments and the T1 ledger (training references, category hours, case-insensitive skill codes), system paths and step replacement,
@@ -148,7 +148,7 @@ namespace Resgrid.Tests.Repositories
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 383 AND {versionColumn} <= 386");
+				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 364 AND {versionColumn} <= 366");
 
 			using (var runner = Runner())
 			using (var scope = runner.CreateScope())
@@ -157,7 +157,7 @@ namespace Resgrid.Tests.Repositories
 				migrations.MigrateUp();
 				(await CountT3TablesAsync()).Should().Be(T3Tables.Length, "Up over the existing schema is a no-op");
 
-				migrations.MigrateDown(382);
+				migrations.MigrateDown(363);
 				(await CountT3TablesAsync()).Should().Be(0, "Down removes every T3 table");
 				(await CountPathColumnsAsync()).Should().Be(0, "and the path assignment columns");
 

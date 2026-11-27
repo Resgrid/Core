@@ -60,1181 +60,1618 @@
   </resheader>
   <data name="ActionFailed" xml:space="preserve">
     <value>Δεν ήταν δυνατό να γίνει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Actions" xml:space="preserve">
     <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddCost" xml:space="preserve">
     <value>Προσθήκη κόστους</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddInstructor" xml:space="preserve">
     <value>Προσθήκη εκπαιδευτή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonNotice" xml:space="preserve">
     <value>Τα μαθήματα ανήκουν στο πρόσθετο LMS, το οποίο δεν είναι ενεργό για αυτό το τμήμα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonRequired" xml:space="preserve">
     <value>Αυτό απαιτεί ενεργό πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddPeople" xml:space="preserve">
     <value>Προσθήκη ατόμων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddWalkIn" xml:space="preserve">
     <value>Καταχώριση παρόντος χωρίς εγγραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllTags" xml:space="preserve">
     <value>Όλες οι ετικέτες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlreadySignedIn" xml:space="preserve">
     <value>Καταχωρίστηκες στις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Amount" xml:space="preserve">
     <value>Ποσό</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Approve" xml:space="preserve">
     <value>Έγκριση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApprovedMessage" xml:space="preserve">
     <value>Εγκρίθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Absent" xml:space="preserve">
     <value>Απών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Attended" xml:space="preserve">
     <value>Παρών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Excused" xml:space="preserve">
     <value>Δικαιολογημένη απουσία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Attendance.Unmarked" xml:space="preserve">
     <value>Δεν σημειώθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Back" xml:space="preserve">
     <value>Πίσω</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Book" xml:space="preserve">
     <value>Κράτηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BookedMessage" xml:space="preserve">
     <value>Έγινε κράτηση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BookingsHeader" xml:space="preserve">
     <value>Εγκαταστάσεις και βοηθήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BookResource" xml:space="preserve">
     <value>Κράτηση για αυτό το μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Calendar" xml:space="preserve">
     <value>Ημερολόγιο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CalendarIsClass" xml:space="preserve">
     <value>Αυτό το στοιχείο ημερολογίου είναι μάθημα: εγγραφή και παρουσία βρίσκονται στη σελίδα του μαθήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelClass" xml:space="preserve">
     <value>Ακύρωση μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cancelled" xml:space="preserve">
     <value>Το μάθημα ακυρώθηκε και ενημερώθηκαν οι συμμετέχοντες.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelReason" xml:space="preserve">
     <value>Αιτία ακύρωσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClassesIntro" xml:space="preserve">
     <value>Μαθήματα με εκπαιδευτή στο ημερολόγιο: εγγραφή, λίστα αναμονής, παρουσία και η υπογεγραμμένη κατάσταση συμμετεχόντων.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClassesTitle" xml:space="preserve">
     <value>Μαθήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Absent" xml:space="preserve">
     <value>Απόντες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attendance" xml:space="preserve">
     <value>Παρουσία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.AttendanceRate" xml:space="preserve">
     <value>Ποσοστό παρουσίας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attended" xml:space="preserve">
     <value>Παρόντες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attendee" xml:space="preserve">
     <value>Συμμετέχων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Attendees" xml:space="preserve">
     <value>Συμμετέχοντες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Bookings" xml:space="preserve">
     <value>Κρατήσεις (επόμενες 90 ημέρες)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Capacity" xml:space="preserve">
     <value>Χωρητικότητα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Class" xml:space="preserve">
     <value>Μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.ClassCost" xml:space="preserve">
     <value>Κόστος μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Classes" xml:space="preserve">
     <value>Μαθήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.ContentSummary" xml:space="preserve">
     <value>Περίληψη περιεχομένου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Course" xml:space="preserve">
     <value>Μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Date" xml:space="preserve">
     <value>Ημερομηνία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Enrolled" xml:space="preserve">
     <value>Εγγεγραμμένοι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Exception" xml:space="preserve">
     <value>Εξαίρεση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Hours" xml:space="preserve">
     <value>Ώρες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.HoursTaught" xml:space="preserve">
     <value>Ώρες διδασκαλίας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Instructor" xml:space="preserve">
     <value>Εκπαιδευτής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Instructors" xml:space="preserve">
     <value>Εκπαιδευτές και προσόντα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.JobTitle" xml:space="preserve">
     <value>Θέση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Kind" xml:space="preserve">
     <value>Είδος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Member" xml:space="preserve">
     <value>Μέλος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Pending" xml:space="preserve">
     <value>Εκκρεμεί</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Published" xml:space="preserve">
     <value>Δημοσιευμένο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Qualifications" xml:space="preserve">
     <value>Προσόντα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.RequestCost" xml:space="preserve">
     <value>Κόστος αιτημάτων εκπαίδευσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Resource" xml:space="preserve">
     <value>Πόρος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Role" xml:space="preserve">
     <value>Ρόλος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Seats" xml:space="preserve">
     <value>Θέσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Series" xml:space="preserve">
     <value>Σειρά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Sessions" xml:space="preserve">
     <value>Συνεδρίες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.SignIn" xml:space="preserve">
     <value>Καταχώριση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Status" xml:space="preserve">
     <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Title" xml:space="preserve">
     <value>Τίτλος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Waitlisted" xml:space="preserve">
     <value>Αναμονή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.WalkIns" xml:space="preserve">
     <value>Χωρίς εγγραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Col.Year" xml:space="preserve">
     <value>Έτος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.BackfillOvertime" xml:space="preserve">
     <value>Υπερωρίες αντικατάστασης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.Instructor" xml:space="preserve">
     <value>Εκπαιδευτής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.Materials" xml:space="preserve">
     <value>Υλικά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.Other" xml:space="preserve">
     <value>Άλλο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cost.OutsideFees" xml:space="preserve">
     <value>Εξωτερικά τέλη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostKind" xml:space="preserve">
     <value>Κόστος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostsHeader" xml:space="preserve">
     <value>Κόστη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostsIntro" xml:space="preserve">
     <value>Εκπαιδευτής, υλικά, εξωτερικά τέλη και υπερωρίες αντικατάστασης ανά μάθημα, μέλος ή έτος, δίπλα στο κόστος των αιτημάτων εκπαίδευσης.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CostsTitle" xml:space="preserve">
     <value>Κόστος μαθημάτων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Create" xml:space="preserve">
     <value>Δημιουργία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CreateClass" xml:space="preserve">
     <value>Δημιουργία μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Created" xml:space="preserve">
     <value>Δημιουργήθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DecisionNote" xml:space="preserve">
     <value>Σημείωση (απαιτείται για επιστροφή)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Decline" xml:space="preserve">
     <value>Απόρριψη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeclinedMessage" xml:space="preserve">
     <value>Απορρίφθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeleteClass" xml:space="preserve">
     <value>Διαγραφή μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Deleted" xml:space="preserve">
     <value>Διαγράφηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeleteLessonPlan" xml:space="preserve">
     <value>Διαγραφή σχεδίου μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftOnly" xml:space="preserve">
     <value>Μόνο πρόχειρο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Επεξεργασία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditClass" xml:space="preserve">
     <value>Επεξεργασία μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditIntro" xml:space="preserve">
     <value>Οι ώρες είναι στη ζώνη ώρας του τμήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EditResource" xml:space="preserve">
     <value>Επεξεργασία εγκατάστασης ή βοηθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enroll" xml:space="preserve">
     <value>Εγγραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrolledMessage" xml:space="preserve">
     <value>Η εγγραφή έγινε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnrollMember" xml:space="preserve">
     <value>Εγγραφή μέλους</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Declined" xml:space="preserve">
     <value>Απορρίφθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Enrolled" xml:space="preserve">
     <value>Εγγεγραμμένος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.PendingApproval" xml:space="preserve">
     <value>Αναμένει έγκριση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Removed" xml:space="preserve">
     <value>Αφαιρέθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Waitlisted" xml:space="preserve">
     <value>Σε λίστα αναμονής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enrollment.Withdrawn" xml:space="preserve">
     <value>Αποσύρθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Evaluation.CourseAssessment" xml:space="preserve">
     <value>Ανάθεση του συνδεδεμένου μαθήματος (με το κουίζ) σε κάθε παρόντα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Evaluation.None" xml:space="preserve">
     <value>Καμία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Excused" xml:space="preserve">
     <value>Δικαιολογημένη απουσία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Inactive" xml:space="preserve">
     <value>Δεν είναι πλέον ενεργό μέλος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.NeverPromoted" xml:space="preserve">
     <value>Έμεινε στη λίστα αναμονής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.NoShow" xml:space="preserve">
     <value>Δεν παρευρέθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.OnShift" xml:space="preserve">
     <value>Σε βάρδια εκείνη την ώρα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Pending" xml:space="preserve">
     <value>Το αίτημα δεν αποφασίστηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Exception.Waitlisted" xml:space="preserve">
     <value>Σε λίστα αναμονής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.AllowSelfUnenroll" xml:space="preserve">
     <value>Τα μέλη μπορούν να αποσυρθούν μόνα τους</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Capacity" xml:space="preserve">
     <value>Χωρητικότητα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CapacityHelp" xml:space="preserve">
     <value>0 για χωρίς όριο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Category" xml:space="preserve">
     <value>Κατηγορία εκπαίδευσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ChangeSummary" xml:space="preserve">
     <value>Περίληψη αλλαγών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CompetencyItems" xml:space="preserve">
     <value>Δεξιότητες που καλύπτονται</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ContentSummary" xml:space="preserve">
     <value>Περίληψη περιεχομένου (κατάσταση)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ContentSummaryHelp" xml:space="preserve">
     <value>Τι καλύφθηκε, όπως το καταγράφει η υπογεγραμμένη κατάσταση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Course" xml:space="preserve">
     <value>Μάθημα LMS</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CourseCode" xml:space="preserve">
     <value>Κωδικός μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Currency" xml:space="preserve">
     <value>Νόμισμα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.CutoffDays" xml:space="preserve">
     <value>Λήξη εγγραφών (ημέρες πριν)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Description" xml:space="preserve">
     <value>Περιγραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Duration" xml:space="preserve">
     <value>Διάρκεια (λεπτά)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.End" xml:space="preserve">
     <value>Λήξη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.EnrollmentOpen" xml:space="preserve">
     <value>Τα μέλη μπορούν να εγγραφούν μόνα τους</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.GpsRequired" xml:space="preserve">
     <value>Απαίτηση θέσης τηλεφώνου εντός ακτίνας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Instructors" xml:space="preserve">
     <value>Εκπαιδευτές</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Latitude" xml:space="preserve">
     <value>Γεωγραφικό πλάτος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.LessonPlan" xml:space="preserve">
     <value>Σχέδιο μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Location" xml:space="preserve">
     <value>Τοποθεσία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Longitude" xml:space="preserve">
     <value>Γεωγραφικό μήκος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Materials" xml:space="preserve">
     <value>Υλικά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.MeetingUrl" xml:space="preserve">
     <value>Σύνδεσμος σύσκεψης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.MeetingUrlHelp" xml:space="preserve">
     <value>Σύνδεσμος Teams, Zoom ή Meet για εικονικό ή υβριδικό μάθημα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Notes" xml:space="preserve">
     <value>Σημειώσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Objectives" xml:space="preserve">
     <value>Στόχοι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Occurrences" xml:space="preserve">
     <value>Αριθμός συνεδριών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.PostEvaluation" xml:space="preserve">
     <value>Μετά το μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.PostEvaluationHelp" xml:space="preserve">
     <value>Ξεκινά για κάθε παρόντα στην πρώτη υπογραφή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.PreBrief" xml:space="preserve">
     <value>Λίστα προενημέρωσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Props" xml:space="preserve">
     <value>Βοηθήματα και εγκαταστάσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.QrEnabled" xml:space="preserve">
     <value>Καταχώριση με εναλλασσόμενο QR (η φωτογραφία του παύει να ισχύει)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Radius" xml:space="preserve">
     <value>Ακτίνα (μέτρα)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Ratio" xml:space="preserve">
     <value>Εκπαιδευόμενοι ανά εκπαιδευτή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.ReminderHours" xml:space="preserve">
     <value>Υπενθύμιση (ώρες πριν· 0 για καμία)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Repeat" xml:space="preserve">
     <value>Επανάληψη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RequiresApproval" xml:space="preserve">
     <value>Ένας υπεύθυνος μαθημάτων εγκρίνει κάθε αίτημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RestrictGroups" xml:space="preserve">
     <value>Μόνο αυτές οι ομάδες μπορούν να εγγραφούν</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RestrictGroupsHelp" xml:space="preserve">
     <value>Χωρίς επιλογή: όλα τα μέλη.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RetentionYears" xml:space="preserve">
     <value>Διατήρηση κατάστασης για (έτη)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.RetentionYearsHelp" xml:space="preserve">
     <value>Κενό: η διάρκεια της κατηγορίας (π.χ. 3 έτη για εκπαίδευση σε αιματογενή παθογόνα).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Roles" xml:space="preserve">
     <value>Ρόλοι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.SafetyPlan" xml:space="preserve">
     <value>Σχέδιο ασφαλείας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Start" xml:space="preserve">
     <value>Έναρξη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Tags" xml:space="preserve">
     <value>Ετικέτες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Title" xml:space="preserve">
     <value>Τίτλος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.TitleHelp" xml:space="preserve">
     <value>Αφήστε κενό για να χρησιμοποιηθεί το όνομα του μαθήματος ή της εκπαίδευσης.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.Training" xml:space="preserve">
     <value>Εκπαίδευση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.VisibleGroups" xml:space="preserve">
     <value>Μόνο αυτές οι ομάδες το βλέπουν</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.VisibleGroupsHelp" xml:space="preserve">
     <value>Χωρίς επιλογή: ορατό σε όλα τα μέλη.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Field.WaitlistEnabled" xml:space="preserve">
     <value>Λίστα αναμονής όταν γεμίσει (προαγωγή με σειρά)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Filter" xml:space="preserve">
     <value>Φίλτρο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Fingerprint" xml:space="preserve">
     <value>Αποτύπωμα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Footer.Costs" xml:space="preserve">
     <value>Κόστος μαθημάτων {0}, αιτήματα εκπαίδευσης {1} ({2}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Footer.Exceptions" xml:space="preserve">
     <value>{0} εξαιρέσεις.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Footer.Sessions" xml:space="preserve">
     <value>{0} συνεδρίες, {1} άτομα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FromStarter" xml:space="preserve">
     <value>Από πρότυπο Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GpsRequiredNotice" xml:space="preserve">
     <value>Η θέση του τηλεφώνου σας ελέγχεται κατά την καταχώριση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GroupBy" xml:space="preserve">
     <value>Ομαδοποίηση κατά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursOverride" xml:space="preserve">
     <value>Ώρες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Import" xml:space="preserve">
     <value>Εισαγωγή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportAttendance" xml:space="preserve">
     <value>Εισαγωγή αναφοράς παρουσίας σύσκεψης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportAttendanceHelp" xml:space="preserve">
     <value>Η αναφορά παρουσίας CSV από Teams, Zoom ή Google Meet. Η αντιστοίχιση γίνεται με email και μετά με όνομα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportedMessage" xml:space="preserve">
     <value>Η αναφορά σύσκεψης εισήχθη.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ImportResultFormat" xml:space="preserve">
     <value>Αναφορά σύσκεψης: {0} άτομα, {1} αντιστοιχίστηκαν, {2} προστέθηκαν χωρίς εγγραφή, {3} χωρίς αντιστοίχιση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Inactive" xml:space="preserve">
     <value>Ανενεργό</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InstructorsHeader" xml:space="preserve">
     <value>Εκπαιδευτές</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KioskInstruction" xml:space="preserve">
     <value>Σαρώστε αυτόν τον κωδικό με το τηλέφωνό σας για καταχώριση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KioskTitle" xml:space="preserve">
     <value>Καταχώριση στο μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LapsedNotice" xml:space="preserve">
     <value>Το πρόσθετο LMS έληξε: τα μαθήματα παραμένουν προσβάσιμα και τα υπάρχοντα μπορούν ακόμη να διεξαχθούν και να υπογραφούν, αλλά δεν δημιουργείται τίποτα νέο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonPlanIntro" xml:space="preserve">
     <value>Το μάθημα διδάσκεται από τη δημοσιευμένη έκδοση· κάθε υποβληθείσα έκδοση διατηρείται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonPlansIntro" xml:space="preserve">
     <value>Στόχοι, δεξιότητες, υλικά, αναλογία, σχέδιο ασφαλείας και λίστα προενημέρωσης, με εκδόσεις που εγκρίνονται πριν τη χρήση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonPlansTitle" xml:space="preserve">
     <value>Σχέδια μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_addon_required" xml:space="preserve">
     <value>Αυτό απαιτεί ενεργό πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_calendar_failed" xml:space="preserve">
     <value>Δεν ήταν δυνατή η δημιουργία του στοιχείου ημερολογίου.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_cancelled" xml:space="preserve">
     <value>Αυτό το μάθημα ακυρώθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_capacity_invalid" xml:space="preserve">
     <value>Η χωρητικότητα πρέπει να είναι από 0 έως 10.000.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_category_invalid" xml:space="preserve">
     <value>Επιλέξτε μία από τις κατηγορίες εκπαίδευσης του τμήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_change_summary_required" xml:space="preserve">
     <value>Περιγράψτε τι άλλαξε πριν την υποβολή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_code_expired" xml:space="preserve">
     <value>Ο κωδικός έληξε. Σαρώστε ξανά τον κωδικό της οθόνης.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_cost_invalid" xml:space="preserve">
     <value>Εισαγάγετε είδος κόστους και ποσό 0 ή μεγαλύτερο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_course_invalid" xml:space="preserve">
     <value>Επιλέξτε ένα δημοσιευμένο μάθημα ή εκπαίδευση του τμήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_enrollment_closed" xml:space="preserve">
     <value>Η εγγραφή γίνεται από υπεύθυνο μαθημάτων.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_enrollment_cutoff" xml:space="preserve">
     <value>Οι εγγραφές για αυτό το μάθημα έκλεισαν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_full" xml:space="preserve">
     <value>Το μάθημα είναι πλήρες.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_gps_location_required" xml:space="preserve">
     <value>Ορίστε τη θέση του μαθήματος (πλάτος και μήκος) για να απαιτείται GPS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_gps_required" xml:space="preserve">
     <value>Αυτό το μάθημα χρειάζεται τη θέση του τηλεφώνου σας. Επιτρέψτε την πρόσβαση και δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_gps_too_far" xml:space="preserve">
     <value>Το τηλέφωνό σας είναι πολύ μακριά από τη θέση του μαθήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_hours_invalid" xml:space="preserve">
     <value>Οι ώρες πρέπει να είναι από 0 έως 9.999.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_import_empty" xml:space="preserve">
     <value>Δεν βρέθηκαν γραμμές παρουσίας στο αρχείο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_instructor_invalid" xml:space="preserve">
     <value>Επιλέξτε μέλος ή εισαγάγετε όνομα εξωτερικού εκπαιδευτή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_lesson_plan_invalid" xml:space="preserve">
     <value>Επιλέξτε δημοσιευμένο σχέδιο μαθήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_meeting_url_invalid" xml:space="preserve">
     <value>Ο σύνδεσμος πρέπει να είναι διεύθυνση ιστού (https://...).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_name_required" xml:space="preserve">
     <value>Εισαγάγετε όνομα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_eligible" xml:space="preserve">
     <value>Αυτό το μάθημα απευθύνεται σε άλλες ομάδες.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_enrolled" xml:space="preserve">
     <value>Δεν είστε στην κατάσταση αυτού του μαθήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_found" xml:space="preserve">
     <value>Το μάθημα δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_member" xml:space="preserve">
     <value>Μόνο τρέχοντα μέλη του τμήματος μπορούν να είναι στην κατάσταση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_open" xml:space="preserve">
     <value>Το μάθημα δεν είναι ανοιχτό για αυτό τώρα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_pending" xml:space="preserve">
     <value>Το αίτημα έχει ήδη αποφασιστεί.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_signed_in" xml:space="preserve">
     <value>Δεν έχετε κάνει καταχώριση σε αυτό το μάθημα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_not_started" xml:space="preserve">
     <value>Ένα μάθημα υπογράφεται αφού ξεκινήσει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_changed" xml:space="preserve">
     <value>Το περιεχόμενο άλλαξε μετά την υποβολή· υποβάλετέ το ξανά.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_approved" xml:space="preserve">
     <value>Μόνο εγκεκριμένη έκδοση μπορεί να δημοσιευθεί.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_draft" xml:space="preserve">
     <value>Μόνο πρόχειρο μπορεί να αλλάξει ή να υποβληθεί.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_found" xml:space="preserve">
     <value>Το σχέδιο μαθήματος δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_plan_not_in_review" xml:space="preserve">
     <value>Η έκδοση δεν αναμένει απόφαση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_reason_required" xml:space="preserve">
     <value>Αναφέρετε γιατί επιστρέφεται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_resource_conflict" xml:space="preserve">
     <value>Η εγκατάσταση ή το βοήθημα έχει ήδη κρατηθεί αυτή την ώρα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_retention_hold" xml:space="preserve">
     <value>Η κατάσταση διατηρείται έως την ημερομηνία διατήρησης και δεν μπορεί ακόμη να διαγραφεί.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_rules_invalid" xml:space="preserve">
     <value>Ελέγξτε τους κανόνες (λήξη 0–365 ημέρες, υπενθύμιση 0–336 ώρες, 1–52 συνεδρίες).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_sign_in_closed" xml:space="preserve">
     <value>Η καταχώριση δεν είναι ανοιχτή τώρα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_signed_off" xml:space="preserve">
     <value>Το μάθημα υπογράφηκε· η κατάστασή του δεν αλλάζει πλέον έτσι.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_times_invalid" xml:space="preserve">
     <value>Το μάθημα πρέπει να λήγει μετά την έναρξη και να μη διαρκεί πάνω από 14 ημέρες.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_title_required" xml:space="preserve">
     <value>Εισαγάγετε τίτλο ή συνδέστε μάθημα ή εκπαίδευση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_class_unenroll_closed" xml:space="preserve">
     <value>Ζητήστε από υπεύθυνο μαθημάτων να σας αφαιρέσει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MajorChange" xml:space="preserve">
     <value>Μείζονα αλλαγή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkPresent" xml:space="preserve">
     <value>Σήμανση παρόντος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MessageRoster" xml:space="preserve">
     <value>Μήνυμα στους συμμετέχοντες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Calendar" xml:space="preserve">
     <value>Καταχώριση ημερολογίου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Import" xml:space="preserve">
     <value>Αναφορά σύσκεψης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Manual" xml:space="preserve">
     <value>Από τον εκπαιδευτή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.None" xml:space="preserve">
     <value>Χωρίς καταχώριση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Method.Qr" xml:space="preserve">
     <value>Καταχώριση με QR</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MinutesFormat" xml:space="preserve">
     <value>{0} λεπτά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyClassesIntro" xml:space="preserve">
     <value>Μαθήματα στα οποία είστε εγγεγραμμένοι ή διδάσκετε, και όσα μπορείτε ακόμη να παρακολουθήσετε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyClassesTitle" xml:space="preserve">
     <value>Τα μαθήματά μου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewClass" xml:space="preserve">
     <value>Νέο μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewDraft" xml:space="preserve">
     <value>Νέο πρόχειρο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewLessonPlan" xml:space="preserve">
     <value>Νέο σχέδιο μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewQrSecret" xml:space="preserve">
     <value>Νέος QR (οι παλιές φωτογραφίες παύουν να ισχύουν)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewResource" xml:space="preserve">
     <value>Νέα εγκατάσταση ή βοήθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoClasses" xml:space="preserve">
     <value>Δεν υπάρχουν μαθήματα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoConflicts" xml:space="preserve">
     <value>Κανείς σε βάρδια</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCosts" xml:space="preserve">
     <value>Δεν υπάρχουν κόστη μαθημάτων σε αυτή την περίοδο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoInstructors" xml:space="preserve">
     <value>Δεν υπάρχουν ακόμη εκπαιδευτές.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoLessonPlans" xml:space="preserve">
     <value>Δεν υπάρχουν ακόμη σχέδια μαθήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoMyClasses" xml:space="preserve">
     <value>Δεν υπάρχουν μαθήματα για εσάς αυτή τη στιγμή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="None" xml:space="preserve">
     <value>Κανένα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoResources" xml:space="preserve">
     <value>Δεν υπάρχουν ακόμη εγκαταστάσεις ή βοηθήματα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRoster" xml:space="preserve">
     <value>Δεν έχει εγγραφεί κανείς ακόμη.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Cancelled" xml:space="preserve">
     <value>Το {0} ({1}) ακυρώθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.CancelledTitle" xml:space="preserve">
     <value>Ακύρωση μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Declined" xml:space="preserve">
     <value>Το αίτημά σας για το {0} ({1}) απορρίφθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Enrolled" xml:space="preserve">
     <value>Είστε εγγεγραμμένοι στο {0} ({1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.EnrolledTitle" xml:space="preserve">
     <value>Κατάσταση μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Promoted" xml:space="preserve">
     <value>Ελευθερώθηκε θέση: τώρα είστε εγγεγραμμένοι στο {0} ({1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Reminder" xml:space="preserve">
     <value>Το {0} ξεκινά {1}. {2}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.ReminderTitle" xml:space="preserve">
     <value>Υπενθύμιση μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Removed" xml:space="preserve">
     <value>Αφαιρεθήκατε από το {0} ({1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Notice.Waitlisted" xml:space="preserve">
     <value>Είστε σε λίστα αναμονής για το {0} ({1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnCalendar" xml:space="preserve">
     <value>Άνοιγμα στο ημερολόγιο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnePerLine" xml:space="preserve">
     <value>Ένα ανά γραμμή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnShift" xml:space="preserve">
     <value>Σε βάρδια</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnShiftHelp" xml:space="preserve">
     <value>Σε βάρδια που επικαλύπτει το μάθημα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Open" xml:space="preserve">
     <value>Άνοιγμα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenClass" xml:space="preserve">
     <value>Άνοιγμα μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenReport" xml:space="preserve">
     <value>Άνοιγμα ως αναφορά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outside" xml:space="preserve">
     <value>εξωτερικός</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutsideInstructor" xml:space="preserve">
     <value>Εξωτερικός εκπαιδευτής (εισαγάγετε όνομα)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutsideName" xml:space="preserve">
     <value>Όνομα εξωτερικού εκπαιδευτή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PendingHeader" xml:space="preserve">
     <value>Αιτήματα προς έγκριση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PresentHeader" xml:space="preserve">
     <value>Καταχωρίστηκαν</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Publish" xml:space="preserve">
     <value>Δημοσίευση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PublishedMessage" xml:space="preserve">
     <value>Δημοσιεύθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QrAlt" xml:space="preserve">
     <value>Κωδικός QR καταχώρισης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QrRotated" xml:space="preserve">
     <value>Εκδόθηκε νέος QR.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QrRotates" xml:space="preserve">
     <value>Ο κωδικός αλλάζει κάθε 30 δευτερόλεπτα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecentHeader" xml:space="preserve">
     <value>Πρόσφατα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Release" xml:space="preserve">
     <value>Αποδέσμευση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Remove" xml:space="preserve">
     <value>Αφαίρεση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemovedMessage" xml:space="preserve">
     <value>Αφαιρέθηκε από την κατάσταση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Repeat.Daily" xml:space="preserve">
     <value>Κάθε μέρα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Repeat.None" xml:space="preserve">
     <value>Μία φορά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Repeat.Weekly" xml:space="preserve">
     <value>Κάθε εβδομάδα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequestPlace" xml:space="preserve">
     <value>Αίτηση θέσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Apparatus" xml:space="preserve">
-    <value>Όχημα</value>
+    <value>Όχημα ή μηχάνημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Equipment" xml:space="preserve">
     <value>Εξοπλισμός</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Facility" xml:space="preserve">
     <value>Εγκατάσταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Other" xml:space="preserve">
     <value>Άλλο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Resource.Prop" xml:space="preserve">
     <value>Εκπαιδευτικό βοήθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResourcesIntro" xml:space="preserve">
-    <value>Πεδία ασκήσεων, αίθουσες, βοηθήματα, οχήματα και εξοπλισμός· ένας πόρος δεν κρατείται ποτέ δύο φορές ταυτόχρονα.</value>
+    <value>Χώροι εκπαίδευσης, αίθουσες, εκπαιδευτικά βοηθήματα, οχήματα και εξοπλισμός· ένας πόρος δεν κρατείται ποτέ δύο φορές ταυτόχρονα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResourcesTitle" xml:space="preserve">
     <value>Εγκαταστάσεις και βοηθήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetainUntil" xml:space="preserve">
     <value>Κατάσταση διατηρείται έως</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionHelpFormat" xml:space="preserve">
     <value>Η υπογεγραμμένη κατάσταση διατηρείται έως {0}· η διαγραφή την κρύβει και διαγράφεται οριστικά μόνο μετά από αυτή την ημερομηνία.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Role.Assistant" xml:space="preserve">
     <value>Βοηθός εκπαιδευτή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Role.Lead" xml:space="preserve">
     <value>Κύριος εκπαιδευτής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Role.Safety" xml:space="preserve">
     <value>Υπεύθυνος ασφαλείας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterHeader" xml:space="preserve">
     <value>Κατάσταση συμμετεχόντων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Approval" xml:space="preserve">
     <value>απαιτείται έγκριση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Closed" xml:space="preserve">
     <value>μόνο από υπευθύνους μαθημάτων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.CutoffFormat" xml:space="preserve">
     <value>κλείνει {0} ημέρες πριν</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Open" xml:space="preserve">
     <value>ανοιχτή στα μέλη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rule.Waitlist" xml:space="preserve">
     <value>λίστα αναμονής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Rules" xml:space="preserve">
     <value>Εγγραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Αποθήκευση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Saved" xml:space="preserve">
     <value>Αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveDraft" xml:space="preserve">
     <value>Αποθήκευση προχείρου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeatsFormat" xml:space="preserve">
     <value>{0} από {1} θέσεις κατειλημμένες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.Details" xml:space="preserve">
     <value>Λεπτομέρειες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.Enrolment" xml:space="preserve">
     <value>Κανόνες εγγραφής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.Records" xml:space="preserve">
     <value>Αρχεία και αξιολόγηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.SignIn" xml:space="preserve">
     <value>Καταχώριση παρουσίας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.What" xml:space="preserve">
     <value>Τι διδάσκεται</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.When" xml:space="preserve">
     <value>Πότε και πού</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Section.You" xml:space="preserve">
     <value>Εσείς</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SendBack" xml:space="preserve">
     <value>Επιστροφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesFormat" xml:space="preserve">
     <value>Συνεδρία {0} από {1} μιας σειράς.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesIntro" xml:space="preserve">
     <value>Η παρουσία κάθε μέλους σε όλες τις συνεδρίες αυτού του μαθήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesReport" xml:space="preserve">
     <value>Παρουσία σειράς</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SeriesTitle" xml:space="preserve">
     <value>Παρουσία σειράς</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShiftPanelHeader" xml:space="preserve">
     <value>Εκπαίδευση στο ημερολόγιο βαρδιών (επόμενες 14 ημέρες)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowQr" xml:space="preserve">
     <value>Εμφάνιση QR καταχώρισης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedInAt" xml:space="preserve">
     <value>Καταχώριση στις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedInMessage" xml:space="preserve">
     <value>Η καταχώρισή σας έγινε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOffFormat" xml:space="preserve">
     <value>Υπογράφηκε: {0} παρόντες, {1} απόντες· {2} εγγραφές, {3} αντικαταστάθηκαν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOffOn" xml:space="preserve">
     <value>Υπογράφηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOutMessage" xml:space="preserve">
     <value>Καταγράφηκε η αποχώρησή σας.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInButton" xml:space="preserve">
     <value>Καταχώρισέ με</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInClosed" xml:space="preserve">
     <value>Η καταχώριση δεν είναι ανοιχτή για αυτό το μάθημα τώρα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInConfirm" xml:space="preserve">
     <value>Καταχώριση στο μάθημα τώρα;</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignInTitle" xml:space="preserve">
     <value>Καταχώριση στο μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOff" xml:space="preserve">
     <value>Υπογραφή κατάστασης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOffAgain" xml:space="preserve">
     <value>Νέα υπογραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOffHelp" xml:space="preserve">
     <value>Η υπογραφή καταγράφει εκπαίδευση για κάθε παρόντα (καμία για τους απόντες) και διατηρεί την κατάσταση για όσο ορίζεται. Όσοι δεν σημειώθηκαν θεωρούνται απόντες, εκτός αν έκαναν καταχώριση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignOut" xml:space="preserve">
     <value>Αποχώρηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.evoc" xml:space="preserve">
     <value>Οδήγηση οχημάτων έκτακτης ανάγκης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.evoc.Help" xml:space="preserve">
-    <value>Έλεγχος πριν την αναχώρηση, όπισθεν με καθοδηγητή, ασκήσεις διαδρομής· ώρες οδήγησης και χιλιόμετρα.</value>
+    <value>Έλεγχος πριν την αναχώρηση, όπισθεν με καθοδηγητή, ασκήσεις διαδρομής· ώρες οδήγησης και απόσταση που διανύθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.hose-evolutions" xml:space="preserve">
     <value>Ετήσιες ασκήσεις μανικών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.hose-evolutions.Help" xml:space="preserve">
     <value>Προσυνδεδεμένες γραμμές, προώθηση σε κλιμακοστάσιο και υδροστόμιο, φόρτωση μανικών.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.ladder-evolutions" xml:space="preserve">
     <value>Ετήσιες ασκήσεις κλιμάκων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.ladder-evolutions.Help" xml:space="preserve">
     <value>Μεταφορά, ανύψωση, τοποθέτηση για διάσωση και αερισμό, αναρρίχηση και ασφάλιση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.live-fire" xml:space="preserve">
     <value>Άσκηση πραγματικής φωτιάς (σχέδιο καύσης)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.live-fire.Help" xml:space="preserve">
     <value>Έλεγχοι πριν την καύση, ρόλοι, αναλογίες και το σχέδιο ασφαλείας που καταγράφει ένα τμήμα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.physical-ability" xml:space="preserve">
     <value>Τεστ φυσικής ικανότητας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.physical-ability.Help" xml:space="preserve">
     <value>Χρονομετρημένοι σταθμοί με τους χρόνους επιτυχίας του τμήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.pump-evolutions" xml:space="preserve">
     <value>Ετήσιες ασκήσεις αντλιών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.pump-evolutions.Help" xml:space="preserve">
     <value>Τροφοδοσία από υδροστόμιο, αναρρόφηση, πιέσεις για τις γραμμές, διαδοχική άντληση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.scba" xml:space="preserve">
     <value>Επάρκεια στην αναπνευστική συσκευή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Starter.scba.Help" xml:space="preserve">
     <value>Επιθεώρηση, χρονομετρημένη εφαρμογή, έλεγχος στεγανότητας, διαχείριση αέρα και διαδικασίες έκτακτης ανάγκης.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StartersHeader" xml:space="preserve">
     <value>Πρότυπα Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StartersIntro" xml:space="preserve">
     <value>Δομή και λίστες ελέγχου γραμμένες από τη Resgrid σε απλή γλώσσα (χωρίς κείμενο προτύπων). Ένα αντίγραφο γίνεται πρόχειρο του τμήματός σας για προσαρμογή και έγκριση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Pending" xml:space="preserve">
     <value>Αναμένουν έγκριση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Seats" xml:space="preserve">
     <value>Κατειλημμένες θέσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Upcoming" xml:space="preserve">
     <value>Προγραμματισμένα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stat.Waitlisted" xml:space="preserve">
     <value>Σε λίστες αναμονής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Cancelled" xml:space="preserve">
     <value>Ακυρώθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Scheduled" xml:space="preserve">
     <value>Προγραμματισμένο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.SignedOff" xml:space="preserve">
     <value>Υπογράφηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StripLabel" xml:space="preserve">
     <value>Μαθήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmitForApproval" xml:space="preserve">
     <value>Υποβολή για έγκριση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmittedMessage" xml:space="preserve">
     <value>Υποβλήθηκε για έγκριση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.Classes" xml:space="preserve">
     <value>Μαθήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.Costs" xml:space="preserve">
     <value>Κόστος μαθημάτων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.LessonPlans" xml:space="preserve">
     <value>Σχέδια μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.My" xml:space="preserve">
     <value>Τα μαθήματά μου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Tab.Resources" xml:space="preserve">
     <value>Εγκαταστάσεις και βοηθήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TagFilter" xml:space="preserve">
     <value>Ετικέτα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TaughtHeader" xml:space="preserve">
     <value>Μαθήματα που διδάξατε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TimecardOff" xml:space="preserve">
     <value>Δεν υπάρχει ακόμη δελτίο χρόνου που δέχεται χρόνο εκπαίδευσης σε αυτό το τμήμα (Workforce Pro).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TimecardOn" xml:space="preserve">
     <value>Οι ώρες των συμμετεχόντων προσφέρονται στα δελτία χρόνου τους κατά την υπογραφή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Total" xml:space="preserve">
     <value>Σύνολο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Uncategorized" xml:space="preserve">
     <value>Χωρίς κατηγορία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UpcomingHeader" xml:space="preserve">
     <value>Επερχόμενα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UseMyLocation" xml:space="preserve">
     <value>Χρήση της θέσης μου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UseStarter" xml:space="preserve">
     <value>Αντιγραφή ως πρόχειρο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionLabel" xml:space="preserve">
     <value>Έκδοση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionsHeader" xml:space="preserve">
     <value>Εκδόσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Approved" xml:space="preserve">
     <value>Εγκρίθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Draft" xml:space="preserve">
     <value>Πρόχειρο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.InReview" xml:space="preserve">
     <value>Υπό έλεγχο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Legacy" xml:space="preserve">
     <value>Παλαιά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Published" xml:space="preserve">
     <value>Δημοσιεύθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Retired" xml:space="preserve">
     <value>Αποσύρθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionStatus.Superseded" xml:space="preserve">
     <value>Αντικαταστάθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Virtual" xml:space="preserve">
     <value>Εικονικό</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WaitlistHeader" xml:space="preserve">
     <value>Λίστα αναμονής (με σειρά)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WaitlistPositionFormat" xml:space="preserve">
     <value>θέση {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WalkIn" xml:space="preserve">
     <value>Χωρίς εγγραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WalkInMessage" xml:space="preserve">
     <value>Σημειώθηκε ως παρών.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Withdraw" xml:space="preserve">
     <value>Αποχώρηση από την εγγραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithdrawnMessage" xml:space="preserve">
     <value>Αποσυρθήκατε από το μάθημα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Ναι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="YouTeach" xml:space="preserve">
     <value>Διδάσκετε αυτό το μάθημα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CurrencyHelp" xml:space="preserve">
+    <value>Αφήστε το κενό για το νόμισμα εκπαίδευσης του τμήματος ({0}). Χρησιμοποιήστε κωδικό ISO όπως CAD, EUR, GBP ή USD.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingCurrencyHelp" xml:space="preserve">
+    <value>Το νόμισμα εκπαίδευσης του τμήματος, ως κωδικός ISO όπως CAD, EUR, GBP ή USD. Σε αυτό καταχωρίζεται το κόστος των αιτημάτων εκπαίδευσης, και τα νέα μαθήματα, το κόστος τους και τα τέλη των δημόσιων μαθημάτων το χρησιμοποιούν, εκτός αν ένα μάθημα ορίζει άλλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill" xml:space="preserve">
+    <value>Άσκηση εκκένωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill.Help" xml:space="preserve">
+    <value>Υπεύθυνοι εκκένωσης, έλεγχοι χώρων και καταμέτρηση στο σημείο συγκέντρωσης, για οποιονδήποτε χώρο εργασίας ή κτίριο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill" xml:space="preserve">
+    <value>Άσκηση διάσωσης σε περιορισμένο χώρο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill.Help" xml:space="preserve">
+    <value>Σύστημα διάσωσης, παρακολούθηση ατμόσφαιρας και απομάκρυνση θύματος, με υπεύθυνο ασφάλειας και σήμα διακοπής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise" xml:space="preserve">
+    <value>Άσκηση πεδίου έρευνας και διάσωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise.Help" xml:space="preserve">
+    <value>Μια έρευνα από την πρώτη αναφορά έως τον εντοπισμό, με ανάθεση αποστολών, ενδείξεις και ώρες δήλωσης παρουσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation" xml:space="preserve">
+    <value>Εκπαίδευση αποκλιμάκωσης με σενάρια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation.Help" xml:space="preserve">
+    <value>Εκπαίδευση με σενάρια, με υποδυόμενους ρόλους, λέξη διακοπής και μόνο αδρανή εξοπλισμό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_no_seat" xml:space="preserve">
+    <value>Χρειάζεστε θέση LMS για να εγγραφείτε ή να δηλώσετε παρουσία μόνοι σας. Ζητήστε από τον διαχειριστή σας να σας ενεργοποιήσει στο LMS ή από τον εκπαιδευτή να σας προσθέσει.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

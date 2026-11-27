@@ -79,7 +79,8 @@ namespace Resgrid.Tests.TrainingT1
 			localizer.Setup(x => x[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
 
 			_controller = new TrainingRecordsController(_records.Object, _import.Object, _lmsAccess.Object, _lms.Object, _authorization.Object,
-				Mock.Of<IDepartmentsService>(), _settings.Object, Mock.Of<ICertificationService>(), _pdf.Object, _sealing.Object, localizer.Object)
+				Mock.Of<IDepartmentsService>(), _settings.Object, Mock.Of<ICertificationService>(), _pdf.Object, _sealing.Object, localizer.Object,
+				Mock.Of<ITrainingCompletionRecordingService>(), Mock.Of<ITrainingSubmissionService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -184,7 +185,7 @@ namespace Resgrid.Tests.TrainingT1
 		[Test]
 		public async Task A_member_without_records_rights_cannot_change_department_wide_records()
 		{
-			ShouldBeRefused(await _controller.Settings(15, 0, true, 7, CancellationToken.None));
+			ShouldBeRefused(await _controller.Settings(15, 0, true, 7, 0, null, null, false, 0, CancellationToken.None));
 			ShouldBeRefused(await _controller.RequestBackfill(false, CancellationToken.None));
 			ShouldBeRefused(await _controller.SaveCategory(new TrainingCategoryInput { Name = "Hazmat" }, CancellationToken.None));
 			ShouldBeRefused(await _controller.DeleteCategory(4, CancellationToken.None));
@@ -262,7 +263,8 @@ namespace Resgrid.Tests.TrainingT1
 			var localizer = new Mock<IStringLocalizer<TrainingsResources>>();
 			localizer.Setup(x => x[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key));
 			var controller = new TrainingRecordsController(_records.Object, _import.Object, _lmsAccess.Object, _lms.Object, _authorization.Object,
-				Mock.Of<IDepartmentsService>(), _settings.Object, certifications.Object, _pdf.Object, _sealing.Object, localizer.Object)
+				Mock.Of<IDepartmentsService>(), _settings.Object, certifications.Object, _pdf.Object, _sealing.Object, localizer.Object,
+				Mock.Of<ITrainingCompletionRecordingService>(), Mock.Of<ITrainingSubmissionService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = _controller.HttpContext }
 			};
@@ -437,6 +439,29 @@ namespace Resgrid.Tests.TrainingT1
 			var controller = new CertificateVerifyController(lms.Object);
 
 			(await controller.Index("ABCD-1234")).Should().BeOfType<ViewResult>().Which.Model.Should().BeSameAs(answer);
+		}
+
+		[Test]
+		public async Task Security_review_L4_the_public_verify_page_is_rate_limited_per_address()
+		{
+			var lms = new Mock<ILmsTrainingService>();
+			lms.Setup(x => x.VerifyCertificateAsync(It.IsAny<string>())).ReturnsAsync((CertificateVerification)null);
+			CertificateVerifyController From(string ip)
+			{
+				var http = new DefaultHttpContext();
+				http.Connection.RemoteIpAddress = System.Net.IPAddress.Parse(ip);
+				return new CertificateVerifyController(lms.Object) { ControllerContext = new ControllerContext { HttpContext = http } };
+			}
+			// A unique address per run: the limiter is process-wide.
+			var address = "198.51.100." + (1 + Random.Shared.Next(250));
+			var other = "203.0.113." + (1 + Random.Shared.Next(250));
+
+			for (var i = 0; i < CertificateVerifyController.RequestsPerMinute; i++)
+				(await From(address).Index("ABCD-" + i.ToString("D4"))).Should().BeOfType<NotFoundResult>();
+
+			(await From(address).Index("ABCD-9999")).Should().BeOfType<StatusCodeResult>().Which.StatusCode.Should().Be(429);
+			(await From(other).Index("ABCD-9999")).Should().BeOfType<NotFoundResult>("another address has its own allowance");
+			lms.Verify(x => x.VerifyCertificateAsync("ABCD-9999"), Times.Once, "the limited request never reaches the lookup");
 		}
 
 		#endregion Public verify page

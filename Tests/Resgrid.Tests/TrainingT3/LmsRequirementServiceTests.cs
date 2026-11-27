@@ -313,6 +313,44 @@ namespace Resgrid.Tests.TrainingT3
 		}
 
 		[Test]
+		public async Task Undoing_an_enforcement_raises_undone_once_and_a_lost_race_raises_nothing()
+		{
+			// Round 7C, workflow trigger 264.
+			var h = new Harness();
+			var raised = new List<RequirementEnforcementWorkflowEvent>();
+			h.Events.Setup(e => e.SendMessage(It.IsAny<RequirementEnforcementWorkflowEvent>())).Callback((RequirementEnforcementWorkflowEvent e) => raised.Add(e));
+			h.Seed(10);
+			h.EnforcementRows.Add(new LmsRequirementEnforcement
+			{
+				LmsRequirementEnforcementId = 1, DepartmentId = Dept, LmsRequirementId = 1, LmsRequirementMemberId = 10, UserId = U(0), PersonnelCertificationId = 1000,
+				DepartmentCertificationTypeId = TypeId, PreviousStatus = (int)PersonnelCertificationStatuses.Active, DueOn = Now.AddDays(-30), ActedOn = Now.AddDays(-20)
+			});
+			h.Completed(0, Now.AddHours(-1));
+
+			(await h.Build().UndoCompletedAsync(Dept, Now)).Should().Be(1);
+			(await h.Build().UndoCompletedAsync(Dept, Now)).Should().Be(0, "nothing open any more");
+
+			raised.Should().ContainSingle();
+			var undone = raised.Single();
+			undone.Trigger.Should().Be(WorkflowTriggerEventType.RequirementEnforcementUndone);
+			(undone.EnforcementId, undone.RequirementId, undone.UserId, undone.UndoReason).Should().Be((1, 1, U(0), "Completed"));
+			undone.ActorUserId.Should().BeNull("the system undid it");
+			undone.EnforcedOn.Should().Be(Now.AddDays(-20));
+
+			raised.Clear();
+			h.EnforcementRows.Add(new LmsRequirementEnforcement
+			{
+				LmsRequirementEnforcementId = 2, DepartmentId = Dept, LmsRequirementId = 1, LmsRequirementMemberId = 11, UserId = U(1), PersonnelCertificationId = 1001,
+				DepartmentCertificationTypeId = TypeId, PreviousStatus = (int)PersonnelCertificationStatuses.Active, DueOn = Now.AddDays(-30), ActedOn = Now.AddDays(-20)
+			});
+			h.Completed(1, Now.AddHours(-1));
+			h.Enforcements.Setup(e => e.TryMarkUndoneAsync(Dept, It.IsAny<int>(), It.IsAny<LmsEnforcementUndoReasons>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(false);
+			(await h.Build().UndoCompletedAsync(Dept, Now)).Should().Be(0);
+			raised.Should().BeEmpty("another run undid it first");
+		}
+
+		[Test]
 		public async Task An_action_whose_member_has_not_completed_stays_and_a_record_changed_since_is_not_touched()
 		{
 			var h = new Harness();
@@ -519,5 +557,42 @@ namespace Resgrid.Tests.TrainingT3
 		}
 
 		#endregion Workflow payloads (224-229)
-	}
+	
+		#region Round 10 A7 (LMS seats)
+
+		[Test]
+		public async Task A_requirement_never_assigns_or_announces_to_a_member_without_an_lms_seat_and_hands_its_licensed_members_on()
+		{
+			var h = new Harness();
+			var requirement = h.Seed(2, enforcing: false);
+			requirement.Kind = (int)LmsRequirementKinds.Path;
+			requirement.TargetRefId = 40;
+			requirement.AutoAssign = true;
+			requirement.IsOnboarding = true;
+			h.Paths.Setup(p => p.GetCompletionFactsAsync(Dept, It.IsAny<IEnumerable<int>>())).ReturnsAsync(new List<LmsRequirementFact>());
+			h.Paths.Setup(p => p.AssignAsync(It.IsAny<LmsActor>(), 40, It.IsAny<IEnumerable<IContentAudienceRule>>(), It.IsAny<DateTime?>(), 1, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new LmsAssignOutcome { Created = 1 });
+			h.PathsRepo.Setup(p => p.GetVisibleByIdAsync(Dept, 40)).ReturnsAsync(new LmsPath { LmsPathId = 40, DepartmentId = Dept, Name = "Engineer onboarding" });
+			h.Paths.Setup(p => p.TitleOf(It.IsAny<LmsPath>(), It.IsAny<string>())).Returns("Engineer onboarding");
+			var seated = U(7);
+			var unseated = U(8);
+			foreach (var joiner in new[] { seated, unseated })
+			{
+				h.Active.Add(joiner);
+				h.AudienceService.Setup(a => a.GetMemberFactsAsync(Dept, joiner)).ReturnsAsync(new ContentAudienceMemberFacts { UserId = joiner, IsActive = true, RoleIds = new HashSet<int> { RoleId } });
+			}
+			h.SeatRows.Add(new LmsMemberSeat { LmsMemberSeatId = 77, DepartmentId = Dept, UserId = seated, EnabledOn = Now.AddDays(-1) });
+
+			await h.Build().OnAudienceChangesAsync(Dept, new[] { seated, unseated }, Now);
+
+			h.Paths.Verify(p => p.AssignAsync(It.IsAny<LmsActor>(), 40, It.Is<IEnumerable<IContentAudienceRule>>(w => w.Any(r => r.RefId == unseated)), It.IsAny<DateTime?>(), 1,
+				It.IsAny<CancellationToken>()), Times.Never(), "§17.4: a member without a seat cannot be enrolled in a path");
+			h.Notifier.Verify(n => n.NotifyAssignedAsync(Dept, unseated, It.IsAny<LmsRequirement>(), It.IsAny<string>(), It.IsAny<DateTime?>(), It.IsAny<CancellationToken>()), Times.Never());
+			h.Paths.Verify(p => p.AssignAsync(It.Is<LmsActor>(a => a.SeatHolders != null && a.SeatHolders.Contains(seated) && !a.SeatHolders.Contains(unseated)), 40,
+				It.Is<IEnumerable<IContentAudienceRule>>(w => w.Single().RefId == seated), It.IsAny<DateTime?>(), 1, It.IsAny<CancellationToken>()), Times.Once(),
+				"the licensed members the run read stand in for the seat holders, so the assignment reads no seats again (R-L9)");
+		}
+
+		#endregion Round 10 A7 (LMS seats)
+}
 }

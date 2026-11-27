@@ -27,7 +27,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for LMS general availability (M0366, M0367) on both engines: the migrations re-run as no-ops, roll back and
+	/// Real-database proof for LMS general availability (M0351, M0352) on both engines: the migrations re-run as no-ops, roll back and
 	/// apply again (the PlanAddons row seeded once, the flag still off); seats are unique per department and member whatever the id's
 	/// case; the add-on state is one row per department; at most one lapse is open per department; department cleanup removes the
 	/// new tables for that department only. Set RESGRID_ADP_SQLSERVER_TEST_CONNECTION / RESGRID_ADP_POSTGRES_TEST_CONNECTION
@@ -130,7 +130,7 @@ namespace Resgrid.Tests.Repositories
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 366");
+				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 351");
 
 			using (var runner = Runner())
 			using (var scope = runner.CreateScope())
@@ -140,7 +140,7 @@ namespace Resgrid.Tests.Repositories
 				(await ScalarAsync($"SELECT COUNT(*) FROM {T("PlanAddons")} WHERE {T("AddonType")} = 9")).Should().Be(1, "the catalog row is seeded once");
 				(await ScalarAsync(Tables("LmsMemberSeats", "LmsAddonStates", "LmsAddonLapses"))).Should().Be(3);
 
-				migrations.MigrateDown(365);
+				migrations.MigrateDown(350);
 				(await ScalarAsync(Tables("LmsMemberSeats", "LmsAddonStates", "LmsAddonLapses"))).Should().Be(0);
 				(await ScalarAsync($"SELECT COUNT(*) FROM {T("PlanAddons")} WHERE {T("AddonType")} = 9")).Should().Be(0, "nothing was bought on the row, so Down removes it");
 
@@ -188,6 +188,12 @@ namespace Resgrid.Tests.Repositories
 			state.RenewalCancelled.Should().BeTrue();
 			state.PaidThroughUtc.Should().Be(paidThrough);
 			state.LastActiveOn.Should().BeNull("the save writes the whole row");
+
+			// The pack-count compare-and-set behind the LmsSeatsChanged workflow trigger (round 7C): only the request that saw the old count wins.
+			(await states.TryChangePacksAsync(Department, 4, 6)).Should().BeTrue();
+			(await states.TryChangePacksAsync(Department, 4, 6)).Should().BeFalse("the count already moved");
+			(await states.TryChangePacksAsync(OtherDepartment, 4, 6)).Should().BeFalse("no row for another department");
+			(await states.GetForDepartmentAsync(Department)).Packs.Should().Be(6);
 		}
 
 		[Test, Order(4)]

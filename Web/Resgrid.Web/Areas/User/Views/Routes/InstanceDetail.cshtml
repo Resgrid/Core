@@ -36,9 +36,9 @@
                         <dt>@localizer["Unit"]</dt>
                         <dd>@(Model.UnitName ?? Model.Instance.UnitId.ToString())</dd>
                         <dt>@localizer["StartedDt"]</dt>
-                        <dd>@(Model.Instance.ActualStartOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
+                        <dd>@(Model.Instance.ActualStartOn?.TimeConverter(Model.Department).ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
                         <dt>@localizer["EndedDt"]</dt>
-                        <dd>@(Model.Instance.ActualEndOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
+                        <dd>@(Model.Instance.ActualEndOn?.TimeConverter(Model.Department).ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
                         <dt>@localizer["Progress"]</dt>
                         <dd>@Model.Instance.StopsCompleted / @Model.Instance.StopsTotal</dd>
                         @if (Model.LinkedCall != null)
@@ -75,11 +75,11 @@
                                     <p><strong>@statusText</strong></p>
                                     @if (stop.CheckInOn.HasValue)
                                     {
-                                        <p>@localizer["StopInPrefix"] @stop.CheckInOn.Value.ToString("HH:mm:ss")</p>
+                                        <p>@localizer["StopInPrefix"] @stop.CheckInOn.Value.TimeConverter(Model.Department).ToString("HH:mm:ss")</p>
                                     }
                                     @if (stop.CheckOutOn.HasValue)
                                     {
-                                        <p>@localizer["StopOutPrefix"] @stop.CheckOutOn.Value.ToString("HH:mm:ss")</p>
+                                        <p>@localizer["StopOutPrefix"] @stop.CheckOutOn.Value.TimeConverter(Model.Department).ToString("HH:mm:ss")</p>
                                     }
                                     @if (stop.DwellSeconds.HasValue)
                                     {

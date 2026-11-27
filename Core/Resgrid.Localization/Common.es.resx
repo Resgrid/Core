@@ -900,11 +900,38 @@
   </data>
   <data name="ResgridAcademy" xml:space="preserve">
     <value>Academia Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyLearnThisPage" xml:space="preserve">
     <value>Lección sobre esta página ({0} min)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyAssignThisLesson" xml:space="preserve">
     <value>Asignar esta lección</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessModule" xml:space="preserve">
+    <value>Bienestar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessOfficersTerm" xml:space="preserve">
+    <value>Responsables de bienestar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TermWellnessOfficer" xml:space="preserve">
+    <value>Responsable de bienestar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficersTerm" xml:space="preserve">
+    <value>Responsables designados</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TermDesignatedOfficer" xml:space="preserve">
+    <value>Responsable designado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerSupportTeamTerm" xml:space="preserve">
+    <value>Equipo de apoyo entre compañeros</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

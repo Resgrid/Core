@@ -1,0 +1,68 @@
+{
+  "key": "security-officer-orientation",
+  "revision": 1,
+  "kind": "course",
+  "title": "Security officer orientation",
+  "code": "RG-SEC",
+  "summary": "Orientation for new security officers: the post orders, observing and reporting, writing an incident report, and responding to an emergency. It complements, and never replaces, the training a licensing body requires.",
+  "tags": "security, post orders, reporting, starter",
+  "hours": 1,
+  "license": "resgrid-starter",
+  "overview": "<p>A starter course written by Resgrid in plain language. Licensing training and the law where you work come first; add your company's procedures and each site's post orders before you publish the course.</p>",
+  "modules": [
+    {
+      "title": "On the post",
+      "lessons": [
+        {
+          "title": "Post orders",
+          "html": "<p>Post orders tell you what a post requires: where it is, when it is staffed, your duties and who to call. Read and acknowledge them before you work the post, and every time they change.</p>"
+        },
+        {
+          "title": "Observe and report",
+          "html": "<p>Your main tools are your eyes, your ears and your notebook.</p><ul><li>Record what you see and hear in the log as it happens.</li><li>Report what is out of place: open doors, damage, people where they should not be.</li><li>Stay professional and calm; your safety comes first.</li></ul>"
+        }
+      ]
+    },
+    {
+      "title": "Incidents",
+      "lessons": [
+        {
+          "title": "Writing an incident report",
+          "html": "<p>A good report answers who, what, when, where and how, in the order things happened, with facts and not opinions. Write it as soon as you can, while the details are fresh.</p>"
+        },
+        {
+          "title": "Emergencies",
+          "html": "<p>Call the emergency services first, then your control room and the client contact. Never put yourself at risk to protect property.</p><p><em>Add your company's emergency procedures.</em></p>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Orientation check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "When do you read and acknowledge a post's orders?",
+        "kind": "single",
+        "options": [ "Before you work the post and whenever they change", "Only on your first day with the company", "Only after an incident" ],
+        "correct": 0,
+        "explanation": "Read and acknowledge them before you work the post, and every time they change."
+      },
+      {
+        "text": "An incident report should include your opinion of the people involved.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 1,
+        "explanation": "A good report gives facts in the order things happened, not opinions."
+      },
+      {
+        "text": "Who do you call first in an emergency?",
+        "kind": "single",
+        "options": [ "The emergency services", "The client contact", "Your supervisor's mobile" ],
+        "correct": 0,
+        "explanation": "Call the emergency services first, then your control room and the client contact."
+      }
+    ]
+  }
+}

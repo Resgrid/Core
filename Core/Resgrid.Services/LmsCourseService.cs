@@ -24,7 +24,7 @@ namespace Resgrid.Services
 	/// signature per approval bound to the version's canonical hash, <see cref="SignatureUse.CourseApproval"/>). Authoring needs the
 	/// LMS add-on (lapse rule 3); system-published content is seeded by <see cref="LmsAcademyService"/>, never authored here.
 	/// </summary>
-	public class LmsCourseService : ILmsCourseService
+	public partial class LmsCourseService : ILmsCourseService
 	{
 		private readonly ILmsCoursesRepository _courses;
 		private readonly ILmsCourseVersionsRepository _versions;
@@ -45,13 +45,23 @@ namespace Resgrid.Services
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly Lazy<ICommunicationService> _communicationService;
 		private readonly IKnowledgeIndexQueue _knowledgeQueue;
+		private readonly IEnumerable<IContentVersionPublishedHook> _publishedHooks;
+		private readonly ILmsStandardsLessonValidator _standardsLessons;
+		private readonly ILmsQuestionsRepository _questions;
+		private readonly IContentSetCopyLocks _setLocks;
+		private readonly ILmsSetFiles _setFiles;
 
 		public LmsCourseService(ILmsCoursesRepository courses, ILmsCourseVersionsRepository versions, ILmsCourseVersionApprovalsRepository approvals,
 			ILmsCourseAudiencesRepository audiences, ILmsCourseOwnersRepository owners, ILmsCourseModulesRepository modules, ILmsLessonsRepository lessons,
 			ILmsEnrollmentsRepository enrollments, ILmsQuestionBanksRepository banks, ILmsMediaAssetsRepository media, IProtocolVersionsRepository protocolVersions,
 			ISignatureService signatures, IDepartmentsService departmentsService, IDepartmentSettingsService settingsService, IUserProfileService profiles,
-			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, Lazy<ICommunicationService> communicationService, IKnowledgeIndexQueue knowledgeQueue)
+			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, Lazy<ICommunicationService> communicationService, IKnowledgeIndexQueue knowledgeQueue,
+			IEnumerable<IContentVersionPublishedHook> publishedHooks, ILmsStandardsLessonValidator standardsLessons, ILmsQuestionsRepository questions,
+			IContentSetCopyLocks setLocks, ILmsSetFiles setFiles)
 		{
+			_questions = questions;
+			_setLocks = setLocks;
+			_setFiles = setFiles;
 			_courses = courses;
 			_versions = versions;
 			_approvals = approvals;
@@ -71,6 +81,8 @@ namespace Resgrid.Services
 			_unitOfWork = unitOfWork;
 			_communicationService = communicationService;
 			_knowledgeQueue = knowledgeQueue;
+			_publishedHooks = publishedHooks ?? Enumerable.Empty<IContentVersionPublishedHook>();
+			_standardsLessons = standardsLessons;
 		}
 
 		/// <summary>
@@ -359,6 +371,9 @@ namespace Resgrid.Services
 				return LmsResult.Fail(LmsErrors.NotAuthorized);
 			if (!LmsLapseRules.CanAssignNew(actor.Gate, false))
 				return LmsResult.Fail(LmsErrors.AddonRequired);
+			// Round 10 A3: a course set copy's versions come from its set (unsubscribing makes it the department's own).
+			if (await ManagedBySetAsync(actor.DepartmentId, course.LmsCourseId))
+				return new LmsResult { LifecycleError = ProtocolLifecycleErrors.ManagedBySet, Course = course };
 
 			var versions = await GetVersionsAsync(actor.DepartmentId, course.LmsCourseId);
 			var open = versions.FirstOrDefault(IsOpenDraft);
@@ -575,7 +590,7 @@ namespace Resgrid.Services
 		internal async Task<LmsErrors> ApplyLessonInputAsync(LmsActor actor, LmsLesson lesson, LmsLessonInput input)
 		{
 			var kind = (LmsLessonKinds)input.Kind;
-			if (!Enum.IsDefined(typeof(LmsLessonKinds), input.Kind) || kind == LmsLessonKinds.Scorm || kind == LmsLessonKinds.Cmi5 || kind == LmsLessonKinds.LiveSession)
+			if (!Enum.IsDefined(typeof(LmsLessonKinds), input.Kind) || kind == LmsLessonKinds.LiveSession)
 				return LmsErrors.InvalidInput;
 
 			var title = Truncate(input.Title?.Trim(), LmsLesson.TitleMaxLength);
@@ -607,9 +622,24 @@ namespace Resgrid.Services
 			lesson.LmsQuestionBankId = null;
 			lesson.SurveyJson = null;
 			lesson.IsPreTest = false;
+			lesson.LmsContentPackageId = null;
+			lesson.LmsLtiToolId = null;
+			lesson.LtiTargetLinkUri = null;
+			lesson.LtiCustomParameters = null;
 
 			switch (kind)
 			{
+				case LmsLessonKinds.Scorm:
+				case LmsLessonKinds.Cmi5:
+				case LmsLessonKinds.LtiLink:
+					// T5: the package or tool must be the department's and usable; the standards validator owns those rules.
+					if (_standardsLessons == null)
+						return LmsErrors.InvalidInput;
+					var standardsError = await _standardsLessons.ApplyAsync(actor, lesson, input);
+					if (standardsError != LmsErrors.None)
+						return standardsError;
+					break;
+
 				case LmsLessonKinds.Blocks:
 					var document = ProtocolContentDocument.FromHtml(input.ContentHtml ?? string.Empty);
 					lesson.ContentJson = document.ToJson();
@@ -1036,8 +1066,35 @@ namespace Resgrid.Services
 				reassignDueDays, now, cancellationToken);
 
 			Audit(actor.DepartmentId, actor.UserId, AuditLogTypes.LmsCourseVersionPublished, null, Snapshot(course, version));
+			ContentWorkflowContext.Publish(_eventAggregator, LmsWorkflowEvents.VersionPublished(course, version, actor.UserId, now));
 			await QueueKnowledgeReindexAsync(actor.DepartmentId, course.LmsCourseId, cancellationToken);
+			// T5: flashcards drafted from an earlier version of this course are flagged for review; never fatal to the publish.
+			await PublishedHooksAsync(new ContentVersionPublished
+			{
+				DepartmentId = actor.DepartmentId, Kind = ContentVersionKinds.CourseVersion, ItemId = course.LmsCourseId, VersionId = version.LmsCourseVersionId,
+				VersionLabel = version.Label, PublishedOnUtc = now
+			}, cancellationToken);
 			return new LmsResult { Course = course, Version = version, Count = moved };
+		}
+
+		/// <summary>The registered <see cref="IContentVersionPublishedHook"/>s after a version went into force: each one's failure is logged, never fatal.</summary>
+		private async Task PublishedHooksAsync(ContentVersionPublished published, CancellationToken cancellationToken)
+		{
+			foreach (var hook in _publishedHooks)
+			{
+				try
+				{
+					await hook.OnVersionPublishedAsync(published, cancellationToken);
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"A publish hook failed for course version {published.VersionId}.");
+				}
+			}
 		}
 
 		/// <summary>
@@ -1154,6 +1211,7 @@ namespace Resgrid.Services
 				return LmsResult.Fail(LmsErrors.NotFound);
 
 			var now = DateTime.UtcNow;
+			var wasRetired = course.Status == (int)ProtocolStatuses.Retired;
 			var current = course.CurrentVersionId.HasValue ? await _versions.GetVisibleByIdAsync(actor.DepartmentId, course.CurrentVersionId.Value) : null;
 			if (current != null && ProtocolLifecycle.CanMove(current.Status, (int)ProtocolVersionStatuses.Retired))
 			{
@@ -1172,6 +1230,9 @@ namespace Resgrid.Services
 				return LmsResult.Fail(LmsErrors.StaleCopy);
 
 			Audit(actor.DepartmentId, actor.UserId, AuditLogTypes.LmsCourseRetired, null, Snapshot(course, current));
+			// Workflow trigger 273, once: the course's compare-and-set above retired it (retiring it again raises nothing).
+			if (!wasRetired)
+				ContentWorkflowContext.Publish(_eventAggregator, LmsWorkflowEvents.Retired(course, current, actor.UserId, now));
 			await QueueKnowledgeReindexAsync(actor.DepartmentId, course.LmsCourseId, cancellationToken);
 			return new LmsResult { Course = course, Version = current };
 		}

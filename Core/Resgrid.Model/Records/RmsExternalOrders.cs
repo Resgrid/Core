@@ -34,6 +34,23 @@ namespace Resgrid.Model
 		Returned = 9
 	}
 
+	/// <summary>
+	/// The linked partner department's L2 acceptance of a fill (round 10 A3, e-Sign §20 "Deployments (Records)", M0419). Persisted: append only.
+	/// </summary>
+	public enum RmsDeploymentPartnerSignStatuses
+	{
+		/// <summary>No partner signature (the order names no linked partner, or the fill was not accepted yet).</summary>
+		None = 0,
+		/// <summary>A signature request is open in the partner department.</summary>
+		Requested = 1,
+		/// <summary>A partner department admin accepted the assignment (L2).</summary>
+		Signed = 2,
+		/// <summary>The partner declined it.</summary>
+		Declined = 3,
+		/// <summary>The request expired or was voided (the link was disabled or removed, the partner changed, the fill was declined).</summary>
+		Lapsed = 4
+	}
+
 	public enum RmsExternalOrderStatus
 	{
 		Open = 1,
@@ -51,6 +68,15 @@ namespace Resgrid.Model
 	{
 		public string RmsExternalOrderId { get; set; }
 		public int DepartmentId { get; set; }
+
+		/// <summary>
+		/// The Department Link to the partner department this order is filled for, when the requesting agency is a linked Resgrid department
+		/// (round 10 A3, M0419): an accepted fill then asks that department's admins to accept the assignment at L2, over the link.
+		/// </summary>
+		public int? PartnerDepartmentLinkId { get; set; }
+
+		/// <summary>The linked partner department (the link's other party, set with <see cref="PartnerDepartmentLinkId"/>).</summary>
+		public int? PartnerDepartmentId { get; set; }
 		public string ProtectionId { get; set; }
 		/// <summary>The deployment Record (pack.mutual-aid.deployment definition) this order rides on.</summary>
 		public string RecordId { get; set; }
@@ -125,6 +151,23 @@ namespace Resgrid.Model
 	{
 		public string RmsExternalOrderFillId { get; set; }
 		public int DepartmentId { get; set; }
+
+		/// <summary>The partner department asked to accept this fill (round 10 A3, M0419); the order's partner when the request was made.</summary>
+		public int? PartnerDepartmentId { get; set; }
+
+		/// <summary><see cref="RmsDeploymentPartnerSignStatuses"/>.</summary>
+		public int PartnerSignStatus { get; set; }
+
+		/// <summary>The signature request in the partner department (SignatureRequests).</summary>
+		public int? PartnerSignRequestId { get; set; }
+
+		public DateTime? PartnerSignRequestedOn { get; set; }
+
+		/// <summary>When the partner accepted the assignment (the plan's AssignmentAcceptedOn).</summary>
+		public DateTime? PartnerSignedOn { get; set; }
+
+		/// <summary>The partner department admin who accepted it (the plan's AssignmentAcceptedBy).</summary>
+		public string PartnerSignedByUserId { get; set; }
 		public string ProtectionId { get; set; }
 		public string RmsExternalOrderId { get; set; }
 		public string RecordId { get; set; }

@@ -60,641 +60,1042 @@
   </resheader>
   <data name="PersonnelLink" xml:space="preserve">
     <value>الأفراد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HomeLink" xml:space="preserve">
     <value>الرئيسية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessModuleLabel" xml:space="preserve">
     <value>الرفاهية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyExposuresTab" xml:space="preserve">
     <value>حالات تعرضي</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportTab" xml:space="preserve">
     <value>تقرير الأعضاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallTab" xml:space="preserve">
     <value>إشارات ما بعد البلاغ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsTab" xml:space="preserve">
     <value>الإعدادات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyExposuresTitle" xml:space="preserve">
     <value>حالات تعرضي</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberExposuresTitle" xml:space="preserve">
     <value>سجل التعرض: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyExposuresIntro" xml:space="preserve">
     <value>سجلك الخاص بحالات التعرض والبلاغات الصعبة. لا يراه إلا أنت ومسؤولو الرفاهية في إدارتك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberExposuresIntro" xml:space="preserve">
     <value>سجل التعرض والحوادث الحرجة لهذا العضو. تعامل معه بعناية: لا يراه إلا العضو ومسؤولو الرفاهية.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LogExposureButton" xml:space="preserve">
     <value>تسجيل تعرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportPdfButton" xml:space="preserve">
     <value>تصدير PDF</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportCsvButton" xml:space="preserve">
     <value>تصدير CSV</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedWithheldNotice" xml:space="preserve">
     <value>بعض التفاصيل محمية بالحماية المتقدمة للبيانات في إدارتك ولا تُعرض هنا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmedEntriesLabel" xml:space="preserve">
     <value>الإدخالات المؤكدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CriticalIncidentsLabel" xml:space="preserve">
     <value>الحوادث الحرجة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AwaitingReviewLabel" xml:space="preserve">
     <value>بانتظار المراجعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsHeader" xml:space="preserve">
     <value>مقترحة من البلاغات الأخيرة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsHelp" xml:space="preserve">
     <value>اقتُرحت هذه من سجلات الإرسال بعد الإشارة إلى بلاغ. لا يُسجَّل شيء حتى تراجعه وتؤكده. إن لم ينطبق عليك فتجاهله.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DateColumn" xml:space="preserve">
     <value>التاريخ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CategoryColumn" xml:space="preserve">
     <value>الفئة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CallColumn" xml:space="preserve">
     <value>البلاغ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DurationColumn" xml:space="preserve">
     <value>المدة (س:دد)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>الإجراءات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestedFromLabel" xml:space="preserve">
     <value>مقترح من</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewButton" xml:space="preserve">
     <value>مراجعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissButton" xml:space="preserve">
     <value>تجاهل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningHeader" xml:space="preserve">
     <value>فحص معزز</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningSelfText" xml:space="preserve">
     <value>اقترح مسؤول الرفاهية في إدارتك إجراء فحوص صحية إضافية لك. المتابعات أدناه هنا لمساعدتك على المتابعة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningOfficerText" xml:space="preserve">
     <value>هذا العضو مُشار إليه لفحص معزز.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewOnLabel" xml:space="preserve">
     <value>المراجعة التالية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PlanNotesLabel" xml:space="preserve">
     <value>خطة المتابعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithheldValue" xml:space="preserve">
     <value>محمي</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpColumn" xml:space="preserve">
     <value>المتابعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssigneeColumn" xml:space="preserve">
     <value>مُسند إلى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueColumn" xml:space="preserve">
     <value>الاستحقاق</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StateColumn" xml:space="preserve">
     <value>الحالة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompleteButton" xml:space="preserve">
     <value>تعليم كمنجز</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>إلغاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningManageHeader" xml:space="preserve">
     <value>الفحص والمتابعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningManageHelp" xml:space="preserve">
     <value>أشِر إلى هذا العضو لفحص معزز واحتفظ بخطة متابعة. الخطة محمية ولا يراها إلا العضو ومسؤولو الرفاهية.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningCategoryLabel" xml:space="preserve">
     <value>بسبب</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCategoryOption" xml:space="preserve">
     <value>غير محدد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedFieldHelp" xml:space="preserve">
     <value>محمي: لا يراه إلا العضو ومسؤولو الرفاهية.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagForScreeningButton" xml:space="preserve">
     <value>الإشارة لفحص معزز</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveScreeningButton" xml:space="preserve">
     <value>حفظ الفحص</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearScreeningButton" xml:space="preserve">
     <value>إنهاء الفحص المعزز</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddFollowUpHeader" xml:space="preserve">
     <value>إضافة متابعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpPrivacyHelp" xml:space="preserve">
     <value>تسجل المتابعات نوع الخطوة وما إذا أُنجزت فقط. احتفظ بأي تفاصيل صحية في الخطة المحمية.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddFollowUpButton" xml:space="preserve">
     <value>إضافة متابعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EntriesHeader" xml:space="preserve">
     <value>الإدخالات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoEntriesSelf" xml:space="preserve">
     <value>لا توجد لديك إدخالات بعد. يمكنك تسجيل تعرض في أي وقت.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoEntriesMember" xml:space="preserve">
     <value>لا توجد إدخالات لهذا العضو.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionNotice" xml:space="preserve">
     <value>تُحفظ الإدخالات 30 عامًا على الأقل. يمكن تعليم الإدخال المسجل خطأً بذلك؛ يُحتفظ به لكنه لا يُحتسب.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusColumn" xml:space="preserve">
     <value>الحالة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AnniversaryReminderOnLabel" xml:space="preserve">
     <value>تذكير الذكرى مفعّل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenButton" xml:space="preserve">
     <value>فتح</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidButton" xml:space="preserve">
     <value>سُجّل خطأً</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidHelp" xml:space="preserve">
     <value>يبقى الإدخال في السجل طوال مدة الاحتفاظ لكنه لا يُحتسب.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidConfirmButton" xml:space="preserve">
     <value>تأكيد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SupportNote" xml:space="preserve">
     <value>إذا كان شيء ما من بلاغ لا يزال يرافقك، فلست مضطرًا لمواجهته وحدك. فريق دعم الأقران وموارد الرفاهية في إدارتك موجودة من أجلك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LogExposureTitle" xml:space="preserve">
     <value>تسجيل تعرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewSuggestionTitle" xml:space="preserve">
     <value>مراجعة إدخال مقترح</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EntryTitle" xml:space="preserve">
     <value>إدخال تعرض</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EntryIntro" xml:space="preserve">
     <value>سجّل ما حدث بكلماتك. تُستخدم الفئة والتاريخ والبلاغ والمدة فقط في الإحصاءات؛ وكل ما عدا ذلك محمي.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionReviewNotice" xml:space="preserve">
     <value>اقتُرح هذا الإدخال من سجلات الإرسال. تحقق من التفاصيل وأضف ما تشاء ثم أكّده - أو تجاهله إن لم ينطبق.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatHappenedHeader" xml:space="preserve">
     <value>متى وماذا</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberLabel" xml:space="preserve">
     <value>العضو</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OccurredOnLabel" xml:space="preserve">
     <value>التاريخ والوقت</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DurationMinutesLabel" xml:space="preserve">
     <value>المدة (بالدقائق)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCallOption" xml:space="preserve">
     <value>بدون بلاغ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DetailsHeader" xml:space="preserve">
     <value>التفاصيل (محمية)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DetailsHelp" xml:space="preserve">
     <value>هذه التفاصيل محمية: لا يقرؤها إلا أنت ومسؤولو الرفاهية في إدارتك، ولا تُستخدم أبدًا في البحث أو في أي ميزة ذكاء اصطناعي.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubstanceLabel" xml:space="preserve">
     <value>المادة أو العامل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PpeWornLabel" xml:space="preserve">
     <value>معدات الحماية المستخدمة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DecontaminationLabel" xml:space="preserve">
     <value>إزالة التلوث بعد ذلك</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NarrativeLabel" xml:space="preserve">
     <value>ماذا حدث</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthDetailsLabel" xml:space="preserve">
     <value>تفاصيل صحية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthDetailsHelp" xml:space="preserve">
     <value>اختياري. الأعراض أو العلاج أو أي شيء تريد تسجيله. هذا ليس تقييمًا طبيًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindersHeader" xml:space="preserve">
     <value>تذكيرات الذكرى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindersHelp" xml:space="preserve">
     <value>بالنسبة للحوادث الحرجة، يمكنك اختيار تذكير لطيف قبل كل ذكرى - لنفسك و/أو لإعلام فريق دعم الأقران. يمكنك تغيير ذلك في أي وقت.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindMemberLabel" xml:space="preserve">
     <value>ذكّرني قبل الذكرى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindPeerTeamLabel" xml:space="preserve">
     <value>أعلم فريق دعم الأقران قبل الذكرى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPeerTeamHelp" xml:space="preserve">
     <value>لم تُنشئ إدارتك فريق دعم أقران بعد.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmButton" xml:space="preserve">
     <value>تأكيد الإدخال</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveForLaterButton" xml:space="preserve">
     <value>حفظ دون تأكيد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>حفظ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackButton" xml:space="preserve">
     <value>رجوع</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissLongButton" xml:space="preserve">
     <value>هذا لا ينطبق علي - تجاهل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportTitle" xml:space="preserve">
     <value>تقرير تعرض الأعضاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportIntro" xml:space="preserve">
     <value>إحصاءات لكل عضو لمسؤولي الرفاهية. تبقى التفاصيل في سجل كل عضو.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterLabel" xml:space="preserve">
     <value>تصفية التقرير</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FromLabel" xml:space="preserve">
     <value>من</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToLabel" xml:space="preserve">
     <value>إلى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterButton" xml:space="preserve">
     <value>تصفية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MembersHeader" xml:space="preserve">
     <value>الأعضاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoReportRows" xml:space="preserve">
     <value>لا توجد إدخالات في هذه الفترة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LastExposureLabel" xml:space="preserve">
     <value>الأحدث</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningFlaggedLabel" xml:space="preserve">
     <value>فحص معزز</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenFollowUpsValue" xml:space="preserve">
     <value>{0} متابعات مفتوحة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenLogButton" xml:space="preserve">
     <value>فتح السجل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecentFlagsHeader" xml:space="preserve">
     <value>إشارات ما بعد البلاغ الأخيرة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoFlags" xml:space="preserve">
     <value>لم تتم الإشارة إلى أي بلاغ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlaggedOnLabel" xml:space="preserve">
     <value>تاريخ الإشارة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsColumn" xml:space="preserve">
     <value>الاقتراحات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagClearedLabel" xml:space="preserve">
     <value>أُزيلت</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsBuiltValue" xml:space="preserve">
     <value>{0} مقترحة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsPendingLabel" xml:space="preserve">
     <value>بانتظار انتهاء البلاغ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallTitle" xml:space="preserve">
     <value>متابعة الرفاهية: البلاغ {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallPickerTitle" xml:space="preserve">
     <value>إشارات ما بعد البلاغ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallIntro" xml:space="preserve">
     <value>أشِر إلى بلاغ كحادث حرج أو تعرض. بعد انتهاء البلاغ، يُعرض على كل من تضعه سجلات الإرسال فيه إدخال مقترح لمراجعته. لا يُسجَّل أحد دون تأكيد.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecentCallsHeader" xml:space="preserve">
     <value>البلاغات الأخيرة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRecentCalls" xml:space="preserve">
     <value>لا توجد بلاغات في آخر 30 يومًا.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CallActiveNotice" xml:space="preserve">
     <value>هذا البلاغ لا يزال نشطًا. تُنشأ الاقتراحات بعد انتهائه.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CriticalIncidentHelp" xml:space="preserve">
     <value>بلاغ قد يكون صادمًا. هذا منفصل عن أولوية إرسال البلاغ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotFlaggedLabel" xml:space="preserve">
     <value>غير مُشار إليه</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagButton" xml:space="preserve">
     <value>إشارة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearFlagButton" xml:space="preserve">
     <value>إزالة الإشارة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagPrivacyHelp" xml:space="preserve">
     <value>الإشارة إلى بلاغ تسجل البلاغ والفئة فقط. يقرر الأعضاء ما يضيفونه إلى سجلاتهم.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackToCallButton" xml:space="preserve">
     <value>العودة إلى البلاغ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
     <value>إعدادات الرفاهية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsIntro" xml:space="preserve">
     <value>من يقرأ سجلات تعرض الأعضاء، ومن هو فريق دعم الأقران، وكم مدة الاحتفاظ بالإدخالات.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessOfficerRoleLabel" xml:space="preserve">
     <value>دور مسؤول الرفاهية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessOfficerRoleHelp" xml:space="preserve">
     <value>يمكن لأعضاء هذا الدور قراءة سجل تعرض كل عضو وإدارة إشارات الفحص. لا يستطيع مديرو الإدارة قراءة السجلات ما لم يحملوا هذا الدور.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoneOption" xml:space="preserve">
     <value>لا شيء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PeerTeamLabel" xml:space="preserve">
     <value>شهادة فريق دعم الأقران</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PeerTeamHelp" xml:space="preserve">
-    <value>يتلقى الأعضاء الحاملون لشهادة سارية من هذا النوع تذكيرات الذكرى التي يختار الأعضاء مشاركتها.</value>
+    <value>نوع شهادة فريق دعم الأقران، مثلاً من قالب عضو فريق دعم الأقران. عند اختيار دور أعلاه تظهر حالة كل عضو في الفريق أدناه؛ وبدون دور يشكّل حاملوها الحاليون الفريق ويتلقون تذكيرات الذكرى التي يختار الأعضاء مشاركتها.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionYearsLabel" xml:space="preserve">
     <value>الاحتفاظ بالإدخالات لمدة (سنوات)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionYearsHelp" xml:space="preserve">
     <value>30 عامًا على الأقل (OSHA 29 CFR 1910.1020). تُحفظ الإدخالات الخاضعة لحجز قانوني مدة أطول.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessFollowUpButton" xml:space="preserve">
     <value>متابعة الرفاهية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessFollowUpHelp" xml:space="preserve">
     <value>أشِر إلى هذا البلاغ كحادث حرج أو تعرض ليتمكن الأعضاء من إضافته إلى سجلاتهم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Recorded" xml:space="preserve">
     <value>تم تسجيل الإدخال.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Confirmed" xml:space="preserve">
     <value>تم تأكيد الإدخال.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Saved" xml:space="preserve">
     <value>تم الحفظ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Dismissed" xml:space="preserve">
     <value>تم تجاهل الاقتراح.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Voided" xml:space="preserve">
     <value>تم تعليم الإدخال كمسجل خطأً.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.RemindersSaved" xml:space="preserve">
     <value>تم حفظ اختيارات التذكير.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ScreeningSaved" xml:space="preserve">
     <value>تم حفظ إشارة الفحص.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ScreeningCleared" xml:space="preserve">
     <value>انتهى الفحص المعزز.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpAdded" xml:space="preserve">
     <value>تمت إضافة المتابعة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCompleted" xml:space="preserve">
     <value>تم تعليم المتابعة كمنجزة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCancelled" xml:space="preserve">
     <value>تم إلغاء المتابعة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.CallFlagged" xml:space="preserve">
     <value>تمت الإشارة إلى البلاغ. ستُعرض الاقتراحات بعد انتهائه.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.CallFlagCleared" xml:space="preserve">
     <value>أُزيلت الإشارة. وحُذفت الاقتراحات التي لم يؤكدها أحد.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.SettingsSaved" xml:space="preserve">
     <value>تم حفظ إعدادات الرفاهية.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.Generic" xml:space="preserve">
     <value>تعذر الحفظ. يرجى التحقق من الإدخال والمحاولة مرة أخرى.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.NotAllowed" xml:space="preserve">
     <value>ليس لديك صلاحية الوصول إلى ذلك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.ExportFailed" xml:space="preserve">
     <value>تعذر إنشاء التصدير. يرجى المحاولة مرة أخرى.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.role_not_found" xml:space="preserve">
     <value>لم يتم العثور على ذلك الدور.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.certification_type_not_found" xml:space="preserve">
     <value>لم يتم العثور على نوع الشهادة ذلك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.member_not_found" xml:space="preserve">
     <value>لم يتم العثور على ذلك العضو في هذه الإدارة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_not_found" xml:space="preserve">
     <value>لم يتم العثور على ذلك الإدخال.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_closed" xml:space="preserve">
     <value>هذا الإدخال مغلق ولا يمكن تغييره.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_changed" xml:space="preserve">
     <value>قام شخص آخر بتغيير هذا الإدخال. يرجى فتحه مجددًا والمحاولة مرة أخرى.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.not_a_suggestion" xml:space="preserve">
     <value>يمكن تأكيد أو تجاهل الإدخال المقترح فقط.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.not_confirmed" xml:space="preserve">
     <value>يمكن تغيير الإدخال المؤكد فقط بهذه الطريقة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.reminders_critical_incident_only" xml:space="preserve">
     <value>تُتاح تذكيرات الذكرى للحوادث الحرجة فقط.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.category_required" xml:space="preserve">
     <value>يرجى اختيار فئة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.date_invalid" xml:space="preserve">
     <value>يرجى إدخال تاريخ صالح.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.duration_invalid" xml:space="preserve">
     <value>يرجى إدخال مدة بين 0 و10080 دقيقة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.call_not_found" xml:space="preserve">
     <value>لم يتم العثور على ذلك البلاغ في هذه الإدارة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.protected_write_refused" xml:space="preserve">
     <value>تعذر حفظ التفاصيل المحمية. يرجى المحاولة مرة أخرى.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.flag_not_found" xml:space="preserve">
     <value>لم يتم العثور على تلك الإشارة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_kind_required" xml:space="preserve">
     <value>يرجى اختيار نوع المتابعة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
     <value>يمكن إسناد المتابعة إلى العضو أو إلى مسؤول رفاهية.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_closed" xml:space="preserve">
     <value>هذه المتابعة مغلقة بالفعل.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_not_found" xml:space="preserve">
     <value>لم يتم العثور على تلك المتابعة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.Carcinogen" xml:space="preserve">
     <value>مادة مسرطنة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.BloodbornePathogen" xml:space="preserve">
     <value>مُمرض منقول بالدم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.HazardousSubstance" xml:space="preserve">
     <value>مادة خطرة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.CriticalIncident" xml:space="preserve">
     <value>حادث حرج</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.Other" xml:space="preserve">
     <value>أخرى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Suggested" xml:space="preserve">
     <value>بانتظار المراجعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Confirmed" xml:space="preserve">
     <value>مؤكد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Dismissed" xml:space="preserve">
     <value>متجاهل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Voided" xml:space="preserve">
     <value>سُجّل خطأً</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.screening_appointment" xml:space="preserve">
     <value>موعد فحص</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.baseline_test" xml:space="preserve">
     <value>فحص أساسي</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.medical_review" xml:space="preserve">
     <value>مراجعة طبية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.wellness_check_in" xml:space="preserve">
     <value>متابعة الرفاهية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.other" xml:space="preserve">
     <value>متابعة أخرى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Open" xml:space="preserve">
     <value>مفتوحة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Acknowledged" xml:space="preserve">
     <value>تم الاطلاع</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Completed" xml:space="preserve">
     <value>منجزة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Cancelled" xml:space="preserve">
     <value>ملغاة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.status" xml:space="preserve">
     <value>حالة الفرد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.unit_crew" xml:space="preserve">
     <value>طاقم الوحدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.check_in" xml:space="preserve">
     <value>تسجيل الحضور</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.unit_response" xml:space="preserve">
     <value>أوقات استجابة الوحدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Title" xml:space="preserve">
     <value>سجل التعرض والحوادث الحرجة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Member" xml:space="preserve">
     <value>العضو</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Date" xml:space="preserve">
     <value>التاريخ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Category" xml:space="preserve">
     <value>الفئة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Status" xml:space="preserve">
     <value>الحالة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Call" xml:space="preserve">
     <value>البلاغ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Duration" xml:space="preserve">
     <value>المدة (س:دد)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Substance" xml:space="preserve">
     <value>المادة أو العامل</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.PpeWorn" xml:space="preserve">
     <value>معدات الحماية المستخدمة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Decontamination" xml:space="preserve">
     <value>إزالة التلوث</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Narrative" xml:space="preserve">
     <value>ماذا حدث</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.HealthDetails" xml:space="preserve">
     <value>تفاصيل صحية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Withheld" xml:space="preserve">
     <value>محجوب (محمي)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.GeneratedOn" xml:space="preserve">
     <value>أُنشئ في {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Retention" xml:space="preserve">
     <value>تحتفظ إدارتك بهذه السجلات 30 عامًا على الأقل.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.CriticalIncidents" xml:space="preserve">
     <value>الحوادث الحرجة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.ReportTitle" xml:space="preserve">
     <value>تقرير تعرض الأعضاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Total" xml:space="preserve">
     <value>الإدخالات المؤكدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.PendingSuggestions" xml:space="preserve">
     <value>بانتظار المراجعة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.LastExposure" xml:space="preserve">
     <value>الأحدث</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.ScreeningFlagged" xml:space="preserve">
     <value>فحص معزز</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.OpenFollowUps" xml:space="preserve">
     <value>متابعات مفتوحة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Yes" xml:space="preserve">
     <value>نعم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessOfficerCertificationLabel" xml:space="preserve">
+    <value>شهادة مسؤول الرفاهية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessOfficerCertificationHelp" xml:space="preserve">
+    <value>اختياري. أحد أنواع الشهادات لديك، مثلاً من قالب مسؤول الرفاهية، مع الدورات أو ساعات التعليم المستمر أو الجلسات التدريبية ومدة الصلاحية التي تقررها منظمتك. تظهر حالة كل مسؤول أدناه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerTeamRoleLabel" xml:space="preserve">
+    <value>دور فريق دعم الأقران</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerTeamRoleHelp" xml:space="preserve">
+    <value>يشكّل أعضاء هذا الدور فريق دعم الأقران. بدون دور، يتكون الفريق من الأعضاء الحاملين لشهادة سارية من النوع أدناه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerTeamByCertificationOption" xml:space="preserve">
+    <value>بدون دور: حاملو الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCertificationHeader" xml:space="preserve">
+    <value>شهادات أدوار الرفاهية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequireCertificationLabel" xml:space="preserve">
+    <value>لا يعمل في هذه الأدوار إلا الأعضاء الحاملون لشهادة سارية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequireCertificationHelp" xml:space="preserve">
+    <value>إيقاف: يحدد الدور من يقرأ السجلات ويتلقى البلاغات والتذكيرات، وتُعرض الشهادة كحالة. تشغيل: يحتاج عضو الدور أيضاً إلى شهادة سارية من النوع المرتبط بالدور. لا يتأثر الدور الذي لا يرتبط به نوع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditCertificationTypeLink" xml:space="preserve">
+    <value>تعديل النوع ومدة صلاحيته</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationRequirementsLink" xml:space="preserve">
+    <value>تحديد متطلباته</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationTemplatesHint" xml:space="preserve">
+    <value>أضف نوع مسؤول الرفاهية أو عضو فريق دعم الأقران أو الضابط المعيّن لمكافحة التعرض من قوالب الشهادات، ثم اربطه أعلاه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationTypesLink" xml:space="preserve">
+    <value>أنواع الشهادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>من يعمل في كل دور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterIntro" xml:space="preserve">
+    <value>تحدد عضوية الدور من يعمل فيه. تظهر شهادة كل عضو من النوع المرتبط بالدور على أنها سارية أو قاربت على الانتهاء أو منتهية أو غير موجودة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterMemberColumn" xml:space="preserve">
+    <value>العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterCertificationColumn" xml:space="preserve">
+    <value>حالة الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterActsColumn" xml:space="preserve">
+    <value>يعمل في الدور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterKind.WellnessOfficer" xml:space="preserve">
+    <value>مسؤولو الرفاهية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterKind.DesignatedOfficer" xml:space="preserve">
+    <value>الضباط المعيّنون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterKind.PeerSupportTeam" xml:space="preserve">
+    <value>فريق دعم الأقران</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNoRole" xml:space="preserve">
+    <value>لم يُحدَّد دور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNoMembers" xml:space="preserve">
+    <value>لا أحد يحمل هذا الدور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterFallsBack" xml:space="preserve">
+    <value>لم يُحدَّد دور للضابط المعيّن، لذلك يتولى دور مسؤول الرفاهية المهمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterByCertification" xml:space="preserve">
+    <value>لم يُحدَّد دور: يشكّل الحاملون الحاليون للشهادة الفريق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNoType" xml:space="preserve">
+    <value>لا توجد شهادة مرتبطة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterTypeMissing" xml:space="preserve">
+    <value>لم يعد نوع الشهادة المرتبط موجوداً، لذلك يحدد الدور وحده.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNobodyActs" xml:space="preserve">
+    <value>لا أحد يعمل في هذا الدور حالياً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterRequiresCertification" xml:space="preserve">
+    <value>لا يعمل إلا الأعضاء الحاملون لشهادة سارية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Current" xml:space="preserve">
+    <value>سارية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.CurrentUntil" xml:space="preserve">
+    <value>سارية حتى {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Expiring" xml:space="preserve">
+    <value>تنتهي في {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Expired" xml:space="preserve">
+    <value>منتهية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.ExpiredOn" xml:space="preserve">
+    <value>انتهت في {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Missing" xml:space="preserve">
+    <value>غير موجودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActsYes" xml:space="preserve">
+    <value>نعم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActsNo" xml:space="preserve">
+    <value>لا: لا توجد شهادة سارية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.certification_switch_leaves_no_officer" xml:space="preserve">
+    <value>لا يحمل أحد في دور مسؤول الرفاهية أو الضابط المعيّن شهادة سارية من النوع المرتبط بعد، لذلك لن يعمل أحد. سجّل الشهادات أولاً ثم شغّل هذا الخيار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>تتطلب إضافة سجلات الصحة أو تغييرها إضافة Workforce Pro. تبقى السجلات الحالية قابلة للعرض.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>لم يُفعَّل Workforce Pro لهذا العضو، لذا سجلاته للقراءة فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>صحة الأعضاء غير متاحة لهذه المنظمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.RequiredTitle" xml:space="preserve">
+    <value>يلزم Workforce Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.ReadOnly" xml:space="preserve">
+    <value>صحة الأعضاء والتعرّض في مكان العمل جزء من إضافة Workforce Pro، التي لا تملكها هذه المنظمة حاليًا. السجلات الحالية للقراءة فقط: يستطيع كل عضو عرض سجلاته وتصديرها، ويستطيع المسؤولون عرض ما يتيحه دورهم. لا يمكن إضافة أي شيء أو تغييره.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.ViewAddon" xml:space="preserve">
+    <value>عرض إضافة Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.Grace" xml:space="preserve">
+    <value>فشلت عملية دفع Workforce Pro. يستمر كل شيء في العمل حتى {0} أثناء إعادة محاولة الدفع؛ بعد ذلك تصبح السجلات للقراءة فقط حتى يتم دفع الإضافة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.ManageSeats" xml:space="preserve">
+    <value>إدارة مقاعد Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.SeatMissingSelf" xml:space="preserve">
+    <value>لم يُفعَّل Workforce Pro لك، لذا سجلاتك هنا للقراءة فقط. اطلب من أحد المسؤولين تفعيله.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.SeatMissing" xml:space="preserve">
+    <value>لم يُفعَّل Workforce Pro لـ {0}، لذا سجلاته للقراءة فقط.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

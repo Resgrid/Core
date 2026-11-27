@@ -19,7 +19,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// <summary>
 	/// Scenario practice on a protocol (K3 tutor, the "Practice" panel of the protocol view): status, a new scenario from the version in
 	/// force, and the member's answers scored against the cited sections. Practice only: nothing is recorded on the transcript. Behind the
-	/// tutor's gate (Enhanced AI with Ai.Knowledge and the LMS add-on); 404 otherwise.
+	/// practice gate (Enhanced AI with Ai.Knowledge; round 7A: no LMS, protocols live outside it); 404 otherwise.
 	/// </summary>
 	[Area("User")]
 	[Authorize]

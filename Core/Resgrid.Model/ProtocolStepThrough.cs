@@ -148,8 +148,16 @@ namespace Resgrid.Model
 		[JsonProperty("by")]
 		public string UserId { get; set; }
 
+		/// <summary>
+		/// The note as written: only on entries recorded before M0403, and, on a read, the note row's text as the reader may see it
+		/// (REDACTED without a grant under ADP). Never written into the stored log any more (<see cref="NoteId"/>).
+		/// </summary>
 		[JsonProperty("note", NullValueHandling = NullValueHandling.Ignore)]
 		public string Note { get; set; }
+
+		/// <summary>ADP catalog 39 (M0403): the <see cref="CallProtocolStepNote"/> holding this event's note; the log keeps only the pointer.</summary>
+		[JsonProperty("noteId", NullValueHandling = NullValueHandling.Ignore)]
+		public string NoteId { get; set; }
 
 		/// <summary>
 		/// The device's own id for this event (round 5F): an offline replay that sends the same id again is ignored, so a step recorded once

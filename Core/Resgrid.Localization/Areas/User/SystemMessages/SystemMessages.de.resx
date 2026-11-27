@@ -83,6 +83,7 @@ Falls Sie dies nicht angefordert haben, wenden Sie sich bitte an den Support.
 
 
 Ihr Resgrid-Team</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GdprExportWithheldNotice" xml:space="preserve">
     <value>Ihre Abteilung verwendet den erweiterten Datenschutz. Daher sind einige Werte in diesem Export verschlüsselt und werden als REDACTED angezeigt. Sie gehören weiterhin zu Ihren Daten und wurden nicht gelöscht.</value>
@@ -128,6 +129,7 @@ Dieser Code läuft in {2} Minuten ab. Falls Sie dies nicht angefordert haben, ig
 
 
 Ihr Resgrid-Team</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">
     <value>Resgrid-Bestätigungscode</value>
@@ -177,6 +179,7 @@ Ihr Resgrid-Team</value>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Dies ist ein automatischer Sicherheitshinweis zu Ihrem Resgrid-Konto.</value></data>
   <data name="SigningLinkEmailSubject" xml:space="preserve">
     <value>{0}: Ein Dokument zur Unterschrift</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkEmailBody" xml:space="preserve">
     <value>Hallo {0},
@@ -189,12 +192,15 @@ Ihr Resgrid-Team</value>
 Der Link kann einmal verwendet werden und läuft am {4} ab. Vor der Unterschrift bestätigen Sie einen Einmalcode.
 
 Wenn Sie diese Nachricht nicht erwartet haben, können Sie sie ignorieren.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkSmsBody" xml:space="preserve">
     <value>{0} bittet Sie, "{1}" zu unterschreiben: {2}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailSubject" xml:space="preserve">
     <value>{0}: Ihr Unterschriftscode</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailBody" xml:space="preserve">
     <value>Hallo {0},
@@ -202,8 +208,10 @@ Wenn Sie diese Nachricht nicht erwartet haben, können Sie sie ignorieren.</valu
 Ihr Code zum Unterschreiben des Dokuments von {3} lautet {1}. Er läuft in {2} Minuten ab.
 
 Wenn Sie diesen Code nicht angefordert haben, können Sie diese Nachricht ignorieren.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeSmsBody" xml:space="preserve">
     <value>Ihr Unterschriftscode für {2} lautet {0}. Er läuft in {1} Minuten ab.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

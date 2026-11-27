@@ -123,9 +123,28 @@ namespace Resgrid.Tests.Protocols
 			public CallProtocol Row;
 			public ProtocolVersion Version;
 			public int Conflicts;
+			public readonly List<CallProtocolStepNote> Notes = new List<CallProtocolStepNote>();
+			public readonly Mock<ICallProtocolStepNotesRepository> NoteRows = new Mock<ICallProtocolStepNotesRepository>();
 
-			public StepWorld(ProtocolKinds kind = ProtocolKinds.Procedure)
+			public StepWorld(ProtocolKinds kind = ProtocolKinds.Procedure, IProtectedReadService read = null, IProtectedWriteService write = null, IProtectedGrantContext grant = null)
 			{
+				// The note rows (M0403): the unique index on (call protocol, client step id) is enforced like the database does.
+				NoteRows.Setup(x => x.InsertAsync(It.IsAny<CallProtocolStepNote>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+					.ReturnsAsync((CallProtocolStepNote n, CancellationToken _, bool __) =>
+					{
+						if (n.ClientStepId != null && Notes.Any(x => x.CallProtocolId == n.CallProtocolId && x.ClientStepId == n.ClientStepId))
+							throw new InvalidOperationException("duplicate key");
+						Notes.Add(n);
+						return n;
+					});
+				NoteRows.Setup(x => x.GetByClientStepIdAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
+					.ReturnsAsync((int d, int cp, string cid) => Notes.FirstOrDefault(x => x.DepartmentId == d && x.CallProtocolId == cp && x.ClientStepId == cid));
+				NoteRows.Setup(x => x.GetByIdsAsync(It.IsAny<int>(), It.IsAny<IReadOnlyCollection<string>>()))
+					.ReturnsAsync((int d, IReadOnlyCollection<string> ids) => Notes.Where(x => x.DepartmentId == d && ids.Contains(x.CallProtocolStepNoteId))
+						.Select(x => new CallProtocolStepNote { CallProtocolStepNoteId = x.CallProtocolStepNoteId, DepartmentId = x.DepartmentId, CallId = x.CallId, CallProtocolId = x.CallProtocolId,
+							StepId = x.StepId, ClientStepId = x.ClientStepId, UserId = x.UserId, Note = x.Note, IsProtected = x.IsProtected, CreatedOn = x.CreatedOn }).ToList());
+				NoteRows.Setup(x => x.DeleteAsync(It.IsAny<CallProtocolStepNote>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync((CallProtocolStepNote n, CancellationToken _) => Notes.RemoveAll(x => x.CallProtocolStepNoteId == n.CallProtocolStepNoteId) > 0);
 				var json = BlockJson();
 				Version = new ProtocolVersion { ProtocolVersionId = 5, DepartmentId = Dept, DispatchProtocolId = 9, Status = (int)ProtocolVersionStatuses.Published, ContentJson = json, ContentHtml = ProtocolContentDocument.Parse(json, null).Render(), Major = 1 };
 				Row = new CallProtocol { CallProtocolId = 300, CallId = 40, DispatchProtocolId = 9, ProtocolVersionId = 5 };
@@ -153,7 +172,9 @@ namespace Resgrid.Tests.Protocols
 						Row.StepLogRevision = expected + 1;
 						return true;
 					});
-				Service = new ProtocolStepThroughService(Protocols.Object, Calls.Object, Rows.Object, Access.Object);
+				Service = new ProtocolStepThroughService(Protocols.Object, Calls.Object, Rows.Object, Access.Object, NoteRows.Object,
+					new Lazy<IProtectedReadService>(() => read ?? Mock.Of<IProtectedReadService>()), new Lazy<IProtectedWriteService>(() => write ?? Mock.Of<IProtectedWriteService>()),
+					grant ?? Mock.Of<IProtectedGrantContext>());
 			}
 		}
 
@@ -171,10 +192,44 @@ namespace Resgrid.Tests.Protocols
 			log.Entries.Should().ContainSingle();
 			log.Entries[0].StepId.Should().Be("s1-a");
 			log.Entries[0].UserId.Should().Be("u-7");
-			log.Entries[0].Note.Should().Be("ok");
+			log.Entries[0].Note.Should().BeNull("the note lives in its own row (M0403); the log keeps the pointer");
+			world.Notes.Single().Note.Should().Be("ok");
+			log.Entries[0].NoteId.Should().Be(world.Notes.Single().CallProtocolStepNoteId);
+			result.Checklist.Steps.Single(s => s.Step.Id == "s1-a").Last.Note.Should().Be("ok", "a read fills the note from its row");
 			log.Entries[0].At.Should().BeOnOrAfter(before);
 			result.Checklist.Steps.Single(s => s.Step.Id == "s1-a").State.Should().Be(ProtocolStepStates.Done);
 			result.Checklist.DoneCount.Should().Be(1);
+		}
+
+		[Test]
+		public async Task Adp_a_step_note_is_sealed_in_its_own_row_the_log_stays_operational_and_it_reads_redacted_without_a_grant()
+		{
+			// Round 8 (catalog 39, M0403): a step note is call narrative. The log keeps step, state, time and who; the note is sealed in its own
+			// row before it is written, an offline replay finds that row, and a reader sees it only with a grant.
+			using var kit = new Resgrid.Tests.Adp.AdpTestKit(departmentId: Dept);
+			var world = new StepWorld(read: kit.Seam, write: kit.Seam, grant: kit.Attended(false));
+
+			var result = await world.Service.RecordStepAsync(Dept, 40, 300, "s1-a", ProtocolStepStates.Done, "BP 180/110 SYNTHETIC-CANARY", null, "u-7", CancellationToken.None, "dev-1:9");
+
+			result.Succeeded.Should().BeTrue("a protected department steps through exactly as any other");
+			world.Row.StepLogJson.Should().NotContain("CANARY").And.NotContain("rgdp:", "the log is operational and appendable without a key");
+			var log = ProtocolStepLog.Parse(world.Row.StepLogJson);
+			log.Entries.Single().Should().Match<ProtocolStepLogEntry>(e => e.StepId == "s1-a" && e.UserId == "u-7" && e.NoteId != null && e.Note == null);
+			var row = world.Notes.Single();
+			ProtectedDataEnvelope.HasEnvelopePrefix(row.Note).Should().BeTrue("the note is sealed before it is stored");
+			row.IsProtected.Should().BeTrue();
+			result.Checklist.Steps.Single(s => s.Step.Id == "s1-a").Last.Note.Should().Be(ProtectedDataEnvelope.RedactionValue, "no grant on this read");
+			kit.Decrypted.Should().BeEmpty();
+
+			(await world.Service.RecordStepAsync(Dept, 40, 300, "s1-a", ProtocolStepStates.Done, "BP 180/110 SYNTHETIC-CANARY", null, "u-7", CancellationToken.None, "dev-1:9"))
+				.Succeeded.Should().BeTrue();
+			world.Notes.Should().ContainSingle("an offline replay finds its row instead of writing a second one");
+
+			var granted = new StepWorld(read: kit.Seam, write: kit.Seam, grant: kit.Attended(true));
+			granted.Row.StepLogJson = world.Row.StepLogJson;
+			granted.Notes.AddRange(world.Notes);
+			(await granted.Service.GetCallChecklistAsync(Dept, 40, 300)).Steps.Single(s => s.Step.Id == "s1-a").Last.Note.Should().Be("BP 180/110 SYNTHETIC-CANARY",
+				"a grant holder (the reveal flow, or the v4 grant header) reads it");
 		}
 
 		[Test]
@@ -487,9 +542,15 @@ namespace Resgrid.Tests.Protocols
 			saved.Translation.ContentHtml.Should().Contain("Einstieg").And.Contain("0.02 mg/kg").And.NotContain("5 mg/kg");
 			saved.Translation.ContentHtml.Should().Contain("Medikament", "the block labels are written in the translation's language");
 
+			var translationEvents = new List<ProtocolWorkflowEvent>();
+			world.Library.Events.Setup(x => x.SendMessage(It.IsAny<ProtocolWorkflowEvent>())).Callback((ProtocolWorkflowEvent e) => translationEvents.Add(e));
 			var approved = await world.Service.ApproveAsync(reader, saved.Translation.ProtocolVersionTranslationId, ProtocolLibraryWorld.StepUp());
 
 			approved.Succeeded.Should().BeTrue();
+			// Round 7C, workflow trigger 249: once, with the locale and ids; a second approval of the approved translation is refused.
+			(await world.Service.ApproveAsync(reader, saved.Translation.ProtocolVersionTranslationId, ProtocolLibraryWorld.StepUp())).Succeeded.Should().BeFalse();
+			translationEvents.Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.ProtocolTranslationApproved && e.Locale == "de" && e.ProtocolId == 9 &&
+				e.TranslationId == saved.Translation.ProtocolVersionTranslationId && e.ProtocolVersionId == 6);
 			world.SignatureRequest.Use.Should().Be(SignatureUse.ProtocolTranslationApproval);
 			world.SignatureRequest.ArtifactSha256.Should().Be(ProtocolContentHash.Compute(saved.Translation.ContentHtml)).And.NotBe(sourceHash);
 			world.Library.Versions[6].ContentHash.Should().Be(sourceHash);

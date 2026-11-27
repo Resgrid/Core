@@ -148,8 +148,13 @@ namespace Resgrid.Services
 					break;
 
 				var completions = new Dictionary<string, (string UserId, DateTime CompletedOn)>(StringComparer.Ordinal);
+				var liveRows = new Dictionary<string, TrainingUser>(StringComparer.Ordinal);
 				foreach (var row in (await _trainingUsers.GetByTrainingIdAsync(training.TrainingId) ?? new List<TrainingUser>()).Where(r => r.Complete && r.CompletedOn.HasValue))
-					completions[LearningRecordRules.CompletionRef(training.TrainingId, row.Cycle) + "|" + row.UserId.ToUpperInvariant()] = (row.UserId, row.CompletedOn.Value);
+				{
+					var liveKey = LearningRecordRules.CompletionRef(training.TrainingId, row.Cycle) + "|" + row.UserId.ToUpperInvariant();
+					completions[liveKey] = (row.UserId, row.CompletedOn.Value);
+					liveRows[liveKey] = row;
+				}
 				foreach (var history in (await _histories.GetForTrainingAsync(job.DepartmentId, training.TrainingId) ?? new List<TrainingCompletionHistory>()).Where(h => h.CompletedOn.HasValue))
 				{
 					var key = LearningRecordRules.CompletionRef(training.TrainingId, history.Cycle) + "|" + history.UserId.ToUpperInvariant();
@@ -171,7 +176,8 @@ namespace Resgrid.Services
 					if (!job.DryRun)
 					{
 						var written = await _writer.WriteSourceAsync(job.DepartmentId, LearningRecordSourceKinds.CourseCompletion, reference,
-							new[] { LearningRecordWriter.CompletionDraft(training, completion.UserId, completion.CompletedOn, true) }, LearningRecordWriter.SystemUserId, ct);
+							new[] { LearningRecordWriter.CompletionDraft(training, completion.UserId, completion.CompletedOn, true, liveRows.TryGetValue(key, out var liveRow) ? liveRow : null) },
+							LearningRecordWriter.SystemUserId, ct);
 						job.RecordsWritten += written.Written;
 						job.RecordsSkipped += written.Unchanged;
 					}

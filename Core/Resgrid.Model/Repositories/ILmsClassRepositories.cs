@@ -6,7 +6,7 @@ using Resgrid.Model.Lms;
 
 namespace Resgrid.Model.Repositories
 {
-	// Training T4 part 1 (round 5B, M0403–M0405): class sessions, rosters, instructors, cost lines, lesson plans, training resources and
+	// Training T4 part 1 (round 5B, M0378–M0380): class sessions, rosters, instructors, cost lines, lesson plans, training resources and
 	// bookings. Every read is department scoped; the worker 95 reads are due-work queries (no per-department sweep).
 
 	public interface ILmsClassSessionsRepository : IRepository<LmsClassSession>
@@ -40,6 +40,8 @@ namespace Resgrid.Model.Repositories
 		Task<bool> ClaimReminderAsync(int departmentId, int lmsClassEnrollmentId, DateTime utcNow, CancellationToken cancellationToken = default);
 		/// <summary>Waitlisted → enrolled, only while still waitlisted; true when this call promoted it.</summary>
 		Task<bool> PromoteAsync(int departmentId, int lmsClassEnrollmentId, DateTime utcNow, CancellationToken cancellationToken = default);
+		/// <summary>Round 7B: the class moved, so every reminder claim of its roster is cleared (worker 95 reminds again for the new time).</summary>
+		Task<int> ResetRemindersAsync(int departmentId, int lmsClassSessionId, CancellationToken cancellationToken = default);
 	}
 
 	public interface ILmsClassInstructorsRepository : IRepository<LmsClassInstructor>

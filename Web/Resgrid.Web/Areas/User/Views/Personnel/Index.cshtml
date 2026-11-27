@@ -4,6 +4,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Personnel.Person> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Profile.Profile> profileLocalizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> wellnessLocalizer
+@inject Resgrid.Model.Services.IWorkforceProAccessService workforceProAccess
 @{
     var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Personnel, localizer["PersonnelHeader"]);
     ViewBag.Title = "Resgrid | " + moduleTitle;
@@ -38,9 +39,12 @@
             }
             <a id="rolesButton" class="btn btn-primary top-button" title="@localizer["ManageRoles"]"
                asp-controller="Personnel" asp-action="Roles" asp-route-area="User">@localizer["ManageRoles"]</a>
-            @* Member wellness WL0: every member's own exposure and critical-incident log. *@
-            <a id="myExposuresButton" class="btn btn-default top-button" title="@wellnessLocalizer["MyExposuresIntro"]"
-               asp-controller="Wellness" asp-action="Index" asp-route-area="User">@wellnessLocalizer["MyExposuresTab"]</a>
+            @* Member wellness (Workforce Pro): every member's own exposure and critical-incident log; hidden while the Workforce.Pro flag is off. *@
+            @if (await WorkforceProRequestGate.IsOfferedAsync(Context, workforceProAccess, ClaimsAuthorizationHelper.GetDepartmentId()))
+            {
+                <a id="myExposuresButton" class="btn btn-default top-button" title="@wellnessLocalizer["MyExposuresIntro"]"
+                   asp-controller="Wellness" asp-action="Index" asp-route-area="User">@wellnessLocalizer["MyExposuresTab"]</a>
+            }
         </div>
     </div>
 </div>

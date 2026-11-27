@@ -10,6 +10,7 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Security;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -18,6 +19,8 @@ namespace Resgrid.Services
 	/// The one signing layer (S0). The level is decided here from server-side proof only: a step-up recorded for the session
 	/// within <see cref="Config.TwoFactorConfig.StepUpVerificationWindowMinutes"/>, or a passkey assertion verified within
 	/// <see cref="PasskeyWindow"/> whose challenge embedded exactly the artifact hash being signed. Anything less is L1.
+	/// The department's step-up policy (<see cref="IStepUpPolicyService"/>, owner decision 2026-11-26) decides per area whether L2 is
+	/// demanded at all and whether the password or an SSO re-sign-in counts besides a second factor.
 	/// </summary>
 	public class SignatureService : ISignatureService
 	{
@@ -31,10 +34,13 @@ namespace Resgrid.Services
 		private readonly IPersonnelRolesService _roles;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IProtocolVersionFilesRepository _versionFiles;
+		private readonly IStepUpPolicyService _stepUpPolicy;
 
 		public SignatureService(ISignatureRecordsRepository signatures, IProtocolVersionsRepository versions, IPersonnelCertificationRepository certifications,
-			IUserProfileService profiles, IPersonnelRolesService roles, IEventAggregator eventAggregator, IProtocolVersionFilesRepository versionFiles)
+			IUserProfileService profiles, IPersonnelRolesService roles, IEventAggregator eventAggregator, IProtocolVersionFilesRepository versionFiles,
+			IStepUpPolicyService stepUpPolicy)
 		{
+			_stepUpPolicy = stepUpPolicy;
 			_versionFiles = versionFiles;
 			_signatures = signatures;
 			_versions = versions;
@@ -45,7 +51,16 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>The level and method the proof establishes for this artifact (pure, for tests and the panel).</summary>
-		public static (SignatureLevels Level, SignatureMethods Method, string Evidence, SignatureOutcomes? Refusal) Assess(SignatureRequest request, SignatureProof proof, DateTime utcNow)
+		public static (SignatureLevels Level, SignatureMethods Method, string Evidence, SignatureOutcomes? Refusal) Assess(SignatureRequest request, SignatureProof proof, DateTime utcNow) =>
+			Assess(request, proof, utcNow, null);
+
+		/// <summary>
+		/// As <see cref="Assess(SignatureRequest, SignatureProof, DateTime)"/> under a department step-up rule: a second factor always counts;
+		/// a password or SSO reauthentication counts only where <paramref name="rule"/> allows its kind (and never without a rule). Its
+		/// evidence reference starts <c>reauth:</c> so the record shows it was not a second factor.
+		/// </summary>
+		public static (SignatureLevels Level, SignatureMethods Method, string Evidence, SignatureOutcomes? Refusal) Assess(SignatureRequest request, SignatureProof proof, DateTime utcNow,
+			StepUpRule rule)
 		{
 			if (proof == null)
 				return (SignatureLevels.Attest, SignatureMethods.Session, null, null);
@@ -59,10 +74,21 @@ namespace Resgrid.Services
 					return (SignatureLevels.StepUp, SignatureMethods.Passkey, "passkey-challenge:" + proof.PasskeyChallengeId, null);
 			}
 
-			var window = TimeSpan.FromMinutes(Math.Max(1, Config.TwoFactorConfig.StepUpVerificationWindowMinutes));
+			var window = TimeSpan.FromMinutes(Math.Max(1, rule?.WindowMinutes ?? Config.TwoFactorConfig.StepUpVerificationWindowMinutes));
+			// StepUpVerifiedOnUtc is second-factor evidence by contract (only the proof builders set it, from SecondFactor evidence); the
+			// password and SSO kinds travel separately in ReauthenticatedOnUtc and count only under a rule that allows them.
 			if (proof.StepUpVerifiedOnUtc.HasValue && Fresh(proof.StepUpVerifiedOnUtc.Value, window, utcNow))
 				return (SignatureLevels.StepUp, SignatureMethods.StepUp,
 					"mfa:" + (proof.StepUpMethod?.ToString(CultureInfo.InvariantCulture) ?? "?") + ":" + DateTime.SpecifyKind(proof.StepUpVerifiedOnUtc.Value, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture), null);
+
+			if (rule != null && proof.ReauthenticatedOnUtc.HasValue && proof.ReauthenticationMethod.HasValue &&
+				Fresh(proof.ReauthenticatedOnUtc.Value, window, utcNow))
+			{
+				var methodClass = StepUpMethodNames.ClassOf((MfaEvidenceMethod)proof.ReauthenticationMethod.Value);
+				if (methodClass is StepUpMethodClasses.Password or StepUpMethodClasses.Sso && rule.Allows(methodClass))
+					return (SignatureLevels.StepUp, SignatureMethods.StepUp,
+						"reauth:" + StepUpMethodNames.Of(methodClass)[0] + ":" + DateTime.SpecifyKind(proof.ReauthenticatedOnUtc.Value, DateTimeKind.Utc).ToString("o", CultureInfo.InvariantCulture), null);
+			}
 
 			return (SignatureLevels.Attest, SignatureMethods.Session, null, null);
 		}
@@ -81,8 +107,13 @@ namespace Resgrid.Services
 				return SignatureResult.Of(SignatureOutcomes.InvalidRequest);
 
 			var now = DateTime.UtcNow;
+			var rule = await StepUpRuleAsync(request);
 			var required = SignaturePolicy.RequiredLevel(request.Use, request.DepartmentLevel);
-			var (level, method, evidence, refusal) = Assess(request, proof, now);
+			// The department made step-up optional for this area: a level above attest is not demanded (a passkey requirement still is).
+			// A member who did step up still signs at L2.
+			if (!rule.Required && !request.RequirePasskey && required >= SignatureLevels.StepUp)
+				required = SignatureLevels.Attest;
+			var (level, method, evidence, refusal) = Assess(request, proof, now, rule);
 
 			if (refusal.HasValue)
 				return SignatureResult.Of(refusal.Value);
@@ -123,6 +154,23 @@ namespace Resgrid.Services
 			Audit(saved.DepartmentId, saved.SignerUserId, AuditLogTypes.SignatureRecorded, null, saved, proof);
 
 			return new SignatureResult { Outcome = SignatureOutcomes.Signed, Record = saved };
+		}
+
+		/// <summary>The department's rule for the signature's area; on any fault, the strict default (required, a second factor only).</summary>
+		private async Task<StepUpRule> StepUpRuleAsync(SignatureRequest request)
+		{
+			var area = request.StepUpArea ?? StepUpAreas.ForUse(request.Use);
+			if (!StepUpAreas.IsKnown(area) || area == StepUpArea.ProtectedData)
+				area = StepUpArea.Signatures;
+			try
+			{
+				return await _stepUpPolicy.GetRuleAsync(request.DepartmentId, area) ?? StepUpRule.Default(area, Config.TwoFactorConfig.StepUpVerificationWindowMinutes);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "The step-up rule for a signature could not be read; the strict default applies.");
+				return StepUpRule.Default(area, Config.TwoFactorConfig.StepUpVerificationWindowMinutes);
+			}
 		}
 
 		public SignatureVerification Verify(SignatureRecord record, string currentArtifactSha256)

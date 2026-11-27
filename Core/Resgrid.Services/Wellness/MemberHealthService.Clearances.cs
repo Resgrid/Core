@@ -20,10 +20,12 @@ namespace Resgrid.Services.Wellness
 		{
 			if (input == null)
 				throw new ArgumentNullException(nameof(input));
+			await RequireReadableAsync(departmentId);
 			await RequireHealthOfficerAsync(departmentId, officerUserId);
 			var memberUserId = input.UserId?.Trim();
 			if (!await IsCurrentMemberAsync(departmentId, memberUserId))
 				throw new MemberWellnessException("member_not_found");
+			await RequireWritableForAsync(departmentId, memberUserId);
 			if (!MemberHealthRules.IsKnownClearanceStatus(input.Status))
 				throw new MemberWellnessException("clearance_status_required");
 			ValidateDate(input.EvaluatedOn, "date_invalid");
@@ -92,6 +94,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsMedicalClearance>> GetClearancesForMemberAsync(int departmentId, string viewerUserId, string memberUserId)
 		{
+			await RequireReadableAsync(departmentId);
 			if (!await CanReadAsync(departmentId, viewerUserId, memberUserId, false))
 				throw new UnauthorizedAccessException("Medical clearances are restricted to the member and the health officers.");
 			var rows = (await _clearances.GetForUserAsync(departmentId, memberUserId) ?? Enumerable.Empty<RmsMedicalClearance>()).ToList();
@@ -101,6 +104,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsMedicalClearance>> GetCurrentClearancesAsync(int departmentId, string officerUserId)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireHealthOfficerAsync(departmentId, officerUserId);
 			var active = await _departmentsService.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var rows = (await _clearances.GetActiveForDepartmentAsync(departmentId) ?? Enumerable.Empty<RmsMedicalClearance>())
@@ -115,10 +119,12 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<RmsMedicalClearance> VoidClearanceAsync(int departmentId, string officerUserId, string clearanceId, CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireHealthOfficerAsync(departmentId, officerUserId);
 			var row = string.IsNullOrWhiteSpace(clearanceId) ? null : await _clearances.GetByIdForDepartmentAsync(departmentId, clearanceId.Trim());
 			if (row == null)
 				throw new MemberWellnessException("clearance_not_found");
+			await RequireWritableForAsync(departmentId, row.UserId);
 			if (row.IsVoided)
 				return row;
 			var before = Snapshot(row);

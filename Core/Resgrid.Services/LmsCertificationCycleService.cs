@@ -38,11 +38,13 @@ namespace Resgrid.Services
 		private readonly ILmsAccessService _access;
 		private readonly ILmsProgramNotifier _notifier;
 		private readonly IEventAggregator _events;
+		private readonly ILmsCertificationIssuanceService _issuance;
 
 		public LmsCertificationCycleService(ILmsCertificationCycleRulesRepository rules, ILmsCertificationAlertsRepository alerts, ILmsProgramStatesRepository states,
 			ICertificationService certifications, IDepartmentsService departments, IDepartmentGroupsService groups, ILmsAccessService access, ILmsProgramNotifier notifier,
-			IEventAggregator events)
+			IEventAggregator events, ILmsCertificationIssuanceService issuance)
 		{
+			_issuance = issuance;
 			_rules = rules;
 			_alerts = alerts;
 			_states = states;
@@ -226,6 +228,7 @@ namespace Resgrid.Services
 						{
 							mine.Add(next);
 							result.Renewed++;
+							await LedgerAsync(departmentId, record, next, cancellationToken);
 							Audit(departmentId, null, AuditLogTypes.LmsCertificationCycleAutoRenewed,
 								JsonConvert.SerializeObject(new { record.PersonnelCertificationId, record.RecievedOn, record.ExpiresOn, CreditedHours = hours }),
 								JsonConvert.SerializeObject(new { next.PersonnelCertificationId, next.RecievedOn, next.ExpiresOn, next.Status, Mode = (LmsAutoRenewModes)rule.AutoRenewMode }));
@@ -268,6 +271,45 @@ namespace Resgrid.Services
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Round 9A: the next cycle goes in the issuance ledger with the learning records behind the hours that met renewal, so voiding one of
+		/// them (the hours no longer met) withdraws the next cycle again. Non-fatal: the renewal stands when the ledger cannot be written.
+		/// </summary>
+		private async Task LedgerAsync(int departmentId, PersonnelCertification previous, PersonnelCertification next, CancellationToken cancellationToken)
+		{
+			if (_issuance == null)
+				return;
+			try
+			{
+				var credits = await _certifications.GetCertificationCreditsAsync(previous.PersonnelCertificationId) ?? new List<PersonnelCertificationCredit>();
+				await _issuance.RecordAsync(new LmsCertificationIssuance
+				{
+					DepartmentId = departmentId,
+					UserId = next.UserId,
+					PersonnelCertificationId = next.PersonnelCertificationId,
+					DepartmentCertificationTypeId = next.DepartmentCertificationTypeId ?? previous.DepartmentCertificationTypeId ?? 0,
+					Source = (int)LmsCertificationIssueSources.CycleAutoRenew,
+					SourceRefId = LmsCertificationIssuanceRules.CycleRef(previous.PersonnelCertificationId),
+					Action = (int)LmsCertificationIssueActions.NextCycle,
+					NewStatus = next.Status,
+					NewExpiresOn = next.ExpiresOn?.Date,
+					BasisRecordIds = LmsCertificationIssuanceRules.FormatIds(credits.Where(c => c.LearningRecordId.HasValue).Select(c => c.LearningRecordId.Value)),
+					CompletedOn = DateTime.UtcNow,
+					IssuedOn = DateTime.UtcNow,
+					IssuedByUserId = "system",
+					State = (int)LmsCertificationIssuanceStates.Live
+				}, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"The next cycle {next.PersonnelCertificationId} could not be written to the issuance ledger.");
+			}
 		}
 
 		private static string Key(DateTime date) => date.ToString("yyyyMMdd", CultureInfo.InvariantCulture);

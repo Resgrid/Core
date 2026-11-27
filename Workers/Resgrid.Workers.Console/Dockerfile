@@ -2,6 +2,12 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 ARG BUILD_VERSION=3.5.0
 
+## Static ffmpeg/ffprobe for worker 87 (LMS hosted video: HLS plus one MP4
+## rendition, LmsConfig.FfmpegExecutable / FfprobeExecutable). Same pinned
+## registry image as Web/Resgrid.Web.Tts/Dockerfile (see its note on why it is
+## not curl'd from johnvansickle.com); keep the two digests in step.
+FROM mwader/static-ffmpeg:7.1@sha256:a8090df5f5608daef387e1b2e93b98aaacb4d92153ad904e7d715c725724fca4 AS ffmpeg
+
 ## Workers.Console transitively requires the ASP.NET Core shared framework
 ## (OpenIddict + the shared Services/Providers projects FrameworkReference
 ## Microsoft.AspNetCore.App), so the runtime-only "dhi.io/dotnet" image fails at
@@ -72,6 +78,18 @@ RUN apt-get update \
     && ldd /usr/local/bin/wkhtmltopdf | awk '/=>/ {print $3}' | while read lib; do cp "$lib" /tmp/wkdeps/; done \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+## The static binaries need no shared libraries. Fail the build here, not at
+## transcode time, if they do not run or lack what worker 87's arguments use
+## (FfmpegLmsVideoTranscoder: libx264, aac, the hls muxer).
+COPY --from=ffmpeg /ffmpeg /usr/local/bin/ffmpeg
+COPY --from=ffmpeg /ffprobe /usr/local/bin/ffprobe
+RUN set -eu; \
+    chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
+    && /usr/local/bin/ffprobe -version > /dev/null \
+    && /usr/local/bin/ffmpeg -hide_banner -encoders | grep -q ' libx264 ' \
+    && /usr/local/bin/ffmpeg -hide_banner -encoders | grep -q ' aac ' \
+    && /usr/local/bin/ffmpeg -hide_banner -muxers | grep -q ' hls '
+
 ## The hardened DHI image marks tzdata as installed (dpkg) but ships none of the
 ## zone files, so a plain "apt-get install tzdata" is a no-op. --reinstall forces
 ## re-extraction; the test asserts the zone files are really present so the build
@@ -90,6 +108,10 @@ COPY --from=publish /usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
 COPY --from=publish /tmp/wkdeps/ /usr/local/lib/wkhtmltopdf/
 COPY --from=publish /etc/fonts/ /etc/fonts/
 COPY --from=publish /usr/share/fonts/ /usr/share/fonts/
+
+## ffmpeg/ffprobe for worker 87, on PATH so LmsConfig's "ffmpeg"/"ffprobe" defaults resolve
+COPY --from=publish /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
+COPY --from=publish /usr/local/bin/ffprobe /usr/local/bin/ffprobe
 
 ## Copy the IANA timezone database. DHI/distroless bases ship without tzdata,
 ## so TimeZoneInfo (and TZConvert) can't resolve any zone -> TimeZoneNotFoundException.

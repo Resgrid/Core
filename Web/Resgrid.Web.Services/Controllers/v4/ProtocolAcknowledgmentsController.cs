@@ -37,9 +37,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IMfaPolicyService _mfaPolicy;
 		private readonly IProtocolLearningExtensions _learning;
 
+		private readonly IStepUpCapabilityService _stepUp;
+
 		public ProtocolAcknowledgmentsController(IProtocolAccessService access, IProtocolAcknowledgmentService acknowledgments, IProtocolDocumentService documents,
-			IProtocolLibraryService library, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy, IProtocolLearningExtensions learning)
+			IProtocolLibraryService library, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy, IProtocolLearningExtensions learning,
+			IStepUpCapabilityService stepUp)
 		{
+			_stepUp = stepUp;
 			_learning = learning;
 			_access = access;
 			_acknowledgments = acknowledgments;
@@ -137,6 +141,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var proof = await ApiSignatureProof.BuildAsync(HttpContext, UserId, DepartmentId, _evidence, _mfaPolicy, cancellationToken);
 			var outcome = await _acknowledgments.AcknowledgeAsync(reader, input.ProtocolVersionId, input.ContentHash, proof, input.Offline, null, cancellationToken);
+			// The department requires a step-up for read-and-sign: the one refusal (403 step_up_required, area acknowledgments).
+			if (outcome.Outcome == ProtocolAcknowledgeOutcomes.StepUpRequired)
+				return await ApiStepUp.RefuseAsync(HttpContext, _stepUp, DepartmentId, UserId, Model.Security.StepUpArea.Acknowledgments, cancellationToken);
 
 			var result = new AcknowledgeProtocolResult
 			{

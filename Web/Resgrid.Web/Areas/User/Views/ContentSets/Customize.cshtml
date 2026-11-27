@@ -1,0 +1,67 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetCustomizeModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3, subscriber: the department's own changes to a protocol copy. Only the blocks the publisher left customizable (or every block of
+    an open item) can be replaced, and local blocks can be added at the end; locked blocks are shown read-only. Saving puts the changes into force
+    now and they are kept on every later update for as long as the publisher keeps the block.
+*@
+@{
+    var view = Model.View;
+    ViewBag.Title = "Resgrid | " + view.Title;
+    ViewData["Title"] = view.Title;
+    ViewData["Subtitle"] = text["CustomizeIntro"].Value;
+    ViewData["SetSection"] = "Protocols";
+    var additions = view.Additions.ToList();
+    // One empty slot for a new local block, up to the most a copy may carry.
+    if (view.AllowsAdditions && additions.Count < ContentSetLocalCustomization.MaxAdditions)
+    {
+        additions.Add(string.Empty);
+    }
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="post" asp-action="Customize" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@view.Copy.ContentSetCopyId" />
+        @foreach (var block in view.Blocks)
+        {
+            <div class="ibox">
+                <div class="ibox-title"><h5>@block.Label</h5>
+                    <span class="label @(block.Customizable ? "label-success" : "label-default") pull-right">@(block.Customizable ? text["BlockCustomizable"] : text["BlockLocked"])</span></div>
+                <div class="ibox-content">
+                    <div class="rgw-protocol-content small">@Html.ProtocolContent(block.PublisherHtml)</div>
+                    @if (block.Customizable)
+                    {
+                        <div class="form-group">
+                            <label class="control-label" for="override-@block.Key">@text["LocalVersionLabel"]</label>
+                            <textarea id="override-@block.Key" name="overrides[@block.Key]" class="form-control" rows="4">@block.LocalHtml</textarea>
+                            <span class="help-block small">@text["LocalVersionHelp"]</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        @if (view.AllowsAdditions)
+        {
+            <div class="ibox">
+                <div class="ibox-title"><h5>@text["AdditionsHeader"]</h5></div>
+                <div class="ibox-content">
+                    <p class="small text-muted">@text["AdditionsHelp"]</p>
+                    @for (var i = 0; i < additions.Count; i++)
+                    {
+                        <div class="form-group">
+                            <label class="sr-only" for="addition-@i">@text["AdditionsHeader"]</label>
+                            <textarea id="addition-@i" name="additions" class="form-control" rows="3">@additions[i]</textarea>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        <button type="submit" class="btn btn-primary" data-confirm="@text["CustomizeConfirm"]"><i class="fa fa-save" aria-hidden="true"></i> @text["CustomizeSaveButton"]</button>
+        <a class="btn btn-white" asp-action="Index" asp-route-kind="0">@commonLocalizer["Cancel"]</a>
+    </form>
+</div>

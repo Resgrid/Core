@@ -468,6 +468,12 @@ namespace Resgrid.Services
 						}
 					}
 				}
+
+				// Catalog 39: the protocols on the call (case record, questionnaire in words, override and removal reasons) ride the same
+				// batch, so every surface that populates Protocols and resolves the call is covered.
+				if (result.Call.Protocols != null)
+					foreach (var protocol in result.Call.Protocols.Where(p => p != null))
+						CollectTextSlots(result, slots, ContentProtectedFields.CallProtocols, protocol, protocol.CallProtocolId.ToString(CultureInfo.InvariantCulture));
 			}
 
 			await ResolveSlotsAsync(departmentId, grantToken, userId, results, slots, cancellationToken);

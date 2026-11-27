@@ -1,0 +1,221 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsExports
+@model LmsCeReportingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExports.LmsExports> localizer
+@*
+    Trainings → Programs → CE reporting (T5): the CAPCE completion file for a CAPCE-accredited department, state CE files (Florida's CE Broker
+    layout; the configurable CSV fallback elsewhere) and the state-ready roster, with a preview, and the settings they read (setting 148).
+    Files only: Resgrid submits nothing to CAPCE or a state, and it is not an accreditor.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Ce.Title"];
+    ViewData["Title"] = localizer["Ce.Title"].Value;
+    ViewData["Subtitle"] = localizer["Ce.Intro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var s = Model.Settings;
+    var r = Model.Request;
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView { BannerTitle = commonLocalizer["AdpProtectedCertifications"] };
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.CanAuthor)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Ce.LapsedNotice"]</div>
+    }
+    <div class="alert alert-warning" role="note"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["Ce.Disclaimer"]</div>
+    @if (Model.ProtectionEnforced)
+    {
+        <partial name="_AdpRevealBanner" model="adpReveal" />
+    }
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer["Ce.BuildTitle"]</h5></div>
+        <div class="ibox-content">
+            <form method="get" asp-controller="LmsExports" asp-action="CePreview" asp-route-area="User">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="key">@localizer["Ce.ExporterLabel"]</label>
+                        <select id="key" name="key" class="form-control">
+                            @foreach (var exporter in Model.Exporters)
+                            {
+                                <option value="@exporter.Key" selected="@(string.Equals(r.ExporterKey, exporter.Key, StringComparison.OrdinalIgnoreCase))">@localizer[exporter.NameKey]</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="from">@localizer["Ce.From"]</label>
+                        <input id="from" name="from" type="date" class="form-control" value="@r.FromLocal.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="to">@localizer["Ce.To"]</label>
+                        <input id="to" name="to" type="date" class="form-control" value="@r.ToLocal.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryId">@localizer["Ce.Category"]</label>
+                        <select id="categoryId" name="categoryId" class="form-control">
+                            <option value="">@localizer["Ce.AllCategories"]</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.TrainingCategoryId" selected="@(r.CategoryId == category.TrainingCategoryId)">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="checkbox">
+                    <label for="former"><input id="former" type="checkbox" name="former" value="true" checked="@r.IncludeFormerMembers" /> @localizer["Ce.IncludeFormer"]</label>
+                    <input type="hidden" name="former" value="false" />
+                </div>
+                <div class="rgw-toolbar">
+                    <button type="submit" class="btn btn-white"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Ce.Preview"]</button>
+                    <button type="submit" id="ce-download" class="btn btn-primary" formaction="@Url.Action("CeDownload", "LmsExports", new { area = "User" })"><i class="fa fa-download" aria-hidden="true"></i> @localizer["Ce.Download"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (Model.Preview != null && Model.Preview.Problem == null)
+    {
+        var preview = Model.Preview;
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-table" aria-hidden="true"></i> @localizer[preview.Exporter.NameKey]</h5></div>
+            <div class="ibox-content">
+                <p>@string.Format(localizer["Ce.PreviewCount"].Value, preview.Rows.Count, Math.Min(preview.Rows.Count, Model.PreviewRows))</p>
+                @if (!preview.Exporter.HeaderRow)
+                {
+                    <p class="help-block">@localizer["Ce.NoHeaderRow"]</p>
+                }
+                @foreach (var (header, missing) in preview.MissingValues)
+                {
+                    <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-circle" aria-hidden="true"></i> @string.Format(localizer["Ce.Missing"].Value, missing, header)</div>
+                }
+                @if (preview.Rows.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table rgw-table table-condensed">
+                            <thead><tr>@foreach (var header in preview.Headers)
+                            {
+                                <th scope="col">@header</th>
+                            }</tr></thead>
+                            <tbody>
+                                @foreach (var row in preview.Rows.Take(Model.PreviewRows))
+                                {
+                                    <tr>@foreach (var cell in row)
+                                    {
+                                        <td>@cell</td>
+                                    }</tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <h3>@localizer["Ce.ExportersTitle"]</h3>
+    <div class="rgw-card-grid m-b-md">
+        @foreach (var exporter in Model.Exporters)
+        {
+            <div class="rgw-card">
+                <h4>@localizer[exporter.NameKey]</h4>
+                <p class="rgw-card-meta">
+                    <span class="label @(exporter.LayoutVerified ? "label-primary" : "label-default")">@(exporter.LayoutVerified ? localizer["Ce.LayoutVerified"] : localizer["Ce.LayoutFallback"])</span>
+                    @if (Model.Settings.HasCustomColumns(exporter.Key))
+                    {
+                        <span class="label label-info">@localizer["Ce.CustomColumns"]</span>
+                    }
+                </p>
+                <p>@localizer[exporter.NoteKey]</p>
+                <a class="btn btn-white btn-sm" asp-controller="LmsExports" asp-action="CeColumns" asp-route-area="User" asp-route-key="@exporter.Key"><i class="fa fa-columns" aria-hidden="true"></i> @localizer["Ce.Columns"]</a>
+            </div>
+        }
+    </div>
+
+    <form method="post" asp-controller="LmsExports" asp-action="CeSettings" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-cog" aria-hidden="true"></i> @localizer["Ce.SettingsTitle"]</h5></div>
+            <div class="ibox-content">
+                <p class="help-block">@localizer["Ce.SettingsIntro"]</p>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="CapceProviderNumber">@localizer["Ce.Set.CapceProviderNumber"]</label>
+                        <input id="CapceProviderNumber" name="capceProviderNumber" class="form-control" maxlength="40" value="@s.CapceProviderNumber" disabled="@(!Model.CanConfigure)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="CapceProviderName">@localizer["Ce.Set.CapceProviderName"]</label>
+                        <input id="CapceProviderName" name="capceProviderName" class="form-control" maxlength="200" value="@s.CapceProviderName" disabled="@(!Model.CanConfigure)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="CeBrokerProviderNumber">@localizer["Ce.Set.CeBrokerProviderNumber"]</label>
+                        <input id="CeBrokerProviderNumber" name="ceBrokerProviderNumber" class="form-control" maxlength="40" value="@s.CeBrokerProviderNumber" disabled="@(!Model.CanConfigure)" />
+                    </div>
+                </div>
+                <p class="help-block">@localizer["Ce.Set.IdentifiersHelp"]</p>
+                <div class="rgw-grid">
+                    @foreach (var (field, label, value) in new[] { ("licenseCertificationTypeId", "Ce.Set.LicenseType", s.LicenseCertificationTypeId), ("nremtCertificationTypeId", "Ce.Set.NremtType", s.NremtCertificationTypeId), ("nemsidCertificationTypeId", "Ce.Set.NemsidType", s.NemsidCertificationTypeId) })
+                    {
+                        <div class="form-group">
+                            <label for="@field">@localizer[label]</label>
+                            <select id="@field" name="@field" class="form-control" disabled="@(!Model.CanConfigure)">
+                                <option value="0">@localizer["Ce.Set.NoType"]</option>
+                                @foreach (var type in Model.CertificationTypes)
+                                {
+                                    <option value="@type.DepartmentCertificationTypeId" selected="@(value == type.DepartmentCertificationTypeId)">@type.Type</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                </div>
+                @if (Model.CanConfigure)
+                {
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Ce.Save"]</button>
+                }
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    @if (Model.ProtectionEnforced)
+    {
+        <script type="text/javascript">
+            // ADP: licence, NREMT/NEMSID and member numbers are protected. With script the download is fetched with the grant (step-up first when
+            // none is live) so an officer gets them as recorded; a plain download (no script) carries them REDACTED, never as ciphertext.
+            (function () {
+                var pending = null;
+                function fileName(form) {
+                    var data = new FormData(form);
+                    return (data.get('key') || 'ce') + '-' + (data.get('from') || '') + '-' + (data.get('to') || '') + '.csv';
+                }
+                function url(form, button) {
+                    var query = new URLSearchParams(new FormData(form));
+                    return button.getAttribute('formaction') + '?' + query.toString();
+                }
+                window.resgridAdpPageRevealed = function () {
+                    if (pending) { var next = pending; pending = null; resgridAdpReveal.download(next.url, next.name, function (message) { alert(message); }); }
+                };
+                document.getElementById('ce-download').addEventListener('click', function (e) {
+                    e.preventDefault();
+                    var button = e.currentTarget, form = button.form;
+                    var request = { url: url(form, button), name: fileName(form) };
+                    if (resgridAdpReveal.hasLiveGrant()) {
+                        resgridAdpReveal.download(request.url, request.name, function (message) { alert(message); });
+                        return;
+                    }
+                    pending = request;
+                    document.getElementById('adpRevealButton').click();
+                });
+            })();
+        </script>
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
+}

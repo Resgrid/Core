@@ -3,6 +3,7 @@
 @using Resgrid.Web.Areas.User.Models.Courses
 @model CourseDetailModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> recordLocalizer
 @* One course for its owners and managers: catalog fields, versions, the version in force with its reports, assignments, owners. *@
 @{
     var course = Model.Course;
@@ -19,6 +20,8 @@
 @await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
 
 <div class="wrapper wrapper-content rgw-page">
+    @* Round 10 A3: a copy managed by a subscribed course set (publisher, lock, propose a change). *@
+    @await Component.InvokeAsync("ContentSetCopyBanner", new { kind = (int)Resgrid.Model.ContentSetItemKinds.LmsCourse, localId = Model.Course.LmsCourseId })
     <div class="rgw-toolbar m-b-sm">
         @if (Model.Rights.Edit)
         {
@@ -34,6 +37,11 @@
                 </form>
             }
         }
+        @if (Model.Rights.Edit)
+        {
+            @* T5: the course's practice flashcards (drafting needs Enhanced AI; the page says so when it is off). *@
+            <a class="btn btn-white" asp-controller="LmsStudio" asp-action="Flashcards" asp-route-area="User" asp-route-id="@course.LmsCourseId"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Studio.FlashcardsButton"]</a>
+        }
         <span class="rgw-toolbar-spacer"></span>
         @if (Model.Rights.Publish && course.Status != (int)ProtocolStatuses.Retired)
         {
@@ -43,6 +51,9 @@
             </form>
         }
     </div>
+
+    @* T5: where the course came from (a starter's attribution, or the source an AI draft cites). *@
+    @await Component.InvokeAsync("LmsCourseOrigin", new { courseId = course.LmsCourseId, showCitations = false })
 
     @if (Model.Current != null)
     {
@@ -102,6 +113,12 @@
                 }
             </div>
         </div>
+    }
+
+    @if (Resgrid.Web.Helpers.ClaimsAuthorizationHelper.CanApplyTrainingCompletions() && course.Status == (int)ProtocolStatuses.Published)
+    {
+        @* Round 7B (permission 135): record that members completed this course together. *@
+        <p><a class="btn btn-default btn-sm" asp-controller="Courses" asp-action="RecordCompletions" asp-route-area="User" asp-route-targetId="@course.LmsCourseId"><i class="fa fa-check-circle-o" aria-hidden="true"></i> @recordLocalizer["RecordCompletions.Title"]</a></p>
     }
 
     @if (Model.Enrollments.Count > 0)

@@ -152,6 +152,17 @@
             }
         </div>
     </div>
+
+    @* 2026-11-26: the wellness team - who holds each wellness role, their certification status and who acts. *@
+    @if (Model.Roster.Count > 0)
+    {
+        <div class="ibox float-e-margins m-t-sm">
+            <div class="ibox-title"><h5><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["RoleCertificationHeader"]</h5></div>
+            <div class="ibox-content">
+                @await Html.PartialAsync("_Roster", new WellnessRosterView { Roster = Model.Roster, Names = Model.Names, Department = Model.Department })
+            </div>
+        </div>
+    }
 </div>
 
 @section Styles {

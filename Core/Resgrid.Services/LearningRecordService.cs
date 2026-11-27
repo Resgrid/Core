@@ -39,12 +39,14 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _groups;
 		private readonly IShiftsService _shifts;
 		private readonly IEventAggregator _events;
+		private readonly IRecordAttachmentScanner _scanner;
 
 		public LearningRecordService(ILearningRecordsRepository records, ILearningRecordFilesRepository files, ITrainingCategoriesRepository categories,
 			ICategoryCreditMappingsRepository mappings, ILearningRecordBackfillsRepository backfills, ILearningRecordWriter writer, ICertificationService certifications,
 			IPersonnelCertificationRepository certificationRecords, IPersonnelCertificationCreditsRepository credits, IDepartmentSettingsService settings,
-			IDepartmentsService departments, IDepartmentGroupsService groups, IShiftsService shifts, IEventAggregator events)
+			IDepartmentsService departments, IDepartmentGroupsService groups, IShiftsService shifts, IEventAggregator events, IRecordAttachmentScanner scanner)
 		{
+			_scanner = scanner;
 			_records = records;
 			_files = files;
 			_categories = categories;
@@ -110,7 +112,17 @@ namespace Resgrid.Services
 
 		#region Member and officer actions
 
-		public async Task<LearningRecord> SubmitExternalAsync(int departmentId, string userId, LearningRecordDraft draft, string fileName, string contentType, byte[] data,
+		public Task<LearningRecord> SubmitExternalAsync(int departmentId, string userId, LearningRecordDraft draft, string fileName, string contentType, byte[] data,
+			CancellationToken cancellationToken = default)
+		{
+			// T1's single-file form: one evidence upload through the round-9B path (checked, cleaned, scanned and linked like any other).
+			var evidence = data != null && data.Length > 0
+				? new[] { new TrainingEvidenceUpload { FileName = fileName, ContentType = contentType, Data = data } }
+				: Array.Empty<TrainingEvidenceUpload>();
+			return SubmitExternalAsync(departmentId, userId, draft, evidence, cancellationToken);
+		}
+
+		public async Task<LearningRecord> SubmitExternalAsync(int departmentId, string userId, LearningRecordDraft draft, IReadOnlyList<TrainingEvidenceUpload> evidence,
 			CancellationToken cancellationToken = default)
 		{
 			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId) || draft == null)
@@ -129,24 +141,12 @@ namespace Resgrid.Services
 			if (draft.CategoryId.HasValue && !await IsLiveCategoryAsync(departmentId, draft.CategoryId.Value))
 				throw new InvalidOperationException("learning_record_category_invalid");
 
-			int? fileId = null;
-			if (data != null && data.Length > 0)
-			{
-				if (data.Length > LearningRecordFile.MaxBytes)
-					throw new InvalidOperationException("learning_record_file_too_large");
-
-				var file = await _files.InsertAsync(new LearningRecordFile
-				{
-					DepartmentId = departmentId,
-					UserId = userId,
-					FileName = LearningRecordRules.Trim(System.IO.Path.GetFileName(fileName ?? "evidence"), 255) ?? "evidence",
-					ContentType = LearningRecordRules.Trim(contentType, 100),
-					Data = data,
-					UploadedOn = DateTime.UtcNow,
-					UploadedByUserId = userId
-				}, cancellationToken, true);
-				fileId = file?.LearningRecordFileId;
-			}
+			// Round 9B: every file is checked, cleaned and scanned before anything is stored.
+			var files = await CheckEvidenceAsync(evidence, 0, cancellationToken);
+			var reviewRequired = TrainingSubmissionRules.RequiresReview(settings, draft.CategoryId, draft.Hours);
+			var now = DateTime.UtcNow;
+			var fileIds = await StoreEvidenceAsync(departmentId, userId, files, null, now, cancellationToken);
+			int? fileId = fileIds.Count > 0 ? fileIds[0] : (int?)null;
 
 			var submission = new LearningRecordDraft
 			{
@@ -167,7 +167,10 @@ namespace Resgrid.Services
 				InstructorNames = draft.InstructorNames,
 				ExternalId = draft.ExternalId,
 				Notes = draft.Notes,
-				Status = LearningRecordStatuses.Pending,
+				// Round 9B: waits for a reviewer when the department asks for it; otherwise counts at once as self-reported (credits follow).
+				Status = reviewRequired ? LearningRecordStatuses.Pending : LearningRecordStatuses.Verified,
+				ReviewState = (int)(reviewRequired ? TrainingSubmissionReviewStates.AwaitingReview : TrainingSubmissionReviewStates.SelfReported),
+				SubmittedOn = now,
 				EvidenceFileId = fileId
 			};
 
@@ -175,8 +178,148 @@ namespace Resgrid.Services
 				new[] { submission }, userId, cancellationToken);
 			var record = result.Records.FirstOrDefault();
 			if (record != null)
+			{
+				if (fileIds.Count > 0)
+					await _files.LinkToRecordAsync(departmentId, fileIds, record.LearningRecordId, cancellationToken);
 				Audit(departmentId, userId, AuditLogTypes.ExternalTrainingSubmitted, null, Snapshot(record));
+			}
 			return record;
+		}
+
+		/// <summary>Round 9B: checks, cleans and scans one upload's files (TrainingEvidencePolicy, then the attachment scanner); throws the refusal code.</summary>
+		private async Task<List<TrainingEvidenceCheck>> CheckEvidenceAsync(IReadOnlyList<TrainingEvidenceUpload> evidence, int alreadyStored, CancellationToken cancellationToken)
+		{
+			var uploads = (evidence ?? Array.Empty<TrainingEvidenceUpload>()).Where(u => u?.Data != null && u.Data.Length > 0).ToList();
+			var refusal = TrainingEvidencePolicy.CheckUpload(uploads, alreadyStored);
+			if (refusal != null)
+				throw new InvalidOperationException(refusal);
+
+			var result = new List<TrainingEvidenceCheck>();
+			foreach (var upload in uploads)
+			{
+				var check = TrainingEvidencePolicy.Check(upload);
+				if (check.Refusal != null)
+					throw new InvalidOperationException(check.Refusal);
+
+				var scan = (_scanner == null ? null : await _scanner.ScanAsync(check.File.FileName, check.File.ContentType, check.File.Data, cancellationToken)) ?? new RecordAttachmentScanResult();
+				if (scan.State == RmsAttachmentScanState.Rejected)
+					throw new InvalidOperationException(TrainingEvidencePolicy.ScannerRejected);
+				check.ScanState = (int)scan.State;
+				result.Add(check);
+			}
+
+			return result;
+		}
+
+		/// <summary>Round 9B: stores checked files (linked to the record when it exists already); returns their ids in upload order.</summary>
+		private async Task<List<int>> StoreEvidenceAsync(int departmentId, string userId, IEnumerable<TrainingEvidenceCheck> files, int? learningRecordId, DateTime now,
+			CancellationToken cancellationToken)
+		{
+			var ids = new List<int>();
+			foreach (var check in files ?? Enumerable.Empty<TrainingEvidenceCheck>())
+			{
+				var stored = await _files.InsertAsync(new LearningRecordFile
+				{
+					DepartmentId = departmentId,
+					UserId = userId,
+					FileName = LearningRecordRules.Trim(check.File.FileName, 255) ?? "evidence",
+					ContentType = LearningRecordRules.Trim(check.File.ContentType, 100),
+					Data = check.File.Data,
+					UploadedOn = now,
+					UploadedByUserId = userId,
+					LearningRecordId = learningRecordId,
+					SizeBytes = check.File.Data.LongLength,
+					Sha256 = check.Sha256,
+					EvidenceKind = check.File.Kind,
+					ScanState = check.ScanState
+				}, cancellationToken, true);
+				if (stored != null && stored.LearningRecordFileId > 0)
+					ids.Add(stored.LearningRecordFileId);
+			}
+
+			return ids;
+		}
+
+		public async Task<LearningRecord> RequestInfoAsync(int departmentId, int learningRecordId, string officerUserId, string note, CancellationToken cancellationToken = default)
+		{
+			var text = TrainingSubmissionRules.Note(note);
+			if (text == null)
+				throw new InvalidOperationException("learning_record_note_required");
+
+			var record = await RequirePendingAsync(departmentId, learningRecordId, officerUserId);
+			if (!TrainingSubmissionRules.IsSubmission(record))
+				throw new InvalidOperationException("learning_record_not_submission");
+			if (!TrainingSubmissionRules.IsAwaitingReview(record))
+				throw new InvalidOperationException("learning_record_not_awaiting_review");
+
+			var before = Snapshot(record);
+			record.ReviewState = (int)TrainingSubmissionReviewStates.InfoRequested;
+			record.ReviewNote = text;
+			await _records.UpdateColumnsAsync(record, new[] { "ReviewState", "ReviewNote" }, cancellationToken);
+			Audit(departmentId, officerUserId, AuditLogTypes.TrainingSubmissionInfoRequested, before, Snapshot(record));
+			return record;
+		}
+
+		public async Task<LearningRecord> ResubmitAsync(int departmentId, int learningRecordId, string userId, TrainingSubmissionCorrection correction,
+			IReadOnlyList<TrainingEvidenceUpload> evidence, CancellationToken cancellationToken = default)
+		{
+			var record = departmentId <= 0 ? null : await _records.GetByIdForDepartmentAsync(departmentId, learningRecordId);
+			// Only the member's own submission; anybody else's reads as not found.
+			if (record == null || record.DepartmentId != departmentId || !TrainingSubmissionRules.IsSubmission(record) ||
+				!string.Equals(record.UserId, userId, StringComparison.OrdinalIgnoreCase))
+				throw new InvalidOperationException("learning_record_not_found");
+			if (record.Status != (int)LearningRecordStatuses.Pending)
+				throw new InvalidOperationException("learning_record_not_pending");
+
+			var before = Snapshot(record);
+			var columns = new List<string> { "ReviewState", "SubmittedOn" };
+			if (correction?.Hours.HasValue == true)
+			{
+				if (correction.Hours.Value <= 0 || correction.Hours.Value > MaxHours)
+					throw new InvalidOperationException("learning_record_hours_invalid");
+				record.Hours = Math.Round(correction.Hours.Value, 2, MidpointRounding.AwayFromZero);
+				columns.Add("Hours");
+			}
+			if (correction?.CeHours.HasValue == true)
+			{
+				if (correction.CeHours.Value < 0 || correction.CeHours.Value > MaxHours)
+					throw new InvalidOperationException("learning_record_hours_invalid");
+				record.CeHours = Math.Round(correction.CeHours.Value, 2, MidpointRounding.AwayFromZero);
+				columns.Add("CeHours");
+			}
+			if (correction?.CategoryId.HasValue == true)
+			{
+				if (correction.CategoryId.Value > 0 && !await IsLiveCategoryAsync(departmentId, correction.CategoryId.Value))
+					throw new InvalidOperationException("learning_record_category_invalid");
+				record.CategoryId = correction.CategoryId.Value > 0 ? correction.CategoryId : null;
+				columns.Add("CategoryId");
+			}
+
+			var stored = await _files.GetForRecordsAsync(departmentId, new[] { record.LearningRecordId }) ?? new List<LearningRecordFile>();
+			var files = await CheckEvidenceAsync(evidence, stored.Count, cancellationToken);
+			var now = DateTime.UtcNow;
+			var fileIds = await StoreEvidenceAsync(departmentId, record.UserId, files, record.LearningRecordId, now, cancellationToken);
+			if (!record.EvidenceFileId.HasValue && fileIds.Count > 0)
+			{
+				record.EvidenceFileId = fileIds[0];
+				columns.Add("EvidenceFileId");
+			}
+
+			// An answer to a request for more information goes back in line now; evidence added while it still waits keeps its place.
+			if (TrainingSubmissionRules.StateOf(record) != TrainingSubmissionReviewStates.AwaitingReview || !record.SubmittedOn.HasValue)
+				record.SubmittedOn = now;
+			record.ReviewState = (int)TrainingSubmissionReviewStates.AwaitingReview;
+			await _records.UpdateColumnsAsync(record, columns, cancellationToken);
+			Audit(departmentId, userId, AuditLogTypes.TrainingSubmissionResubmitted, before, Snapshot(record));
+			return record;
+		}
+
+		public async Task<List<LearningRecordFile>> GetEvidenceFilesAsync(int departmentId, IEnumerable<int> learningRecordIds)
+		{
+			var ids = learningRecordIds?.Where(i => i > 0).Distinct().ToList() ?? new List<int>();
+			if (departmentId <= 0 || ids.Count == 0)
+				return new List<LearningRecordFile>();
+			return (await _files.GetForRecordsAsync(departmentId, ids) ?? new List<LearningRecordFile>()).Where(f => f != null && f.DepartmentId == departmentId).ToList();
 		}
 
 		public async Task<LearningRecord> VerifyAsync(int departmentId, int learningRecordId, string officerUserId, string note, decimal? hours,
@@ -197,10 +340,18 @@ namespace Resgrid.Services
 				record.Hours = Math.Round(hours.Value, 2, MidpointRounding.AwayFromZero);
 				columns.Add("Hours");
 			}
+			// Round 9B: a member submission says it was approved (a reviewed record, not a self-reported one).
+			if (TrainingSubmissionRules.IsSubmission(record))
+			{
+				record.ReviewState = (int)TrainingSubmissionReviewStates.Approved;
+				columns.Add("ReviewState");
+			}
 
 			await _records.UpdateColumnsAsync(record, columns, cancellationToken);
 			await _writer.ApplyCreditsAsync(record, false, officerUserId, cancellationToken);
 			Audit(departmentId, officerUserId, AuditLogTypes.LearningRecordVerified, before, Snapshot(record));
+			// Round 9A: a verified submission can complete a certification's requirements (CE hours, an outside course).
+			await _writer.NotifyChangedAsync(departmentId, new[] { record }, null, officerUserId, cancellationToken);
 			return record;
 		}
 
@@ -212,7 +363,13 @@ namespace Resgrid.Services
 			record.ReviewNote = LearningRecordRules.Trim(note, 1000);
 			record.VerifiedByUserId = officerUserId;
 			record.VerifiedOn = DateTime.UtcNow;
-			await _records.UpdateColumnsAsync(record, new[] { "Status", "ReviewNote", "VerifiedByUserId", "VerifiedOn" }, cancellationToken);
+			var columns = new List<string> { "Status", "ReviewNote", "VerifiedByUserId", "VerifiedOn" };
+			if (TrainingSubmissionRules.IsSubmission(record))
+			{
+				record.ReviewState = (int)TrainingSubmissionReviewStates.Denied;
+				columns.Add("ReviewState");
+			}
+			await _records.UpdateColumnsAsync(record, columns, cancellationToken);
 			Audit(departmentId, officerUserId, AuditLogTypes.LearningRecordRejected, before, Snapshot(record));
 			return record;
 		}
@@ -248,6 +405,8 @@ namespace Resgrid.Services
 			record.VoidReason = reason;
 			await _writer.RemoveCreditsAsync(record, officerUserId, cancellationToken);
 			Audit(departmentId, officerUserId, AuditLogTypes.LearningRecordVoided, before, Snapshot(record));
+			// Round 9A: a certification this record issued, renewed or kept (its hours) goes back unless another completion still covers it.
+			await _writer.NotifyChangedAsync(departmentId, null, new[] { record }, officerUserId, cancellationToken);
 			return true;
 		}
 
@@ -270,6 +429,7 @@ namespace Resgrid.Services
 			{
 				record.Status = (int)LearningRecordStatuses.Voided;
 				await _writer.RemoveCreditsAsync(record, officerUserId, cancellationToken);
+				await _writer.NotifyChangedAsync(departmentId, null, new[] { record }, officerUserId, cancellationToken);
 			}
 
 			Audit(departmentId, officerUserId, AuditLogTypes.LearningRecordDuplicateResolved, before, Snapshot(record));
@@ -357,9 +517,13 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<int> ApplyCategoryTemplateAsync(int departmentId, string templateKey, string userId, CancellationToken cancellationToken = default)
+		public Task<int> ApplyCategoryTemplateAsync(int departmentId, string templateKey, string userId, CancellationToken cancellationToken = default) =>
+			ApplyCategoryTemplateAsync(departmentId, templateKey, userId, null, cancellationToken);
+
+		public async Task<int> ApplyCategoryTemplateAsync(int departmentId, string templateKey, string userId, string culture, CancellationToken cancellationToken = default)
 		{
-			var template = TrainingCategoryTemplateCatalog.Find(templateKey);
+			// Round 9C: names and descriptions in the applying user's language (English when none ships); codes match in every language.
+			var template = TrainingCategoryTemplateCatalog.Find(templateKey, culture);
 			if (template == null || departmentId <= 0)
 				throw new InvalidOperationException("learning_record_category_invalid");
 

@@ -75,7 +75,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var type = saved.DepartmentCertificationTypeId.HasValue ? (await _certifications.GetCertificationTypeByIdAsync(saved.DepartmentCertificationTypeId.Value))?.Type : null;
 			var proof = SignatureProof.SessionOnly(UserId, IpAddressHelper.GetRequestIP(Request, true), Request?.Headers["User-Agent"].ToString());
-			proof.StepUpVerifiedOnUtc = HttpContext?.Items["mfa_verified_at"] as DateTime?;
+			Resgrid.Web.Helpers.WebStepUpProof.Apply(proof, HttpContext);
 
 			var signed = await _signatures.SignAsync(new SignatureRequest
 			{
@@ -454,7 +454,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var added = 0; var skipped = new List<string>();
 			foreach (var templateId in (templateIds ?? Array.Empty<string>()).Where(t => !string.IsNullOrWhiteSpace(t)).Distinct())
 			{
-				try { await _certifications.CreateCertificationTypeFromTemplateAsync(DepartmentId, templateId, UserId, cancellationToken); added++; }
+				try { await _certifications.CreateCertificationTypeFromTemplateAsync(DepartmentId, templateId, UserId, CultureInfo.CurrentUICulture.Name, cancellationToken); added++; }
 				catch (InvalidOperationException ex) when (ex.Message.StartsWith("certifications_", StringComparison.Ordinal)) { skipped.Add(CertificationTypeTemplateCatalog.GetById(templateId)?.Code ?? templateId); }
 			}
 			if (skipped.Count > 0)
@@ -751,7 +751,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// verification page), and the verification is recorded with a signature bound to the record's holder, type and dates.
 		/// </summary>
 		[HttpPost, ValidateAntiForgeryToken]
-		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true)]
+		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Signatures)]
 		public async Task<IActionResult> Verify(int id, CancellationToken cancellationToken)
 		{
 			if (!CanManage)

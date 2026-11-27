@@ -78,11 +78,18 @@ namespace Resgrid.Tests.TrainingT3
 		private Mock<ITrainingService> _trainings;
 		private Mock<ICertificationService> _certifications;
 		private Mock<IEventAggregator> _events;
+		private readonly Mock<IContentSetCopyLocks> _setLocks = new Mock<IContentSetCopyLocks>();
 		private List<TrainingWorkflowEvent> _raised;
 		private List<(int CourseId, string UserId)> _enrolled;
 
+		/// <summary>Round 10 A7: the department's LMS seat holders (the learner is seated unless a test says otherwise) and how often they were read.</summary>
+		private Mock<ILmsGateService> _gate;
+		private HashSet<string> _seated;
+		private int _seatReads;
+		private List<LmsActor> _assigners;
+
 		private LmsPathService Service() => new LmsPathService(_paths, _steps, _assignments, _enrollments, _courses, new FakeFacts(_enrollments), _learner.Object, _academy.Object,
-			_entitlements.Object, _audience.Object, _trainings.Object, _certifications.Object, _events.Object);
+			_entitlements.Object, _audience.Object, _trainings.Object, _certifications.Object, _events.Object, _gate.Object, _setLocks.Object);
 
 		[SetUp]
 		public void SetUp()
@@ -101,6 +108,11 @@ namespace Resgrid.Tests.TrainingT3
 			_events = new Mock<IEventAggregator>();
 			_raised = new List<TrainingWorkflowEvent>();
 			_enrolled = new List<(int CourseId, string UserId)>();
+			_seated = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Learner };
+			_seatReads = 0;
+			_assigners = new List<LmsActor>();
+			_gate = new Mock<ILmsGateService>();
+			_gate.Setup(g => g.GetLearnerSeatHoldersAsync(Dept)).ReturnsAsync(() => { _seatReads++; return new HashSet<string>(_seated, StringComparer.OrdinalIgnoreCase); });
 			LmsPathService.ResetSeedMemo();
 			_academy.Setup(a => a.EnsureSeededAsync(It.IsAny<CancellationToken>())).ReturnsAsync(0);
 			_academy.Setup(a => a.Text(It.IsAny<string>(), It.IsAny<string>())).Returns((string key, string _) => key);
@@ -110,6 +122,7 @@ namespace Resgrid.Tests.TrainingT3
 					It.IsAny<string>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((LmsActor a, int course, IEnumerable<IContentAudienceRule> who, DateTime? due, LmsEnrollmentSources source, string key, CancellationToken _) =>
 				{
+					_assigners.Add(a);
 					foreach (var rule in who)
 						_enrolled.Add((course, rule.RefId));
 					return new LmsAssignOutcome { Created = who.Count() };
@@ -207,7 +220,8 @@ namespace Resgrid.Tests.TrainingT3
 			{
 				DepartmentCertificationTypeId = 9, DepartmentId = Dept, Type = "Dispatcher", IsActive = true, AppliesTo = (int)CertificationAppliesTo.Person
 			});
-			_learner.Setup(l => l.IssueOrRenewCertificationAsync(Dept, Learner, 9, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync(555);
+			_learner.Setup(l => l.IssueOrRenewCertificationAsync(Dept, Learner, 9, It.IsAny<DateTime>(), LmsCertificationIssueSources.PathCompletion, It.IsAny<string>(),
+				It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(555);
 			var saved = await Service().SavePathAsync(Actor(), new LmsPathInput
 			{
 				Name = "Dispatcher certification", IssuesCertificationTypeId = 9,
@@ -224,7 +238,9 @@ namespace Resgrid.Tests.TrainingT3
 			var assignment = _assignments.Rows.Single();
 			assignment.CompletedOn.Should().BeCloseTo(Now.AddDays(-1), TimeSpan.FromSeconds(1));
 			assignment.PersonnelCertificationId.Should().Be(555);
-			_learner.Verify(l => l.IssueOrRenewCertificationAsync(Dept, Learner, 9, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once());
+			// Round 9A: a path issues through the ledgered overload (its path reference and step records), so a void can take it back.
+			_learner.Verify(l => l.IssueOrRenewCertificationAsync(Dept, Learner, 9, It.IsAny<DateTime>(), LmsCertificationIssueSources.PathCompletion, It.Is<string>(r => r.StartsWith("lms-path:")),
+				It.IsAny<IReadOnlyCollection<int>>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once());
 			_raised.Count(e => e.Change == TrainingWorkflowChanges.Completed && e.PathId == pathId).Should().Be(1);
 		}
 
@@ -243,5 +259,78 @@ namespace Resgrid.Tests.TrainingT3
 			cycle.Error.Should().Be(LmsErrors.InvalidInput);
 			cycle.Value.Should().Be("Err.PathPrerequisiteNotEarlier");
 		}
-	}
+	
+		#region Round 10 A7 (LMS seats)
+
+		private async Task<int> DepartmentPathAsync(string name = "Engineer onboarding")
+		{
+			var saved = await Service().SavePathAsync(Actor(), new LmsPathInput
+			{
+				Name = name,
+				Steps = new List<LmsPathStepInput> { new LmsPathStepInput { Kind = LmsPathStepKinds.Course, TargetRefId = _courses.Rows[0].LmsCourseId } }
+			});
+			saved.Succeeded.Should().BeTrue();
+			return ((LmsPath)saved.Value).LmsPathId;
+		}
+
+		[Test]
+		public async Task A_member_without_an_lms_seat_is_skipped_from_a_department_path_and_never_told()
+		{
+			var pathId = await DepartmentPathAsync();
+			_seated.Clear();
+
+			var outcome = await Service().AssignAsync(Actor(), pathId, new[] { new ContentAudienceRule(ContentAudienceKinds.User, Learner) }, Now.AddDays(30));
+
+			outcome.Error.Should().Be(LmsErrors.None);
+			outcome.Created.Should().Be(0);
+			outcome.Skipped.Should().ContainSingle(s => s.UserId == Learner && s.Reason == ContentAudienceSkipReasons.NotLicensed);
+			outcome.NotLicensed.Should().Be(1);
+			_assignments.Rows.Should().BeEmpty("§17.4: a member without a seat cannot be put on a department path");
+			_enrolled.Should().BeEmpty();
+			_raised.Should().NotContain(e => e.Change == TrainingWorkflowChanges.Assigned, "nothing is announced to a member who was not assigned");
+
+			// Once a seat is enabled, assigning again (or the requirement's next run) puts them on it.
+			_seated.Add(Learner);
+			(await Service().AssignAsync(Actor(), pathId, new[] { new ContentAudienceRule(ContentAudienceKinds.User, Learner) }, Now.AddDays(30))).Created.Should().Be(1);
+		}
+
+		[Test]
+		public async Task An_academy_role_path_is_assigned_without_a_seat()
+		{
+			await Service().EnsureSystemPathsAsync();
+			var path = _paths.Rows.First(p => p.IsSystem);
+			_seated.Clear();
+
+			var outcome = await Service().AssignAsync(Actor(), path.LmsPathId, new[] { new ContentAudienceRule(ContentAudienceKinds.User, Learner) }, null);
+
+			outcome.Created.Should().Be(1, "the Academy is free: no seat (R-S2)");
+			outcome.NotLicensed.Should().Be(0);
+			_seatReads.Should().Be(0, "an Academy path never asks for seats");
+		}
+
+		[Test]
+		public async Task Advancing_department_paths_reads_the_seats_once_per_run_and_hands_them_to_the_course_assignment()
+		{
+			var first = await DepartmentPathAsync("First");
+			var second = await DepartmentPathAsync("Second");
+			const string other = "seat-test-member-2";
+			_audience.Setup(a => a.ResolveAsync(Dept, It.IsAny<IEnumerable<IContentAudienceRule>>()))
+				.ReturnsAsync(new ContentAudienceResolution { MemberUserIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Learner, other } });
+			_seated.Add(other);
+			foreach (var pathId in new[] { first, second })
+				(await Service().AssignAsync(Actor(), pathId, new[] { new ContentAudienceRule(ContentAudienceKinds.User, Learner) }, null)).Created.Should().Be(2);
+			_enrolled.Clear();
+			_assigners.Clear();
+			_seated.Remove(other);
+			_seatReads = 0;
+
+			await Service().AdvanceDepartmentAsync(Dept, Actor().Gate, Now);
+
+			_seatReads.Should().Be(1, "one seat read for the department's run (R-L9), shared by both paths");
+			_assigners.Should().NotBeEmpty().And.OnlyContain(a => a.SeatHolders != null && a.SeatHolders.Contains(Learner) && !a.SeatHolders.Contains(other),
+				"the learner service skips the member who lost the seat as NotLicensed");
+		}
+
+		#endregion Round 10 A7 (LMS seats)
+}
 }

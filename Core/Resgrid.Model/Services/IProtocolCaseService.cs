@@ -75,7 +75,9 @@ namespace Resgrid.Model.Services
 		OptedOut = 7,
 		/// <summary>Another dispatcher is connected to the thread.</summary>
 		HeldByAnotherDispatcher = 8,
-		SendFailed = 9
+		SendFailed = 9,
+		/// <summary>ADP catalog 39: the case is sealed and the dispatcher holds no protected-data grant; step up and retry.</summary>
+		ProtectedDataRequired = 10
 	}
 
 	public sealed class ProtocolCaseUpdateResult

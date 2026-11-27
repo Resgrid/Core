@@ -34,6 +34,8 @@ namespace Resgrid.Tests.TrainingT1
 		private Mock<IAuthorizationService> _authorization;
 		private Mock<IDepartmentSettingsService> _settings;
 		private Mock<ILearningRecordService> _records;
+		/// <summary>Round 9B: submissions go through the training submission service (review, notices, workflow).</summary>
+		private Mock<ITrainingSubmissionService> _submissions;
 		private DepartmentModuleSettings _modules;
 		private TrainingManagementScope _scope;
 		private ApiTrainingsController _controller;
@@ -45,6 +47,7 @@ namespace Resgrid.Tests.TrainingT1
 			_authorization = new Mock<IAuthorizationService>();
 			_settings = new Mock<IDepartmentSettingsService>();
 			_records = new Mock<ILearningRecordService>();
+			_submissions = new Mock<ITrainingSubmissionService>();
 			_modules = new DepartmentModuleSettings();
 			_scope = TrainingManagementScope.None(UserId, DepartmentId);
 
@@ -75,7 +78,7 @@ namespace Resgrid.Tests.TrainingT1
 			_activity = new Activity("TrainingsApiT1Tests").Start();
 
 			_controller = new ApiTrainingsController(new Mock<ITrainingService>().Object, new Mock<ITrainingAssignmentService>().Object, new Mock<IMyTrainingService>().Object,
-				_authorization.Object, _settings.Object, _records.Object)
+				_authorization.Object, _settings.Object, _records.Object, Mock.Of<ITrainingCompletionRecordingService>(), _submissions.Object, Mock.Of<ITrainingRecordDocumentService>())
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -129,8 +132,8 @@ namespace Resgrid.Tests.TrainingT1
 			(await _controller.GetTrainingCategories()).Result.Should().BeOfType<NotFoundResult>();
 			(await _controller.SubmitExternalTraining(ValidInput(), CancellationToken.None)).Result.Should().BeOfType<NotFoundResult>();
 
-			_records.Verify(x => x.SubmitExternalAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<LearningRecordDraft>(), It.IsAny<string>(), It.IsAny<string>(),
-				It.IsAny<byte[]>(), It.IsAny<CancellationToken>()), Times.Never);
+			_submissions.Verify(x => x.SubmitAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<LearningRecordDraft>(), It.IsAny<IReadOnlyList<TrainingEvidenceUpload>>(),
+				It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -203,12 +206,20 @@ namespace Resgrid.Tests.TrainingT1
 			LearningRecordDraft draft = null;
 			string fileName = null, contentType = null;
 			byte[] data = null;
-			_records.Setup(x => x.SubmitExternalAsync(DepartmentId, UserId, It.IsAny<LearningRecordDraft>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>()))
-				.Callback((int d, string u, LearningRecordDraft dr, string n, string t, byte[] b, CancellationToken c) => { draft = dr; fileName = n; contentType = t; data = b; })
-				.ReturnsAsync(() => new LearningRecord
+			_submissions.Setup(x => x.SubmitAsync(DepartmentId, UserId, It.IsAny<LearningRecordDraft>(), It.IsAny<IReadOnlyList<TrainingEvidenceUpload>>(), It.IsAny<CancellationToken>()))
+				.Callback((int d, string u, LearningRecordDraft dr, IReadOnlyList<TrainingEvidenceUpload> files, CancellationToken c) =>
 				{
-					LearningRecordId = 77, DepartmentId = DepartmentId, UserId = UserId, Title = draft.Title, CompletedOn = draft.CompletedOn, Hours = draft.Hours,
-					CategoryId = draft.CategoryId, SourceKind = (int)LearningRecordSourceKinds.ExternalSubmission, Status = (int)LearningRecordStatuses.Pending
+					draft = dr; fileName = files.Single().FileName; contentType = files.Single().ContentType; data = files.Single().Data;
+				})
+				.ReturnsAsync(() => new TrainingSubmissionOutcome
+				{
+					ReviewRequired = true,
+					Record = new LearningRecord
+					{
+						LearningRecordId = 77, DepartmentId = DepartmentId, UserId = UserId, Title = draft.Title, CompletedOn = draft.CompletedOn, Hours = draft.Hours,
+						CategoryId = draft.CategoryId, SourceKind = (int)LearningRecordSourceKinds.ExternalSubmission, Status = (int)LearningRecordStatuses.Pending,
+						ReviewState = (int)TrainingSubmissionReviewStates.AwaitingReview
+					}
 				});
 			var input = ValidInput();
 			input.FileName = "certs/card.PDF";
@@ -221,6 +232,9 @@ namespace Resgrid.Tests.TrainingT1
 			response.Value.Error.Should().BeNull();
 			response.Value.Data.Id.Should().Be(77);
 			response.Value.Data.StatusName.Should().Be("Pending");
+			response.Value.ReviewRequired.Should().BeTrue();
+			response.Value.Data.ReviewState.Should().Be("AwaitingReview");
+			response.Value.Data.Provenance.Should().Be("SelfReported", "an unreviewed submission is the member's own report");
 			response.Value.Data.CategoryName.Should().Be("Fire suppression");
 			draft.UserId.Should().Be(UserId);
 			draft.Title.Should().Be("Hazmat Awareness");
@@ -242,8 +256,8 @@ namespace Resgrid.Tests.TrainingT1
 		[Test]
 		public async Task Submissions_switched_off_answer_a_failure_with_the_reason()
 		{
-			_records.Setup(x => x.SubmitExternalAsync(DepartmentId, UserId, It.IsAny<LearningRecordDraft>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((LearningRecord)null);
+			_submissions.Setup(x => x.SubmitAsync(DepartmentId, UserId, It.IsAny<LearningRecordDraft>(), It.IsAny<IReadOnlyList<TrainingEvidenceUpload>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(TrainingSubmissionOutcome.Fail("learning_record_submissions_disabled"));
 
 			var response = await _controller.SubmitExternalTraining(ValidInput(), CancellationToken.None);
 
@@ -255,8 +269,8 @@ namespace Resgrid.Tests.TrainingT1
 		[Test]
 		public async Task A_service_refusal_code_comes_back_as_the_error()
 		{
-			_records.Setup(x => x.SubmitExternalAsync(DepartmentId, UserId, It.IsAny<LearningRecordDraft>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>()))
-				.ThrowsAsync(new InvalidOperationException("learning_record_category_invalid"));
+			_submissions.Setup(x => x.SubmitAsync(DepartmentId, UserId, It.IsAny<LearningRecordDraft>(), It.IsAny<IReadOnlyList<TrainingEvidenceUpload>>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(TrainingSubmissionOutcome.Fail("learning_record_category_invalid"));
 
 			var response = await _controller.SubmitExternalTraining(ValidInput(), CancellationToken.None);
 
@@ -292,8 +306,9 @@ namespace Resgrid.Tests.TrainingT1
 		[Test]
 		public async Task Evidence_of_exactly_the_limit_is_accepted()
 		{
-			_records.Setup(x => x.SubmitExternalAsync(DepartmentId, UserId, It.IsAny<LearningRecordDraft>(), "card.png", "image/png", It.Is<byte[]>(b => b.Length == LearningRecordFile.MaxBytes),
-				It.IsAny<CancellationToken>())).ReturnsAsync(Record(9, UserId, LearningRecordStatuses.Pending, null));
+			_submissions.Setup(x => x.SubmitAsync(DepartmentId, UserId, It.IsAny<LearningRecordDraft>(),
+				It.Is<IReadOnlyList<TrainingEvidenceUpload>>(f => f.Count == 1 && f[0].FileName == "card.png" && f[0].ContentType == "image/png" && f[0].Data.Length == LearningRecordFile.MaxBytes),
+				It.IsAny<CancellationToken>())).ReturnsAsync(new TrainingSubmissionOutcome { Record = Record(9, UserId, LearningRecordStatuses.Pending, null), ReviewRequired = true });
 			var input = ValidInput();
 			input.FileName = "card.png";
 			input.Data = Convert.ToBase64String(new byte[LearningRecordFile.MaxBytes]);
@@ -349,8 +364,37 @@ namespace Resgrid.Tests.TrainingT1
 
 			response.Result.Should().BeOfType<BadRequestObjectResult>().Subject.Value.Should().BeOfType<ExternalTrainingSubmissionResult>()
 				.Which.Error.Should().Be(error);
-			_records.Verify(x => x.SubmitExternalAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<LearningRecordDraft>(), It.IsAny<string>(), It.IsAny<string>(),
-				It.IsAny<byte[]>(), It.IsAny<CancellationToken>()), Times.Never);
+			_submissions.Verify(x => x.SubmitAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<LearningRecordDraft>(), It.IsAny<IReadOnlyList<TrainingEvidenceUpload>>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Several_evidence_files_go_to_the_service_with_their_kinds_and_the_limits_hold()
+		{
+			IReadOnlyList<TrainingEvidenceUpload> sent = null;
+			_submissions.Setup(x => x.SubmitAsync(DepartmentId, UserId, It.IsAny<LearningRecordDraft>(), It.IsAny<IReadOnlyList<TrainingEvidenceUpload>>(), It.IsAny<CancellationToken>()))
+				.Callback((int d, string u, LearningRecordDraft dr, IReadOnlyList<TrainingEvidenceUpload> files, CancellationToken c) => sent = files)
+				.ReturnsAsync(new TrainingSubmissionOutcome { Record = Record(12, UserId, LearningRecordStatuses.Verified, 3), ReviewRequired = false });
+			var input = ValidInput();
+			input.Files = new List<TrainingEvidenceFileInput>
+			{
+				new TrainingEvidenceFileInput { FileName = "certificate.pdf", Data = Convert.ToBase64String(new byte[] { 1 }), Kind = (int)TrainingEvidenceKinds.Certificate },
+				new TrainingEvidenceFileInput { FileName = "IMG_0042.png", Data = Convert.ToBase64String(new byte[] { 2 }), Kind = (int)TrainingEvidenceKinds.Photo },
+				new TrainingEvidenceFileInput { FileName = "receipt.jpg", Data = Convert.ToBase64String(new byte[] { 3 }), Kind = (int)TrainingEvidenceKinds.Receipt }
+			};
+
+			var response = await _controller.SubmitExternalTraining(input, CancellationToken.None);
+
+			response.Value.ReviewRequired.Should().BeFalse("the department reviews nothing: accepted as self-reported");
+			sent.Select(f => f.ContentType).Should().Equal("application/pdf", "image/png", "image/jpeg");
+			sent.Select(f => f.Kind).Should().Equal((int)TrainingEvidenceKinds.Certificate, (int)TrainingEvidenceKinds.Photo, (int)TrainingEvidenceKinds.Receipt);
+			_submissions.Invocations.Clear();
+
+			input.Files = Enumerable.Range(0, TrainingSubmissionRules.MaxFilesPerUpload + 1)
+				.Select(i => new TrainingEvidenceFileInput { FileName = "p" + i + ".png", Data = Convert.ToBase64String(new byte[] { 1 }) }).ToList();
+			await AssertRefused(input, "too_many_files");
+			input.Files = new List<TrainingEvidenceFileInput> { new TrainingEvidenceFileInput { FileName = "macro.docm", Data = Convert.ToBase64String(new byte[] { 1 }) } };
+			await AssertRefused(input, "file_type_not_allowed");
 		}
 	}
 }

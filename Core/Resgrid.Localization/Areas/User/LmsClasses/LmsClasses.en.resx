@@ -914,7 +914,7 @@
     <value>Request a place</value>
   </data>
   <data name="Resource.Apparatus" xml:space="preserve">
-    <value>Apparatus</value>
+    <value>Vehicle or apparatus</value>
   </data>
   <data name="Resource.Equipment" xml:space="preserve">
     <value>Equipment</value>
@@ -929,7 +929,7 @@
     <value>Training prop</value>
   </data>
   <data name="ResourcesIntro" xml:space="preserve">
-    <value>Drill grounds, classrooms, props, apparatus and equipment; a resource is never booked twice at once.</value>
+    <value>Training grounds, classrooms, props, vehicles and equipment; a resource is never booked twice at once.</value>
   </data>
   <data name="ResourcesTitle" xml:space="preserve">
     <value>Facilities and props</value>
@@ -1067,7 +1067,7 @@
     <value>Emergency vehicle operation</value>
   </data>
   <data name="Starter.evoc.Help" xml:space="preserve">
-    <value>Pre-trip inspection, backing with a spotter, course exercises; hours behind the wheel and road miles.</value>
+    <value>Pre-trip inspection, backing with a spotter, course exercises; hours behind the wheel and distance driven.</value>
   </data>
   <data name="Starter.hose-evolutions" xml:space="preserve">
     <value>Annual hose evolutions</value>
@@ -1236,5 +1236,38 @@
   </data>
   <data name="YouTeach" xml:space="preserve">
     <value>You teach this class</value>
+  </data>
+  <data name="Field.CurrencyHelp" xml:space="preserve">
+    <value>Leave empty for the department's training currency ({0}). Use an ISO code such as CAD, EUR, GBP or USD.</value>
+  </data>
+  <data name="Field.TrainingCurrencyHelp" xml:space="preserve">
+    <value>The department's training currency, as an ISO code such as CAD, EUR, GBP or USD. Training request costs are entered in it, and new classes, class costs and public class fees use it unless a class names another.</value>
+  </data>
+  <data name="Starter.evacuation-drill" xml:space="preserve">
+    <value>Evacuation drill</value>
+  </data>
+  <data name="Starter.evacuation-drill.Help" xml:space="preserve">
+    <value>Wardens, sweeps and the count at the assembly point, for any workplace or building.</value>
+  </data>
+  <data name="Starter.confined-space-rescue-drill" xml:space="preserve">
+    <value>Confined space rescue drill</value>
+  </data>
+  <data name="Starter.confined-space-rescue-drill.Help" xml:space="preserve">
+    <value>Rescue system, air monitoring and casualty removal, with a safety officer and a stop signal.</value>
+  </data>
+  <data name="Starter.sar-field-exercise" xml:space="preserve">
+    <value>Search and rescue field exercise</value>
+  </data>
+  <data name="Starter.sar-field-exercise.Help" xml:space="preserve">
+    <value>A search from the first report to the find, with tasking, clues and check-in times.</value>
+  </data>
+  <data name="Starter.scenario-de-escalation" xml:space="preserve">
+    <value>De-escalation scenario training</value>
+  </data>
+  <data name="Starter.scenario-de-escalation.Help" xml:space="preserve">
+    <value>Scenario-based training with role players, a stop word and inert equipment only.</value>
+  </data>
+  <data name="lms_class_no_seat" xml:space="preserve">
+    <value>You need an LMS seat to enrol or sign in yourself. Ask your administrator to enable LMS access for you, or ask the instructor to add you.</value>
   </data>
 </root>

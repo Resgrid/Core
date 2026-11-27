@@ -60,803 +60,1090 @@
   </resheader>
   <data name="HealthRecordsTab" xml:space="preserve">
     <value>Cartelle sanitarie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearancesTab" xml:space="preserve">
     <value>Idoneità medica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaTab" xml:space="preserve">
     <value>Registro OSHA</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthRecordsTitle" xml:space="preserve">
     <value>Cartelle sanitarie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthRecordsIntro" xml:space="preserve">
     <value>I tuoi casi di esposizione, infortuni, stato di servizio e idoneità medica. Solo tu e i referenti sanitari del tuo ente li vedete.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportExposureButton" xml:space="preserve">
     <value>Segnala un'esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportInjuryButton" xml:space="preserve">
     <value>Segnala un infortunio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DutyStatusLabel" xml:space="preserve">
     <value>Stato di servizio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExpectedReturnLabel" xml:space="preserve">
     <value>Rientro previsto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceStatusLabel" xml:space="preserve">
     <value>Idoneità medica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoClearance" xml:space="preserve">
     <value>Nessuna registrata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ValidUntilLabel" xml:space="preserve">
     <value>Prossima valutazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenCasesLabel" xml:space="preserve">
     <value>Casi di esposizione aperti</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenInjuriesLabel" xml:space="preserve">
     <value>Infortuni aperti</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenCasesHeader" xml:space="preserve">
     <value>Casi di esposizione aperti (referente designato)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoOpenCases" xml:space="preserve">
     <value>Nessun caso di esposizione aperto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberColumn" xml:space="preserve">
     <value>Membro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberLabel" xml:space="preserve">
     <value>Membro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DateColumn" xml:space="preserve">
     <value>Data</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RouteColumn" xml:space="preserve">
     <value>Via di esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StageColumn" xml:space="preserve">
     <value>Fase</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>Azioni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenButton" xml:space="preserve">
     <value>Apri</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotificationOverdue" xml:space="preserve">
     <value>Risposta in ritardo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenInjuriesHeader" xml:space="preserve">
     <value>Infortuni aperti</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoOpenInjuries" xml:space="preserve">
     <value>Nessun infortunio aperto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaseNumberColumn" xml:space="preserve">
     <value>N. caso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyCasesHeader" xml:space="preserve">
     <value>I miei casi di esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCasesSelf" xml:space="preserve">
     <value>Non hai casi di esposizione. Segnala qui un'esposizione a patogeni ematici o a una malattia infettiva, oppure da una voce di esposizione.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyInjuriesHeader" xml:space="preserve">
     <value>I miei infortuni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoInjuriesSelf" xml:space="preserve">
     <value>Non hai infortuni registrati.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StateColumn" xml:space="preserve">
     <value>Stato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DutyBoardHeader" xml:space="preserve">
     <value>Quadro dello stato di servizio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DutyBoardHelp" xml:space="preserve">
     <value>Membri in servizio limitato, fuori servizio o non pienamente idonei. Mostra solo lo stato, mai il motivo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoDutyBoard" xml:space="preserve">
     <value>Tutte le persone che supervisioni sono in pieno servizio e idonee.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SinceLabel" xml:space="preserve">
     <value>Dal</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrivacyNote" xml:space="preserve">
     <value>Queste cartelle sono riservate: le vedete tu, il referente designato e i referenti del benessere. Amministratori e supervisori vedono solo lo stato di servizio, mai i dettagli medici. Non sono mai ricercabili né usate dall'IA.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Duty.FullDuty" xml:space="preserve">
     <value>Servizio pieno</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Duty.RestrictedDuty" xml:space="preserve">
     <value>Servizio limitato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Duty.OffDuty" xml:space="preserve">
     <value>Fuori servizio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Clearance.Cleared" xml:space="preserve">
     <value>Idoneo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Clearance.ClearedWithRestrictions" xml:space="preserve">
     <value>Idoneo con limitazioni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Clearance.NotCleared" xml:space="preserve">
     <value>Non idoneo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryState.Open" xml:space="preserve">
     <value>Aperto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryState.Cleared" xml:space="preserve">
     <value>Rientrato in servizio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryState.Voided" xml:space="preserve">
     <value>Registrato per errore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.Reported" xml:space="preserve">
     <value>Segnalato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.SourceFollowUpRequested" xml:space="preserve">
     <value>Richiesto il follow-up della fonte</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.NotificationRequested" xml:space="preserve">
     <value>Notifica richiesta (Ryan White)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.NotificationReceived" xml:space="preserve">
     <value>Notifica ricevuta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.FollowUp" xml:space="preserve">
     <value>Follow-up post-esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.Closed" xml:space="preserve">
     <value>Chiuso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.Withdrawn" xml:space="preserve">
     <value>Registrato per errore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.Percutaneous" xml:space="preserve">
     <value>Puntura d'ago o taglio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.MucousMembrane" xml:space="preserve">
     <value>Schizzo su occhi, naso o bocca</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.NonIntactSkin" xml:space="preserve">
     <value>Contatto con cute lesa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.Airborne" xml:space="preserve">
     <value>Malattia infettiva aerea</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.Other" xml:space="preserve">
     <value>Altro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaseTitle" xml:space="preserve">
     <value>Caso di esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaseIntro" xml:space="preserve">
     <value>Un'esposizione a patogeni ematici o a una malattia infettiva, dalla segnalazione alla chiusura. Il referente designato la fa avanzare.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedWithheldNotice" xml:space="preserve">
     <value>Alcuni dettagli sono protetti e nascosti senza un'autorizzazione ai Dati protetti.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotificationOverdueHelp" xml:space="preserve">
     <value>La struttura sanitaria non ha risposto alla richiesta di notifica entro 48 ore. Sollecitala oppure avvia comunque il follow-up post-esposizione.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaseFactsHeader" xml:space="preserve">
     <value>L'esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OccurredLabel" xml:space="preserve">
     <value>Quando è avvenuta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CallLabel" xml:space="preserve">
     <value>Chiamata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportedLabel" xml:space="preserve">
     <value>Segnalato il</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SourceFacilityLabel" xml:space="preserve">
     <value>Struttura sanitaria ricevente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotificationDueLabel" xml:space="preserve">
     <value>Risposta attesa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPatientIdentityNote" xml:space="preserve">
     <value>Non inserire mai il nome o il numero di cartella del paziente fonte. Il caso rimanda alla chiamata; la struttura ricevente identifica la fonte da essa.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BbpTrainingHeader" xml:space="preserve">
     <value>Formazione sui patogeni ematici</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExpiresLabel" xml:space="preserve">
     <value>Scade</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.NotTracked" xml:space="preserve">
     <value>Non tracciata dall'ente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.Current" xml:space="preserve">
     <value>Valida</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.ExpiringSoon" xml:space="preserve">
     <value>In scadenza</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.Expired" xml:space="preserve">
     <value>Scaduta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.None" xml:space="preserve">
     <value>Nessuna registrazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordInjuryButton" xml:space="preserve">
     <value>Registra come infortunio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordInjuryHelp" xml:space="preserve">
     <value>Una puntura o un taglio contaminato da sangue è un caso riservato da registrare per l'OSHA. Registralo come infortunio perché entri nel registro OSHA senza il nome del membro.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextStepHeader" xml:space="preserve">
     <value>Passo successivo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextStepHelp" xml:space="preserve">
     <value>Indica quando è avvenuto il passo e le eventuali note, poi scegli il passo. Per richiedere il follow-up della fonte serve la struttura ricevente.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepDateLabel" xml:space="preserve">
     <value>Quando (vuoto = adesso)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepNotesLabel" xml:space="preserve">
     <value>Note per questo passo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedFieldHelp" xml:space="preserve">
     <value>Protetto: lo leggono solo il membro e i referenti.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MoveToFormat" xml:space="preserve">
     <value>Passa a: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotesHeader" xml:space="preserve">
     <value>Note protette</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SourceFollowUpNotesLabel" xml:space="preserve">
     <value>Follow-up della fonte</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotificationResponseLabel" xml:space="preserve">
     <value>Risposta alla notifica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MedicalNotesLabel" xml:space="preserve">
     <value>Note su esami e trattamento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClosureNotesLabel" xml:space="preserve">
     <value>Note di chiusura</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Salva</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithheldValue" xml:space="preserve">
     <value>Nascosto (protetto)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpsHeader" xml:space="preserve">
     <value>Attività di follow-up post-esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoFollowUps" xml:space="preserve">
     <value>Nessuna attività di follow-up per ora.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpColumn" xml:space="preserve">
     <value>Attività</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssigneeColumn" xml:space="preserve">
     <value>Assegnata a</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueColumn" xml:space="preserve">
     <value>Scadenza</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompleteButton" xml:space="preserve">
     <value>Fatto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Annulla</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddFollowUpButton" xml:space="preserve">
     <value>Aggiungi attività</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpPrivacyHelp" xml:space="preserve">
     <value>Un'attività indica solo il tipo, mai un risultato; va al membro o a un referente designato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.baseline_testing" xml:space="preserve">
     <value>Esami basali</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.prophylaxis_review" xml:space="preserve">
     <value>Valutazione della profilassi</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.six_week_test" xml:space="preserve">
     <value>Esame a sei settimane</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.three_month_test" xml:space="preserve">
     <value>Esame a tre mesi</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.six_month_test" xml:space="preserve">
     <value>Esame a sei mesi</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.counselling" xml:space="preserve">
     <value>Consulenza</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.other" xml:space="preserve">
     <value>Altro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Open" xml:space="preserve">
     <value>Aperta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Acknowledged" xml:space="preserve">
     <value>Presa in carico</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Completed" xml:space="preserve">
     <value>Completata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Cancelled" xml:space="preserve">
     <value>Annullata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportExposureTitle" xml:space="preserve">
     <value>Segnala un'esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportExposureIntro" xml:space="preserve">
     <value>Un'esposizione a patogeni ematici o a una malattia infettiva. Il referente designato viene avvisato subito e se ne occupa.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExistingEntryLabel" xml:space="preserve">
     <value>Da una delle tue voci di esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExistingEntryHelp" xml:space="preserve">
     <value>Scegli una voce già registrata o lascia vuoto per una nuova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewEntryOption" xml:space="preserve">
     <value>Una nuova esposizione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCallOption" xml:space="preserve">
     <value>Nessuna chiamata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NarrativeLabel" xml:space="preserve">
     <value>Cosa è successo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PpeWornLabel" xml:space="preserve">
     <value>Dispositivi di protezione indossati</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmitReportButton" xml:space="preserve">
     <value>Invia la segnalazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportInjuryTitle" xml:space="preserve">
     <value>Segnala un infortunio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryTitle" xml:space="preserve">
     <value>Infortunio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryIntro" xml:space="preserve">
     <value>Cosa è successo, lo stato di servizio con le date, le limitazioni e il via libera al rientro. I supervisori vedono solo lo stato di servizio.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReturnedOnLabel" xml:space="preserve">
     <value>Rientro in servizio pieno</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LinkedCaseLabel" xml:space="preserve">
     <value>Apri il caso di esposizione da cui deriva questo infortunio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatHappenedHeader" xml:space="preserve">
     <value>Cosa è successo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LocationLabel" xml:space="preserve">
     <value>Dove è successo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="JobTitleLabel" xml:space="preserve">
     <value>Mansione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DescriptionLabel" xml:space="preserve">
     <value>Cosa faceva il membro e cosa è successo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryDetailsLabel" xml:space="preserve">
     <value>L'infortunio, la parte del corpo e la causa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TreatmentLabel" xml:space="preserve">
     <value>Medico, struttura e cure</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaHeader" xml:space="preserve">
     <value>Classificazione OSHA</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaHelp" xml:space="preserve">
     <value>Un caso registrabile entra nel registro OSHA 300 dell'anno e riceve un rapporto 301. I giorni derivano dallo storico dello stato di servizio.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaTypeLabel" xml:space="preserve">
     <value>Tipo di infortunio o malattia</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiedOnLabel" xml:space="preserve">
     <value>Data del decesso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordableLabel" xml:space="preserve">
     <value>Caso registrabile OSHA</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrivacyCaseLabel" xml:space="preserve">
     <value>Caso riservato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrivacyCaseHelp" xml:space="preserve">
     <value>Il nome non compare nel registro 300 (29 CFR 1904.29(b)).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EmergencyRoomLabel" xml:space="preserve">
     <value>Trattato al pronto soccorso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HospitalizedLabel" xml:space="preserve">
     <value>Ricoverato per una notte</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaOfficerOnlyNote" xml:space="preserve">
     <value>I referenti sanitari del tuo ente esaminano la segnalazione e completano la classificazione OSHA.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DutyHistoryHeader" xml:space="preserve">
     <value>Storico dello stato di servizio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RestrictionsLabel" xml:space="preserve">
     <value>Limitazioni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPeriods" xml:space="preserve">
     <value>Servizio pieno per tutto il tempo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FromColumn" xml:space="preserve">
     <value>Dal</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToColumn" xml:space="preserve">
     <value>Fino al</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OngoingLabel" xml:space="preserve">
     <value>In corso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SetDutyStatusHeader" xml:space="preserve">
     <value>Servizio limitato o fuori servizio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RestrictionsHelp" xml:space="preserve">
     <value>Protetto. I supervisori vedono solo che il membro è in servizio limitato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SetDutyStatusButton" xml:space="preserve">
     <value>Imposta lo stato di servizio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReturnHeader" xml:space="preserve">
     <value>Rientro in servizio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReturnHelp" xml:space="preserve">
     <value>Il via libera al rientro in servizio pieno chiude i periodi di servizio dell'infortunio.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceNotesLabel" xml:space="preserve">
     <value>Note sul via libera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearReturnButton" xml:space="preserve">
     <value>Via libera al servizio pieno</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidInjuryButton" xml:space="preserve">
     <value>Registrato per errore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidInjuryHelp" xml:space="preserve">
     <value>Il record viene conservato per il periodo previsto ed esce dal registro OSHA.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearancesTitle" xml:space="preserve">
     <value>Idoneità medica (NFPA 1582)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearancesIntro" xml:space="preserve">
     <value>Valutazioni di medicina del lavoro con il loro stato di limitazione. Responsabili e pianificazione vedono lo stato; il dettaglio delle limitazioni è protetto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceTypeMissingNote" xml:space="preserve">
     <value>Indica nelle impostazioni del benessere un tipo di certificazione per l'idoneità medica (dal modello "Medical Clearance (NFPA 1582)") per registrare ogni valutazione anche come certificazione.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CurrentClearancesHeader" xml:space="preserve">
     <value>Idoneità attuale per membro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoClearances" xml:space="preserve">
     <value>Nessuna idoneità registrata per ora.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EvaluatedOnLabel" xml:space="preserve">
     <value>Valutato il</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HistoryButton" xml:space="preserve">
     <value>Storico</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordClearanceHeader" xml:space="preserve">
     <value>Registra una valutazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RestrictionDetailLabel" xml:space="preserve">
     <value>Limitazioni e motivi</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceDetailHelp" xml:space="preserve">
     <value>Protetto (ADP). Responsabili e pianificazione vedono solo Idoneo, Idoneo con limitazioni o Non idoneo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordClearanceButton" xml:space="preserve">
     <value>Salva la valutazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HistoryHeaderFormat" xml:space="preserve">
     <value>Storico idoneità: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidedLabel" xml:space="preserve">
     <value>Annullata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidButton" xml:space="preserve">
     <value>Annulla la voce</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthSettingsHeader" xml:space="preserve">
     <value>Casi di esposizione, infortuni e idoneità medica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DesignatedOfficerRoleLabel" xml:space="preserve">
     <value>Ruolo del referente designato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DesignatedOfficerRoleHelp" xml:space="preserve">
     <value>I membri di questo ruolo ricevono le segnalazioni di esposizione a patogeni ematici e malattie infettive (Ryan White Parte G) e gestiscono i casi.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SameAsWellnessOfficerOption" xml:space="preserve">
     <value>Il ruolo del referente del benessere</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BbpTrainingTypeLabel" xml:space="preserve">
     <value>Certificazione della formazione sui patogeni ematici</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BbpTrainingTypeHelp" xml:space="preserve">
     <value>Ogni caso di esposizione mostra lo stato attuale del membro per questa formazione annuale (OSHA 1910.1030).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceTypeLabel" xml:space="preserve">
     <value>Certificazione di idoneità medica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceTypeHelp" xml:space="preserve">
     <value>Ogni valutazione NFPA 1582 viene registrata anche come certificazione di questo tipo; Non idoneo la sospende.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryRetentionYearsLabel" xml:space="preserve">
     <value>Conserva le cartelle degli infortuni (anni)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryRetentionYearsHelp" xml:space="preserve">
     <value>Dopo la fine dell'anno dell'infortunio: almeno 5 (OSHA 1904.33). Casi di esposizione e idoneità seguono la conservazione trentennale delle esposizioni.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaTitle" xml:space="preserve">
     <value>OSHA 300 e 301</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaIntro" xml:space="preserve">
     <value>Il registro annuale degli infortuni registrabili e i rapporti sugli incidenti, ricavati dalle cartelle degli infortuni. I casi riservati compaiono senza nome.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowButton" xml:space="preserve">
     <value>Mostra</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Export300Csv" xml:space="preserve">
     <value>Registro 300 (CSV)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Export300Pdf" xml:space="preserve">
     <value>Registro 300 (PDF)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Export301Csv" xml:space="preserve">
     <value>Rapporti 301 (CSV)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Export301Pdf" xml:space="preserve">
     <value>Rapporti 301 (PDF)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCasesOnLog" xml:space="preserve">
     <value>Nessun caso registrabile quest'anno.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrivacyMaskNote" xml:space="preserve">
     <value>Un caso riservato mostra "Caso riservato" al posto del nome, qui e in ogni esportazione del registro 300.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutcomeColumn" xml:space="preserve">
     <value>Esito</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outcome.Death" xml:space="preserve">
     <value>Decesso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outcome.DaysAwayFromWork" xml:space="preserve">
     <value>Giorni di assenza dal lavoro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outcome.JobTransferOrRestriction" xml:space="preserve">
     <value>Trasferimento o limitazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outcome.OtherRecordable" xml:space="preserve">
     <value>Altro caso registrabile</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.LogTitle" xml:space="preserve">
     <value>Registro di infortuni e malattie legati al lavoro (formato del modulo OSHA 300)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.ReportTitle" xml:space="preserve">
     <value>Rapporto su infortunio o malattia (formato del modulo OSHA 301)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Establishment" xml:space="preserve">
     <value>Sede</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Year" xml:space="preserve">
     <value>Anno</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.CaseNumber" xml:space="preserve">
     <value>N. caso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.EmployeeName" xml:space="preserve">
     <value>Nome del dipendente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.JobTitle" xml:space="preserve">
     <value>Mansione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DateOfInjury" xml:space="preserve">
     <value>Data dell'infortunio o dell'esordio della malattia</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Where" xml:space="preserve">
     <value>Luogo dell'evento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Description" xml:space="preserve">
     <value>Infortunio o malattia, parti del corpo colpite e oggetto o sostanza</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Death" xml:space="preserve">
     <value>Decesso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DaysAwayCase" xml:space="preserve">
     <value>Giorni di assenza dal lavoro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.RestrictedCase" xml:space="preserve">
     <value>Trasferimento o limitazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.OtherRecordable" xml:space="preserve">
     <value>Altro caso registrabile</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DaysAway" xml:space="preserve">
     <value>Assenza dal lavoro (giorni)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DaysRestricted" xml:space="preserve">
     <value>In trasferimento o limitazione (giorni)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.Injury" xml:space="preserve">
     <value>Infortunio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.SkinDisorder" xml:space="preserve">
     <value>Disturbo cutaneo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.RespiratoryCondition" xml:space="preserve">
     <value>Disturbo respiratorio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.Poisoning" xml:space="preserve">
     <value>Avvelenamento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.HearingLoss" xml:space="preserve">
     <value>Perdita dell'udito</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.AllOtherIllnesses" xml:space="preserve">
     <value>Tutte le altre malattie</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Totals" xml:space="preserve">
     <value>Totali</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.TimeOfEvent" xml:space="preserve">
     <value>Ora dell'evento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.WhatHappened" xml:space="preserve">
     <value>Cosa faceva il dipendente e cosa è successo?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.InjuryDetails" xml:space="preserve">
     <value>Qual è stato l'infortunio o la malattia e cosa l'ha causato?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Treatment" xml:space="preserve">
     <value>Medico, struttura e cure</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.EmergencyRoom" xml:space="preserve">
     <value>Trattato al pronto soccorso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Hospitalized" xml:space="preserve">
     <value>Ricoverato per una notte come degente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DateOfDeath" xml:space="preserve">
     <value>Data del decesso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.PrivacyCase" xml:space="preserve">
     <value>Caso riservato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.PrivacyCaseName" xml:space="preserve">
     <value>Caso riservato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.EmployeeDetailsNote" xml:space="preserve">
     <value>Indirizzo, data di nascita, data di assunzione e sesso del dipendente si completano dal fascicolo del personale.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Withheld" xml:space="preserve">
     <value>Nascosto (protetto)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Yes" xml:space="preserve">
     <value>Sì</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.No" xml:space="preserve">
     <value>No</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Retention" xml:space="preserve">
     <value>Conserva queste registrazioni per cinque anni dalla fine dell'anno a cui si riferiscono (29 CFR 1904.33).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Generated" xml:space="preserve">
     <value>Generato il {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ExposureReported" xml:space="preserve">
     <value>L'esposizione è stata segnalata e il referente designato è stato avvisato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.CaseMoved" xml:space="preserve">
     <value>Il caso è passato al passo successivo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Saved" xml:space="preserve">
     <value>Salvato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpAdded" xml:space="preserve">
     <value>L'attività di follow-up è stata aggiunta.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCompleted" xml:space="preserve">
     <value>L'attività di follow-up è completata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCancelled" xml:space="preserve">
     <value>L'attività di follow-up è stata annullata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.InjuryReported" xml:space="preserve">
     <value>L'infortunio è stato segnalato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.DutyStatusSaved" xml:space="preserve">
     <value>Lo stato di servizio è stato impostato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ReturnedToDuty" xml:space="preserve">
     <value>Il membro ha il via libera al servizio pieno.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.InjuryVoided" xml:space="preserve">
     <value>L'infortunio è segnato come registrato per errore.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ClearanceRecorded" xml:space="preserve">
     <value>La valutazione è stata registrata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ClearanceVoided" xml:space="preserve">
     <value>La valutazione è stata annullata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.Generic" xml:space="preserve">
     <value>Impossibile salvare. Controlla il modulo e riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.NotAllowed" xml:space="preserve">
     <value>Non hai l'autorizzazione per farlo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.ExportFailed" xml:space="preserve">
     <value>Impossibile generare l'esportazione. Riprova più tardi.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.date_invalid" xml:space="preserve">
     <value>Inserisci una data valida (non futura).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.member_not_found" xml:space="preserve">
     <value>Questa persona non è un membro attuale dell'ente.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.route_required" xml:space="preserve">
     <value>Scegli la via di esposizione.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_not_bloodborne" xml:space="preserve">
     <value>Un caso può seguire solo una voce confermata di esposizione a patogeni ematici (o altro).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.case_exists" xml:space="preserve">
     <value>Questa voce ha già un caso aperto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.call_not_found" xml:space="preserve">
     <value>Chiamata non trovata in questo ente.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.case_changed" xml:space="preserve">
     <value>Qualcun altro ha modificato il caso. Ricaricalo e riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.stage_not_allowed" xml:space="preserve">
     <value>Il caso non può passare a quel passo da dove si trova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.facility_required" xml:space="preserve">
     <value>Indica la struttura sanitaria ricevente per richiedere il follow-up della fonte.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_ups_open" xml:space="preserve">
     <value>Completa o annulla le attività di follow-up aperte prima di chiudere il caso.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.case_closed" xml:space="preserve">
     <value>Questo caso è chiuso.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
     <value>Un'attività va al membro esposto o a un referente designato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.duty_status_required" xml:space="preserve">
     <value>Scegli servizio limitato o fuori servizio.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.return_date_invalid" xml:space="preserve">
     <value>Il rientro previsto deve essere successivo alla data di inizio.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.date_before_current_status" xml:space="preserve">
     <value>Questa data precede l'inizio dello stato di servizio attuale.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.injury_not_open" xml:space="preserve">
     <value>Solo un infortunio aperto può ricevere il via libera.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.clearance_status_required" xml:space="preserve">
     <value>Scegli lo stato di idoneità.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.valid_until_invalid" xml:space="preserve">
     <value>La prossima valutazione deve essere successiva alla data della valutazione.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.injury_changed" xml:space="preserve">
     <value>Qualcun altro ha modificato l'infortunio. Ricaricalo e riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.protected_write_refused" xml:space="preserve">
     <value>Al momento non è stato possibile salvare i dettagli protetti. Riprova più tardi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerCertificationLabel" xml:space="preserve">
+    <value>Certificazione del referente designato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerCertificationHelp" xml:space="preserve">
+    <value>Facoltativo. Uno dei tuoi tipi di certificazione, ad esempio dal modello Referente designato per il controllo delle esposizioni. Senza un ruolo di referente designato, agiscono il ruolo di referente per il benessere e la sua certificazione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>Per aggiungere o modificare registri di benessere serve il componente Workforce Pro. I registri esistenti restano consultabili.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>Workforce Pro non è attivo per questo membro, quindi i suoi registri sono di sola lettura.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>Il benessere dei membri non è disponibile per questa organizzazione.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

@@ -14,7 +14,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 namespace Resgrid.Repositories.DataRepository
 {
 	/// <summary>
-	/// Shared plumbing of the LMS repositories (T2, M0359/M0360): the optimistic-concurrency update (claim the RowVersion bump,
+	/// Shared plumbing of the LMS repositories (T2, M0349/M0350): the optimistic-concurrency update (claim the RowVersion bump,
 	/// then write the row in the same transaction), the PostgreSQL savepoint an insert that may hit a unique index needs, and the
 	/// "department or system" filter (system-published content has DepartmentId 0).
 	/// </summary>
@@ -563,6 +563,20 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			return QueryFirstOrDefaultAsync<LmsLessonFile>(
 				$"SELECT * FROM {Tbl("LmsLessonFiles")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("LmsLessonFileId")} = {P}Id", new { DepartmentId = departmentId, Id = lmsLessonFileId });
+		}
+
+		/// <summary>The bytes (up to 10 MB a file) are left out: only the one file endpoint reads them.</summary>
+		private static readonly string[] MetadataColumns = { "LmsLessonFileId", "DepartmentId", "LmsLessonId", "UserId", "FileName", "ContentType", "SizeBytes", "UploadedOn" };
+
+		public async Task<List<LmsLessonFile>> GetMetadataByIdsAsync(int departmentId, IEnumerable<int> lmsLessonFileIds)
+		{
+			var ids = InListValue((lmsLessonFileIds ?? Enumerable.Empty<int>()).Where(x => x > 0).Distinct());
+			if (departmentId <= 0 || ids.Length == 0)
+				return new List<LmsLessonFile>();
+
+			return (await QueryAsync<LmsLessonFile>(
+				$"SELECT {Cols(MetadataColumns)} FROM {Tbl("LmsLessonFiles")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {InList("LmsLessonFileId", "Ids")}",
+				new { DepartmentId = departmentId, Ids = ids }) ?? Enumerable.Empty<LmsLessonFile>()).ToList();
 		}
 	}
 

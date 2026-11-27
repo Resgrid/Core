@@ -12,7 +12,9 @@ namespace Resgrid.Workers.Framework.Logic
 	/// Worker 91 (member wellness WL0 and WL1, protocols-training-knowledge-plan §13b): builds post-call exposure suggestions for flagged calls
 	/// that have ended, sends the opt-in critical-incident anniversary reminders (daily, from 09:00 department-local, claimed before
 	/// sending) and erases entries past their retention (never under 30 years) that no legal hold covers. Every pass starts from a
-	/// query for due work, never from a sweep of every department, and asks no billing gate: WL0 is free. A failing pass does not stop
+	/// query for due work, never from a sweep of every department. Workforce Pro (2026-11-26): the services ask the add-on gate once per
+	/// department with due work and skip (after claiming) the work of departments that are not licensed and of members without a seat;
+	/// retention erasure is never gated. A failing pass does not stop
 	/// the others. WL1 adds two steps: overdue Ryan White answers and due return-to-duty reviews (to the officers, claimed first), and the
 	/// retention of exposure cases (30 years), injuries (5 years after their year) and medical clearances (30 years).
 	/// </summary>

@@ -29,7 +29,7 @@ using Resgrid.Repositories.DataRepository.Transactions;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for round 5F on both engines: M0417 in the full chain, Up again as a no-op, Down and Up; the protocol learning
+	/// Real-database proof for round 5F on both engines: M0387 in the full chain, Up again as a no-op, Down and Up; the protocol learning
 	/// settings (unique per protocol), worker 86's micro-learning due-work query and weekly clock claim, the weekly questions (one per member
 	/// and week, member ids without case on PostgreSQL's citext, answered once), quiz attempts written against their RowVersion, the course
 	/// attempts read for the GDPR export without their snapshot, LmsRequirements.AcademyUpdatePolicy's default, and the department cleanup.
@@ -338,12 +338,12 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test, Order(7)]
-		public async Task M0417_reruns_as_a_no_op_rolls_back_and_applies_again()
+		public async Task M0387_reruns_as_a_no_op_rolls_back_and_applies_again()
 		{
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 417");
+				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 387");
 			var tables = IsPostgres
 				? "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('lmsprotocollearnings', 'lmsprotocolquizattempts', 'lmsmicrolearningitems', 'lmsmicrolearningruns')"
 				: "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME IN ('LmsProtocolLearnings', 'LmsProtocolQuizAttempts', 'LmsMicroLearningItems', 'LmsMicroLearningRuns')";
@@ -360,7 +360,7 @@ namespace Resgrid.Tests.Repositories
 				(await ScalarAsync(column)).Should().Be(1);
 				(await ScalarAsync($"SELECT COUNT(*) FROM {T("LmsProtocolLearnings")}")).Should().Be(2, "the second Up keeps the rows");
 
-				migrations.MigrateDown(416);
+				migrations.MigrateDown(386);
 				(await ScalarAsync(tables)).Should().Be(0);
 				(await ScalarAsync(column)).Should().Be(0);
 

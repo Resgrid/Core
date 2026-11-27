@@ -83,6 +83,7 @@ Si no solicitó esto, contacte con el soporte.
 
 
 El equipo de Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GdprExportWithheldNotice" xml:space="preserve">
     <value>Su departamento utiliza la Protección de Datos Avanzada, por lo que algunos valores de esta exportación están cifrados y aparecen como REDACTED. Siguen formando parte de su expediente y no se han eliminado.</value>
@@ -128,6 +129,7 @@ Este código caduca en {2} minutos. Si no lo solicitó, ignore este correo.
 
 
 El equipo de Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">
     <value>Código de verificación de Resgrid</value>
@@ -177,6 +179,7 @@ El equipo de Resgrid</value>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Este es un aviso de seguridad automático sobre su cuenta de Resgrid.</value></data>
   <data name="SigningLinkEmailSubject" xml:space="preserve">
     <value>{0}: un documento para firmar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkEmailBody" xml:space="preserve">
     <value>Hola {0}:
@@ -189,12 +192,15 @@ Abra este enlace para firmar:
 El enlace se puede usar una vez y caduca el {4}. Antes de firmar confirmará un código de un solo uso.
 
 Si no esperaba este mensaje, puede ignorarlo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkSmsBody" xml:space="preserve">
     <value>{0} le pide que firme "{1}": {2}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailSubject" xml:space="preserve">
     <value>{0}: su código de firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailBody" xml:space="preserve">
     <value>Hola {0}:
@@ -202,8 +208,10 @@ Si no esperaba este mensaje, puede ignorarlo.</value>
 Su código para firmar el documento de {3} es {1}. Caduca en {2} minutos.
 
 Si no ha pedido este código, puede ignorar este mensaje.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeSmsBody" xml:space="preserve">
     <value>Su código de firma para {2} es {0}. Caduca en {1} minutos.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

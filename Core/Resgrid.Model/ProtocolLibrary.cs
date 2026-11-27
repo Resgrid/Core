@@ -278,7 +278,7 @@ namespace Resgrid.Model
 		public long RowVersion { get; set; }
 
 		/// <summary>
-		/// <see cref="ProtocolVersionContentKinds"/> (M0353): authored HTML blocks, or an uploaded document (one primary PDF or DOCX in
+		/// <see cref="ProtocolVersionContentKinds"/> (M0347): authored HTML blocks, or an uploaded document (one primary PDF or DOCX in
 		/// ProtocolVersionFiles) whose <see cref="ContentHash"/> is the SHA-256 of the file's bytes.
 		/// </summary>
 		public int ContentKind { get; set; }
@@ -524,7 +524,12 @@ namespace Resgrid.Model
 		/// <summary>P4: the decision graph has problems (no single first step, a path without an outcome, a loop…); fix it before review.</summary>
 		DecisionGraphInvalid,
 		/// <summary>P4: a decision graph belongs to an authored Dispatch protocol (not another kind, not a document-backed version).</summary>
-		DecisionGraphNotAllowed
+		DecisionGraphNotAllowed,
+		/// <summary>
+		/// Round 10 A3: the protocol is a copy managed by a subscribed protocol set; its content changes only through the set's update inbox and
+		/// customize page (unsubscribing makes it the department's own).
+		/// </summary>
+		ManagedBySet
 	}
 
 	/// <summary>The lifecycle rules (P1 §5): which status may move to which, and when content may change.</summary>

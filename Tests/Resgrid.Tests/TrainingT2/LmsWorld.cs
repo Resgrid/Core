@@ -47,12 +47,22 @@ namespace Resgrid.Tests.TrainingT2
 		public readonly FakeLmsPaths Paths = new FakeLmsPaths();
 		public readonly FakeLmsStates States = new FakeLmsStates();
 		public readonly FakeLmsMedia Media = new FakeLmsMedia();
+		public readonly Mock<ILmsSetFiles> SetFiles = new Mock<ILmsSetFiles>();
 		public readonly FakeLearningRecordsRepository Records = new FakeLearningRecordsRepository();
 		public readonly Resgrid.Tests.Academy.FakeAcademyLessonUpdates AcademyUpdates;
 
 		public LmsDepartmentGate Gate = new LmsDepartmentGate { DepartmentId = DepartmentId, ModuleOn = true, FlagOn = true, AddonActive = true, LastEntitledOn = DateTime.UtcNow };
 		public AcademyEntitlements Entitlements = new AcademyEntitlements();
 		public HashSet<string> ResolvedMembers = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Member, Member2 };
+
+		/// <summary>
+		/// Round 10 A7: the members holding an LMS seat (ILmsGateService.HoldsLearnerSeatAsync / GetLearnerSeatHoldersAsync). Every member by
+		/// default; a test removes one to see a learner action refused, or assigns its own set.
+		/// </summary>
+		public HashSet<string> SeatedMembers = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { Admin, Member, Member2, Grader };
+
+		/// <summary>Round 10 A7: how many times the services asked for the seat holders (one read per request, R-L9).</summary>
+		public int SeatReads;
 		public readonly List<PersonnelCertification> Certifications = new List<PersonnelCertification>();
 		public readonly Dictionary<int, DepartmentCertificationType> CertificationTypes = new Dictionary<int, DepartmentCertificationType>();
 		public readonly List<TrainingCategory> Categories = new List<TrainingCategory>();
@@ -61,11 +71,34 @@ namespace Resgrid.Tests.TrainingT2
 		/// <summary>K3: the knowledge reindex queue the course service notifies on publish, retire and catalog changes.</summary>
 		public readonly Mock<IKnowledgeIndexQueue> KnowledgeQueue = new Mock<IKnowledgeIndexQueue>();
 
+		/// <summary>T5 (round 6F): the publish hooks the course service calls after a version goes into force (flashcard supersede flags).</summary>
+		public readonly List<IContentVersionPublishedHook> PublishedHooks = new List<IContentVersionPublishedHook>();
+
 		public readonly Mock<ICertificationService> CertificationService = new Mock<ICertificationService>();
 		public readonly Mock<ISignatureService> SignatureService = new Mock<ISignatureService>();
 		public readonly Mock<ILmsMediaStore> Store = new Mock<ILmsMediaStore>();
 		public readonly Mock<ILmsVideoTranscoder> Transcoder = new Mock<ILmsVideoTranscoder>();
 		public readonly Mock<IDepartmentsService> Departments = new Mock<IDepartmentsService>();
+
+		/// <summary>T5: the xAPI statement queue the learner and assessment services report to, and the builder's standards lesson check.</summary>
+		public readonly Mock<ILmsXapiStatementQueue> Xapi = new Mock<ILmsXapiStatementQueue>();
+		public readonly Mock<ILmsExternalLearnersRepository> ExternalLearners = new Mock<ILmsExternalLearnersRepository>();
+		public readonly Mock<ILmsStandardsLessonValidator> StandardsLessons = new Mock<ILmsStandardsLessonValidator>();
+
+		/// <summary>Security review M3: the protocol a ProtocolVersion lesson shows, and its header and audience (the public-page rules for external learners).</summary>
+		public readonly Mock<IProtocolVersionsRepository> ProtocolVersions = new Mock<IProtocolVersionsRepository>();
+		public readonly Mock<IDispatchProtocolRepository> DispatchProtocols = new Mock<IDispatchProtocolRepository>();
+		public readonly Mock<IProtocolAudiencesRepository> ProtocolAudiences = new Mock<IProtocolAudiencesRepository>();
+
+		public readonly Mock<IEventAggregator> Events = new Mock<IEventAggregator>();
+		public readonly List<Resgrid.Model.Events.CourseWorkflowEvent> CourseEvents = new List<Resgrid.Model.Events.CourseWorkflowEvent>();
+
+		/// <summary>Round 9A: the certification issuance ledger (in memory), the engine over it, the learning-record observers the writer tells.</summary>
+		public readonly List<LmsCertificationIssuance> Issuances = new List<LmsCertificationIssuance>();
+		public readonly List<ILearningRecordObserver> Observers = new List<ILearningRecordObserver>();
+		public readonly Mock<ILmsProgramNotifier> CertificationNotifier = new Mock<ILmsProgramNotifier>();
+		public readonly LmsCertificationIssuanceService CertificationIssuance;
+		public readonly LearningRecordWriter Writer;
 
 		public readonly LmsLearnerService Learner;
 		public readonly LmsAssessmentService Assessment;
@@ -80,6 +113,10 @@ namespace Resgrid.Tests.TrainingT2
 			AcademyUpdates = new Resgrid.Tests.Academy.FakeAcademyLessonUpdates(Enrollments);
 			var gate = new Mock<ILmsGateService>();
 			gate.Setup(g => g.GetGateAsync(It.IsAny<int>())).ReturnsAsync(() => Gate);
+			gate.Setup(g => g.HoldsLearnerSeatAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string user) => { SeatReads++; return d == DepartmentId && Gate.FlagOn && user != null && SeatedMembers.Contains(user); });
+			gate.Setup(g => g.GetLearnerSeatHoldersAsync(It.IsAny<int>()))
+				.ReturnsAsync((int d) => { SeatReads++; return d == DepartmentId && Gate.FlagOn ? new HashSet<string>(SeatedMembers, StringComparer.OrdinalIgnoreCase) : new HashSet<string>(); });
 
 			var entitlements = new Mock<ILmsEntitlementService>();
 			entitlements.Setup(e => e.GetEntitlementsAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>())).ReturnsAsync(() => Entitlements);
@@ -140,14 +177,19 @@ namespace Resgrid.Tests.TrainingT2
 				});
 
 			var writer = BuildWriter(settings);
-			var events = new Mock<IEventAggregator>();
+			Writer = writer;
+			var events = Events;
+			CertificationIssuance = BuildIssuance(Departments);
+			// Round 7C: the course workflow events (triggers 259-261) the services raise.
+			Events.Setup(e => e.SendMessage(It.IsAny<Resgrid.Model.Events.CourseWorkflowEvent>())).Callback((Resgrid.Model.Events.CourseWorkflowEvent e) => CourseEvents.Add(e));
 			var communication = new Mock<ICommunicationService>();
-			var protocolVersions = new Mock<IProtocolVersionsRepository>();
+			var protocolVersions = ProtocolVersions;
 
 			Learner = new LmsLearnerService(Courses, Versions, Modules, Lessons, Audiences, Owners, Enrollments, Progress, Files, Attempts, Surveys, Media,
 				protocolVersions.Object, gate.Object, entitlements.Object, audience.Object, Departments.Object, settings.Object, profiles.Object, writer, recordService.Object,
-				CertificationService.Object, events.Object, new Lazy<ICommunicationService>(() => communication.Object));
-			Assessment = new LmsAssessmentService(Attempts, Enrollments, Lessons, Versions, Courses, Owners, Questions, gate.Object, Learner, events.Object);
+				CertificationService.Object, events.Object, new Lazy<ICommunicationService>(() => communication.Object), Xapi.Object, ExternalLearners.Object,
+				DispatchProtocols.Object, ProtocolAudiences.Object, CertificationIssuance);
+			Assessment = new LmsAssessmentService(Attempts, Enrollments, Lessons, Versions, Courses, Owners, Questions, gate.Object, Learner, events.Object, Xapi.Object);
 
 			SignatureService.Setup(s => s.SignAsync(It.IsAny<SignatureRequest>(), It.IsAny<SignatureProof>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync((SignatureRequest request, SignatureProof proof, CancellationToken ct) =>
@@ -176,14 +218,15 @@ namespace Resgrid.Tests.TrainingT2
 			var unitOfWork = new Mock<IUnitOfWork>();
 			CourseService = new LmsCourseService(Courses, Versions, Approvals, Audiences, Owners, Modules, Lessons, Enrollments, Banks, Media, protocolVersions.Object,
 				SignatureService.Object, Departments.Object, settings.Object, profiles.Object, events.Object, unitOfWork.Object,
-				new Lazy<ICommunicationService>(() => communication.Object), KnowledgeQueue.Object);
+				new Lazy<ICommunicationService>(() => communication.Object), KnowledgeQueue.Object, PublishedHooks, StandardsLessons.Object, Questions,
+				Mock.Of<IContentSetCopyLocks>(), SetFiles.Object);
 			Crew = new LmsCrewViewingService(Viewings, Attendees, Courses, Owners, Lessons, entitlements.Object, Learner, Departments.Object, events.Object);
 			Academy = new LmsAcademyService(Courses, Versions, Modules, Lessons, Banks, Questions, Enrollments, Paths, entitlements.Object, Learner, audience.Object, events.Object, AcademyUpdates);
 			Store.SetupGet(s => s.IsConfigured).Returns(true);
 			Store.Setup(s => s.KeyFor(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
 				.Returns((int d, int a, string relative) => "lms/" + d + "/" + a + "/" + relative);
 			MediaService = new LmsMediaService(Store.Object, Transcoder.Object, Media, Lessons, Enrollments, Versions, Courses, Owners, States, gate.Object, events.Object);
-			BankService = new LmsQuestionBankService(Banks, Questions, Owners, events.Object);
+			BankService = new LmsQuestionBankService(Banks, Questions, Owners, events.Object, KnowledgeQueue.Object);
 		}
 
 		private LearningRecordWriter BuildWriter(Mock<IDepartmentSettingsService> settings)
@@ -199,7 +242,40 @@ namespace Resgrid.Tests.TrainingT2
 			return new LearningRecordWriter(Records, mappings.Object, categories.Object, certificationRecords.Object, credits.Object,
 				new Lazy<ICertificationService>(() => CertificationService.Object), Mock.Of<ITrainingRepository>(), Mock.Of<ITrainingUserRepository>(),
 				Mock.Of<ITrainingCompletionHistoriesRepository>(), Mock.Of<ILogUsersRepository>(), Mock.Of<IRmsOperationalRecordsRepository>(),
-				Mock.Of<IRmsRecordParticipantsRepository>(), Mock.Of<ICalendarItemsRepository>(), Mock.Of<ICalendarItemTypeRepository>(), settings.Object, Mock.Of<IEventAggregator>());
+				Mock.Of<IRmsRecordParticipantsRepository>(), Mock.Of<ICalendarItemsRepository>(), Mock.Of<ICalendarItemTypeRepository>(), settings.Object, Mock.Of<IEventAggregator>(),
+				new Lazy<IEnumerable<ILearningRecordObserver>>(() => Observers));
+		}
+
+		/// <summary>Round 9A: the real issuance engine over an in-memory ledger, the mocked certification service and enrolment-backed course facts.</summary>
+		private LmsCertificationIssuanceService BuildIssuance(Mock<IDepartmentsService> departments)
+		{
+			var ledger = new Mock<ILmsCertificationIssuancesRepository>();
+			ledger.Setup(l => l.InsertAsync(It.IsAny<LmsCertificationIssuance>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((LmsCertificationIssuance i, CancellationToken _, bool __) => { i.LmsCertificationIssuanceId = Issuances.Count + 1; Issuances.Add(i); return i; });
+			ledger.Setup(l => l.GetLiveForUserAsync(It.IsAny<int>(), It.IsAny<string>()))
+				.ReturnsAsync((int d, string u) => Issuances.Where(i => i.DepartmentId == d && i.IsLive && string.Equals(i.UserId, u, StringComparison.OrdinalIgnoreCase)).ToList());
+			ledger.Setup(l => l.GetForCertificationAsync(It.IsAny<int>(), It.IsAny<int>()))
+				.ReturnsAsync((int d, int c) => Issuances.Where(i => i.DepartmentId == d && i.PersonnelCertificationId == c).ToList());
+			ledger.Setup(l => l.UpdateStateAsync(It.IsAny<LmsCertificationIssuance>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			return new LmsCertificationIssuanceService(ledger.Object, CertificationService.Object, departments.Object, new WorldFacts(this), Mock.Of<ILmsPathStepsRepository>(),
+				Enrollments, Mock.Of<ILmsCertificationRequirementSetsRepository>(), Mock.Of<ILmsCertificationRequirementItemsRepository>(), CertificationNotifier.Object, Events.Object);
+		}
+
+		/// <summary>Course completions read from the enrolments (with the ledger record of each), like the Dapper projection.</summary>
+		private sealed class WorldFacts(LmsWorld world) : ILmsRequirementFactsRepository
+		{
+			public Task<List<LmsRequirementFact>> GetCourseCompletionsAsync(int departmentId, IEnumerable<int> lmsCourseIds) =>
+				Task.FromResult(world.Enrollments.Rows.Where(e => e.DepartmentId == departmentId && e.Status == (int)LmsEnrollmentStatuses.Completed && e.CompletedOn.HasValue &&
+					lmsCourseIds.Contains(e.LmsCourseId)).Select(e => new LmsRequirementFact
+					{
+						UserId = e.UserId, RefId = e.LmsCourseId, CompletedOn = e.CompletedOn.Value, CompletionMethod = e.CompletionMethod,
+						LearningRecordId = e.LearningRecordId ?? world.Records.Live.FirstOrDefault(r => r.SourceRefId == LmsLearnerService.SourceRefFor(e))?.LearningRecordId
+					}).ToList());
+
+			public Task<List<LmsRequirementFact>> GetCourseCompletionsWithRecordsAsync(int departmentId, IEnumerable<int> lmsCourseIds) => GetCourseCompletionsAsync(departmentId, lmsCourseIds);
+			public Task<List<LmsRequirementFact>> GetTrainingCompletionsAsync(int departmentId, IEnumerable<int> trainingIds) => Task.FromResult(new List<LmsRequirementFact>());
+			public Task<List<LmsRequirementFact>> GetCategoryHoursAsync(int departmentId, IEnumerable<int> categoryIds, DateTime fromUtc) => Task.FromResult(new List<LmsRequirementFact>());
+			public Task<List<LmsRequirementFact>> GetEvaluationsAsync(int departmentId, IEnumerable<string> codes) => Task.FromResult(new List<LmsRequirementFact>());
 		}
 
 		/// <summary>Forgets the process-wide "the Academy is seeded" memo so a fresh store is seeded again.</summary>

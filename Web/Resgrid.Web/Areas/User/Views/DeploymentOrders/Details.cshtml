@@ -70,7 +70,24 @@
 						<dt>@localizer["DeploymentMobilizedOn"]</dt><dd>@When(o.MobilizedOn)</dd>
 						<dt>@localizer["DeploymentReleasedOn"]</dt><dd>@When(o.ReleasedOn)</dd>
 						@if (closed) { <dt>@localizer["DeploymentClosedOutOn"]</dt><dd>@When(o.ClosedOutOn) · @Who(o.ClosedOutByUserId)<br />@o.CloseoutNotes</dd> }
+						<dt>@localizer["DeploymentPartner"]</dt><dd>@(Model.PartnerName ?? "-")</dd>
 					</dl>
+					@if (canAct && (Model.PartnerLinks.Count > 0 || o.PartnerDepartmentLinkId.HasValue))
+					{
+						@* Round 10 A3: the linked department this order is filled for; its admins accept each accepted fill at L2, over the link. *@
+						<form class="form-inline m-b-sm" method="post" asp-controller="DeploymentOrders" asp-action="SetPartner" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">
+							@Html.AntiForgeryToken()
+							<select class="form-control input-sm" name="departmentLinkId" aria-label="@localizer["DeploymentPartner"]">
+								<option value="">@localizer["DeploymentPartnerNone"]</option>
+								@foreach (var link in Model.PartnerLinks)
+								{
+									<option value="@link.Value" selected="@link.Selected">@link.Text</option>
+								}
+							</select>
+							<button type="submit" class="btn btn-sm btn-default">@localizer["DeploymentPartnerSave"]</button>
+							<span class="help-block small">@localizer["DeploymentPartnerHelp"]</span>
+						</form>
+					}
 					@if (canAct)
 					{
 						<form class="form-inline" method="post" enctype="multipart/form-data" asp-controller="DeploymentOrders" asp-action="Snapshot" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId">
@@ -105,7 +122,14 @@
 									<td>@f.ResourceKind @f.ResourceType @if (!string.IsNullOrEmpty(f.ResourceTypeScheme)) { <small class="text-muted">(@f.ResourceTypeScheme)</small> }</td>
 									<td>@f.Position @if (f.IsTrainee) { <span class="label label-info">(t)</span> }</td>
 									<td>@Who(f.AssignedUserId)<br /><small class="text-muted">@f.HomeUnit @f.HostAgency</small></td>
-									<td>@status<br /><small class="text-muted">@When(f.Status switch { 9 => f.ReturnedOn, 8 => f.DemobilizedOn, 7 => f.ReleasedOn, 6 => f.AssignedOn, 5 => f.CheckedInOn, 4 => f.MobilizedOn, 3 => f.FilledOn, 2 => f.FilledOn, _ => f.RequestedOn })</small>@if (status == RmsDeploymentFillStatus.Declined) { <br /><small>@f.DeclineReason</small> }</td>
+									<td>@status<br /><small class="text-muted">@When(f.Status switch { 9 => f.ReturnedOn, 8 => f.DemobilizedOn, 7 => f.ReleasedOn, 6 => f.AssignedOn, 5 => f.CheckedInOn, 4 => f.MobilizedOn, 3 => f.FilledOn, 2 => f.FilledOn, _ => f.RequestedOn })</small>@if (status == RmsDeploymentFillStatus.Declined) { <br /><small>@f.DeclineReason</small> }
+										@if (f.PartnerSignStatus != (int)RmsDeploymentPartnerSignStatuses.None)
+										{
+											var partnerState = (RmsDeploymentPartnerSignStatuses)f.PartnerSignStatus;
+											<br /><span class="label @(partnerState == RmsDeploymentPartnerSignStatuses.Signed ? "label-primary" : partnerState == RmsDeploymentPartnerSignStatuses.Requested ? "label-warning" : "label-default")">@localizer["DeploymentPartnerState" + partnerState]</span>
+											@if (partnerState == RmsDeploymentPartnerSignStatuses.Signed) { <small class="text-muted">@When(f.PartnerSignedOn)</small> }
+										}
+									</td>
 									<td class="text-right">
 										@if (canAct)
 										{
@@ -114,6 +138,14 @@
 												<form method="post" asp-controller="DeploymentOrders" asp-action="Transition" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId" style="display:inline" onsubmit="@(next == RmsDeploymentFillStatus.Declined ? "var r = prompt(" + Newtonsoft.Json.JsonConvert.SerializeObject(localizer["DeploymentDeclineReason"].Value) + "); if (!r) return false; this.querySelector('[name=reason]').value = r; return true;" : "return true;")">
 													@Html.AntiForgeryToken()<input type="hidden" name="rowVersion" value="@f.RowVersion" /><input type="hidden" name="fillId" value="@f.RmsExternalOrderFillId" /><input type="hidden" name="status" value="@((int)next)" /><input type="hidden" name="reason" value="" />
 													<button type="submit" class="btn btn-xs @(next == RmsDeploymentFillStatus.Declined ? "btn-danger" : "btn-default")">@next</button>
+												</form>
+											}
+											if (o.PartnerDepartmentLinkId.HasValue && f.Status != (int)RmsDeploymentFillStatus.Requested && f.Status != (int)RmsDeploymentFillStatus.Declined &&
+												(f.PartnerSignStatus == (int)RmsDeploymentPartnerSignStatuses.None || f.PartnerSignStatus == (int)RmsDeploymentPartnerSignStatuses.Declined || f.PartnerSignStatus == (int)RmsDeploymentPartnerSignStatuses.Lapsed))
+											{
+												<form method="post" asp-controller="DeploymentOrders" asp-action="RequestPartner" asp-route-area="User" asp-route-id="@o.RmsExternalOrderId" style="display:inline">
+													@Html.AntiForgeryToken()<input type="hidden" name="fillId" value="@f.RmsExternalOrderFillId" />
+													<button type="submit" class="btn btn-xs btn-default">@localizer["DeploymentPartnerAsk"]</button>
 												</form>
 											}
 										}

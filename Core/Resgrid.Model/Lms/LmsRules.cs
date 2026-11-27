@@ -35,7 +35,7 @@ namespace Resgrid.Model.Lms
 				modules = moduleList.Select(m => new
 				{
 					title = m.Title ?? string.Empty,
-					lessons = lessonList.Where(l => l.LmsCourseModuleId == m.LmsCourseModuleId).OrderBy(l => l.SortOrder).ThenBy(l => l.LmsLessonId).Select(l => new
+					lessons = lessonList.Where(l => l.LmsCourseModuleId == m.LmsCourseModuleId).OrderBy(l => l.SortOrder).ThenBy(l => l.LmsLessonId).Select(l => StandardsCanonical(l, new
 					{
 						kind = l.Kind,
 						title = l.Title ?? string.Empty,
@@ -54,9 +54,29 @@ namespace Resgrid.Model.Lms
 							l.TimeLimitMinutes, l.ShowAnswersPolicy, l.IsPreTest, l.RandomizeAnswers, l.RequireAttestation
 						},
 						survey = l.SurveyJson ?? string.Empty
-					}).ToList()
+					})).ToList()
 				}).ToList()
 			});
+		}
+
+		/// <summary>
+		/// T5: a Scorm, Cmi5 or LtiLink lesson also binds its package or tool (and LTI target and parameters, the pass mark the score must reach).
+		/// Lessons of the earlier kinds serialize exactly as before, so the hash of every version approved before T5 is unchanged.
+		/// </summary>
+		private static object StandardsCanonical(LmsLesson l, object canonical)
+		{
+			if (l == null || (l.Kind != (int)LmsLessonKinds.Scorm && l.Kind != (int)LmsLessonKinds.Cmi5 && l.Kind != (int)LmsLessonKinds.LtiLink))
+				return canonical;
+			var node = Newtonsoft.Json.Linq.JObject.FromObject(canonical);
+			node["standards"] = Newtonsoft.Json.Linq.JObject.FromObject(new
+			{
+				package = l.LmsContentPackageId,
+				lti = l.LmsLtiToolId,
+				target = l.LtiTargetLinkUri ?? string.Empty,
+				custom = l.LtiCustomParameters ?? string.Empty,
+				passMark = l.PassMark
+			});
+			return node;
 		}
 
 		/// <summary>SHA-256 (lower-case hex) of <see cref="Canonical"/>: what an approval's L2 signature binds to.</summary>
@@ -86,6 +106,80 @@ namespace Resgrid.Model.Lms
 
 		/// <summary>The add-on was active once and is not now (or billing cannot say).</summary>
 		public bool IsLapsed => FlagOn && AddonActive != true && LastEntitledOn.HasValue;
+
+		/// <summary>
+		/// T5 item 2a (round 10 A3): the department's managed copies of a sponsor's course sets that run on the sponsor's add-on, each with the
+		/// time its sponsorship stopped paying (null while it pays). Filled only when the department has no add-on of its own.
+		/// </summary>
+		public Dictionary<int, DateTime?> SponsoredCourses { get; set; } = new Dictionary<int, DateTime?>();
+
+		/// <summary>The department's sponsored learning path copies (as <see cref="SponsoredCourses"/>): assigning them follows the sponsor's add-on.</summary>
+		public Dictionary<int, DateTime?> SponsoredPaths { get; set; } = new Dictionary<int, DateTime?>();
+
+		/// <summary>
+		/// The gate one course runs under: the department's own, or for a sponsored set copy the sponsor's (active while the sponsorship pays,
+		/// lapsed from when it stopped, so the add-on's lapse rules apply to it). Authoring is refused on copies anyway (the set edit lock).
+		/// </summary>
+		public LmsDepartmentGate ForCourse(int lmsCourseId) =>
+			AddonActive == true || SponsoredCourses == null || !SponsoredCourses.TryGetValue(lmsCourseId, out var stoppedOn) ? this : Sponsored(stoppedOn);
+
+		/// <summary>The gate a learning path is assigned under: the department's own, or for a sponsored path copy the sponsor's (as <see cref="ForCourse"/>).</summary>
+		public LmsDepartmentGate ForPath(int lmsPathId) =>
+			AddonActive == true || SponsoredPaths == null || !SponsoredPaths.TryGetValue(lmsPathId, out var stoppedOn) ? this : Sponsored(stoppedOn);
+
+		private LmsDepartmentGate Sponsored(DateTime? stoppedOn) => new LmsDepartmentGate
+		{
+			DepartmentId = DepartmentId,
+			ModuleOn = ModuleOn,
+			FlagOn = FlagOn,
+			AddonActive = stoppedOn.HasValue ? false : true,
+			LastEntitledOn = stoppedOn ?? LastEntitledOn,
+			SponsoredCourses = SponsoredCourses,
+			SponsoredPaths = SponsoredPaths
+		};
+	}
+
+	/// <summary>
+	/// Round 10 A7 (owner decision 2026-11-26, §17.4 "Only being trained through LMS features uses a seat"): which learner actions need the
+	/// acting member's LMS seat. Department-made LMS content (its own courses, a sponsor's managed copies, classes) does; the Resgrid Academy
+	/// and system-published content never do (R-S2), and an external learner (the learner portal) follows the portal's own fair-use and
+	/// suspension rules instead. Managers, instructors and graders acting on others need their permission, never a seat of their own.
+	/// </summary>
+	public static class LmsLearnerSeats
+	{
+		/// <summary>Whether <paramref name="userId"/> needs an LMS seat to act as a learner on a course (system or not).</summary>
+		public static bool Needed(bool systemCourse, string userId) =>
+			!systemCourse && !string.IsNullOrWhiteSpace(userId) && !LmsExternalLearnerIds.IsExternal(userId);
+
+		/// <summary>Whether <paramref name="userId"/> needs an LMS seat to act as a learner on <paramref name="course"/>.</summary>
+		public static bool Needed(LmsCourse course, string userId) => course != null && Needed(course.IsSystem, userId);
+
+		/// <summary>
+		/// §17.4 ("they cannot be enrolled in a course, class, path, skill sheet or task book"): takes out of <paramref name="members"/> everyone
+		/// who needs a seat for department content and is not in <paramref name="seatHolders"/>, recording each as a
+		/// <see cref="ContentAudienceSkipReasons.NotLicensed"/> skip. Returns the members still to enrol.
+		/// </summary>
+		public static HashSet<string> SkipUnseated(IEnumerable<string> members, ISet<string> seatHolders, List<ContentAudienceSkip> skipped)
+		{
+			var holders = new HashSet<string>(seatHolders ?? Enumerable.Empty<string>(), StringComparer.OrdinalIgnoreCase);
+			var keep = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			foreach (var userId in members ?? Enumerable.Empty<string>())
+			{
+				if (string.IsNullOrWhiteSpace(userId))
+					continue;
+				if (Needed(false, userId) && !holders.Contains(userId))
+					skipped?.Add(new ContentAudienceSkip { UserId = userId, Reason = ContentAudienceSkipReasons.NotLicensed });
+				else
+					keep.Add(userId);
+			}
+			return keep;
+		}
+	}
+
+	/// <summary>Null-safe <see cref="LmsDepartmentGate.ForCourse"/>.</summary>
+	public static class LmsDepartmentGateExtensions
+	{
+		public static LmsDepartmentGate For(this LmsDepartmentGate gate, int lmsCourseId) => gate?.ForCourse(lmsCourseId);
 	}
 
 	/// <summary>

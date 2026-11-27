@@ -59,6 +59,8 @@ namespace Resgrid.Model.Lms
 		public string ExemptReason { get; set; }
 		public DateTime? ExtendedDueUtc { get; set; }
 		public bool Enforced { get; set; }
+		/// <summary>Round 7B: the completion behind the state was recorded by an instructor (permission 135).</summary>
+		public bool RecordedByOther { get; set; }
 	}
 
 	public sealed class LmsMatrixRow

@@ -91,6 +91,11 @@
             </div>
         </div>
         <div class="col-md-6">
+            @* Round 9A: the type's requirement set progress (LMS; nothing without a set or the add-on), by name so this page never depends on LMS types. *@
+            @if (t != null && !t.IsUnitScoped)
+            {
+                @await Component.InvokeAsync("LmsCertificationProgress", new { userId = Model.Record.UserId, certificationTypeId = t.DepartmentCertificationTypeId })
+            }
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@localizer["Credits"]</h5>

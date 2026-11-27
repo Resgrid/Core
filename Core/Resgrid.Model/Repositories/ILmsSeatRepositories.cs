@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	/// <summary>LMS seats (M0366): one row per LMS-enabled member per department.</summary>
+	/// <summary>LMS seats (M0351): one row per LMS-enabled member per department.</summary>
 	public interface ILmsMemberSeatsRepository : IRepository<LmsMemberSeat>
 	{
 		/// <summary>The department's seat rows, oldest first (the licensing order).</summary>
@@ -18,16 +18,22 @@ namespace Resgrid.Model.Repositories
 		Task<int> RemoveAsync(int departmentId, IEnumerable<string> userIds, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>What Core last saw of each department's LMS add-on (M0367).</summary>
+	/// <summary>What Core last saw of each department's LMS add-on (M0352).</summary>
 	public interface ILmsAddonStatesRepository : IRepository<LmsAddonState>
 	{
 		Task<LmsAddonState> GetForDepartmentAsync(int departmentId);
 
 		/// <summary>Inserts or replaces the department's row (one per department; a concurrent insert falls back to an update).</summary>
 		Task SaveForDepartmentAsync(LmsAddonState state, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Moves the stored packs from <paramref name="expectedPacks"/> to <paramref name="packs"/> (compare-and-set); true when this call
+		/// changed them, so a renewal that changed the packs is announced once (round 7C, workflow trigger 274).
+		/// </summary>
+		Task<bool> TryChangePacksAsync(int departmentId, int expectedPacks, int packs, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>LMS add-on lapse periods (M0367).</summary>
+	/// <summary>LMS add-on lapse periods (M0352).</summary>
 	public interface ILmsAddonLapsesRepository : IRepository<LmsAddonLapse>
 	{
 		/// <summary>The department's lapses, oldest first.</summary>

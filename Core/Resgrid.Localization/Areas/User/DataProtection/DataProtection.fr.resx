@@ -191,7 +191,8 @@
     <value>Les notifications SMS, e-mail, push et vocales envoient par défaut un contenu générique (« Une répartition protégée est disponible — connectez-vous à Resgrid »).</value>
   </data>
   <data name="Step1NotCompliance" xml:space="preserve">
-    <value>La protection avancée des données ne constitue pas à elle seule une conformité HIPAA ou ePCR. C'est un contrôle au sein d'un programme de conformité qui reste sous la responsabilité de votre organisme.</value>
+    <value>La protection avancée des données ne constitue pas à elle seule une conformité HIPAA ou à d'autres règles sur les données de santé. C'est un contrôle au sein d'un programme de conformité qui reste sous la responsabilité de votre organisme.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step2Header" xml:space="preserve">
     <value>Étape 2 sur 6 — Reconnaissances</value>
@@ -230,7 +231,8 @@
     <value>Je comprends que le support Resgrid ne peut pas lire les valeurs protégées sans une autorisation de support explicite, auditée et approuvée par le département, et que la perte de clés n'est récupérable que par le processus documenté.</value>
   </data>
   <data name="AckNotHipaaCompliance" xml:space="preserve">
-    <value>Je comprends que la protection avancée des données ne constitue pas à elle seule une conformité HIPAA/ePCR.</value>
+    <value>Je comprends que la protection avancée des données ne constitue pas à elle seule une conformité HIPAA ou à d'autres règles sur les données de santé.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step3Header" xml:space="preserve">
     <value>Étape 3 sur 6 — Vérifications préalables</value>

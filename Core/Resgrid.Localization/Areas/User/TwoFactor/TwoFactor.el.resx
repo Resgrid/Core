@@ -503,5 +503,13 @@
   <data name="ResumeGoBack" xml:space="preserve">
     <value>Επιστροφή</value>
   </data>
+  <data name="StepUpUseReauthenticationLink" xml:space="preserve">
+    <value>Χρησιμοποιήστε αντί αυτού τον κωδικό σας ή τη σύνδεση του οργανισμού σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpReauthenticateIntro" xml:space="preserve">
+    <value>Για την ασφάλειά σας, επιβεβαιώστε ότι είστε εσείς για να συνεχίσετε: εισαγάγετε τον κωδικό σας ή συνδεθείτε ξανά μέσω του παρόχου ταυτότητας του οργανισμού σας. Αυτό δεν σας αποσυνδέει ούτε παρατείνει τη συνεδρία σας.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>
 

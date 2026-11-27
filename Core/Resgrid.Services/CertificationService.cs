@@ -329,6 +329,11 @@ namespace Resgrid.Services
 			}
 			if (type.RenewalCreditHoursRequired.HasValue && type.RenewalCreditHoursRequired.Value < 0)
 				throw new InvalidOperationException("certifications_type_credits_invalid");
+			// Round 9A: the validity rule (rolling months, calendar or fiscal year end, fixed date), the grace and the renewal window.
+			CertificationValidity.Normalize(type);
+			var validity = CertificationValidity.Validate(type);
+			if (validity != null)
+				throw new InvalidOperationException(validity);
 
 			DepartmentCertificationType existing = null;
 			if (type.DepartmentCertificationTypeId > 0)
@@ -369,9 +374,13 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<DepartmentCertificationType> CreateCertificationTypeFromTemplateAsync(int departmentId, string templateId, string userId, CancellationToken cancellationToken = default)
+		public Task<DepartmentCertificationType> CreateCertificationTypeFromTemplateAsync(int departmentId, string templateId, string userId, CancellationToken cancellationToken = default) =>
+			CreateCertificationTypeFromTemplateAsync(departmentId, templateId, userId, null, cancellationToken);
+
+		public async Task<DepartmentCertificationType> CreateCertificationTypeFromTemplateAsync(int departmentId, string templateId, string userId, string culture, CancellationToken cancellationToken = default)
 		{
-			var template = CertificationTypeTemplateCatalog.GetById(templateId);
+			// Round 9C: the name and description in the adding user's language (English when none ships); the code stays.
+			var template = CertificationTypeTemplateCatalog.Localized(CertificationTypeTemplateCatalog.GetById(templateId), culture);
 			if (template == null)
 				throw new InvalidOperationException("certifications_template_not_found");
 			return await SaveCertificationTypeAsync(CertificationTypeTemplateCatalog.ToDepartmentType(template, departmentId), userId, cancellationToken);

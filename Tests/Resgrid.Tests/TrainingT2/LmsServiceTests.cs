@@ -229,7 +229,9 @@ namespace Resgrid.Tests.TrainingT2
 
 			var certification = _world.Certifications.Should().ContainSingle().Subject;
 			certification.Status.Should().Be((int)PersonnelCertificationStatuses.Active);
-			certification.ExpiresOn.Should().Be(DateTime.UtcNow.Date.AddMonths(24));
+			// Round 9A: the expiry runs from the department-local date of the completion (the validity rule's maths).
+			var department = await _world.Departments.Object.GetDepartmentByIdAsync(D, false);
+			certification.ExpiresOn.Should().Be(Resgrid.Model.Helpers.TrainingDueDates.LocalDate(stored.CompletedOn.Value, department).AddMonths(24));
 			stored.PersonnelCertificationId.Should().Be(certification.PersonnelCertificationId);
 		}
 
@@ -253,7 +255,8 @@ namespace Resgrid.Tests.TrainingT2
 
 			var renewed = _world.Certifications.Should().ContainSingle().Subject;
 			renewed.PersonnelCertificationId.Should().Be(77);
-			renewed.ExpiresOn.Should().Be(DateTime.UtcNow.Date.AddMonths(12));
+			var department = await _world.Departments.Object.GetDepartmentByIdAsync(D, false);
+			renewed.ExpiresOn.Should().Be(Resgrid.Model.Helpers.TrainingDueDates.LocalDate(_world.Enrollments.Rows.Single().CompletedOn.Value, department).AddMonths(12));
 			renewed.Status.Should().Be((int)PersonnelCertificationStatuses.PendingVerification);
 		}
 
@@ -696,5 +699,130 @@ namespace Resgrid.Tests.TrainingT2
 		}
 
 		#endregion Academy (A1)
+
+		#region Workflow events (round 7C, triggers 259-261)
+
+		[Test]
+		public async Task Publishing_a_course_version_raises_version_published_once_and_a_refused_publish_raises_nothing()
+		{
+			var admin = _world.AdminActor;
+			var created = await _world.CourseService.CreateAsync(admin, new LmsCourseInput { Title = "Pump operations", Code = "PO-1", IsSelfEnrollable = true });
+			var module = _world.Modules.Rows.Single(m => m.LmsCourseVersionId == created.Version.LmsCourseVersionId);
+			(await _world.CourseService.SaveLessonAsync(admin, new LmsLessonInput
+			{
+				LmsCourseVersionId = created.Version.LmsCourseVersionId, LmsCourseModuleId = module.LmsCourseModuleId, Kind = (int)LmsLessonKinds.Blocks, Title = "Intro", ContentHtml = "<p>Pressure</p>"
+			})).Succeeded.Should().BeTrue();
+
+			(await _world.CourseService.PublishAsync(admin, created.Version.LmsCourseVersionId, false, "x", LmsMajorChangePolicies.Nothing, null)).Succeeded.Should().BeFalse();
+			_world.CourseEvents.Should().BeEmpty();
+
+			await ApproveAndPublishAsync(created.Version.LmsCourseVersionId);
+
+			_world.CourseEvents.Should().ContainSingle();
+			var published = _world.CourseEvents.Single();
+			published.Trigger.Should().Be(WorkflowTriggerEventType.CourseVersionPublished);
+			published.DepartmentId.Should().Be(D);
+			published.CourseId.Should().Be(created.Course.LmsCourseId);
+			published.CourseVersionId.Should().Be(created.Version.LmsCourseVersionId);
+			published.VersionLabel.Should().Be("1.0");
+			published.ActorUserId.Should().Be(LmsWorld.Admin);
+			published.UserId.Should().BeNull();
+		}
+
+		[Test]
+		public async Task Completing_a_course_raises_completed_once_for_the_learner()
+		{
+			var (course, version, lessons) = await _world.PublishedCourseAsync("Pump operator", LmsWorld.Reading("Hydraulics"), LmsWorld.Reading("Pumps"));
+			var enrollment = await EnrollAsync(LmsWorld.Member, course.LmsCourseId);
+
+			await _world.Learner.CompleteLessonAsync(D, LmsWorld.Member, enrollment.LmsEnrollmentId, lessons[0].LmsLessonId, null);
+			_world.CourseEvents.Should().BeEmpty("one required lesson is still open");
+
+			await _world.Learner.CompleteLessonAsync(D, LmsWorld.Member, enrollment.LmsEnrollmentId, lessons[1].LmsLessonId, null);
+			await _world.Learner.CompleteLessonAsync(D, LmsWorld.Member, enrollment.LmsEnrollmentId, lessons[1].LmsLessonId, null);
+
+			_world.CourseEvents.Should().ContainSingle();
+			var completed = _world.CourseEvents.Single();
+			completed.Trigger.Should().Be(WorkflowTriggerEventType.CourseCompleted);
+			completed.UserId.Should().Be(LmsWorld.Member);
+			completed.EnrollmentId.Should().Be(enrollment.LmsEnrollmentId);
+			completed.CourseVersionId.Should().Be(version.LmsCourseVersionId);
+			completed.CompletedOn.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task Grading_raises_assessment_graded_once_without_the_answers_or_the_notes()
+		{
+			var essay = new LmsQuestion { Kind = (int)LmsQuestionKinds.ShortAnswer, Text = "Describe a size-up.", Points = 2, Explanation = "Model answer" };
+			var bank = await _world.BankAsync(LmsWorld.Single("Command?", "a", "a", "b"), essay);
+			var (course, _, lessons) = await _world.PublishedCourseAsync("Command", LmsWorld.Quiz(bank.LmsQuestionBankId, 80));
+			var enrollment = await EnrollAsync(LmsWorld.Member, course.LmsCourseId);
+			var view = await _world.Assessment.StartAttemptAsync(D, LmsWorld.Member, enrollment.LmsEnrollmentId, lessons[0].LmsLessonId, false, null, null, null);
+			await _world.Assessment.SubmitAttemptAsync(D, LmsWorld.Member, view.Attempt.LmsAssessmentAttemptId, _world.Answers(view.Attempt.LmsAssessmentAttemptId, true));
+			var item = (await _world.Assessment.GetGradingQueueAsync(_world.Actor(LmsWorld.Grader, grade: true))).Single();
+			var grades = new[] { new LmsManualGrade { QuestionId = item.Questions[0].QuestionId, Awarded = 2 } };
+			// Workflow trigger 272: the submitted attempt waits for a grader (once, never the answers).
+			var waiting = _world.CourseEvents.Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.AssessmentAwaitingGrading).Subject;
+			(waiting.UserId, waiting.AttemptId, waiting.CourseId).Should().Be((LmsWorld.Member, view.Attempt.LmsAssessmentAttemptId, course.LmsCourseId));
+			JsonConvert.SerializeObject(waiting).Should().NotContain("considered answer");
+			_world.CourseEvents.Clear();
+
+			(await _world.Assessment.GradeAsync(_world.Actor(LmsWorld.Member, grade: true), view.Attempt.LmsAssessmentAttemptId, grades, null)).Error.Should().Be(LmsErrors.NotAuthorized);
+			_world.CourseEvents.Should().BeEmpty();
+
+			(await _world.Assessment.GradeAsync(_world.Actor(LmsWorld.Grader, grade: true), view.Attempt.LmsAssessmentAttemptId, grades, "Sharp size-up notes")).Attempt.Passed.Should().BeTrue();
+			(await _world.Assessment.GradeAsync(_world.Actor(LmsWorld.Grader, grade: true), view.Attempt.LmsAssessmentAttemptId, grades, null)).Error.Should().Be(LmsErrors.AlreadySubmitted);
+
+			var graded = _world.CourseEvents.Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.AssessmentGraded).Subject;
+			graded.UserId.Should().Be(LmsWorld.Member);
+			graded.ActorUserId.Should().Be(LmsWorld.Grader);
+			graded.Passed.Should().BeTrue();
+			graded.CourseId.Should().Be(course.LmsCourseId);
+			graded.LessonTitle.Should().Be("Quiz");
+			var json = JsonConvert.SerializeObject(graded);
+			json.Should().NotContain("size-up").And.NotContain("Model answer");
+			_world.CourseEvents.Should().Contain(e => e.Trigger == WorkflowTriggerEventType.CourseCompleted, "the graded pass completed the course");
+		}
+
+		[Test]
+		public async Task A_direct_assignment_raises_course_assigned_per_new_member_and_an_automated_one_does_not()
+		{
+			// Round 7C, workflow trigger 271: Courses → Assign (and an Academy lesson); requirements and paths raise 224 instead.
+			var (course, _, _) = await _world.PublishedCourseAsync("Rope rescue", LmsWorld.Reading("Knots"));
+			var officer = _world.Actor(LmsWorld.Admin, manage: true, assign: true, admin: true);
+			var due = DateTime.UtcNow.AddDays(30);
+
+			await _world.Learner.AssignAsync(officer, course.LmsCourseId, new[] { new ContentAudienceRule(ContentAudienceKinds.User, LmsWorld.Member2) }, due);
+			_world.CourseEvents.Should().BeEmpty("the plain assignment is the one requirements and paths use");
+
+			var outcome = await _world.Learner.AssignDirectAsync(officer, course.LmsCourseId,
+				new[] { new ContentAudienceRule(ContentAudienceKinds.User, LmsWorld.Member), new ContentAudienceRule(ContentAudienceKinds.User, LmsWorld.Member2) }, due);
+			outcome.Created.Should().Be(1);
+			(await _world.Learner.AssignDirectAsync(officer, course.LmsCourseId, new[] { new ContentAudienceRule(ContentAudienceKinds.User, LmsWorld.Member) }, due)).Created.Should().Be(0);
+
+			var assigned = _world.CourseEvents.Should().ContainSingle().Subject;
+			assigned.Trigger.Should().Be(WorkflowTriggerEventType.CourseAssigned);
+			(assigned.DepartmentId, assigned.UserId, assigned.ActorUserId, assigned.CourseId).Should().Be((D, LmsWorld.Member, LmsWorld.Admin, course.LmsCourseId));
+			assigned.DueOn.Should().Be(due);
+		}
+
+		[Test]
+		public async Task Retiring_a_course_raises_course_retired_once()
+		{
+			// Round 7C, workflow trigger 273.
+			var (course, version, _) = await _world.PublishedCourseAsync("Old pump course", LmsWorld.Reading("Pumps"));
+			var admin = _world.AdminActor;
+
+			(await _world.CourseService.RetireAsync(_world.Actor(LmsWorld.Member), course.LmsCourseId)).Succeeded.Should().BeFalse();
+			(await _world.CourseService.RetireAsync(admin, course.LmsCourseId)).Succeeded.Should().BeTrue();
+			await _world.CourseService.RetireAsync(admin, course.LmsCourseId);
+
+			var retired = _world.CourseEvents.Should().ContainSingle().Subject;
+			retired.Trigger.Should().Be(WorkflowTriggerEventType.CourseRetired);
+			(retired.CourseId, retired.CourseVersionId, retired.ActorUserId).Should().Be((course.LmsCourseId, (int?)version.LmsCourseVersionId, LmsWorld.Admin));
+			retired.UserId.Should().BeNull();
+		}
+
+		#endregion Workflow events (round 7C, triggers 259-261, 271-273)
 	}
 }

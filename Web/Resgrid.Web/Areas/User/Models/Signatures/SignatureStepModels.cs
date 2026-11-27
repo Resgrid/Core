@@ -66,7 +66,7 @@ namespace Resgrid.Web.Areas.User.Models.Signatures
 				who = !string.IsNullOrWhiteSpace(signer.UserId) ? (names != null && names.TryGetValue(signer.UserId, out var name) && !string.IsNullOrWhiteSpace(name) ? name : text["MemberFallbackName"].Value)
 					: text["AnyEligibleMember"].Value;
 			else
-				who = string.IsNullOrWhiteSpace(signer.ExternalName) ? text["OutsideSignerFallbackName"].Value : signer.ExternalName;
+				who = string.IsNullOrWhiteSpace(signer.ExternalName) ? text["OutsideSignerFallbackName"].Value : signer.ExternalNameForDisplay;
 			return role + " · " + who;
 		}
 

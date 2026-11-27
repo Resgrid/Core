@@ -18,6 +18,27 @@ namespace Resgrid.Web.Areas.User.Models.Wellness
 
 		/// <summary>WL1: keeps injuries, duty status, medical clearances and the OSHA log (designated or wellness officer).</summary>
 		public bool IsHealthOfficer { get; set; }
+
+		/// <summary>Workforce Pro is offered but not licensed (never bought, cancelled or lapsed): records are read-only (the upsell banner).</summary>
+		public bool WorkforceProReadOnly { get; set; }
+
+		/// <summary>Workforce Pro is licensed (records about seat holders can be created and edited).</summary>
+		public bool WorkforceProLicensed { get; set; }
+
+		/// <summary>The viewer administers the department: the banner links to the Workforce Pro add-on page and the seats page.</summary>
+		public bool ShowWorkforceProLinks { get; set; }
+
+		/// <summary>
+		/// A Workforce Pro renewal failed and the seven-day dunning grace runs until this moment (UTC): everything still works; the notice is
+		/// shown to administrators only (null otherwise).
+		/// </summary>
+		public DateTime? WorkforceProGraceEndsUtc { get; set; }
+
+		/// <summary>Set by a page about one member who holds no Workforce Pro seat (licensed department): that member's name, for the read-only notice.</summary>
+		public string SeatMissingMemberName { get; set; }
+
+		/// <summary>The page is about the signed-in member, who holds no seat.</summary>
+		public bool SeatMissingIsSelf { get; set; }
 	}
 
 	/// <summary>A member's exposure log: "My exposures", or a member's log opened by a wellness officer.</summary>
@@ -94,6 +115,8 @@ namespace Resgrid.Web.Areas.User.Models.Wellness
 		public string To { get; set; }
 		public List<MemberExposureSummary> Summaries { get; set; } = new List<MemberExposureSummary>();
 		public List<RmsCallExposureFlag> RecentFlags { get; set; } = new List<RmsCallExposureFlag>();
+		/// <summary>2026-11-26: the wellness team (each role's members, their certification status and who acts).</summary>
+		public List<WellnessRoleRoster> Roster { get; set; } = new List<WellnessRoleRoster>();
 		public Dictionary<string, string> Names { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 		public Dictionary<int, string> CallNames { get; set; } = new Dictionary<int, string>();
 		public Department Department { get; set; }
@@ -127,10 +150,34 @@ namespace Resgrid.Web.Areas.User.Models.Wellness
 		public int BbpTrainingCertificationTypeId { get; set; }
 		public int MedicalClearanceCertificationTypeId { get; set; }
 		public int InjuryRetentionYears { get; set; } = OshaRules.MinimumRetentionYears;
+		/// <summary>2026-11-26: each wellness role's own certification type, the peer support role and the certification switch.</summary>
+		public int WellnessOfficerCertificationTypeId { get; set; }
+		public int DesignatedOfficerCertificationTypeId { get; set; }
+		public int PeerTeamRoleId { get; set; }
+		public bool RequireCurrentCertification { get; set; }
 		public List<PersonnelRole> Roles { get; set; } = new List<PersonnelRole>();
 		public List<DepartmentCertificationType> CertificationTypes { get; set; } = new List<DepartmentCertificationType>();
+		/// <summary>Person-scoped, active types: the choices for a wellness role's certification (the saved one is kept even when inactive).</summary>
+		public List<DepartmentCertificationType> PersonCertificationTypes { get; set; } = new List<DepartmentCertificationType>();
+		/// <summary>Each wellness role's members with their certification status; empty when it could not be read.</summary>
+		public List<WellnessRoleRoster> Roster { get; set; } = new List<WellnessRoleRoster>();
+		public Dictionary<string, string> Names { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		public Department Department { get; set; }
+		/// <summary>True when the LMS flag is on, so the certification requirement set editor (round 9A) can be linked.</summary>
+		public bool RequirementSetsAvailable { get; set; }
 		public string Message { get; set; }
 		public string Error { get; set; }
+
+		public string NameOf(string userId) => !string.IsNullOrWhiteSpace(userId) && Names.TryGetValue(userId, out var name) && !string.IsNullOrWhiteSpace(name) ? name : userId;
+	}
+
+	/// <summary>The roster partial (Wellness/_Roster): the wellness roles, who holds them, their certification status and who acts.</summary>
+	public class WellnessRosterView
+	{
+		public List<WellnessRoleRoster> Roster { get; set; } = new List<WellnessRoleRoster>();
+		public Dictionary<string, string> Names { get; set; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		public Department Department { get; set; }
+		public string NameOf(string userId) => !string.IsNullOrWhiteSpace(userId) && Names.TryGetValue(userId, out var name) && !string.IsNullOrWhiteSpace(name) ? name : userId;
 	}
 
 	/// <summary>Localization keys and display helpers shared by the wellness views and documents.</summary>

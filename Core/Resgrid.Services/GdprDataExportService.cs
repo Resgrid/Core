@@ -587,7 +587,12 @@ namespace Resgrid.Services
 					r.Tags,
 					r.Notes,
 					r.VerificationCode,
-					r.CreatedOn
+					r.CreatedOn,
+					// Round 7B: a completion an instructor recorded for the member (recorded_completions.json has the source, note and attestation)
+					CompletionMethod = ((LearningCompletionMethods)r.CompletionMethod).ToString(),
+					r.RecordedByUserId,
+					r.RecordedOn,
+					r.RecordedCompletionId
 				}).ToList();
 		}
 

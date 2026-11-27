@@ -60,98 +60,130 @@
   </resheader>
   <data name="AcceptButton" xml:space="preserve">
     <value>Accetta selezionati</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcceptedNotice" xml:space="preserve">
     <value>{0} aggiunti all'editor. Salva per mantenerli.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcceptedSummaryNotice" xml:space="preserve">
     <value>Il riepilogo delle modifiche è stato compilato. Rivedilo prima di inviare.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BudgetNotice" xml:space="preserve">
     <value>La quota di IA del dipartimento per questo mese è esaurita.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BusyNotice" xml:space="preserve">
     <value>Il servizio di IA è occupato. Riprova tra poco.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CorrectLabel" xml:space="preserve">
     <value>Corretta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiscardButton" xml:space="preserve">
     <value>Scarta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftChangeSummaryButton" xml:space="preserve">
     <value>Prepara il riepilogo delle modifiche</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftedNotice" xml:space="preserve">
     <value>Una bozza basata solo su questo contenuto. Rivedi ogni elemento; nulla viene salvato finché non lo accetti.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Drafting" xml:space="preserve">
     <value>Stesura in corso…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftOutlineButton" xml:space="preserve">
     <value>Prepara la scaletta del corso</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftQuizButton" xml:space="preserve">
     <value>Prepara domande del quiz</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DroppedNotice" xml:space="preserve">
     <value>{0} elementi sono stati esclusi perché contenevano un numero che non è nel contenuto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExcludedNotice" xml:space="preserve">
     <value>Questo contenuto è escluso dall'IA, quindi gli assistenti di stesura non sono disponibili.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplanationLabel" xml:space="preserve">
     <value>Spiegazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InvalidNotice" xml:space="preserve">
     <value>La richiesta non è valida.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KeepLabel" xml:space="preserve">
     <value>Mantieni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KeptLocalNotice" xml:space="preserve">
     <value>La Protezione Avanzata dei Dati mantiene locali i contenuti del dipartimento, quindi gli assistenti di stesura non sono disponibili.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ModuleNumber" xml:space="preserve">
     <value>Modulo {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoChangesNotice" xml:space="preserve">
     <value>Non c'è una versione precedente da confrontare, oppure non è cambiato nulla.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoContentNotice" xml:space="preserve">
     <value>Aggiungi prima altro contenuto; non ce n'è abbastanza per una bozza.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotAllowedNotice" xml:space="preserve">
     <value>Non puoi modificare questo contenuto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotFoundNotice" xml:space="preserve">
     <value>Questo contenuto non è stato trovato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NothingSelectedNotice" xml:space="preserve">
     <value>Seleziona almeno un elemento da accettare.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ObjectiveLabel" xml:space="preserve">
     <value>Obiettivo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PanelHeader" xml:space="preserve">
     <value>Assistenti di stesura</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PanelHelp" xml:space="preserve">
     <value>Prepara una bozza da questo contenuto con l'IA, poi rivedila. Nulla viene salvato finché non la accetti e ogni numero deve provenire dal contenuto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionCountLabel" xml:space="preserve">
     <value>Numero di domande</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionCountOption" xml:space="preserve">
     <value>{0} domande</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionNumber" xml:space="preserve">
     <value>Domanda {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusedNotice" xml:space="preserve">
     <value>Non è stato possibile usare la bozza. Riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UnavailableNotice" xml:space="preserve">
     <value>Gli assistenti di stesura non sono disponibili ora.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

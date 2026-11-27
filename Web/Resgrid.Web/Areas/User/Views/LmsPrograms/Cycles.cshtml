@@ -40,7 +40,7 @@
             </div>
             <div class="ibox-content">
                 <p class="text-muted">
-                    @(type.RenewalCreditHoursRequired.HasValue ? string.Format(localizer["Prg.RenewalHours"].Value, type.RenewalCreditHoursRequired.Value.ToString("0.##")) : localizer["Prg.NoRenewalHours"].Value)
+                    @(type.RenewalCreditHoursRequired.HasValue ? string.Format(System.Globalization.CultureInfo.CurrentCulture, localizer["Prg.RenewalHours"].Value, type.RenewalCreditHoursRequired.Value.ToString("0.##", System.Globalization.CultureInfo.CurrentCulture)) : localizer["Prg.NoRenewalHours"].Value)
                     @(type.DefaultValidityMonths.HasValue ? " · " + string.Format(localizer["Prg.ValidityMonths"].Value, type.DefaultValidityMonths.Value) : string.Empty)
                 </p>
                 <form method="post" asp-controller="LmsPrograms" asp-action="SaveCycleRule" asp-route-area="User">

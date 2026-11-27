@@ -21,6 +21,7 @@
 @await Html.PartialAsync("_Shell")
 
 <div class="wrapper wrapper-content">
+    @await Component.InvokeAsync("ContentSetCopyBanner", new { kind = (int)Resgrid.Model.ContentSetItemKinds.Training, localId = Model.TrainingId })
     @await Html.PartialAsync("_Editor", (TrainingEditorModel)Model)
     @await Html.PartialAsync("_EditorAids", (TrainingEditorModel)Model)
 </div>

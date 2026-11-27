@@ -35,7 +35,7 @@ namespace Resgrid.Model
 		public long? Size { get; set; }
 
 		/// <summary>
-		/// Lower-case hex SHA-256 of the bytes (M0381, P3 offline manifest). Filled by the database itself (backfill, and on the manifest read
+		/// Lower-case hex SHA-256 of the bytes (M0363, P3 offline manifest). Filled by the database itself (backfill, and on the manifest read
 		/// for any row still without one), never by the ORM, so a list never loads the bytes to hash them.
 		/// </summary>
 		[NotMapped]

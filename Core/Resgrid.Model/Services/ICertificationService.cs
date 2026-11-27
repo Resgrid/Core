@@ -54,6 +54,8 @@ namespace Resgrid.Model.Services
 		Task<DepartmentCertificationType> SaveCertificationTypeAsync(DepartmentCertificationType type, string userId, Onboarding.ImportEffectPolicy effects, CancellationToken cancellationToken);
 		/// <summary>Projects a <see cref="Certifications.CertificationTypeTemplateCatalog"/> template into a new department type.</summary>
 		Task<DepartmentCertificationType> CreateCertificationTypeFromTemplateAsync(int departmentId, string templateId, string userId, CancellationToken cancellationToken = default);
+		/// <summary>As above, the type's name and description in a language (round 9C; English when none ships). The code is the same in every language.</summary>
+		Task<DepartmentCertificationType> CreateCertificationTypeFromTemplateAsync(int departmentId, string templateId, string userId, string culture, CancellationToken cancellationToken = default);
 
 		// ---- Personnel records (plan D4) ---------------------------------------------------------------------------
 
@@ -76,6 +78,12 @@ namespace Resgrid.Model.Services
 		/// <summary>Puts a record back to the status and expiry it held before a rule changed it (the rule's undo). Audits Before/After; raises trigger 91.</summary>
 		Task<PersonnelCertification> RestoreCertificationStateAsync(int certificationId, int departmentId, PersonnelCertificationStatuses status, DateTime? expiresOn, string reason,
 			string userId, CancellationToken cancellationToken = default);
+		/// <summary>
+		/// Round 9A: puts a record back to the status, expiry and start date it held before an automatic issue or renewal that a void took
+		/// back (the training engine keeps the previous state in its issuance ledger). Audits Before/After; raises trigger 91.
+		/// </summary>
+		Task<PersonnelCertification> RollBackCertificationAsync(int certificationId, int departmentId, PersonnelCertificationStatuses status, DateTime? expiresOn,
+			DateTime? recievedOn, string reason, string userId, CancellationToken cancellationToken = default);
 
 		// ---- Credits (plan D1.4) ----------------------------------------------------------------------------------
 
@@ -150,9 +158,44 @@ namespace Resgrid.Model
 		public int InGrace { get; set; }
 		public int Removed { get; set; }
 		public bool DigestSent { get; set; }
-		public List<string> ExpiredNames { get; set; } = new List<string>();
-		public List<string> ExpiringNames { get; set; } = new List<string>();
-		public List<string> InGraceNames { get; set; } = new List<string>();
-		public List<string> RemovedNames { get; set; } = new List<string>();
+
+		/// <summary>
+		/// What the admin digest lists, as data rather than text: each admin's digest is written in that admin's own language
+		/// (CertificationSweepNotices), so the sweep keeps the names, types, roles and dates, never a sentence.
+		/// </summary>
+		public List<CertificationSweepEntry> Entries { get; set; } = new List<CertificationSweepEntry>();
+	}
+
+	/// <summary>The digest line an entry belongs to.</summary>
+	public enum CertificationSweepEntryKinds
+	{
+		Expired = 0,
+		Expiring = 1,
+		InGrace = 2,
+		Removed = 3
+	}
+
+	/// <summary>One member's or unit's line in the certification digest.</summary>
+	public sealed class CertificationSweepEntry
+	{
+		public CertificationSweepEntryKinds Kind { get; set; }
+
+		/// <summary>The member's or unit's name; null for a unit that could not be read (<see cref="UnitId"/> names it).</summary>
+		public string SubjectName { get; set; }
+
+		/// <summary>The unit of a unit record; null for a member's.</summary>
+		public int? UnitId { get; set; }
+
+		/// <summary>The certification type's name (department data, not translated).</summary>
+		public string TypeName { get; set; }
+
+		/// <summary>The role of an in-grace or removed member.</summary>
+		public string RoleName { get; set; }
+
+		/// <summary>Days left on an expiring record.</summary>
+		public int? DaysUntilExpiry { get; set; }
+
+		/// <summary>When an in-grace member is removed from the role (the grace deadline).</summary>
+		public DateTime? Until { get; set; }
 	}
 }

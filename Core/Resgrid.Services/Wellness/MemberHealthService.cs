@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
+using Resgrid.Localization.Areas.User.ContentNotices;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
@@ -20,6 +21,11 @@ namespace Resgrid.Services.Wellness
 	/// department enforces protection, reads reveal for the caller's grant and show REDACTED otherwise. Audit entries carry ids, stages,
 	/// statuses and dates, never a protected value. Notices name no health detail. Nothing here is indexed for search or sent to an AI
 	/// feature (§16.3).
+	/// <para>
+	/// Workforce Pro (owner 2026-11-26), as <see cref="MemberWellnessService"/>: flag off refuses everything (routes 404); offered but not
+	/// licensed is read-only (the OSHA log and the member's own records stay readable); licensed, a record about a member is created or
+	/// edited only while that member holds a seat. The GDPR archive and retention erasure are never gated.
+	/// </para>
 	/// </summary>
 	public partial class MemberHealthService : IMemberHealthService
 	{
@@ -44,14 +50,19 @@ namespace Resgrid.Services.Wellness
 		private readonly Lazy<IProtectedReadService> _protectedRead;
 		private readonly IProtectedGrantContext _grant;
 		private readonly IEventAggregator _events;
+		private readonly IUserProfileService _userProfiles;
+		private readonly WellnessRoleResolver _roleResolver;
+		private readonly IWorkforceProAccessService _workforcePro;
 
 		public MemberHealthService(IRmsExposureIncidentsRepository incidents, IRmsMemberInjuriesRepository injuries, IRmsInjuryDutyPeriodsRepository periods,
 			IRmsMedicalClearancesRepository clearances, IRmsResponderExposuresRepository exposures, IRmsRecordWorkAssignmentsRepository assignments,
 			IRmsRecordLegalHoldsRepository legalHolds, IMemberWellnessService wellness, IDepartmentsService departmentsService, IDepartmentSettingsService settingsService,
 			IPersonnelRolesService rolesService, IDepartmentGroupsService groupsService, Lazy<ICertificationService> certificationService, ICallsService callsService,
 			Lazy<ICommunicationService> communicationService, Lazy<IProtectedWriteService> protectedWrite, Lazy<IProtectedReadService> protectedRead,
-			IProtectedGrantContext grant, IEventAggregator events)
+			IProtectedGrantContext grant, IEventAggregator events, IUserProfileService userProfiles, IWorkforceProAccessService workforcePro)
 		{
+			_workforcePro = workforcePro;
+			_userProfiles = userProfiles;
 			_incidents = incidents;
 			_injuries = injuries;
 			_periods = periods;
@@ -71,6 +82,7 @@ namespace Resgrid.Services.Wellness
 			_protectedRead = protectedRead;
 			_grant = grant;
 			_events = events;
+			_roleResolver = new WellnessRoleResolver(departmentsService, rolesService, certificationService);
 		}
 
 		#region Access
@@ -91,9 +103,11 @@ namespace Resgrid.Services.Wellness
 				var designatedRoleId = DesignatedRoleId(settings);
 				if (settings.WellnessOfficerRoleId > 0 || designatedRoleId > 0)
 				{
-					var roles = await _rolesService.GetRolesForUserAsync(userId, departmentId) ?? new List<PersonnelRole>();
-					access.IsWellnessOfficer = settings.WellnessOfficerRoleId > 0 && roles.Any(r => r != null && r.PersonnelRoleId == settings.WellnessOfficerRoleId);
-					access.IsDesignatedOfficer = designatedRoleId > 0 && roles.Any(r => r != null && r.PersonnelRoleId == designatedRoleId);
+					// 2026-11-26: the role decides; with the certification switch on, a current certification of the role's type is needed too.
+					var held = (await _rolesService.GetRolesForUserAsync(userId, departmentId) ?? new List<PersonnelRole>())
+						.Where(r => r != null).Select(r => r.PersonnelRoleId).ToHashSet();
+					access.IsWellnessOfficer = await _roleResolver.ActsAsync(departmentId, settings, WellnessRoleKinds.WellnessOfficer, userId, held);
+					access.IsDesignatedOfficer = await _roleResolver.ActsAsync(departmentId, settings, WellnessRoleKinds.DesignatedOfficer, userId, held);
 				}
 
 				access.IsAdmin = await _wellness.IsDepartmentAdminAsync(departmentId, userId);
@@ -108,8 +122,7 @@ namespace Resgrid.Services.Wellness
 		}
 
 		/// <summary>The designated officer role, or the wellness officer role when the department names none.</summary>
-		internal static int DesignatedRoleId(WellnessSettings settings) =>
-			settings == null ? 0 : settings.DesignatedOfficerRoleId > 0 ? settings.DesignatedOfficerRoleId : settings.WellnessOfficerRoleId;
+		internal static int DesignatedRoleId(WellnessSettings settings) => WellnessRoleRules.RoleIdFor(settings, WellnessRoleKinds.DesignatedOfficer);
 
 		public async Task<bool> IsDesignatedOfficerAsync(int departmentId, string userId) => (await GetAccessAsync(departmentId, userId)).IsDesignatedOfficer;
 
@@ -124,6 +137,13 @@ namespace Resgrid.Services.Wellness
 		}
 
 		private static bool Same(string a, string b) => string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
+
+		/// <summary>The Workforce Pro gate for the department (one evaluation per request, remembered by the access service).</summary>
+		private Task<WorkforceProAccess> WorkforceProAsync(int departmentId) => _workforcePro.GetAccessAsync(departmentId);
+
+		private async Task RequireReadableAsync(int departmentId) => (await WorkforceProAsync(departmentId)).EnsureReadable();
+
+		private async Task RequireWritableForAsync(int departmentId, string subjectUserId) => (await WorkforceProAsync(departmentId)).EnsureWritableFor(subjectUserId);
 
 		/// <summary>The member themselves (still current) or an officer of the right kind.</summary>
 		private async Task<bool> CanReadAsync(int departmentId, string viewerUserId, string memberUserId, bool designatedOnly)
@@ -148,31 +168,20 @@ namespace Resgrid.Services.Wellness
 				throw new UnauthorizedAccessException("This needs the department's designated or wellness officer role.");
 		}
 
-		/// <summary>The current members of a role (case-insensitive ids), active ones only when <paramref name="activeOnly"/>.</summary>
-		private async Task<List<string>> RoleMembersAsync(int departmentId, int roleId)
-		{
-			if (roleId <= 0)
-				return new List<string>();
-			var active = await _departmentsService.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			return (await _rolesService.GetAllMembersOfRoleAsync(roleId) ?? new List<PersonnelRoleUser>())
-				.Where(m => m != null && !string.IsNullOrWhiteSpace(m.UserId) && active.Contains(m.UserId))
-				.Select(m => m.UserId)
-				.Distinct(StringComparer.OrdinalIgnoreCase)
-				.ToList();
-		}
-
+		/// <summary>The active designated officers acting today (role, and the certification rule when the switch is on).</summary>
 		private async Task<List<string>> DesignatedOfficersAsync(int departmentId)
 		{
 			var settings = await _wellness.GetSettingsAsync(departmentId) ?? new WellnessSettings();
-			return await RoleMembersAsync(departmentId, DesignatedRoleId(settings));
+			return await _roleResolver.ActingMembersAsync(departmentId, settings, WellnessRoleKinds.DesignatedOfficer);
 		}
 
+		/// <summary>The active designated and wellness officers acting today.</summary>
 		private async Task<List<string>> HealthOfficersAsync(int departmentId)
 		{
 			var settings = await _wellness.GetSettingsAsync(departmentId) ?? new WellnessSettings();
-			var ids = await RoleMembersAsync(departmentId, DesignatedRoleId(settings));
-			if (settings.WellnessOfficerRoleId > 0 && settings.WellnessOfficerRoleId != DesignatedRoleId(settings))
-				ids.AddRange(await RoleMembersAsync(departmentId, settings.WellnessOfficerRoleId));
+			var ids = await _roleResolver.ActingMembersAsync(departmentId, settings, WellnessRoleKinds.DesignatedOfficer);
+			if (settings.WellnessOfficerRoleId > 0)
+				ids.AddRange(await _roleResolver.ActingMembersAsync(departmentId, settings, WellnessRoleKinds.WellnessOfficer));
 			return ids.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 		}
 
@@ -233,8 +242,13 @@ namespace Resgrid.Services.Wellness
 			});
 		}
 
-		/// <summary>Direct notices to active members only; a failed channel never stops the others or undoes the write.</summary>
-		private async Task<int> NotifyAsync(int departmentId, IEnumerable<string> userIds, string title, string message, EventTypes type, string id, CancellationToken cancellationToken)
+		/// <summary>
+		/// Direct notices to active members only; a failed channel never stops the others or undoes the write. Each officer reads the notice
+		/// in their own language (ContentNotices, round 9C): <paramref name="titleKey"/> and <paramref name="messageKey"/> filled with
+		/// <paramref name="args"/>, dates written the reader's way; <paramref name="memberName"/> null is "a member" in that language.
+		/// </summary>
+		private async Task<int> NotifyAsync(int departmentId, IEnumerable<string> userIds, string titleKey, string messageKey, string memberName, Func<object[]> args,
+			EventTypes type, string id, CancellationToken cancellationToken)
 		{
 			var wanted = (userIds ?? Enumerable.Empty<string>()).Where(u => !string.IsNullOrWhiteSpace(u)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
 			if (wanted.Count == 0 || !ConfigHelper.CanTransmit(departmentId))
@@ -248,12 +262,16 @@ namespace Resgrid.Services.Wellness
 				var active = await _departmentsService.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				var number = await _settingsService.GetTextToCallNumberForDepartmentAsync(departmentId);
 				var eventCode = (type == EventTypes.ExposureIncidentNotice ? "EI:" : "DS:") + id;
+				var cultures = new ContentNoticeCultures(_userProfiles, department);
 				foreach (var userId in wanted.Where(active.Contains))
 				{
 					cancellationToken.ThrowIfCancellationRequested();
 					try
 					{
-						if (await _communicationService.Value.SendNotificationAsync(userId, departmentId, message, number, department, title, null, false, eventCode))
+						var (culture, profile) = await cultures.ForMemberAsync(userId);
+						var values = new object[] { memberName ?? ContentNoticeText.Get("Health.AMember", culture) }.Concat(args?.Invoke() ?? Array.Empty<object>()).ToArray();
+						var message = ContentNoticeText.Format(messageKey, culture, values);
+						if (await _communicationService.Value.SendNotificationAsync(userId, departmentId, message, number, department, ContentNoticeText.Get(titleKey, culture), profile, false, eventCode))
 							sent++;
 					}
 					catch (Exception ex)
@@ -279,7 +297,8 @@ namespace Resgrid.Services.Wellness
 		{
 			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(departmentId) ?? new List<PersonName>();
 			var name = names.FirstOrDefault(n => Same(n.UserId, userId))?.Name?.Trim();
-			return string.IsNullOrWhiteSpace(name) ? "A member" : name;
+			// Null when unknown: each notice says "a member" in its reader's language.
+			return string.IsNullOrWhiteSpace(name) ? null : name;
 		}
 
 		#endregion Shared helpers

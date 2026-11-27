@@ -2375,7 +2375,7 @@
     <value>The QR code could not be drawn.</value>
   </data>
   <data name="QrCodeHelp" xml:space="preserve">
-    <value>Print this poster for an apparatus or a station wall. Scanning it opens the version in force for members who may read the protocol.</value>
+    <value>Print this poster for a vehicle, a station or any workplace wall. Scanning it opens the version in force for members who may read the protocol.</value>
   </data>
   <data name="DeepLinkLabel" xml:space="preserve">
     <value>Direct link</value>
@@ -3087,5 +3087,47 @@
   </data>
   <data name="CaseExportSection" xml:space="preserve">
     <value>Protocol cases</value>
+  </data>
+  <data name="AiSuggestBudgetExhausted" xml:space="preserve">
+    <value>Your department's monthly Enhanced AI budget is used up, so there is no AI suggestion. Pick a protocol by hand.</value>
+  </data>
+  <data name="AiSuggestBusy" xml:space="preserve">
+    <value>AI is busy with other work right now. Try again or pick a protocol by hand.</value>
+  </data>
+  <data name="CaseProtectedDataRequired" xml:space="preserve">
+    <value>This case is protected by Advanced Data Protection. Verify your identity to view protected data, then try again.</value>
+  </data>
+  <data name="CaseCallerProtectedDataRequired" xml:space="preserve">
+    <value>This case is protected by Advanced Data Protection. Verify your identity to view protected data, then send the text again.</value>
+  </data>
+  <data name="ApprovedAllMessage" xml:space="preserve">
+    <value>Approved and signed. Every approval step is done, so the version can be published.</value>
+  </data>
+  <data name="ApprovedStepMessage" xml:space="preserve">
+    <value>Approved and signed. The version moves on to the next approval step.</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Version {0} is published and in force from {1}.</value>
+  </data>
+  <data name="ScheduledMessage" xml:space="preserve">
+    <value>Version {0} is approved and comes into force on {1}.</value>
+  </data>
+  <data name="CategorySavedMessage" xml:space="preserve">
+    <value>The category was saved.</value>
+  </data>
+  <data name="CategoryDeletedMessage" xml:space="preserve">
+    <value>The category was deleted.</value>
+  </data>
+  <data name="CategoryInUseMessage" xml:space="preserve">
+    <value>The category was not deleted: protocols or other categories still use it. Move them first.</value>
+  </data>
+  <data name="ReviewCommentSaved" xml:space="preserve">
+    <value>Your review comment was added.</value>
+  </data>
+  <data name="SuggestionSaved" xml:space="preserve">
+    <value>Thank you. Your suggestion was added for the protocol's authors.</value>
+  </data>
+  <data name="LifecycleErrorManagedBySet" xml:space="preserve">
+    <value>This protocol is a copy managed by a subscribed protocol set. Its content changes through the set's update inbox and customize page; unsubscribe to make it your own.</value>
   </data>
 </root>

@@ -327,7 +327,7 @@
     },
     {
       "Id": "setting.WellnessSettings",
-      "AreaId": "people",
+      "AreaId": "workforce-pro",
       "LabelKey": "Setting.WellnessSettings",
       "HelpKey": "SettingHelp.WellnessSettings",
       "Binding": "DepartmentSettingTypes.WellnessSettings",
@@ -340,7 +340,7 @@
         "Field": null
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
       "Impact": {
         "Risk": "Medium",
         "AudienceKey": "Impact.Audience",
@@ -353,14 +353,14 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "setting.WellnessSettings",
-      "DefaultValue": "no wellness officer role, no peer support team, entries kept 30 years",
+      "DefaultValue": "no wellness officer role, no linked certifications, no peer support team, the certification switch off, entries kept 30 years",
       "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
       "EvidenceSource": "DepartmentSettings",
       "Availability": "available"
     },
     {
       "Id": "field.WellnessSettings.WellnessOfficerRoleId",
-      "AreaId": "people",
+      "AreaId": "workforce-pro",
       "LabelKey": "Field.WellnessSettings.WellnessOfficerRoleId",
       "HelpKey": "FieldHelp.WellnessSettings.WellnessOfficerRoleId",
       "Binding": "WellnessSettings.WellnessOfficerRoleId",
@@ -395,7 +395,7 @@
     },
     {
       "Id": "field.WellnessSettings.PeerTeamCertificationTypeId",
-      "AreaId": "people",
+      "AreaId": "workforce-pro",
       "LabelKey": "Field.WellnessSettings.PeerTeamCertificationTypeId",
       "HelpKey": "FieldHelp.WellnessSettings.PeerTeamCertificationTypeId",
       "Binding": "WellnessSettings.PeerTeamCertificationTypeId",
@@ -408,7 +408,7 @@
         "Field": "PeerTeamCertificationTypeId"
       },
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
       "Impact": {
         "Risk": "Low",
         "AudienceKey": "Impact.Audience",
@@ -423,14 +423,14 @@
       "Affects": [],
       "Conflicts": [],
       "DocumentationId": "field.WellnessSettings.PeerTeamCertificationTypeId",
-      "DefaultValue": "0 (no peer support team)",
+      "DefaultValue": "0 (no peer support certification; with no peer support role either, no team)",
       "AllowedValues": "A certification type of the department, or 0 for none",
       "EvidenceSource": "WellnessSettings",
       "Availability": "available"
     },
     {
       "Id": "field.WellnessSettings.RetentionYears",
-      "AreaId": "people",
+      "AreaId": "workforce-pro",
       "LabelKey": "Field.WellnessSettings.RetentionYears",
       "HelpKey": "FieldHelp.WellnessSettings.RetentionYears",
       "Binding": "WellnessSettings.RetentionYears",
@@ -465,7 +465,7 @@
     },
     {
       "Id": "field.WellnessSettings.DesignatedOfficerRoleId",
-      "AreaId": "people",
+      "AreaId": "workforce-pro",
       "LabelKey": "Field.WellnessSettings.DesignatedOfficerRoleId",
       "HelpKey": "FieldHelp.WellnessSettings.DesignatedOfficerRoleId",
       "Binding": "WellnessSettings.DesignatedOfficerRoleId",
@@ -500,7 +500,7 @@
     },
     {
       "Id": "field.WellnessSettings.BbpTrainingCertificationTypeId",
-      "AreaId": "people",
+      "AreaId": "workforce-pro",
       "LabelKey": "Field.WellnessSettings.BbpTrainingCertificationTypeId",
       "HelpKey": "FieldHelp.WellnessSettings.BbpTrainingCertificationTypeId",
       "Binding": "WellnessSettings.BbpTrainingCertificationTypeId",
@@ -535,7 +535,7 @@
     },
     {
       "Id": "field.WellnessSettings.MedicalClearanceCertificationTypeId",
-      "AreaId": "people",
+      "AreaId": "workforce-pro",
       "LabelKey": "Field.WellnessSettings.MedicalClearanceCertificationTypeId",
       "HelpKey": "FieldHelp.WellnessSettings.MedicalClearanceCertificationTypeId",
       "Binding": "WellnessSettings.MedicalClearanceCertificationTypeId",
@@ -570,7 +570,7 @@
     },
     {
       "Id": "field.WellnessSettings.InjuryRetentionYears",
-      "AreaId": "people",
+      "AreaId": "workforce-pro",
       "LabelKey": "Field.WellnessSettings.InjuryRetentionYears",
       "HelpKey": "FieldHelp.WellnessSettings.InjuryRetentionYears",
       "Binding": "WellnessSettings.InjuryRetentionYears",
@@ -600,6 +600,146 @@
       "DocumentationId": "field.WellnessSettings.InjuryRetentionYears",
       "DefaultValue": "5",
       "AllowedValues": "5 to 100",
+      "EvidenceSource": "WellnessSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.WellnessSettings.WellnessOfficerCertificationTypeId",
+      "AreaId": "workforce-pro",
+      "LabelKey": "Field.WellnessSettings.WellnessOfficerCertificationTypeId",
+      "HelpKey": "FieldHelp.WellnessSettings.WellnessOfficerCertificationTypeId",
+      "Binding": "WellnessSettings.WellnessOfficerCertificationTypeId",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Wellness",
+        "Action": "Settings",
+        "Field": "WellnessOfficerCertificationTypeId"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.people",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.WellnessSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.WellnessSettings.WellnessOfficerCertificationTypeId",
+      "DefaultValue": "0 (none)",
+      "AllowedValues": "A person-scoped certification type of the department, or 0 for none",
+      "EvidenceSource": "WellnessSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.WellnessSettings.DesignatedOfficerCertificationTypeId",
+      "AreaId": "workforce-pro",
+      "LabelKey": "Field.WellnessSettings.DesignatedOfficerCertificationTypeId",
+      "HelpKey": "FieldHelp.WellnessSettings.DesignatedOfficerCertificationTypeId",
+      "Binding": "WellnessSettings.DesignatedOfficerCertificationTypeId",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Wellness",
+        "Action": "Settings",
+        "Field": "DesignatedOfficerCertificationTypeId"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.people",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.WellnessSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.WellnessSettings.DesignatedOfficerCertificationTypeId",
+      "DefaultValue": "0 (the wellness officer certification while no designated officer role is named)",
+      "AllowedValues": "A person-scoped certification type of the department, or 0 for none",
+      "EvidenceSource": "WellnessSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.WellnessSettings.PeerTeamRoleId",
+      "AreaId": "workforce-pro",
+      "LabelKey": "Field.WellnessSettings.PeerTeamRoleId",
+      "HelpKey": "FieldHelp.WellnessSettings.PeerTeamRoleId",
+      "Binding": "WellnessSettings.PeerTeamRoleId",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Wellness",
+        "Action": "Settings",
+        "Field": "PeerTeamRoleId"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.people",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.WellnessSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.WellnessSettings.PeerTeamRoleId",
+      "DefaultValue": "0 (the holders of the peer support team certification)",
+      "AllowedValues": "A personnel role of the department, or 0 for the certification holders",
+      "EvidenceSource": "WellnessSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.WellnessSettings.RequireCurrentCertification",
+      "AreaId": "workforce-pro",
+      "LabelKey": "Field.WellnessSettings.RequireCurrentCertification",
+      "HelpKey": "FieldHelp.WellnessSettings.RequireCurrentCertification",
+      "Binding": "WellnessSettings.RequireCurrentCertification",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Wellness",
+        "Action": "Settings",
+        "Field": "RequireCurrentCertification"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.people",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.WellnessSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.WellnessSettings.RequireCurrentCertification",
+      "DefaultValue": "false (the roles alone decide; certifications are shown as status)",
+      "AllowedValues": "true or false",
       "EvidenceSource": "WellnessSettings",
       "Availability": "available"
     }
@@ -747,18 +887,27 @@
     },
     {
       "Id": "member-wellness",
-      "AreaId": "people",
+      "AreaId": "workforce-pro",
       "LabelKey": "Feature.member-wellness",
       "PurposeKey": "FeaturePurpose.member-wellness",
       "ValueKey": "FeatureValue.member-wellness",
       "ExampleKey": "FeatureExample.member-wellness",
       "AdoptionKey": "FeatureSetup.member-wellness",
-      "ReleaseStatus": "available",
+      "ReleaseStatus": "planned",
       "Location": {
         "Controller": "Wellness",
         "Action": "Index"
       },
-      "Requirements": [],
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Workforce.Pro"
+        },
+        {
+          "Kind": "addon",
+          "Id": "WorkforcePro"
+        }
+      ],
       "SettingIds": [
         "setting.WellnessSettings"
       ],
@@ -980,12 +1129,12 @@
       "Id": "setting.WellnessSettings",
       "Locale": "en",
       "TitleKey": "Setting.WellnessSettings",
-      "Body": "Wellness settings. Who reads members' exposure and critical-incident logs (the wellness officer role), who the peer support team is, and how many years entries are kept.",
+      "Body": "Wellness settings. Who reads members' exposure and critical-incident logs (the wellness officer role), who the designated officers and the peer support team are, the certification each wellness role can hold, and how many years entries are kept. Member wellness is part of the Workforce Pro add-on, not the LMS add-on: without it, existing records are read-only.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "setting-wellnesssettings",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-11-25T00:00:00Z"
+      "ReviewedOn": "2026-11-26T00:00:00Z"
     },
     {
       "Id": "field.WellnessSettings.WellnessOfficerRoleId",
@@ -1002,12 +1151,12 @@
       "Id": "field.WellnessSettings.PeerTeamCertificationTypeId",
       "Locale": "en",
       "TitleKey": "Field.WellnessSettings.PeerTeamCertificationTypeId",
-      "Body": "Wellness settings / Peer support team certification. Members holding a current certification of this type are the peer support team and receive the critical-incident anniversary reminders a member chooses to share. None turns the team off.",
+      "Body": "Wellness settings / Peer support team certification. The peer support team's certification type. With a peer support team role, it is shown as each team member's status; with no role, the members holding a current certification of this type are the team and receive the critical-incident anniversary reminders a member chooses to share. With neither, there is no team.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-wellnesssettings-peerteamcertificationtypeid",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-11-25T00:00:00Z"
+      "ReviewedOn": "2026-11-26T00:00:00Z"
     },
     {
       "Id": "field.WellnessSettings.RetentionYears",
@@ -1065,15 +1214,59 @@
       "ReviewedOn": "2026-11-25T00:00:00Z"
     },
     {
+      "Id": "field.WellnessSettings.WellnessOfficerCertificationTypeId",
+      "Locale": "en",
+      "TitleKey": "Field.WellnessSettings.WellnessOfficerCertificationTypeId",
+      "Body": "Wellness settings / Wellness officer certification. A certification type of the department, such as one added from the Wellness Officer template, whose requirements and validity the department sets. Each wellness officer's status (current, expiring, expired, missing) shows on the settings page and the member exposure report. It decides who acts only when the certification switch is on. None shows no status.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-wellnesssettings-wellnessofficercertificationtypeid",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "field.WellnessSettings.DesignatedOfficerCertificationTypeId",
+      "Locale": "en",
+      "TitleKey": "Field.WellnessSettings.DesignatedOfficerCertificationTypeId",
+      "Body": "Wellness settings / Designated officer certification. A certification type of the department, such as one added from the Designated Exposure Control Officer template, shown as each designated officer's status. None: while no designated officer role is named, the wellness officer certification serves.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-wellnesssettings-designatedofficercertificationtypeid",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "field.WellnessSettings.PeerTeamRoleId",
+      "Locale": "en",
+      "TitleKey": "Field.WellnessSettings.PeerTeamRoleId",
+      "Body": "Wellness settings / Peer support team role. Members of this personnel role are the peer support team and receive the critical-incident anniversary reminders a member chooses to share. None: the members holding a current peer support team certification are the team.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-wellnesssettings-peerteamroleid",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "field.WellnessSettings.RequireCurrentCertification",
+      "Locale": "en",
+      "TitleKey": "Field.WellnessSettings.RequireCurrentCertification",
+      "Body": "Wellness settings / Only members with a current certification act. Off (the default): the wellness officer, designated officer and peer support roles alone decide who acts, and each linked certification is shown as status. On: a role member also needs a current certification of the role's linked type; a role with no linked type is not affected. It cannot be turned on while nobody in the wellness officer or designated officer role holds a current certification.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-wellnesssettings-requirecurrentcertification",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
       "Id": "member-wellness",
       "Locale": "en",
       "TitleKey": "Feature.member-wellness",
-      "Body": "My Exposures Each member's own log of carcinogen, bloodborne pathogen, hazardous substance and critical-incident exposures, with entries suggested from dispatch data after a call is flagged. Exposure records for cancer presumption and workers' compensation, kept 30 years, without anyone but the member and the wellness officers reading them. After a structure fire, the officer flags the call; each member on scene confirms a suggested carcinogen entry and adds the PPE worn and decontamination done. Choose the wellness officer role in Personnel, My exposures, Settings. Members open My exposures from Personnel; officers flag a call from its Wellness follow-up button.",
+      "Body": "My Exposures Each member's own log of carcinogen, bloodborne pathogen, hazardous substance and critical-incident exposures, with entries suggested from dispatch data after a call is flagged. Exposure records for cancer presumption and workers' compensation, kept 30 years, without anyone but the member and the wellness officers reading them. After a structure fire, the officer flags the call; each member on scene confirms a suggested carcinogen entry and adds the PPE worn and decontamination done. Choose the wellness officer role in Personnel, My exposures, Settings, and optionally a certification type for each wellness role. Members open My exposures from Personnel; officers flag a call from its Wellness follow-up button. Member wellness is part of the Workforce Pro add-on (not the LMS add-on): records are kept for the members with Workforce Pro switched on, and without the add-on existing records are read-only.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "member-wellness",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-11-25T00:00:00Z"
+      "ReviewedOn": "2026-11-26T00:00:00Z"
     }
   ]
 }

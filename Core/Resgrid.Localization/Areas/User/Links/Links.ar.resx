@@ -163,4 +163,156 @@
   <data name="ViewDepartmentLinkTitle" xml:space="preserve">
     <value>عرض رابط القسم</value>
   </data>
+  <data name="AgreementFrom" xml:space="preserve">
+    <value>من</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementRequested" xml:space="preserve">
+    <value>تاريخ الطلب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementTitle" xml:space="preserve">
+    <value>الاتفاقية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>المراجعة والتوقيع المقابل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsLink" xml:space="preserve">
+    <value>مجموعات الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditSharing" xml:space="preserve">
+    <value>المشاركة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolChange" xml:space="preserve">
+    <value>ما الذي تغيّر:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolReadOnly" xml:space="preserve">
+    <value>للقراءة فقط: هذا هو الإصدار الساري للقسم المرتبط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolSubtitle" xml:space="preserve">
+    <value>{0}، الإصدار {1}، ساري منذ {2}، رمز المحتوى {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsHeader" xml:space="preserve">
+    <value>البروتوكولات المرتبطة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsIntro" xml:space="preserve">
+    <value>البروتوكولات المنشورة التي يشاركها هذا القسم المرتبط مع قسمكم. يُعرض الإصدار الساري فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsTitle" xml:space="preserve">
+    <value>بروتوكولات {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLinkedProtocols" xml:space="preserve">
+    <value>لا يشارك هذا القسم أي بروتوكولات منشورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerAgreements" xml:space="preserve">
+    <value>لا توجد اتفاقية بانتظار التوقيع المقابل من قسمكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsIntro" xml:space="preserve">
+    <value>اتفاقيات المساعدة المتبادلة التي تطلب الأقسام المرتبطة من قسمكم توقيعها توقيعًا مقابلًا. يمكن لأي مسؤول في القسم التوقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsLink" xml:space="preserve">
+    <value>اتفاقيات بانتظار التوقيع المقابل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolCategory" xml:space="preserve">
+    <value>الفئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolEffective" xml:space="preserve">
+    <value>ساري منذ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolName" xml:space="preserve">
+    <value>البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolNumber" xml:space="preserve">
+    <value>الرقم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsLink" xml:space="preserve">
+    <value>مجموعات البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersion" xml:space="preserve">
+    <value>الإصدار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocols" xml:space="preserve">
+    <value>البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetsIntro" xml:space="preserve">
+    <value>شاركوا البروتوكولات والدورات مع الأقسام المرتبطة كمجموعات، وارعوا مقاعد LMS الخاصة بها، ووقّعوا توقيعًا مقابلًا على اتفاقيات المساعدة المتبادلة الخاصة بها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocols" xml:space="preserve">
+    <value>مشاركة البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocolsHelp" xml:space="preserve">
+    <value>يمكن للقسم الآخر قراءة بروتوكولاتكم المنشورة والاشتراك في مجموعات البروتوكولات الخاصة بكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTraining" xml:space="preserve">
+    <value>مشاركة التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTrainingHelp" xml:space="preserve">
+    <value>يمكن للقسم الآخر الاشتراك في مجموعات الدورات الخاصة بكم، ويمكنكم رعاية مقاعد LMS الخاصة به.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBack" xml:space="preserve">
+    <value>يشاركون:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingIntro" xml:space="preserve">
+    <value>اختاروا ما يشاركه قسمكم مع {0}. لا تغيّرون أبدًا ما يشاركونه هم معكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingRevokeHelp" xml:space="preserve">
+    <value>يؤدي إيقاف أي مشاركة إلى قطع الوصول فورًا: تتوقف القراءة، وتُعلَّق الاشتراكات في مجموعاتكم، وتنتهي الرعايات عبر هذا الرابط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ViewProtocols" xml:space="preserve">
+    <value>البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentsTitle" xml:space="preserve">
+    <value>مهام انتشار بانتظار القبول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerDeployments" xml:space="preserve">
+    <value>لا توجد مؤسسة مرتبطة تطلب منكم قبول مهمة انتشار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAssignment" xml:space="preserve">
+    <value>المهمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAccept" xml:space="preserve">
+    <value>مراجعة وقبول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkAcceptanceSignatureNote" xml:space="preserve">
+    <value>قبول هذا الارتباط قرار موقّع: سيُطلب منك التحقق من هويتك مرة أخرى، ويسجّل توقيعك المنظمتين وما تشاركه كل منهما.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

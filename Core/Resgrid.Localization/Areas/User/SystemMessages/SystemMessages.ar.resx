@@ -83,6 +83,7 @@
 
 
 فريق Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GdprExportWithheldNotice" xml:space="preserve">
     <value>تستخدم إدارتك الحماية المتقدمة للبيانات، لذلك فإن بعض القيم في هذا التصدير مشفّرة وتظهر بالعلامة REDACTED. وهي لا تزال جزءًا من سجلك ولم يتم حذفها.</value>
@@ -128,6 +129,7 @@
 
 
 فريق Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">
     <value>رمز التحقق من Resgrid</value>
@@ -177,6 +179,7 @@
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>هذا إشعار أمني تلقائي بشأن حسابك على Resgrid.</value></data>
   <data name="SigningLinkEmailSubject" xml:space="preserve">
     <value>{0}: مستند بانتظار توقيعك</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkEmailBody" xml:space="preserve">
     <value>مرحبًا {0}،
@@ -189,12 +192,15 @@
 يمكن استخدام الرابط مرة واحدة وتنتهي صلاحيته في {4}. قبل التوقيع ستؤكد رمزًا لمرة واحدة.
 
 إذا لم تكن تتوقع هذه الرسالة فيمكنك تجاهلها.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkSmsBody" xml:space="preserve">
     <value>تطلب منك {0} توقيع "{1}": {2}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailSubject" xml:space="preserve">
     <value>{0}: رمز التوقيع الخاص بك</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailBody" xml:space="preserve">
     <value>مرحبًا {0}،
@@ -202,8 +208,10 @@
 رمزك لتوقيع المستند من {3} هو {1}. تنتهي صلاحيته خلال {2} دقيقة.
 
 إذا لم تطلب هذا الرمز فيمكنك تجاهل هذه الرسالة.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeSmsBody" xml:space="preserve">
     <value>رمز التوقيع الخاص بك لدى {2} هو {0}. تنتهي صلاحيته خلال {1} دقيقة.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

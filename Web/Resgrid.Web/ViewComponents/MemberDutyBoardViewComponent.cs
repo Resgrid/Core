@@ -14,9 +14,10 @@ namespace Resgrid.Web.ViewComponents
 	/// <summary>
 	/// The duty board on the personnel page (member wellness WL1): members on restricted or off duty, or not fully cleared, for the viewer's
 	/// supervisors view (department admins and health officers: everyone; group admins: their group). Operational only: duty status with
-	/// dates and the clearance status, never a reason. Renders nothing for anyone else or when nobody is listed. Read only.
+	/// dates and the clearance status, never a reason. Renders nothing for anyone else, when nobody is listed, or while the Workforce.Pro
+	/// flag is off (Workforce Pro; while it is not licensed the board stays readable). Read only.
 	/// </summary>
-	public sealed class MemberDutyBoardViewComponent(IMemberHealthService health, IDepartmentsService departments) : ViewComponent
+	public sealed class MemberDutyBoardViewComponent(IMemberHealthService health, IDepartmentsService departments, IWorkforceProAccessService workforcePro) : ViewComponent
 	{
 		public async Task<IViewComponentResult> InvokeAsync()
 		{
@@ -24,6 +25,8 @@ namespace Resgrid.Web.ViewComponents
 			{
 				var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
 				var userId = ClaimsAuthorizationHelper.GetUserId();
+				if (!await WorkforceProRequestGate.IsOfferedAsync(HttpContext, workforcePro, departmentId))
+					return Content(string.Empty);
 				var access = await health.GetAccessAsync(departmentId, userId);
 				if (!access.IsSupervisor && !access.IsHealthOfficer)
 					return Content(string.Empty);

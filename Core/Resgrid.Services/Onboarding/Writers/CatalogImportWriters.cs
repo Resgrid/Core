@@ -307,7 +307,7 @@ namespace Resgrid.Services.Onboarding.Writers
 	public sealed class CertificationTypesImportWriter : ImportRecordWriter<DepartmentCertificationType>, IImportImplicitCreator, IImportExporter
 	{
 		private static readonly string[] Categories =
-			{ "fire", "ems", "sar", "wildland", "emergency-management", "industrial", "security", "medical", "driver", "vehicle", "other" };
+			{ "fire", "ems", "sar", "wildland", "emergency-management", "industrial", "security", "medical", "driver", "vehicle", "other", "law-enforcement" };
 		private static readonly string[] AppliesTo = { "person", "unit" };
 
 		private readonly ICertificationService _certifications;

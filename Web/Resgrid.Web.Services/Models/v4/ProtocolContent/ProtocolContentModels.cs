@@ -46,6 +46,21 @@ namespace Resgrid.Web.Services.Models.v4.ProtocolContent
 		public string DosingToolUrl { get; set; }
 		public string DeepLink { get; set; }
 		public List<ProtocolStepResultData> Steps { get; set; } = new List<ProtocolStepResultData>();
+
+		/// <summary>
+		/// Round 10: the version is an uploaded document (PDF or DOCX) rather than authored content: ContentHtml, ContentJson and Steps are empty
+		/// and the file comes from ProtocolAcknowledgments/GetVersionFile.
+		/// </summary>
+		public bool IsDocument { get; set; }
+
+		/// <summary>Round 10: a document-backed version's file name (safe for saving); null otherwise.</summary>
+		public string DocumentFileName { get; set; }
+
+		/// <summary>Round 10: a document-backed version's content type (application/pdf or the DOCX type); null otherwise.</summary>
+		public string DocumentContentType { get; set; }
+
+		/// <summary>Round 10: a document-backed version's file size in bytes; null otherwise.</summary>
+		public long? DocumentSize { get; set; }
 	}
 
 	public class ProtocolStepResultData

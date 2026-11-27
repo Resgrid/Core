@@ -17,6 +17,10 @@
     ViewData["Section"] = "Library";
     var log = checklist.Log;
     var completed = log != null && log.IsComplete;
+    // ADP catalog 39 (M0403): a step note sealed for a protected department reads REDACTED on a page load; the reveal flow (step-up, then
+    // StepsRevealed with the grant) renders the page again with the notes as written.
+    var notesWithheld = log?.Entries != null && log.Entries.Any(e => e != null && e.Note == Resgrid.Model.ProtectedDataEnvelope.RedactionValue);
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView { BannerTitle = commonLocalizer["AdpProtectedCall"] };
     var canWrite = Model.CanEdit && !completed;
     string Who(string userId) => string.IsNullOrWhiteSpace(userId) ? "" : (Model.Names.TryGetValue(userId, out var n) && !string.IsNullOrWhiteSpace(n) ? n : userId);
     string StateText(ProtocolStepStates state) => state switch
@@ -40,6 +44,11 @@
         <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
     }
     <div id="stepError" class="alert alert-danger" role="alert" hidden></div>
+    @if (notesWithheld)
+    {
+        <partial name="_AdpRevealBanner" model="adpReveal" />
+        <form id="adp-steps-reveal-form" method="post" action="@Url.Action("StepsRevealed", "ProtocolTools", new { area = "User", callId = Model.Call.CallId, callProtocolId = checklist.Row.CallProtocolId })">@Html.AntiForgeryToken()</form>
+    }
 
     <div class="rgw-stat-tiles" role="list">
         <div class="rgw-stat-tile" role="listitem">
@@ -166,4 +175,14 @@
 @section Scripts
 {
     <script src="~/js/app/internal/protocols/resgrid.protocols.steps.js" asp-append-version="true"></script>
+    @if (notesWithheld)
+    {
+        <script type="text/javascript">
+            // The reveal module holds the grant in its closure; on reveal it posts it with the hidden form above and the page comes back with the notes.
+            window.resgridAdpPageRevealed = function () {
+                resgridAdpReveal.submitWithGrant(document.getElementById('adp-steps-reveal-form'));
+            };
+        </script>
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
 }

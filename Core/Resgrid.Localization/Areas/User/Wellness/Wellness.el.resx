@@ -60,641 +60,1042 @@
   </resheader>
   <data name="PersonnelLink" xml:space="preserve">
     <value>Προσωπικό</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HomeLink" xml:space="preserve">
     <value>Αρχική</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessModuleLabel" xml:space="preserve">
     <value>Ευεξία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyExposuresTab" xml:space="preserve">
     <value>Οι εκθέσεις μου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportTab" xml:space="preserve">
     <value>Αναφορά μελών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallTab" xml:space="preserve">
     <value>Σημάνσεις μετά την κλήση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsTab" xml:space="preserve">
     <value>Ρυθμίσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyExposuresTitle" xml:space="preserve">
     <value>Οι εκθέσεις μου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberExposuresTitle" xml:space="preserve">
     <value>Αρχείο εκθέσεων: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyExposuresIntro" xml:space="preserve">
     <value>Το δικό σας αρχείο εκθέσεων και δύσκολων κλήσεων. Μόνο εσείς και οι υπεύθυνοι ευεξίας της υπηρεσίας σας μπορούν να το δουν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberExposuresIntro" xml:space="preserve">
     <value>Το αρχείο εκθέσεων και κρίσιμων συμβάντων αυτού του μέλους. Χειριστείτε το με προσοχή: μόνο το μέλος και οι υπεύθυνοι ευεξίας μπορούν να το δουν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LogExposureButton" xml:space="preserve">
     <value>Καταγραφή έκθεσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportPdfButton" xml:space="preserve">
     <value>Εξαγωγή PDF</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportCsvButton" xml:space="preserve">
     <value>Εξαγωγή CSV</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedWithheldNotice" xml:space="preserve">
     <value>Ορισμένα στοιχεία προστατεύονται από την Προηγμένη Προστασία Δεδομένων της υπηρεσίας σας και δεν εμφανίζονται εδώ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmedEntriesLabel" xml:space="preserve">
     <value>Επιβεβαιωμένες καταχωρίσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CriticalIncidentsLabel" xml:space="preserve">
     <value>Κρίσιμα συμβάντα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AwaitingReviewLabel" xml:space="preserve">
     <value>Σε αναμονή ελέγχου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsHeader" xml:space="preserve">
     <value>Προτάσεις από πρόσφατες κλήσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsHelp" xml:space="preserve">
     <value>Αυτά προτάθηκαν από τα αρχεία διαχείρισης κλήσεων αφού σημάνθηκε μια κλήση. Τίποτα δεν καταγράφεται μέχρι να το ελέγξετε και να το επιβεβαιώσετε. Αν δεν σας αφορά, απορρίψτε το.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DateColumn" xml:space="preserve">
     <value>Ημερομηνία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CategoryColumn" xml:space="preserve">
     <value>Κατηγορία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CallColumn" xml:space="preserve">
     <value>Κλήση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DurationColumn" xml:space="preserve">
     <value>Διάρκεια (ω:λλ)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestedFromLabel" xml:space="preserve">
     <value>Προτάθηκε από</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewButton" xml:space="preserve">
     <value>Έλεγχος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissButton" xml:space="preserve">
     <value>Απόρριψη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningHeader" xml:space="preserve">
     <value>Ενισχυμένος έλεγχος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningSelfText" xml:space="preserve">
     <value>Ο υπεύθυνος ευεξίας της υπηρεσίας σας πρότεινε επιπλέον ελέγχους υγείας για εσάς. Οι παρακάτω ενέργειες σας βοηθούν να παρακολουθείτε την πορεία.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningOfficerText" xml:space="preserve">
     <value>Αυτό το μέλος έχει σημανθεί για ενισχυμένο έλεγχο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewOnLabel" xml:space="preserve">
     <value>Επόμενος έλεγχος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PlanNotesLabel" xml:space="preserve">
     <value>Σχέδιο παρακολούθησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithheldValue" xml:space="preserve">
     <value>Προστατευμένο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpColumn" xml:space="preserve">
     <value>Παρακολούθηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssigneeColumn" xml:space="preserve">
     <value>Ανατέθηκε σε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueColumn" xml:space="preserve">
     <value>Προθεσμία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StateColumn" xml:space="preserve">
     <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompleteButton" xml:space="preserve">
     <value>Σήμανση ως ολοκληρωμένο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Ακύρωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningManageHeader" xml:space="preserve">
     <value>Έλεγχος και παρακολούθηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningManageHelp" xml:space="preserve">
     <value>Σημάνετε αυτό το μέλος για ενισχυμένο έλεγχο και τηρήστε σχέδιο παρακολούθησης. Το σχέδιο προστατεύεται και είναι ορατό μόνο στο μέλος και στους υπεύθυνους ευεξίας.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningCategoryLabel" xml:space="preserve">
     <value>Αφορμή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCategoryOption" xml:space="preserve">
     <value>Δεν καθορίστηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedFieldHelp" xml:space="preserve">
     <value>Προστατευμένο: ορατό μόνο στο μέλος και στους υπεύθυνους ευεξίας.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagForScreeningButton" xml:space="preserve">
     <value>Σήμανση για ενισχυμένο έλεγχο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveScreeningButton" xml:space="preserve">
     <value>Αποθήκευση ελέγχου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearScreeningButton" xml:space="preserve">
     <value>Λήξη ενισχυμένου ελέγχου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddFollowUpHeader" xml:space="preserve">
     <value>Προσθήκη παρακολούθησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpPrivacyHelp" xml:space="preserve">
     <value>Οι ενέργειες παρακολούθησης καταγράφουν μόνο το είδος του βήματος και αν ολοκληρώθηκε. Κρατήστε τυχόν στοιχεία υγείας στο προστατευμένο σχέδιο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddFollowUpButton" xml:space="preserve">
     <value>Προσθήκη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EntriesHeader" xml:space="preserve">
     <value>Καταχωρίσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoEntriesSelf" xml:space="preserve">
     <value>Δεν έχετε ακόμη καταχωρίσεις. Μπορείτε να καταγράψετε μια έκθεση οποιαδήποτε στιγμή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoEntriesMember" xml:space="preserve">
     <value>Αυτό το μέλος δεν έχει καταχωρίσεις.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionNotice" xml:space="preserve">
     <value>Οι καταχωρίσεις διατηρούνται για τουλάχιστον 30 χρόνια. Μια λανθασμένη καταχώριση μπορεί να σημανθεί ως τέτοια· διατηρείται αλλά δεν προσμετράται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusColumn" xml:space="preserve">
     <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AnniversaryReminderOnLabel" xml:space="preserve">
     <value>Υπενθύμιση επετείου ενεργή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenButton" xml:space="preserve">
     <value>Άνοιγμα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidButton" xml:space="preserve">
     <value>Καταχωρίστηκε κατά λάθος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidHelp" xml:space="preserve">
     <value>Η καταχώριση παραμένει στο αρχείο για την περίοδο διατήρησης αλλά δεν προσμετράται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidConfirmButton" xml:space="preserve">
     <value>Επιβεβαίωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SupportNote" xml:space="preserve">
     <value>Αν κάτι από μια κλήση σας απασχολεί ακόμη, δεν χρειάζεται να το διαχειριστείτε μόνοι. Η ομάδα υποστήριξης συναδέλφων και οι πόροι ευεξίας της υπηρεσίας σας είναι εδώ για εσάς.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LogExposureTitle" xml:space="preserve">
     <value>Καταγραφή έκθεσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReviewSuggestionTitle" xml:space="preserve">
     <value>Έλεγχος προτεινόμενης καταχώρισης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EntryTitle" xml:space="preserve">
     <value>Καταχώριση έκθεσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EntryIntro" xml:space="preserve">
     <value>Καταγράψτε τι συνέβη με δικά σας λόγια. Μόνο η κατηγορία, η ημερομηνία, η κλήση και η διάρκεια χρησιμοποιούνται στις μετρήσεις· όλα τα άλλα προστατεύονται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionReviewNotice" xml:space="preserve">
     <value>Αυτή η καταχώριση προτάθηκε από τα αρχεία διαχείρισης κλήσεων. Ελέγξτε τα στοιχεία, προσθέστε ό,τι θέλετε και επιβεβαιώστε την - ή απορρίψτε την αν δεν σας αφορά.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatHappenedHeader" xml:space="preserve">
     <value>Πότε και τι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberLabel" xml:space="preserve">
     <value>Μέλος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OccurredOnLabel" xml:space="preserve">
     <value>Ημερομηνία και ώρα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DurationMinutesLabel" xml:space="preserve">
     <value>Διάρκεια (λεπτά)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCallOption" xml:space="preserve">
     <value>Χωρίς κλήση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DetailsHeader" xml:space="preserve">
     <value>Λεπτομέρειες (προστατευμένες)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DetailsHelp" xml:space="preserve">
     <value>Αυτά τα στοιχεία προστατεύονται: μόνο εσείς και οι υπεύθυνοι ευεξίας της υπηρεσίας σας μπορούν να τα διαβάσουν και δεν χρησιμοποιούνται ποτέ στην αναζήτηση ή από λειτουργίες τεχνητής νοημοσύνης.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubstanceLabel" xml:space="preserve">
     <value>Ουσία ή παράγοντας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PpeWornLabel" xml:space="preserve">
     <value>Εξοπλισμός προστασίας που φορέθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DecontaminationLabel" xml:space="preserve">
     <value>Απολύμανση μετά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NarrativeLabel" xml:space="preserve">
     <value>Τι συνέβη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthDetailsLabel" xml:space="preserve">
     <value>Στοιχεία υγείας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthDetailsHelp" xml:space="preserve">
     <value>Προαιρετικό. Συμπτώματα, θεραπεία ή ό,τι θέλετε να καταγραφεί. Δεν πρόκειται για ιατρική αξιολόγηση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindersHeader" xml:space="preserve">
     <value>Υπενθυμίσεις επετείου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindersHelp" xml:space="preserve">
     <value>Για κρίσιμα συμβάντα, μπορείτε να επιλέξετε μια διακριτική υπενθύμιση πριν από κάθε επέτειο - για εσάς ή/και για να ενημερωθεί η ομάδα υποστήριξης συναδέλφων. Μπορείτε να το αλλάξετε οποιαδήποτε στιγμή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindMemberLabel" xml:space="preserve">
     <value>Υπενθύμισέ μου πριν από την επέτειο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemindPeerTeamLabel" xml:space="preserve">
     <value>Ενημέρωσε την ομάδα υποστήριξης συναδέλφων πριν από την επέτειο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPeerTeamHelp" xml:space="preserve">
     <value>Η υπηρεσία σας δεν έχει ορίσει ακόμη ομάδα υποστήριξης συναδέλφων.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmButton" xml:space="preserve">
     <value>Επιβεβαίωση καταχώρισης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveForLaterButton" xml:space="preserve">
     <value>Αποθήκευση χωρίς επιβεβαίωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Αποθήκευση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackButton" xml:space="preserve">
     <value>Πίσω</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissLongButton" xml:space="preserve">
     <value>Δεν με αφορά - απόρριψη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportTitle" xml:space="preserve">
     <value>Αναφορά εκθέσεων μελών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportIntro" xml:space="preserve">
     <value>Μετρήσεις ανά μέλος για τους υπεύθυνους ευεξίας. Οι λεπτομέρειες μένουν στο αρχείο κάθε μέλους.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterLabel" xml:space="preserve">
     <value>Φιλτράρισμα αναφοράς</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FromLabel" xml:space="preserve">
     <value>Από</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToLabel" xml:space="preserve">
     <value>Έως</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterButton" xml:space="preserve">
     <value>Φιλτράρισμα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MembersHeader" xml:space="preserve">
     <value>Μέλη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoReportRows" xml:space="preserve">
     <value>Δεν υπάρχουν καταχωρίσεις σε αυτή την περίοδο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LastExposureLabel" xml:space="preserve">
     <value>Πιο πρόσφατη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ScreeningFlaggedLabel" xml:space="preserve">
     <value>Ενισχυμένος έλεγχος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenFollowUpsValue" xml:space="preserve">
     <value>{0} ανοιχτές ενέργειες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenLogButton" xml:space="preserve">
     <value>Άνοιγμα αρχείου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecentFlagsHeader" xml:space="preserve">
     <value>Πρόσφατες σημάνσεις μετά την κλήση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoFlags" xml:space="preserve">
     <value>Δεν έχει σημανθεί καμία κλήση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlaggedOnLabel" xml:space="preserve">
     <value>Σημάνθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsColumn" xml:space="preserve">
     <value>Προτάσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagClearedLabel" xml:space="preserve">
     <value>Καταργήθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsBuiltValue" xml:space="preserve">
     <value>{0} προτάθηκαν</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SuggestionsPendingLabel" xml:space="preserve">
     <value>Αναμονή λήξης της κλήσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallTitle" xml:space="preserve">
     <value>Παρακολούθηση ευεξίας: κλήση {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallPickerTitle" xml:space="preserve">
     <value>Σημάνσεις μετά την κλήση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagCallIntro" xml:space="preserve">
     <value>Σημάνετε μια κλήση ως κρίσιμο συμβάν ή έκθεση. Μόλις λήξει η κλήση, σε όσους τοποθετούν εκεί τα αρχεία διαχείρισης κλήσεων προτείνεται μια καταχώριση για έλεγχο. Κανείς δεν καταγράφεται χωρίς επιβεβαίωση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecentCallsHeader" xml:space="preserve">
     <value>Πρόσφατες κλήσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRecentCalls" xml:space="preserve">
     <value>Δεν υπάρχουν κλήσεις τις τελευταίες 30 ημέρες.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CallActiveNotice" xml:space="preserve">
     <value>Η κλήση είναι ακόμη ενεργή. Οι προτάσεις δημιουργούνται μόλις λήξει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CriticalIncidentHelp" xml:space="preserve">
     <value>Μια δυνητικά τραυματική κλήση. Είναι ξεχωριστό από την προτεραιότητα αποστολής της κλήσης.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotFlaggedLabel" xml:space="preserve">
     <value>Χωρίς σήμανση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagButton" xml:space="preserve">
     <value>Σήμανση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearFlagButton" xml:space="preserve">
     <value>Κατάργηση σήμανσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FlagPrivacyHelp" xml:space="preserve">
     <value>Η σήμανση καταγράφει μόνο την κλήση και την κατηγορία. Τα μέλη αποφασίζουν τι θα προσθέσουν στο αρχείο τους.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackToCallButton" xml:space="preserve">
     <value>Επιστροφή στην κλήση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
     <value>Ρυθμίσεις ευεξίας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsIntro" xml:space="preserve">
     <value>Ποιος διαβάζει τα αρχεία εκθέσεων των μελών, ποια είναι η ομάδα υποστήριξης συναδέλφων και για πόσο διατηρούνται οι καταχωρίσεις.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessOfficerRoleLabel" xml:space="preserve">
     <value>Ρόλος υπεύθυνου ευεξίας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessOfficerRoleHelp" xml:space="preserve">
     <value>Τα μέλη αυτού του ρόλου μπορούν να διαβάζουν το αρχείο εκθέσεων κάθε μέλους και να διαχειρίζονται τις σημάνσεις ελέγχου. Οι διαχειριστές δεν μπορούν να διαβάσουν τα αρχεία αν δεν έχουν αυτόν τον ρόλο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoneOption" xml:space="preserve">
     <value>Κανένας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PeerTeamLabel" xml:space="preserve">
     <value>Πιστοποίηση ομάδας υποστήριξης συναδέλφων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PeerTeamHelp" xml:space="preserve">
-    <value>Τα μέλη με ισχύουσα πιστοποίηση αυτού του τύπου λαμβάνουν τις υπενθυμίσεις επετείου που επιλέγουν να μοιραστούν τα μέλη.</value>
+    <value>Ο τύπος πιστοποίησης της ομάδας υποστήριξης συναδέλφων, για παράδειγμα από το πρότυπο Μέλος ομάδας υποστήριξης συναδέλφων. Με ρόλο παραπάνω, η κατάσταση κάθε μέλους της ομάδας εμφανίζεται παρακάτω· χωρίς ρόλο, οι τρέχοντες κάτοχοι αποτελούν την ομάδα και λαμβάνουν τις υπενθυμίσεις επετείου που επιλέγουν να μοιραστούν τα μέλη.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionYearsLabel" xml:space="preserve">
     <value>Διατήρηση καταχωρίσεων (έτη)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RetentionYearsHelp" xml:space="preserve">
     <value>Τουλάχιστον 30 χρόνια (OSHA 29 CFR 1910.1020). Οι καταχωρίσεις υπό νομική δέσμευση διατηρούνται περισσότερο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessFollowUpButton" xml:space="preserve">
     <value>Παρακολούθηση ευεξίας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WellnessFollowUpHelp" xml:space="preserve">
     <value>Σημάνετε αυτή την κλήση ως κρίσιμο συμβάν ή έκθεση ώστε τα μέλη να την προσθέσουν στο αρχείο τους</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Recorded" xml:space="preserve">
     <value>Η καταχώριση καταγράφηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Confirmed" xml:space="preserve">
     <value>Η καταχώριση επιβεβαιώθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Saved" xml:space="preserve">
     <value>Αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Dismissed" xml:space="preserve">
     <value>Η πρόταση απορρίφθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Voided" xml:space="preserve">
     <value>Η καταχώριση σημάνθηκε ως λανθασμένη.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.RemindersSaved" xml:space="preserve">
     <value>Οι επιλογές υπενθύμισης αποθηκεύτηκαν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ScreeningSaved" xml:space="preserve">
     <value>Η σήμανση ελέγχου αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ScreeningCleared" xml:space="preserve">
     <value>Ο ενισχυμένος έλεγχος ολοκληρώθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpAdded" xml:space="preserve">
     <value>Η ενέργεια παρακολούθησης προστέθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCompleted" xml:space="preserve">
     <value>Η ενέργεια σημάνθηκε ως ολοκληρωμένη.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCancelled" xml:space="preserve">
     <value>Η ενέργεια ακυρώθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.CallFlagged" xml:space="preserve">
     <value>Η κλήση σημάνθηκε. Οι προτάσεις θα δοθούν μόλις λήξει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.CallFlagCleared" xml:space="preserve">
     <value>Η σήμανση καταργήθηκε. Οι προτάσεις που δεν επιβεβαιώθηκαν αφαιρέθηκαν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.SettingsSaved" xml:space="preserve">
     <value>Οι ρυθμίσεις ευεξίας αποθηκεύτηκαν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.Generic" xml:space="preserve">
     <value>Δεν ήταν δυνατή η αποθήκευση. Ελέγξτε την καταχώριση και δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.NotAllowed" xml:space="preserve">
     <value>Δεν έχετε πρόσβαση σε αυτό.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.ExportFailed" xml:space="preserve">
     <value>Δεν ήταν δυνατή η δημιουργία της εξαγωγής. Δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.role_not_found" xml:space="preserve">
     <value>Ο ρόλος δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.certification_type_not_found" xml:space="preserve">
     <value>Ο τύπος πιστοποίησης δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.member_not_found" xml:space="preserve">
     <value>Το μέλος δεν βρέθηκε σε αυτή την υπηρεσία.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_not_found" xml:space="preserve">
     <value>Η καταχώριση δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_closed" xml:space="preserve">
     <value>Η καταχώριση έχει κλείσει και δεν μπορεί πλέον να αλλάξει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_changed" xml:space="preserve">
     <value>Κάποιος άλλος άλλαξε την καταχώριση. Ανοίξτε την ξανά και δοκιμάστε πάλι.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.not_a_suggestion" xml:space="preserve">
     <value>Μόνο μια προτεινόμενη καταχώριση μπορεί να επιβεβαιωθεί ή να απορριφθεί.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.not_confirmed" xml:space="preserve">
     <value>Μόνο μια επιβεβαιωμένη καταχώριση μπορεί να αλλάξει με αυτόν τον τρόπο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.reminders_critical_incident_only" xml:space="preserve">
     <value>Οι υπενθυμίσεις επετείου προσφέρονται μόνο για κρίσιμα συμβάντα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.category_required" xml:space="preserve">
     <value>Επιλέξτε κατηγορία.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.date_invalid" xml:space="preserve">
     <value>Εισαγάγετε έγκυρη ημερομηνία.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.duration_invalid" xml:space="preserve">
     <value>Εισαγάγετε διάρκεια από 0 έως 10.080 λεπτά.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.call_not_found" xml:space="preserve">
     <value>Η κλήση δεν βρέθηκε σε αυτή την υπηρεσία.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.protected_write_refused" xml:space="preserve">
     <value>Δεν ήταν δυνατή η αποθήκευση των προστατευμένων στοιχείων. Δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.flag_not_found" xml:space="preserve">
     <value>Η σήμανση δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_kind_required" xml:space="preserve">
     <value>Επιλέξτε το είδος της ενέργειας.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
     <value>Μια ενέργεια μπορεί να ανατεθεί στο μέλος ή σε υπεύθυνο ευεξίας.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_closed" xml:space="preserve">
     <value>Η ενέργεια έχει ήδη κλείσει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_not_found" xml:space="preserve">
     <value>Η ενέργεια δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.Carcinogen" xml:space="preserve">
     <value>Καρκινογόνο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.BloodbornePathogen" xml:space="preserve">
     <value>Αιματογενές παθογόνο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.HazardousSubstance" xml:space="preserve">
     <value>Επικίνδυνη ουσία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.CriticalIncident" xml:space="preserve">
     <value>Κρίσιμο συμβάν</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Category.Other" xml:space="preserve">
     <value>Άλλο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Suggested" xml:space="preserve">
     <value>Σε αναμονή ελέγχου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Confirmed" xml:space="preserve">
     <value>Επιβεβαιωμένο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Dismissed" xml:space="preserve">
     <value>Απορρίφθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status.Voided" xml:space="preserve">
     <value>Καταχωρίστηκε κατά λάθος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.screening_appointment" xml:space="preserve">
     <value>Ραντεβού ελέγχου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.baseline_test" xml:space="preserve">
     <value>Εξέταση αναφοράς</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.medical_review" xml:space="preserve">
     <value>Ιατρική επανεξέταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.wellness_check_in" xml:space="preserve">
     <value>Συνάντηση ευεξίας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.other" xml:space="preserve">
     <value>Άλλη ενέργεια</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Open" xml:space="preserve">
     <value>Ανοιχτή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Acknowledged" xml:space="preserve">
     <value>Ελήφθη υπόψη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Completed" xml:space="preserve">
     <value>Ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Cancelled" xml:space="preserve">
     <value>Ακυρώθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.status" xml:space="preserve">
     <value>κατάσταση προσωπικού</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.unit_crew" xml:space="preserve">
     <value>πλήρωμα οχήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.check_in" xml:space="preserve">
     <value>δήλωση παρουσίας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Basis.unit_response" xml:space="preserve">
     <value>χρόνοι απόκρισης οχήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Title" xml:space="preserve">
     <value>Αρχείο εκθέσεων και κρίσιμων συμβάντων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Member" xml:space="preserve">
     <value>Μέλος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Date" xml:space="preserve">
     <value>Ημερομηνία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Category" xml:space="preserve">
     <value>Κατηγορία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Status" xml:space="preserve">
     <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Call" xml:space="preserve">
     <value>Κλήση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Duration" xml:space="preserve">
     <value>Διάρκεια (ω:λλ)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Substance" xml:space="preserve">
     <value>Ουσία ή παράγοντας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.PpeWorn" xml:space="preserve">
     <value>ΜΑΠ που φορέθηκαν</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Decontamination" xml:space="preserve">
     <value>Απολύμανση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Narrative" xml:space="preserve">
     <value>Τι συνέβη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.HealthDetails" xml:space="preserve">
     <value>Στοιχεία υγείας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Withheld" xml:space="preserve">
     <value>Δεν εμφανίζεται (προστατευμένο)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.GeneratedOn" xml:space="preserve">
     <value>Δημιουργήθηκε {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Retention" xml:space="preserve">
     <value>Η υπηρεσία σας διατηρεί αυτά τα αρχεία για τουλάχιστον 30 χρόνια.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.CriticalIncidents" xml:space="preserve">
     <value>Κρίσιμα συμβάντα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.ReportTitle" xml:space="preserve">
     <value>Αναφορά εκθέσεων μελών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Total" xml:space="preserve">
     <value>Επιβεβαιωμένες καταχωρίσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.PendingSuggestions" xml:space="preserve">
     <value>Σε αναμονή ελέγχου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.LastExposure" xml:space="preserve">
     <value>Πιο πρόσφατη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.ScreeningFlagged" xml:space="preserve">
     <value>Ενισχυμένος έλεγχος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.OpenFollowUps" xml:space="preserve">
     <value>Ανοιχτές ενέργειες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Doc.Yes" xml:space="preserve">
     <value>Ναι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessOfficerCertificationLabel" xml:space="preserve">
+    <value>Πιστοποίηση υπευθύνου ευεξίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessOfficerCertificationHelp" xml:space="preserve">
+    <value>Προαιρετικό. Ένας από τους τύπους πιστοποίησής σας, για παράδειγμα από το πρότυπο Υπεύθυνος ευεξίας, με τα μαθήματα, τις ώρες συνεχιζόμενης εκπαίδευσης ή τις εκπαιδευτικές συνεδρίες και τη διάρκεια ισχύος που αποφασίζει ο οργανισμός σας. Η κατάσταση κάθε υπευθύνου εμφανίζεται παρακάτω.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerTeamRoleLabel" xml:space="preserve">
+    <value>Ρόλος ομάδας υποστήριξης συναδέλφων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerTeamRoleHelp" xml:space="preserve">
+    <value>Τα μέλη αυτού του ρόλου αποτελούν την ομάδα υποστήριξης συναδέλφων. Χωρίς ρόλο, την ομάδα αποτελούν τα μέλη με ισχύουσα πιστοποίηση του παρακάτω τύπου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerTeamByCertificationOption" xml:space="preserve">
+    <value>Χωρίς ρόλο: οι κάτοχοι της πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCertificationHeader" xml:space="preserve">
+    <value>Πιστοποίηση ρόλων ευεξίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequireCertificationLabel" xml:space="preserve">
+    <value>Μόνο μέλη με ισχύουσα πιστοποίηση ενεργούν σε αυτούς τους ρόλους</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequireCertificationHelp" xml:space="preserve">
+    <value>Ανενεργό: ο ρόλος καθορίζει ποιος διαβάζει τα αρχεία και λαμβάνει αναφορές και υπενθυμίσεις· η πιστοποίηση εμφανίζεται ως κατάσταση. Ενεργό: ένα μέλος του ρόλου χρειάζεται επίσης ισχύουσα πιστοποίηση του τύπου που έχει συνδεθεί με τον ρόλο. Ένας ρόλος χωρίς συνδεδεμένο τύπο δεν επηρεάζεται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditCertificationTypeLink" xml:space="preserve">
+    <value>Επεξεργασία τύπου και διάρκειας ισχύος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationRequirementsLink" xml:space="preserve">
+    <value>Ορισμός απαιτήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationTemplatesHint" xml:space="preserve">
+    <value>Προσθέστε τον τύπο Υπεύθυνος ευεξίας, Μέλος ομάδας υποστήριξης συναδέλφων ή Ορισμένος υπεύθυνος ελέγχου εκθέσεων από τα πρότυπα πιστοποιήσεων και, στη συνέχεια, συνδέστε τον παραπάνω.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationTypesLink" xml:space="preserve">
+    <value>Τύποι πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Ποιος ενεργεί σε κάθε ρόλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterIntro" xml:space="preserve">
+    <value>Η συμμετοχή στον ρόλο καθορίζει ποιος ενεργεί. Η πιστοποίηση κάθε μέλους για τον συνδεδεμένο τύπο του ρόλου εμφανίζεται ως ισχύουσα, λήγει σύντομα, έληξε ή λείπει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterMemberColumn" xml:space="preserve">
+    <value>Μέλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterCertificationColumn" xml:space="preserve">
+    <value>Κατάσταση πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterActsColumn" xml:space="preserve">
+    <value>Ενεργεί στον ρόλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterKind.WellnessOfficer" xml:space="preserve">
+    <value>Υπεύθυνοι ευεξίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterKind.DesignatedOfficer" xml:space="preserve">
+    <value>Ορισμένοι υπεύθυνοι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterKind.PeerSupportTeam" xml:space="preserve">
+    <value>Ομάδα υποστήριξης συναδέλφων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNoRole" xml:space="preserve">
+    <value>Δεν έχει οριστεί ρόλος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNoMembers" xml:space="preserve">
+    <value>Κανείς δεν έχει αυτόν τον ρόλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterFallsBack" xml:space="preserve">
+    <value>Δεν έχει οριστεί ρόλος ορισμένου υπευθύνου, οπότε ενεργεί ο ρόλος υπευθύνου ευεξίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterByCertification" xml:space="preserve">
+    <value>Δεν έχει οριστεί ρόλος: την ομάδα αποτελούν οι τρέχοντες κάτοχοι της πιστοποίησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNoType" xml:space="preserve">
+    <value>Δεν έχει συνδεθεί πιστοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterTypeMissing" xml:space="preserve">
+    <value>Ο συνδεδεμένος τύπος πιστοποίησης δεν υπάρχει πλέον, οπότε αποφασίζει μόνο ο ρόλος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterNobodyActs" xml:space="preserve">
+    <value>Αυτή τη στιγμή κανείς δεν ενεργεί σε αυτόν τον ρόλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterRequiresCertification" xml:space="preserve">
+    <value>Ενεργούν μόνο μέλη με ισχύουσα πιστοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Current" xml:space="preserve">
+    <value>Ισχύει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.CurrentUntil" xml:space="preserve">
+    <value>Ισχύει έως {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Expiring" xml:space="preserve">
+    <value>Λήγει {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Expired" xml:space="preserve">
+    <value>Έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.ExpiredOn" xml:space="preserve">
+    <value>Έληξε {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertState.Missing" xml:space="preserve">
+    <value>Λείπει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActsYes" xml:space="preserve">
+    <value>Ναι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActsNo" xml:space="preserve">
+    <value>Όχι: δεν υπάρχει ισχύουσα πιστοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.certification_switch_leaves_no_officer" xml:space="preserve">
+    <value>Κανείς στον ρόλο υπευθύνου ευεξίας ή ορισμένου υπευθύνου δεν έχει ακόμη ισχύουσα πιστοποίηση του συνδεδεμένου τύπου, οπότε δεν θα ενεργούσε κανείς. Καταχωρίστε πρώτα τις πιστοποιήσεις και μετά ενεργοποιήστε αυτή την επιλογή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>Η προσθήκη ή αλλαγή αρχείων ευεξίας απαιτεί το πρόσθετο Workforce Pro. Τα υπάρχοντα αρχεία παραμένουν αναγνώσιμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>Το Workforce Pro δεν είναι ενεργό για αυτό το μέλος, οπότε τα αρχεία του είναι μόνο για ανάγνωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>Η ευεξία μελών δεν είναι διαθέσιμη για αυτόν τον οργανισμό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.RequiredTitle" xml:space="preserve">
+    <value>Απαιτείται Workforce Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.ReadOnly" xml:space="preserve">
+    <value>Η ευεξία μελών και η έκθεση στον χώρο εργασίας ανήκουν στο πρόσθετο Workforce Pro, το οποίο ο οργανισμός δεν διαθέτει αυτή τη στιγμή. Τα υπάρχοντα αρχεία είναι μόνο για ανάγνωση: κάθε μέλος μπορεί ακόμη να δει και να εξαγάγει τα δικά του και οι υπεύθυνοι βλέπουν ό,τι ανοίγει ο ρόλος τους. Δεν μπορεί να προστεθεί ή να αλλάξει τίποτα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.ViewAddon" xml:space="preserve">
+    <value>Δείτε το πρόσθετο Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.Grace" xml:space="preserve">
+    <value>Μια πληρωμή του Workforce Pro απέτυχε. Όλα συνεχίζουν να λειτουργούν έως {0} όσο επαναλαμβάνεται η πληρωμή· μετά, οι εγγραφές γίνονται μόνο για ανάγνωση μέχρι να πληρωθεί το πρόσθετο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.ManageSeats" xml:space="preserve">
+    <value>Διαχείριση θέσεων Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.SeatMissingSelf" xml:space="preserve">
+    <value>Το Workforce Pro δεν είναι ενεργό για εσάς, οπότε τα αρχεία σας εδώ είναι μόνο για ανάγνωση. Ζητήστε από έναν διαχειριστή να το ενεργοποιήσει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforcePro.SeatMissing" xml:space="preserve">
+    <value>Το Workforce Pro δεν είναι ενεργό για {0}, οπότε τα αρχεία είναι μόνο για ανάγνωση.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

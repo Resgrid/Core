@@ -13,7 +13,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>A3 guidance remembered per member (AcademyGuidanceStates, M0397): portable SQL, unique per department, member and key.</summary>
+	/// <summary>A3 guidance remembered per member (AcademyGuidanceStates, M0375): portable SQL, unique per department, member and key.</summary>
 	public class AcademyGuidanceStatesRepository : RmsRepositoryBase<AcademyGuidanceState>, IAcademyGuidanceStatesRepository
 	{
 		public AcademyGuidanceStatesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -77,7 +77,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Major Academy lesson revisions waiting for worker 88 (AcademyLessonUpdates, M0397); system-level, unique per course and revision.</summary>
+	/// <summary>Major Academy lesson revisions waiting for worker 88 (AcademyLessonUpdates, M0375); system-level, unique per course and revision.</summary>
 	public class AcademyLessonUpdatesRepository : RmsRepositoryBase<AcademyLessonUpdate>, IAcademyLessonUpdatesRepository
 	{
 		public AcademyLessonUpdatesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)

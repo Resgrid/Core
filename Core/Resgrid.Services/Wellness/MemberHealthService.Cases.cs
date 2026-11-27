@@ -26,6 +26,7 @@ namespace Resgrid.Services.Wellness
 				throw new ArgumentNullException(nameof(report));
 			if (string.IsNullOrWhiteSpace(actorUserId))
 				throw new UnauthorizedAccessException("A signed-in member is required.");
+			await RequireReadableAsync(departmentId);
 
 			var memberUserId = string.IsNullOrWhiteSpace(report.UserId) ? actorUserId : report.UserId.Trim();
 			if (Same(actorUserId, memberUserId))
@@ -37,6 +38,7 @@ namespace Resgrid.Services.Wellness
 				await RequireDesignatedOfficerAsync(departmentId, actorUserId);
 			if (!await IsCurrentMemberAsync(departmentId, memberUserId))
 				throw new MemberWellnessException("member_not_found");
+			await RequireWritableForAsync(departmentId, memberUserId);
 			if (!MemberHealthRules.IsKnownRoute(report.Route))
 				throw new MemberWellnessException("route_required");
 
@@ -83,10 +85,10 @@ namespace Resgrid.Services.Wellness
 
 			// The designated officers hear of it at once; the text names the member and the date, never what happened.
 			var department = await DepartmentAsync(departmentId);
-			var when = LocalDate(incident.OccurredOn, department).ToString("d", CultureInfo.InvariantCulture);
+			var when = LocalDate(incident.OccurredOn, department);
 			var name = await NameOfAsync(departmentId, memberUserId);
-			await NotifyAsync(departmentId, (await DesignatedOfficersAsync(departmentId)).Where(o => !Same(o, actorUserId)), "Exposure reported",
-				$"{name} reported a possible bloodborne or infectious-disease exposure on {when}. Please open the exposure case: {Link("/User/MemberHealth/Case?id=" + incident.RmsExposureIncidentId)}",
+			await NotifyAsync(departmentId, (await DesignatedOfficersAsync(departmentId)).Where(o => !Same(o, actorUserId)), "Health.ExposureReported.Title",
+				"Health.ExposureReported.Message", name, () => new object[] { when, Link("/User/MemberHealth/Case?id=" + incident.RmsExposureIncidentId) },
 				EventTypes.ExposureIncidentNotice, incident.RmsExposureIncidentId, cancellationToken);
 			return incident;
 		}
@@ -128,6 +130,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<RmsExposureIncident> GetCaseAsync(int departmentId, string viewerUserId, string incidentId)
 		{
+			await RequireReadableAsync(departmentId);
 			if (string.IsNullOrWhiteSpace(incidentId))
 				return null;
 			var row = await _incidents.GetByIdForDepartmentAsync(departmentId, incidentId.Trim());
@@ -139,6 +142,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsExposureIncident>> GetCasesForMemberAsync(int departmentId, string viewerUserId, string memberUserId)
 		{
+			await RequireReadableAsync(departmentId);
 			if (!await CanReadAsync(departmentId, viewerUserId, memberUserId, true))
 				throw new UnauthorizedAccessException("Exposure cases are restricted to the member and the designated officers.");
 			var rows = (await _incidents.GetForUserAsync(departmentId, memberUserId) ?? Enumerable.Empty<RmsExposureIncident>()).ToList();
@@ -148,6 +152,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsExposureIncident>> GetDepartmentCasesAsync(int departmentId, string officerUserId, bool includeClosed)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireDesignatedOfficerAsync(departmentId, officerUserId);
 			var rows = (await _incidents.GetForDepartmentAsync(departmentId, includeClosed) ?? Enumerable.Empty<RmsExposureIncident>()).ToList();
 			// The list carries operational columns only; the notes stay on the case page.
@@ -157,6 +162,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<BbpTrainingStatus> GetBbpTrainingStatusAsync(int departmentId, string memberUserId)
 		{
+			await RequireReadableAsync(departmentId);
 			try
 			{
 				var settings = await _wellness.GetSettingsAsync(departmentId) ?? new WellnessSettings();
@@ -185,10 +191,12 @@ namespace Resgrid.Services.Wellness
 		{
 			if (step == null)
 				throw new ArgumentNullException(nameof(step));
+			await RequireReadableAsync(departmentId);
 			await RequireDesignatedOfficerAsync(departmentId, officerUserId);
 			var row = string.IsNullOrWhiteSpace(incidentId) ? null : await _incidents.GetByIdForDepartmentAsync(departmentId, incidentId.Trim());
 			if (row == null)
 				throw new MemberWellnessException("case_not_found");
+			await RequireWritableForAsync(departmentId, row.UserId);
 			if (step.ExpectedRowVersion.HasValue && step.ExpectedRowVersion.Value != row.RowVersion)
 				throw new MemberWellnessException("case_changed");
 			if (!ExposureIncidentWorkflow.CanMove(row.Stage, step.ToStage))
@@ -266,10 +274,12 @@ namespace Resgrid.Services.Wellness
 		public async Task<RmsExposureIncident> UpdateCaseNotesAsync(int departmentId, string officerUserId, string incidentId, string sourceFacility, string sourceFollowUpNotes,
 			string notificationResponse, string medicalNotes, long? expectedRowVersion, CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireDesignatedOfficerAsync(departmentId, officerUserId);
 			var row = string.IsNullOrWhiteSpace(incidentId) ? null : await _incidents.GetByIdForDepartmentAsync(departmentId, incidentId.Trim());
 			if (row == null)
 				throw new MemberWellnessException("case_not_found");
+			await RequireWritableForAsync(departmentId, row.UserId);
 			if (row.Stage == (int)ExposureIncidentStages.Withdrawn)
 				throw new MemberWellnessException("case_closed");
 			if (expectedRowVersion.HasValue && expectedRowVersion.Value != row.RowVersion)
@@ -318,6 +328,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsRecordWorkAssignment>> GetCaseFollowUpsAsync(int departmentId, string viewerUserId, string incidentId)
 		{
+			await RequireReadableAsync(departmentId);
 			var row = string.IsNullOrWhiteSpace(incidentId) ? null : await _incidents.GetByIdForDepartmentAsync(departmentId, incidentId.Trim());
 			if (row == null || !await CanReadAsync(departmentId, viewerUserId, row.UserId, true))
 				throw new UnauthorizedAccessException("Exposure cases are restricted to the member and the designated officers.");
@@ -327,10 +338,12 @@ namespace Resgrid.Services.Wellness
 		public async Task<RmsRecordWorkAssignment> AddCaseFollowUpAsync(int departmentId, string officerUserId, string incidentId, string kind, string assigneeUserId, DateTime? dueOn,
 			CancellationToken cancellationToken = default)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireDesignatedOfficerAsync(departmentId, officerUserId);
 			var row = string.IsNullOrWhiteSpace(incidentId) ? null : await _incidents.GetByIdForDepartmentAsync(departmentId, incidentId.Trim());
 			if (row == null)
 				throw new MemberWellnessException("case_not_found");
+			await RequireWritableForAsync(departmentId, row.UserId);
 			if (!row.IsOpen)
 				throw new MemberWellnessException("case_closed");
 			if (!ExposureCaseFollowUpKinds.IsKnown(kind))
@@ -375,6 +388,7 @@ namespace Resgrid.Services.Wellness
 				throw new UnauthorizedAccessException("Only a current member completes a follow-up.");
 			if (!Same(task.AssigneeUserId, actorUserId) && !await IsDesignatedOfficerAsync(departmentId, actorUserId))
 				throw new UnauthorizedAccessException("Only the assignee or a designated officer completes a follow-up.");
+			await RequireWritableForCaseTaskAsync(departmentId, task);
 			if (!task.IsOpen)
 				throw new MemberWellnessException("follow_up_closed");
 
@@ -394,6 +408,7 @@ namespace Resgrid.Services.Wellness
 		{
 			await RequireDesignatedOfficerAsync(departmentId, officerUserId);
 			var task = await LoadFollowUpAsync(departmentId, assignmentId);
+			await RequireWritableForCaseTaskAsync(departmentId, task);
 			if (!task.IsOpen)
 				throw new MemberWellnessException("follow_up_closed");
 			await CancelAsync(departmentId, officerUserId, task, null, cancellationToken);
@@ -420,8 +435,19 @@ namespace Resgrid.Services.Wellness
 			Audit(departmentId, officerUserId, AuditLogTypes.ExposureIncidentFollowUpChanged, null, FollowUpSnapshot(task, "cancelled"));
 		}
 
+		/// <summary>A case follow-up is part of the member's case: editable only while that member holds a seat.</summary>
+		private async Task RequireWritableForCaseTaskAsync(int departmentId, RmsRecordWorkAssignment task)
+		{
+			var incident = string.IsNullOrWhiteSpace(task?.RecordId) ? null : await _incidents.GetByIdForDepartmentAsync(departmentId, task.RecordId);
+			if (incident != null)
+				await RequireWritableForAsync(departmentId, incident.UserId);
+			else
+				(await WorkforceProAsync(departmentId)).EnsureWritable();
+		}
+
 		private async Task<RmsRecordWorkAssignment> LoadFollowUpAsync(int departmentId, string assignmentId)
 		{
+			await RequireReadableAsync(departmentId);
 			var task = string.IsNullOrWhiteSpace(assignmentId) ? null : await _assignments.GetByIdForDepartmentAsync(departmentId, assignmentId.Trim());
 			// Only the exposure-case purpose is reachable here; a Record's own work assignment (or a WL0 one) is never touched.
 			if (task == null || task.DeletedOn.HasValue || !string.Equals(task.Purpose, RmsWorkAssignmentPurposes.ExposureCaseFollowUp, StringComparison.Ordinal))

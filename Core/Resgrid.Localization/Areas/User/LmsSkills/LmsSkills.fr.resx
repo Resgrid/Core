@@ -60,1115 +60,1486 @@
   </resheader>
   <data name="Skl.ActionFailed" xml:space="preserve">
     <value>L'action n'a pas pu être effectuée.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Actions" xml:space="preserve">
     <value>Actions possibles</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddEvidence" xml:space="preserve">
     <value>Ajouter une preuve</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddStep" xml:space="preserve">
     <value>Ajouter une étape</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddTask" xml:space="preserve">
     <value>Ajouter une tâche</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddTimedNote" xml:space="preserve">
     <value>Ajouter une note (l'heure est enregistrée)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddonNotice" xml:space="preserve">
     <value>Les évaluations de compétences et les livrets de tâches nécessitent le module LMS. Tout ce qui est enregistré reste consultable.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AllSheets" xml:space="preserve">
     <value>Toutes les fiches de compétences</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AllStates" xml:space="preserve">
     <value>Tous les états</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AllTaskBooks" xml:space="preserve">
     <value>Tous les livrets de tâches</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Annotation" xml:space="preserve">
     <value>Commentaire</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Answer" xml:space="preserve">
     <value>Réponse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AnyEligible" xml:space="preserve">
     <value>Tout membre habilité</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Attempt" xml:space="preserve">
     <value>Tentative</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AwaitingCertification" xml:space="preserve">
     <value>En attente de l'évaluateur final et du certificateur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.BooksToEvaluate" xml:space="preserve">
     <value>Livrets dans lesquels vous pouvez signer des tâches</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CancelReason" xml:space="preserve">
     <value>Motif de l'annulation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CancelTaskBook" xml:space="preserve">
     <value>Annuler le livret</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CancelTaskBookConfirm" xml:space="preserve">
     <value>Annuler ce livret ? Les tâches signées restent enregistrées.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CertificationRequested" xml:space="preserve">
     <value>La certification a été demandée. L'évaluateur final signe en premier.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CertifiedOn" xml:space="preserve">
     <value>Certifié le</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CertifyingOfficial" xml:space="preserve">
     <value>Certificateur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.ChangeSummary" xml:space="preserve">
     <value>Résumé des modifications</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Choose" xml:space="preserve">
     <value>Choisir...</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Date" xml:space="preserve">
     <value>Date du jour</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Evaluation" xml:space="preserve">
     <value>Évaluation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Evaluator" xml:space="preserve">
     <value>Évaluateur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Expires" xml:space="preserve">
     <value>Expire le</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Score" xml:space="preserve">
     <value>Note obtenue</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Signer" xml:space="preserve">
     <value>Signataire</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Started" xml:space="preserve">
     <value>Commencée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Status" xml:space="preserve">
     <value>État</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Step" xml:space="preserve">
     <value>Étape</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Version" xml:space="preserve">
     <value>Révision</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Complete" xml:space="preserve">
     <value>Terminée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Average" xml:space="preserve">
     <value>Moyenne</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Max" xml:space="preserve">
     <value>Plus élevé</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Min" xml:space="preserve">
     <value>Plus bas</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Sum" xml:space="preserve">
     <value>Somme</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.ComputedHelp" xml:space="preserve">
     <value>Calculé à partir des étapes indiquées</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Continue" xml:space="preserve">
     <value>Reprendre</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CrewHelp" xml:space="preserve">
-    <value>Un formulaire pour toute l'équipe : chacun reçoit le même résultat et le même enregistrement. Séparez un membre qui doit être noté autrement.</value>
+    <value>Un formulaire pour toute l'équipe : chacun reçoit le même résultat et le même enregistrement. Séparez un membre qui doit être noté autrement.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CriticalFailedNotice" xml:space="preserve">
     <value>Une étape critique n'a pas été réussie : l'évaluation n'est pas validée, quelle que soit la note.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Declined" xml:space="preserve">
     <value>Refusé</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Definition" xml:space="preserve">
     <value>Modèle de livret</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionCreated" xml:space="preserve">
     <value>Le modèle a été créé. Indiquez qui signe et qui certifie, puis enregistrez.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionDeleted" xml:space="preserve">
     <value>Le modèle a été supprimé. Les livrets ouverts conservent leurs tâches.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionIntro" xml:space="preserve">
     <value>Le code de poste, les tâches et qui signe, recommande et certifie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionsIntro" xml:space="preserve">
     <value>Vos livrets de tâches par poste et les modèles Resgrid pour les créer.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionsTitle" xml:space="preserve">
     <value>Modèles de livrets</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteDefinition" xml:space="preserve">
     <value>Supprimer le modèle</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteDefinitionConfirm" xml:space="preserve">
     <value>Supprimer ce modèle ? Les livrets ouverts conservent leurs tâches.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteSheet" xml:space="preserve">
     <value>Retirer la fiche</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteSheetConfirm" xml:space="preserve">
     <value>Retirer cette fiche ? Ses évaluations restent enregistrées.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Daily" xml:space="preserve">
     <value>Récapitulatif quotidien</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Immediate" xml:space="preserve">
     <value>Immédiatement</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Off" xml:space="preserve">
     <value>Désactivé</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Weekly" xml:space="preserve">
     <value>Récapitulatif hebdomadaire</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DigestHour" xml:space="preserve">
     <value>Heure du récapitulatif (heure du service)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DigestMode" xml:space="preserve">
     <value>Envoi des avis</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DigestWeekday" xml:space="preserve">
     <value>Jour du récapitulatif hebdomadaire</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Draft" xml:space="preserve">
     <value>Brouillon</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DraftNotReady" xml:space="preserve">
     <value>Le brouillon ne peut pas encore être publié :</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DraftSaved" xml:space="preserve">
     <value>Le brouillon a été enregistré.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DraftSteps" xml:space="preserve">
     <value>Étapes</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Edit" xml:space="preserve">
     <value>Modifier</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EditorNeedsScript" xml:space="preserve">
     <value>L'éditeur d'étapes nécessite JavaScript.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Elapsed" xml:space="preserve">
     <value>Écoulé</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Evaluate" xml:space="preserve">
     <value>Évaluer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationIntro" xml:space="preserve">
     <value>Le résultat, chaque étape, les preuves et les signatures.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationStarted" xml:space="preserve">
     <value>L'évaluation a commencé. Le chronomètre tourne.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Evaluations" xml:space="preserve">
     <value>Évaluations</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationsIntro" xml:space="preserve">
     <value>Toutes les évaluations du service, par fiche et par état.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationsTitle" xml:space="preserve">
     <value>Évaluations de compétences</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluatorComments" xml:space="preserve">
     <value>Remarques de l'évaluateur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Evidence" xml:space="preserve">
     <value>Preuves</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceAdded" xml:space="preserve">
     <value>La preuve a été ajoutée.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceFile" xml:space="preserve">
     <value>Photo, vidéo ou fichier</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceHelp" xml:space="preserve">
     <value>Jusqu'à 30 Mo par fichier. Le SHA-256 de chaque fichier figure dans l'enregistrement scellé.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceStep" xml:space="preserve">
     <value>Pour l'étape</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceStepHelp" xml:space="preserve">
     <value>Ajoutez la photo, la vidéo ou le fichier ci-dessous.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Fail" xml:space="preserve">
     <value>Échec</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family" xml:space="preserve">
     <value>Famille</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.Custom" xml:space="preserve">
     <value>Personnalisée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.DriverOperator" xml:space="preserve">
     <value>Conducteur/opérateur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.FieldTraining" xml:space="preserve">
     <value>Formation sur le terrain</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.NccpSkills" xml:space="preserve">
     <value>Vérification des compétences NCCP</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.Officer" xml:space="preserve">
     <value>Officier</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.OshaOperator" xml:space="preserve">
     <value>Évaluation d'opérateur OSHA</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.Wildland" xml:space="preserve">
     <value>Feux de forêt (NWCG)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.AllowCrew" xml:space="preserve">
     <value>Autoriser les évaluations d'équipe (un formulaire pour plusieurs membres)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.AllowSelf" xml:space="preserve">
     <value>Autoriser l'auto-évaluation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.AttemptWindow" xml:space="preserve">
     <value>Période des tentatives (jours)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CallId" xml:space="preserve">
     <value>Numéro d'intervention</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Category" xml:space="preserve">
     <value>Catégorie de formation créditée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CertificationType" xml:space="preserve">
     <value>Certification activée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CertificationTypeHelp" xml:space="preserve">
     <value>L'ouverture d'un livret crée un enregistrement « Stagiaire » de ce type ; la certification le rend actif.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CertificationTypes" xml:space="preserve">
     <value>Types de certification</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Code" xml:space="preserve">
     <value>Code de compétence</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CodeHelp" xml:space="preserve">
     <value>Sert de code de cours dans le relevé et pour les exigences « N évaluations réussies ».</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.DefaultMinutes" xml:space="preserve">
     <value>Minutes créditées sans chronométrage</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.DeploymentId" xml:space="preserve">
     <value>Numéro de déploiement</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Description" xml:space="preserve">
     <value>Présentation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Evaluators" xml:space="preserve">
     <value>Qui peut évaluer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.EvaluatorsHelp" xml:space="preserve">
     <value>Les membres titulaires d'une certification valide d'un type choisi ou d'un rôle choisi. Aucun choix : gestionnaires LMS seulement.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Kind" xml:space="preserve">
     <value>Nature</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Location" xml:space="preserve">
     <value>Lieu</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.MaxAttempts" xml:space="preserve">
     <value>Échecs autorisés (0 = sans limite)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.NextSigner" xml:space="preserve">
     <value>Qui l'évaluateur peut désigner comme signataire suivant</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.NextSignerHelp" xml:space="preserve">
     <value>Si défini, l'évaluateur doit désigner un membre autorisé par cette règle ; il signe après l'évaluateur.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.PassThreshold" xml:space="preserve">
     <value>Seuil de réussite (%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.RecertifyMonths" xml:space="preserve">
     <value>Réévaluer après (mois)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.RecertifyMonthsHelp" xml:space="preserve">
     <value>Expiration de l'enregistrement certifié (opérateurs OSHA : 36). 0 reprend la validité du type.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Roles" xml:space="preserve">
     <value>Rôles</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.TimeLimit" xml:space="preserve">
     <value>Limite de temps (secondes, 0 = aucune)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Title" xml:space="preserve">
     <value>Intitulé</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.ValidityMonths" xml:space="preserve">
     <value>Valable (mois)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Filter" xml:space="preserve">
     <value>Filtrer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.FinalEvaluator" xml:space="preserve">
     <value>Évaluateur final</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Grading" xml:space="preserve">
     <value>Notation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.HomeIntro" xml:space="preserve">
     <value>Vos évaluations en cours, les signatures en attente, vos résultats et livrets.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.HomeTitle" xml:space="preserve">
     <value>Compétences et livrets de tâches</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.IncidentRequired" xml:space="preserve">
     <value>Cette tâche ne compte que les évaluations lors d'une intervention ou d'un déploiement : saisissez son numéro.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.IncidentTask" xml:space="preserve">
     <value>Tâche en intervention</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Initiate" xml:space="preserve">
     <value>Ouvrir un livret</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.InitiatedOn" xml:space="preserve">
     <value>Ouvert le</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Kind.ObservationReport" xml:space="preserve">
     <value>Rapport d'observation quotidien</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Kind.SkillSheet" xml:space="preserve">
     <value>Fiche de compétences</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.LapsedNotice" xml:space="preserve">
     <value>Le module LMS n'est pas actif : les données restent consultables et les évaluations et livrets ouverts peuvent être terminés, mais rien de nouveau ne peut commencer.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MajorVersion" xml:space="preserve">
     <value>Version majeure (une réévaluation peut être nécessaire)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MemberSplit" xml:space="preserve">
     <value>Le membre a été séparé dans sa propre évaluation.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MembersHelp" xml:space="preserve">
-    <value>Choisissez un membre, ou plusieurs pour une évaluation d'équipe si la fiche le permet.</value>
+    <value>Choisissez un membre, ou plusieurs pour une évaluation d'équipe lorsque la fiche le permet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MembersToEvaluate" xml:space="preserve">
     <value>Membres évalués</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MoveDown" xml:space="preserve">
     <value>Descendre</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MoveUp" xml:space="preserve">
     <value>Monter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MyOpenEvaluations" xml:space="preserve">
     <value>Mes évaluations en cours</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MyResults" xml:space="preserve">
     <value>Mes résultats</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MySignatures" xml:space="preserve">
     <value>Évaluations en attente de ma signature</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MyTaskBooks" xml:space="preserve">
     <value>Mes livrets de tâches</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NeedsAnswer" xml:space="preserve">
     <value>Réponse requise</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NewDefinition" xml:space="preserve">
     <value>Nouveau modèle de livret</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NewSheet" xml:space="preserve">
     <value>Nouvelle fiche de compétences</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NextSigner" xml:space="preserve">
     <value>Signataire suivant</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NextSignerHelp" xml:space="preserve">
     <value>La fiche demande une deuxième signature d'un membre autorisé par sa règle.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoDefinitions" xml:space="preserve">
     <value>Aucun modèle pour l'instant. Partez d'un modèle Resgrid.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoEvaluations" xml:space="preserve">
     <value>Aucune évaluation ne correspond.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoOpenEvaluations" xml:space="preserve">
     <value>Vous n'avez aucune évaluation en cours.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoResults" xml:space="preserve">
     <value>Aucune évaluation vous concernant pour l'instant.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSheet" xml:space="preserve">
     <value>Sans fiche (réussi/échec)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSheets" xml:space="preserve">
     <value>Aucune fiche de compétences pour l'instant.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSheetsToEvaluate" xml:space="preserve">
     <value>Aucune fiche publiée ne vous permet d'évaluer.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSignatures" xml:space="preserve">
     <value>Aucune évaluation n'attend votre signature.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoTaskBooks" xml:space="preserve">
     <value>Aucun livret de tâches.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.None" xml:space="preserve">
     <value>Aucune</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotApplicable" xml:space="preserve">
     <value>Sans objet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotApplicableReason" xml:space="preserve">
     <value>Pourquoi c'est sans objet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotifyMembers" xml:space="preserve">
     <value>Informer les membres évalués et stagiaires de leurs propres évaluations et livrets</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotifyOfficers" xml:space="preserve">
     <value>Informer les administrateurs du service de chaque évaluation et livret</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Open" xml:space="preserve">
     <value>Ouvrir</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OpenSignature" xml:space="preserve">
     <value>Ouvrir la signature</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OpenTaskBooks" xml:space="preserve">
     <value>Livrets ouverts</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluator" xml:space="preserve">
     <value>Un évaluateur externe signe à la place</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorEmail" xml:space="preserve">
     <value>Son e-mail (pour un lien de signature)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorHelp" xml:space="preserve">
     <value>Les évaluateurs externes signent au niveau L4, en personne sur cet appareil ou par lien tant que le module LMS est actif.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorName" xml:space="preserve">
     <value>Son nom</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorRemote" xml:space="preserve">
     <value>Envoyer un lien de signature au lieu de signer sur cet appareil</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Pass" xml:space="preserve">
     <value>Réussi</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassAll" xml:space="preserve">
     <value>Valider les étapes restantes</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassAt" xml:space="preserve">
     <value>réussite à</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassFailReport" xml:space="preserve">
     <value>Rapport réussites/échecs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassRange" xml:space="preserve">
     <value>Réussi de-à :</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassingRatingIs" xml:space="preserve">
     <value>Note minimale :</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Position" xml:space="preserve">
     <value>Code de poste</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Publish" xml:space="preserve">
     <value>Publier</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PublishTitle" xml:space="preserve">
     <value>Publier le brouillon</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Published" xml:space="preserve">
     <value>La version a été publiée. Les nouvelles évaluations l'utilisent.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RatingsReport" xml:space="preserve">
     <value>Notes par question</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Remove" xml:space="preserve">
     <value>Retirer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RequestCertification" xml:space="preserve">
     <value>Demander la certification</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RequestCertificationHelp" xml:space="preserve">
     <value>Toutes les tâches sont terminées. L'évaluateur final recommande, puis le certificateur certifie ; tous deux signent au niveau L2.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Required" xml:space="preserve">
     <value>Évaluations requises</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Result.Failed" xml:space="preserve">
     <value>Non réussi</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Result.Passed" xml:space="preserve">
     <value>Réussi</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Role.Evaluator" xml:space="preserve">
     <value>Évaluateur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Role.NextSigner" xml:space="preserve">
     <value>Signataire suivant</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RunIntro" xml:space="preserve">
     <value>Notez chaque étape ; vos commentaires et preuves figurent dans l'enregistrement scellé.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Save" xml:space="preserve">
     <value>Enregistrer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SaveDraft" xml:space="preserve">
     <value>Enregistrer le brouillon</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Saved" xml:space="preserve">
     <value>Enregistré.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SealFailed" xml:space="preserve">
     <value>L'évaluation est signée, mais son enregistrement n'a pas pu être scellé. Un administrateur peut réessayer.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SealPending" xml:space="preserve">
     <value>Signé, scellement en attente : l'enregistrement scellé n'est pas encore disponible.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SealedPdf" xml:space="preserve">
     <value>Enregistrement scellé (PDF)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Seconds" xml:space="preserve">
     <value>secondes</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SettingsHelp" xml:space="preserve">
     <value>Les récapitulatifs quotidiens et hebdomadaires regroupent les avis dus en un message par personne. Les membres inactifs n'en reçoivent jamais.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SettingsIntro" xml:space="preserve">
     <value>Comment sont envoyés les avis d'évaluations et de livrets.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SettingsTitle" xml:space="preserve">
     <value>Avis de compétences</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Sheet" xml:space="preserve">
     <value>Fiche de compétences</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetCreated" xml:space="preserve">
     <value>La fiche a été créée. Adaptez ses étapes, puis publiez-la.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetDeleted" xml:space="preserve">
     <value>La fiche a été retirée.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetDetails" xml:space="preserve">
     <value>Détails de la fiche et signataires</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetIntro" xml:space="preserve">
     <value>Étapes ordonnées, critères critiques et notation, avec versions.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetsIntro" xml:space="preserve">
     <value>Fiches de compétences par exigence de performance et la bibliothèque de modèles.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetsTitle" xml:space="preserve">
     <value>Fiches de compétences</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Sign" xml:space="preserve">
     <value>Signer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Signatures" xml:space="preserve">
     <value>Signatures apposées</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Signed" xml:space="preserve">
     <value>Signé</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SignerRulesHelp" xml:space="preserve">
     <value>Un membre est habilité par une certification valide d'un type choisi ou un rôle choisi. Sans règle, les gestionnaires LMS évaluent les tâches et les administrateurs recommandent et certifient.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SplitConfirm" xml:space="preserve">
     <value>Séparer ce membre dans sa propre évaluation ? Ses réponses actuelles sont copiées.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SplitOut" xml:space="preserve">
     <value>Séparer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SplitTo" xml:space="preserve">
     <value>Noté séparément</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StartEvaluation" xml:space="preserve">
     <value>Commencer une évaluation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StartIntro" xml:space="preserve">
     <value>Choisissez la fiche et les personnes évaluées. Le chronomètre démarre maintenant.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.AwaitingSignature" xml:space="preserve">
     <value>En attente de signature</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.Completed" xml:space="preserve">
     <value>Terminée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.InProgress" xml:space="preserve">
     <value>En cours</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.Open" xml:space="preserve">
     <value>Ouvertes</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.Voided" xml:space="preserve">
     <value>Annulée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.AllowNa" xml:space="preserve">
     <value>Autoriser « sans objet »</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Compute" xml:space="preserve">
     <value>Calcul</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.ComputeKeys" xml:space="preserve">
     <value>À partir des étapes (clés séparées par des virgules)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Critical" xml:space="preserve">
     <value>Critique</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.EvidenceOnFail" xml:space="preserve">
     <value>Preuve en cas d'échec</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Help" xml:space="preserve">
     <value>Consignes pour l'évaluateur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Key" xml:space="preserve">
     <value>Clé</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Label" xml:space="preserve">
     <value>Étape</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Max" xml:space="preserve">
     <value>Valeur maximale acceptée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Min" xml:space="preserve">
     <value>Valeur minimale acceptée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.NoteOnFail" xml:space="preserve">
     <value>Note en cas d'échec</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Options" xml:space="preserve">
     <value>Choix</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.OptionsHelp" xml:space="preserve">
     <value>Une par ligne : Libellé | points | fail (la dernière partie seulement pour un choix qui fait échouer l'étape).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.PassingRating" xml:space="preserve">
     <value>Note minimale de réussite</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Rating" xml:space="preserve">
     <value>Échelle</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Required" xml:space="preserve">
     <value>Réponse obligatoire</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Type" xml:space="preserve">
     <value>Type de question</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Weight" xml:space="preserve">
     <value>Pondération</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.ChooseAny" xml:space="preserve">
     <value>Choix multiples</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.ChooseOne" xml:space="preserve">
     <value>Choix unique</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Computed" xml:space="preserve">
     <value>Valeur calculée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Date" xml:space="preserve">
     <value>Date du jour</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.DateTime" xml:space="preserve">
     <value>Date et heure</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Duration" xml:space="preserve">
     <value>Durée (chronométrée)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Evidence" xml:space="preserve">
     <value>Photo, vidéo ou fichier</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Heading" xml:space="preserve">
     <value>Titre de section</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Instructions" xml:space="preserve">
     <value>Consignes</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Number" xml:space="preserve">
     <value>Nombre</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.PassFail" xml:space="preserve">
     <value>Réussi / échec</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.RatingScale" xml:space="preserve">
     <value>Échelle de notation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Text" xml:space="preserve">
     <value>Texte libre</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Time" xml:space="preserve">
     <value>Heure</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.TimestampedNotes" xml:space="preserve">
     <value>Notes horodatées</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Steps" xml:space="preserve">
     <value>Étapes</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StripLabel" xml:space="preserve">
     <value>Sections compétences</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SubmitAndSign" xml:space="preserve">
     <value>Soumettre et signer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SubmitConfirm" xml:space="preserve">
     <value>Soumettre l'évaluation ? Le résultat est figé et la signature s'ouvre.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SubmitTitle" xml:space="preserve">
     <value>Soumettre</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Submitted" xml:space="preserve">
     <value>L'évaluation a été soumise. Signez-la pour la terminer.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Definitions" xml:space="preserve">
     <value>Modèles</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Evaluations" xml:space="preserve">
     <value>Évaluations</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Home" xml:space="preserve">
     <value>Vue d'ensemble</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Settings" xml:space="preserve">
     <value>Paramètres</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Sheets" xml:space="preserve">
     <value>Fiches de compétences</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.TaskBooks" xml:space="preserve">
     <value>Livrets de tâches</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Task" xml:space="preserve">
     <value>Tâche</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookCancelled" xml:space="preserve">
     <value>Le livret a été annulé.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookInitiated" xml:space="preserve">
     <value>Le livret a été ouvert.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookIntro" xml:space="preserve">
     <value>Les tâches et leurs évaluations, puis la recommandation de l'évaluateur final et la certification.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.AwaitingCertification" xml:space="preserve">
     <value>En attente de certification</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Cancelled" xml:space="preserve">
     <value>Annulé</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Certified" xml:space="preserve">
     <value>Certifié</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Expired" xml:space="preserve">
     <value>Expiré</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Open" xml:space="preserve">
     <value>Ouvert</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookTemplates" xml:space="preserve">
     <value>Modèles de livrets</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookTemplatesIntro" xml:space="preserve">
     <value>Rédigés par Resgrid : codes de poste, numéros et noms courts de tâches uniquement. Saisissez le texte de chaque tâche depuis votre exemplaire et alignez-vous sur l'édition en vigueur.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBooksIntro" xml:space="preserve">
     <value>Livrets de tâches par poste : ouverts à une date, signés tâche par tâche, puis certifiés.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBooksTitle" xml:space="preserve">
     <value>Livrets de tâches par poste</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskEvaluators" xml:space="preserve">
     <value>Qui signe les tâches</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskNumber" xml:space="preserve">
     <value>N°</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tasks" xml:space="preserve">
     <value>Tâches</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TasksComplete" xml:space="preserve">
     <value>Tâches terminées</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TemplateLibrary" xml:space="preserve">
     <value>Bibliothèque de modèles de fiches</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TemplateLibraryIntro" xml:space="preserve">
     <value>Points de départ rédigés par Resgrid, structure uniquement. Adaptez-les à votre matériel et vos procédures avant usage.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TimeExceededNotice" xml:space="preserve">
     <value>La limite de temps a été dépassée : l'évaluation n'est pas réussie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Trainee" xml:space="preserve">
     <value>Stagiaire</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Upload" xml:space="preserve">
     <value>Téléverser</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.UseTemplate" xml:space="preserve">
     <value>Utiliser le modèle</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.ValidUntil" xml:space="preserve">
     <value>Valable jusqu'au</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Approved" xml:space="preserve">
     <value>Approuvée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Draft" xml:space="preserve">
     <value>Brouillon</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.InReview" xml:space="preserve">
     <value>En relecture</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Published" xml:space="preserve">
     <value>En vigueur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Retired" xml:space="preserve">
     <value>Retirée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Superseded" xml:space="preserve">
     <value>Remplacée</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Versions" xml:space="preserve">
     <value>Versions publiées</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Void" xml:space="preserve">
     <value>Annuler l'évaluation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VoidConfirm" xml:space="preserve">
     <value>Annuler cette évaluation ? Ses enregistrements de formation sont aussi annulés.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VoidReason" xml:space="preserve">
     <value>Motif de l'annulation</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Voided" xml:space="preserve">
     <value>L'évaluation a été annulée.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Waiting" xml:space="preserve">
     <value>En attente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.WholeEvaluation" xml:space="preserve">
     <value>L'évaluation entière</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_addon_required" xml:space="preserve">
     <value>Cela nécessite le module LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_answer_unknown_step" xml:space="preserve">
     <value>Une réponse n'appartient pas à cette version de la fiche.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_attempts_exhausted" xml:space="preserve">
     <value>Ce membre n'a plus de tentative dans la période.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_crew_not_allowed" xml:space="preserve">
     <value>Cette fiche évalue un membre à la fois.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evaluation_closed" xml:space="preserve">
     <value>L'évaluation n'est plus en cours.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evaluation_not_found" xml:space="preserve">
     <value>L'évaluation est introuvable.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_count" xml:space="preserve">
     <value>Cette évaluation a déjà le nombre maximal de preuves.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_size" xml:space="preserve">
     <value>Choisissez un fichier de 30 Mo au plus.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_step" xml:space="preserve">
     <value>Cette étape ne figure pas sur la fiche.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_type" xml:space="preserve">
     <value>Ajoutez une photo, une vidéo, un PDF ou un fichier texte.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_idempotency_key_required" xml:space="preserve">
     <value>Un envoi hors ligne a besoin de sa clé de boîte d'envoi.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_member_invalid" xml:space="preserve">
     <value>Choisissez des membres actifs du service.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_members_required" xml:space="preserve">
     <value>Choisissez qui est évalué (50 membres au plus).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_next_signer_not_allowed" xml:space="preserve">
     <value>Cette fiche ne prévoit pas de signataire suivant.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_next_signer_not_eligible" xml:space="preserve">
     <value>Le signataire suivant doit être un autre membre actif autorisé par la règle, ni l'évaluateur ni un membre évalué.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_next_signer_required" xml:space="preserve">
     <value>Désignez le signataire suivant demandé par la fiche.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_allowed" xml:space="preserve">
     <value>Vous ne pouvez pas faire cela.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_eligible" xml:space="preserve">
     <value>Vous n'êtes pas évaluateur habilité pour cette fiche ou ce livret.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_evaluator" xml:space="preserve">
     <value>Seul l'évaluateur peut modifier cette évaluation.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_found" xml:space="preserve">
     <value>Introuvable.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_self_evaluation" xml:space="preserve">
     <value>Vous ne pouvez pas vous évaluer vous-même avec cette fiche ou ce livret.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_category_invalid" xml:space="preserve">
     <value>Choisissez une catégorie de formation du service.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_change_summary_required" xml:space="preserve">
     <value>Décrivez ce qui a changé.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_kind_invalid" xml:space="preserve">
     <value>Choisissez fiche de compétences ou rapport d'observation quotidien.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_no_draft" xml:space="preserve">
     <value>Aucun brouillon à publier.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_no_gradable_step" xml:space="preserve">
     <value>Ajoutez au moins une étape à laquelle l'évaluateur répond.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_not_found" xml:space="preserve">
     <value>La fiche est introuvable.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_not_published" xml:space="preserve">
     <value>La fiche n'a pas de version publiée.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_bounds" xml:space="preserve">
     <value>Une valeur minimale dépasse la maximale.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_compute" xml:space="preserve">
     <value>Une étape calculée doit citer des étapes antérieures de nombre, durée ou note.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_count" xml:space="preserve">
     <value>Une fiche compte de 1 à 200 étapes.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_critical" xml:space="preserve">
     <value>Seules les étapes notées peuvent être critiques.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_key" xml:space="preserve">
     <value>Chaque étape doit avoir une clé unique.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_label" xml:space="preserve">
     <value>Chaque étape doit avoir un libellé de 300 caractères au plus.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_options" xml:space="preserve">
     <value>Les étapes à choix exigent de 2 à 30 choix distincts.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_rating" xml:space="preserve">
     <value>Une échelle doit avoir une note minimale et maximale, et la note de réussite entre les deux.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_type" xml:space="preserve">
     <value>Choisissez un type de question.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_weight" xml:space="preserve">
     <value>Les pondérations vont de 0 à 1000 ; une étape critique doit dépasser 0.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_title_required" xml:space="preserve">
     <value>Saisissez un intitulé.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_signature_refused" xml:space="preserve">
     <value>La demande de signature n'a pas pu être créée ; l'évaluation reste en cours.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_split_last_member" xml:space="preserve">
     <value>Le dernier membre d'une évaluation d'équipe ne peut pas être séparé.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_split_not_crew" xml:space="preserve">
     <value>Seule une évaluation d'équipe permet de séparer un membre.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_stale" xml:space="preserve">
     <value>Quelqu'un d'autre l'a modifié entre-temps. Rechargez et réessayez.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_evidence_required" xml:space="preserve">
     <value>Une étape échouée exige une preuve.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_invalid" xml:space="preserve">
     <value>Une réponse n'est pas valide pour son étape.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_not_applicable" xml:space="preserve">
     <value>« Sans objet » exige un motif et n'est pas permis sur les étapes critiques.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_note_required" xml:space="preserve">
     <value>Une étape échouée exige un commentaire.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_required" xml:space="preserve">
     <value>Répondez à chaque étape obligatoire avant de soumettre.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_too_long" xml:space="preserve">
     <value>Une réponse ou un commentaire est trop long.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_template_not_found" xml:space="preserve">
     <value>Le modèle est introuvable.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_void_reason_required" xml:space="preserve">
     <value>Saisissez un motif.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_already_open" xml:space="preserve">
     <value>Ce membre a déjà un livret ouvert de ce modèle.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_certification_type_invalid" xml:space="preserve">
     <value>Choisissez un type de certification de personne du service.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_certifying_official_not_eligible" xml:space="preserve">
     <value>Le certificateur ne satisfait pas à la règle du modèle.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_certifying_official_required" xml:space="preserve">
     <value>Choisissez le certificateur.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_code_required" xml:space="preserve">
     <value>Saisissez le code de poste.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_date_invalid" xml:space="preserve">
     <value>La date d'ouverture doit être dans la validité du livret et pas dans le futur.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_expired" xml:space="preserve">
     <value>La validité du livret a pris fin.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_family_invalid" xml:space="preserve">
     <value>Choisissez une famille.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_final_evaluator_not_eligible" xml:space="preserve">
     <value>L'évaluateur final ne satisfait pas à la règle du modèle.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_final_evaluator_required" xml:space="preserve">
     <value>Choisissez l'évaluateur final.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_member_mismatch" xml:space="preserve">
     <value>Une tâche de livret n'évalue que son stagiaire.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_name_required" xml:space="preserve">
     <value>Saisissez le nom du poste.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_not_found" xml:space="preserve">
     <value>Le livret est introuvable.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_not_open" xml:space="preserve">
     <value>Le livret n'est pas ouvert.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_sheet_invalid" xml:space="preserve">
     <value>Une tâche cite une fiche inexistante.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_signers_invalid" xml:space="preserve">
     <value>Le stagiaire, l'évaluateur final et le certificateur doivent être trois membres différents.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_count" xml:space="preserve">
     <value>Un livret compte de 1 à 200 tâches.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_invalid" xml:space="preserve">
     <value>Chaque tâche doit avoir un intitulé et 1 à 50 évaluations.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_key" xml:space="preserve">
     <value>Chaque tâche doit avoir une clé unique.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_not_found" xml:space="preserve">
     <value>Cette tâche ne figure pas dans le livret.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_tasks_incomplete" xml:space="preserve">
     <value>Toutes les tâches doivent être terminées avant la certification.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

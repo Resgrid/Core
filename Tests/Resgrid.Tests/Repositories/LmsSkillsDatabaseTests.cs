@@ -30,7 +30,7 @@ using Resgrid.Services;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for Training T4 part 2 (M0407–M0410) on both engines: the migrations re-run as no-ops, roll back and apply again;
+	/// Real-database proof for Training T4 part 2 (M0381–M0384) on both engines: the migrations re-run as no-ops, roll back and apply again;
 	/// sheets and versions with the optimistic save; evaluations with members (the member list, case-insensitive ids), the offline idempotency
 	/// key's filtered unique index, evidence lists without bytes; task books and worker 96's expiry query; the notification due query and its
 	/// claim; a completed evaluation's learning record counted by 4B's "N passed evaluations" query; department cleanup for that department
@@ -145,7 +145,7 @@ namespace Resgrid.Tests.Repositories
 			(await ScalarAsync(Exists(Tables))).Should().Be(Tables.Length);
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
-			await ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 407");
+			await ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 381");
 
 			using (var runner = Runner())
 			using (var scope = runner.CreateScope())
@@ -154,7 +154,7 @@ namespace Resgrid.Tests.Repositories
 				migrations.MigrateUp();
 				(await ScalarAsync(Exists(Tables))).Should().Be(Tables.Length, "a second Up over existing tables is a no-op");
 
-				migrations.MigrateDown(406);
+				migrations.MigrateDown(380);
 				(await ScalarAsync(Exists(Tables))).Should().Be(0);
 
 				migrations.MigrateUp();

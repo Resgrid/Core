@@ -332,5 +332,36 @@
 		/// Missing = immediate notices to the evaluated members and the department admins. Read through <c>ILmsSkillSettingsService.GetAsync</c>.
 		/// </summary>
 		LmsSkillSettings = 146,
+
+		/// <summary>
+		/// ProtoBuf <see cref="Resgrid.Model.Lms.LmsStandardsSettings"/>, Trainings → Standards → xAPI (LMS, T5 round 6C): whether xAPI statements
+		/// go to an external LRS, its endpoint and basic-auth key, the secret (encrypted for the department) and whether the actor may be the
+		/// member's e-mail address. Missing = off. Read through <c>ILmsXapiService.GetSettingsAsync</c>.
+		/// </summary>
+		LmsStandardsSettings = 147,
+
+		/// <summary>
+		/// ProtoBuf <see cref="Resgrid.Model.Lms.LmsCeReportingSettings"/>, Trainings → Programs → CE reporting (LMS, T5 round 6D): the department's
+		/// CAPCE provider number and name, the certification types that hold the state license, NREMT registration and National EMS ID, the CE
+		/// Broker provider number, and per-exporter column maps. Missing = no CAPCE file, empty identifier columns, default columns. Read
+		/// through <c>ILmsCeExportService.GetSettingsAsync</c>.
+		/// </summary>
+		LmsCeReportingSettings = 148,
+
+		/// <summary>
+		/// JSON <see cref="Resgrid.Model.ContentSetSettings"/>, Protocols → Sets (Protocols P5 / Training T5, round 10 A3): the local time of
+		/// day accepted protocol and course set updates go into force (default 07:00, so nothing changes mid-shift by surprise) and whether the
+		/// department's set managers are told when an update arrives. Missing = 07:00, notify. Read through
+		/// <c>IContentSetService.GetSettingsAsync</c>.
+		/// </summary>
+		ContentSetSettings = 151,
+
+		/// <summary>
+		/// ProtoBuf <see cref="Resgrid.Model.Security.DepartmentStepUpPolicy"/>, Security → Step-up verification (owner decision 2026-11-26):
+		/// per area (signatures, read-and-sign, approvals, protected data) whether step-up is optional and whether SSO or password re-entry
+		/// is allowed besides a second factor. Missing or unreadable = today's behaviour (required where it was, second factor only). Read
+		/// through <c>IStepUpPolicyService.GetRulesAsync</c>; never cached, so a tightening applies at once.
+		/// </summary>
+		StepUpPolicy = 153,
 	}
 }

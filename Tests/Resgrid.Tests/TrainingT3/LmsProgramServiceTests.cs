@@ -129,9 +129,12 @@ namespace Resgrid.Tests.TrainingT3
 			public readonly Mock<ILearningRecordWriter> Writer = new Mock<ILearningRecordWriter>();
 			public bool LoseNextRace;
 			public LmsTrainingRequestService Service;
+			public readonly Mock<IEventAggregator> Events = new Mock<IEventAggregator>();
+			public readonly List<Resgrid.Model.Events.TrainingRequestWorkflowEvent> Raised = new List<Resgrid.Model.Events.TrainingRequestWorkflowEvent>();
 
 			public RequestWorld(LmsProgramSettings settings = null)
 			{
+				Events.Setup(e => e.SendMessage(It.IsAny<Resgrid.Model.Events.TrainingRequestWorkflowEvent>())).Callback((Resgrid.Model.Events.TrainingRequestWorkflowEvent e) => Raised.Add(e));
 				var requests = new Mock<ILmsTrainingRequestsRepository>();
 				Requests.Bind(requests);
 				requests.Setup(r => r.GetByIdForDepartmentAsync(Dept, It.IsAny<int>())).ReturnsAsync((int d, int id) => Copy(Requests.Rows.FirstOrDefault(x => x.LmsTrainingRequestId == id)));
@@ -166,7 +169,7 @@ namespace Resgrid.Tests.TrainingT3
 				});
 
 				Service = new LmsTrainingRequestService(requests.Object, decisions.Object, Settings(settings).Object, learning.Object, Writer.Object, files.Object,
-					Officers(Officer).Object, Departments(Member, Captain, Officer, Admin).Object, Groups().Object, Notifier(Sent).Object, Mock.Of<IEventAggregator>());
+					Officers(Officer).Object, Departments(Member, Captain, Officer, Admin).Object, Groups().Object, Notifier(Sent).Object, Events.Object);
 			}
 
 			private static LmsTrainingRequest Copy(LmsTrainingRequest r) => r == null ? null : Newtonsoft.Json.JsonConvert.DeserializeObject<LmsTrainingRequest>(Newtonsoft.Json.JsonConvert.SerializeObject(r));
@@ -209,6 +212,34 @@ namespace Resgrid.Tests.TrainingT3
 			world.Decisions.Rows.Select(d => (LmsTrainingRequestSteps)d.Step).Should().Equal(LmsTrainingRequestSteps.Supervisor, LmsTrainingRequestSteps.TrainingOfficer);
 			world.Sent.Last().Key.Should().Be("Prg.Notify.RequestApproved");
 			world.Sent.Last().To.Should().Equal(Member);
+		}
+
+		[Test]
+		public async Task Submitting_and_the_final_decision_each_raise_one_workflow_event_without_the_justification_or_notes()
+		{
+			// Round 7C, workflow triggers 265-266: a step passed on is not a decision; a lost race raises nothing.
+			var world = new RequestWorld();
+			var input = Class();
+			input.Justification = "Needed for the swift-water team rotation";
+			var request = await world.Service.SubmitAsync(Dept, Member, input);
+
+			world.Raised.Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.TrainingRequestSubmitted && e.UserId == Member && e.Status == "Submitted" &&
+				e.AwaitingStep == "Supervisor" && e.TotalCost == 520.46m && e.RequestTitle == "Rope rescue technician");
+
+			await world.Service.DecideAsync(Dept, request.LmsTrainingRequestId, Captain, true, "Good course, confidential budget note");
+			world.Raised.Should().HaveCount(1, "the supervisor passed it on; nothing is decided yet");
+
+			world.LoseNextRace = true;
+			await FluentActions.Awaiting(() => world.Service.DecideAsync(Dept, request.LmsTrainingRequestId, Officer, true, null)).Should().ThrowAsync<InvalidOperationException>();
+			world.Raised.Should().HaveCount(1);
+
+			await world.Service.DecideAsync(Dept, request.LmsTrainingRequestId, Officer, true, null);
+			var decided = world.Raised.Last();
+			decided.Trigger.Should().Be(WorkflowTriggerEventType.TrainingRequestDecided);
+			(decided.Status, decided.DecidedByUserId, decided.AwaitingStep).Should().Be(("Approved", Officer, (string)null));
+			world.Raised.Should().HaveCount(2);
+			var json = Newtonsoft.Json.JsonConvert.SerializeObject(world.Raised);
+			json.Should().NotContain("swift-water").And.NotContain("confidential");
 		}
 
 		[Test]
@@ -353,6 +384,8 @@ namespace Resgrid.Tests.TrainingT3
 			public readonly Mock<ICertificationService> Certifications = new Mock<ICertificationService>();
 			public readonly Mock<ILmsAccessService> Access = new Mock<ILmsAccessService>();
 			public readonly Mock<ILmsProgramStatesRepository> States = new Mock<ILmsProgramStatesRepository>();
+			public readonly Mock<ILmsCertificationIssuanceService> Ledger = new Mock<ILmsCertificationIssuanceService>();
+			public readonly List<LmsCertificationIssuance> Ledgered = new List<LmsCertificationIssuance>();
 			public readonly List<PersonnelCertification> Records;
 			public LmsCertificationCycleService Service;
 
@@ -395,8 +428,11 @@ namespace Resgrid.Tests.TrainingT3
 				});
 				Access.Setup(a => a.CanAuthorAndManageAsync(Dept)).ReturnsAsync(true);
 				var groups = Groups();
+				// Round 9A: every next cycle is ledgered (the issuance engine records it).
+				Ledger.Setup(l => l.RecordAsync(It.IsAny<LmsCertificationIssuance>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync((LmsCertificationIssuance i, CancellationToken _) => { Ledgered.Add(i); return i; });
 				Service = new LmsCertificationCycleService(rules.Object, alerts.Object, States.Object, Certifications.Object, Departments(Member, Captain, Officer, Admin).Object,
-					groups.Object, Access.Object, Notifier(Sent).Object, Mock.Of<IEventAggregator>());
+					groups.Object, Access.Object, Notifier(Sent).Object, Mock.Of<IEventAggregator>(), Ledger.Object);
 			}
 		}
 
@@ -611,6 +647,8 @@ namespace Resgrid.Tests.TrainingT3
 			public Task<LearningRecordWriteResult> RemoveManualCreditAsync(PersonnelCertificationCredit credit, string actingUserId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 			public Task<int> ApplyCreditsAsync(LearningRecord record, bool includeBackfill, string actingUserId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 			public Task<int> RemoveCreditsAsync(LearningRecord record, string actingUserId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+			public Task NotifyChangedAsync(int departmentId, IReadOnlyCollection<LearningRecord> written, IReadOnlyCollection<LearningRecord> voided, string actingUserId,
+				CancellationToken cancellationToken = default) => Task.CompletedTask;
 		}
 
 		[Test]

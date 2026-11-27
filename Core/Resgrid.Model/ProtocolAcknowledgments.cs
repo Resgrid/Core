@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace Resgrid.Model
 {
-	/// <summary>Where one member's acknowledgment of one version stands (ProtocolAcknowledgments.Status, M0354). Persisted: append only.</summary>
+	/// <summary>Where one member's acknowledgment of one version stands (ProtocolAcknowledgments.Status, M0348). Persisted: append only.</summary>
 	public enum ProtocolAcknowledgmentStatuses
 	{
 		/// <summary>Assigned and not yet signed.</summary>
@@ -87,7 +87,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// One member's acknowledgment of one protocol version (P2, M0354): assigned on publish and whenever the member enters the
+	/// One member's acknowledgment of one protocol version (P2, M0348): assigned on publish and whenever the member enters the
 	/// audience (R-P3), signed at L1 (or L2 when the department asks) bound to the version's content hash, carried forward by a minor
 	/// version, withdrawn when the member leaves the audience before signing. Signed rows are kept (R-P10) and written to the
 	/// transcript (LearningRecords, source ProtocolAcknowledgment).

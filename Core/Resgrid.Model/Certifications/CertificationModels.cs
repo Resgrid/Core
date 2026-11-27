@@ -20,7 +20,9 @@ namespace Resgrid.Model
 		Medical = 7,
 		Driver = 8,
 		Vehicle = 9,
-		Other = 10
+		Other = 10,
+		/// <summary>Police services and other law enforcement agencies (round 9C).</summary>
+		LawEnforcement = 11
 	}
 
 	/// <summary>Whether records of a type are held by a person or by a unit (plan D1.1: one catalog, two record scopes).</summary>

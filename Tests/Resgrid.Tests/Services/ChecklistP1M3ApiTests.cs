@@ -39,7 +39,7 @@ namespace Resgrid.Tests.Services
 			builder.Services.AddAuthorization(o => o.AddPolicy(ResgridResources.Checklist_Update, p => p.RequireRole("manager")));
 			builder.Services.AddApiVersioning();
 			builder.Services.AddControllers().AddApplicationPart(typeof(ChecklistRunsController).Assembly).AddNewtonsoftJson(o => o.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.DefaultContractResolver());
-			builder.Services.AddSingleton<IChecklistsService>(_service); builder.Services.AddSingleton(Mock.Of<IChecklistWitnessSignatureService>()); builder.Services.AddSingleton(Mock.Of<IMfaEvidenceService>()); builder.Services.AddSingleton(Mock.Of<IMfaPolicyService>()); builder.Services.AddSingleton(_access.Object);
+			builder.Services.AddSingleton<IChecklistsService>(_service); builder.Services.AddSingleton(Mock.Of<IChecklistWitnessSignatureService>()); builder.Services.AddSingleton(Mock.Of<IMfaEvidenceService>()); builder.Services.AddSingleton(Mock.Of<IMfaPolicyService>()); builder.Services.AddSingleton(Resgrid.Tests.Security.StepUpTestPolicies.Capabilities()); builder.Services.AddSingleton(_access.Object);
 			builder.Services.AddSingleton(Mock.Of<IChecklistTemplateService>()); builder.Services.AddSingleton(Mock.Of<IDepartmentDataProtectionService>());
 			await using var app = builder.Build(); var previous = ApiClaims._httpContextAccessor;
 			ApiClaims._httpContextAccessor = app.Services.GetRequiredService<IHttpContextAccessor>();

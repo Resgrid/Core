@@ -38,10 +38,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IAiKnowledgeService _knowledge;
 		private readonly IAuthorizationService _authorization;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> _localizer;
+		private readonly IProtocolDocumentService _documents;
 
 		public ProtocolContentController(IProtocolOfflineService offline, IProtocolStepThroughService steps, IProtocolTranslationService translations,
 			IProtocolAccessService access, IProtocolLibraryService library, IAiKnowledgeService knowledge, IAuthorizationService authorization,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer, IProtocolDocumentService documents)
 		{
 			_offline = offline;
 			_steps = steps;
@@ -51,6 +52,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_knowledge = knowledge;
 			_authorization = authorization;
 			_localizer = localizer;
+			_documents = documents;
 		}
 
 		/// <summary>The offline manifest: the readable protocols in force with their version hash, the SHA-256 of each file and the approved translations.</summary>
@@ -126,8 +128,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ContentJson = version.IsDocument ? null : localized.ContentJson,
 				DosingToolUrl = dosing,
 				DeepLink = (Config.SystemBehaviorConfig.ResgridBaseUrl ?? string.Empty).TrimEnd('/') + "/User/Protocols/View/" + protocol.DispatchProtocolId.ToString(CultureInfo.InvariantCulture),
-				Steps = version.IsDocument ? new List<ProtocolStepResultData>() : ProtocolSteps.Extract(localized.ContentJson, localized.ContentHtml).Select(s => Step(s, null)).ToList()
+				Steps = version.IsDocument ? new List<ProtocolStepResultData>() : ProtocolSteps.Extract(localized.ContentJson, localized.ContentHtml).Select(s => Step(s, null)).ToList(),
+				IsDocument = version.IsDocument
 			};
+
+			if (version.IsDocument)
+			{
+				// Round 10: the file's name, type and size for the reader's download button (metadata only; the bytes leave through GetVersionFile).
+				var file = await _documents.GetFileInfoAsync(DepartmentId, version.ProtocolVersionId);
+				if (file != null && file.ProtocolVersionId == version.ProtocolVersionId)
+				{
+					data.DocumentFileName = ProtocolDocumentRules.SafeFileName(file.FileName);
+					data.DocumentContentType = string.IsNullOrWhiteSpace(file.ContentType) ? "application/octet-stream" : file.ContentType;
+					data.DocumentSize = file.Size;
+				}
+			}
 
 			var result = new GetProtocolVersionContentResult { Data = data, PageSize = 1, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);

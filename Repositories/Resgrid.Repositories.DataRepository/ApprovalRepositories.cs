@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>Approval chains (e-Signature S4, M0413). Department reads start at the department.</summary>
+	/// <summary>Approval chains (e-Signature S4, M0385). Department reads start at the department.</summary>
 	public class ApprovalChainsRepository : RmsRepositoryBase<ApprovalChain>, IApprovalChainsRepository
 	{
 		public ApprovalChainsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -210,6 +210,30 @@ namespace Resgrid.Repositories.DataRepository
 			return (await QueryAsync<MutualAidAgreement>(
 				$"SELECT * FROM {Tbl("MutualAidAgreements")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("IsDeleted")} = {P}Deleted ORDER BY {Col("MutualAidAgreementId")} DESC",
 				new { DepartmentId = departmentId, Deleted = false })).ToList();
+		}
+
+		public async Task<List<MutualAidAgreement>> GetAwaitingCountersignatureAsync(int partnerDepartmentId)
+		{
+			return (await QueryAsync<MutualAidAgreement>(
+				$"SELECT * FROM {Tbl("MutualAidAgreements")} WHERE {Col("PartnerDepartmentId")} = {P}PartnerId AND {Col("CountersignStatus")} = {P}Requested " +
+				$"AND {Col("IsDeleted")} = {P}Deleted AND {Col("DepartmentId")} <> {P}PartnerId ORDER BY {Col("CountersignRequestedOn")} DESC, {Col("MutualAidAgreementId")} DESC",
+				new { PartnerId = partnerDepartmentId, Requested = (int)MutualAidCountersignStatuses.Requested, Deleted = false })).ToList();
+		}
+
+		public async Task<List<MutualAidAgreement>> GetAllCountersignRequestedAsync(int take)
+		{
+			var top = Math.Max(1, Math.Min(take, 10000));
+			var sql = IsPostgres
+				? $"SELECT * FROM {Tbl("MutualAidAgreements")} WHERE {Col("CountersignStatus")} = {P}Requested AND {Col("IsDeleted")} = {P}Deleted ORDER BY {Col("MutualAidAgreementId")} LIMIT {top}"
+				: $"SELECT TOP ({top}) * FROM {Tbl("MutualAidAgreements")} WHERE {Col("CountersignStatus")} = {P}Requested AND {Col("IsDeleted")} = {P}Deleted ORDER BY {Col("MutualAidAgreementId")}";
+			return (await QueryAsync<MutualAidAgreement>(sql, new { Requested = (int)MutualAidCountersignStatuses.Requested, Deleted = false })).ToList();
+		}
+
+		public async Task<List<MutualAidAgreement>> GetCountersignRequestedForLinkAsync(int departmentLinkId)
+		{
+			return (await QueryAsync<MutualAidAgreement>(
+				$"SELECT * FROM {Tbl("MutualAidAgreements")} WHERE {Col("DepartmentLinkId")} = {P}LinkId AND {Col("CountersignStatus")} = {P}Requested AND {Col("IsDeleted")} = {P}Deleted",
+				new { LinkId = departmentLinkId, Requested = (int)MutualAidCountersignStatuses.Requested, Deleted = false })).ToList();
 		}
 	}
 }

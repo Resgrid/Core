@@ -83,6 +83,25 @@ namespace Resgrid.Repositories.DataRepository
 			return changed == 1;
 		}
 
+		public async Task<bool> UpdateProtectedContentAsync(int departmentId, CallProtocol row, System.Threading.CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || row == null || row.CallProtocolId <= 0)
+				return false;
+
+			var parameters = new Dapper.DynamicParameters();
+			parameters.Add("Id", row.CallProtocolId);
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("CaseJson", row.CaseJson, System.Data.DbType.String);
+			parameters.Add("AnswersJson", row.AnswersJson, System.Data.DbType.String);
+			parameters.Add("Reason", row.OverrideReason, System.Data.DbType.String);
+			parameters.Add("Removed", row.RemovedReason, System.Data.DbType.String);
+			var changed = await ExecuteAsync(
+				$"UPDATE {Tbl("CallProtocols")} SET {Col("CaseJson")} = {P}CaseJson, {Col("AnswersJson")} = {P}AnswersJson, {Col("OverrideReason")} = {P}Reason, {Col("RemovedReason")} = {P}Removed " +
+				$"WHERE {Col("CallProtocolId")} = {P}Id AND {Col("CallId")} IN (SELECT c.{Col("CallId")} FROM {Tbl("Calls")} c WHERE c.{Col("DepartmentId")} = {P}DepartmentId)",
+				parameters, cancellationToken);
+			return changed == 1;
+		}
+
 		public async Task<IEnumerable<CallProtocol>> GetCallProtocolsByCallIdAsync(int callId)
 		{
 			try

@@ -797,6 +797,73 @@
         "PackGap.mutual-aid",
         "PackGapOwner"
       ]
+    },
+    {
+      "Id": "law-enforcement",
+      "LabelKey": "Pack.law-enforcement",
+      "PurposeKey": "PackPurpose.law-enforcement",
+      "AreaIds": [
+        "people",
+        "shifts",
+        "training",
+        "calls",
+        "checklists",
+        "maintenance",
+        "records",
+        "knowledge",
+        "relay"
+      ],
+      "RuleIds": [
+        "shift-auto-without-dispatch",
+        "shift-coverage",
+        "text-sources",
+        "empty-groups",
+        "run-cards",
+        "checkin-timers",
+        "qualified-coverage",
+        "credential-expiry",
+        "checklist-overdue",
+        "equipment-holds",
+        "import-heartbeat",
+        "email-import-failures",
+        "record-review",
+        "shift-open-slots",
+        "shift-overlaps",
+        "shift-trades"
+      ],
+      "PrerequisiteKeys": [
+        "PackLocalRequirements",
+        "PackGap.law-enforcement",
+        "PackGapOwner"
+      ]
+    },
+    {
+      "Id": "business",
+      "LabelKey": "Pack.business",
+      "PurposeKey": "PackPurpose.business",
+      "AreaIds": [
+        "people",
+        "shifts",
+        "training",
+        "checklists",
+        "maintenance",
+        "knowledge",
+        "business"
+      ],
+      "RuleIds": [
+        "empty-groups",
+        "qualified-coverage",
+        "credential-expiry",
+        "checklist-overdue",
+        "equipment-holds",
+        "shift-open-slots",
+        "shift-overlaps"
+      ],
+      "PrerequisiteKeys": [
+        "PackLocalRequirements",
+        "PackGap.business",
+        "PackGapOwner"
+      ]
     }
   ],
   "Articles": [

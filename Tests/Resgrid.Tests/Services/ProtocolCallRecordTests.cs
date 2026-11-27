@@ -96,7 +96,7 @@ namespace Resgrid.Tests.Services
 
 			_service = new ProtocolsService(_protocols.Object, _attachments.Object, _questions.Object, _triggers.Object,
 				Mock.Of<IDispatchProtocolQuestionAnswersRepository>(), new Lazy<IDispatchTriggerFactsService>(() => Mock.Of<IDispatchTriggerFactsService>()),
-				new Lazy<IProtocolAiSuggestionService>(() => Mock.Of<IProtocolAiSuggestionService>()), null, _cache.Object, _callTypes.Object, _callProtocols.Object, _snapshots.Object);
+				new Lazy<IProtocolAiSuggestionService>(() => Mock.Of<IProtocolAiSuggestionService>()), new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()), null, _cache.Object, _callTypes.Object, _callProtocols.Object, _snapshots.Object);
 		}
 
 		private static Call CallFor(int priority, string type) => new Call { CallId = 900, DepartmentId = DepartmentId, Priority = priority, Type = type, LoggedOn = LoggedOn };

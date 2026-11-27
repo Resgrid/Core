@@ -473,7 +473,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
-				// Worker ID 84: Protocols P1 lifecycle (M0343). Publishes approved versions whose effective date has come, retires
+				// Worker ID 84: Protocols P1 lifecycle (M0342). Publishes approved versions whose effective date has come, retires
 				// versions past their expiry, sends T-30 / T-7 / overdue review reminders and purges versions past their kind's
 				// retention. Each step starts from a query for due work; four small queries when idle.
 				_logger.Log(LogLevel.Information, "Scheduling Protocol Lifecycle");
@@ -482,7 +482,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
-				// Worker ID 89: K1 department knowledge index (M0368). Drains the reindex queue (protocol and training publish, retire,
+				// Worker ID 89: K1 department knowledge index (M0353). Drains the reindex queue (protocol and training publish, retire,
 				// audience and AI-flag changes) and runs each department's nightly repair pass; starts from a query for departments with
 				// due work and asks the Enhanced AI gate once per department per run. Two small queries when idle.
 				_logger.Log(LogLevel.Information, "Scheduling Knowledge Index");
@@ -491,7 +491,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
-				// Worker ID 86: Protocols P2 acknowledgments and the P1 wave-2 file text (M0353, M0354). Queues PDF/DOCX attachments without
+				// Worker ID 86: Protocols P2 acknowledgments and the P1 wave-2 file text (M0347, M0348). Queues PDF/DOCX attachments without
 				// text, extracts queued files, completes quiz-gated acknowledgments once the training is passed, and sends reminders at the due
 				// date and after with the escalation to the supervisor or group admin. Each step starts from a due-work query; four when idle.
 				_logger.Log(LogLevel.Information, "Scheduling Protocol Acknowledgments");
@@ -500,7 +500,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
-				// Worker ID 85: Training T1 history backfill (M0348, R-T3). Runs queued per-department backfill jobs (resumable, a dry run
+				// Worker ID 85: Training T1 history backfill (M0344, R-T3). Runs queued per-department backfill jobs (resumable, a dry run
 				// only counts); a single query when idle. No billing gate: the transcript is free.
 				_logger.Log(LogLevel.Information, "Scheduling Training Records");
 				await Client.ScheduleAsync("Training Records",
@@ -508,7 +508,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
-				// Worker ID 91: member wellness WL0 (M0376). Builds post-call exposure suggestions for flagged calls that have ended,
+				// Worker ID 91: member wellness WL0 (M0360). Builds post-call exposure suggestions for flagged calls that have ended,
 				// sends the opt-in critical-incident anniversary reminders (from 09:00 department-local, claimed before sending) and erases
 				// entries past their retention (30 years minimum) that no legal hold covers. Three small queries when idle; no billing gate.
 				_logger.Log(LogLevel.Information, "Scheduling Member Wellness");
@@ -517,7 +517,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(15),
 					stoppingToken);
 
-				// Worker ID 90: e-Signature S1/S2 (M0371-M0374). Webhook hints (each re-fetches its envelope), envelope reconcile,
+				// Worker ID 90: e-Signature S1/S2 (M0356-M0359). Webhook hints (each re-fetches its envelope), envelope reconcile,
 				// request expiry, pending seals with backoff (nothing while sealing is unconfigured; never a local-time seal) and
 				// B-LTA re-timestamps. Due-work queries only; no billing gate.
 				_logger.Log(LogLevel.Information, "Scheduling Signatures");
@@ -526,7 +526,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
-				// Worker ID 97: e-Signature S4 approval chains (M0413-M0414). Announces approval steps whose turn started (a named approver
+				// Worker ID 97: e-Signature S4 approval chains (M0385-M0386). Announces approval steps whose turn started (a named approver
 				// on leave is delegated first), escalates steps past their hours and syncs approvals whose signature request closed
 				// elsewhere. Due-work queries only; no department sweep and no billing gate. Request expiry and reminders stay with 90.
 				_logger.Log(LogLevel.Information, "Scheduling Approvals");
@@ -535,7 +535,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
-				// Worker ID 87: Training T2 LMS hosted video (M0359, decision 9). Claims queued uploads and transcodes them to HLS plus one MP4
+				// Worker ID 87: Training T2 LMS hosted video (M0349, decision 9). Claims queued uploads and transcodes them to HLS plus one MP4
 				// rendition with ffmpeg (LmsConfig.FfmpegExecutable); a stale claim goes back to the queue. One small query when idle, none
 				// when the LMS media store is not configured.
 				_logger.Log(LogLevel.Information, "Scheduling LMS Media");
@@ -544,7 +544,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(2),
 					stoppingToken);
 
-				// Worker ID 88: Training T2 / A1 LMS sweeps (M0360). Seeds the Academy system course set when its manifest version rose,
+				// Worker ID 88: Training T2 / A1 LMS sweeps (M0350). Seeds the Academy system course set when its manifest version rose,
 				// sends in-progress lesson reminders (claimed before sending) and archives hosted media 90 days after a lapse (rule 6).
 				// Each step queries for due work first and asks the LMS gate once per department with due work (R-L9).
 				_logger.Log(LogLevel.Information, "Scheduling LMS Sweeps");
@@ -553,7 +553,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(30),
 					stoppingToken);
 
-				// Worker ID 94: Training T3 part 2 LMS programs (M0387-M0390). Sends due scheduled reports (claimed before sending, inactive
+				// Worker ID 94: Training T3 part 2 LMS programs (M0367-M0370). Sends due scheduled reports (claimed before sending, inactive
 				// recipients skipped), runs certification cycle auto-renew and alerts once per department-local day, and credits building
 				// familiarization from Records visits. Three due-work queries when idle; the LMS gate once per department with due work (R-L9).
 				_logger.Log(LogLevel.Information, "Scheduling LMS Programs");
@@ -562,7 +562,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(15),
 					stoppingToken);
 
-				// Worker ID 95: Training T4 part 1 LMS class sessions (M0403-M0405). Sends class reminders (claimed before sending, active members
+				// Worker ID 95: Training T4 part 1 LMS class sessions (M0378-M0380). Sends class reminders (claimed before sending, active members
 				// only), promotes waitlisted members into free seats in order, and purges deleted rosters only once their retention has passed.
 				// Three due-work queries when idle; the LMS gate once per department with due work (R-L9).
 				_logger.Log(LogLevel.Information, "Scheduling LMS Classes");
@@ -571,7 +571,7 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(10),
 					stoppingToken);
 
-				// Worker ID 96: Training T4 part 2 skills (M0407-M0410). Sends the skill evaluation and task book notices that are due (immediate, or
+				// Worker ID 96: Training T4 part 2 skills (M0381-M0384). Sends the skill evaluation and task book notices that are due (immediate, or
 				// the department's daily or weekly digest; claimed before sending, inactive members skipped) and expires open position task books
 				// past their validity. Two due-work queries when idle; no department sweep and no billing gate (R-L9).
 				_logger.Log(LogLevel.Information, "Scheduling LMS Skills");
@@ -580,7 +580,35 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(5),
 					stoppingToken);
 
-				// Worker ID 93: Training T3 learning requirements (M0383-M0385). Links Academy role-path assignments to their system paths, runs
+				// Worker ID 99: Training T5 data exit (M0395). Builds the department training exports owners and admins queued (a few per run,
+				// into the LMS store, or the database without one), requeues a stale claim and removes zips whose download link expired. Two
+				// due-work queries when idle; never the add-on gate (data exit works after a lapse) and no department sweep (R-L9).
+				_logger.Log(LogLevel.Information, "Scheduling LMS Data Export");
+				await Client.ScheduleAsync("LMS Data Export",
+					new Commands.LmsDataExportCommand(99),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				// Worker ID 100 (round 10 A3, placeholder block 100-101): protocol and course sets over Department Links (M0415-M0416).
+				// Accepts updates for auto-accepting subscriptions and locked items past their deadline, applies accepted updates at the
+				// subscriber's update time, picks up edited baseline trainings, and suspends subscriptions, ends LMS sponsorships and voids
+				// mutual-aid countersignature requests whose link no longer shares. Due-work and open-row queries only; no department sweep.
+				_logger.Log(LogLevel.Information, "Scheduling Content Sets");
+				await Client.ScheduleAsync("Content Sets",
+					new Commands.ContentSetsCommand(100),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
+				// Worker ID 98: Training T5 standards (M0392-M0394). Unpacks queued SCORM / cmi5 packages into the LMS media store (a stale
+				// claim goes back to the queue), delivers due xAPI statements to each department's LRS with retry and backoff, and purges
+				// delivered statements, expired launch sessions and AGS tokens. Due-work queries only; no department sweep, no billing gate (R-L9).
+				_logger.Log(LogLevel.Information, "Scheduling LMS Standards");
+				await Client.ScheduleAsync("LMS Standards",
+					new Commands.LmsStandardsCommand(98),
+					Cron.MinuteIntervals(2),
+					stoppingToken);
+
+				// Worker ID 93: Training T3 learning requirements (M0364-M0366). Links Academy role-path assignments to their system paths, runs
 				// each department's daily pass (claimed per department-local day: states, notices, onboarding, enforcement under the blast-radius
 				// guard, paths) and undoes enforcement for members who completed. Starts from a due-work query; the LMS gate once per department
 				// per day (R-L9). Two small queries when idle.

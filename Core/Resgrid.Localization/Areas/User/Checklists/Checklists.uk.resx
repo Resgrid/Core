@@ -117,6 +117,9 @@
   <data name="Author" xml:space="preserve">
     <value>Автор</value>
   </data>
+  <data name="FormerMember" xml:space="preserve">
+    <value>Колишній учасник</value>
+  </data>
   <data name="Submitted" xml:space="preserve">
     <value>Подано</value>
   </data>
@@ -718,11 +721,14 @@
   <data name="HelpFieldAssignment" xml:space="preserve"><value>Автоматична маршрутизація надсилає перевірку тому, хто відповідає за об'єкт. Оберіть особу, роль, групу чи техніку, щоб змінити це.</value></data>
   <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
     <value>Свідок підписує на рівні L2 (нова перевірка особи або ключ доступу), з прив'язкою до вмісту виконання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WitnessSignatureRequired" xml:space="preserve">
     <value>Цей контрольний список потрібно засвідчити підписом свідка. Відкрийте виконання й підпишіть як свідок.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WitnessSignatureRefused" xml:space="preserve">
     <value>Підпис свідка не записано, тому контрольний список досі очікує на свідка.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

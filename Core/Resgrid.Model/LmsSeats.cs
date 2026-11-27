@@ -241,7 +241,26 @@ namespace Resgrid.Model
 
 		public int PurchasedPacks { get; init; }
 		public int PackSize { get; init; }
-		public int PurchasedSeats => PurchasedPacks * PackSize;
+
+		/// <summary>
+		/// The seats the department may fill: its own packs × the pack size, or for a department seated by a sponsor (T5 item 2a), the seats
+		/// the sponsorship leaves it (<see cref="SponsoredCapacity"/>).
+		/// </summary>
+		public int PurchasedSeats => SponsoredCapacity ?? PurchasedPacks * PackSize;
+
+		/// <summary>
+		/// T5 item 2a: the department has no LMS add-on of its own and is seated by a sponsor; its enabled members count in the sponsor's packs.
+		/// Null for a department on its own add-on.
+		/// </summary>
+		public int? SponsoredCapacity { get; init; }
+
+		/// <summary>The sponsor that pays for this department's seats (shown to the department), when <see cref="SponsoredCapacity"/> is set.</summary>
+		public int? SponsorDepartmentId { get; init; }
+
+		public string SponsorName { get; init; }
+
+		/// <summary>On a sponsor's summary: seats its sponsored departments hold in its packs.</summary>
+		public int SponsoredSeats { get; init; }
 
 		/// <summary>Active members who hold a seat (dormant seats of inactive members are not counted).</summary>
 		public int EnabledSeats { get; init; }
@@ -255,9 +274,15 @@ namespace Resgrid.Model
 		/// <summary>The members who can be trained through LMS features now: enabled, active, within the purchased seats (in enable order) and with the add-on working.</summary>
 		public HashSet<string> LicensedUserIds { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-		public int AvailableSeats => Math.Max(0, PurchasedSeats - EnabledSeats);
+		/// <summary>
+		/// External learners beyond the fair-use allowance (T5, §17.4: 25% of purchased seats, minimum 25): they count toward packs like
+		/// members, so they take purchased seats no member can be enabled into.
+		/// </summary>
+		public int ExternalLearnerSeats { get; init; }
 
-		/// <summary>The fewest packs that still seat every enabled member; a pack decrease never goes below it.</summary>
+		public int AvailableSeats => Math.Max(0, PurchasedSeats - EnabledSeats - ExternalLearnerSeats - SponsoredSeats);
+
+		/// <summary>The fewest packs that still seat every enabled member (and the external learners beyond fair use); a pack decrease never goes below it.</summary>
 		public int MinimumPacks { get; init; }
 	}
 

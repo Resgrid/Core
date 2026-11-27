@@ -6,7 +6,7 @@ using Resgrid.Model.Approvals;
 
 namespace Resgrid.Model.Repositories
 {
-	/// <summary>Approval chain definitions (e-Signature S4, M0413).</summary>
+	/// <summary>Approval chain definitions (e-Signature S4, M0385).</summary>
 	public interface IApprovalChainsRepository : IRepository<ApprovalChain>
 	{
 		Task<List<ApprovalChain>> GetForDepartmentAsync(int departmentId);
@@ -74,5 +74,14 @@ namespace Resgrid.Model.Repositories
 		Task<MutualAidAgreement> GetForDepartmentAsync(int departmentId, int mutualAidAgreementId);
 
 		Task<List<MutualAidAgreement>> GetAllForDepartmentAsync(int departmentId);
+
+		/// <summary>Round 10 A3: agreements other departments ask this partner department to countersign (requested, not deleted).</summary>
+		Task<List<MutualAidAgreement>> GetAwaitingCountersignatureAsync(int partnerDepartmentId);
+
+		/// <summary>Round 10 A3: every agreement with an open countersignature request (worker 100's link check).</summary>
+		Task<List<MutualAidAgreement>> GetAllCountersignRequestedAsync(int take);
+
+		/// <summary>Round 10 A3: agreements with an open countersignature request over a link (revocation voids them).</summary>
+		Task<List<MutualAidAgreement>> GetCountersignRequestedForLinkAsync(int departmentLinkId);
 	}
 }

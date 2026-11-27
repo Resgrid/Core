@@ -27,6 +27,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// </summary>
 	[Area("User")]
 	[Authorize]
+	[DepartmentLocalTime]
 	public partial class SignaturesController : SecureBaseController
 	{
 		private readonly ISignatureRequestService _requests;

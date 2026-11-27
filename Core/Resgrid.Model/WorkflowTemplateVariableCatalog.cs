@@ -84,6 +84,7 @@ namespace Resgrid.Model
 			new TemplateVariableDescriptor("call.is_deleted", "Whether the call is deleted", "bool", false),
 			new TemplateVariableDescriptor("call.deleted_reason", "Reason for deletion", "string", false),
 			new TemplateVariableDescriptor("call.part2_consent_on_file", "42 CFR Part 2 consent (or another Part 2 basis) is on file for this call", "bool", false),
+			new TemplateVariableDescriptor("call.determinant", "The protocol case determinant on the call (several joined by commas; empty when none)", "string", false),
 		};
 
 		/// <summary>run.* is set for every step of every run.</summary>
@@ -398,6 +399,13 @@ namespace Resgrid.Model
 			{
 				foreach (var (variable, type, description) in IncidentLogistics.IncidentBackOfficeWorkflowPayload.For(eventType))
 					list.Add(new TemplateVariableDescriptor(variable, description, type, false));
+				return list.AsReadOnly();
+			}
+
+			// Protocols, Training/LMS, signing and knowledge (round 7C): ids, content names, dates and statuses, from one table.
+			if (Events.ContentWorkflowTriggers.IsContent((int)eventType))
+			{
+				list.AddRange(Events.ContentWorkflowTriggers.Catalog(eventType));
 				return list.AsReadOnly();
 			}
 
@@ -1196,6 +1204,77 @@ namespace Resgrid.Model
 						new TemplateVariableDescriptor("approval.step_label", "The step that escalated", "string", false),
 						new TemplateVariableDescriptor("approval.reason", "The rejection reason", "string", false),
 						new TemplateVariableDescriptor("approval.content_code", "The short content code the approvals bind to", "string", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.ClassSessionScheduled:
+				case WorkflowTriggerEventType.ClassSessionCancelled:
+				case WorkflowTriggerEventType.ClassSessionSignedOff:
+				case WorkflowTriggerEventType.ClassWaitlistPromoted:
+					// Round 7B: the session's ids, title, times and counts; a promotion names the person by user id only (never a name, e-mail or phone).
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("training_class.change", "Scheduled, Cancelled, SignedOff or WaitlistPromoted", "string", false),
+						new TemplateVariableDescriptor("training_class.session_id", "Class session ID", "int", false),
+						new TemplateVariableDescriptor("training_class.title", "Class title", "string", false),
+						new TemplateVariableDescriptor("training_class.course_kind", "What the class teaches: None, Course (LMS course) or Training (baseline training)", "string", false),
+						new TemplateVariableDescriptor("training_class.course_id", "LMS course ID (0 when none)", "int", false),
+						new TemplateVariableDescriptor("training_class.training_id", "Baseline training ID (0 when none)", "int", false),
+						new TemplateVariableDescriptor("training_class.starts_on", "Class start (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("training_class.ends_on", "Class end (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("training_class.capacity", "Seats (0 = no limit)", "int", false),
+						new TemplateVariableDescriptor("training_class.enrolled", "People holding a seat", "int", false),
+						new TemplateVariableDescriptor("training_class.waitlisted", "People on the waitlist", "int", false),
+						new TemplateVariableDescriptor("training_class.attended", "Attendees at sign-off", "int", false),
+						new TemplateVariableDescriptor("training_class.absent", "Absentees at sign-off", "int", false),
+						new TemplateVariableDescriptor("training_class.series_key", "Key shared by the sessions of a series", "string", false),
+						new TemplateVariableDescriptor("training_class.user_id", "Waitlist promotion: the promoted member's user ID (an external learner's starts with xl-)", "string", false),
+						new TemplateVariableDescriptor("training_class.is_external_learner", "Waitlist promotion: the promoted person is an external learner", "bool", false),
+						new TemplateVariableDescriptor("training_class.acting_user_id", "The member who scheduled, cancelled or signed off the class", "string", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.TrainingCompletionRecorded:
+					// Round 7B: a completion an instructor recorded for a member (permission 135); metadata only.
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("recorded_completion.id", "Recorded completion ID", "int", false),
+						new TemplateVariableDescriptor("recorded_completion.user_id", "The member's user ID (an external learner's starts with xl-)", "string", false),
+						new TemplateVariableDescriptor("recorded_completion.is_external_learner", "The person is an external learner on the class roster", "bool", false),
+						new TemplateVariableDescriptor("recorded_completion.recorded_by_user_id", "The instructor who recorded it", "string", false),
+						new TemplateVariableDescriptor("recorded_completion.target_kind", "Training (baseline training) or Course (LMS course)", "string", false),
+						new TemplateVariableDescriptor("recorded_completion.target_id", "Training or course ID", "int", false),
+						new TemplateVariableDescriptor("recorded_completion.target_name", "Training or course name", "string", false),
+						new TemplateVariableDescriptor("recorded_completion.source", "Manual or ClassSession", "string", false),
+						new TemplateVariableDescriptor("recorded_completion.session_id", "Class session ID (0 when manual)", "int", false),
+						new TemplateVariableDescriptor("recorded_completion.learning_record_id", "Transcript record ID (0 when none)", "int", false),
+						new TemplateVariableDescriptor("recorded_completion.certification_id", "Certification issued or renewed (0 when none)", "int", false),
+						new TemplateVariableDescriptor("recorded_completion.quiz_waived", "The training's quiz was not taken (waived)", "bool", false),
+						new TemplateVariableDescriptor("recorded_completion.attestation_version", "The attestation statement version the instructor accepted", "string", false),
+						new TemplateVariableDescriptor("recorded_completion.completed_on", "Completion date (UTC)", "datetime", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.ExternalLearnerRegistered:
+				case WorkflowTriggerEventType.ExternalLearnerEnrolled:
+				case WorkflowTriggerEventType.ExternalLearnerCompletedCourse:
+					// Round 7B: an external learner by ids only (never the name, e-mail address or organization).
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("external_learner.change", "Registered, Enrolled or CompletedCourse", "string", false),
+						new TemplateVariableDescriptor("external_learner.id", "External learner ID", "int", false),
+						new TemplateVariableDescriptor("external_learner.user_id", "The learner's user ID (starts with xl-)", "string", false),
+						new TemplateVariableDescriptor("external_learner.source", "Invited or SelfRegistered", "string", false),
+						new TemplateVariableDescriptor("external_learner.subject", "Class or Course", "string", false),
+						new TemplateVariableDescriptor("external_learner.session_id", "Class session ID (0 when none)", "int", false),
+						new TemplateVariableDescriptor("external_learner.course_id", "LMS course ID (0 when none)", "int", false),
+						new TemplateVariableDescriptor("external_learner.title", "Class or course title", "string", false),
+						new TemplateVariableDescriptor("external_learner.status", "Enrolled, Waitlisted, PendingApproval or Completed", "string", false),
+						new TemplateVariableDescriptor("external_learner.fee", "A class place's fee (0 when none)", "decimal", false),
+						new TemplateVariableDescriptor("external_learner.currency", "The fee's currency", "string", false),
+						new TemplateVariableDescriptor("external_learner.starts_on", "Class start (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("external_learner.completed_on", "Course completion date (UTC)", "datetime", false),
+						new TemplateVariableDescriptor("external_learner.learning_record_id", "Transcript record ID (0 when none)", "int", false),
 					});
 					break;
 

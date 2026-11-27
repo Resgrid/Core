@@ -64,7 +64,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IPersonnelRolesService personnelRolesService, IAuthorizationService authorizationService, ITrainingAssignmentService assignmentService,
 			IMyTrainingService myTrainingService, IMemberLeaveService leaveService, IDepartmentSettingsService departmentSettingsService,
 			ICertificationService certificationService, IUnitsService unitsService, IShiftsService shiftsService,
-			ILearningRecordService learningRecordService, IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer)
+			ILearningRecordService learningRecordService, IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer,
+			ITrainingCompletionRecordingService recordings, IContentSetCopyLocks setLocks)
 		{
 			_departmentGroupsService = departmentGroupsService;
 			_departmentsService = departmentService;
@@ -80,7 +81,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_shiftsService = shiftsService;
 			_learningRecordService = learningRecordService;
 			_localizer = localizer;
+			_recordings = recordings;
+			_setLocks = setLocks;
 		}
+
+		private readonly ITrainingCompletionRecordingService _recordings;
+		private readonly IContentSetCopyLocks _setLocks;
+
+		/// <summary>
+		/// A training that is a managed copy of a linked department's course set item (round 10 A3) changes only through the set: its content and
+		/// quiz cannot be edited here, but it can still be assigned, reported on, copied into an unmanaged training, archived or deleted.
+		/// </summary>
+		private Task<bool> ManagedBySetAsync(int trainingId) => _setLocks.IsManagedCopyAsync(DepartmentId, ContentSetItemKinds.Training, trainingId);
 
 		#region Gates
 
@@ -321,8 +333,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// The edit page shows the answer key: never to a member who merely may create trainings of their own.
 			if (!canAuthor && !canAssign)
 				return Unauthorized();
+			var managedBySet = canAuthor && await ManagedBySetAsync(trainingId);
+			if (managedBySet)
+				canAuthor = false;
 
 			var (message, error) = Flashed();
+			if (managedBySet)
+				message = string.IsNullOrWhiteSpace(message) ? L("ManagedBySetMessage") : message + " " + L("ManagedBySetMessage");
 			var model = ToEditor(training, await DepartmentAsync(), canAuthor, canAssign);
 			model.Message = message;
 			model.Error = error;
@@ -350,6 +367,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!canAuthor && !canAssign)
 				return Unauthorized();
+			if (canAuthor && await ManagedBySetAsync(trainingId))
+			{
+				// Only the audience of a managed copy is the department's to change; posted content and quiz are ignored.
+				canAuthor = false;
+				if (!canAssign)
+				{
+					Flash(null, L("ManagedBySetMessage"));
+					return RedirectToAction("Edit", new { trainingId });
+				}
+			}
 
 			model ??= new EditTrainingModel();
 			model.TrainingId = trainingId;
@@ -456,6 +483,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 			if (training.DepartmentId != DepartmentId || !(await ScopeAsync()).CanAuthor(training))
 				return Unauthorized();
+			if (await ManagedBySetAsync(trainingId))
+			{
+				Flash(null, L("ManagedBySetMessage"));
+				return RedirectToAction("Edit", new { trainingId });
+			}
 
 			var removed = await _trainingService.RemoveAttachmentAsync(DepartmentId, trainingId, trainingAttachmentId);
 			Flash(removed ? L("AttachmentRemovedMessage") : null, removed ? null : L("AttachmentNotRemovedError"));
@@ -689,6 +721,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return enrolled != null ? RedirectToAction("View", new { trainingId }) : RedirectToAction("Index");
 		}
 
+		/// <summary>
+		/// Round 9A read and confirm: the member confirms they read and reviewed a training that asks for it (a handbook or policy review); the
+		/// assignment completes and goes on their transcript. The statement box must be ticked.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		public async Task<IActionResult> Acknowledge(int trainingId, bool confirmed, CancellationToken cancellationToken)
+		{
+			if (!confirmed)
+			{
+				Flash(null, L("AckRequired"));
+				return RedirectToAction("View", new { trainingId });
+			}
+			var assignment = await _trainingService.AcknowledgeTrainingAsync(DepartmentId, trainingId, UserId, cancellationToken);
+			Flash(assignment?.Complete == true ? L("AckDone") : null, assignment?.Complete == true ? null : L("AckError"));
+			return RedirectToAction("View", new { trainingId });
+		}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Training_View)]
@@ -824,6 +875,75 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return View(model);
 		}
+
+		#region Recorded completions (round 7B, permission 135)
+
+		/// <summary>Record that members completed this training together (the assignee list first); voids of earlier recordings.</summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		public async Task<IActionResult> RecordCompletions(int targetId)
+		{
+			var view = await _recordings.GetTrainingRecordingViewAsync(DepartmentId, targetId, UserId);
+			if (view == null)
+				return NotFound();
+			if (!view.CanRecord)
+				return Unauthorized();
+			var (message, error) = Flashed();
+			var department = await DepartmentAsync();
+			return View(new Resgrid.Web.Areas.User.Models.RecordCompletionsPageView
+			{
+				View = view,
+				Controller = "Trainings",
+				Names = await NamesAsync(),
+				Local = d => department == null ? d : DateTime.SpecifyKind(d, DateTimeKind.Utc).TimeConverter(department),
+				Message = message,
+				Error = error
+			});
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		public async Task<IActionResult> RecordCompletions(int targetId, List<string> userIds, string note, bool attested, string attestationVersion, CancellationToken cancellationToken)
+		{
+			var outcome = await _recordings.RecordTrainingAsync(DepartmentId, targetId, new TrainingCompletionRecordingRequest
+			{
+				RecorderUserId = UserId,
+				MemberUserIds = userIds ?? new List<string>(),
+				Note = note,
+				Attested = attested,
+				AttestationVersion = string.IsNullOrWhiteSpace(attestationVersion) ? TrainingCompletionAttestation.CurrentVersion : attestationVersion,
+				Source = TrainingCompletionRecordingSources.Manual
+			}, cancellationToken);
+			FlashRecording(outcome);
+			return RedirectToAction("RecordCompletions", new { targetId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		public async Task<IActionResult> VoidRecordedCompletion(int targetId, int recordingId, string reason, CancellationToken cancellationToken)
+		{
+			var recording = await _recordings.GetAsync(DepartmentId, recordingId);
+			if (recording == null || recording.TargetKind != (int)TrainingCompletionRecordingTargets.Training || recording.TargetId != targetId)
+				return NotFound();
+			var result = await _recordings.VoidAsync(DepartmentId, recordingId, UserId, reason, cancellationToken);
+			Flash(result.Refusal == null ? L("RecordCompletions.VoidDone") : null, result.Refusal == null ? null : L(result.Refusal));
+			return RedirectToAction("RecordCompletions", new { targetId });
+		}
+
+		private void FlashRecording(TrainingCompletionRecordingOutcome outcome)
+		{
+			if (!outcome.Succeeded)
+			{
+				Flash(null, L(outcome.Error));
+				return;
+			}
+			var refusals = outcome.Results.Where(r => !r.Recorded).GroupBy(r => r.Refusal).Select(g => L(g.Key) + " (" + g.Count().ToString(CultureInfo.CurrentCulture) + ")").ToList();
+			Flash(string.Format(CultureInfo.CurrentCulture, L("RecordCompletions.ResultFormat"), outcome.Recorded, outcome.Refused), refusals.Count > 0 ? string.Join(" ", refusals) : null);
+		}
+
+		#endregion Recorded completions (round 7B, permission 135)
 
 		/// <summary>The training and the right to act on this one member (a group admin only their own group's).</summary>
 		private async Task<IActionResult> AssigneeGateAsync(int trainingId, string userId)
@@ -1214,6 +1334,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			training.OpenToAllMembers = model.OpenToAllMembers;
 			training.AllowSelfEnroll = model.OpenToAllMembers && model.AllowSelfEnroll;
 			training.OneQuestionPerPage = model.OneQuestionPerPage;
+			training.RequiresAcknowledgment = model.RequiresAcknowledgment;
 
 			var previousRepeat = training.RepeatMonths;
 			training.RepeatMonths = Bounded(model.RepeatMonths, 1, 120, nameof(model.RepeatMonths), "RepeatMonthsRange");
@@ -1351,6 +1472,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				RepeatMonths = training.RepeatMonths,
 				QuizAttemptLimit = training.QuizAttemptLimit,
 				OneQuestionPerPage = training.OneQuestionPerPage,
+				RequiresAcknowledgment = training.RequiresAcknowledgment,
 				ReminderLeadDaysCsv = training.ReminderLeadDaysCsv,
 				SendOverdueNotices = training.SendOverdueNotices,
 				OverdueRepeatDays = training.OverdueRepeatDays,

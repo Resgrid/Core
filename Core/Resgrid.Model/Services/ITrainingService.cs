@@ -45,6 +45,14 @@ namespace Resgrid.Model.Services
 		Task<TrainingUser> SetTrainingAsViewedAsync(int trainingId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Round 9A read and confirm: the member confirms they have read and reviewed a training without a quiz that asks for it
+		/// (<see cref="Training.RequiresAcknowledgment"/>); the assignment completes and goes on the transcript. Null when the member is not
+		/// assigned, the training has not started, is archived, has a quiz or does not ask for a confirmation; the assignment unchanged when it
+		/// is already complete.
+		/// </summary>
+		Task<TrainingUser> AcknowledgeTrainingAsync(int departmentId, int trainingId, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Scores and records a quiz submission on the server (R-T11): the attempt with its snapshot and revision hash (R-T6,
 		/// R-T7), then the assignment's score (always, T-D1) and pass result (apart from completion, T-D2). Posted ids are
 		/// validated against the training's own questions and options (T-D4, T-D11). The attempt limit is enforced.

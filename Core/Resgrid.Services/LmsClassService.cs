@@ -55,6 +55,8 @@ namespace Resgrid.Services
 		private readonly ITrainingTimecardOffers _timecards;
 		private readonly IEnumerable<ILmsPostClassEvaluation> _evaluations;
 		private readonly IEventAggregator _events;
+		private readonly ILmsLearnerClassMailer _learnerMail;
+		private readonly ILmsExternalLearnersRepository _learners;
 
 		public LmsClassService(ILmsClassSessionsRepository sessions, ILmsClassEnrollmentsRepository enrollments, ILmsClassInstructorsRepository instructors,
 			ILmsClassCostLinesRepository costs, ILmsTrainingResourcesRepository resources, ILmsClassResourceBookingsRepository bookings,
@@ -63,7 +65,7 @@ namespace Resgrid.Services
 			IDepartmentsService departments, IDepartmentGroupsService groups, IPersonnelRolesService roles, ICertificationService certifications,
 			IDepartmentSettingsService settings, ILearningRecordService learningRecords, ILearningRecordWriter writer, IShiftsService shifts,
 			ILmsTrainingRequestService requests, ILmsGateService gate, ILmsClassNotifier notifier, ITrainingTimecardOffers timecards,
-			IEnumerable<ILmsPostClassEvaluation> evaluations, IEventAggregator events)
+			IEnumerable<ILmsPostClassEvaluation> evaluations, IEventAggregator events, ILmsLearnerClassMailer learnerMail, ILmsExternalLearnersRepository learners)
 		{
 			_sessions = sessions;
 			_enrollments = enrollments;
@@ -92,6 +94,8 @@ namespace Resgrid.Services
 			_timecards = timecards;
 			_evaluations = evaluations ?? Enumerable.Empty<ILmsPostClassEvaluation>();
 			_events = events;
+			_learnerMail = learnerMail;
+			_learners = learners;
 		}
 
 		#region Reads
@@ -110,6 +114,8 @@ namespace Resgrid.Services
 			var session = await _sessions.GetByCalendarItemAsync(departmentId, calendarItemId);
 			return session == null || session.DepartmentId != departmentId || session.IsDeleted ? null : session;
 		}
+
+		public Task<string> GetTrainingCurrencyAsync(int departmentId) => LmsProgramSettingsService.TrainingCurrencyAsync(_settings, departmentId);
 
 		private async Task<LmsClassSession> RequireAsync(int departmentId, int lmsClassSessionId) =>
 			await GetSessionAsync(departmentId, lmsClassSessionId) ?? throw new InvalidOperationException("lms_class_not_found");
@@ -175,7 +181,8 @@ namespace Resgrid.Services
 					Enrollment = e,
 					Name = names.TryGetValue(e.UserId ?? string.Empty, out var name) ? name : e.MemberName ?? e.UserId,
 					OnShift = onShift.Contains(e.UserId ?? string.Empty),
-					Inactive = !active.Contains(e.UserId ?? string.Empty),
+					Inactive = !active.Contains(e.UserId ?? string.Empty) && !LmsExternalLearnerIds.IsExternal(e.UserId),
+					IsExternal = LmsExternalLearnerIds.IsExternal(e.UserId),
 					CalendarCheckIn = calendarCheckIn,
 					ProjectedHours = LmsClassRules.HoursFor(session, e, calendarCheckIn, settings)
 				};
@@ -282,6 +289,8 @@ namespace Resgrid.Services
 			}
 
 			Audit(departmentId, userId, AuditLogTypes.LmsClassSessionChanged, null, JsonConvert.SerializeObject(created.Select(Summary)));
+			foreach (var session in created)
+				Announce(TrainingClassWorkflowChanges.Scheduled, session, null, userId);
 			return created;
 		}
 
@@ -304,6 +313,8 @@ namespace Resgrid.Services
 						throw new InvalidOperationException("lms_class_resource_conflict");
 
 			var capacityGrew = template.Capacity == 0 || (session.Capacity > 0 && template.Capacity > session.Capacity);
+			var keepLocation = session.Location;
+			var keepMeeting = session.MeetingUrl;
 			var keep = new { session.LmsClassSessionId, session.CalendarItemId, session.SeriesKey, session.SeriesIndex, session.QrSecret, session.Status, session.SignedOffOn,
 				session.SignedOffByUserId, session.RetainUntil, session.CreatedOn, session.CreatedByUserId, session.LmsTrainingPlanItemId, session.CancelledOn, session.CancelReason };
 			session = Copy(template);
@@ -336,6 +347,17 @@ namespace Resgrid.Services
 
 			await SyncCalendarItemAsync(department, stored, input.LocalStart, input.LocalEnd, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.LmsClassSessionChanged, before, JsonConvert.SerializeObject(Summary(stored)));
+			var changedPlace = !string.Equals(keepLocation ?? string.Empty, stored.Location ?? string.Empty, StringComparison.Ordinal) ||
+				!string.Equals(keepMeeting ?? string.Empty, stored.MeetingUrl ?? string.Empty, StringComparison.Ordinal);
+			if (moved || changedPlace)
+			{
+				// Round 7B: a reminder sent for the old time no longer holds; worker 95 reminds everyone again for the new one.
+				if (moved)
+					await _enrollments.ResetRemindersAsync(departmentId, stored.LmsClassSessionId, cancellationToken);
+				if (stored.IsScheduled)
+					await MailLearnersAsync(stored, (await _enrollments.GetForSessionAsync(departmentId, stored.LmsClassSessionId) ?? new List<LmsClassEnrollment>())
+						.Where(e => e.IsOnRoster).Select(e => e.UserId), LmsLearnerNoticeKinds.Changed, cancellationToken);
+			}
 			if (capacityGrew && stored.IsScheduled)
 				await PromoteWaitlistAsync(departmentId, stored.LmsClassSessionId, DateTime.UtcNow, cancellationToken);
 			return stored;
@@ -402,7 +424,9 @@ namespace Resgrid.Services
 
 			var roster = (await _enrollments.GetForSessionAsync(departmentId, lmsClassSessionId) ?? new List<LmsClassEnrollment>()).Where(e => e.IsOnRoster).Select(e => e.UserId).ToList();
 			await NotifyAsync(departmentId, roster, "Notice.CancelledTitle", "Notice.Cancelled", stored, cancellationToken);
+			await MailLearnersAsync(stored, roster, LmsLearnerNoticeKinds.Cancelled, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.LmsClassSessionCancelled, null, JsonConvert.SerializeObject(new { stored.LmsClassSessionId, stored.Title, stored.CancelReason }));
+			Announce(TrainingClassWorkflowChanges.Cancelled, stored, null, userId);
 			return stored;
 		}
 
@@ -519,7 +543,9 @@ namespace Resgrid.Services
 				var defaults = await _settings.GetTrainingRecordSettingsAsync(departmentId);
 				retention = defaults != null && defaults.DefaultRetentionYears > 0 ? defaults.DefaultRetentionYears : (int?)null;
 			}
-			var currency = (input.Currency ?? string.Empty).Trim().ToUpperInvariant();
+			// The department's training currency unless the class names its own (region neutrality: never a fixed USD).
+			var currency = LmsTrainingCurrency.Normalize(input.Currency) ?? LmsTrainingCurrency.Normalize(existing?.Currency)
+				?? await LmsProgramSettingsService.TrainingCurrencyAsync(_settings, departmentId);
 
 			return new LmsClassSession
 			{
@@ -553,7 +579,7 @@ namespace Resgrid.Services
 				PostClassEvaluationKind = Enum.IsDefined(typeof(LmsClassPostEvaluationKinds), input.PostClassEvaluationKind) ? (int)input.PostClassEvaluationKind : 0,
 				PostClassEvaluationRef = Trim(input.PostClassEvaluationRef, 128),
 				RetentionYears = retention,
-				Currency = currency.Length == 3 && currency.All(char.IsLetter) ? currency : "USD"
+				Currency = currency
 			};
 		}
 
@@ -728,7 +754,7 @@ namespace Resgrid.Services
 				Kind = line.Kind,
 				Description = Trim(line.Description, LmsClassCostLine.DescriptionMaxLength),
 				Amount = Math.Round(line.Amount, 2),
-				Currency = session.Currency ?? "USD",
+				Currency = LmsTrainingCurrency.Normalize(session.Currency) ?? await LmsProgramSettingsService.TrainingCurrencyAsync(_settings, departmentId),
 				CreatedOn = DateTime.UtcNow,
 				CreatedByUserId = userId
 			}, cancellationToken, true);
@@ -846,6 +872,7 @@ namespace Resgrid.Services
 			var refusal = LmsClassRules.SelfEnrollRefusal(session, utcNow, group != null && group.DepartmentId == departmentId ? group.DepartmentGroupId : (int?)null);
 			if (refusal != null)
 				throw new InvalidOperationException(refusal);
+			await RequireLearnerSeatAsync(departmentId, userId);
 			return await PlaceAsync(session, userId, userId, false, utcNow, cancellationToken);
 		}
 
@@ -864,8 +891,25 @@ namespace Resgrid.Services
 			return enrollment;
 		}
 
+		/// <summary>
+		/// T5 (round 6E): an external learner's place on the roster under the same rules (capacity and waitlist; approval unless a class manager
+		/// places them), with their name and organization kept as the roster snapshot (the OSHA-grade roster's name and job title).
+		/// </summary>
+		public async Task<LmsClassEnrollment> PlaceExternalAsync(int departmentId, int lmsClassSessionId, string learnerUserId, string name, string organization,
+			string actingUserId, bool byManager, DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			if (!LmsExternalLearnerIds.IsExternal(learnerUserId))
+				throw new InvalidOperationException("lms_class_not_member");
+			var session = await RequireAsync(departmentId, lmsClassSessionId);
+			if (!session.IsScheduled)
+				throw new InvalidOperationException("lms_class_not_open");
+			return await PlaceAsync(session, learnerUserId, string.IsNullOrWhiteSpace(actingUserId) ? learnerUserId : actingUserId, byManager, utcNow, cancellationToken,
+				Trim(name, LmsClassEnrollment.NameMaxLength), Trim(organization, LmsClassEnrollment.NameMaxLength));
+		}
+
 		/// <summary>Puts a member on the roster where the rules place them; an existing roster row is returned (or re-used when they had left).</summary>
-		private async Task<LmsClassEnrollment> PlaceAsync(LmsClassSession session, string userId, string actingUserId, bool byManager, DateTime utcNow, CancellationToken cancellationToken)
+		private async Task<LmsClassEnrollment> PlaceAsync(LmsClassSession session, string userId, string actingUserId, bool byManager, DateTime utcNow, CancellationToken cancellationToken,
+			string snapshotName = null, string snapshotTitle = null)
 		{
 			var departmentId = session.DepartmentId;
 			var roster = await _enrollments.GetForSessionAsync(departmentId, session.LmsClassSessionId) ?? new List<LmsClassEnrollment>();
@@ -884,6 +928,10 @@ namespace Resgrid.Services
 				return existing;
 			row.Status = (int)placement;
 			row.WaitlistPosition = placement == LmsClassEnrollmentStatuses.Waitlisted ? LmsClassRules.NextWaitlistPosition(roster) : (int?)null;
+			if (!string.IsNullOrEmpty(snapshotName))
+				row.MemberName = snapshotName;
+			if (!string.IsNullOrEmpty(snapshotTitle))
+				row.JobTitle = snapshotTitle;
 			row.EnrolledOn = existing?.IsOnRoster == true ? existing.EnrolledOn : utcNow;
 			row.EnrolledByUserId = existing?.IsOnRoster == true ? existing.EnrolledByUserId : actingUserId;
 			row.WithdrawnOn = null;
@@ -907,6 +955,8 @@ namespace Resgrid.Services
 
 			Audit(departmentId, actingUserId, AuditLogTypes.LmsClassRosterChanged, null,
 				JsonConvert.SerializeObject(new { session.LmsClassSessionId, stored.UserId, status = ((LmsClassEnrollmentStatuses)stored.Status).ToString() }));
+			if (LmsLearnerNoticeRules.PlacementNotice(stored) is LmsLearnerNoticeKinds placementNotice)
+				await MailLearnersAsync(session, new[] { stored.UserId }, placementNotice, cancellationToken);
 			return stored;
 		}
 
@@ -1004,7 +1054,13 @@ namespace Resgrid.Services
 
 			var active = await _departments.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			var promoted = 0;
-			foreach (var next in LmsClassRules.PromotionOrder(session, roster, active.Contains, utcNow))
+			// External learners (T5) are never department members: they are promoted in the same order while their account is active (round 7B:
+			// a suspended learner is passed over, like an inactive member).
+			var waitingLearners = roster.Where(e => e.Status == (int)LmsClassEnrollmentStatuses.Waitlisted && LmsExternalLearnerIds.IsExternal(e.UserId)).Select(e => e.UserId).ToList();
+			var activeLearners = waitingLearners.Count == 0 ? new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+				: new HashSet<string>((await _learners.GetByLearnerUserIdsAsync(departmentId, waitingLearners) ?? new List<LmsExternalLearner>())
+					.Where(l => l.DepartmentId == departmentId && l.Status == (int)LmsExternalLearnerStatuses.Active).Select(l => l.LearnerUserId), StringComparer.OrdinalIgnoreCase);
+			foreach (var next in LmsClassRules.PromotionOrder(session, roster, id => active.Contains(id) || activeLearners.Contains(id), utcNow))
 			{
 				if (!await _enrollments.PromoteAsync(departmentId, next.LmsClassEnrollmentId, utcNow, cancellationToken))
 					continue;
@@ -1013,6 +1069,10 @@ namespace Resgrid.Services
 					JsonConvert.SerializeObject(new { session.LmsClassSessionId, next.UserId, status = "Promoted" }));
 				await NotifyAsync(departmentId, new[] { next.UserId }, "Notice.EnrolledTitle", "Notice.Promoted", session,
 					cancellationToken);
+				next.Status = (int)LmsClassEnrollmentStatuses.Enrolled;
+				next.PromotedOn = utcNow;
+				await MailLearnersAsync(session, new[] { next.UserId }, LmsLearnerNoticeKinds.Promoted, cancellationToken);
+				Announce(TrainingClassWorkflowChanges.WaitlistPromoted, session, roster, null, next.UserId);
 			}
 
 			return promoted;
@@ -1032,6 +1092,7 @@ namespace Resgrid.Services
 			if (refusal != null)
 				throw new InvalidOperationException(refusal);
 			userId = await RequireCurrentMemberAsync(departmentId, userId);
+			await RequireLearnerSeatAsync(departmentId, userId);
 
 			var hasPosition = latitude.HasValue && longitude.HasValue && LmsClassRules.IsValidPosition(latitude.Value, longitude.Value);
 			return await MarkPresentAsync(session, userId, LmsClassCheckInMethods.Qr, userId, utcNow, enrollment =>
@@ -1316,7 +1377,9 @@ namespace Resgrid.Services
 
 			foreach (var enrollment in roster.Where(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled))
 			{
-				if (timecard && enrollment.Attendance == (int)LmsClassAttendanceStates.Attended && !enrollment.TimecardOfferedOn.HasValue && (enrollment.Hours ?? 0m) > 0)
+				// External learners (T5) have no timecard: only members' hours are offered.
+				if (timecard && enrollment.Attendance == (int)LmsClassAttendanceStates.Attended && !enrollment.TimecardOfferedOn.HasValue && (enrollment.Hours ?? 0m) > 0 &&
+					!LmsExternalLearnerIds.IsExternal(enrollment.UserId))
 				{
 					try
 					{
@@ -1360,10 +1423,17 @@ namespace Resgrid.Services
 
 			if (firstSignOff && session.PostClassEvaluationKind != (int)LmsClassPostEvaluationKinds.None)
 				result.EvaluationsStarted = await StartEvaluationAsync(session, signerUserId,
-					roster.Where(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled && e.Attendance == (int)LmsClassAttendanceStates.Attended).Select(e => e.UserId).ToList(), cancellationToken);
+					roster.Where(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled && e.Attendance == (int)LmsClassAttendanceStates.Attended &&
+						!LmsExternalLearnerIds.IsExternal(e.UserId)).Select(e => e.UserId).ToList(), cancellationToken);
 
 			Audit(departmentId, signerUserId, AuditLogTypes.LmsClassSignedOff, null,
 				JsonConvert.SerializeObject(new { session.LmsClassSessionId, session.Title, result.Attended, result.Absent, result.Written, result.Voided, session.RetainUntil }));
+			if (firstSignOff)
+			{
+				await MailLearnersAsync(session, roster.Where(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled && e.Attendance == (int)LmsClassAttendanceStates.Attended)
+					.Select(e => e.UserId), LmsLearnerNoticeKinds.SignedOff, cancellationToken);
+				Announce(TrainingClassWorkflowChanges.SignedOff, session, roster, signerUserId);
+			}
 			return result;
 		}
 
@@ -1461,7 +1531,8 @@ namespace Resgrid.Services
 
 			return new LmsClassCostRollup
 			{
-				Currency = sessions.Select(s => s.Currency).FirstOrDefault(c => !string.IsNullOrWhiteSpace(c)) ?? requests?.Currency ?? "USD",
+				Currency = LmsTrainingCurrency.Normalize(sessions.Select(s => s.Currency).FirstOrDefault(c => LmsTrainingCurrency.Normalize(c) != null))
+					?? LmsTrainingCurrency.Normalize(requests?.Currency) ?? await LmsProgramSettingsService.TrainingCurrencyAsync(_settings, departmentId),
 				Rows = LmsClassCostMath.Rollup(sessions, lines, attendees, groupBy, requests?.Rows)
 			};
 		}
@@ -1471,6 +1542,18 @@ namespace Resgrid.Services
 		#region Helpers
 
 		/// <summary>The member's own id (pickers post it upper-cased), or lms_class_not_member when they are not a current member.</summary>
+		/// <summary>
+		/// Round 10 A7 (owner decision 2026-11-26): enrolling oneself in a class and signing oneself in by its QR code are learner actions that
+		/// need the member's LMS seat. A class manager or instructor placing, adding as a walk-in or marking a member needs their permission only.
+		/// </summary>
+		private async Task RequireLearnerSeatAsync(int departmentId, string userId)
+		{
+			if (!LmsLearnerSeats.Needed(false, userId))
+				return;
+			if (!await _gate.HoldsLearnerSeatAsync(departmentId, userId))
+				throw new InvalidOperationException("lms_class_no_seat");
+		}
+
 		private async Task<string> RequireCurrentMemberAsync(int departmentId, string userId)
 		{
 			if (string.IsNullOrWhiteSpace(userId))
@@ -1521,6 +1604,57 @@ namespace Resgrid.Services
 			{
 				Logging.LogException(ex, "A class notification could not be sent.");
 			}
+		}
+
+		/// <summary>Round 7B: the class e-mails of the external learners among <paramref name="userIds"/> (members are left to their notices). Non-fatal.</summary>
+		private async Task MailLearnersAsync(LmsClassSession session, IEnumerable<string> userIds, LmsLearnerNoticeKinds kind, CancellationToken cancellationToken)
+		{
+			var learners = (userIds ?? Enumerable.Empty<string>()).Where(LmsExternalLearnerIds.IsExternal).ToList();
+			if (learners.Count == 0 || _learnerMail == null)
+				return;
+			try
+			{
+				await _learnerMail.SendAsync(session.DepartmentId, session, learners, kind, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Learner class e-mails ({kind}) could not be sent.");
+			}
+		}
+
+		/// <summary>Round 7B workflow triggers 240-243: ids, title, times and counts only (never a name or contact detail).</summary>
+		private void Announce(TrainingClassWorkflowChanges change, LmsClassSession session, IReadOnlyCollection<LmsClassEnrollment> roster, string actingUserId,
+			string promotedUserId = null)
+		{
+			if (session == null)
+				return;
+			var rows = roster ?? (IReadOnlyCollection<LmsClassEnrollment>)Array.Empty<LmsClassEnrollment>();
+			_events?.SendMessage(new TrainingClassWorkflowEvent
+			{
+				DepartmentId = session.DepartmentId,
+				Change = change,
+				SessionId = session.LmsClassSessionId,
+				Title = session.Title,
+				CourseKind = ((LmsClassCourseKinds)session.CourseKind).ToString(),
+				CourseId = session.LmsCourseId,
+				TrainingId = session.TrainingId,
+				StartsOn = session.StartsOn,
+				EndsOn = session.EndsOn,
+				Capacity = session.Capacity,
+				Enrolled = rows.Count(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled),
+				Waitlisted = rows.Count(e => e.Status == (int)LmsClassEnrollmentStatuses.Waitlisted),
+				Attended = change == TrainingClassWorkflowChanges.SignedOff ? rows.Count(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled && e.Attendance == (int)LmsClassAttendanceStates.Attended) : 0,
+				Absent = change == TrainingClassWorkflowChanges.SignedOff ? rows.Count(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled && e.Attendance == (int)LmsClassAttendanceStates.Absent) : 0,
+				SeriesKey = session.SeriesKey,
+				UserId = promotedUserId,
+				IsExternalLearner = LmsExternalLearnerIds.IsExternal(promotedUserId),
+				ActingUserId = actingUserId,
+				OccurredOn = DateTime.UtcNow
+			});
 		}
 
 		private static object Summary(LmsClassSession s) => new { s.LmsClassSessionId, s.Title, s.StartsOn, s.EndsOn, s.Capacity, s.EnrollmentOpen, s.RequiresApproval, s.Status };

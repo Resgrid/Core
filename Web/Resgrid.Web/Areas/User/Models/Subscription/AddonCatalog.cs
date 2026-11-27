@@ -87,7 +87,7 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 			new AddonDefinition
 			{
 				Type = PlanAddonTypes.EnhancedAi, Key = "EnhancedAi", Icon = "fa-magic", Slug = "enhanced-ai", FeatureFlag = FeatureFlagKeys.AiEnhanced,
-				Period = AddonBillingPeriod.Monthly, FeatureCount = 6, StripeAmount = () => AiAddonConfig.StripeMonthlyAmount, PaddleAmount = () => AiAddonConfig.PaddleMonthlyAmount
+				Period = AddonBillingPeriod.Monthly, FeatureCount = 8, StripeAmount = () => AiAddonConfig.StripeMonthlyAmount, PaddleAmount = () => AiAddonConfig.PaddleMonthlyAmount
 			},
 			new AddonDefinition
 			{
@@ -102,6 +102,14 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 				Type = PlanAddonTypes.Lms, Key = "Lms", Icon = "fa-graduation-cap", Slug = "lms", FeatureFlag = FeatureFlagKeys.TrainingLms,
 				Period = AddonBillingPeriod.Monthly, FeatureCount = 5, StripeAmount = () => LmsAddonConfig.StripeFirstTierPackAmount,
 				PaddleAmount = () => LmsAddonConfig.PaddleFirstTierPackAmount, PackPricing = paddle => LmsPackPricing.ForProvider(paddle)
+			},
+			new AddonDefinition
+			{
+				// The second pack add-on (shifts-scheduling-modernization-plan.md §7.2, D23): 25-member packs, graduated, monthly, no setup fee;
+				// sold only with a paid base plan (the card rule below). Member wellness and workplace exposure since 2026-11-26.
+				Type = PlanAddonTypes.WorkforcePro, Key = "WorkforcePro", Icon = "fa-id-badge", Slug = "workforce-pro", FeatureFlag = FeatureFlagKeys.WorkforcePro,
+				Period = AddonBillingPeriod.Monthly, FeatureCount = 5, StripeAmount = () => WorkforceProAddonConfig.StripeFirstTierPackAmount,
+				PaddleAmount = () => WorkforceProAddonConfig.PaddleFirstTierPackAmount, PackPricing = paddle => WorkforceProPackPricing.ForProvider(paddle)
 			},
 			new AddonDefinition
 			{

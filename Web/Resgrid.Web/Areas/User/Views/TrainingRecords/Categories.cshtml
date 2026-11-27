@@ -169,6 +169,10 @@
                     var applied = template.Items.Count(i => Model.Codes.Contains(i.Code));
                     <div class="rgw-card">
                         <h4>@template.Name</h4>
+                        @if (Model.Suggested.Contains(template.Key))
+                        {
+                            <div class="rgw-card-meta"><span class="label label-primary"><i class="fa fa-star" aria-hidden="true"></i> @localizer["Rec.TemplateSuggested"]</span></div>
+                        }
                         <div class="rgw-card-meta">@localizer["CategoryKind." + template.Kind] · @template.Source</div>
                         <p class="m-b-none">@template.Description</p>
                         <ul class="rgw-journey">

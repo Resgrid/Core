@@ -1,0 +1,90 @@
+{
+  "key": "incident-safety-basics",
+  "revision": 1,
+  "kind": "course",
+  "title": "Incident safety basics",
+  "code": "RG-SAFE",
+  "summary": "Plain-language safety habits for every incident: size-up and situational awareness, protective equipment, accountability and communication, and rest and rehab.",
+  "tags": "safety, incident, starter",
+  "hours": 1,
+  "license": "resgrid-starter",
+  "overview": "<p>A starter course written by Resgrid in plain language. It is not a substitute for your department's standard operating procedures or for any certification course. Replace the general guidance with your department's own procedures, equipment and terminology before you publish it.</p>",
+  "modules": [
+    {
+      "title": "Situational awareness",
+      "lessons": [
+        {
+          "title": "Size-up starts before you arrive",
+          "html": "<p>Safety starts with what you already know: the call type, the address, the time of day, the weather and any notes from the caller. Think about what could hurt you before you arrive.</p><ul><li>Look for hazards on approach: traffic, power lines, unstable structures, animals, people acting aggressively.</li><li>Say what you see over the radio so that everyone shares the same picture.</li><li>If the scene is not safe, stop and wait for the resources you need.</li></ul>"
+        },
+        {
+          "title": "Conditions change",
+          "html": "<p>An incident never stays the same. Keep looking up and around, not only at your task.</p><ul><li>Notice changes in smoke, sound, structure, traffic and the crowd.</li><li>Speak up the moment something feels wrong. Anyone may call a stop when they see danger.</li><li>Know your way out before you need it.</li></ul>"
+        }
+      ]
+    },
+    {
+      "title": "Protective equipment",
+      "lessons": [
+        {
+          "title": "Wear what the task requires",
+          "html": "<p>Your department decides which protective equipment each task requires. Wear all of it, wear it correctly, and keep wearing it until the task is done.</p><ul><li>Check your equipment at the start of every shift and after every use.</li><li>Report damaged or contaminated equipment and take it out of service.</li><li>Add your department's equipment list for each type of incident here.</li></ul>"
+        },
+        {
+          "title": "After the incident",
+          "html": "<p>Contamination does not end when the incident does. Clean yourself and your equipment as your department's procedure describes before you eat, drink or go home.</p><p>Report any exposure to your officer so that it can be recorded and followed up.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Accountability and communication",
+      "lessons": [
+        {
+          "title": "Who is where",
+          "html": "<p>The person in charge must always know who is on scene, where they are and what they are doing. Use your department's accountability system every time.</p><ul><li>Check in when you arrive and check out when you leave.</li><li>Work with a partner and stay together.</li><li>Answer every roll call.</li></ul>"
+        },
+        {
+          "title": "Radio discipline and emergency traffic",
+          "html": "<p>Keep radio messages short and clear: who you are calling, who you are, and the message. Listen before you talk.</p><p>Learn your department's words for emergency traffic and for a member in trouble, and what everyone does when they hear them. Practise them in drills so that they come without thinking.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Rest and rehab",
+      "lessons": [
+        {
+          "title": "Rehab is part of the job",
+          "html": "<p>Heat, cold, effort and stress wear people down faster than they notice. Rehab gives members rest, fluids, food and a check of how they are doing before they go back to work.</p><ul><li>Go to rehab when you are sent, and send others when you see them struggling.</li><li>Tell the rehab team about any symptoms, however small.</li></ul>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Incident safety check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "Who may call a stop when they see danger?",
+        "kind": "single",
+        "options": [ "Anyone on the incident", "Only the person in charge", "Only the safety officer" ],
+        "correct": 0,
+        "explanation": "Anyone may call a stop the moment they see danger."
+      },
+      {
+        "text": "What should you do with damaged protective equipment?",
+        "kind": "single",
+        "options": [ "Report it and take it out of service", "Keep using it until the incident ends", "Lend it to someone else" ],
+        "correct": 0,
+        "explanation": "Report damaged or contaminated equipment and take it out of service."
+      },
+      {
+        "text": "You should check in when you arrive and check out when you leave.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 0,
+        "explanation": "The accountability system only works when everyone checks in and out."
+      }
+    ]
+  }
+}

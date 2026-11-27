@@ -58,6 +58,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> _localizer;
 		private readonly ILmsSkillSheetService _skillSheets;
 		private readonly ILmsTaskBookService _taskBooks;
+		private readonly ILmsCertificationRequirementService _certificationRequirements;
 
 		private LmsActor _actor;
 		private TrainingManagementScope _scope;
@@ -68,8 +69,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ILmsTrainingRequestService requests, ILmsReportCatalogService reports, ILmsCertificationCycleService cycles, ILmsProgramSettingsService settings,
 			ILearningRecordService learningRecords, ICertificationService certifications, ITrainingService trainings, ILmsCourseService courses,
 			IDepartmentsService departments, IDepartmentGroupsService groups, IShiftsService shifts, IAuthorizationService authorization,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer, ILmsSkillSheetService skillSheets, ILmsTaskBookService taskBooks)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer, ILmsSkillSheetService skillSheets, ILmsTaskBookService taskBooks,
+			ILmsCertificationRequirementService certificationRequirements)
 		{
+			_certificationRequirements = certificationRequirements;
 			_skillSheets = skillSheets;
 			_taskBooks = taskBooks;
 			_gate = gate;
@@ -116,6 +119,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private async Task<bool> IsOfficerAsync() => ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || (await ScopeAsync()).CanManageRecords;
 
 		private static bool CanManageCertifications => ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || ClaimsAuthorizationHelper.CanManageCertifications();
+
+		/// <summary>Round 9A: who sees the requirement sets and the "close to lapsing" list (the certification view right; no new permission).</summary>
+		private static bool CanViewCertifications => CanManageCertifications || ClaimsAuthorizationHelper.CanViewCertifications();
 
 		private string L(string key)
 		{
@@ -190,23 +196,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return view;
 		}
 
-		private ModuleTabsView Tabs(string active, bool officer, bool certifications)
-		{
-			var tabs = new ModuleTabsView { Label = L("Prg.StripLabel") };
-			void Add(string key, string icon, string action) => tabs.Tabs.Add(new ModuleTab(L(key), icon, "LmsPrograms", action, action == active));
-			Add("Prg.Tab.Home", "fa-th-large", "Index");
-			if (officer)
-				Add("Prg.Tab.Plans", "fa-calendar", "Plans");
-			Add("Prg.Tab.Frameworks", "fa-sitemap", "Frameworks");
-			Add("Prg.Tab.Requests", "fa-paper-plane-o", "Requests");
-			if (officer)
-				Add("Prg.Tab.Reports", "fa-table", "Reports");
-			if (certifications)
-				Add("Prg.Tab.Cycles", "fa-refresh", "Cycles");
-			if (officer)
-				Add("Prg.Tab.Settings", "fa-cog", "Settings");
-			return tabs;
-		}
+		// The strip is shared with the data export and CE reporting pages (LmsExportsController, T5 round 6D).
+		private ModuleTabsView Tabs(string active, bool officer, bool certifications) =>
+			LmsProgramTabs.Build(L, active, officer, certifications, ClaimsAuthorizationHelper.IsUserDepartmentAdmin());
 
 		private static DateTime? LocalDateToUtc(DateTime? localDate, Department department) =>
 			localDate.HasValue ? DateTime.SpecifyKind(DateTime.SpecifyKind(localDate.Value.Date, DateTimeKind.Unspecified).DepartmentLocalToUtc(department), DateTimeKind.Utc) : null;
@@ -464,7 +456,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var view = await PageAsync(new LmsFrameworksView(), "Frameworks");
 			view.Frameworks = await _competencies.GetFrameworksAsync(DepartmentId);
-			view.Catalog = _competencies.GetCatalog();
+			view.Catalog = _competencies.GetCatalog(CultureInfo.CurrentUICulture.Name);
 			return View(view);
 		}
 
@@ -481,7 +473,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Frameworks");
 			}
 			LmsCompetencyFramework framework = null;
-			var ok = await TryAsync(async () => framework = await _competencies.ApplyCatalogAsync(DepartmentId, key, UserId, cancellationToken), "Prg.FrameworkApplied");
+			var ok = await TryAsync(async () => framework = await _competencies.ApplyCatalogAsync(DepartmentId, key, UserId, CultureInfo.CurrentUICulture.Name, cancellationToken), "Prg.FrameworkApplied");
 			return ok ? RedirectToAction("Framework", new { id = framework.LmsCompetencyFrameworkId }) : RedirectToAction("Frameworks");
 		}
 
@@ -1049,5 +1041,105 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		#endregion Certification cycles
+
+		#region Certification requirements (round 9A)
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		public async Task<IActionResult> CertificationRequirements()
+		{
+			if (!CanViewCertifications)
+				return Unauthorized();
+			var view = await PageAsync(new LmsCertRequirementsView(), "CertificationRequirements");
+			view.Rows = await _certificationRequirements.GetSetRowsAsync(DepartmentId, DateTime.UtcNow) ?? new List<LmsCertificationRequirementSetRow>();
+			return View(view);
+		}
+
+		private async Task<DepartmentCertificationType> PersonTypeAsync(int typeId)
+		{
+			var type = typeId > 0 ? await _certifications.GetCertificationTypeByIdAsync(typeId) : null;
+			return type == null || type.DepartmentId != DepartmentId || type.IsDeleted || type.AppliesTo != (int)CertificationAppliesTo.Person ? null : type;
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		public async Task<IActionResult> EditCertificationRequirements(int typeId)
+		{
+			if (!CanManageCertifications)
+				return Unauthorized();
+			var type = await PersonTypeAsync(typeId);
+			if (type == null)
+				return NotFound();
+			var view = await PageAsync(new LmsCertRequirementEditView { Type = type }, "CertificationRequirements");
+			view.Set = await _certificationRequirements.GetSetAsync(DepartmentId, typeId);
+			view.Input = view.Set == null
+				? new LmsCertificationRequirementSetInput { DepartmentCertificationTypeId = typeId }
+				: new LmsCertificationRequirementSetInput
+				{
+					DepartmentCertificationTypeId = typeId, IsActive = view.Set.IsActive, IssueToNonHolders = view.Set.IssueToNonHolders, RenewHolders = view.Set.RenewHolders,
+					DueSoonDays = view.Set.DueSoonDays, NotifyMembers = view.Set.NotifyMembers,
+					Items = view.Set.Items.Select(i => new LmsCertificationRequirementItemInput
+					{
+						Kind = i.Kind, TargetRefId = i.TargetRefId, TargetCode = i.TargetCode, RequiredHours = i.RequiredHours, RequiredCount = i.RequiredCount,
+						RequireRecordedByInstructor = i.RequireRecordedByInstructor, Label = i.Label
+					}).ToList()
+				};
+			view.Options = (await _certificationRequirements.GetTargetOptionsAsync(DepartmentId) ?? new List<(int Kind, int Id, string Name)>())
+				.Select(o => new LmsCertRequirementOption { Kind = o.Kind, Id = o.Id, Name = o.Name }).ToList();
+			view.BlankRows = Math.Max(0, Math.Min(view.Set == null ? 3 : 2, LmsCertificationRequirementSet.MaxItems - view.Input.Items.Count));
+			return View(view);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		public async Task<IActionResult> SaveCertificationRequirements(LmsCertificationRequirementSetInput input, CancellationToken cancellationToken)
+		{
+			if (!CanManageCertifications)
+				return Unauthorized();
+			if (input == null || await PersonTypeAsync(input.DepartmentCertificationTypeId) == null)
+				return NotFound();
+			if (!(await ActorAsync()).Gate.CanAuthor)
+			{
+				Flash(null, L("Prg.AddonRequired"));
+				return RedirectToAction("EditCertificationRequirements", new { typeId = input.DepartmentCertificationTypeId });
+			}
+			// Blank rows of the form (no kind, or no target) are not items.
+			input.Items = (input.Items ?? new List<LmsCertificationRequirementItemInput>())
+				.Where(i => i != null && i.Kind >= 0 && (i.TargetRefId > 0 || !string.IsNullOrWhiteSpace(i.TargetCode))).ToList();
+			if (await TryAsync(() => _certificationRequirements.SaveSetAsync(DepartmentId, input, UserId, cancellationToken), "Prg.Saved"))
+				return RedirectToAction("CertificationRequirements");
+			return RedirectToAction("EditCertificationRequirements", new { typeId = input.DepartmentCertificationTypeId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		public async Task<IActionResult> DeleteCertificationRequirements(int typeId, CancellationToken cancellationToken)
+		{
+			if (!CanManageCertifications)
+				return Unauthorized();
+			await TryAsync(() => _certificationRequirements.DeleteSetAsync(DepartmentId, typeId, UserId, cancellationToken), "Prg.Deleted");
+			return RedirectToAction("CertificationRequirements");
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		public async Task<IActionResult> CertificationProgress(int typeId)
+		{
+			if (!CanViewCertifications)
+				return Unauthorized();
+			var type = await PersonTypeAsync(typeId);
+			if (type == null)
+				return NotFound();
+			var view = await PageAsync(new LmsCertProgressView { Type = type }, "CertificationRequirements");
+			view.Set = await _certificationRequirements.GetSetAsync(DepartmentId, typeId);
+			if (view.Set == null)
+				return RedirectToAction("EditCertificationRequirements", new { typeId });
+			view.Rows = await _certificationRequirements.GetTypeProgressAsync(DepartmentId, typeId, DateTime.UtcNow) ?? new List<LmsCertificationProgress>();
+			return View(view);
+		}
+
+		#endregion Certification requirements (round 9A)
 	}
 }

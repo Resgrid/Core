@@ -1,0 +1,168 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model FlashcardsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* A course's flashcards (T5 item 5): drafted with Enhanced AI from the course's version in force or a protocol it is built from, kept only when an
+   author accepts them, and shown to learners in the course player while their source version is in force. A newer source version flags a card
+   for review; a flagged card is hidden from learners until an author reviews it against the version in force. Practice is never recorded. *@
+@{
+    var course = Model.Course;
+    ViewBag.Title = "Resgrid | " + localizer["Studio.FlashcardsTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = string.Format(localizer["Studio.FlashcardsTitleFormat"].Value, course.Title);
+    ViewData["Subtitle"] = localizer["Studio.FlashcardsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var flagged = Model.Cards.Count(c => !c.IsActive);
+    var active = Model.Cards.Count(c => c.IsActive);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white" asp-controller="Courses" asp-action="Course" asp-route-area="User" asp-route-id="@course.LmsCourseId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToCourseDetail"]</a>
+    </div>
+
+    <div class="rgw-stat-tiles m-b-md">
+        <div class="rgw-stat-tile">
+            <div class="rgw-stat-label">@localizer["Studio.CardsActive"]</div>
+            <div class="rgw-stat-value">@active</div>
+        </div>
+        <div class="rgw-stat-tile">
+            <div class="rgw-stat-label">@localizer["Studio.CardsFlagged"]</div>
+            <div class="rgw-stat-value">@flagged</div>
+        </div>
+    </div>
+
+    @if (!Model.Status.AiAvailable)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Studio.Outcome." + (Model.Status.AiReason ?? LmsStudioOutcomes.NotEntitled)]</div>
+    }
+    else if (Model.Choices.Count == 0)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Studio.NoCardSources"]</div>
+    }
+    else
+    {
+        <div class="ibox float-e-margins" id="studio-cards" data-draft-url="@Url.Action("DraftCards", "LmsStudio", new { area = "User", id = course.LmsCourseId })"
+             data-accept-url="@Url.Action("AcceptCards", "LmsStudio", new { area = "User", id = course.LmsCourseId })"
+             data-busy-text="@localizer["Studio.Drafting"]" data-accept-text="@localizer["Studio.AcceptCardsButton"]" data-none-text="@localizer["Studio.NothingTicked"]"
+             data-failed-text="@localizer["Studio.Outcome.Unavailable"]" data-source-text="@localizer["Studio.CardSourceFormat"]">
+            <div class="ibox-title"><h5><i class="fa fa-magic" aria-hidden="true"></i> @localizer["Studio.DraftCardsHeader"]</h5></div>
+            <div class="ibox-content">
+                <form class="form-inline" id="studio-cards-form">
+                    @Html.AntiForgeryToken()
+                    <label for="studio-card-source">@localizer["Studio.CardSourceLabel"]</label>
+                    <select id="studio-card-source" class="form-control">
+                        @foreach (var choice in Model.Choices)
+                        {
+                            <option value="@choice.SourceKind:@choice.ItemId">@(choice.SourceKind == (int)LmsFlashcardSourceKinds.CourseVersion ? localizer["Studio.ThisCourse"].Value + " · " : "")@choice.Title @choice.VersionLabel</option>
+                        }
+                    </select>
+                    <label for="studio-card-count">@localizer["Studio.CardCountLabel"]</label>
+                    <input id="studio-card-count" type="number" class="form-control" min="@LmsFlashcardDraftRequest.MinCards" max="@LmsFlashcardDraftRequest.MaxCards" value="10" />
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-magic" aria-hidden="true"></i> @localizer["Studio.DraftCardsButton"]</button>
+                </form>
+                <p class="rgw-progress-honest m-t-sm" id="studio-cards-status" role="status" aria-live="polite"></p>
+                <div id="studio-cards-draft"></div>
+                <p class="small text-muted m-t-sm">@localizer["Studio.CardsRule"]</p>
+            </div>
+        </div>
+    }
+
+    <h3>@localizer["Studio.CardsHeader"]</h3>
+    @if (Model.Cards.Count == 0)
+    {
+        <p class="text-muted">@localizer["Studio.NoCards"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Studio.FrontColumn"]</th>
+                        <th>@localizer["Studio.BackColumn"]</th>
+                        <th>@localizer["Studio.SourceColumn"]</th>
+                        <th>@localizer["StatusColumn"]</th>
+                        <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var card in Model.Cards)
+                    {
+                        <tr>
+                            @if (Model.EditingCardId == card.LmsFlashcardId)
+                            {
+                                <td colspan="2">
+                                    <form method="post" asp-controller="LmsStudio" asp-action="SaveCard" asp-route-area="User" asp-route-id="@course.LmsCourseId">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="cardId" value="@card.LmsFlashcardId" />
+                                        <div class="form-group">
+                                            <label for="front-@card.LmsFlashcardId">@localizer["Studio.FrontColumn"]</label>
+                                            <textarea id="front-@card.LmsFlashcardId" name="front" class="form-control" rows="2" maxlength="@LmsFlashcard.FrontMaxLength" required>@card.Front</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="back-@card.LmsFlashcardId">@localizer["Studio.BackColumn"]</label>
+                                            <textarea id="back-@card.LmsFlashcardId" name="back" class="form-control" rows="3" maxlength="@LmsFlashcard.BackMaxLength" required>@card.Back</textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Studio.SaveCardButton"]</button>
+                                        <a class="btn btn-white btn-xs" asp-controller="LmsStudio" asp-action="Flashcards" asp-route-area="User" asp-route-id="@course.LmsCourseId">@localizer["CancelButton"]</a>
+                                    </form>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>@card.Front</td>
+                                <td>@card.Back</td>
+                            }
+                            <td>
+                                @card.SourceTitle @card.SourceVersionLabel
+                                @if (!string.IsNullOrWhiteSpace(card.SourceHeading)) {<span class="rgw-sub">@card.SourceHeading</span>}
+                            </td>
+                            <td>
+                                @if (card.IsActive)
+                                {
+                                    <span class="label label-primary">@localizer["Studio.CardActive"]</span>
+                                }
+                                else
+                                {
+                                    <span class="label label-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["Studio.CardNeedsReview"]</span>
+                                    <span class="rgw-sub">@localizer[card.FlagReason == (int)LmsFlashcardFlagReasons.SourceUnavailable ? "Studio.FlagUnavailable" : "Studio.FlagSuperseded"]</span>
+                                }
+                            </td>
+                            <td class="rgw-row-actions">
+                                @if (!card.IsActive)
+                                {
+                                    <form method="post" asp-controller="LmsStudio" asp-action="ReviewCard" asp-route-area="User" asp-route-id="@course.LmsCourseId" class="inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="cardId" value="@card.LmsFlashcardId" />
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["Studio.ReviewCardButton"]</button>
+                                    </form>
+                                }
+                                @if (Model.EditingCardId != card.LmsFlashcardId)
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="LmsStudio" asp-action="Flashcards" asp-route-area="User" asp-route-id="@course.LmsCourseId" asp-route-edit="@card.LmsFlashcardId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Studio.EditCardButton"]</a>
+                                }
+                                <form method="post" asp-controller="LmsStudio" asp-action="RemoveCard" asp-route-area="User" asp-route-id="@course.LmsCourseId" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="cardId" value="@card.LmsFlashcardId" />
+                                    <button type="submit" class="btn btn-white btn-xs" data-confirm="@localizer["Studio.RemoveCardConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Studio.RemoveCardButton"]</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/courses/resgrid.courses.studio.js" asp-append-version="true"></script>
+}

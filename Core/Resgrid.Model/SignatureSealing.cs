@@ -225,7 +225,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// The input a pending seal waits with (M0371): the HTML (audit page already appended) or the PDF bytes, kept until the
+	/// The input a pending seal waits with (M0356): the HTML (audit page already appended) or the PDF bytes, kept until the
 	/// document is sealed and then deleted. Never read by a list query.
 	/// </summary>
 	[Table("SealedDocumentInputs")]

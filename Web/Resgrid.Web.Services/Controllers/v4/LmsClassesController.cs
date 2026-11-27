@@ -33,12 +33,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ILmsGateService _gate;
 		private readonly ILmsAccessService _access;
 		private readonly ILmsClassService _classes;
+		private readonly ILmsCompletionRecordingService _recordings;
+		private readonly ITrainingCompletionRecordingService _recorded;
 
-		public LmsClassesController(ILmsGateService gate, ILmsAccessService access, ILmsClassService classes)
+		public LmsClassesController(ILmsGateService gate, ILmsAccessService access, ILmsClassService classes, ILmsCompletionRecordingService recordings,
+			ITrainingCompletionRecordingService recorded)
 		{
 			_gate = gate;
 			_access = access;
 			_classes = classes;
+			_recordings = recordings;
+			_recorded = recorded;
 		}
 
 		private static T Populate<T>(T result, int pageSize, string status = ResponseHelper.Success) where T : StandardApiResponseV4Base
@@ -309,6 +314,112 @@ namespace Resgrid.Web.Services.Controllers.v4
 				result.RecordsWritten = outcome.Written;
 				result.RecordsVoided = outcome.Voided;
 			});
+		}
+
+		/// <summary>
+		/// Round 7B (permission 135): the roster's record panel: what the class completes (its LMS course or baseline training) and, per
+		/// attendee, whether a completion can be recorded, who is ticked by default (attended) and what was recorded already.
+		/// </summary>
+		[HttpGet("GetRecordCompletions")]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<LmsClassRecordingResult>> GetRecordCompletions(int sessionId)
+		{
+			var actor = await ActorAsync();
+			if (actor == null)
+				return NotFound();
+			var view = await _recordings.GetClassRecordingViewAsync(DepartmentId, sessionId, UserId);
+			if (view == null || !view.CanRecord)
+				return NotFound();
+			var result = new LmsClassRecordingResult
+			{
+				Data = new LmsClassRecordingData
+				{
+					ClassSessionId = view.Session.LmsClassSessionId,
+					TargetKind = view.Target?.ToString(),
+					TargetId = view.TargetId,
+					TargetName = view.TargetName,
+					Refusal = view.Refusal,
+					AttestationVersion = view.AttestationVersion,
+					Rows = view.Rows.Select(r => new LmsClassRecordingRowData
+					{
+						UserId = r.UserId,
+						Name = r.Name,
+						IsExternalLearner = r.IsExternal,
+						Attended = r.Attended,
+						Selected = r.Selected,
+						Refusal = r.Refusal,
+						RecordingId = r.Recording?.TrainingCompletionRecordingId,
+						RecordedByUserId = r.Recording?.RecordedByUserId,
+						RecordedOn = r.Recording?.RecordedOn
+					}).ToList()
+				}
+			};
+			return Ok(Populate(result, result.Data.Rows.Count));
+		}
+
+		/// <summary>
+		/// Round 7B (permission 135): record that the listed roster members completed the class's LMS course or baseline training (the
+		/// attestation is required). Each member is checked on their own (group scope, active member, seat, already complete); the result says
+		/// who was recorded and why the others were not.
+		/// </summary>
+		[HttpPost("RecordCompletions")]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<LmsClassRecordCompletionsResult>> RecordCompletions([FromBody] LmsClassRecordCompletionsInput input, CancellationToken cancellationToken)
+		{
+			var actor = await ActorAsync();
+			if (actor == null || input == null)
+				return NotFound();
+			var outcome = await _recordings.RecordFromClassAsync(DepartmentId, input.ClassSessionId, new Resgrid.Model.TrainingCompletionRecordingRequest
+			{
+				RecorderUserId = UserId,
+				MemberUserIds = input.UserIds ?? new List<string>(),
+				Note = input.Note,
+				Attested = input.Attested,
+				AttestationVersion = string.IsNullOrWhiteSpace(input.AttestationVersion) ? Resgrid.Model.TrainingCompletionAttestation.CurrentVersion : input.AttestationVersion
+			}, cancellationToken);
+			var result = new LmsClassRecordCompletionsResult
+			{
+				Error = outcome.Error,
+				Recorded = outcome.Recorded,
+				Refused = outcome.Refused,
+				Results = outcome.Results.Select(r => new LmsRecordedCompletionData
+				{
+					UserId = r.UserId,
+					Recorded = r.Recorded,
+					Refusal = r.Refusal,
+					RecordingId = r.Recording?.TrainingCompletionRecordingId,
+					LearningRecordId = r.Recording?.LearningRecordId
+				}).ToList()
+			};
+			return Ok(Populate(result, result.Results.Count, outcome.Succeeded ? ResponseHelper.Success : ResponseHelper.Failure));
+		}
+
+		/// <summary>Round 7B (permission 135): voids a recorded completion with a reason (the learning record and its credits are voided).</summary>
+		[HttpPost("VoidRecordedCompletion")]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<LmsClassRecordCompletionsResult>> VoidRecordedCompletion([FromBody] LmsVoidRecordedCompletionInput input, CancellationToken cancellationToken)
+		{
+			var actor = await ActorAsync();
+			if (actor == null || input == null)
+				return NotFound();
+			var voided = await _recorded.VoidAsync(DepartmentId, input.RecordingId, UserId, input.Reason, cancellationToken);
+			if (voided.Refusal == Resgrid.Model.TrainingCompletionRecordingRules.NotFound)
+				return NotFound();
+			var result = new LmsClassRecordCompletionsResult
+			{
+				Error = voided.Refusal,
+				Results = new List<LmsRecordedCompletionData>
+				{
+					new LmsRecordedCompletionData { UserId = voided.UserId, Recorded = false, Refusal = voided.Refusal, RecordingId = input.RecordingId }
+				}
+			};
+			return Ok(Populate(result, 1, voided.Refusal == null ? ResponseHelper.Success : ResponseHelper.Failure));
 		}
 	}
 }

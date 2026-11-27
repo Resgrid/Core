@@ -58,6 +58,11 @@ namespace Resgrid.Services
 		private readonly ICertificationService _certificationService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly Lazy<ICommunicationService> _communicationService;
+		private readonly ILmsXapiStatementQueue _xapi;
+		private readonly ILmsExternalLearnersRepository _externalLearners;
+		private readonly IDispatchProtocolRepository _dispatchProtocols;
+		private readonly IProtocolAudiencesRepository _protocolAudiences;
+		private readonly ILmsCertificationIssuanceService _certificationIssuance;
 
 		public LmsLearnerService(ILmsCoursesRepository courses, ILmsCourseVersionsRepository versions, ILmsCourseModulesRepository modules, ILmsLessonsRepository lessons,
 			ILmsCourseAudiencesRepository audiences, ILmsCourseOwnersRepository owners, ILmsEnrollmentsRepository enrollments, ILmsLessonProgressRepository progress,
@@ -65,8 +70,10 @@ namespace Resgrid.Services
 			IProtocolVersionsRepository protocolVersions, ILmsGateService gate, ILmsEntitlementService entitlements, IContentAudienceService audienceService,
 			IDepartmentsService departmentsService, IDepartmentSettingsService settingsService, IUserProfileService profiles, ILearningRecordWriter learningRecords,
 			ILearningRecordService learningRecordService, ICertificationService certificationService, IEventAggregator eventAggregator,
-			Lazy<ICommunicationService> communicationService)
+			Lazy<ICommunicationService> communicationService, ILmsXapiStatementQueue xapi, ILmsExternalLearnersRepository externalLearners,
+			IDispatchProtocolRepository dispatchProtocols, IProtocolAudiencesRepository protocolAudiences, ILmsCertificationIssuanceService certificationIssuance)
 		{
+			_certificationIssuance = certificationIssuance;
 			_courses = courses;
 			_versions = versions;
 			_modules = modules;
@@ -91,6 +98,27 @@ namespace Resgrid.Services
 			_certificationService = certificationService;
 			_eventAggregator = eventAggregator;
 			_communicationService = communicationService;
+			_xapi = xapi;
+			_externalLearners = externalLearners;
+			_dispatchProtocols = dispatchProtocols;
+			_protocolAudiences = protocolAudiences;
+		}
+
+		/// <summary>T5: the lesson kinds whose runtime (SCORM, cmi5, an LTI tool) decides completion; the learner's button never does.</summary>
+		internal static bool IsRuntimeKind(int kind) => kind == (int)LmsLessonKinds.Scorm || kind == (int)LmsLessonKinds.Cmi5 || kind == (int)LmsLessonKinds.LtiLink;
+
+		/// <summary>T5 xAPI out: queues a learning event (non-fatal; the queue itself drops it when the department has no LRS).</summary>
+		private async Task QueueXapiAsync(LmsXapiEvent learningEvent, CancellationToken cancellationToken)
+		{
+			try
+			{
+				if (_xapi != null && learningEvent != null)
+					await _xapi.EnqueueAsync(learningEvent, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "An xAPI statement could not be queued.");
+			}
 		}
 
 		#region Results (P2 hook)
@@ -116,6 +144,7 @@ namespace Resgrid.Services
 			var courses = (await _courses.GetVisibleByIdsAsync(departmentId, enrollments.Select(e => e.LmsCourseId)) ?? new List<LmsCourse>()).ToDictionary(c => c.LmsCourseId);
 			var versions = (await _versions.GetVisibleByIdsAsync(departmentId, enrollments.Select(e => e.LmsCourseVersionId)) ?? new List<LmsCourseVersion>()).ToDictionary(v => v.LmsCourseVersionId);
 			var now = DateTime.UtcNow;
+			bool? seated = null;
 
 			foreach (var enrollment in enrollments)
 			{
@@ -125,7 +154,19 @@ namespace Resgrid.Services
 				if (!course.IsSystem && !gate.FlagOn)
 					continue;
 				// Completed history stays visible (lapse rule 2); only open work needs the runtime.
-				var canRun = LmsLapseRules.CanRun(gate, course.IsSystem, enrollment, now);
+				var canRun = LmsLapseRules.CanRun(gate.For(course.LmsCourseId), course.IsSystem, enrollment, now);
+				var blockedBy = canRun ? LmsErrors.None : (course.IsSystem ? LmsErrors.NotAuthorized : gate.IsLapsed ? LmsErrors.LapseWindowEnded : LmsErrors.AddonRequired);
+				// Round 10 A7: a department course runs only for a member holding an LMS seat (one seat read per request). Without one the
+				// enrollment stays listed, read-only: nothing is withdrawn or deleted when a seat is removed.
+				if (canRun && LmsLearnerSeats.Needed(course, userId))
+				{
+					seated ??= await _gate.HoldsLearnerSeatAsync(departmentId, userId);
+					if (seated != true)
+					{
+						canRun = false;
+						blockedBy = LmsErrors.NotLicensed;
+					}
+				}
 				result.Add(new LmsMyCourse
 				{
 					Enrollment = enrollment,
@@ -133,7 +174,7 @@ namespace Resgrid.Services
 					Version = version,
 					CanRun = canRun,
 					IsOverdue = enrollment.IsOpen && enrollment.DueOn.HasValue && enrollment.DueOn.Value < now,
-					BlockedBy = canRun ? LmsErrors.None : (course.IsSystem ? LmsErrors.NotAuthorized : gate.IsLapsed ? LmsErrors.LapseWindowEnded : LmsErrors.AddonRequired)
+					BlockedBy = blockedBy
 				});
 			}
 
@@ -152,7 +193,7 @@ namespace Resgrid.Services
 
 			var audiences = (await _audiences.GetForDepartmentAsync(actor.DepartmentId) ?? new List<LmsCourseAudience>()).ToLookup(a => a.LmsCourseId);
 			var mine = (await _enrollments.GetForUserAsync(actor.DepartmentId, actor.UserId) ?? new List<LmsEnrollment>()).Where(e => e.IsOpen).ToList();
-			var canEnroll = LmsLapseRules.CanAssignNew(actor.Gate, false);
+			bool? seated = null;
 			foreach (var course in await _courses.GetForDepartmentAsync(actor.DepartmentId) ?? new List<LmsCourse>())
 			{
 				if (course.Status != (int)ProtocolStatuses.Published || !course.CurrentVersionId.HasValue || !course.IsSelfEnrollable)
@@ -162,7 +203,20 @@ namespace Resgrid.Services
 					continue;
 				var version = await _versions.GetVisibleByIdAsync(actor.DepartmentId, course.CurrentVersionId.Value);
 				var open = mine.FirstOrDefault(e => e.LmsCourseId == course.LmsCourseId);
-				entries.Add(new LmsCatalogEntry { Course = course, Version = version, OpenEnrollment = open, CanEnroll = canEnroll && open == null });
+				// T5 item 2a: a sponsored set copy enrols on the sponsor's add-on.
+				var canEnroll = LmsLapseRules.CanAssignNew(actor.Gate.For(course.LmsCourseId), false);
+				var blockedBy = LmsErrors.None;
+				// Round 10 A7: self-enrolment is a learner action: the member's LMS seat (one seat read per request).
+				if (canEnroll && LmsLearnerSeats.Needed(course, actor.UserId))
+				{
+					seated ??= await _gate.HoldsLearnerSeatAsync(actor.DepartmentId, actor.UserId);
+					if (seated != true)
+					{
+						canEnroll = false;
+						blockedBy = LmsErrors.NotLicensed;
+					}
+				}
+				entries.Add(new LmsCatalogEntry { Course = course, Version = version, OpenEnrollment = open, CanEnroll = canEnroll && open == null, BlockedBy = blockedBy });
 			}
 
 			return entries;
@@ -185,16 +239,68 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				if (!LmsLapseRules.CanAssignNew(actor.Gate, false))
+				if (!LmsLapseRules.CanAssignNew(actor.Gate.For(course.LmsCourseId), false))
 					return LmsResult.Fail(LmsErrors.AddonRequired);
 				var rules = await _audiences.GetForCourseAsync(actor.DepartmentId, course.LmsCourseId) ?? new List<LmsCourseAudience>();
 				if (!course.IsSelfEnrollable || (rules.Count > 0 && !actor.MayManage && !ContentAudienceMatcher.Matches(actor.Facts, rules)))
 					return LmsResult.Fail(LmsErrors.NotAuthorized);
+				// Round 10 A7 (owner decision 2026-11-26): enrolling oneself is being trained, which needs the member's LMS seat (a manager or
+				// admin too; assigning others does not).
+				if (LmsLearnerSeats.Needed(course, actor.UserId) && !await _gate.HoldsLearnerSeatAsync(actor.DepartmentId, actor.UserId))
+					return LmsResult.Fail(LmsErrors.NotLicensed);
 			}
 
 			var (enrollment, _) = await _enrollments.InsertOpenAsync(NewEnrollment(actor.DepartmentId, course, course.CurrentVersionId.Value, actor.UserId, actor.UserId,
 				LmsEnrollmentSources.SelfEnrolled, null, null), cancellationToken);
 			return new LmsResult { Course = course, Enrollment = enrollment };
+		}
+
+		public async Task<LmsResult> EnrollExternalAsync(int departmentId, int lmsCourseId, string learnerUserId, string actingUserId, bool selfEnrolled,
+			CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || !LmsExternalLearnerIds.IsExternal(learnerUserId))
+				return LmsResult.Fail(LmsErrors.NotAuthorized);
+			var course = await _courses.GetVisibleByIdAsync(departmentId, lmsCourseId);
+			if (course == null || course.IsDeleted || course.IsSystem || course.DepartmentId != departmentId || course.Status != (int)ProtocolStatuses.Published ||
+				!course.CurrentVersionId.HasValue)
+				return LmsResult.Fail(LmsErrors.NotFound);
+			if (!LmsLapseRules.CanAssignNew(await _gate.GetGateAsync(departmentId), false))
+				return LmsResult.Fail(LmsErrors.AddonRequired);
+
+			var (enrollment, _) = await _enrollments.InsertOpenAsync(NewEnrollment(departmentId, course, course.CurrentVersionId.Value, learnerUserId,
+				string.IsNullOrWhiteSpace(actingUserId) ? learnerUserId : actingUserId, selfEnrolled ? LmsEnrollmentSources.SelfEnrolled : LmsEnrollmentSources.Assigned,
+				null, null), cancellationToken);
+			return new LmsResult { Course = course, Enrollment = enrollment };
+		}
+
+		public async Task<ProtocolPublicEligibility> GetExternalProtocolEligibilityAsync(int departmentId, int lmsCourseVersionId)
+		{
+			if (departmentId <= 0 || lmsCourseVersionId <= 0)
+				return ProtocolPublicEligibility.NotPublished;
+			var lessons = (await _lessons.GetForVersionAsync(departmentId, lmsCourseVersionId) ?? new List<LmsLesson>())
+				.Where(l => l.DepartmentId == departmentId && l.Kind == (int)LmsLessonKinds.ProtocolVersion && l.ProtocolVersionId.HasValue);
+			foreach (var protocolVersionId in lessons.Select(l => l.ProtocolVersionId.Value).Distinct())
+			{
+				var eligibility = await ExternalEligibilityAsync(departmentId, await _protocolVersions.GetByIdForDepartmentAsync(departmentId, protocolVersionId));
+				if (eligibility != ProtocolPublicEligibility.Eligible)
+					return eligibility;
+			}
+			return ProtocolPublicEligibility.Eligible;
+		}
+
+		/// <summary>
+		/// Security review M3 (2026-11-25): the public-page rules (<see cref="ProtocolPublicPages.Eligibility"/>) for a protocol version an external
+		/// learner would see: published and in force, not licensed content, no audience, not disabled, not document-backed. Fails closed.
+		/// </summary>
+		private async Task<ProtocolPublicEligibility> ExternalEligibilityAsync(int departmentId, ProtocolVersion version)
+		{
+			if (version == null || version.DepartmentId != departmentId)
+				return ProtocolPublicEligibility.NotPublished;
+			var protocol = await _dispatchProtocols.GetByIdAsync(version.DispatchProtocolId);
+			if (protocol == null || protocol.DepartmentId != departmentId)
+				return ProtocolPublicEligibility.NotPublished;
+			var audience = await _protocolAudiences.GetForProtocolAsync(departmentId, protocol.DispatchProtocolId) ?? new List<ProtocolAudience>();
+			return ProtocolPublicPages.Eligibility(protocol, version, audience);
 		}
 
 		public async Task<LmsAssignOutcome> AssignAsync(LmsActor actor, int lmsCourseId, IEnumerable<IContentAudienceRule> who, DateTime? dueOnUtc,
@@ -223,7 +329,7 @@ namespace Resgrid.Services
 				var rights = actor.RightsOn(course, await _owners.GetForCourseAsync(actor.DepartmentId, course.LmsCourseId));
 				if (!rights.Assign)
 					return Fail(outcome, LmsErrors.NotAuthorized);
-				if (!LmsLapseRules.CanAssignNew(actor.Gate, false))
+				if (!LmsLapseRules.CanAssignNew(actor.Gate.For(course.LmsCourseId), false))
 					return Fail(outcome, LmsErrors.AddonRequired);
 			}
 
@@ -236,8 +342,13 @@ namespace Resgrid.Services
 
 			var resolution = await _audienceService.ResolveAsync(actor.DepartmentId, rules);
 			outcome.Skipped = resolution?.Skipped ?? new List<ContentAudienceSkip>();
+			IEnumerable<string> members = resolution?.MemberUserIds ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			// Round 10 A7 (§17.4): a member without an LMS seat cannot be enrolled in a department course (its own, a sponsor's copy, a path step,
+			// a requirement's or a class's): skipped as NotLicensed, never enrolled or notified. The Academy is assignable to everyone.
+			if (!course.IsSystem && members.Any())
+				members = LmsLearnerSeats.SkipUnseated(members, await _gate.SeatHoldersAsync(actor), outcome.Skipped);
 			var created = new List<string>();
-			foreach (var userId in resolution?.MemberUserIds ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase))
+			foreach (var userId in members)
 			{
 				var (_, isNew) = await _enrollments.InsertOpenAsync(NewEnrollment(actor.DepartmentId, course, course.CurrentVersionId.Value, userId, actor.UserId, source,
 					rolePathKey, dueOnUtc), cancellationToken);
@@ -256,6 +367,26 @@ namespace Resgrid.Services
 			{
 				Audit(actor.DepartmentId, actor.UserId, AuditLogTypes.LmsCourseAssigned, JsonConvert.SerializeObject(new { course.LmsCourseId, course.Title, assigned = created.Count, dueOnUtc, rolePathKey }));
 				await NotifyAssignedAsync(actor.DepartmentId, course, created);
+			}
+
+			outcome.CreatedUserIds = created;
+			return outcome;
+		}
+
+		public async Task<LmsAssignOutcome> AssignDirectAsync(LmsActor actor, int lmsCourseId, IEnumerable<IContentAudienceRule> who, DateTime? dueOnUtc,
+			CancellationToken cancellationToken = default)
+		{
+			var outcome = await AssignAsync(actor, lmsCourseId, who, dueOnUtc, LmsEnrollmentSources.Assigned, null, cancellationToken);
+			if (outcome.Error != LmsErrors.None || outcome.CreatedUserIds.Count == 0)
+				return outcome;
+
+			// Workflow trigger 271, once per new enrollment (InsertOpenAsync created it here; an existing open one is not reassigned).
+			var course = await _courses.GetVisibleByIdAsync(actor.DepartmentId, lmsCourseId);
+			if (course != null)
+			{
+				var now = DateTime.UtcNow;
+				foreach (var userId in outcome.CreatedUserIds.Where(u => !LmsExternalLearnerIds.IsExternal(u)))
+					ContentWorkflowContext.Publish(_eventAggregator, LmsWorkflowEvents.Assigned(actor.DepartmentId, course, userId, actor.UserId, dueOnUtc, now));
 			}
 
 			return outcome;
@@ -349,10 +480,15 @@ namespace Resgrid.Services
 			var outline = LmsCourseService.BuildOutline(course, version,
 				await _modules.GetForVersionAsync(departmentId, version.LmsCourseVersionId), await _lessons.GetForVersionAsync(departmentId, version.LmsCourseVersionId));
 			var gate = await _gate.GetGateAsync(departmentId);
-			if (requireRun && !LmsLapseRules.CanRun(gate, course.IsSystem, enrollment, DateTime.UtcNow))
+			if (requireRun && !LmsLapseRules.CanRun(gate.For(course.LmsCourseId), course.IsSystem, enrollment, DateTime.UtcNow))
 				return (enrollment, outline, gate, course.IsSystem ? LmsErrors.NotAuthorized : gate.IsLapsed ? LmsErrors.LapseWindowEnded : LmsErrors.AddonRequired);
 			if (course.IsSystem && !await _entitlements.IsVisibleAsync(departmentId, course))
 				return (enrollment, outline, gate, LmsErrors.NotEntitled);
+			// Round 10 A7 (owner decision 2026-11-26): every player action on a department course (open, progress, complete, survey, the
+			// SCORM / cmi5 / LTI runtimes, attempts, hosted media and captions) is a learner action that needs the member's LMS seat. The
+			// enrollment itself is untouched (read-only without one); the Academy and external learners never ask.
+			if (requireRun && LmsLearnerSeats.Needed(course, userId) && !await _gate.HoldsLearnerSeatAsync(departmentId, userId))
+				return (enrollment, outline, gate, LmsErrors.NotLicensed);
 			return (enrollment, outline, gate, LmsErrors.None);
 		}
 
@@ -376,6 +512,14 @@ namespace Resgrid.Services
 		{
 			var (enrollment, outline, gate, error) = await LoadAsync(departmentId, userId, lmsEnrollmentId);
 			var view = new LmsPlayerView { Error = error, Enrollment = enrollment, Outline = outline };
+			if (error != LmsErrors.None && enrollment != null && outline != null)
+			{
+				// Round 10 A7: a course that may not run now (no LMS seat, the lapse window ended, the add-on off) is read-only: the outline and
+				// the member's own progress, no lesson opened.
+				view.Progress = (await _progress.GetForEnrollmentAsync(departmentId, enrollment.LmsEnrollmentId) ?? new List<LmsLessonProgress>())
+					.GroupBy(p => p.LmsLessonId).ToDictionary(g => g.Key, g => g.First());
+				view.LockedLessonIds = LockedLessons(outline, view.Progress);
+			}
 			if (error != LmsErrors.None)
 				return view;
 
@@ -408,14 +552,23 @@ namespace Resgrid.Services
 					break;
 				case LmsLessonKinds.ProtocolVersion:
 					if (view.Lesson.ProtocolVersionId.HasValue && !outline.Course.IsSystem)
-						view.Protocol = await _protocolVersions.GetByIdForDepartmentAsync(departmentId, view.Lesson.ProtocolVersionId.Value);
+					{
+						var protocol = await _protocolVersions.GetByIdForDepartmentAsync(departmentId, view.Lesson.ProtocolVersionId.Value);
+						// Security review M3: an external learner sees a protocol only when a public page could show it.
+						if (protocol != null && LmsExternalLearnerIds.IsExternal(userId) && await ExternalEligibilityAsync(departmentId, protocol) != ProtocolPublicEligibility.Eligible)
+						{
+							protocol = null;
+							view.ProtocolWithheld = true;
+						}
+						view.Protocol = protocol;
+					}
 					break;
 				case LmsLessonKinds.Video:
 					view.Captions = LmsCaptionTrack.Parse(view.Lesson.CaptionTracksJson);
 					if (view.Lesson.VideoSource == (int)LmsVideoSources.Hosted && view.Lesson.LmsMediaAssetId.HasValue)
 					{
 						view.Media = await _media.GetByIdForDepartmentAsync(departmentId, view.Lesson.LmsMediaAssetId.Value);
-						view.HostedVideoPlayable = view.Media != null && view.Media.Status == (int)LmsMediaStatuses.Ready && LmsLapseRules.CanStreamHostedVideo(gate, now);
+						view.HostedVideoPlayable = view.Media != null && view.Media.Status == (int)LmsMediaStatuses.Ready && LmsLapseRules.CanStreamHostedVideo(gate.For(enrollment.LmsCourseId), now);
 					}
 					break;
 				case LmsLessonKinds.Survey:
@@ -475,6 +628,7 @@ namespace Resgrid.Services
 			for (var attempt = 0; attempt < 3 && enrollment != null; attempt++)
 			{
 				var expected = enrollment.RowVersion;
+				var starting = !enrollment.StartedOn.HasValue;
 				enrollment.StartedOn ??= now;
 				if (enrollment.Status == (int)LmsEnrollmentStatuses.NotStarted)
 					enrollment.Status = (int)LmsEnrollmentStatuses.InProgress;
@@ -482,7 +636,15 @@ namespace Resgrid.Services
 				enrollment.SeatSeconds += seconds;
 				enrollment.LastActivityOn = now;
 				if (await _enrollments.TryUpdateAsync(enrollment, expected, cancellationToken))
+				{
+					// T5 xAPI out: the learner started the course.
+					if (starting)
+						await QueueXapiAsync(new LmsXapiEvent
+						{
+							DepartmentId = departmentId, UserId = enrollment.UserId, VerbId = LmsXapiVerbs.Attempted, LmsCourseId = enrollment.LmsCourseId, OccurredOn = now
+						}, cancellationToken);
 					return;
+				}
 				enrollment = await _enrollments.GetByIdForDepartmentAsync(departmentId, enrollment.LmsEnrollmentId);
 			}
 		}
@@ -513,8 +675,13 @@ namespace Resgrid.Services
 			};
 
 			var kind = (LmsLessonKinds)lesson.Kind;
-			if (kind == LmsLessonKinds.Survey)
+			// A survey completes by its answers; a SCORM, cmi5 or LTI lesson by what its runtime reports (T5), never by the button.
+			if (kind == LmsLessonKinds.Survey || IsRuntimeKind(lesson.Kind))
 				return LmsResult.Fail(LmsErrors.RequirementNotMet);
+			// Security review M3: a protocol lesson withheld from an external learner cannot be completed unseen either.
+			if (kind == LmsLessonKinds.ProtocolVersion && lesson.ProtocolVersionId.HasValue && !outline.Course.IsSystem && LmsExternalLearnerIds.IsExternal(userId) &&
+				await ExternalEligibilityAsync(departmentId, await _protocolVersions.GetByIdForDepartmentAsync(departmentId, lesson.ProtocolVersionId.Value)) != ProtocolPublicEligibility.Eligible)
+				return LmsResult.Fail(LmsErrors.NotAuthorized);
 			if (kind == LmsLessonKinds.Assessment)
 			{
 				var attempts = await _attempts.GetForEnrollmentLessonAsync(departmentId, enrollment.LmsEnrollmentId, lmsLessonId) ?? new List<LmsAssessmentAttempt>();
@@ -707,13 +874,75 @@ namespace Resgrid.Services
 			var file = await _files.GetByIdForDepartmentAsync(actor?.DepartmentId ?? 0, lmsLessonFileId);
 			if (file == null)
 				return null;
-			if (string.Equals(file.UserId, actor.UserId, StringComparison.OrdinalIgnoreCase) || actor.MayGrade)
+			// Graders and the course's reporters read any member's upload by their permission, never a seat of their own.
+			if (actor.MayGrade)
 				return file;
+			var own = string.Equals(file.UserId, actor.UserId, StringComparison.OrdinalIgnoreCase);
 			var lesson = await _lessons.GetVisibleByIdAsync(actor.DepartmentId, file.LmsLessonId);
 			var version = lesson == null ? null : await _versions.GetVisibleByIdAsync(actor.DepartmentId, lesson.LmsCourseVersionId);
 			var course = version == null ? null : await _courses.GetVisibleByIdAsync(actor.DepartmentId, version.LmsCourseId);
-			return course != null && actor.RightsOn(course, await _owners.GetForCourseAsync(actor.DepartmentId, course.LmsCourseId)).Report ? file : null;
+			if (course != null && actor.RightsOn(course, await _owners.GetForCourseAsync(actor.DepartmentId, course.LmsCourseId)).Report)
+				return file;
+			if (!own)
+				return null;
+			// Round 10 A7: the member's own upload on a department lesson is a learner item: it needs their LMS seat (unknown course: a seat).
+			if (LmsLearnerSeats.Needed(course?.IsSystem ?? false, actor.UserId) && !await _gate.HoldsLearnerSeatAsync(actor.DepartmentId, actor.UserId))
+				return null;
+			return file;
 		}
+
+		private static bool IsOwnEnrollment(LmsEnrollment enrollment, string userId) =>
+			enrollment != null && !string.IsNullOrWhiteSpace(userId) && string.Equals(enrollment.UserId, userId, StringComparison.OrdinalIgnoreCase) &&
+			enrollment.Status != (int)LmsEnrollmentStatuses.Withdrawn;
+
+		public async Task<List<LmsLessonFile>> GetMyLessonFilesAsync(int departmentId, string userId, int lmsEnrollmentId)
+		{
+			var result = new List<LmsLessonFile>();
+			if (departmentId <= 0 || lmsEnrollmentId <= 0)
+				return result;
+			var enrollment = await _enrollments.GetByIdForDepartmentAsync(departmentId, lmsEnrollmentId);
+			if (!IsOwnEnrollment(enrollment, userId))
+				return result;
+
+			var ids = (await _progress.GetForEnrollmentAsync(departmentId, enrollment.LmsEnrollmentId) ?? new List<LmsLessonProgress>())
+				.Where(p => p.LmsLessonFileId.HasValue && string.Equals(p.UserId, userId, StringComparison.OrdinalIgnoreCase)).Select(p => p.LmsLessonFileId.Value).Distinct().ToList();
+			if (ids.Count == 0)
+				return result;
+
+			// Metadata only: the bytes leave through GetMyLessonFileAsync alone.
+			return (await _files.GetMetadataByIdsAsync(departmentId, ids) ?? new List<LmsLessonFile>())
+				.Where(f => f != null && f.DepartmentId == departmentId && string.Equals(f.UserId, userId, StringComparison.OrdinalIgnoreCase))
+				.Select(f => { f.Data = null; return f; })
+				.OrderBy(f => f.UploadedOn).ToList();
+		}
+
+		public async Task<LmsMyLessonFile> GetMyLessonFileAsync(int departmentId, string userId, int lmsLessonFileId)
+		{
+			if (departmentId <= 0 || lmsLessonFileId <= 0 || string.IsNullOrWhiteSpace(userId))
+				return null;
+			var file = await _files.GetByIdForDepartmentAsync(departmentId, lmsLessonFileId);
+			if (file == null || file.DepartmentId != departmentId || !string.Equals(file.UserId, userId, StringComparison.OrdinalIgnoreCase))
+				return null;
+
+			// The file must be the answer of a lesson on one of the member's own enrollments (not just any upload of theirs).
+			foreach (var enrollment in (await _enrollments.GetForUserAsync(departmentId, userId) ?? new List<LmsEnrollment>()).Where(e => IsOwnEnrollment(e, userId)))
+			{
+				var progress = await _progress.GetForEnrollmentAsync(departmentId, enrollment.LmsEnrollmentId) ?? new List<LmsLessonProgress>();
+				if (!progress.Any(p => p.LmsLessonFileId == lmsLessonFileId && p.LmsLessonId == file.LmsLessonId))
+					continue;
+				var course = await _courses.GetVisibleByIdAsync(departmentId, enrollment.LmsCourseId);
+				if (course == null)
+					return null;
+				// Round 10 A7: a department lesson's file is a learner item that needs the member's LMS seat.
+				if (LmsLearnerSeats.Needed(course, userId) && !await _gate.HoldsLearnerSeatAsync(departmentId, userId))
+					return null;
+				return new LmsMyLessonFile { File = file, Enrollment = enrollment, Course = course };
+			}
+			return null;
+		}
+
+		public async Task<LmsEnrollment> GetEnrollmentAsync(int departmentId, int lmsEnrollmentId) =>
+			departmentId <= 0 || lmsEnrollmentId <= 0 ? null : await _enrollments.GetByIdForDepartmentAsync(departmentId, lmsEnrollmentId);
 
 		#endregion Player
 
@@ -764,10 +993,15 @@ namespace Resgrid.Services
 			var gate = await _gate.GetGateAsync(viewing.DepartmentId);
 			var enrollment = await _enrollments.GetOpenAsync(viewing.DepartmentId, userId, course.LmsCourseId);
 			var now = DateTime.UtcNow;
+			// Round 10 A7: a member scanning in to a department course's crew viewing is being trained: their LMS seat (read at most once).
+			bool? seated = null;
+			async Task<bool> SeatedAsync() => !LmsLearnerSeats.Needed(course, userId) || (seated ??= await _gate.HoldsLearnerSeatAsync(viewing.DepartmentId, userId));
 			if (enrollment == null)
 			{
-				if (!LmsLapseRules.CanAssignNew(gate, course.IsSystem))
+				if (!LmsLapseRules.CanAssignNew(gate.For(course.LmsCourseId), course.IsSystem))
 					return LmsResult.Fail(course.IsSystem ? LmsErrors.NotAuthorized : LmsErrors.AddonRequired);
+				if (!await SeatedAsync())
+					return LmsResult.Fail(LmsErrors.NotLicensed);
 				(enrollment, _) = await _enrollments.InsertOpenAsync(NewEnrollment(viewing.DepartmentId, course, version.LmsCourseVersionId, userId, viewing.StartedByUserId,
 					LmsEnrollmentSources.CrewViewing, null, null), cancellationToken);
 			}
@@ -781,8 +1015,10 @@ namespace Resgrid.Services
 				await _enrollments.TryUpdateAsync(enrollment, expected, cancellationToken);
 			}
 
-			if (!LmsLapseRules.CanRun(gate, course.IsSystem, enrollment, now))
+			if (!LmsLapseRules.CanRun(gate.For(course.LmsCourseId), course.IsSystem, enrollment, now))
 				return LmsResult.Fail(gate.IsLapsed ? LmsErrors.LapseWindowEnded : LmsErrors.AddonRequired);
+			if (!await SeatedAsync())
+				return new LmsResult { Error = LmsErrors.NotLicensed, Enrollment = enrollment };
 
 			var outline = LmsCourseService.BuildOutline(course, version,
 				await _modules.GetForVersionAsync(viewing.DepartmentId, version.LmsCourseVersionId), await _lessons.GetForVersionAsync(viewing.DepartmentId, version.LmsCourseVersionId));
@@ -816,13 +1052,53 @@ namespace Resgrid.Services
 			return new LmsResult { Course = course, Version = version, Enrollment = enrollment, Value = progress };
 		}
 
+		public async Task<LmsResult> RecordRuntimeOutcomeAsync(int departmentId, string userId, int lmsEnrollmentId, int lmsLessonId, bool satisfied, int totalSeconds,
+			CancellationToken cancellationToken = default)
+		{
+			var (enrollment, outline, _, error) = await LoadAsync(departmentId, userId, lmsEnrollmentId);
+			if (error != LmsErrors.None)
+				return LmsResult.Fail(error);
+			var lesson = outline.Lessons.FirstOrDefault(l => l.LmsLessonId == lmsLessonId);
+			if (lesson == null || !IsRuntimeKind(lesson.Kind))
+				return LmsResult.Fail(LmsErrors.NotFound);
+
+			var progressMap = (await _progress.GetForEnrollmentAsync(departmentId, enrollment.LmsEnrollmentId) ?? new List<LmsLessonProgress>())
+				.GroupBy(p => p.LmsLessonId).ToDictionary(g => g.Key, g => g.First());
+			if (LockedLessons(outline, progressMap).Contains(lmsLessonId))
+				return LmsResult.Fail(LmsErrors.LessonLocked);
+
+			var now = DateTime.UtcNow;
+			progressMap.TryGetValue(lmsLessonId, out var progress);
+			var before = progress?.SeatSeconds ?? 0;
+			progress ??= new LmsLessonProgress
+			{
+				DepartmentId = departmentId, LmsEnrollmentId = enrollment.LmsEnrollmentId, LmsLessonId = lmsLessonId, UserId = enrollment.UserId,
+				Status = (int)LmsLessonProgressStatuses.InProgress, StartedOn = now
+			};
+			// The runtime's own time (SCORM session times, cmi5 wall clock) only ever raises the seat time.
+			progress.SeatSeconds = Math.Max(progress.SeatSeconds, Math.Max(0, totalSeconds));
+			progress.LastSeenOn = now;
+			var newlyCompleted = satisfied && progress.Status != (int)LmsLessonProgressStatuses.Completed;
+			if (newlyCompleted)
+			{
+				progress.Status = (int)LmsLessonProgressStatuses.Completed;
+				progress.CompletedOn = now;
+			}
+			await _progress.SaveOrUpdateAsync(progress, cancellationToken, true);
+			progressMap[lmsLessonId] = progress;
+
+			await TouchEnrollmentAsync(departmentId, enrollment, lmsLessonId, Math.Max(0, progress.SeatSeconds - before), now, cancellationToken);
+			var completed = newlyCompleted && await EvaluateCompletionAsync(enrollment, outline, progressMap, false, cancellationToken);
+			return new LmsResult { Enrollment = enrollment, Value = progress, Count = completed ? 1 : 0 };
+		}
+
 		/// <summary>
 		/// Completes the course when every required lesson is complete (or a pre-test was passed): the enrollment closes, one learning
 		/// record is written (AcademyLesson for system content, LmsCourseCompletion otherwise; idempotent by the enrollment) and the
 		/// version's certification is issued or renewed. True when the course completed now.
 		/// </summary>
 		internal async Task<bool> EvaluateCompletionAsync(LmsEnrollment enrollment, LmsCourseOutline outline, IDictionary<int, LmsLessonProgress> progress, bool passedPreTest,
-			CancellationToken cancellationToken)
+			CancellationToken cancellationToken, TrainingCompletionRecording recording = null)
 		{
 			if (enrollment == null || !enrollment.IsOpen)
 				return false;
@@ -846,8 +1122,13 @@ namespace Resgrid.Services
 				{
 					fresh.Status = (int)LmsEnrollmentStatuses.Completed;
 					fresh.IsOpen = false;
-					fresh.CompletedOn = now;
+					fresh.CompletedOn = recording != null && recording.CompletedOn != default && recording.CompletedOn < now ? recording.CompletedOn : now;
 					fresh.TestedOut = passedPreTest && done < required.Count;
+					if (recording != null)
+					{
+						fresh.CompletionMethod = (int)LearningCompletionMethods.RecordedByOther;
+						fresh.RecordedCompletionId = recording.TrainingCompletionRecordingId;
+					}
 				}
 				else if (fresh.Status == (int)LmsEnrollmentStatuses.NotStarted)
 				{
@@ -864,12 +1145,26 @@ namespace Resgrid.Services
 			if (!complete || fresh == null)
 				return false;
 
-			await RecordCompletionAsync(fresh, outline, cancellationToken);
+			await RecordCompletionAsync(fresh, outline, cancellationToken, recording);
+			// Workflow trigger 260, once: the enrollment's compare-and-set closed it here. An external learner is not a member (the
+			// learner portal's own events cover them).
+			if (!LmsExternalLearnerIds.IsExternal(fresh.UserId))
+				ContentWorkflowContext.Publish(_eventAggregator, LmsWorkflowEvents.Completed(fresh, outline.Course, outline.Version, now));
+			// Round 7B (trigger 247): an external learner completed a department course (their own work or recorded from a class roster).
+			if (!outline.Course.IsSystem && LmsExternalLearnerIds.IsExternal(fresh.UserId))
+				await AnnounceExternalCompletionAsync(fresh, outline);
+			// T5 xAPI out: the course completed (department courses only; the queue drops it without an LRS).
+			if (!outline.Course.IsSystem)
+				await QueueXapiAsync(new LmsXapiEvent
+				{
+					DepartmentId = fresh.DepartmentId, UserId = fresh.UserId, VerbId = LmsXapiVerbs.Completed, LmsCourseId = outline.Course.LmsCourseId,
+					CourseTitle = outline.Version?.Title ?? outline.Course.Title, Completion = true, DurationSeconds = fresh.SeatSeconds, OccurredOn = fresh.CompletedOn ?? now
+				}, cancellationToken);
 			return true;
 		}
 
 		/// <summary>The transcript entry and the certification of a completed enrollment. Non-fatal: a failure is logged and the completion stands.</summary>
-		internal async Task RecordCompletionAsync(LmsEnrollment enrollment, LmsCourseOutline outline, CancellationToken cancellationToken)
+		internal async Task RecordCompletionAsync(LmsEnrollment enrollment, LmsCourseOutline outline, CancellationToken cancellationToken, TrainingCompletionRecording recording = null)
 		{
 			var course = outline.Course;
 			var version = outline.Version;
@@ -895,8 +1190,17 @@ namespace Resgrid.Services
 					Notes = version.Label == null ? null : "v" + version.Label + (enrollment.TestedOut ? " (test-out)" : string.Empty),
 					Status = LearningRecordStatuses.Verified
 				};
+				// Round 7B: a completion an instructor recorded says so on the transcript (never the member's own).
+				if (enrollment.CompletionMethod == (int)LearningCompletionMethods.RecordedByOther)
+				{
+					draft.CompletionMethod = enrollment.CompletionMethod;
+					draft.RecordedCompletionId = enrollment.RecordedCompletionId;
+					draft.RecordedByUserId = recording?.RecordedByUserId;
+					draft.RecordedOn = recording?.RecordedOn;
+				}
 				var kind = course.IsSystem ? LearningRecordSourceKinds.AcademyLesson : LearningRecordSourceKinds.LmsCourseCompletion;
-				var written = await _learningRecords.WriteSourceAsync(enrollment.DepartmentId, kind, SourceRefFor(enrollment), new[] { draft }, enrollment.UserId, cancellationToken);
+				var written = await _learningRecords.WriteSourceAsync(enrollment.DepartmentId, kind, SourceRefFor(enrollment), new[] { draft },
+					recording?.RecordedByUserId ?? enrollment.UserId, cancellationToken);
 				var record = written?.Records?.FirstOrDefault(r => r.Status != (int)LearningRecordStatuses.Voided);
 				if (record != null && enrollment.LearningRecordId != record.LearningRecordId)
 				{
@@ -909,12 +1213,16 @@ namespace Resgrid.Services
 				Logging.LogException(ex, $"The learning record of LMS enrollment {enrollment.LmsEnrollmentId} could not be written.");
 			}
 
-			if (!course.IsSystem && version.IssuesCertificationTypeId.HasValue)
+			// An external learner (T5) holds no personnel certification: their certificate is the learning record.
+			if (!course.IsSystem && version.IssuesCertificationTypeId.HasValue && !LmsExternalLearnerIds.IsExternal(enrollment.UserId))
 			{
 				try
 				{
+					// Round 9A: ledgered with the enrolment and its learning record, so a void of the completion takes the certification back.
 					var certificationId = await IssueOrRenewCertificationAsync(enrollment.DepartmentId, enrollment.UserId, version.IssuesCertificationTypeId.Value,
-						enrollment.CompletedOn ?? DateTime.UtcNow, cancellationToken);
+						enrollment.CompletedOn ?? DateTime.UtcNow, LmsCertificationIssueSources.CourseCompletion, SourceRefFor(enrollment),
+						enrollment.LearningRecordId.HasValue ? new[] { enrollment.LearningRecordId.Value } : Array.Empty<int>(), recording?.RecordedByUserId ?? enrollment.UserId,
+						cancellationToken);
 					if (certificationId.HasValue && enrollment.PersonnelCertificationId != certificationId)
 					{
 						enrollment.PersonnelCertificationId = certificationId;
@@ -938,47 +1246,131 @@ namespace Resgrid.Services
 		/// Issues the certification a completion grants, or renews the member's record of that type (T2 item 6): the new expiry runs
 		/// from the completion by the type's validity; a type that requires verification leaves the record PendingVerification.
 		/// </summary>
-		public async Task<int?> IssueOrRenewCertificationAsync(int departmentId, string userId, int certificationTypeId, DateTime completedOnUtc, CancellationToken cancellationToken = default)
+		public Task<int?> IssueOrRenewCertificationAsync(int departmentId, string userId, int certificationTypeId, DateTime completedOnUtc, CancellationToken cancellationToken = default) =>
+			IssueOrRenewCertificationAsync(departmentId, userId, certificationTypeId, completedOnUtc, LmsCertificationIssueSources.CourseCompletion, null, Array.Empty<int>(), userId,
+				cancellationToken);
+
+		/// <summary>
+		/// Round 9A: the issuance engine (<see cref="ILmsCertificationIssuanceService"/>) issues or renews: the expiry from the type's validity
+		/// rule on the department's local date, the ledger row that lets a void take it back, the member's notice and the workflow event.
+		/// Returns the member's record of the type (also when nothing needed renewing), or null when the type cannot be issued.
+		/// </summary>
+		public async Task<int?> IssueOrRenewCertificationAsync(int departmentId, string userId, int certificationTypeId, DateTime completedOnUtc, LmsCertificationIssueSources source,
+			string sourceRefId, IReadOnlyCollection<int> basisRecordIds, string actorUserId, CancellationToken cancellationToken = default)
 		{
-			var type = await _certificationService.GetCertificationTypeByIdAsync(certificationTypeId);
-			if (type == null || type.DepartmentId != departmentId || type.IsDeleted || !type.IsActive || type.AppliesTo != (int)CertificationAppliesTo.Person)
+			if (LmsExternalLearnerIds.IsExternal(userId) || _certificationIssuance == null)
 				return null;
-
-			DateTime? expires = type.NeverExpires || !type.DefaultValidityMonths.HasValue ? (DateTime?)null : completedOnUtc.Date.AddMonths(type.DefaultValidityMonths.Value);
-			var existing = (await _certificationService.GetCertificationsForDepartmentAsync(departmentId, new[] { userId }) ?? new List<PersonnelCertification>())
-				.Where(c => c != null && !c.IsDeleted && c.DepartmentCertificationTypeId == certificationTypeId && string.Equals(c.UserId, userId, StringComparison.OrdinalIgnoreCase))
-				.OrderByDescending(c => c.ExpiresOn ?? DateTime.MaxValue).FirstOrDefault();
-
-			if (existing != null)
-			{
-				// Already valid beyond the new expiry: nothing to renew.
-				if (expires.HasValue && existing.ExpiresOn.HasValue && existing.ExpiresOn.Value.Date >= expires.Value.Date &&
-					existing.Status != (int)PersonnelCertificationStatuses.Expired)
-					return existing.PersonnelCertificationId;
-				if (!expires.HasValue && !type.NeverExpires)
-					return existing.PersonnelCertificationId;
-
-				// Renewed as the holder: a type that requires verification goes back to PendingVerification (CertificationService rule).
-				var renewed = await _certificationService.RenewCertificationAsync(existing.PersonnelCertificationId, departmentId, expires, null, userId, cancellationToken);
-				return renewed?.PersonnelCertificationId;
-			}
-
-			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
-			var created = await _certificationService.SaveCertificationAsync(new PersonnelCertification
+			var result = await _certificationIssuance.IssueOrRenewAsync(new LmsCertificationIssueRequest
 			{
 				DepartmentId = departmentId,
 				UserId = userId,
-				Name = type.Type,
-				Type = type.Type,
-				DepartmentCertificationTypeId = certificationTypeId,
-				IssuedBy = department?.Name,
-				RecievedOn = completedOnUtc.Date,
-				ExpiresOn = expires,
-				Status = type.RequiresVerification ? (int)PersonnelCertificationStatuses.PendingVerification : (int)PersonnelCertificationStatuses.Active,
-				StatusChangedOn = DateTime.UtcNow,
-				StatusChangedByUserId = userId
+				CertificationTypeId = certificationTypeId,
+				CompletedOnUtc = completedOnUtc,
+				Source = source,
+				SourceRefId = sourceRefId,
+				BasisRecordIds = basisRecordIds ?? Array.Empty<int>(),
+				ActorUserId = actorUserId ?? userId
 			}, cancellationToken);
-			return created?.PersonnelCertificationId;
+			return result?.Skipped == "type_invalid" ? null : result?.CertificationId;
+		}
+
+		public async Task<LmsResult> RecordCompletionForMemberAsync(int departmentId, int lmsCourseId, string userId, TrainingCompletionRecording recording,
+			CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId) || recording == null || recording.TrainingCompletionRecordingId <= 0)
+				return LmsResult.Fail(LmsErrors.InvalidInput);
+			var course = await _courses.GetVisibleByIdAsync(departmentId, lmsCourseId);
+			if (course == null || course.IsDeleted || course.IsSystem || course.DepartmentId != departmentId || course.Status != (int)ProtocolStatuses.Published ||
+				!course.CurrentVersionId.HasValue)
+				return LmsResult.Fail(LmsErrors.NotFound);
+			var version = await _versions.GetVisibleByIdAsync(departmentId, course.CurrentVersionId.Value);
+			if (version == null)
+				return LmsResult.Fail(LmsErrors.NotFound);
+			var gate = await _gate.GetGateAsync(departmentId);
+			if (!LmsLapseRules.CanAssignNew(gate.For(course.LmsCourseId), false))
+				return LmsResult.Fail(LmsErrors.AddonRequired);
+			// The first completion stands: a member who completed the current version keeps their own.
+			if (await _enrollments.HasCompletedVersionAsync(userId, version.LmsCourseVersionId))
+				return LmsResult.Fail(LmsErrors.AlreadySubmitted);
+
+			var enrollment = await _enrollments.GetOpenAsync(departmentId, userId, course.LmsCourseId);
+			if (enrollment == null)
+			{
+				(enrollment, _) = await _enrollments.InsertOpenAsync(NewEnrollment(departmentId, course, version.LmsCourseVersionId, userId, recording.RecordedByUserId,
+					LmsEnrollmentSources.RecordedCompletion, null, null), cancellationToken);
+			}
+			else if (enrollment.LmsCourseVersionId != version.LmsCourseVersionId)
+			{
+				// Completed together on the current version: the open enrolment moves to it (its earlier version's progress does not count).
+				var expected = enrollment.RowVersion;
+				enrollment.LmsCourseVersionId = version.LmsCourseVersionId;
+				enrollment.CurrentLessonId = null;
+				if (!await _enrollments.TryUpdateAsync(enrollment, expected, cancellationToken))
+					return LmsResult.Fail(LmsErrors.StaleCopy);
+			}
+			if (enrollment == null || !enrollment.IsOpen)
+				return LmsResult.Fail(LmsErrors.StaleCopy);
+
+			var outline = LmsCourseService.BuildOutline(course, version,
+				await _modules.GetForVersionAsync(departmentId, version.LmsCourseVersionId), await _lessons.GetForVersionAsync(departmentId, version.LmsCourseVersionId));
+			if (!outline.Lessons.Any())
+				return LmsResult.Fail(LmsErrors.NotFound);
+
+			// Every lesson marked complete as a group (the quiz included): each row names the recording, so a void undoes exactly these.
+			var now = DateTime.UtcNow;
+			var progressMap = (await _progress.GetForEnrollmentAsync(departmentId, enrollment.LmsEnrollmentId) ?? new List<LmsLessonProgress>())
+				.GroupBy(p => p.LmsLessonId).ToDictionary(g => g.Key, g => g.First());
+			foreach (var lesson in outline.Lessons)
+			{
+				progressMap.TryGetValue(lesson.LmsLessonId, out var progress);
+				if (progress?.Status == (int)LmsLessonProgressStatuses.Completed)
+					continue;
+				progress ??= new LmsLessonProgress
+				{
+					DepartmentId = departmentId, LmsEnrollmentId = enrollment.LmsEnrollmentId, LmsLessonId = lesson.LmsLessonId, UserId = enrollment.UserId, StartedOn = now
+				};
+				progress.Status = (int)LmsLessonProgressStatuses.Completed;
+				progress.CompletedOn = now;
+				progress.LastSeenOn = now;
+				progress.RecordedCompletionId = recording.TrainingCompletionRecordingId;
+				await _progress.SaveOrUpdateAsync(progress, cancellationToken, true);
+				progressMap[lesson.LmsLessonId] = progress;
+			}
+
+			var completed = await EvaluateCompletionAsync(enrollment, outline, progressMap, false, cancellationToken, recording);
+			var stored = await _enrollments.GetByIdForDepartmentAsync(departmentId, enrollment.LmsEnrollmentId) ?? enrollment;
+			if (!completed && stored.Status != (int)LmsEnrollmentStatuses.Completed)
+				return new LmsResult { Error = LmsErrors.RequirementNotMet, Course = course, Version = version, Enrollment = stored };
+			// Audited by the recording itself (TrainingCompletionRecorded) with this enrolment and the record it wrote.
+			return new LmsResult { Course = course, Version = version, Enrollment = stored, Count = completed ? 1 : 0 };
+		}
+
+		/// <summary>Round 7B (trigger 247): an external learner completed a department course; ids only, never the learner's name or address.</summary>
+		private async Task AnnounceExternalCompletionAsync(LmsEnrollment enrollment, LmsCourseOutline outline)
+		{
+			try
+			{
+				var learner = _externalLearners == null ? null : await _externalLearners.GetByLearnerUserIdAsync(enrollment.DepartmentId, enrollment.UserId);
+				_eventAggregator?.SendMessage(new ExternalLearnerWorkflowEvent
+				{
+					DepartmentId = enrollment.DepartmentId,
+					Change = ExternalLearnerWorkflowChanges.CompletedCourse,
+					LearnerId = learner?.LmsExternalLearnerId ?? 0,
+					LearnerUserId = enrollment.UserId,
+					Source = learner == null ? null : ((LmsExternalLearnerSources)learner.Source).ToString(),
+					Subject = "Course",
+					CourseId = outline.Course.LmsCourseId,
+					Title = outline.Version?.Title ?? outline.Course.Title,
+					Status = "Completed",
+					CompletedOn = enrollment.CompletedOn,
+					LearningRecordId = enrollment.LearningRecordId,
+					OccurredOn = DateTime.UtcNow
+				});
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "The external learner completion event could not be raised.");
+			}
 		}
 
 		/// <summary>The department's "Systems training" category (no CE) for Academy completions, created on first use (§15 A1).</summary>
@@ -1027,12 +1419,20 @@ namespace Resgrid.Services
 					var courses = (await _courses.GetVisibleByIdsAsync(department.Key, department.Select(e => e.LmsCourseId)) ?? new List<LmsCourse>()).ToDictionary(c => c.LmsCourseId);
 					var canTransmit = ConfigHelper.CanTransmit(department.Key);
 					string number = null;
+					HashSet<string> seatHolders = null;
 
 					foreach (var enrollment in department)
 					{
 						if (!courses.TryGetValue(enrollment.LmsCourseId, out var course) || !active.Contains(enrollment.UserId) ||
-							!LmsLapseRules.CanRun(gate, course.IsSystem, enrollment, utcNow))
+							!LmsLapseRules.CanRun(gate.For(course.LmsCourseId), course.IsSystem, enrollment, utcNow))
 							continue;
+						// Round 10 A7: no reminder to take a department course the member cannot run without an LMS seat (one read per department).
+						if (LmsLearnerSeats.Needed(course, enrollment.UserId))
+						{
+							seatHolders ??= await _gate.GetLearnerSeatHoldersAsync(department.Key) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+							if (!seatHolders.Contains(enrollment.UserId))
+								continue;
+						}
 						// Claim first: a second worker run never sends the same reminder twice.
 						if (!await _enrollments.ClaimReminderAsync(department.Key, enrollment.LmsEnrollmentId, enrollment.ReminderSentOn, utcNow, cancellationToken))
 							continue;

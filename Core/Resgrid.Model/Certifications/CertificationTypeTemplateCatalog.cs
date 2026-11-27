@@ -24,6 +24,19 @@ namespace Resgrid.Model.Certifications
 			return All.FirstOrDefault(t => string.Equals(t.Id, id, StringComparison.OrdinalIgnoreCase));
 		}
 
+		/// <summary>The text fields of a template (round 9C): its name and description. Codes, the issuing authority and keywords stay.</summary>
+		public static readonly ISet<string> TextProperties = SeedContentLocalization.Properties("Name", "Description");
+
+		/// <summary>A template in a language (a translated copy; the template itself in English or when the language ships no variant).</summary>
+		public static CertificationTypeTemplate Localized(CertificationTypeTemplate template, string culture) =>
+			SeedContentLocalization.Localize(template, SeedContentLocalization.CertificationTemplates, culture, TextProperties, template?.Id);
+
+		/// <summary>Every template in a language, in catalog order.</summary>
+		public static IReadOnlyList<CertificationTypeTemplate> AllFor(string culture) => All.Select(t => Localized(t, culture)).ToList();
+
+		/// <summary>Every English text of a template (what the translations cover).</summary>
+		public static IReadOnlyList<string> TextOf(CertificationTypeTemplate template) => SeedContentLocalization.CollectObject(template, TextProperties);
+
 		public static IReadOnlyList<CertificationTypeTemplate> GetByCategory(CertificationCategories category)
 			=> All.Where(t => t.Category == category).ToList();
 
@@ -82,7 +95,8 @@ namespace Resgrid.Model.Certifications
 		{
 			const CertificationCategories Fire = CertificationCategories.Fire, EMS = CertificationCategories.EMS, SAR = CertificationCategories.SAR,
 				Wild = CertificationCategories.Wildland, EM = CertificationCategories.EmergencyManagement, Ind = CertificationCategories.Industrial,
-				Sec = CertificationCategories.Security, Med = CertificationCategories.Medical, Drv = CertificationCategories.Driver, Veh = CertificationCategories.Vehicle;
+				Sec = CertificationCategories.Security, Med = CertificationCategories.Medical, Drv = CertificationCategories.Driver, Veh = CertificationCategories.Vehicle,
+				LE = CertificationCategories.LawEnforcement, Other = CertificationCategories.Other;
 
 			return new List<CertificationTypeTemplate>
 			{
@@ -162,6 +176,28 @@ namespace Resgrid.Model.Certifications
 				P("BBP", "Bloodborne Pathogens", Ind, "OSHA 1910.1030", 12, "Annual bloodborne pathogens training.", "osha"),
 				P("TWIC", "Transportation Worker Identification Credential", Ind, "TSA", 60, "TWIC card (5-year).", "tsa", "port", "maritime"),
 				P("NCCCO", "NCCCO Crane Operator", Ind, "NCCCO", 60, "Certified crane operator (5-year recert).", "crane", "operator"),
+				// Round 9C: Canada and EU workplace credentials (structure only; the rules differ by province, territory and member state).
+				P("CA-WHMIS", "WHMIS Training", Ind, "Employer (provincial or territorial rules)", 12, "Workplace hazardous materials training, reviewed at least once a year.", "canada", "whmis", "hazard communication"),
+				P("CA-SFA", "Standard First Aid with CPR (Canada)", Med, "Red Cross / St. John Ambulance / provincial provider", 36, "Workplace standard first aid and CPR certificate.", "canada", "first aid", "cpr"),
+				P("CA-JHSC", "Joint Health and Safety Committee Certification", Ind, "Provincial or territorial rules", null, "Training for certified members of the joint health and safety committee.", "canada", "committee", "safety"),
+				P("CA-TDG", "Transportation of Dangerous Goods Training", Ind, "Employer (TDG regulations)", 36, "Training certificate for handling, offering or transporting dangerous goods.", "canada", "tdg", "dangerous goods"),
+				P("EU-FAW", "First Aid at Work (EU)", Med, "National first aid provider", 36, "Workplace first aid certificate; the refresher cycle follows national rules.", "eu", "first aid"),
+				P("EU-ATEX", "Explosive Atmospheres (ATEX) Awareness", Ind, "Employer / training provider", 36, "Working safely where an explosive atmosphere can occur.", "eu", "atex", "explosive"),
+				P("EU-ADR", "ADR Driver Training Certificate", Drv, "National competent authority (ADR)", 60, "Dangerous goods by road driver training certificate (5-year).", "eu", "adr", "dangerous goods", "driver"),
+				P("EU-CPC", "Driver CPC (Certificate of Professional Competence)", Drv, "National competent authority", 60, "Professional driver qualification; periodic training hours are recorded as credits.", "eu", "cpc", "driver").Credits(35m),
+				P("EU-FIRE-WARDEN", "Fire Warden", Ind, "Employer / training provider", 36, "Fire warden or evacuation marshal training.", "eu", "fire", "evacuation"),
+
+				// ---- Business and workplace compliance (round 9C) --------------------------------------------------------------------
+				P("BUS-HANDBOOK", "Employee Handbook Acknowledgment", Other, "Employer", 12, "Annual read-and-acknowledge of the employee handbook.", "business", "handbook", "policy"),
+				P("BUS-CONDUCT", "Conduct and Anti-Harassment Training", Other, "Employer", 12, "Respect at work and harassment prevention training.", "business", "harassment", "conduct"),
+				P("BUS-PRIVACY", "Data Protection and Privacy Training", Other, "Employer", 12, "Handling personal data and reporting a data breach.", "business", "privacy", "gdpr", "data protection"),
+
+				// ---- Member wellness roles (2026-11-26) ------------------------------------------------------------------------------
+				// Each wellness role is a personnel role, and the department can link one of these types to it in the wellness settings;
+				// the department decides the requirements (courses, CE hours, training sessions) and the validity. Names stay neutral.
+				P("WELLNESS-OFFICER", "Wellness Officer", Other, "Department (wellness program)", 24, "A member trained to act as the organization's wellness officer. Set the courses, continuing-education hours or training sessions your organization expects and how long the certification lasts, then link it in the wellness settings.", "wellness", "health", "officer", "member support"),
+				P("PEER-SUPPORT", "Peer Support Team Member", Other, "Department (peer support program)", 12, "A member trained for the peer support team, with a yearly refresher. Link it in the wellness settings to show each team member's status.", "peer support", "wellness", "critical incident", "crisis"),
+				P("DESIGNATED-OFFICER", "Designated Exposure Control Officer", Other, "Department (exposure control plan)", 24, "A member trained to receive bloodborne-pathogen and infectious-disease exposure reports and follow each case through, such as a designated infection control officer. Link it in the wellness settings.", "infection control", "exposure", "bloodborne", "designated officer"),
 
 				// ---- Security ---------------------------------------------------------------------------------
 				P("GUARD-CARD", "Security Guard Registration / License", Sec, "State licensing board (e.g. CA BSIS)", 24, "State guard card; annual con-ed hours tracked as credits.", "bsis", "license", "guard").Credits(8m),
@@ -171,6 +207,18 @@ namespace Resgrid.Model.Certifications
 				P("USE-OF-FORCE", "Use of Force Recertification", Sec, "Agency / state", 12, "Annual use-of-force recertification.", "force", "recert"),
 				P("PI-LICENSE", "Private Investigator License", Sec, "State licensing board", 24, "Private investigator license.", "investigator", "license"),
 				P("BC-SWL", "BC Security Worker Licence", Sec, "BC Security Programs Division", 24, "British Columbia security worker licence.", "canada", "bc", "licence"),
+				// Round 9C: security licences outside the US (the licensing body sets the hours; record renewal training as credits).
+				P("ON-SECURITY", "Ontario Security Guard Licence", Sec, "Ontario Private Security and Investigative Services", 24, "Ontario security guard licence.", "canada", "ontario", "licence"),
+				P("UK-SIA", "SIA Licence (UK)", Sec, "Security Industry Authority", 36, "UK Security Industry Authority front-line licence (door supervisor, security guard or CCTV).", "uk", "sia", "licence"),
+				P("SEC-LICENCE", "Security Officer Licence", Sec, "National or regional licensing body", 24, "A security officer licence or registration; set the renewal cycle and the hours your licensing body requires.", "licence", "registration", "guard").Credits(8m),
+
+				// ---- Law enforcement (round 9C: names only; the licensing body or training standard sets the hours) ------------------
+				P("LE-CERT", "Peace Officer Certification", LE, "Licensing body or training standard (POST or equivalent)", null, "Basic peace officer or police officer certification.", "police", "peace officer", "post"),
+				P("LE-INSERVICE", "Annual In-Service Training", LE, "Licensing body or training standard", 12, "In-service hours required to keep the certification; record the hours as credits.", "police", "in-service", "hours").Credits(24m),
+				P("LE-FIREARMS", "Firearms Qualification", LE, "Agency range master", 12, "Qualification for each firearm a member is authorized to carry.", "police", "firearm", "range", "qualification").Verified(),
+				P("LE-CEW", "Conducted Energy Weapon Certification", LE, "Agency / manufacturer program", 12, "Annual conducted energy weapon user certification.", "police", "taser", "cew"),
+				P("LE-CIT", "Crisis Intervention Training", LE, "Agency / training partner", null, "Crisis intervention team training for responding to people in mental health crisis.", "police", "crisis", "mental health"),
+				P("LE-UOF", "Use-of-Force Policy Acknowledgment", LE, "Agency", 12, "Annual read-and-acknowledge of the agency's use-of-force policy.", "police", "use of force", "policy"),
 
 				// ---- Driver qualification file (49 CFR 391) -----------------------------------------------------
 				P("CDL-A", "Commercial Driver's License – Class A", Drv, "State DMV (49 CFR 383)", 48, "Class A CDL; record endorsements as separate types.", "cdl", "dot", "fmcsa", "driver"),

@@ -56,6 +56,7 @@ namespace Resgrid.Tests.Security
 		private Mock<IMfaActivityService> _activity;
 		private List<AdpAuditEvent> _audited;
 		private MfaCredentialStateService _credentials;
+		private IStepUpPolicyService _stepUp;
 
 		[SetUp]
 		public void SetUp()
@@ -94,6 +95,7 @@ namespace Resgrid.Tests.Security
 			_activity = new Mock<IMfaActivityService>();
 			_audited = new List<AdpAuditEvent>();
 			_credentials = new MfaCredentialStateService(_passkeyRows, _sessionRows, _ssoConfigs.Object, _clock);
+			_stepUp = null;
 		}
 
 		[TearDown]
@@ -116,7 +118,7 @@ namespace Resgrid.Tests.Security
 			var evidence = new MfaEvidenceService(_evidenceRows, new InMemoryUserMfaStateRepository(), _passkeyRows, _sessionRows,
 				new InMemoryMfaActivityRepository(), _clock);
 			return new AdpStepUpService(grants ?? _grants, protection.Object, policy, evidence, _passkeys.Object, _approvals.Object, _broker.Object,
-				_departmentSso.Object, _credentials, _activity.Object, audit.Object, _gates.Object, _clock);
+				_departmentSso.Object, _credentials, _activity.Object, audit.Object, _gates.Object, _clock, _stepUp ?? Resgrid.Tests.Security.StepUpTestPolicies.Strict());
 		}
 
 		private ProtectedGrantSessionContext Session(DateTime? expiresOn = null, long? lockVersion = null) => new()
@@ -660,6 +662,67 @@ namespace Resgrid.Tests.Security
 
 			_securityPolicy.AcceptRecentUnlockMfaForAdp = false;
 			(await Service().IssueFromRecentEvidenceAsync(Caller())).Outcome.Should().Be(AdpGrantOutcome.StepUpRequired);
+		}
+
+		// ---- Password or SSO entered again (round 10 A5, department choice) ---------------------------------------------
+
+		private void AllowForProtectedData(StepUpMethodClasses methods) =>
+			_stepUp = StepUpTestPolicies.Of(a => a == StepUpArea.ProtectedData ? StepUpTestPolicies.Rule(a, methods: methods) : null).Object;
+
+		[Test]
+		public async Task A_reauthentication_grant_is_refused_unless_the_department_allows_that_kind_for_protected_data()
+		{
+			(await Service().IssueForReauthenticationAsync(Caller(), MfaEvidenceMethod.Password, _clock.Now)).Outcome.Should().Be(AdpGrantOutcome.MethodNotAllowed);
+
+			AllowForProtectedData(StepUpMethodClasses.Sso);
+			(await Service().IssueForReauthenticationAsync(Caller(), MfaEvidenceMethod.Password, _clock.Now)).Outcome.Should().Be(AdpGrantOutcome.MethodNotAllowed,
+				"SSO allowed does not allow the password");
+			(await Service().IssueForReauthenticationAsync(Caller(), MfaEvidenceMethod.Totp, _clock.Now)).Outcome.Should().Be(AdpGrantOutcome.InvalidRequest,
+				"a second factor has its own issuer");
+		}
+
+		[Test]
+		public async Task A_password_grant_opens_protected_values_but_is_never_proof_of_mfa()
+		{
+			AllowForProtectedData(StepUpMethodClasses.Password);
+
+			var issued = await Service().IssueForReauthenticationAsync(Caller(), MfaEvidenceMethod.Password, _clock.Now.AddSeconds(-5));
+
+			var grant = Read(issued);
+			grant.StepUpExempt.Should().BeTrue("no second factor was used, so the grant is in the non-MFA class");
+			grant.MfaMethod.Should().Be(ProtectedDataGrantMfaMethods.None);
+			grant.SessionId.Should().Be(SessionId);
+			issued.ExpiresOnUtc.Should().BeOnOrBefore(_clock.Now.AddMinutes(15).AddSeconds(1));
+			_audited.Should().Contain(e => e.Operation == "reauth-verify" && e.Outcome == "password-reauth");
+			_audited.Should().Contain(e => e.Operation == "grant-issued" && e.Outcome == "password-reauth" && e.PolicyEpoch == 3);
+		}
+
+		[Test]
+		public async Task A_reauthentication_grant_needs_a_tracked_session_and_a_verification_made_just_now()
+		{
+			AllowForProtectedData(StepUpMethodClasses.Password | StepUpMethodClasses.Sso);
+			(await Service().IssueForReauthenticationAsync(Caller(untracked: true), MfaEvidenceMethod.Sso, _clock.Now)).Outcome.Should().Be(AdpGrantOutcome.SessionRequired);
+			(await Service().IssueForReauthenticationAsync(Caller(), MfaEvidenceMethod.Sso, _clock.Now.AddMinutes(-5))).Outcome.Should().Be(AdpGrantOutcome.StepUpRequired,
+				"an older verification would outlive its window");
+			(await Service().IssueForReauthenticationAsync(Caller(), MfaEvidenceMethod.Sso, _clock.Now.AddMinutes(5))).Outcome.Should().Be(AdpGrantOutcome.StepUpRequired);
+			(await Service().IssueForReauthenticationAsync(Caller(), MfaEvidenceMethod.Sso, _clock.Now)).Succeeded.Should().BeTrue();
+		}
+
+		[Test]
+		public async Task A_reauthentication_grant_never_outlives_the_session()
+		{
+			AllowForProtectedData(StepUpMethodClasses.Password);
+			var issued = await Service().IssueForReauthenticationAsync(Caller(Session(expiresOn: _clock.Now.AddMinutes(4))), MfaEvidenceMethod.Password, _clock.Now);
+			issued.Succeeded.Should().BeTrue(issued.ErrorCode);
+			issued.ExpiresOnUtc.Should().BeOnOrBefore(_clock.Now.AddMinutes(4).AddSeconds(1));
+		}
+
+		[Test]
+		public async Task Without_signing_material_a_reauthentication_grant_is_unavailable()
+		{
+			AllowForProtectedData(StepUpMethodClasses.Password);
+			var issued = await Service(new ProtectedDataGrantService(() => null, () => _certificate)).IssueForReauthenticationAsync(Caller(), MfaEvidenceMethod.Password, _clock.Now);
+			issued.Outcome.Should().Be(AdpGrantOutcome.NotConfigured);
 		}
 }
 }

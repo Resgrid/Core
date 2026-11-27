@@ -11,10 +11,13 @@ using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Llm;
 using Resgrid.Model;
+using Resgrid.Model.AdminAssist;
+using Resgrid.Model.AiDispatch;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
+using Resgrid.Services.Knowledge;
 
 namespace Resgrid.Services
 {
@@ -23,6 +26,9 @@ namespace Resgrid.Services
 	/// thread and picks one of the department's published Dispatch protocols with a case flow, prefilling its answers. Nothing is attached
 	/// here: the suggestion is stored and shown to the dispatcher, who confirms it on the case flow. Fails closed (no add-on, Advanced Data
 	/// Protection, no model, no candidates); licensed and "no AI" protocols never reach the prompt (<see cref="ProtocolLicensing"/>).
+	/// Round 7A: every model call is charged like the other Enhanced AI features (the shared inference slot and the department's monthly
+	/// budget, feature <see cref="Feature"/>); over the cap, or with the slots busy, there is no suggestion (the dispatcher picks by hand with
+	/// the deterministic trigger matches), never an error.
 	/// </summary>
 	public class ProtocolAiSuggestionService : IProtocolAiSuggestionService
 	{
@@ -31,6 +37,12 @@ namespace Resgrid.Services
 
 		/// <summary>Longest text read from the call (nature, notes, thread), newest thread messages kept.</summary>
 		public const int MaxInputLength = 6000;
+
+		/// <summary>The usage ledger's feature name for the suggestion.</summary>
+		public const string Feature = "ProtocolSuggestion";
+
+		/// <summary>Tokens reserved per suggestion (the call text, the candidates' questions and a short tool call).</summary>
+		public const int ReservedTokens = 6144;
 
 		private readonly IEnhancedAiAccessService _enhancedAi;
 		private readonly IDepartmentDataProtectionService _protection;
@@ -41,11 +53,17 @@ namespace Resgrid.Services
 		private readonly IProtocolAiSuggestionsRepository _suggestions;
 		private readonly IProtocolCaseSuggester _suggester;
 		private readonly IEventAggregator _events;
+		private readonly IAiUsageMeter _usage;
+		private readonly IAiBackgroundAdmission _admission;
+		private readonly TimeProvider _clock;
 
 		public ProtocolAiSuggestionService(IEnhancedAiAccessService enhancedAi, IDepartmentDataProtectionService protection, IProtocolsService protocols,
 			IProtocolCaseService cases, Lazy<ICallsService> calls, Lazy<IIntakeConversationService> conversations, IProtocolAiSuggestionsRepository suggestions,
-			IProtocolCaseSuggester suggester, IEventAggregator events)
+			IProtocolCaseSuggester suggester, IEventAggregator events, IAiUsageMeter usage, IAiBackgroundAdmission admission, TimeProvider clock)
 		{
+			_usage = usage;
+			_admission = admission;
+			_clock = clock ?? TimeProvider.System;
 			_enhancedAi = enhancedAi;
 			_protection = protection;
 			_protocols = protocols;
@@ -102,14 +120,32 @@ namespace Resgrid.Services
 			if (string.IsNullOrWhiteSpace(text))
 				return ProtocolAiSuggestionResult.Of(ProtocolAiSuggestionOutcomes.NoInput);
 
+			// Charged like every Enhanced AI feature: the shared slot and the monthly budget. Over the cap (or busy) there is no suggestion.
+			var admission = await KnowledgeModelCalls.ReserveAsync(_usage, _admission, _clock, departmentId, Feature, ReservedTokens, cancellationToken);
+			if (admission.Outcome != null)
+				return ProtocolAiSuggestionResult.Of(admission.Outcome == KnowledgeOutcomes.BudgetExhausted ? ProtocolAiSuggestionOutcomes.BudgetExhausted : ProtocolAiSuggestionOutcomes.Busy);
+
 			ProtocolAiPick pick;
+			var used = 0;
+			var ledger = "Unavailable";
 			try
 			{
-				pick = await _suggester.SuggestAsync(departmentId, text, candidates, cancellationToken);
+				try
+				{
+					pick = await _suggester.SuggestAsync(departmentId, text, candidates, cancellationToken);
+				}
+				catch (Exception ex) when (ex is TimeoutException || ex is LlmUnavailableException || (ex is OperationCanceledException && !cancellationToken.IsCancellationRequested))
+				{
+					// Failed inference is not charged: the GPU and its outages are the operator's.
+					return ProtocolAiSuggestionResult.Of(ProtocolAiSuggestionOutcomes.Unavailable);
+				}
+
+				used = pick == null ? 0 : Math.Min(admission.Reservation.Tokens, Math.Max(0, pick.InputTokens + pick.OutputTokens));
+				ledger = "Answered";
 			}
-			catch (Exception ex) when (ex is TimeoutException || ex is LlmUnavailableException || (ex is OperationCanceledException && !cancellationToken.IsCancellationRequested))
+			finally
 			{
-				return ProtocolAiSuggestionResult.Of(ProtocolAiSuggestionOutcomes.Unavailable);
+				await KnowledgeModelCalls.CompleteAsync(_usage, admission.Reservation, used, ledger);
 			}
 
 			var validated = Validate(pick, candidates);
@@ -310,7 +346,11 @@ namespace Resgrid.Services
 				}
 			}
 
-			return Parse(result);
+			// An unusable reply is no pick (confidence 0), but its tokens were spent and are charged.
+			var pick = Parse(result) ?? new ProtocolAiPick { Confidence = 0m, ModelRevision = AiConfig.ModelRevision };
+			pick.InputTokens = Math.Max(0, result?.InputTokens ?? 0);
+			pick.OutputTokens = Math.Max(0, result?.OutputTokens ?? 0);
+			return pick;
 		}
 
 		public static IReadOnlyList<LlmMessage> Messages(string callText, IReadOnlyList<ProtocolAiCandidate> candidates)

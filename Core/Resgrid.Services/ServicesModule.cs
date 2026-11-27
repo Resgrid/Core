@@ -280,6 +280,13 @@ namespace Resgrid.Services
 			builder.RegisterType<ContentAudienceChangeQueue>().As<IContentAudienceChangeQueue>().InstancePerLifetimeScope();
 			builder.RegisterType<LearningRecordWriter>().As<ILearningRecordWriter>().InstancePerLifetimeScope();
 			builder.RegisterType<LearningRecordService>().As<ILearningRecordService>().InstancePerLifetimeScope();
+			// Round 7B (permission 135): completions recorded for members by an instructor (baseline; the LMS course target registers below)
+			builder.RegisterType<TrainingCompletionRecordingService>().As<ITrainingCompletionRecordingService>().InstancePerLifetimeScope();
+			// Round 9B: training hours submissions with evidence, their optional review and the member and reviewer notices (EventTypes 79-81)
+			builder.RegisterType<TrainingSubmissionService>().As<ITrainingSubmissionService>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingRecordNoticeService>().As<ITrainingRecordNoticeService>().InstancePerLifetimeScope();
+			// Round 10 (Omni): the member's own transcript and certificate PDFs for the v4 API (the web pages' documents and seal revisions)
+			builder.RegisterType<TrainingRecordDocumentService>().As<ITrainingRecordDocumentService>().InstancePerLifetimeScope();
 			builder.RegisterType<LearningRecordBackfillService>().As<ILearningRecordBackfillService>().InstancePerLifetimeScope();
 			builder.RegisterType<TrainingHistoryImportService>().As<ITrainingHistoryImportService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsAccessService>().As<ILmsAccessService>().InstancePerLifetimeScope();
@@ -295,6 +302,16 @@ namespace Resgrid.Services
 				}).InstancePerLifetimeScope();
 			builder.RegisterType<LmsSeatService>().As<ILmsSeatService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsReactivationService>().As<ILmsReactivationService>().InstancePerLifetimeScope();
+			// Workforce Pro add-on (shifts plan §7; owner 2026-11-26: member wellness and workplace exposure): the gate, seats and the pack
+			// add-on billing proxy (the LMS contract on api/WorkforceProBilling, sharing the billing client).
+			builder.RegisterType<WorkforceProAccessService>().As<IWorkforceProAccessService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceProSeatService>().As<IWorkforceProSeatService>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceProBillingService>().As<IWorkforceProBillingService>()
+				.WithParameter((parameter, _) => parameter.ParameterType == typeof(Func<RestClient>), (_, context) =>
+				{
+					var scope = context.Resolve<ILifetimeScope>();
+					return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>("lms-billing-client"));
+				}).InstancePerLifetimeScope();
 			// Member wellness WL0 (§13b): exposure and critical-incident log, post-call flags, screening, worker 91.
 			builder.RegisterType<Resgrid.Services.Wellness.MemberWellnessService>().As<IMemberWellnessService>().InstancePerLifetimeScope();
 			// Member wellness WL1: BBP exposure cases, injuries and return to duty, OSHA 300/301, NFPA 1582 clearances.
@@ -316,10 +333,18 @@ namespace Resgrid.Services
 			// certification cycles, familiarization credit, credential-status message audiences (worker 94)
 			builder.RegisterType<LmsProgramNotifier>().As<ILmsProgramNotifier>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsProgramSettingsService>().As<ILmsProgramSettingsService>().InstancePerLifetimeScope();
+			// Training T5 data exit and CE reporting (round 6D): worker 99 builds the exports; CE files are built on request
+			builder.RegisterType<LmsDataExportService>().As<ILmsDataExportService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsCeExportService>().As<ILmsCeExportService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsTrainingPlanService>().As<ILmsTrainingPlanService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsCompetencyService>().As<ILmsCompetencyService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsTrainingRequestService>().As<ILmsTrainingRequestService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsCertificationCycleService>().As<ILmsCertificationCycleService>().InstancePerLifetimeScope();
+			// Round 9A: certifications backed by training (requirement sets, validity rules, the issuance ledger and its void roll-back). The
+			// observer is the LMS side of the baseline ILearningRecordObserver seam (the writer resolves it lazily).
+			builder.RegisterType<LmsCertificationIssuanceService>().As<ILmsCertificationIssuanceService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsCertificationRequirementService>().As<ILmsCertificationRequirementService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsCertificationLearningRecordObserver>().As<ILearningRecordObserver>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsFamiliarizationCreditService>().As<ILmsFamiliarizationCreditService>().InstancePerLifetimeScope();
 			builder.RegisterType<CredentialStatusAudienceService>().As<ICredentialStatusAudienceService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsHoursReportSource>().As<ILmsReportSource>().InstancePerLifetimeScope();
@@ -337,6 +362,13 @@ namespace Resgrid.Services
 			// the post-class course quiz and the class reports
 			builder.RegisterType<LmsClassNotifier>().As<ILmsClassNotifier>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsClassService>().As<ILmsClassService>().InstancePerLifetimeScope();
+			// Training T5 item 2 (round 6E): external learners, the learner portal and paid public classes
+			builder.RegisterType<LmsExternalLearnerService>().As<ILmsExternalLearnerService>().InstancePerLifetimeScope();
+			// Round 7B: learner class e-mails (claimed once, learner's language), recorded LMS course completions and their void target
+			builder.RegisterType<LmsLearnerClassMailer>().As<ILmsLearnerClassMailer>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsCompletionRecordingService>().As<ILmsCompletionRecordingService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsCourseCompletionRecordingTarget>().As<ITrainingCompletionRecordingTarget>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsPublicClassService>().As<ILmsPublicClassService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsLessonPlanService>().As<ILmsLessonPlanService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsClassSweepService>().As<ILmsClassSweepService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsEventRosterAudienceService>().As<IEventRosterAudienceService>().InstancePerLifetimeScope();
@@ -357,6 +389,16 @@ namespace Resgrid.Services
 			// Training T4 part 2 (round 5C): skill sheets, evaluations (S3 evaluator mode: the SkillEvaluation subject source and its access rule),
 			// the post-class evaluation hook, position task books, the skill notification digest (worker 96), rating and pass/fail reports
 			builder.RegisterType<LmsSkillSettingsService>().As<ILmsSkillSettingsService>().InstancePerLifetimeScope();
+			// Training T5 standards (round 6C): SCORM / cmi5 packages (worker 98 unpacks), the sandboxed runtime and the cmi5 minimal LRS, the LTI
+			// 1.3 tool consumer, xAPI statements out (the outbox worker 98 delivers), the course builder's lesson check, the guarded HTTP transport
+			builder.RegisterType<LmsContentPackageService>().As<ILmsContentPackageService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsStandardsRuntimeService>().As<ILmsStandardsRuntimeService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsLtiService>().As<ILmsLtiService>().InstancePerLifetimeScope();
+			// Round 10 A8: SCORM / cmi5 / LTI lessons in the app's web view (single-use launch link, launch page session, completion message).
+			builder.RegisterType<LmsAppLaunchService>().As<ILmsAppLaunchService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsXapiService>().As<ILmsXapiService>().As<ILmsXapiStatementQueue>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsStandardsLessonValidator>().As<ILmsStandardsLessonValidator>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsStandardsHttpTransport>().As<ILmsStandardsTransport>().SingleInstance();
 			builder.RegisterType<LmsSkillNotificationService>().As<ILmsSkillNotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsSkillSheetService>().As<ILmsSkillSheetService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsSkillEvaluationService>().As<ILmsSkillEvaluationService>().As<ILmsPostClassEvaluationHook>().InstancePerLifetimeScope();
@@ -411,7 +453,7 @@ namespace Resgrid.Services
 			builder.RegisterType<Signatures.ChecklistWitnessSignatureService>().As<IChecklistWitnessSignatureService>().InstancePerLifetimeScope();
 			builder.RegisterType<Signatures.WorkOrderVendorAcceptanceSignatureSource>().As<ISignatureSubjectSource>().InstancePerLifetimeScope();
 			builder.RegisterType<Signatures.InventoryIssueReceiptSignatureSource>().As<ISignatureSubjectSource>().InstancePerLifetimeScope();
-			// e-Signature S4 approval chains (M0413-M0414, worker 97): the chain service on the S3 request, the module gate, one module source per
+			// e-Signature S4 approval chains (M0385-M0386, worker 97): the chain service on the S3 request, the module gate, one module source per
 			// approval kind (IBO requisitions and IAP, Business Ops invoices and MARS packages, mutual-aid agreements; payroll runs have no entity
 			// yet), the signing layer's view of each kind, the IBO ledger gates and the notifications (EventTypes 73-74).
 			builder.RegisterType<Approvals.ApprovalChainService>().As<IApprovalChainService>().InstancePerLifetimeScope();
@@ -438,11 +480,11 @@ namespace Resgrid.Services
 				.As<IIncidentLedgerRule<Model.IncidentLogistics.IncidentPlanVersion>>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolAccessService>().As<IProtocolAccessService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolLibraryService>().As<IProtocolLibraryService>().InstancePerLifetimeScope();
-			// K1 department knowledge (M0368-M0370, worker 89): the reindex queue the content services write to, the corpus sources, the
+			// K1 department knowledge (M0353-M0355, worker 89): the reindex queue the content services write to, the corpus sources, the
 			// index, the answers and the gaps report. The page-text store default yields no pages until file extraction registers its own.
 			builder.RegisterType<Knowledge.KnowledgeIndexQueue>().As<IKnowledgeIndexQueue>().InstancePerLifetimeScope();
 			builder.RegisterType<Knowledge.NullKnowledgePageTextSource>().As<IKnowledgePageTextSource>().InstancePerLifetimeScope().PreserveExistingDefaults();
-			// Protocol file text (P1 wave-2 extraction, M0353) feeds the ProtocolFile corpus; training files and documents still yield no pages.
+			// Protocol file text (P1 wave-2 extraction, M0347) feeds the ProtocolFile corpus; training files and documents still yield no pages.
 			builder.RegisterType<Knowledge.ProtocolKnowledgePageTextSource>().As<IKnowledgePageTextSource>().InstancePerLifetimeScope();
 			builder.RegisterType<Knowledge.ProtocolKnowledgeSource>().As<IKnowledgeCorpusSource>().InstancePerLifetimeScope();
 			builder.RegisterType<Knowledge.TrainingKnowledgeSource>().As<IKnowledgeCorpusSource>().InstancePerLifetimeScope();
@@ -460,12 +502,20 @@ namespace Resgrid.Services
 			// determinant reader is P4's; the default yields none and never replaces one registered by P4), scenario practice and the LMS
 			// learning recommendations.
 			builder.RegisterType<LmsCourseKnowledgeSource>().As<IKnowledgeCorpusSource>().As<IKnowledgeVersionContentSource>().InstancePerLifetimeScope();
+			// Question bank explanations (owner decision 2026-11-26): readable only by those the bank editor shows the answer keys to.
+			builder.RegisterType<LmsQuestionExplanationKnowledgeSource>().As<IKnowledgeCorpusSource>().InstancePerLifetimeScope();
 			builder.RegisterType<Knowledge.NullKnowledgeCallDeterminantSource>().As<IKnowledgeCallDeterminantSource>().InstancePerLifetimeScope().PreserveExistingDefaults();
 			// P4 case flow: the call's determinant (CallProtocols.Determinant) for call-context answers.
 			builder.RegisterType<Knowledge.CallProtocolDeterminantSource>().As<IKnowledgeCallDeterminantSource>().InstancePerLifetimeScope();
 			builder.RegisterType<Knowledge.KnowledgeCallContextService>().As<IKnowledgeCallContextService>().InstancePerLifetimeScope();
 			builder.RegisterType<Knowledge.KnowledgePracticeService>().As<IKnowledgePracticeService>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsRecommendationService>().As<ILmsRecommendationService>().InstancePerLifetimeScope();
+			// T5 AI and content (round 6F): course drafts from a protocol or SOP and flashcards (Enhanced AI and the LMS), the Resgrid starter
+			// course library (the LMS), and the publish hook that flags flashcards whose source version was superseded.
+			builder.RegisterType<LmsCourseDraftService>().As<ILmsCourseDraftService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsFlashcardService>().As<ILmsFlashcardService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsStarterCourseService>().As<ILmsStarterCourseService>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsFlashcardSupersedeHook>().As<IContentVersionPublishedHook>().InstancePerLifetimeScope();
 			// Protocols P1 wave-2 remainder (document-backed versions, file text) and P2 (distribution and acknowledgment).
 			builder.RegisterType<ProtocolDocumentService>().As<IProtocolDocumentService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolAcknowledgmentService>().As<IProtocolAcknowledgmentService>().InstancePerLifetimeScope();
@@ -480,7 +530,46 @@ namespace Resgrid.Services
 			builder.RegisterType<DispatchTriggerFactsService>().As<IDispatchTriggerFactsService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolCaseService>().As<IProtocolCaseService>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolAiSuggestionService>().As<IProtocolAiSuggestionService>().InstancePerLifetimeScope();
+			// Enhanced AI on protocols (round 7A, Enhanced AI only): protocol flashcards with their supersede hook, a baseline training drafted from a
+			// protocol version, and translation drafts of a version's wording.
+			builder.RegisterType<ProtocolFlashcardService>().As<IProtocolFlashcardService>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtocolFlashcardSupersedeHook>().As<IContentVersionPublishedHook>().InstancePerLifetimeScope();
+
+			// Round 10 A3: Protocols share kind on Department Links, protocol and course sets (publisher/subscriber, lock/override, inbox,
+			// proposals), sponsored LMS seats and mutual-aid countersignature over the link.
+			builder.RegisterType<LinkedProtocolService>().As<ILinkedProtocolService>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSetCopyLocks>().As<IContentSetCopyLocks>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.ContentSetService>().As<IContentSetService>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.ProtocolSetItemSource>().As<IContentSetItemSource>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.LmsCourseSetItemSource>().As<IContentSetItemSource>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.TrainingSetItemSource>().As<IContentSetItemSource>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.LmsPathSetItemSource>().As<IContentSetItemSource>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.LmsSetFiles>().As<ILmsSetFiles>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.ContentSetNotifier>().As<IContentSetNotifier>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.ContentSetPublishedHook>().As<IContentVersionPublishedHook>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.ContentSetLinkAccessListener>().As<IDepartmentLinkAccessListener>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSets.LmsSponsorshipService>().As<ILmsSponsorshipService>().InstancePerLifetimeScope();
+			builder.RegisterType<Approvals.MutualAidCountersignService>().As<IMutualAidCountersignService>().InstancePerLifetimeScope();
+			builder.RegisterType<Approvals.MutualAidCountersignatureSource>().As<ISignatureSubjectSource>().InstancePerLifetimeScope();
+			builder.RegisterType<Approvals.MutualAidCountersignatureAccessRule>().As<ISignatureSubjectAccessRule>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordDeploymentPartnerService>().As<IRecordDeploymentPartnerService>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordDeploymentPartnerAcceptanceSource>().As<ISignatureSubjectSource>().InstancePerLifetimeScope();
+			builder.RegisterType<Records.RecordDeploymentPartnerAcceptanceAccessRule>().As<ISignatureSubjectAccessRule>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtocolTrainingDraftService>().As<IProtocolTrainingDraftService>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtocolTranslationDraftService>().As<IProtocolTranslationDraftService>().InstancePerLifetimeScope();
+			// Protocols P5 (round 6 A): public pages, the template library, the community exchange (with its item sources) and analytics
+			builder.RegisterType<ProtocolPublicPageService>().As<IProtocolPublicPageService>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtocolTemplateLibraryService>().As<IProtocolTemplateLibraryService>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtocolAnalyticsService>().As<IProtocolAnalyticsService>().InstancePerLifetimeScope();
+			builder.RegisterType<CommunityExchangeService>().As<ICommunityExchangeService>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtocolExchangeItemSource>().As<IExchangeItemSource>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingExchangeItemSource>().As<IExchangeItemSource>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsSkillSheetExchangeSource>().As<IExchangeItemSource>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsLessonPlanExchangeSource>().As<IExchangeItemSource>().InstancePerLifetimeScope();
 			builder.RegisterType<LlmProtocolCaseSuggester>().As<IProtocolCaseSuggester>().InstancePerLifetimeScope();
+			// Protocols P5 QA: dispatch case review (sampling, scoring against a Records QA rubric, dispatcher feedback, reports).
+			builder.RegisterType<DispatchCaseReviewService>().As<IDispatchCaseReviewService>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchCaseReviewNotifier>().As<IDispatchCaseReviewNotifier>().InstancePerLifetimeScope();
 			builder.RegisterType<FormsService>().As<IFormsService>().InstancePerLifetimeScope();
 			builder.RegisterType<VoiceService>().As<IVoiceService>().InstancePerLifetimeScope();
 			builder.RegisterType<SystemAuditsService>().As<ISystemAuditsService>().InstancePerLifetimeScope();
@@ -533,6 +622,9 @@ namespace Resgrid.Services
 			builder.RegisterType<MfaActivityService>().As<IMfaActivityService>().InstancePerLifetimeScope();
 			builder.RegisterType<MfaCredentialStateService>().As<IMfaCredentialStateService>().InstancePerLifetimeScope();
 			builder.RegisterType<AdpStepUpService>().As<IAdpStepUpService>().InstancePerLifetimeScope();
+			// Department step-up policy (round 10 A5): per-area rules and evidence evaluation, and what a member can use (refusals, warning).
+			builder.RegisterType<StepUpPolicyService>().As<IStepUpPolicyService>().InstancePerLifetimeScope();
+			builder.RegisterType<StepUpCapabilityService>().As<IStepUpCapabilityService>().InstancePerLifetimeScope();
 
 			// Passkey plan Phase 1 slice 2: MFA evidence, single-use ceremony challenges and the per-client relying parties.
 			// The registry parses static config once; the gates only report ON when that configuration validated.
@@ -675,6 +767,14 @@ namespace Resgrid.Services
 			builder.RegisterType<GdprDataExportService>().As<IGdprDataExportService>().InstancePerLifetimeScope();
 			// Round 5F: the LMS part of a member's GDPR export (enrollments, attempts without keys, requirement status, training requests).
 			builder.RegisterType<LmsGdprExportSection>().As<IGdprExportSection>().InstancePerLifetimeScope();
+			// Round 7B: the completions an instructor recorded for the member (who, when, from where, the note, the attestation, any void).
+			builder.RegisterType<TrainingCompletionRecordingsGdprSection>().As<IGdprExportSection>().InstancePerLifetimeScope();
+			// Round 9B: the member's hours submissions, their review history and their evidence files' metadata (never the bytes).
+			builder.RegisterType<TrainingSubmissionsGdprSection>().As<IGdprExportSection>().InstancePerLifetimeScope();
+			// Protocols P5 QA: the member's own sent dispatch case reviews.
+			builder.RegisterType<DispatchCaseReviewGdprExportSection>().As<IGdprExportSection>().InstancePerLifetimeScope();
+			// Round 9A: the member's certification issuance ledger (automatic issues and renewals, and voids that took one back).
+			builder.RegisterType<LmsCertificationIssuanceGdprSection>().As<IGdprExportSection>().InstancePerLifetimeScope();
 
 			// Communication Test Services
 			builder.RegisterType<CommunicationTestService>().As<ICommunicationTestService>().InstancePerLifetimeScope();

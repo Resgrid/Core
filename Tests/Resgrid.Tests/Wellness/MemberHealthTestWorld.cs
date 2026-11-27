@@ -62,6 +62,8 @@ namespace Resgrid.Tests.Wellness
 		public readonly Mock<IRmsRecordWorkAssignmentsRepository> AssignmentsRepository = new Mock<IRmsRecordWorkAssignmentsRepository>();
 		public readonly Mock<IRmsRecordLegalHoldsRepository> HoldsRepository = new Mock<IRmsRecordLegalHoldsRepository>();
 		public readonly Mock<IMemberWellnessService> Wellness = new Mock<IMemberWellnessService>();
+		/// <summary>Workforce Pro (2026-11-26): licensed with every member seated unless a test says otherwise.</summary>
+		public readonly FakeWorkforcePro WorkforcePro = new FakeWorkforcePro();
 		public readonly Mock<IDepartmentsService> Departments = new Mock<IDepartmentsService>();
 		public readonly Mock<IDepartmentSettingsService> SettingsService = new Mock<IDepartmentSettingsService>();
 		public readonly Mock<IPersonnelRolesService> Roles = new Mock<IPersonnelRolesService>();
@@ -69,6 +71,7 @@ namespace Resgrid.Tests.Wellness
 		public readonly Mock<ICertificationService> CertificationService = new Mock<ICertificationService>();
 		public readonly Mock<ICallsService> CallsService = new Mock<ICallsService>();
 		public readonly Mock<ICommunicationService> Communication = new Mock<ICommunicationService>();
+		public readonly Mock<IUserProfileService> UserProfiles = new Mock<IUserProfileService>();
 		public readonly Mock<IProtectedWriteService> ProtectedWrite = new Mock<IProtectedWriteService>();
 		public readonly Mock<IProtectedReadService> ProtectedRead = new Mock<IProtectedReadService>();
 		public readonly Mock<IProtectedGrantContext> Grant = new Mock<IProtectedGrantContext>();
@@ -277,7 +280,7 @@ namespace Resgrid.Tests.Wellness
 			ClearancesRepository.Object, ExposuresRepository.Object, AssignmentsRepository.Object, HoldsRepository.Object, Wellness.Object, Departments.Object,
 			SettingsService.Object, Roles.Object, Groups.Object, new Lazy<ICertificationService>(() => CertificationService.Object), CallsService.Object,
 			new Lazy<ICommunicationService>(() => Communication.Object), new Lazy<IProtectedWriteService>(() => ProtectedWrite.Object),
-			new Lazy<IProtectedReadService>(() => ProtectedRead.Object), Grant.Object, Events.Object);
+			new Lazy<IProtectedReadService>(() => ProtectedRead.Object), Grant.Object, Events.Object, UserProfiles.Object, WorkforcePro);
 
 		public RmsResponderExposure AddExposure(string userId, ResponderExposureCategories category, ResponderExposureStatuses status, DateTime occurredOn, int? callId = null)
 		{

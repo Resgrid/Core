@@ -28,7 +28,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for e-Signature S4 (M0413, M0414) on both engines: the migrations re-run as a no-op, roll back and apply again;
+	/// Real-database proof for e-Signature S4 (M0385, M0386) on both engines: the migrations re-run as a no-op, roll back and apply again;
 	/// the repositories' department reads (case-insensitive subject ids), the conditional status claim, worker 97's due-work queries
 	/// (unannounced turns joined to the S3 signer, due escalations of pending requests only, pending requests whose signature request
 	/// closed) and their one-time claims (with and without an escalation time, the PostgreSQL untyped-null trap), and the department
@@ -161,7 +161,7 @@ namespace Resgrid.Tests.Repositories
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 413");
+				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 385");
 
 			using var runner = Runner();
 			using var scope = runner.CreateScope();
@@ -170,7 +170,7 @@ namespace Resgrid.Tests.Repositories
 			foreach (var table in new[] { "ApprovalChains", "ApprovalChainSteps", "ApprovalRequests", "ApprovalRequestSteps", "ApprovalDelegates", "MutualAidAgreements" })
 				(await TableCountAsync(table)).Should().Be(1, table);
 
-			migrations.MigrateDown(412);
+			migrations.MigrateDown(384);
 			(await TableCountAsync("ApprovalRequests")).Should().Be(0);
 			(await TableCountAsync("MutualAidAgreements")).Should().Be(0);
 

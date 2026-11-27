@@ -35,7 +35,7 @@ namespace Resgrid.Model
 
 	/// <summary>
 	/// The P4 criteria a trigger can add to its basis. Both <see cref="DispatchProtocolTrigger"/> and <see cref="RunCardTrigger"/> store them
-	/// (M0399) and the one engine reads them. Every criterion that is set must hold (AND); triggers on one protocol or card are OR'd.
+	/// (M0376) and the one engine reads them. Every criterion that is set must hold (AND); triggers on one protocol or card are OR'd.
 	/// </summary>
 	public interface IDispatchTriggerCriteria
 	{

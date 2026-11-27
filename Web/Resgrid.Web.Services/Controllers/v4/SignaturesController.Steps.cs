@@ -109,7 +109,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						Kind = s.SignerKind,
 						StepLabel = s.StepLabel,
 						// Member names are operational; an outside signer shows the printed name only (no contact).
-						Name = s.IsMember ? (s.UserId != null && names.TryGetValue(s.UserId, out var n) ? n : null) : s.ExternalName,
+						Name = s.IsMember ? (s.UserId != null && names.TryGetValue(s.UserId, out var n) ? n : null) : s.ExternalNameForDisplay,
 						AnyEligibleMember = s.IsMember && string.IsNullOrWhiteSpace(s.UserId),
 						Level = (int)SignatureOrdering.StepLevel(s),
 						Status = s.Status,
@@ -140,6 +140,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				SignatureRequestSignerId = input.SignatureRequestSignerId > 0 ? input.SignatureRequestSignerId : null,
 				Proof = proof
 			}, cancellationToken);
+			if (outcome.Refusal == SignatureRequestRefusals.StepUpRequired)
+				return await ApiStepUp.RefuseAsync(HttpContext, _stepUp, DepartmentId, UserId, Model.Security.StepUpArea.Signatures, cancellationToken);
 			return Outcome(outcome);
 		}
 

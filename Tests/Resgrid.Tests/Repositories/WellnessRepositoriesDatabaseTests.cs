@@ -28,7 +28,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for member wellness WL0 (M0376) on both engines: the three tables, the repository queries worker 91 relies on
+	/// Real-database proof for member wellness WL0 (M0360) on both engines: the three tables, the repository queries worker 91 relies on
 	/// (only due anniversaries, a claim that wins once, only departments with an entry past the 30-year minimum, pending flags and their
 	/// claim/release), the case-insensitive member lookup, removal of only unconfirmed suggestions, then Up again after the version row
 	/// is gone changes nothing, and Down removes the tables and Up rebuilds them.
@@ -62,8 +62,8 @@ namespace Resgrid.Tests.Repositories
 		private void Migrate(Action<IMigrationRunner> run)
 		{
 			IMigration migration = IsPostgres
-				? new Resgrid.Providers.MigrationsPg.Migrations.M0376_AddResponderExposuresPg()
-				: new Resgrid.Providers.Migrations.Migrations.M0376_AddResponderExposures();
+				? new Resgrid.Providers.MigrationsPg.Migrations.M0360_AddResponderExposuresPg()
+				: new Resgrid.Providers.Migrations.Migrations.M0360_AddResponderExposures();
 			var source = new Mock<IMigrationSource>();
 			source.Setup(s => s.GetMigrations()).Returns(new[] { migration });
 			using var provider = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
@@ -244,7 +244,7 @@ namespace Resgrid.Tests.Repositories
 				? "SELECT COUNT(*) FROM information_schema.tables WHERE table_name IN ('rmsresponderexposures', 'rmscallexposureflags', 'rmsresponderscreeningflags')"
 				: "SELECT COUNT(*) FROM sys.tables WHERE name IN ('RmsResponderExposures', 'RmsCallExposureFlags', 'RmsResponderScreeningFlags')";
 
-			Migrate(r => r.MigrateDown(375));
+			Migrate(r => r.MigrateDown(359));
 			await using (var database = Connect(_connection))
 				(await database.ExecuteScalarAsync<int>(exists)).Should().Be(0);
 

@@ -145,6 +145,36 @@
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/resource-orders/"
+    },
+    {
+      "Id": "deployment-partner-acceptance",
+      "AreaId": "deployments",
+      "LabelKey": "Feature.deployment-partner-acceptance",
+      "PurposeKey": "FeaturePurpose.deployment-partner-acceptance",
+      "ValueKey": "AreaValue.deployments",
+      "ExampleKey": "AreaExample.deployments",
+      "AdoptionKey": "ModuleAdoption.deployments",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DeploymentOrders",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Operations.Deployments"
+        },
+        {
+          "Kind": "module",
+          "Id": "Deployments"
+        }
+      ],
+      "SettingIds": [
+        "module.DeploymentsDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/business-ops/deployment-finance/"
     }
   ],
   "Rules": [],
@@ -182,6 +212,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "deployment-partner-acceptance",
+      "Locale": "en",
+      "TitleKey": "Feature.deployment-partner-acceptance",
+      "Body": "Partner Acceptance Of Deployments When a deployment order is filled for a linked organization on Resgrid, name it as the partner: each fill you accept asks its administrators to accept the assignment with a step-up signature over the link, and the deployment shows who accepted it and when.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "deployment-partner-acceptance",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
     },
     {
       "Id": "module.DeploymentsDisabled",

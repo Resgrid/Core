@@ -78,7 +78,7 @@ namespace Resgrid.Tests.Web
 				.Callback((SignatureRecord r, CancellationToken _, bool __) => { r.SignatureRecordId = 900 + _inserted.Count; _inserted.Add(r); })
 				.ReturnsAsync((SignatureRecord r, CancellationToken _, bool __) => r);
 			_signatureService = new SignatureService(_signatureRows.Object, Mock.Of<IProtocolVersionsRepository>(), Mock.Of<IPersonnelCertificationRepository>(),
-				Mock.Of<IUserProfileService>(), Mock.Of<IPersonnelRolesService>(), Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>());
+				Mock.Of<IUserProfileService>(), Mock.Of<IPersonnelRolesService>(), Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>(), Resgrid.Tests.Security.StepUpTestPolicies.Strict());
 		}
 
 		[TearDown]
@@ -221,7 +221,8 @@ namespace Resgrid.Tests.Web
 			var policy = new Mock<IMfaPolicyService>();
 			policy.Setup(x => x.IsEvidenceAcceptedAsync(DepartmentId, MfaMethodScope.Login, It.IsAny<MfaEvidence>(), It.IsAny<CancellationToken>())).ReturnsAsync(accepted);
 
-			var controller = new ApiCertifications(_certifications.Object, Mock.Of<IProtectedReadService>(), Mock.Of<IDepartmentsService>(), _signatureService,
+			var controller = new ApiCertifications(_certifications.Object, Mock.Of<IProtectedReadService>(), Mock.Of<IDepartmentsService>(),
+				Resgrid.Tests.Security.StepUpTestPolicies.Strict(), Resgrid.Tests.Security.StepUpTestPolicies.Capabilities(), _signatureService,
 				evidenceService.Object, policy.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = http }
@@ -260,8 +261,11 @@ namespace Resgrid.Tests.Web
 
 			var result = await controller.VerifyCertification(CertificationId, CancellationToken.None);
 
+			// Round 10 A5: the one v4 step-up refusal (403, problem type step_up_required, area signatures).
 			result.Result.Should().BeOfType<ObjectResult>().Which.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
-			http.Response.Headers["X-Resgrid-Reason"].ToString().Should().Be("certifications_step_up_required");
+			((ProblemDetails)((ObjectResult)result.Result).Value).Type.Should().Be("step_up_required");
+			http.Response.Headers["X-Resgrid-Reason"].ToString().Should().Be("step_up_required");
+			http.Response.Headers["X-Resgrid-Step-Up"].ToString().Should().Be("signatures");
 			_certifications.Verify(x => x.VerifyCertificationAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
 			_inserted.Should().BeEmpty();
 		}

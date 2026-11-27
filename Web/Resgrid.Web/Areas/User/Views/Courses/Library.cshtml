@@ -29,6 +29,9 @@
         @if (Model.Actor?.MayManage == true)
         {
             <a class="btn btn-white" asp-controller="Courses" asp-action="Storage" asp-route-area="User"><i class="fa fa-hdd-o" aria-hidden="true"></i> @localizer["StorageTitle"]</a>
+            @* T5: the Resgrid starter course library (the LMS) and course drafts from a protocol or SOP (Enhanced AI and the LMS). *@
+            <a class="btn btn-white" asp-controller="LmsStudio" asp-action="Starters" asp-route-area="User"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Studio.StartersTab"]</a>
+            <a class="btn btn-white" asp-controller="LmsStudio" asp-action="Draft" asp-route-area="User"><i class="fa fa-magic" aria-hidden="true"></i> @localizer["Studio.DraftTab"]</a>
         }
     </div>
 

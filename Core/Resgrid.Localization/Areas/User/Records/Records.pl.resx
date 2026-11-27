@@ -2298,4 +2298,72 @@
   <data name="RatedFlowHelp" xml:space="preserve">
     <value>Wydajność znamionowa wg NFPA 291: zmierzona wydajność × ((statyczne − 20) / (statyczne − resztkowe))^0.54. Klasa wydajności wynika z niej, gdy wpisano ciśnienie statyczne i resztkowe.</value>
   </data>
+  <data name="DeploymentPartner" xml:space="preserve">
+    <value>Powiązany partner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerNone" xml:space="preserve">
+    <value>Brak powiązanego partnera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSave" xml:space="preserve">
+    <value>Zapisz partnera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerHelp" xml:space="preserve">
+    <value>Jeśli agencja, dla której realizowane jest to zamówienie, jest powiązaną organizacją w Resgrid, proszę ją tutaj wybrać. Każda zaakceptowana obsada poprosi wtedy jej administratorów o przyjęcie przydziału podpisem z ponowną weryfikacją tożsamości (step-up).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSaved" xml:space="preserve">
+    <value>Zapisano powiązanego partnera.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerRequested" xml:space="preserve">
+    <value>Poproszono powiązanego partnera o przyjęcie przydziału.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerAsk" xml:space="preserve">
+    <value>Poproś partnera o akceptację</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotLinked" xml:space="preserve">
+    <value>Powiązanie z tą organizacją nie jest włączone.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorClosedOut" xml:space="preserve">
+    <value>Oddelegowanie jest zamknięte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorConflict" xml:space="preserve">
+    <value>Ktoś inny zmienił to oddelegowanie w tym samym czasie. Proszę spróbować ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotFound" xml:space="preserve">
+    <value>Nie znaleziono oddelegowania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotAuthorized" xml:space="preserve">
+    <value>Nie można zmienić tego oddelegowania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateRequested" xml:space="preserve">
+    <value>Poproszono partnera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateSigned" xml:space="preserve">
+    <value>Partner zaakceptował</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateDeclined" xml:space="preserve">
+    <value>Partner odrzucił</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateLapsed" xml:space="preserve">
+    <value>Prośba do partnera wygasła</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateNone" xml:space="preserve">
+    <value>Brak podpisu partnera</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

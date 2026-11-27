@@ -6,7 +6,7 @@ using Resgrid.Model.Lms;
 
 namespace Resgrid.Model.Repositories
 {
-	// Training T4 part 2 (round 5C, M0407-M0410): skill sheets, evaluations, task books and the skill notification digest.
+	// Training T4 part 2 (round 5C, M0381-M0384): skill sheets, evaluations, task books and the skill notification digest.
 
 	public interface ILmsSkillSheetsRepository : IRepository<LmsSkillSheet>
 	{

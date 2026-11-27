@@ -30,7 +30,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for Protocols P3 on both engines: M0379 (CallProtocols step log), M0380 (ProtocolVersionTranslations) and M0381
+	/// Real-database proof for Protocols P3 on both engines: M0361 (CallProtocols step log), M0362 (ProtocolVersionTranslations) and M0363
 	/// (DispatchProtocolAttachments.Sha256, backfilled by the database) over the P0/P1/round-3 schema; Up again is a no-op, Down removes
 	/// them and Up rebuilds them. Then the repositories: the step log's optimistic revision and its department check, translations
 	/// (unique per version and language, approved headers only, conditional update), attachment hashes filled by the database and equal
@@ -71,32 +71,32 @@ namespace Resgrid.Tests.Repositories
 			? new IMigration[]
 			{
 				new Resgrid.Providers.MigrationsPg.Migrations.M0336_ProtocolFoundationPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocolsPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0342_AddSignatureRecordsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0343_AddProtocolLibraryAndVersionsPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0344_BackfillProtocolVersionsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0353_AddProtocolDocumentsAndFileTextPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0354_AddProtocolAcknowledgmentsPg()
+				new Resgrid.Providers.MigrationsPg.Migrations.M0341_AddSignatureRecordsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0342_AddProtocolLibraryAndVersionsPg(),
+				new Resgrid.Providers.MigrationsPg.Migrations.M0343_BackfillProtocolVersionsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0347_AddProtocolDocumentsAndFileTextPg(),
+				new Resgrid.Providers.MigrationsPg.Migrations.M0348_AddProtocolAcknowledgmentsPg()
 			}
 			: new IMigration[]
 			{
 				new Resgrid.Providers.Migrations.Migrations.M0336_ProtocolFoundation(), new Resgrid.Providers.Migrations.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocols(),
-				new Resgrid.Providers.Migrations.Migrations.M0342_AddSignatureRecords(), new Resgrid.Providers.Migrations.Migrations.M0343_AddProtocolLibraryAndVersions(),
-				new Resgrid.Providers.Migrations.Migrations.M0344_BackfillProtocolVersions(), new Resgrid.Providers.Migrations.Migrations.M0353_AddProtocolDocumentsAndFileText(),
-				new Resgrid.Providers.Migrations.Migrations.M0354_AddProtocolAcknowledgments()
+				new Resgrid.Providers.Migrations.Migrations.M0341_AddSignatureRecords(), new Resgrid.Providers.Migrations.Migrations.M0342_AddProtocolLibraryAndVersions(),
+				new Resgrid.Providers.Migrations.Migrations.M0343_BackfillProtocolVersions(), new Resgrid.Providers.Migrations.Migrations.M0347_AddProtocolDocumentsAndFileText(),
+				new Resgrid.Providers.Migrations.Migrations.M0348_AddProtocolAcknowledgments()
 			};
 
 		private IMigration[] P3() => IsPostgres
 			? new IMigration[]
 			{
-				new Resgrid.Providers.MigrationsPg.Migrations.M0379_AddCallProtocolStepLogPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0380_AddProtocolVersionTranslationsPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0381_AddProtocolAttachmentSha256Pg(),
-				// P4 (M0399): the call protocol case columns the ORM now writes on insert.
-				new Resgrid.Providers.MigrationsPg.Migrations.M0399_AddProtocolDecisionEnginePg()
+				new Resgrid.Providers.MigrationsPg.Migrations.M0361_AddCallProtocolStepLogPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0362_AddProtocolVersionTranslationsPg(),
+				new Resgrid.Providers.MigrationsPg.Migrations.M0363_AddProtocolAttachmentSha256Pg(),
+				// P4 (M0376): the call protocol case columns the ORM now writes on insert.
+				new Resgrid.Providers.MigrationsPg.Migrations.M0376_AddProtocolDecisionEnginePg()
 			}
 			: new IMigration[]
 			{
-				new Resgrid.Providers.Migrations.Migrations.M0379_AddCallProtocolStepLog(), new Resgrid.Providers.Migrations.Migrations.M0380_AddProtocolVersionTranslations(),
-				new Resgrid.Providers.Migrations.Migrations.M0381_AddProtocolAttachmentSha256(),
-				// P4 (M0399): the call protocol case columns the ORM now writes on insert.
-				new Resgrid.Providers.Migrations.Migrations.M0399_AddProtocolDecisionEngine()
+				new Resgrid.Providers.Migrations.Migrations.M0361_AddCallProtocolStepLog(), new Resgrid.Providers.Migrations.Migrations.M0362_AddProtocolVersionTranslations(),
+				new Resgrid.Providers.Migrations.Migrations.M0363_AddProtocolAttachmentSha256(),
+				// P4 (M0376): the call protocol case columns the ORM now writes on insert.
+				new Resgrid.Providers.Migrations.Migrations.M0376_AddProtocolDecisionEngine()
 			};
 
 		private void Migrate(IMigration[] migrations, Action<IMigrationRunner> run)
@@ -206,7 +206,7 @@ INSERT INTO {T("Calls")} ({T("DepartmentId")}, {T("LoggedOn")}, {T("Number")}, {
 			{
 				(await database.ExecuteScalarAsync<string>($"SELECT {T("Sha256")} FROM {T("DispatchProtocolAttachments")} WHERE {T("FileName")} = 'before.pdf'"))
 					.Should().Be(Sha(AttachmentBytes), "the migration hashes existing attachments in the database");
-				await database.ExecuteAsync(IsPostgres ? "DELETE FROM \"VersionInfo\" WHERE \"Version\" IN (379, 380, 381)" : "DELETE FROM [VersionInfo] WHERE [Version] IN (379, 380, 381)");
+				await database.ExecuteAsync(IsPostgres ? "DELETE FROM \"VersionInfo\" WHERE \"Version\" IN (361, 362, 363)" : "DELETE FROM [VersionInfo] WHERE [Version] IN (361, 362, 363)");
 			}
 
 			Migrate(P3(), r => r.MigrateUp());
@@ -216,7 +216,7 @@ INSERT INTO {T("Calls")} ({T("DepartmentId")}, {T("LoggedOn")}, {T("Number")}, {
 		[Test, Order(2)]
 		public async Task Down_removes_them_and_up_again_rebuilds_them()
 		{
-			Migrate(Base().Concat(P3()).ToArray(), r => r.MigrateDown(354));
+			Migrate(Base().Concat(P3()).ToArray(), r => r.MigrateDown(348));
 			(await CountSchemaAsync()).Should().Be(0);
 			await using (var database = Connect(_connection))
 				(await database.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM {T("DispatchProtocolAttachments")}")).Should().Be(2, "Down never removes attachments");

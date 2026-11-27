@@ -478,23 +478,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 			else
 				address = c.Address;
 
+			// Every protocol the call cited, including one taken off the call or deleted from the library since: the store apps
+			// read this payload as it is, and a removed protocol stays part of the call's record (marked by RemovedOn / IsDeleted).
 			var protocols = new List<DispatchProtocol>();
-			if (c.Protocols != null && c.Protocols.Any())
+			var protocolRows = new List<CallProtocol>();
+			foreach (var callProtocol in CallProtocolRowsForRead(c.Protocols))
 			{
-				// A protocol taken off the call (removed with a reason) is not shown as one of its protocols.
-				foreach (var callProtocol in c.Protocols.Where(x => !x.IsRemoved))
-				{
-					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
+				var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
 
-					// Only a protocol of the call's own department: a row pointing at another department's protocol is never read out.
-					if (protocol != null && protocol.DepartmentId == c.DepartmentId)
-						protocols.Add(protocol);
+				// Only a protocol of the call's own department: a row pointing at another department's protocol is never read out.
+				if (protocol != null && protocol.DepartmentId == c.DepartmentId)
+				{
+					protocols.Add(protocol);
+					protocolRows.Add(callProtocol);
 				}
 			}
 
 			var callLocationPoi = c.LocationPoiId.HasValue ? await _callRoutesService.GetLocationPoiAsync(effectiveDepartmentId, c.LocationPoiId.Value) : null;
 			var callRouteNames = await GetRoutePlanNamesAsync(effectiveDepartmentId, new[] { c });
 			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi, callTypes, callLocationPoi, RoutePlanName(callRouteNames, c));
+			for (var i = 0; i < protocolRows.Count && i < result.Data.Protocols.Count; i++)
+				result.Data.Protocols[i].RemovedOn = protocolRows[i].RemovedOn;
 			ApplyProtectedReadMetadata(result.Data, protectedRead);
 
 			// Linked contacts with pre-plan / alert / hazard indicators (Contacts plan Phase A, 3a).
@@ -1040,17 +1044,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			if (call.Protocols != null && call.Protocols.Any())
+			// Every protocol the call cited, including one taken off the call or deleted from the library since (see GetCall).
+			foreach (var callProtocol in CallProtocolRowsForRead(call.Protocols))
 			{
-				foreach (var callProtocol in call.Protocols.Where(x => !x.IsRemoved))
-				{
-					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
+				var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
 
-					// Only a protocol of the call's own department: a row pointing at another department's protocol is never read out.
-					// With the row: how it came onto the call and the answers recorded then.
-					if (protocol != null && protocol.DepartmentId == call.DepartmentId)
-						result.Data.Protocols.Add(CallProtocolsController.ConvertProtocolData(protocol, callProtocol));
-				}
+				// Only a protocol of the call's own department: a row pointing at another department's protocol is never read out.
+				// With the row: how it came onto the call, the answers recorded then, and when it was taken off.
+				if (protocol != null && protocol.DepartmentId == call.DepartmentId)
+					result.Data.Protocols.Add(CallProtocolsController.ConvertProtocolData(protocol, callProtocol));
 			}
 
 			// Runs of the call's route (M0322): which unit is on it and how far it got. Linked by the call itself, so runs stay listed
@@ -3524,6 +3526,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 				// P4: the case flow (Omni's dispatch form); null when the client ran none.
 				Case = protocolCases != null && protocolCases.TryGetValue(id, out var caseInput) ? caseInput : null
 			}).ToList();
+		}
+
+		/// <summary>
+		/// The call's protocol rows the call reads (GetCall, GetCallExtraData) list: one per protocol, in the call's order. The row
+		/// still on the call wins; for a protocol that was only taken off, the latest removal. Removed rows are listed, not hidden:
+		/// the store apps read these payloads unchanged, and a protocol the call cited stays part of its record.
+		/// </summary>
+		public static List<CallProtocol> CallProtocolRowsForRead(IEnumerable<CallProtocol> rows)
+		{
+			var all = (rows ?? Enumerable.Empty<CallProtocol>()).Where(r => r != null && r.DispatchProtocolId > 0).ToList();
+			var chosen = all
+				.GroupBy(r => r.DispatchProtocolId)
+				.Select(g => g.OrderBy(r => r.IsRemoved ? 1 : 0)
+					.ThenByDescending(r => r.RemovedOn ?? DateTime.MaxValue)
+					.ThenByDescending(r => r.CallProtocolId)
+					.First())
+				.ToHashSet();
+
+			return all.Where(chosen.Contains).ToList();
 		}
 
 		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone, Poi destinationPoi = null,

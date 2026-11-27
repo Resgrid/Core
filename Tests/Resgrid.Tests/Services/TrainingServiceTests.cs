@@ -45,7 +45,7 @@ namespace Resgrid.Tests.Services
 				_communicationServiceMock.Object,
 				_departmentServiceMock.Object,
 				_departmentSettingsServiceMock.Object,
-				Mock.Of<IKnowledgeIndexQueue>()
+				Mock.Of<IKnowledgeIndexQueue>(), Mock.Of<IUserProfileService>()
 			);
 		}
 

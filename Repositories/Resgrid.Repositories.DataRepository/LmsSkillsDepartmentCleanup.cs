@@ -6,7 +6,7 @@ using Resgrid.Config;
 namespace Resgrid.Repositories.DataRepository
 {
 	/// <summary>
-	/// The department's Training T4 part 2 rows (round 5C, M0407-M0410) in the caller's transaction, children first, for both databases:
+	/// The department's Training T4 part 2 rows (round 5C, M0381-M0384) in the caller's transaction, children first, for both databases:
 	/// evaluation evidence and members before their evaluations, task books before their definitions, sheet versions before their sheets,
 	/// and the skill notification queue. No foreign keys (LMS tables reference baseline ids only, §17.3).
 	/// </summary>

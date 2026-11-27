@@ -22,6 +22,19 @@ namespace Resgrid.Model.Services
 
 		/// <summary>The rights of a person in the department (permission rows, not claims) with the gate.</summary>
 		Task<LmsActor> GetActorAsync(int departmentId, string userId);
+
+		/// <summary>
+		/// Round 10 A7 (owner decision 2026-11-26): the members who may act as learners on department LMS content
+		/// (<see cref="ILmsAccessService.GetLearnerSeatHoldersAsync"/>; one billing read). A worker asks once per department per run (R-L9).
+		/// </summary>
+		Task<HashSet<string>> GetLearnerSeatHoldersAsync(int departmentId);
+
+		/// <summary>
+		/// Round 10 A7: whether this member holds the LMS seat a learner action on department LMS content needs (see
+		/// <see cref="LmsLearnerSeats"/> for which actions ask). Lapse-aware: during a lapse a member who held a seat keeps it, and the
+		/// lapse rules decide what still runs. False when the flag is off or anything cannot be read (fails closed).
+		/// </summary>
+		Task<bool> HoldsLearnerSeatAsync(int departmentId, string userId);
 	}
 
 	/// <summary>
@@ -35,6 +48,63 @@ namespace Resgrid.Model.Services
 	}
 
 	/// <summary>Course authoring on the shared content core (T2 item 1): versions, approval with L2 signatures, publish, owners, audience.</summary>
+	/// <summary>One course set copy to write (round 10 A3).</summary>
+	public sealed class LmsSetCopyRequest
+	{
+		public int SubscriberDepartmentId { get; set; }
+		public int PublisherDepartmentId { get; set; }
+		public int SourceVersionId { get; set; }
+		/// <summary>The subscriber's course (updates only).</summary>
+		public int LocalCourseId { get; set; }
+		public string UserId { get; set; }
+		public string ChangeSummary { get; set; }
+		public bool Major { get; set; }
+	}
+
+	/// <summary>What a course set copy leaves for the subscriber to do (round 10 A3): LTI tools to register before their lessons open.</summary>
+	public sealed class LmsSetCopyNotes
+	{
+		public List<string> ToolsToRegister { get; set; } = new List<string>();
+	}
+
+	/// <summary>Why a course's stored lesson files cannot travel to a subscriber now (ContentSets Problem_* keys).</summary>
+	public static class LmsSetFileProblems
+	{
+		public const string MediaNotReady = "media_not_ready";
+		public const string PackageNotReady = "package_not_ready";
+		public const string ToolMissing = "lti_tool_missing";
+	}
+
+	/// <summary>The subscriber's LTI registration a copied lesson uses.</summary>
+	public sealed class LmsSetTool
+	{
+		public int LmsLtiToolId { get; set; }
+		public string Name { get; set; }
+		public bool IsActive { get; set; }
+		public bool AllowGradePassback { get; set; }
+		/// <summary>Made by this copy (inactive until the subscriber registers it with the vendor).</summary>
+		public bool Created { get; set; }
+	}
+
+	/// <summary>
+	/// Hosted video, SCORM/cmi5 packages and LTI tools of a course set copy (round 10 A3): video and packages are shared as the subscriber's
+	/// own rows over the publisher's stored objects; an LTI tool becomes the subscriber's own (inactive) registration with the same endpoints.
+	/// </summary>
+	public interface ILmsSetFiles
+	{
+		/// <summary>Why the lessons' stored files cannot be shared now (a video or package not ready, a removed tool), or null.</summary>
+		Task<string> GetProblemAsync(int publisherDepartmentId, IEnumerable<LmsLesson> lessons);
+
+		/// <summary>The subscriber's media asset over the publisher's ready video (reused across updates), or null.</summary>
+		Task<int?> ShareVideoAsync(int publisherDepartmentId, int subscriberDepartmentId, int sourceAssetId, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>The subscriber's package over the publisher's ready package (reused across updates), or null.</summary>
+		Task<int?> SharePackageAsync(int publisherDepartmentId, int subscriberDepartmentId, int sourcePackageId, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>The subscriber's registration for the publisher's tool (an existing one with the same endpoints, else a new inactive one), or null.</summary>
+		Task<LmsSetTool> PrepareToolAsync(int publisherDepartmentId, int subscriberDepartmentId, int sourceToolId, string userId, CancellationToken cancellationToken = default);
+	}
+
 	public interface ILmsCourseService
 	{
 		Task<List<LmsCourseRow>> GetCourseRowsAsync(LmsActor actor);
@@ -100,6 +170,17 @@ namespace Resgrid.Model.Services
 
 		Task<LmsResult> RetireAsync(LmsActor actor, int lmsCourseId, CancellationToken cancellationToken = default);
 
+		// ---- T5 shared course sets (round 10 A3) ----
+
+		/// <summary>Why a publisher's course version cannot be copied into another department (hosted video, packages, LTI…), or null.</summary>
+		Task<string> GetSetCopyProblemAsync(int publisherDepartmentId, int lmsCourseVersionId);
+
+		/// <summary>A subscriber's copy of a set course: a department course of its own whose first version (the publisher's, remapped) is published.</summary>
+		Task<LmsResult> CreateSetCopyAsync(LmsSetCopyRequest request, CancellationToken cancellationToken = default);
+
+		/// <summary>Publishes the publisher's newer version on a managed copy; learners who have not started move to it (R-L12).</summary>
+		Task<LmsResult> PublishSetVersionAsync(LmsSetCopyRequest request, CancellationToken cancellationToken = default);
+
 		Task<LmsResult> SaveOwnerAsync(LmsActor actor, int lmsCourseId, string userId, bool canEdit, bool canAssign, bool canReport, CancellationToken cancellationToken = default);
 
 		Task<LmsResult> RemoveOwnerAsync(LmsActor actor, int lmsCourseId, int lmsCourseOwnerId, CancellationToken cancellationToken = default);
@@ -162,9 +243,30 @@ namespace Resgrid.Model.Services
 
 		Task<LmsResult> EnrollSelfAsync(LmsActor actor, int lmsCourseId, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// T5 (round 6E): enrols an external learner (an "xl-" id, never a member) in a published department course; the caller checks the
+		/// course's external access and fair use. New enrolments need the add-on (lapse rule 3).
+		/// </summary>
+		Task<LmsResult> EnrollExternalAsync(int departmentId, int lmsCourseId, string learnerUserId, string actingUserId, bool selfEnrolled,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Security review M3 (2026-11-25): whether every protocol lesson of a course version may be shown to external learners under the
+		/// public-page rules (<see cref="ProtocolPublicPages.Eligibility"/>: licensed content, audiences, document-backed, disabled or not in
+		/// force); the first refusal, else Eligible. The player withholds a failing lesson from an external learner the same way.
+		/// </summary>
+		Task<ProtocolPublicEligibility> GetExternalProtocolEligibilityAsync(int departmentId, int lmsCourseVersionId);
+
 		/// <summary>Assigns a course to the members the rules resolve to (active members only); needs the add-on for department courses.</summary>
 		Task<LmsAssignOutcome> AssignAsync(LmsActor actor, int lmsCourseId, IEnumerable<IContentAudienceRule> who, DateTime? dueOnUtc,
 			LmsEnrollmentSources source = LmsEnrollmentSources.Assigned, string rolePathKey = null, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// An officer's own assignment (Courses → Assign, an Academy lesson): <see cref="AssignAsync"/> plus workflow trigger 271 per new
+		/// enrollment. Requirements, paths and classes call <see cref="AssignAsync"/> and raise their own events.
+		/// </summary>
+		Task<LmsAssignOutcome> AssignDirectAsync(LmsActor actor, int lmsCourseId, IEnumerable<IContentAudienceRule> who, DateTime? dueOnUtc,
+			CancellationToken cancellationToken = default);
 
 		Task<LmsResult> WithdrawEnrollmentAsync(LmsActor actor, int lmsEnrollmentId, CancellationToken cancellationToken = default);
 
@@ -193,13 +295,55 @@ namespace Resgrid.Model.Services
 		/// <summary>Marks a member present at a crew viewing: enrolls them in the version shown and completes the lesson shown.</summary>
 		Task<LmsResult> RecordCrewPresenceAsync(LmsCrewViewing viewing, string userId, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// T5: the runtime of a Scorm, Cmi5 or LtiLink lesson reported the learner's time and whether the lesson's rule is met (SCORM status,
+		/// cmi5 moveOn, an LTI score at the pass mark). Runs on the course's gate and lapse rules like every other lesson; a satisfied lesson
+		/// completes and may complete the course (<see cref="LmsResult.Count"/> 1). These kinds are never completed by the learner's button.
+		/// </summary>
+		Task<LmsResult> RecordRuntimeOutcomeAsync(int departmentId, string userId, int lmsEnrollmentId, int lmsLessonId, bool satisfied, int totalSeconds,
+			CancellationToken cancellationToken = default);
+
 		Task<LmsLessonFile> GetLessonFileAsync(LmsActor actor, int lmsLessonFileId);
+
+		/// <summary>
+		/// Round 10 (Omni): the files the member uploaded on one of their own enrollments (the file-request lessons' answers), metadata only
+		/// (no bytes). Empty for another member's or a withdrawn enrollment.
+		/// </summary>
+		Task<List<LmsLessonFile>> GetMyLessonFilesAsync(int departmentId, string userId, int lmsEnrollmentId);
+
+		/// <summary>
+		/// Round 10 (Omni): one of the member's own uploaded files with its bytes, only when a lesson of one of their own (not withdrawn)
+		/// enrollments holds it; with that enrollment and its course. Null otherwise (graders and course reporters use the web).
+		/// </summary>
+		Task<LmsMyLessonFile> GetMyLessonFileAsync(int departmentId, string userId, int lmsLessonFileId);
+
+		/// <summary>Round 10 (Omni): an enrollment of the department by id (any learner), or null. The v4 signed media links resolve their learner through it.</summary>
+		Task<LmsEnrollment> GetEnrollmentAsync(int departmentId, int lmsEnrollmentId);
 
 		/// <summary>
 		/// Issues the certification a completion grants, or renews the member's record of that type (T2 item 6; T3 paths reuse it). Returns
 		/// the record id, or null when the type cannot be issued.
 		/// </summary>
 		Task<int?> IssueOrRenewCertificationAsync(int departmentId, string userId, int certificationTypeId, DateTime completedOnUtc, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Round 9A: as above, naming where it came from (a course or a path), the learning records behind it and who caused it, so the
+		/// issuance ledger can take it back when one of those records is voided. The expiry follows the type's validity rule on the
+		/// department's local date of the completion; a suspended or revoked record is never touched.
+		/// </summary>
+		Task<int?> IssueOrRenewCertificationAsync(int departmentId, string userId, int certificationTypeId, DateTime completedOnUtc, LmsCertificationIssueSources source,
+			string sourceRefId, IReadOnlyCollection<int> basisRecordIds, string actorUserId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Round 7B (permission 135): completes the course's current version for one member (or a class roster's external learner) as an
+		/// instructor recorded it: the open enrolment (or a new one) moves to the current version, every lesson is marked complete with the
+		/// recording, and the normal completion follows (the LmsCourseCompletion learning record with the recorded-by metadata, the
+		/// certification issued or renewed). The caller checked the permission, the member, the seat and the attestation, and inserted
+		/// <paramref name="recording"/>. Refused when the course is not a published department course, the add-on does not allow new work, or
+		/// the member already completed the current version (the first completion stands).
+		/// </summary>
+		Task<LmsResult> RecordCompletionForMemberAsync(int departmentId, int lmsCourseId, string userId, TrainingCompletionRecording recording,
+			CancellationToken cancellationToken = default);
 
 		// ---- worker 88 ---------------------------------------------------------------------------------------------------------
 

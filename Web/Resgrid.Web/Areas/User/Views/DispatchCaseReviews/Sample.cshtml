@@ -1,0 +1,107 @@
+@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Protocols.DispatchCaseSampleModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatchCaseReviews.DispatchCaseReviews> L
+@*
+    Protocols P5 QA: draw a random sample of recorded dispatch cases into the officers' queue: by protocol, version, determinant (or its
+    prefix), dispatcher and call dates; N cases or a percentage. Calls already reviewed, calls with no dispatcher to give feedback to and
+    the assignee's own calls are left out. "Count" previews the numbers without queuing anything.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + L["SampleTitle"];
+    ViewData["Title"] = L["SampleTitle"].Value;
+    ViewData["Subtitle"] = L["SampleIntro"].Value;
+    ViewData["CaseReviewPage"] = "Sample";
+    var form = Model.Form;
+    var percentMode = string.Equals(form.Mode, "percent", StringComparison.OrdinalIgnoreCase);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_CaseReviewNav")
+
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    @if (Model.Preview != null && Model.Preview.Result == DispatchCaseReviewResults.Done)
+    {
+        <div class="rgw-stat-tiles" role="list" aria-label="@L["PreviewHeader"]">
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["PreviewCandidates"]</div><div class="rgw-stat-value">@Model.Preview.Candidates</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["PreviewAlreadyReviewed"]</div><div class="rgw-stat-value">@Model.Preview.AlreadyReviewed</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["PreviewExcluded"]</div><div class="rgw-stat-value">@(Model.Preview.NoDispatcher + Model.Preview.AssigneesOwn)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["PreviewEligible"]</div><div class="rgw-stat-value">@Model.Preview.Eligible</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["PreviewSampleSize"]</div><div class="rgw-stat-value text-success">@Model.Preview.SampleSize</div></div>
+        </div>
+        @if (Model.Preview.Candidates >= DispatchCaseSampling.MaxCandidates)
+        {
+            <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @string.Format(L["PreviewCapped"].Value, DispatchCaseSampling.MaxCandidates)</div>
+        }
+    }
+
+    <div class="ibox">
+        <div class="ibox-content">
+            <form method="post" asp-action="Sample" asp-route-area="User" class="form-horizontal">
+                @Html.AntiForgeryToken()
+                <fieldset>
+                    <legend>@L["WhichCallsLegend"]</legend>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="Form_From">@L["FromLabel"]</label>
+                        <div class="col-sm-3"><input type="date" class="form-control" id="Form_From" name="From" value="@form.From?.ToString("yyyy-MM-dd")" required /></div>
+                        <label class="col-sm-2 control-label" for="Form_To">@L["ToLabel"]</label>
+                        <div class="col-sm-3"><input type="date" class="form-control" id="Form_To" name="To" value="@form.To?.ToString("yyyy-MM-dd")" required /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="ProtocolId">@L["ProtocolLabel"]</label>
+                        <div class="col-sm-5"><select class="form-control" id="ProtocolId" name="ProtocolId" asp-items="Model.Protocols"></select></div>
+                        <div class="col-sm-3"><select class="form-control" id="VersionId" name="VersionId" asp-items="Model.Versions" aria-label="@L["VersionLabel"]"></select></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="Determinant">@L["DeterminantLabel"]</label>
+                        <div class="col-sm-3"><input type="text" class="form-control rgw-mono" id="Determinant" name="Determinant" value="@form.Determinant" maxlength="32" aria-describedby="DeterminantHelp" /></div>
+                        <div class="col-sm-6"><span id="DeterminantHelp" class="help-block">@L["DeterminantHelp"]</span></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="DispatcherUserId">@L["DispatcherLabel"]</label>
+                        <div class="col-sm-5"><select class="form-control" id="DispatcherUserId" name="DispatcherUserId" asp-items="Model.Dispatchers"></select></div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>@L["HowManyLegend"]</legend>
+                    <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                            <div class="radio">
+                                <label><input type="radio" name="Mode" value="count" checked="@(!percentMode)" /> @L["ModeCount"]</label>
+                                <input type="number" class="form-control input-sm" style="display:inline-block;width:6em" name="Count" value="@form.Count" min="1" max="@DispatchCaseSampling.MaxSample" aria-label="@L["ModeCount"]" />
+                            </div>
+                            <div class="radio">
+                                <label><input type="radio" name="Mode" value="percent" checked="@percentMode" /> @L["ModePercent"]</label>
+                                <input type="number" class="form-control input-sm" style="display:inline-block;width:6em" name="Percent" value="@form.Percent" min="1" max="100" aria-label="@L["ModePercent"]" />
+                            </div>
+                            <span class="help-block">@string.Format(L["SampleSizeHelp"].Value, DispatchCaseSampling.MaxSample)</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="RubricId">@L["RubricLabel"]</label>
+                        <div class="col-sm-5"><select class="form-control" id="RubricId" name="RubricId" asp-items="Model.Rubrics"></select></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label" for="AssignToUserId">@L["AssignToLabel"]</label>
+                        <div class="col-sm-5"><select class="form-control" id="AssignToUserId" name="AssignToUserId" asp-items="Model.Reviewers" aria-describedby="AssignHelp"></select></div>
+                        <div class="col-sm-4"><span id="AssignHelp" class="help-block">@L["AssignHelp"]</span></div>
+                    </div>
+                </fieldset>
+                <div class="rgw-wizard-actions">
+                    <button type="submit" name="preview" value="1" class="btn btn-default"><i class="fa fa-calculator" aria-hidden="true"></i> @L["PreviewButton"]</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-random" aria-hidden="true"></i> @L["DrawSampleButton"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

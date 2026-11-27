@@ -11,7 +11,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>Sealed documents (e-Signature S1, M0371). Department reads start at the department; worker reads are due-work queries.</summary>
+	/// <summary>Sealed documents (e-Signature S1, M0356). Department reads start at the department; worker reads are due-work queries.</summary>
 	public class SealedDocumentsRepository : RmsRepositoryBase<SealedDocument>, ISealedDocumentsRepository
 	{
 		public SealedDocumentsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -84,7 +84,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Pending seal inputs (S1, M0371): one row per pending document, read alone.</summary>
+	/// <summary>Pending seal inputs (S1, M0356): one row per pending document, read alone.</summary>
 	public class SealedDocumentInputsRepository : RmsRepositoryBase<SealedDocumentInput>, ISealedDocumentInputsRepository
 	{
 		public SealedDocumentInputsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -105,7 +105,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Signature requests (S2, M0372).</summary>
+	/// <summary>Signature requests (S2, M0357).</summary>
 	public class SignatureRequestsRepository : RmsRepositoryBase<SignatureRequestRecord>, ISignatureRequestsRepository
 	{
 		public SignatureRequestsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -189,7 +189,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Signers (S2, M0372). Token and session lookups compare exact SHA-256 hex.</summary>
+	/// <summary>Signers (S2, M0357). Token and session lookups compare exact SHA-256 hex.</summary>
 	public class SignatureRequestSignersRepository : RmsRepositoryBase<SignatureRequestSigner>, ISignatureRequestSignersRepository
 	{
 		public SignatureRequestSignersRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -252,6 +252,54 @@ namespace Resgrid.Repositories.DataRepository
 			return updated == 1;
 		}
 
+		public async Task<bool> TryCountOtpAttemptAsync(int signatureRequestSignerId, string otpHash, int maxAttempts, DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrEmpty(otpHash))
+				return false;
+			// One statement (security review M4): parallel posts race here, and at most maxAttempts of them ever get to compare a code.
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl("SignatureRequestSigners")} SET {Col("OtpAttempts")} = {Col("OtpAttempts")} + 1 " +
+				$"WHERE {Col("SignatureRequestSignerId")} = {P}Id AND {Col("OtpHash")} = {P}Hash AND {Col("OtpVerifiedOn")} IS NULL " +
+				$"AND {Col("OtpExpiresOn")} IS NOT NULL AND {Col("OtpExpiresOn")} > {P}Now AND {Col("OtpAttempts")} < {P}Max",
+				new { Id = signatureRequestSignerId, Hash = otpHash, Max = Math.Max(1, maxAttempts), Now = DatabaseTimestamp(utcNow) }, cancellationToken);
+			return updated == 1;
+		}
+
+		public async Task<bool> MarkOtpVerifiedAsync(int signatureRequestSignerId, string otpHash, DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrEmpty(otpHash))
+				return false;
+			// Only the columns a verified code changes (a stale full-row write can no longer undo it, nor this one undo a wipe or a new code).
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl("SignatureRequestSigners")} SET {Col("OtpVerifiedOn")} = {P}Now, {Col("OtpHash")} = NULL, {Col("OtpExpiresOn")} = NULL, " +
+				$"{Col("Status")} = CASE WHEN {Col("Status")} IN ({(int)SignatureSignerStatuses.Pending}, {(int)SignatureSignerStatuses.Opened}) THEN {(int)SignatureSignerStatuses.Verified} ELSE {Col("Status")} END " +
+				$"WHERE {Col("SignatureRequestSignerId")} = {P}Id AND {Col("OtpHash")} = {P}Hash AND {Col("OtpVerifiedOn")} IS NULL",
+				new { Id = signatureRequestSignerId, Hash = otpHash, Now = DatabaseTimestamp(utcNow) }, cancellationToken);
+			return updated == 1;
+		}
+
+		public async Task<bool> IssueOtpAsync(int signatureRequestSignerId, string otpHash, DateTime expiresOn, DateTime sentOn, int channel, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrEmpty(otpHash))
+				return false;
+			var updated = await ExecuteAsync(
+				$"UPDATE {Tbl("SignatureRequestSigners")} SET {Col("OtpHash")} = {P}Hash, {Col("OtpExpiresOn")} = {P}Expires, {Col("OtpAttempts")} = 0, " +
+				$"{Col("OtpSentOn")} = {P}Sent, {Col("OtpChannel")} = {P}Channel " +
+				$"WHERE {Col("SignatureRequestSignerId")} = {P}Id AND {Col("OtpVerifiedOn")} IS NULL",
+				new { Id = signatureRequestSignerId, Hash = otpHash, Expires = DatabaseTimestamp(expiresOn), Sent = DatabaseTimestamp(sentOn), Channel = channel }, cancellationToken);
+			return updated == 1;
+		}
+
+		public Task WipeExhaustedOtpAsync(int signatureRequestSignerId, string otpHash, int maxAttempts, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrEmpty(otpHash))
+				return Task.CompletedTask;
+			return ExecuteAsync(
+				$"UPDATE {Tbl("SignatureRequestSigners")} SET {Col("OtpHash")} = NULL, {Col("OtpExpiresOn")} = NULL " +
+				$"WHERE {Col("SignatureRequestSignerId")} = {P}Id AND {Col("OtpHash")} = {P}Hash AND {Col("OtpVerifiedOn")} IS NULL AND {Col("OtpAttempts")} >= {P}Max",
+				new { Id = signatureRequestSignerId, Hash = otpHash, Max = Math.Max(1, maxAttempts) }, cancellationToken);
+		}
+
 		private static string Top(int take) => IsPostgres ? string.Empty : $"TOP ({Math.Max(1, take)}) ";
 		private static string Limit(int take) => IsPostgres ? $" LIMIT {Math.Max(1, take)}" : string.Empty;
 		private static string OpenRequestStatuses => $"({(int)SignatureRequestStatuses.Draft}, {(int)SignatureRequestStatuses.Sent}, {(int)SignatureRequestStatuses.PartiallySigned})";
@@ -301,7 +349,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>In-person captures (S2, M0373).</summary>
+	/// <summary>In-person captures (S2, M0358).</summary>
 	public class SignatureCapturesRepository : RmsRepositoryBase<SignatureCapture>, ISignatureCapturesRepository
 	{
 		public SignatureCapturesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -315,7 +363,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Department e-sign platform accounts (S2, M0374).</summary>
+	/// <summary>Department e-sign platform accounts (S2, M0359).</summary>
 	public class ESignProviderAccountsRepository : RmsRepositoryBase<ESignProviderAccount>, IESignProviderAccountsRepository
 	{
 		public ESignProviderAccountsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -329,7 +377,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Webhook hints (S2, M0374): insert-if-absent by the provider event id, then a conditional claim per attempt.</summary>
+	/// <summary>Webhook hints (S2, M0359): insert-if-absent by the provider event id, then a conditional claim per attempt.</summary>
 	public class ESignWebhookEventsRepository : RmsRepositoryBase<ESignWebhookEvent>, IESignWebhookEventsRepository
 	{
 		private const string Table = "ESignWebhookEvents";

@@ -9,7 +9,9 @@
     ViewData["Section"]  Mine, Health, Report, Clearances, Osha, Flags or Settings: the highlighted section (Health, Clearances and Osha are WL1)
     ViewData["Title"]    heading and last crumb
     ViewData["Subtitle"] optional description
-    ViewData["WellnessAccess"]  set by WellnessController: decides which sections show
+    ViewData["WellnessAccess"]  set by WellnessController: decides which sections show, and the Workforce Pro notices (read-only
+                                while the add-on is not licensed; a failed renewal's dunning grace, administrators only; a member
+                                without a seat on a page about them)
     ViewData["Message"] / ViewData["Error"]  a one-time notice from the last action
 *@
 @{
@@ -21,7 +23,8 @@
     var message = ViewData["Message"] as string;
     var error = ViewData["Error"] as string;
 
-    var sections = new ModuleTabsView { Label = localizer["WellnessModuleLabel"].Value };
+    // The department may rename the wellness section (Department -> Terminology, module.wellness).
+    var sections = new ModuleTabsView { Label = await departmentTerms.NameAsync(DepartmentTerms.Wellness, localizer["WellnessModuleLabel"].Value) };
     sections.Tabs.Add(new ModuleTab(localizer["MyExposuresTab"].Value, "fa-heartbeat", "Wellness", "Index", section == "Mine"));
     sections.Tabs.Add(new ModuleTab(healthLocalizer["HealthRecordsTab"].Value, "fa-medkit", "MemberHealth", "Index", section == "Health"));
     if (access.IsOfficer)
@@ -60,6 +63,36 @@
         @await Html.PartialAsync("_ModuleTabs", sections)
     </div>
 </div>
+@if (access.WorkforceProReadOnly)
+{
+    <div class="alert alert-warning m-t-sm" role="status" id="workforce-pro-read-only">
+        <strong><i class="fa fa-id-badge" aria-hidden="true"></i> @localizer["WorkforcePro.RequiredTitle"]</strong>
+        @localizer["WorkforcePro.ReadOnly"]
+        @if (access.ShowWorkforceProLinks)
+        {
+            <a asp-controller="WorkforceProBilling" asp-action="Index" asp-route-area="User">@localizer["WorkforcePro.ViewAddon"]</a>
+        }
+    </div>
+}
+else if (access.WorkforceProGraceEndsUtc.HasValue)
+{
+    <div class="alert alert-warning m-t-sm" role="status" id="workforce-pro-grace">
+        <i class="fa fa-credit-card" aria-hidden="true"></i>
+        @string.Format(System.Globalization.CultureInfo.CurrentCulture, localizer["WorkforcePro.Grace"].Value, access.WorkforceProGraceEndsUtc.Value.ToString("D", System.Globalization.CultureInfo.CurrentCulture))
+        <a asp-controller="WorkforceProBilling" asp-action="Index" asp-route-area="User">@localizer["WorkforcePro.ViewAddon"]</a>
+    </div>
+}
+@if (!access.WorkforceProReadOnly && !string.IsNullOrEmpty(access.SeatMissingMemberName))
+{
+    <div class="alert alert-info m-t-sm" role="status" id="workforce-pro-seat-missing">
+        <i class="fa fa-id-badge" aria-hidden="true"></i>
+        @(access.SeatMissingIsSelf ? localizer["WorkforcePro.SeatMissingSelf"].Value : string.Format(System.Globalization.CultureInfo.CurrentCulture, localizer["WorkforcePro.SeatMissing"].Value, access.SeatMissingMemberName))
+        @if (access.ShowWorkforceProLinks)
+        {
+            <a asp-controller="WorkforceProSeats" asp-action="Index" asp-route-area="User">@localizer["WorkforcePro.ManageSeats"]</a>
+        }
+    </div>
+}
 @if (!string.IsNullOrEmpty(message))
 {
     <div class="alert alert-success m-t-sm" role="status"><i class="fa fa-check" aria-hidden="true"></i> @message</div>

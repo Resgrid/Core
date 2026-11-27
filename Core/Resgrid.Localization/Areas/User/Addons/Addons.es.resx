@@ -115,64 +115,204 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>El código de socio/cuenta se guardó para su departamento.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ese código de socio/cuenta no es válido o ya no está activo.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Su departamento ya tiene un código de socio/cuenta. Contáctenos si necesita cambiarlo.</value></data>
-  <data name="LmsTitle" xml:space="preserve"><value>LMS</value></data>
-  <data name="LmsTagline" xml:space="preserve"><value>Cursos, informes de formación formales y certificados verificables</value></data>
-  <data name="LmsFeature1" xml:space="preserve"><value>Cursos con lecciones, bancos de preguntas y cuestionarios</value></data>
-  <data name="LmsFeature2" xml:space="preserve"><value>Lecciones en vídeo alojadas, 100 GB incluidos por departamento</value></data>
-  <data name="LmsFeature3" xml:space="preserve"><value>Informes de formación formales ISO FSRS y NREMT NCCP</value></data>
-  <data name="LmsFeature4" xml:space="preserve"><value>Certificados con código de verificación, QR y página pública de verificación, con su propia plantilla</value></data>
-  <data name="LmsFeature5" xml:space="preserve"><value>Plazas solo para los miembros que active; todos conservan la formación gratuita</value></data>
-  <data name="LmsNote" xml:space="preserve"><value>Precio por paquete de 25 miembros, escalonado: los 4 primeros paquetes a precio completo y después más baratos. Facturación mensual por departamento; sin prueba. Requiere un plan de pago de Resgrid.</value></data>
-  <data name="PerMemberPack" xml:space="preserve"><value>por paquete de {0} miembros</value></data>
-  <data name="PackTierLine" xml:space="preserve"><value>Paquetes {0}–{1}: {2} por paquete</value></data>
-  <data name="PackTierLineOpen" xml:space="preserve"><value>Paquetes {0} en adelante: {1} por paquete</value></data>
-  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>El LMS se vende con un plan de pago de Resgrid. Elija primero un plan en la página de suscripción.</value></data>
-  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Cada paquete incluye 25 miembros. Los paquetes tienen precios por tramos: cada paquete se factura al precio de su propio tramo, así que añadir paquetes nunca abarata ni encarece los anteriores. Facturación mensual; no hay prueba ni plazo anual.</value></data>
-  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Añadir paquetes se cobra de inmediato, prorrateado hasta su fecha de facturación. Quitar paquetes se aplica en la siguiente fecha de facturación y solo hasta el número de miembros habilitados en el LMS.</value></data>
-  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Los miembros no habilitados en el LMS conservan el módulo de Formación gratuito, su expediente y la Academy. Los instructores, evaluadores y oficiales no necesitan plaza.</value></data>
-  <data name="LmsManageSeats" xml:space="preserve"><value>Gestionar las plazas del LMS en la página de personal</value></data>
-  <data name="BillingPacksAdded" xml:space="preserve"><value>Paquetes añadidos. Se ha facturado el importe prorrateado del resto de este periodo de facturación.</value></data>
-  <data name="BillingPacksScheduled" xml:space="preserve"><value>La reducción de paquetes está programada para su próxima fecha de facturación. Sus plazas se mantienen hasta entonces.</value></data>
-  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Quedarían menos plazas que miembros habilitados en el LMS. Deshabilite primero miembros en la página de personal.</value></data>
-  <data name="BillingPacksFailed" xml:space="preserve"><value>No se pudo cambiar el número de paquetes y no se ha cobrado nada. Inténtelo de nuevo o contáctenos.</value></data>
-  <data name="PacksHeading" xml:space="preserve"><value>Paquetes y plazas</value></data>
-  <data name="PacksInForce" xml:space="preserve"><value>{0} paquetes: {1} plazas, {2} en uso</value></data>
-  <data name="PacksNextMonth" xml:space="preserve"><value>Precio del próximo mes: {0}</value></data>
-  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Próximo mes</value></data>
-  <data name="PacksScheduledNote" xml:space="preserve"><value>A partir del {0}: {1} paquetes.</value></data>
-  <data name="PacksLabel" xml:space="preserve"><value>Paquetes</value></data>
-  <data name="PacksUpdate" xml:space="preserve"><value>Actualizar paquetes</value></data>
-  <data name="PackPreviewFirst" xml:space="preserve"><value>{0} paquetes ({1} plazas): {2} al mes.</value></data>
-  <data name="PackPreviewIncrease" xml:space="preserve"><value>{0} paquetes ({1} plazas): {2} al mes a partir de ahora. Ahora se cobran unos {3} por el resto de este periodo de facturación.</value></data>
-  <data name="PackPreviewDecrease" xml:space="preserve"><value>{0} paquetes ({1} plazas): {2} al mes a partir del {3}. No se reembolsa nada y sus plazas se mantienen hasta entonces.</value></data>
-  <data name="PackPreviewSame" xml:space="preserve"><value>Este es el número de paquetes que tiene ahora.</value></data>
-  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Se necesitan al menos {0} paquetes para los miembros habilitados en el LMS. Deshabilite primero algunos en la página de personal.</value></data>
-  <data name="PackRefusedRange" xml:space="preserve"><value>Elija entre {0} y {1} paquetes.</value></data>
-  <data name="PackPreviewFailed" xml:space="preserve"><value>No se pudo mostrar el precio. Inténtelo de nuevo.</value></data>
-  <data name="LmsSeatHeading" xml:space="preserve"><value>Plaza del LMS</value></data>
-  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>Habilitado en el LMS</value></data>
-  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Este miembro puede formarse con los cursos y requisitos del LMS.</value></data>
-  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>No habilitado en el LMS</value></data>
-  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Este miembro conserva el módulo de Formación gratuito, su expediente y la Academy.</value></data>
-  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Sin licencia</value></data>
-  <data name="LmsSeatCounter" xml:space="preserve"><value>{0} de {1} plazas en uso</value></data>
-  <data name="LmsSeatEnable" xml:space="preserve"><value>Habilitar LMS</value></data>
-  <data name="LmsSeatDisable" xml:space="preserve"><value>Deshabilitar LMS</value></data>
-  <data name="LmsSeatsFull" xml:space="preserve"><value>Las {0} plazas están en uso. Paquetes que añadir: {1}.</value></data>
-  <data name="LmsSeatNotActive" xml:space="preserve"><value>Solo los miembros activos pueden tener una plaza del LMS; los miembros eliminados, desactivados u ocultos no.</value></data>
-  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Su departamento no tiene un complemento LMS activo, así que no se puede habilitar a ningún miembro.</value></data>
-  <data name="LmsSeatFailed" xml:space="preserve"><value>No se pudo cambiar la plaza del LMS. Inténtelo de nuevo.</value></data>
-  <data name="LmsSeatSaved" xml:space="preserve"><value>Plaza del LMS actualizada.</value></data>
-  <data name="LmsAddPack" xml:space="preserve"><value>Añadir un paquete</value></data>
-  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>Plazas del LMS</value></data>
-  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Grupo</value></data>
-  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Habilitar grupo</value></data>
-  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Deshabilitar grupo</value></data>
-  <data name="LmsSeatBulkResult" xml:space="preserve"><value>{0} cambiados, {1} ya establecidos, {2} omitidos por no estar activos, {3} rechazados por falta de plazas.</value></data>
-  <data name="LmsSeatDormant" xml:space="preserve"><value>{0} plazas pertenecen a miembros que ya no están activos y no se cuentan.</value></data>
-  <data name="LmsManagePacks" xml:space="preserve"><value>Gestionar paquetes</value></data>
-  <data name="LmsSettingsHeading" xml:space="preserve"><value>Paquetes y plazas del LMS</value></data>
-  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Su departamento no ha comprado el complemento LMS.</value></data>
-  <data name="LmsSettingsLapsed" xml:space="preserve"><value>El complemento LMS ha finalizado. Los registros, certificados y expedientes siguen disponibles y exportables.</value></data>
-  <data name="LmsSettingsGrace" xml:space="preserve"><value>Un pago ha fallado. El LMS sigue funcionando hasta el {0} mientras se reintenta el pago.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsTagline" xml:space="preserve"><value>Cursos, informes de formación formales y certificados verificables</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>Cursos con lecciones, bancos de preguntas y cuestionarios</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>Lecciones en vídeo alojadas, 100 GB incluidos por departamento</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>Informes de formación formales ISO FSRS y NREMT NCCP</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>Certificados con código de verificación, QR y página pública de verificación, con su propia plantilla</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>Plazas solo para los miembros que active; todos conservan la formación gratuita</value><comment>machine-translated</comment></data>
+  <data name="LmsNote" xml:space="preserve"><value>Precio por paquete de 25 miembros, escalonado: los 4 primeros paquetes a precio completo y después más baratos. Facturación mensual por departamento; sin prueba. Requiere un plan de pago de Resgrid.</value><comment>machine-translated</comment></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>por paquete de {0} miembros</value><comment>machine-translated</comment></data>
+  <data name="PackTierLine" xml:space="preserve"><value>Paquetes {0}–{1}: {2} por paquete</value><comment>machine-translated</comment></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>Paquetes {0} en adelante: {1} por paquete</value><comment>machine-translated</comment></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>El LMS se vende con un plan de pago de Resgrid. Elija primero un plan en la página de suscripción.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Cada paquete incluye 25 miembros. Los paquetes tienen precios por tramos: cada paquete se factura al precio de su propio tramo, así que añadir paquetes nunca abarata ni encarece los anteriores. Facturación mensual; no hay prueba ni plazo anual.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Añadir paquetes se cobra de inmediato, prorrateado hasta su fecha de facturación. Quitar paquetes se aplica en la siguiente fecha de facturación y solo hasta el número de miembros habilitados en el LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Los miembros no habilitados en el LMS conservan el módulo de Formación gratuito, su expediente y la Academy. Los instructores, evaluadores y oficiales no necesitan plaza.</value><comment>machine-translated</comment></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>Gestionar las plazas del LMS en la página de personal</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>Paquetes añadidos. Se ha facturado el importe prorrateado del resto de este periodo de facturación.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>La reducción de paquetes está programada para su próxima fecha de facturación. Sus plazas se mantienen hasta entonces.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Quedarían menos plazas que miembros habilitados en el LMS. Deshabilite primero miembros en la página de personal.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>No se pudo cambiar el número de paquetes y no se ha cobrado nada. Inténtelo de nuevo o contáctenos.</value><comment>machine-translated</comment></data>
+  <data name="PacksHeading" xml:space="preserve"><value>Paquetes y plazas</value><comment>machine-translated</comment></data>
+  <data name="PacksInForce" xml:space="preserve"><value>{0} paquetes: {1} plazas, {2} en uso</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>Precio del próximo mes: {0}</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Próximo mes</value><comment>machine-translated</comment></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>A partir del {0}: {1} paquetes.</value><comment>machine-translated</comment></data>
+  <data name="PacksLabel" xml:space="preserve"><value>Paquetes</value><comment>machine-translated</comment></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>Actualizar paquetes</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>{0} paquetes ({1} plazas): {2} al mes.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>{0} paquetes ({1} plazas): {2} al mes a partir de ahora. Ahora se cobran unos {3} por el resto de este periodo de facturación.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>{0} paquetes ({1} plazas): {2} al mes a partir del {3}. No se reembolsa nada y sus plazas se mantienen hasta entonces.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>Este es el número de paquetes que tiene ahora.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Se necesitan al menos {0} paquetes para los miembros habilitados en el LMS. Deshabilite primero algunos en la página de personal.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>Elija entre {0} y {1} paquetes.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>No se pudo mostrar el precio. Inténtelo de nuevo.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>Plaza del LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>Habilitado en el LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Este miembro puede formarse con los cursos y requisitos del LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>No habilitado en el LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Este miembro conserva el módulo de Formación gratuito, su expediente y la Academy.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Sin licencia</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>{0} de {1} plazas en uso</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>Habilitar LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>Deshabilitar LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>Las {0} plazas están en uso. Paquetes que añadir: {1}.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>Solo los miembros activos pueden tener una plaza del LMS; los miembros eliminados, desactivados u ocultos no.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Su departamento no tiene un complemento LMS activo, así que no se puede habilitar a ningún miembro.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>No se pudo cambiar la plaza del LMS. Inténtelo de nuevo.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>Plaza del LMS actualizada.</value><comment>machine-translated</comment></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>Añadir un paquete</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>Plazas del LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Grupo</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Habilitar grupo</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Deshabilitar grupo</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>{0} cambiados, {1} ya establecidos, {2} omitidos por no estar activos, {3} rechazados por falta de plazas.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>{0} plazas pertenecen a miembros que ya no están activos y no se cuentan.</value><comment>machine-translated</comment></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>Gestionar paquetes</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>Paquetes y plazas del LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Su departamento no ha comprado el complemento LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>El complemento LMS ha finalizado. Los registros, certificados y expedientes siguen disponibles y exportables.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>Un pago ha fallado. El LMS sigue funcionando hasta el {0} mientras se reintenta el pago.</value><comment>machine-translated</comment></data>
+  <data name="EnhancedAiFeature7" xml:space="preserve">
+    <value>Borradores de protocolos y formaciones, traducciones, tarjetas y práctica</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnhancedAiFeature8" xml:space="preserve">
+    <value>Borradores de cursos, tutor y tarjetas de cursos con el complemento LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTitle" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTagline" xml:space="preserve">
+    <value>Registros de bienestar de los miembros y de exposición laboral, para los miembros que elija</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature1" xml:space="preserve">
+    <value>Registro de exposición a cancerígenos, patógenos de transmisión sanguínea, sustancias peligrosas e incidentes críticos, con entradas sugeridas tras marcar una llamada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature2" xml:space="preserve">
+    <value>Casos de exposición con un flujo de trabajo del responsable designado y seguimiento posterior a la exposición</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature3" xml:space="preserve">
+    <value>Lesiones con estado de servicio, reincorporación y exportación del registro de lesiones</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature4" xml:space="preserve">
+    <value>Autorizaciones médicas con estado de restricciones y funciones de bienestar que nombra su organización</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature5" xml:space="preserve">
+    <value>Puestos solo para los miembros que active; los registros siguen siendo legibles si lo deja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProNote" xml:space="preserve">
+    <value>Precio por paquete de 25 miembros, escalonado: los 4 primeros paquetes al precio completo y después más baratos. Facturación mensual por departamento; sin cuota de alta. Requiere un plan de pago de Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProRequiresPaidPlan" xml:space="preserve">
+    <value>Workforce Pro se vende con un plan de pago de Resgrid. Elija primero un plan en la página de suscripción.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingPacksNote" xml:space="preserve">
+    <value>Cada paquete cubre 25 miembros. Los paquetes tienen precios por tramos: cada paquete se factura al precio de su propio tramo, así que añadir paquetes nunca abarata ni encarece los anteriores. Facturación mensual; sin cuota de alta ni plazo anual.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingSeatsNote" xml:space="preserve">
+    <value>Añadir paquetes se cobra en el momento, prorrateado hasta su fecha de facturación. Quitar paquetes surte efecto en la siguiente fecha de facturación y solo hasta los miembros que tienen Workforce Pro activado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingFreeNote" xml:space="preserve">
+    <value>Los puestos son para los miembros cuyos registros lleva; los responsables y mandos que actúan sobre otros necesitan su permiso, no un puesto. Si el complemento termina, los registros existentes siguen siendo legibles y exportables.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProManageSeats" xml:space="preserve">
+    <value>Gestionar los puestos de Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsTitle" xml:space="preserve">
+    <value>Puestos de Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsIntro" xml:space="preserve">
+    <value>Active Workforce Pro para los miembros cuyos registros de bienestar y exposición laboral lleva su organización. Desactivar a un miembro nunca borra un registro: sus registros pasan a ser de solo lectura.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatCounter" xml:space="preserve">
+    <value>{0} de {1} puestos en uso, {2} disponibles</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatMember" xml:space="preserve">
+    <value>Miembro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatState" xml:space="preserve">
+    <value>Puesto de Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOn" xml:space="preserve">
+    <value>Activado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOff" xml:space="preserve">
+    <value>Desactivado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotLicensed" xml:space="preserve">
+    <value>Activado, sin licencia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatEnable" xml:space="preserve">
+    <value>Activar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDisable" xml:space="preserve">
+    <value>Desactivar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsFull" xml:space="preserve">
+    <value>Los {0} puestos están en uso. Paquetes que añadir: {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotActive" xml:space="preserve">
+    <value>Solo los miembros activos pueden tener un puesto de Workforce Pro; los eliminados, deshabilitados y ocultos no.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatAddonInactive" xml:space="preserve">
+    <value>Su organización no tiene un complemento Workforce Pro activo, así que no se puede activar Workforce Pro para nadie. Los registros existentes siguen siendo de solo lectura.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatFailed" xml:space="preserve">
+    <value>No se pudo cambiar el puesto de Workforce Pro. Inténtelo de nuevo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatSaved" xml:space="preserve">
+    <value>Puesto de Workforce Pro actualizado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDormant" xml:space="preserve">
+    <value>{0} puestos pertenecen a miembros que ya no están activos y no se cuentan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProAddPack" xml:space="preserve">
+    <value>Añadir un paquete</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsNotPurchased" xml:space="preserve">
+    <value>Su organización no tiene ahora el complemento Workforce Pro. Los registros de bienestar existentes siguen siendo legibles; compre paquetes para añadir o cambiar registros.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsGrace" xml:space="preserve">
+    <value>Un pago ha fallado. Workforce Pro sigue funcionando hasta el {0} mientras se reintenta el pago.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsBilling" xml:space="preserve">
+    <value>Comprar o cambiar paquetes</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

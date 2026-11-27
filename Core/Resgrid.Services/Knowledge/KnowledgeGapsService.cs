@@ -83,7 +83,39 @@ namespace Resgrid.Services.Knowledge
 			gap.ResolutionNote = null;
 			if (gap.AskedOn == default)
 				gap.AskedOn = DateTime.UtcNow;
-			return await _repository.InsertAsync(gap, cancellationToken);
+			var saved = await _repository.InsertAsync(gap, cancellationToken);
+			if (saved != null)
+				ContentWorkflowContext.Publish(_eventAggregator, RecordedEvent(saved, DateTime.UtcNow));
+			return saved;
+		}
+
+		/// <summary>
+		/// Workflow trigger 258 once the gap is stored: ids, the reason, where it was asked and a count. The question (user content that
+		/// can carry a call's details), the asker and the nearest sources stay in Knowledge.
+		/// </summary>
+		public static KnowledgeGapWorkflowEvent RecordedEvent(KnowledgeGap gap, DateTime utcNow) => new KnowledgeGapWorkflowEvent
+		{
+			DepartmentId = gap.DepartmentId,
+			KnowledgeGapId = gap.KnowledgeGapId,
+			GapReason = Enum.IsDefined(typeof(KnowledgeGapReasons), gap.Reason) ? ((KnowledgeGapReasons)gap.Reason).ToString() : null,
+			Surface = Enum.IsDefined(typeof(KnowledgeAskSurfaces), gap.Surface) ? ((KnowledgeAskSurfaces)gap.Surface).ToString() : null,
+			NearestSourceCount = CountSources(gap.NearestSourcesJson),
+			AskedOn = gap.AskedOn,
+			OccurredOn = utcNow
+		};
+
+		private static int CountSources(string json)
+		{
+			if (string.IsNullOrWhiteSpace(json))
+				return 0;
+			try
+			{
+				return Newtonsoft.Json.Linq.JToken.Parse(json) is Newtonsoft.Json.Linq.JArray array ? array.Count : 0;
+			}
+			catch (Newtonsoft.Json.JsonException)
+			{
+				return 0;
+			}
 		}
 
 		public async Task<bool> SetStatusAsync(int departmentId, int knowledgeGapId, KnowledgeGapStatuses status, string userId, string note, CancellationToken cancellationToken = default)

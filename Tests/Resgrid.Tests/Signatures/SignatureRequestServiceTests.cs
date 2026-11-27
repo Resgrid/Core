@@ -50,6 +50,9 @@ namespace Resgrid.Tests.Signatures
 		private Mock<IRmsSignaturesRepository> _rms;
 		private ESignEnvelope _envelope;
 		private SignatureRequestService _service;
+		private Mock<IDepartmentDataProtectionService> _protection;
+		private IProtectedWriteService _protectedWrite;
+		private Mock<ISignatureRequestSignersRepository> _signersRepository;
 
 		private sealed class FakeSource : ISignatureSubjectSource
 		{
@@ -110,6 +113,40 @@ namespace Resgrid.Tests.Signatures
 					s.LinkTokenUsedOn = now; s.SessionHash = session; s.SessionExpiresOn = expires;
 					return true;
 				});
+			// Security review M4: the one-time-code conditional updates (the real SQL, with parallel posts, is proven in SignatureSealingDatabaseTests).
+			signers.Setup(x => x.TryCountOtpAttemptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int id, string hash, int max, DateTime now, CancellationToken _) =>
+				{
+					var s = _signers.FirstOrDefault(x => x.SignatureRequestSignerId == id && x.OtpHash == hash && x.OtpVerifiedOn == null && x.OtpExpiresOn > now && x.OtpAttempts < max);
+					if (s == null) return false;
+					s.OtpAttempts++;
+					return true;
+				});
+			signers.Setup(x => x.MarkOtpVerifiedAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int id, string hash, DateTime now, CancellationToken _) =>
+				{
+					var s = _signers.FirstOrDefault(x => x.SignatureRequestSignerId == id && x.OtpHash == hash && x.OtpVerifiedOn == null);
+					if (s == null) return false;
+					s.OtpVerifiedOn = now; s.OtpHash = null; s.OtpExpiresOn = null;
+					if (s.Status == (int)SignatureSignerStatuses.Pending || s.Status == (int)SignatureSignerStatuses.Opened) s.Status = (int)SignatureSignerStatuses.Verified;
+					return true;
+				});
+			signers.Setup(x => x.WipeExhaustedOtpAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.Callback((int id, string hash, int max, CancellationToken _) =>
+				{
+					var s = _signers.FirstOrDefault(x => x.SignatureRequestSignerId == id && x.OtpHash == hash && x.OtpVerifiedOn == null && x.OtpAttempts >= max);
+					if (s != null) { s.OtpHash = null; s.OtpExpiresOn = null; }
+				})
+				.Returns(Task.CompletedTask);
+			signers.Setup(x => x.IssueOtpAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((int id, string hash, DateTime expires, DateTime sent, int channel, CancellationToken _) =>
+				{
+					var s = _signers.FirstOrDefault(x => x.SignatureRequestSignerId == id && x.OtpVerifiedOn == null);
+					if (s == null) return false;
+					s.OtpHash = hash; s.OtpExpiresOn = expires; s.OtpAttempts = 0; s.OtpSentOn = sent; s.OtpChannel = channel;
+					return true;
+				});
+			_signersRepository = signers;
 
 			var records = new Mock<ISignatureRecordsRepository>();
 			records.Setup(x => x.InsertAsync(It.IsAny<SignatureRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -119,7 +156,7 @@ namespace Resgrid.Tests.Signatures
 
 			var captures = new Mock<ISignatureCapturesRepository>();
 			captures.Setup(x => x.InsertAsync(It.IsAny<SignatureCapture>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.ReturnsAsync((SignatureCapture c, CancellationToken _, bool __) => { _captures.Add(c); return c; });
+				.ReturnsAsync((SignatureCapture c, CancellationToken _, bool __) => { c.SignatureCaptureId = _captures.Count + 900; _captures.Add(c); return c; });
 			captures.Setup(x => x.GetForRequestAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((int d, int id) => _captures.Where(c => c.SignatureRequestId == id).ToList());
 
 			var hints = new Mock<IESignWebhookEventsRepository>();
@@ -131,6 +168,8 @@ namespace Resgrid.Tests.Signatures
 				.Returns(Task.CompletedTask);
 
 			_rms = new Mock<IRmsSignaturesRepository>(MockBehavior.Strict);
+			_protection = new Mock<IDepartmentDataProtectionService>();
+			_protectedWrite = null;
 
 			_envelope = new ESignEnvelope
 			{
@@ -178,7 +217,8 @@ namespace Resgrid.Tests.Signatures
 			_service = new SignatureRequestService(requests.Object, signers.Object, captures.Object, records.Object, hints.Object, _rms.Object, new[] { (ISignatureSubjectSource)_source },
 				_provider.Object, _accounts.Object, _sealing.Object, pdf.Object, encryption.Object, email.Object, sms.Object, departments.Object, Mock.Of<IDepartmentSettingsService>(),
 				_businessOps.Object, Mock.Of<IReadinessAccessService>(), Mock.Of<IIncidentBackOfficeAccessService>(), Mock.Of<ILmsAccessService>(), cache.Object, events.Object,
-				Mock.Of<ISignatureService>(), Mock.Of<ISignerEligibilityService>(), Mock.Of<ISignatureNotificationService>());
+				Mock.Of<ISignatureService>(), Mock.Of<ISignerEligibilityService>(), Mock.Of<ISignatureNotificationService>(), _protection.Object,
+				new Lazy<IProtectedWriteService>(() => _protectedWrite ?? Mock.Of<IProtectedWriteService>()));
 		}
 
 		[TearDown]
@@ -383,6 +423,36 @@ namespace Resgrid.Tests.Signatures
 		}
 
 		[Test]
+		public async Task Security_review_M4_the_attempt_is_taken_before_the_compare_and_verifying_never_writes_the_whole_row()
+		{
+			var result = await RemoteAsync();
+			var (_, session) = await _service.StartSessionAsync(result.LinkToken, null);
+			await _service.ConsentAsync(session, SignatureTokens.ConsentTextVersion, null);
+			await _service.SendCodeAsync(session, "en");
+			var code = CodeFrom(_mail.Last().Body.Substring(_mail.Last().Body.IndexOf("is ", StringComparison.Ordinal)));
+			_signersRepository.Invocations.Clear();
+
+			// Parallel posts used every attempt before this one was read: the right code is not even compared.
+			result.Signer.OtpAttempts = ESignConfig.MaxCodeAttempts;
+			var refused = await _service.VerifyCodeAsync(session, code);
+			refused.Step.Should().Be(SigningPageSteps.Code);
+			refused.EmbedUrl.Should().BeNull();
+			result.Signer.OtpVerifiedOn.Should().BeNull();
+			result.Signer.OtpHash.Should().BeNull("the exhausted code is wiped");
+
+			await _service.SendCodeAsync(session, "en");
+			code = CodeFrom(_mail.Last().Body.Substring(_mail.Last().Body.IndexOf("is ", StringComparison.Ordinal)));
+			_signersRepository.Invocations.Clear();
+			(await _service.VerifyCodeAsync(session, code == "000000" ? "111111" : "000000")).Step.Should().Be(SigningPageSteps.Code);
+			(await _service.VerifyCodeAsync(session, code)).Step.Should().Be(SigningPageSteps.Sign);
+			result.Signer.OtpAttempts.Should().Be(2, "each post took its attempt first");
+
+			_signersRepository.Verify(x => x.TryCountOtpAttemptAsync(result.Signer.SignatureRequestSignerId, It.IsAny<string>(), ESignConfig.MaxCodeAttempts, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Exactly(2));
+			_signersRepository.Verify(x => x.UpdateAsync(It.IsAny<SignatureRequestSigner>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never,
+				"a verify post writes only the columns it changes (a stale full row can no longer undo a success)");
+		}
+
+		[Test]
 		public async Task The_code_goes_by_text_message_when_the_signer_chose_sms()
 		{
 			var result = await RemoteAsync(SignatureSignerAuthMethods.SmsOtp);
@@ -545,6 +615,62 @@ namespace Resgrid.Tests.Signatures
 			_captures.Single().BoundRevisionSha256.Should().Be(_source.Revision);
 			_captures.Single().SignatureImageEncrypted.Should().StartWith("enc:", "the drawn signature is encrypted at rest");
 			request.Status.Should().Be((int)SignatureRequestStatuses.Completed);
+		}
+
+		[Test]
+		public async Task Adp_a_records_signers_name_is_sealed_and_never_reaches_the_evidence_the_snapshot_or_a_screen()
+		{
+			// Round 8, catalog 39: the occupant representative of a Records inspection is the person RmsInspections.SignatureName protects.
+			using var kit = new Resgrid.Tests.Adp.AdpTestKit(departmentId: Dept);
+			_protection.Setup(x => x.ShouldEncryptNewWritesAsync(Dept)).ReturnsAsync(true);
+			_protectedWrite = kit.Seam;
+			SealHtmlRequest evidence = null;
+			_sealing.Setup(x => x.SealHtmlAsync(It.IsAny<SealHtmlRequest>(), It.IsAny<CancellationToken>())).Callback((SealHtmlRequest r, CancellationToken _) => evidence = r)
+				.ReturnsAsync(new SealOutcome { Document = new SealedDocument { SealedDocumentId = 77, Status = (int)SealedDocumentStatuses.Pending }, Bytes = new byte[] { 1 } });
+			_source.Kind = SignatureSubjectKinds.RecordsInspection;
+			var request = (await InPersonAsync(SignatureSubjectKinds.RecordsInspection)).Request;
+
+			var signed = await _service.CaptureInPersonAsync(new InPersonSignatureCapture
+			{
+				DepartmentId = Dept, SignatureRequestId = request.SignatureRequestId, BoundRevisionSha256 = request.ArtifactSha256, PrintedName = "SYNTHETIC-OCCUPANT-CANARY",
+				SignatureImageDataUrl = Png, WitnessName = "SYNTHETIC-WITNESS-CANARY", ConsentGiven = true, CapturedByUserId = Member
+			});
+
+			signed.Succeeded.Should().BeTrue("a protected department signs exactly as any other");
+			var signer = _signers.Single(s => s.SignatureRequestId == request.SignatureRequestId);
+			ProtectedDataEnvelope.HasEnvelopePrefix(signer.ExternalName).Should().BeTrue();
+			signer.ExternalNameForDisplay.Should().Be(ProtectedDataEnvelope.RedactionValue);
+			var record = _records.Single();
+			ProtectedDataEnvelope.HasEnvelopePrefix(record.ExternalSignerName).Should().BeTrue();
+			record.SignerNameSnapshot.Should().BeNull("the snapshot the lists read without a grant is never a copy of the protected name");
+			ProtectedDataEnvelope.HasEnvelopePrefix(_captures.Single().PrintedNameEncrypted).Should().BeTrue();
+			ProtectedDataEnvelope.HasEnvelopePrefix(_captures.Single().WitnessNameEncrypted).Should().BeTrue();
+			kit.Open("signaturerequestsigners.externalname", signer.SignatureRequestSignerId.ToString(), signer.ExternalName).Should().Be("SYNTHETIC-OCCUPANT-CANARY",
+				"the name is kept, sealed, and revealable with the step-up flow");
+
+			evidence.Should().NotBeNull();
+			evidence.Html.Should().NotContain("CANARY").And.NotContain("rgdp:");
+			evidence.Signers.Should().OnlyContain(s => s.Name == SignatureRequestService.ProtectedSignerName && (s.Evidence == null || !s.Evidence.Contains("CANARY")));
+			kit.Decrypted.Should().BeEmpty("the unattended evidence never decrypts");
+		}
+
+		[Test]
+		public async Task Adp_a_customer_signers_name_is_never_encrypted_even_in_a_protected_department()
+		{
+			using var kit = new Resgrid.Tests.Adp.AdpTestKit(departmentId: Dept);
+			_protection.Setup(x => x.ShouldEncryptNewWritesAsync(Dept)).ReturnsAsync(true);
+			_protectedWrite = kit.Seam;
+			var request = (await InPersonAsync()).Request;
+
+			(await _service.CaptureInPersonAsync(new InPersonSignatureCapture
+			{
+				DepartmentId = Dept, SignatureRequestId = request.SignatureRequestId, BoundRevisionSha256 = request.ArtifactSha256, PrintedName = "Casey Customer",
+				SignatureImageDataUrl = Png, ConsentGiven = true, CapturedByUserId = Member
+			})).Succeeded.Should().BeTrue();
+
+			_signers.Single().ExternalName.Should().Be("Casey Customer", "customer-facing documents are never under ADP");
+			_records.Single().SignerNameSnapshot.Should().Be("Casey Customer");
+			kit.Broker.Verify(x => x.EncryptAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<IReadOnlyList<ProtectedFieldOperationItem>>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]

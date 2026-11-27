@@ -52,7 +52,13 @@ namespace Resgrid.Tests.TrainingT1
 			if (query.Statuses != null && query.Statuses.Count > 0) rows = rows.Where(r => query.Statuses.Contains(r.Status));
 			else if (!query.IncludeVoided) rows = rows.Where(r => !r.IsVoided);
 			if (query.UnresolvedDuplicatesOnly) rows = rows.Where(r => r.PossibleDuplicateOfId.HasValue && !r.DuplicateResolvedOn.HasValue);
-			return Task.FromResult(rows.OrderByDescending(r => r.CompletedOn).Skip(query.Skip).Take(query.Take <= 0 ? 5000 : query.Take).Select(Copy).ToList());
+			// Round 9B: review states (AwaitingReview also matches a submission without one) and the reviewer inbox's oldest-first order.
+			if (query.ReviewStates != null && query.ReviewStates.Count > 0)
+				rows = rows.Where(r => r.ReviewState.HasValue ? query.ReviewStates.Contains(r.ReviewState.Value) : query.ReviewStates.Contains((int)TrainingSubmissionReviewStates.AwaitingReview));
+			rows = query.OldestSubmittedFirst
+				? rows.OrderBy(r => r.SubmittedOn ?? r.CreatedOn).ThenBy(r => r.LearningRecordId)
+				: rows.OrderByDescending(r => r.CompletedOn);
+			return Task.FromResult(rows.Skip(query.Skip).Take(query.Take <= 0 ? 5000 : query.Take).Select(Copy).ToList());
 		}
 
 		public async Task<int> CountAsync(LearningRecordQuery query) => (await QueryAsync(query)).Count;
@@ -110,6 +116,10 @@ namespace Resgrid.Tests.TrainingT1
 
 		public Task<int> CountUnresolvedDuplicatesAsync(int departmentId, DateTime? fromUtc, DateTime? toUtc) =>
 			Task.FromResult(Live.Count(r => r.DepartmentId == departmentId && r.HasUnresolvedDuplicate));
+
+		public Task<List<int>> GetDepartmentIdsAwaitingReviewAsync(int take) =>
+			Task.FromResult(Rows.Where(r => r.SourceKind == (int)LearningRecordSourceKinds.ExternalSubmission && r.Status == (int)LearningRecordStatuses.Pending &&
+				(!r.ReviewState.HasValue || r.ReviewState == (int)TrainingSubmissionReviewStates.AwaitingReview)).Select(r => r.DepartmentId).Distinct().OrderBy(d => d).Take(take).ToList());
 
 		public Task<LearningRecord> GetByVerificationCodeAsync(string verificationCode) =>
 			Task.FromResult(Rows.FirstOrDefault(r => string.Equals(r.VerificationCode, verificationCode, StringComparison.OrdinalIgnoreCase)));

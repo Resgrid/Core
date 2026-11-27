@@ -73,7 +73,7 @@ namespace Resgrid.Tests.Web.Services
 			Resgrid.Web.Helpers.ClaimsAuthorizationHelper._httpContextAccessor = null;
 		}
 
-		private V4.ProtocolsController Protocols() => new V4.ProtocolsController(_protocols.Object, _authorization.Object, _calls.Object, Mock.Of<IEventAggregator>(), _access.Object)
+		private V4.ProtocolsController Protocols() => new V4.ProtocolsController(_protocols.Object, Resgrid.Tests.Security.StepUpTestPolicies.Capabilities(), _authorization.Object, _calls.Object, Mock.Of<IEventAggregator>(), _access.Object)
 		{
 			ControllerContext = new ControllerContext { HttpContext = ApiClaims._httpContextAccessor.HttpContext }
 		};

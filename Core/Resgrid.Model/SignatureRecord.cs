@@ -100,7 +100,26 @@ namespace Resgrid.Model
 		CalOesMarsPackageApproval = 24,
 
 		/// <summary>S4: a mutual-aid agreement document approved by the department's chain. SubjectId is the MutualAidAgreementId.</summary>
-		MutualAidAgreementApproval = 25
+		MutualAidAgreementApproval = 25,
+
+		/// <summary>
+		/// Round 10 (A3): the partner department's countersignature of a mutual-aid agreement, routed over the Department Link. The request
+		/// lives in the partner department; SubjectId is "{originDepartmentId}:{MutualAidAgreementId}". Appended; renumber on merge if taken.
+		/// </summary>
+		MutualAidAgreementCountersignature = 26,
+
+		/// <summary>
+		/// Round 10 (A3): a linked partner department's acceptance of a Records deployment fill (e-Sign §20 "Deployments (Records)", L2 for a
+		/// partner on Resgrid). The request lives in the partner department; SubjectId is "{originDepartmentId}:{RmsExternalOrderFillId}".
+		/// Appended; renumber on merge if taken.
+		/// </summary>
+		RecordDeploymentPartnerAcceptance = 27,
+
+		/// <summary>
+		/// Round 10 (A3): a department admin accepting a Department Link (e-Sign §20 "Department Links", L2). SubjectId is the DepartmentLinkId.
+		/// Appended; renumber on merge if taken.
+		/// </summary>
+		DepartmentLinkAcceptance = 28
 	}
 
 	/// <summary>What the signer means by signing (SignatureRecords.Intent). Persisted: append only.</summary>
@@ -237,19 +256,19 @@ namespace Resgrid.Model
 
 		public DateTime CreatedOn { get; set; }
 
-		/// <summary>S2 (M0373): the signature request an external (L4) signature answered, when it answered one.</summary>
+		/// <summary>S2 (M0358): the signature request an external (L4) signature answered, when it answered one.</summary>
 		public int? SignatureRequestId { get; set; }
 
-		/// <summary>S2 (M0373): an external signer's printed name (SignerUserId is null for them).</summary>
+		/// <summary>S2 (M0358): an external signer's printed name (SignerUserId is null for them).</summary>
 		public string ExternalSignerName { get; set; }
 
-		/// <summary>S2 (M0373): the masked address the signer's one-time code went to ("j***@example.com"); never the full address.</summary>
+		/// <summary>S2 (M0358): the masked address the signer's one-time code went to ("j***@example.com"); never the full address.</summary>
 		public string ExternalSignerContact { get; set; }
 
-		/// <summary>S2 (M0373): the member whose device captured an in-person signature.</summary>
+		/// <summary>S2 (M0358): the member whose device captured an in-person signature.</summary>
 		public string CapturedByUserId { get; set; }
 
-		/// <summary>S2 (M0373): where the provider's evidence for this signature is (envelope id, stored certificate key).</summary>
+		/// <summary>S2 (M0358): where the provider's evidence for this signature is (envelope id, stored certificate key).</summary>
 		public string ProviderEvidenceKey { get; set; }
 
 		[NotMapped]
@@ -322,6 +341,12 @@ namespace Resgrid.Model
 
 		/// <summary>S3: an independent witness on a checklist completion (free with Checklists): at least L2, bound to the completion's operational hash.</summary>
 		public static readonly SignatureUse ChecklistWitness = new SignatureUse("checklist-witness", SignatureSubjectKinds.ChecklistWitness, SignatureIntents.Witness, SignatureLevels.StepUp, "checklist-witness/1");
+
+		/// <summary>
+		/// Accepting a Department Link (round 10 A3, e-Sign §20): L2, bound to the link's parties and share settings. Not department-configurable
+		/// (the floor is the level), so it is not listed in <see cref="All"/>.
+		/// </summary>
+		public static readonly SignatureUse DepartmentLinkAcceptance = new SignatureUse("department-link-acceptance", SignatureSubjectKinds.DepartmentLinkAcceptance, SignatureIntents.Accept, SignatureLevels.StepUp, "department-link-acceptance/1");
 
 		public static IReadOnlyList<SignatureUse> All { get; } = new[] { ProtocolApproval, ProtocolReviewStamp, CertificationVerification, ReadAndSign, CourseApproval, ProtocolTranslationApproval, ChecklistWitness };
 
@@ -430,6 +455,15 @@ namespace Resgrid.Model
 		/// <summary>The evidence's method (MfaEvidenceMethod), for the record.</summary>
 		public int? StepUpMethod { get; set; }
 
+		/// <summary>
+		/// When this session last entered its password or signed in at the department's provider again (server-side first-factor
+		/// reauthentication evidence); null when it has not. Counts only where the department's step-up policy allows that kind for the area.
+		/// </summary>
+		public DateTime? ReauthenticatedOnUtc { get; set; }
+
+		/// <summary>The reauthentication's method (MfaEvidenceMethod Password or Sso).</summary>
+		public int? ReauthenticationMethod { get; set; }
+
 		/// <summary>A verified signing passkey assertion: the passkey's id.</summary>
 		public string PasskeyId { get; set; }
 
@@ -467,6 +501,12 @@ namespace Resgrid.Model
 
 		/// <summary>S3: the multi-signer request a member's step signature answers (stored on the record), when it answers one.</summary>
 		public int? SignatureRequestId { get; set; }
+
+		/// <summary>
+		/// The department step-up area this signature belongs to (approvals name theirs); null = from the use (read-and-sign is
+		/// acknowledgments, everything else signatures).
+		/// </summary>
+		public Security.StepUpArea? StepUpArea { get; set; }
 	}
 
 	public enum SignatureOutcomes

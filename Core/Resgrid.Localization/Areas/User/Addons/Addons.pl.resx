@@ -115,64 +115,204 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>Kod partnera/konta został zapisany dla oddziału.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Ten kod partnera/konta jest nieprawidłowy lub nie jest już aktywny.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Oddział ma już kod partnera/konta. Skontaktuj się z nami, jeśli trzeba go zmienić.</value></data>
-  <data name="LmsTitle" xml:space="preserve"><value>LMS</value></data>
-  <data name="LmsTagline" xml:space="preserve"><value>Kursy, formalne raporty szkoleniowe i weryfikowalne certyfikaty</value></data>
-  <data name="LmsFeature1" xml:space="preserve"><value>Kursy z lekcjami, bankami pytań i quizami</value></data>
-  <data name="LmsFeature2" xml:space="preserve"><value>Hostowane lekcje wideo, 100 GB w cenie dla każdej jednostki</value></data>
-  <data name="LmsFeature3" xml:space="preserve"><value>Formalne raporty szkoleniowe ISO FSRS i NREMT NCCP</value></data>
-  <data name="LmsFeature4" xml:space="preserve"><value>Certyfikaty z kodem weryfikacyjnym, kodem QR i publiczną stroną weryfikacji, na własnym szablonie</value></data>
-  <data name="LmsFeature5" xml:space="preserve"><value>Miejsca tylko dla członków, których włączysz; wszyscy zachowują bezpłatne szkolenia</value></data>
-  <data name="LmsNote" xml:space="preserve"><value>Cena za pakiet 25 członków, progowa: pierwsze 4 pakiety w pełnej cenie, kolejne taniej. Rozliczane co miesiąc za jednostkę; bez okresu próbnego. Wymaga płatnego planu Resgrid.</value></data>
-  <data name="PerMemberPack" xml:space="preserve"><value>za pakiet {0} członków</value></data>
-  <data name="PackTierLine" xml:space="preserve"><value>Pakiety {0}–{1}: {2} za pakiet</value></data>
-  <data name="PackTierLineOpen" xml:space="preserve"><value>Pakiety od {0}: {1} za pakiet</value></data>
-  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>LMS jest sprzedawany wraz z płatnym planem Resgrid. Najpierw wybierz plan na stronie subskrypcji.</value></data>
-  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Każdy pakiet obejmuje 25 członków. Ceny pakietów są progowe: każdy pakiet jest rozliczany według ceny własnego progu, więc dodanie pakietów nigdy nie obniża ani nie podnosi ceny wcześniejszych. Rozliczenie miesięczne; bez okresu próbnego i bez umowy rocznej.</value></data>
-  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Dodanie pakietów jest naliczane od razu, proporcjonalnie do daty rozliczenia. Usunięcie pakietów działa od następnej daty rozliczenia i tylko do liczby członków z włączonym LMS.</value></data>
-  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Członkowie bez włączonego LMS zachowują bezpłatny moduł Szkolenia, swój wykaz szkoleń i Academy. Instruktorzy, oceniający i oficerowie nie potrzebują miejsca.</value></data>
-  <data name="LmsManageSeats" xml:space="preserve"><value>Zarządzaj miejscami LMS na stronie personelu</value></data>
-  <data name="BillingPacksAdded" xml:space="preserve"><value>Dodano pakiety. Proporcjonalna opłata za resztę tego okresu rozliczeniowego została zafakturowana.</value></data>
-  <data name="BillingPacksScheduled" xml:space="preserve"><value>Zmniejszenie liczby pakietów zaplanowano na najbliższą datę rozliczenia. Do tego czasu miejsca pozostają.</value></data>
-  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Zostałoby mniej miejsc niż członków z włączonym LMS. Najpierw wyłącz członków na stronie personelu.</value></data>
-  <data name="BillingPacksFailed" xml:space="preserve"><value>Nie udało się zmienić liczby pakietów i nic nie zostało naliczone. Spróbuj ponownie lub skontaktuj się z nami.</value></data>
-  <data name="PacksHeading" xml:space="preserve"><value>Pakiety i miejsca</value></data>
-  <data name="PacksInForce" xml:space="preserve"><value>Pakiety: {0}, miejsca: {1}, zajęte: {2}</value></data>
-  <data name="PacksNextMonth" xml:space="preserve"><value>Cena w przyszłym miesiącu: {0}</value></data>
-  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Przyszły miesiąc</value></data>
-  <data name="PacksScheduledNote" xml:space="preserve"><value>Od {0}: pakiety: {1}.</value></data>
-  <data name="PacksLabel" xml:space="preserve"><value>Pakiety</value></data>
-  <data name="PacksUpdate" xml:space="preserve"><value>Zaktualizuj pakiety</value></data>
-  <data name="PackPreviewFirst" xml:space="preserve"><value>Pakiety: {0} (miejsca: {1}): {2} miesięcznie.</value></data>
-  <data name="PackPreviewIncrease" xml:space="preserve"><value>Pakiety: {0} (miejsca: {1}): {2} miesięcznie od teraz. Około {3} zostanie naliczone teraz za resztę tego okresu rozliczeniowego.</value></data>
-  <data name="PackPreviewDecrease" xml:space="preserve"><value>Pakiety: {0} (miejsca: {1}): {2} miesięcznie od {3}. Nic nie jest zwracane, a miejsca pozostają do tego czasu.</value></data>
-  <data name="PackPreviewSame" xml:space="preserve"><value>Tyle pakietów masz teraz.</value></data>
-  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Dla członków z włączonym LMS potrzeba co najmniej {0} pakietów. Najpierw wyłącz niektórych na stronie personelu.</value></data>
-  <data name="PackRefusedRange" xml:space="preserve"><value>Wybierz od {0} do {1} pakietów.</value></data>
-  <data name="PackPreviewFailed" xml:space="preserve"><value>Nie udało się wyświetlić ceny. Spróbuj ponownie.</value></data>
-  <data name="LmsSeatHeading" xml:space="preserve"><value>Miejsce LMS</value></data>
-  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>LMS włączony</value></data>
-  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Ten członek może być szkolony w ramach kursów i wymagań LMS.</value></data>
-  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>LMS wyłączony</value></data>
-  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Ten członek zachowuje bezpłatny moduł Szkolenia, swój wykaz szkoleń i Academy.</value></data>
-  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Bez licencji</value></data>
-  <data name="LmsSeatCounter" xml:space="preserve"><value>Zajęte miejsca: {0} z {1}</value></data>
-  <data name="LmsSeatEnable" xml:space="preserve"><value>Włącz LMS</value></data>
-  <data name="LmsSeatDisable" xml:space="preserve"><value>Wyłącz LMS</value></data>
-  <data name="LmsSeatsFull" xml:space="preserve"><value>Wszystkie miejsca ({0}) są zajęte. Pakiety do dodania: {1}.</value></data>
-  <data name="LmsSeatNotActive" xml:space="preserve"><value>Tylko aktywni członkowie mogą mieć miejsce LMS; usunięci, wyłączeni i ukryci członkowie nie.</value></data>
-  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Twoja jednostka nie ma aktywnego dodatku LMS, więc nie można włączyć LMS żadnemu członkowi.</value></data>
-  <data name="LmsSeatFailed" xml:space="preserve"><value>Nie udało się zmienić miejsca LMS. Spróbuj ponownie.</value></data>
-  <data name="LmsSeatSaved" xml:space="preserve"><value>Zaktualizowano miejsce LMS.</value></data>
-  <data name="LmsAddPack" xml:space="preserve"><value>Dodaj pakiet</value></data>
-  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>Miejsca LMS</value></data>
-  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Grupa</value></data>
-  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Włącz grupę</value></data>
-  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Wyłącz grupę</value></data>
-  <data name="LmsSeatBulkResult" xml:space="preserve"><value>Zmieniono: {0}, już ustawione: {1}, pominięte jako nieaktywne: {2}, odrzucone z braku miejsc: {3}.</value></data>
-  <data name="LmsSeatDormant" xml:space="preserve"><value>Miejsca należące do członków, którzy nie są już aktywni, nie są liczone: {0}.</value></data>
-  <data name="LmsManagePacks" xml:space="preserve"><value>Zarządzaj pakietami</value></data>
-  <data name="LmsSettingsHeading" xml:space="preserve"><value>Pakiety i miejsca LMS</value></data>
-  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Twoja jednostka nie kupiła dodatku LMS.</value></data>
-  <data name="LmsSettingsLapsed" xml:space="preserve"><value>Dodatek LMS wygasł. Rekordy, certyfikaty i wykazy szkoleń pozostają dostępne i można je eksportować.</value></data>
-  <data name="LmsSettingsGrace" xml:space="preserve"><value>Płatność nie powiodła się. LMS działa do {0}, dopóki płatność jest ponawiana.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsTagline" xml:space="preserve"><value>Kursy, formalne raporty szkoleniowe i weryfikowalne certyfikaty</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>Kursy z lekcjami, bankami pytań i quizami</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>Hostowane lekcje wideo, 100 GB w cenie dla każdej jednostki</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>Formalne raporty szkoleniowe ISO FSRS i NREMT NCCP</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>Certyfikaty z kodem weryfikacyjnym, kodem QR i publiczną stroną weryfikacji, na własnym szablonie</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>Miejsca tylko dla członków, których włączysz; wszyscy zachowują bezpłatne szkolenia</value><comment>machine-translated</comment></data>
+  <data name="LmsNote" xml:space="preserve"><value>Cena za pakiet 25 członków, progowa: pierwsze 4 pakiety w pełnej cenie, kolejne taniej. Rozliczane co miesiąc za jednostkę; bez okresu próbnego. Wymaga płatnego planu Resgrid.</value><comment>machine-translated</comment></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>za pakiet {0} członków</value><comment>machine-translated</comment></data>
+  <data name="PackTierLine" xml:space="preserve"><value>Pakiety {0}–{1}: {2} za pakiet</value><comment>machine-translated</comment></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>Pakiety od {0}: {1} za pakiet</value><comment>machine-translated</comment></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>LMS jest sprzedawany wraz z płatnym planem Resgrid. Najpierw wybierz plan na stronie subskrypcji.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Każdy pakiet obejmuje 25 członków. Ceny pakietów są progowe: każdy pakiet jest rozliczany według ceny własnego progu, więc dodanie pakietów nigdy nie obniża ani nie podnosi ceny wcześniejszych. Rozliczenie miesięczne; bez okresu próbnego i bez umowy rocznej.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Dodanie pakietów jest naliczane od razu, proporcjonalnie do daty rozliczenia. Usunięcie pakietów działa od następnej daty rozliczenia i tylko do liczby członków z włączonym LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Członkowie bez włączonego LMS zachowują bezpłatny moduł Szkolenia, swój wykaz szkoleń i Academy. Instruktorzy, oceniający i oficerowie nie potrzebują miejsca.</value><comment>machine-translated</comment></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>Zarządzaj miejscami LMS na stronie personelu</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>Dodano pakiety. Proporcjonalna opłata za resztę tego okresu rozliczeniowego została zafakturowana.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>Zmniejszenie liczby pakietów zaplanowano na najbliższą datę rozliczenia. Do tego czasu miejsca pozostają.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Zostałoby mniej miejsc niż członków z włączonym LMS. Najpierw wyłącz członków na stronie personelu.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>Nie udało się zmienić liczby pakietów i nic nie zostało naliczone. Spróbuj ponownie lub skontaktuj się z nami.</value><comment>machine-translated</comment></data>
+  <data name="PacksHeading" xml:space="preserve"><value>Pakiety i miejsca</value><comment>machine-translated</comment></data>
+  <data name="PacksInForce" xml:space="preserve"><value>Pakiety: {0}, miejsca: {1}, zajęte: {2}</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>Cena w przyszłym miesiącu: {0}</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Przyszły miesiąc</value><comment>machine-translated</comment></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>Od {0}: pakiety: {1}.</value><comment>machine-translated</comment></data>
+  <data name="PacksLabel" xml:space="preserve"><value>Pakiety</value><comment>machine-translated</comment></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>Zaktualizuj pakiety</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>Pakiety: {0} (miejsca: {1}): {2} miesięcznie.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>Pakiety: {0} (miejsca: {1}): {2} miesięcznie od teraz. Około {3} zostanie naliczone teraz za resztę tego okresu rozliczeniowego.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>Pakiety: {0} (miejsca: {1}): {2} miesięcznie od {3}. Nic nie jest zwracane, a miejsca pozostają do tego czasu.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>Tyle pakietów masz teraz.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Dla członków z włączonym LMS potrzeba co najmniej {0} pakietów. Najpierw wyłącz niektórych na stronie personelu.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>Wybierz od {0} do {1} pakietów.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>Nie udało się wyświetlić ceny. Spróbuj ponownie.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>Miejsce LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>LMS włączony</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Ten członek może być szkolony w ramach kursów i wymagań LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>LMS wyłączony</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Ten członek zachowuje bezpłatny moduł Szkolenia, swój wykaz szkoleń i Academy.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Bez licencji</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>Zajęte miejsca: {0} z {1}</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>Włącz LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>Wyłącz LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>Wszystkie miejsca ({0}) są zajęte. Pakiety do dodania: {1}.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>Tylko aktywni członkowie mogą mieć miejsce LMS; usunięci, wyłączeni i ukryci członkowie nie.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Twoja jednostka nie ma aktywnego dodatku LMS, więc nie można włączyć LMS żadnemu członkowi.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>Nie udało się zmienić miejsca LMS. Spróbuj ponownie.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>Zaktualizowano miejsce LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>Dodaj pakiet</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>Miejsca LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Grupa</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Włącz grupę</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Wyłącz grupę</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>Zmieniono: {0}, już ustawione: {1}, pominięte jako nieaktywne: {2}, odrzucone z braku miejsc: {3}.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>Miejsca należące do członków, którzy nie są już aktywni, nie są liczone: {0}.</value><comment>machine-translated</comment></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>Zarządzaj pakietami</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>Pakiety i miejsca LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Twoja jednostka nie kupiła dodatku LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>Dodatek LMS wygasł. Rekordy, certyfikaty i wykazy szkoleń pozostają dostępne i można je eksportować.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>Płatność nie powiodła się. LMS działa do {0}, dopóki płatność jest ponawiana.</value><comment>machine-translated</comment></data>
+  <data name="EnhancedAiFeature7" xml:space="preserve">
+    <value>Projekty protokołów i szkoleń, tłumaczenia, karty i ćwiczenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnhancedAiFeature8" xml:space="preserve">
+    <value>Projekty kursów, tutor i karty kursów z dodatkiem LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTitle" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTagline" xml:space="preserve">
+    <value>Rejestry dobrostanu członków i narażeń w miejscu pracy, dla wybranych przez Ciebie członków</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature1" xml:space="preserve">
+    <value>Dziennik narażeń na substancje rakotwórcze, patogeny przenoszone przez krew, substancje niebezpieczne i zdarzenia krytyczne, z wpisami sugerowanymi po oznaczeniu zgłoszenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature2" xml:space="preserve">
+    <value>Przypadki narażenia z procesem dla wyznaczonego koordynatora i działaniami po narażeniu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature3" xml:space="preserve">
+    <value>Urazy ze statusem służby, powrotem do służby i eksportem rejestru urazów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature4" xml:space="preserve">
+    <value>Orzeczenia lekarskie ze statusem ograniczeń oraz role ds. dobrostanu nazwane przez Twoją organizację</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature5" xml:space="preserve">
+    <value>Miejsca tylko dla włączonych przez Ciebie członków; rejestry pozostają do odczytu, jeśli zrezygnujesz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProNote" xml:space="preserve">
+    <value>Cena za pakiet 25 członków, stopniowana: pierwsze 4 pakiety w pełnej cenie, kolejne taniej. Rozliczenie miesięczne na jednostkę; bez opłaty wdrożeniowej. Wymaga płatnego planu Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProRequiresPaidPlan" xml:space="preserve">
+    <value>Workforce Pro jest sprzedawany z płatnym planem Resgrid. Najpierw wybierz plan na stronie subskrypcji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingPacksNote" xml:space="preserve">
+    <value>Każdy pakiet obejmuje 25 członków. Pakiety mają ceny progowe: każdy pakiet jest rozliczany według ceny własnego progu, więc dodanie pakietów nigdy nie obniża ani nie podnosi ceny wcześniejszych. Rozliczenie miesięczne; bez opłaty wdrożeniowej i bez okresu rocznego.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingSeatsNote" xml:space="preserve">
+    <value>Dodanie pakietów jest naliczane od razu, proporcjonalnie do daty rozliczenia. Usunięcie pakietów obowiązuje od następnej daty rozliczenia i tylko do liczby członków z włączonym Workforce Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingFreeNote" xml:space="preserve">
+    <value>Miejsca dotyczą członków, których rejestry prowadzisz; koordynatorzy i kierownicy działający w imieniu innych potrzebują swojego uprawnienia, nie miejsca. Gdy dodatek się zakończy, istniejące rejestry pozostają do odczytu i eksportu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProManageSeats" xml:space="preserve">
+    <value>Zarządzaj miejscami Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsTitle" xml:space="preserve">
+    <value>Miejsca Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsIntro" xml:space="preserve">
+    <value>Włącz Workforce Pro dla członków, których rejestry dobrostanu i narażeń w miejscu pracy prowadzi Twoja organizacja. Wyłączenie członka nigdy nie usuwa wpisu: jego rejestry stają się tylko do odczytu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatCounter" xml:space="preserve">
+    <value>Zajęte miejsca: {0} z {1}, wolne: {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatMember" xml:space="preserve">
+    <value>Członek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatState" xml:space="preserve">
+    <value>Miejsce Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOn" xml:space="preserve">
+    <value>Włączone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOff" xml:space="preserve">
+    <value>Wyłączone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotLicensed" xml:space="preserve">
+    <value>Włączone, bez licencji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatEnable" xml:space="preserve">
+    <value>Włącz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDisable" xml:space="preserve">
+    <value>Wyłącz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsFull" xml:space="preserve">
+    <value>Wszystkie miejsca ({0}) są zajęte. Pakiety do dodania: {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotActive" xml:space="preserve">
+    <value>Tylko aktywni członkowie mogą mieć miejsce Workforce Pro; usunięci, wyłączeni i ukryci nie mogą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatAddonInactive" xml:space="preserve">
+    <value>Twoja organizacja nie ma aktywnego dodatku Workforce Pro, więc nie można go nikomu włączyć. Istniejące rejestry pozostają tylko do odczytu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatFailed" xml:space="preserve">
+    <value>Nie udało się zmienić miejsca Workforce Pro. Spróbuj ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatSaved" xml:space="preserve">
+    <value>Zaktualizowano miejsce Workforce Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDormant" xml:space="preserve">
+    <value>Miejsca ({0}) należą do członków, którzy nie są już aktywni, i nie są liczone.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProAddPack" xml:space="preserve">
+    <value>Dodaj pakiet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsNotPurchased" xml:space="preserve">
+    <value>Twoja organizacja nie ma obecnie dodatku Workforce Pro. Istniejące rejestry dobrostanu pozostają do odczytu; kup pakiety, aby dodawać lub zmieniać wpisy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsGrace" xml:space="preserve">
+    <value>Płatność nie powiodła się. Workforce Pro działa do {0}, a płatność jest ponawiana.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsBilling" xml:space="preserve">
+    <value>Kup lub zmień pakiety</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

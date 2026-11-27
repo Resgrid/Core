@@ -266,7 +266,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				credentials.Select(c => new { id = c.WorkflowCredentialId, name = c.Name, credentialType = c.CredentialType })
 			);
 
-			ViewBag.TriggerEventTypeName = ((WorkflowTriggerEventType)workflow.TriggerEventType).ToString();
 			ViewBag.RecordsTriggersAvailable = await RecordsTriggersAvailableAsync();
 			await AddExportTemplatesAsync((WorkflowTriggerEventType)workflow.TriggerEventType);
 

@@ -29,7 +29,7 @@ namespace Resgrid.Model.Repositories
 	}
 
 	/// <summary>
-	/// The knowledge index store (K1, M0368): chunks with their embeddings, the per-item reindex queue and the per-department state.
+	/// The knowledge index store (K1, M0353): chunks with their embeddings, the per-item reindex queue and the per-department state.
 	/// Every read starts at the department; list reads never load another department's rows. Writes to a department's chunks bump its
 	/// revision in the same transaction.
 	/// </summary>
@@ -90,7 +90,7 @@ namespace Resgrid.Model.Repositories
 		Task<List<KnowledgeDocumentHeader>> GetDocumentHeadersAsync(int departmentId, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>The knowledge gaps report (§16.4, M0369).</summary>
+	/// <summary>The knowledge gaps report (§16.4, M0354).</summary>
 	public interface IKnowledgeGapsRepository
 	{
 		Task<KnowledgeGap> InsertAsync(KnowledgeGap gap, CancellationToken cancellationToken = default);

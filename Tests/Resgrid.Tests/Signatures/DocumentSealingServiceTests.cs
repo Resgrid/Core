@@ -38,7 +38,9 @@ namespace Resgrid.Tests.Signatures
 		private Mock<ISigningKeyProvider> _keys;
 		private Mock<ISealedDocumentStore> _store;
 		private Mock<IPdfProvider> _pdf;
+		private Mock<IDepartmentDataProtectionService> _protection;
 		private DocumentSealingService _service;
+		private List<Resgrid.Model.Events.DocumentSealingWorkflowEvent> _sealingEvents;
 
 		[SetUp]
 		public void SetUp()
@@ -48,6 +50,7 @@ namespace Resgrid.Tests.Signatures
 			_documents = new List<SealedDocument>();
 			_inputs = new List<SealedDocumentInput>();
 			_objects = new Dictionary<string, byte[]>();
+			_protection = new Mock<IDepartmentDataProtectionService>();
 
 			var documents = new Mock<ISealedDocumentsRepository>();
 			documents.Setup(x => x.InsertAsync(It.IsAny<SealedDocument>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -90,7 +93,10 @@ namespace Resgrid.Tests.Signatures
 			encryption.Setup(x => x.Encrypt(It.IsAny<string>())).Returns((string s) => "enc:" + s);
 			encryption.Setup(x => x.Decrypt(It.IsAny<string>())).Returns((string s) => s.Substring(4));
 
-			_service = new DocumentSealingService(documents.Object, inputs.Object, _dss.Object, _keys.Object, _store.Object, _pdf.Object, encryption.Object, Mock.Of<IEventAggregator>());
+			_sealingEvents = new List<Resgrid.Model.Events.DocumentSealingWorkflowEvent>();
+			var events = new Mock<IEventAggregator>();
+			events.Setup(e => e.SendMessage(It.IsAny<Resgrid.Model.Events.DocumentSealingWorkflowEvent>())).Callback((Resgrid.Model.Events.DocumentSealingWorkflowEvent e) => _sealingEvents.Add(e));
+			_service = new DocumentSealingService(documents.Object, inputs.Object, _dss.Object, _keys.Object, _store.Object, _pdf.Object, encryption.Object, events.Object, _protection.Object);
 		}
 
 		[TearDown]
@@ -191,6 +197,8 @@ namespace Resgrid.Tests.Signatures
 			document.TimestampedOn.Should().Be(new DateTime(2026, 11, 24, 12, 0, 0, DateTimeKind.Utc));
 			_inputs.Should().BeEmpty("the input is deleted once sealed");
 			_objects[document.StorageKey].Should().Equal(SealedPdf);
+			// Round 7C, workflow trigger 218: once, after the sealed state is stored.
+			_sealingEvents.Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.DocumentSealed && e.SealedDocumentId == document.SealedDocumentId && e.Status == "Sealed");
 		}
 
 		[Test]
@@ -209,6 +217,7 @@ namespace Resgrid.Tests.Signatures
 			document.Status.Should().Be((int)SealedDocumentStatuses.Pending);
 			document.Attempts.Should().Be(1);
 			document.LastError.Should().Be("sealing_sidecar_http_503");
+			_sealingEvents.Should().BeEmpty("a retry still to come is neither sealed nor failed");
 			document.NextAttemptOn.Should().BeAfter(before.Add(SealingPolicy.Backoff(1)).AddSeconds(-5));
 			_inputs.Should().HaveCount(1, "the input is kept for the next attempt");
 		}
@@ -228,6 +237,8 @@ namespace Resgrid.Tests.Signatures
 
 			document.Status.Should().Be((int)SealedDocumentStatuses.Failed);
 			document.NextAttemptOn.Should().BeNull();
+			// Round 7C, workflow trigger 219: the final failure only, with a code and never the raw error text.
+			_sealingEvents.Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.DocumentSealingFailed && e.ErrorCode == "boom");
 		}
 
 		[Test]
@@ -404,6 +415,56 @@ namespace Resgrid.Tests.Signatures
 			_documents.Single().AuditPageIncluded.Should().BeFalse();
 			_documents.Single().RevisionSha256.Should().Be(SealingPolicy.Sha256(RenderedPdf));
 			_documents.Single().PadesLevel.Should().Be((int)PadesLevels.BaselineLT);
+		}
+
+		[Test]
+		public async Task Adp_a_protected_departments_records_export_is_sealed_and_handed_back_but_never_kept()
+		{
+			// Round 8: the sealed copy of a Records revision or disclosure carries the values the member revealed. ADP's export rule is that a
+			// stored copy inherits its source's protection; the sealed store keeps plain PDFs that unattended steps read, so nothing is kept.
+			ConfigureSealing();
+			_protection.Setup(x => x.ShouldEncryptNewWritesAsync(Dept)).ReturnsAsync(true);
+
+			foreach (var kind in new[] { SignatureSubjectKinds.RecordsDocument, SignatureSubjectKinds.RecordsDisclosure })
+			{
+				var outcome = await _service.SealPdfAsync(new SealPdfRequest { DepartmentId = Dept, SubjectKind = kind, SubjectId = "rec-" + (int)kind, Pdf = RenderedPdf, LongTermSubject = true });
+
+				outcome.Sealed.Should().BeTrue();
+				outcome.Bytes.Should().Equal(SealedPdf, "the member gets the sealed file");
+				outcome.Document.StorageKey.Should().BeNull();
+				outcome.Document.Sha256.Should().Be(SealingPolicy.Sha256(SealedPdf), "the hash stays so the copy verifies as issued");
+				outcome.Document.RetimestampDueOn.Should().BeNull("an unattended re-timestamp would read the plain copy");
+			}
+
+			_objects.Should().BeEmpty("no sealed PDF reaches the store");
+			_inputs.Should().BeEmpty("no input is queued for a retry");
+			_store.Verify(x => x.PutAsync(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task Adp_a_protected_departments_records_export_keeps_nothing_when_sealing_is_unavailable()
+		{
+			_protection.Setup(x => x.ShouldEncryptNewWritesAsync(Dept)).ReturnsAsync(true);
+
+			var outcome = await _service.SealPdfAsync(new SealPdfRequest { DepartmentId = Dept, SubjectKind = SignatureSubjectKinds.RecordsDocument, SubjectId = "rec-1", Pdf = RenderedPdf });
+
+			outcome.Sealed.Should().BeFalse();
+			outcome.Bytes.Should().Equal(RenderedPdf);
+			_documents.Should().BeEmpty("no pending row: nothing could ever seal it later");
+			_inputs.Should().BeEmpty("the rendered export is never queued");
+		}
+
+		[Test]
+		public async Task Adp_unprotected_departments_and_operational_subjects_keep_their_sealed_copy()
+		{
+			ConfigureSealing();
+			_protection.Setup(x => x.ShouldEncryptNewWritesAsync(Dept)).ReturnsAsync(false);
+			(await _service.SealPdfAsync(new SealPdfRequest { DepartmentId = Dept, SubjectKind = SignatureSubjectKinds.RecordsDocument, SubjectId = "rec-1", Pdf = RenderedPdf }))
+				.Document.StorageKey.Should().NotBeNull();
+
+			_protection.Setup(x => x.ShouldEncryptNewWritesAsync(Dept)).ReturnsAsync(true);
+			var training = await _service.SealHtmlAsync(Request());
+			training.Document.StorageKey.Should().NotBeNull("a training certificate is operational: its sealed copy is kept for every department");
 		}
 
 		[Test]

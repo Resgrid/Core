@@ -7,6 +7,7 @@ using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Identity;
 using Resgrid.Model.Lms;
 using Resgrid.Model.Providers;
@@ -49,6 +50,14 @@ namespace Resgrid.Tests.TrainingT4
 			public readonly Mock<ICalendarService> Calendar = new Mock<ICalendarService>();
 			public readonly Mock<ILmsTrainingPlansRepository> TrainingPlans = new Mock<ILmsTrainingPlansRepository>();
 			public readonly Mock<ILmsTrainingPlanItemsRepository> PlanItems = new Mock<ILmsTrainingPlanItemsRepository>();
+			public readonly Mock<ILmsLearnerClassMailer> LearnerMail = new Mock<ILmsLearnerClassMailer>();
+			public readonly Mock<ILmsExternalLearnersRepository> Learners = new Mock<ILmsExternalLearnersRepository>();
+			public readonly Mock<IEventAggregator> Events = new Mock<IEventAggregator>();
+			public readonly Mock<IDepartmentSettingsService> Settings = new Mock<IDepartmentSettingsService>();
+
+			/// <summary>Round 10 A7: the gate's LMS seat answer for class self-service (every active member seated unless a test removes one).</summary>
+			public readonly Mock<ILmsGateService> Gate = new Mock<ILmsGateService>();
+			public readonly HashSet<string> Unseated = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			public LmsClassService Service;
 			public LmsLessonPlanService LessonPlans;
 			public LmsClassSweepService Sweep;
@@ -58,6 +67,7 @@ namespace Resgrid.Tests.TrainingT4
 				foreach (var id in active)
 					Active.Add(id);
 				Active.Add(Manager);
+				Gate.Setup(g => g.HoldsLearnerSeatAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync((int d, string u) => Active.Contains(u) && !Unseated.Contains(u));
 
 				Sessions.Bind(SessionRepo);
 				SessionRepo.Setup(r => r.GetByIdForDepartmentAsync(It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync((int d, int id) => Sessions.Rows.FirstOrDefault(s => s.DepartmentId == d && s.LmsClassSessionId == id));
@@ -121,7 +131,7 @@ namespace Resgrid.Tests.TrainingT4
 				Departments.Setup(d => d.GetAllUsersForDepartmentAsync(It.IsAny<int>(), It.IsAny<bool>(), It.IsAny<bool>()))
 					.ReturnsAsync(() => Active.Select(id => new IdentityUser { Id = id, Email = id + "@example.org" }).ToList());
 
-				var settings = new Mock<IDepartmentSettingsService>();
+				var settings = Settings;
 				settings.Setup(s => s.GetTrainingRecordSettingsAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new TrainingRecordSettings());
 				var learningRecords = new Mock<ILearningRecordService>();
 				learningRecords.Setup(l => l.GetCategoriesAsync(It.IsAny<int>(), It.IsAny<bool>()))
@@ -164,10 +174,11 @@ namespace Resgrid.Tests.TrainingT4
 				Service = new LmsClassService(SessionRepo.Object, EnrollmentRepo.Object, instructorRepo.Object, Mock.Of<ILmsClassCostLinesRepository>(), Mock.Of<ILmsTrainingResourcesRepository>(),
 					Mock.Of<ILmsClassResourceBookingsRepository>(), planRepo.Object, versionRepo.Object, TrainingPlans.Object, PlanItems.Object,
 					Mock.Of<ILmsCourseService>(), Mock.Of<ITrainingService>(), Calendar.Object, Departments.Object, groups.Object, roles.Object, certifications.Object, settings.Object,
-					learningRecords.Object, writer.Object, shifts.Object, Mock.Of<ILmsTrainingRequestService>(), Mock.Of<ILmsGateService>(), Notifier.Object, new UnavailableTrainingTimecardOffers(),
-					new ILmsPostClassEvaluation[0], Mock.Of<IEventAggregator>());
+					learningRecords.Object, writer.Object, shifts.Object, Mock.Of<ILmsTrainingRequestService>(), Gate.Object, Notifier.Object, new UnavailableTrainingTimecardOffers(),
+					new ILmsPostClassEvaluation[0], Events.Object, LearnerMail.Object, Learners.Object);
 				LessonPlans = new LmsLessonPlanService(planRepo.Object, versionRepo.Object, Mock.Of<IEventAggregator>());
-				Sweep = new LmsClassSweepService(SessionRepo.Object, EnrollmentRepo.Object, Service, Access.Object, Departments.Object, Notifier.Object, Mock.Of<IEventAggregator>());
+				Sweep = new LmsClassSweepService(SessionRepo.Object, EnrollmentRepo.Object, Service, Access.Object, Departments.Object, Notifier.Object, Mock.Of<IEventAggregator>(),
+					LearnerMail.Object);
 			}
 
 			public LmsClassSession Add(int capacity, bool waitlist = true, bool approval = false, DateTime? starts = null, int department = Dept)
@@ -456,6 +467,26 @@ namespace Resgrid.Tests.TrainingT4
 			h.Enrollments.Rows.Should().OnlyContain(e => e.Attendance == (int)LmsClassAttendanceStates.Attended);
 		}
 		[Test]
+		public async Task A_class_without_its_own_currency_takes_the_departments_training_currency()
+		{
+			// Round 9C (region neutrality): a Canadian department's classes are costed in CAD without anyone typing it; a class may name its own.
+			var h = new Harness("lead");
+			h.Settings.Setup(s => s.GetSettingByTypeAsync(Dept, DepartmentSettingTypes.LmsProgramSettings)).ReturnsAsync(new DepartmentSetting
+			{
+				DepartmentId = Dept, Setting = Resgrid.Framework.ObjectSerialization.Serialize(new LmsProgramSettings { RequestCurrency = " cad " })
+			});
+			var start = new DateTime(2027, 4, 6, 19, 0, 0);
+
+			var plain = (await h.Service.CreateAsync(Dept, new LmsClassSessionInput { Title = "Workplace hazardous materials refresher", LocalStart = start, LocalEnd = start.AddHours(2) }, Manager)).Single();
+			plain.Currency.Should().Be("CAD");
+			var own = (await h.Service.CreateAsync(Dept, new LmsClassSessionInput { Title = "First aid", LocalStart = start, LocalEnd = start.AddHours(2), Currency = "eur" }, Manager)).Single();
+			own.Currency.Should().Be("EUR");
+			var junk = (await h.Service.CreateAsync(Dept, new LmsClassSessionInput { Title = "Induction", LocalStart = start, LocalEnd = start.AddHours(2), Currency = "$" }, Manager)).Single();
+			junk.Currency.Should().Be("CAD", "a symbol is not a currency code; the department's currency stands");
+			(await h.Service.GetTrainingCurrencyAsync(Dept)).Should().Be("CAD");
+		}
+
+		[Test]
 		public async Task A_weekly_series_creates_a_session_and_calendar_item_per_week_and_a_plan_line_becomes_a_class()
 		{
 			var h = new Harness("lead");
@@ -494,5 +525,156 @@ namespace Resgrid.Tests.TrainingT4
 			line.CalendarItemId.Should().Be(fromPlan.CalendarItemId);
 			(await h.Service.CreateFromPlanItemAsync(Dept, 41, Manager)).LmsClassSessionId.Should().Be(fromPlan.LmsClassSessionId, "a line becomes one class");
 		}
-	}
+
+		#region Round 7B: external learners on the waitlist, learner e-mails, member reminders and the class workflow events
+
+		private static List<TrainingClassWorkflowEvent> CaptureClassEvents(Harness h)
+		{
+			var events = new List<TrainingClassWorkflowEvent>();
+			h.Events.Setup(e => e.SendMessage(It.IsAny<TrainingClassWorkflowEvent>())).Callback((TrainingClassWorkflowEvent e) => events.Add(e));
+			return events;
+		}
+
+		[Test]
+		public async Task External_learners_join_the_waitlist_in_order_are_promoted_like_members_and_are_emailed_each_step()
+		{
+			var h = new Harness("a", "b");
+			var events = CaptureClassEvents(h);
+			var session = h.Add(capacity: 1);
+			var now = DateTime.UtcNow;
+			var suspended = LmsExternalLearnerIds.New();
+			var learner = LmsExternalLearnerIds.New();
+			h.Learners.Setup(l => l.GetByLearnerUserIdsAsync(Dept, It.IsAny<IEnumerable<string>>())).ReturnsAsync(new List<LmsExternalLearner>
+			{
+				new LmsExternalLearner { LmsExternalLearnerId = 1, DepartmentId = Dept, LearnerUserId = suspended, Status = (int)LmsExternalLearnerStatuses.Suspended },
+				new LmsExternalLearner { LmsExternalLearnerId = 2, DepartmentId = Dept, LearnerUserId = learner, Status = (int)LmsExternalLearnerStatuses.Active }
+			});
+
+			(await h.Service.EnrollSelfAsync(Dept, session.LmsClassSessionId, "a", now)).Status.Should().Be((int)LmsClassEnrollmentStatuses.Enrolled);
+			var first = await h.Service.PlaceExternalAsync(Dept, session.LmsClassSessionId, suspended, "Sam Suspended", "Acme", null, false, now);
+			var second = await h.Service.PlaceExternalAsync(Dept, session.LmsClassSessionId, learner, "Lee Learner", "Acme", null, false, now);
+			var member = await h.Service.EnrollSelfAsync(Dept, session.LmsClassSessionId, "b", now);
+			first.Status.Should().Be((int)LmsClassEnrollmentStatuses.Waitlisted);
+			second.WaitlistPosition.Should().Be(2);
+			member.WaitlistPosition.Should().Be(3);
+			LmsLearnerNoticeRules.WaitlistPosition(h.Enrollments.Rows, second).Should().Be(2, "the learner sees their place in the queue");
+			h.LearnerMail.Verify(m => m.SendAsync(Dept, It.IsAny<LmsClassSession>(), It.Is<IEnumerable<string>>(ids => ids.Single() == learner), LmsLearnerNoticeKinds.Waitlisted,
+				It.IsAny<CancellationToken>()), Times.Once, "waitlisted by e-mail");
+
+			await h.Service.UnenrollSelfAsync(Dept, session.LmsClassSessionId, "a", now);
+
+			h.Enrollments.Rows.Single(e => e.UserId == learner).Status.Should().Be((int)LmsClassEnrollmentStatuses.Enrolled, "promoted in waitlist order, like a member");
+			h.Enrollments.Rows.Single(e => e.UserId == suspended).Status.Should().Be((int)LmsClassEnrollmentStatuses.Waitlisted, "a suspended learner is passed over");
+			h.Enrollments.Rows.Single(e => e.UserId == "b").Status.Should().Be((int)LmsClassEnrollmentStatuses.Waitlisted);
+			h.LearnerMail.Verify(m => m.SendAsync(Dept, It.IsAny<LmsClassSession>(), It.Is<IEnumerable<string>>(ids => ids.Single() == learner), LmsLearnerNoticeKinds.Promoted,
+				It.IsAny<CancellationToken>()), Times.Once);
+			h.Notices.Should().NotContain(n => n.UserId == learner, "learners get e-mail, members get their notices");
+			var promoted = events.Single(e => e.Change == TrainingClassWorkflowChanges.WaitlistPromoted);
+			promoted.Trigger.Should().Be(WorkflowTriggerEventType.ClassWaitlistPromoted);
+			promoted.UserId.Should().Be(learner);
+			promoted.IsExternalLearner.Should().BeTrue();
+			Newtonsoft.Json.JsonConvert.SerializeObject(promoted).Should().NotContain("Lee").And.NotContain("Acme").And.NotContain("@");
+		}
+
+		[Test]
+		public async Task Members_keep_their_promotion_notice_and_worker_95_reminds_learners_by_email_and_members_by_notice()
+		{
+			var h = new Harness("a", "b");
+			var now = DateTime.UtcNow;
+			var learner = LmsExternalLearnerIds.New();
+			var open = h.Add(capacity: 5, starts: now.AddHours(10));
+			h.Enrollments.Save(new LmsClassEnrollment { LmsClassSessionId = open.LmsClassSessionId, DepartmentId = Dept, UserId = "a", Status = (int)LmsClassEnrollmentStatuses.Enrolled });
+			h.Enrollments.Save(new LmsClassEnrollment { LmsClassSessionId = open.LmsClassSessionId, DepartmentId = Dept, UserId = learner, Status = (int)LmsClassEnrollmentStatuses.Enrolled });
+			h.SessionRepo.Setup(r => r.GetReminderCandidatesAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<LmsClassSession> { open });
+			h.SessionRepo.Setup(r => r.GetWaitlistCandidatesAsync(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<LmsClassSession>());
+			h.SessionRepo.Setup(r => r.GetPurgeCandidatesAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<LmsClassSession>());
+			h.Access.Setup(a => a.CanAuthorAndManageAsync(Dept)).ReturnsAsync(true);
+			h.LearnerMail.Setup(m => m.SendAsync(Dept, It.IsAny<LmsClassSession>(), It.IsAny<IEnumerable<string>>(), LmsLearnerNoticeKinds.Reminder, It.IsAny<CancellationToken>())).ReturnsAsync(1);
+
+			var result = await LmsClassesLogic.Process(h.Sweep, now);
+
+			result.Reminders.Should().Be(2);
+			h.Notices.Should().Contain(("a", "Notice.Reminder"));
+			h.LearnerMail.Verify(m => m.SendAsync(Dept, It.Is<LmsClassSession>(s => s.LmsClassSessionId == open.LmsClassSessionId), It.Is<IEnumerable<string>>(ids => ids.Single() == learner),
+				LmsLearnerNoticeKinds.Reminder, It.IsAny<CancellationToken>()), Times.Once);
+			h.Enrollments.Rows.Single(e => e.UserId == learner).ReminderSentOn.Should().NotBeNull("claimed before sending, like a member's");
+			(await LmsClassesLogic.Process(h.Sweep, now)).Reminders.Should().Be(0);
+		}
+
+		[Test]
+		public async Task Moving_a_class_clears_the_reminder_claims_and_tells_its_learners_it_changed()
+		{
+			var h = new Harness("a");
+			var start = DateTime.UtcNow.Date.AddDays(10).AddHours(9);
+			var session = (await h.Service.CreateAsync(Dept, new LmsClassSessionInput { Title = "CPR", LocalStart = start, LocalEnd = start.AddHours(2), EnrollmentOpen = true, ReminderHours = 24 }, Manager)).Single();
+			var learner = LmsExternalLearnerIds.New();
+			h.Enrollments.Save(new LmsClassEnrollment { LmsClassSessionId = session.LmsClassSessionId, DepartmentId = Dept, UserId = learner, Status = (int)LmsClassEnrollmentStatuses.Enrolled, ReminderSentOn = DateTime.UtcNow });
+
+			await h.Service.UpdateAsync(Dept, session.LmsClassSessionId, new LmsClassSessionInput { Title = "CPR", LocalStart = start.AddDays(1), LocalEnd = start.AddDays(1).AddHours(2), EnrollmentOpen = true, ReminderHours = 24 }, Manager);
+
+			h.EnrollmentRepo.Verify(r => r.ResetRemindersAsync(Dept, session.LmsClassSessionId, It.IsAny<CancellationToken>()), Times.Once, "worker 95 reminds again for the new time");
+			h.LearnerMail.Verify(m => m.SendAsync(Dept, It.IsAny<LmsClassSession>(), It.Is<IEnumerable<string>>(ids => ids.Contains(learner)), LmsLearnerNoticeKinds.Changed, It.IsAny<CancellationToken>()), Times.Once);
+
+			await h.Service.UpdateAsync(Dept, session.LmsClassSessionId, new LmsClassSessionInput { Title = "CPR (renamed)", LocalStart = start.AddDays(1), LocalEnd = start.AddDays(1).AddHours(2), EnrollmentOpen = true, ReminderHours = 24 }, Manager);
+			h.EnrollmentRepo.Verify(r => r.ResetRemindersAsync(Dept, session.LmsClassSessionId, It.IsAny<CancellationToken>()), Times.Once, "a rename does not move the class");
+		}
+
+		[Test]
+		public async Task Scheduling_cancelling_and_signing_off_raise_the_class_workflow_events_without_contact_data()
+		{
+			var h = new Harness("a");
+			var events = CaptureClassEvents(h);
+			var start = DateTime.UtcNow.Date.AddDays(3).AddHours(9);
+			var created = await h.Service.CreateAsync(Dept, new LmsClassSessionInput { Title = "Hose", LocalStart = start, LocalEnd = start.AddHours(2), EnrollmentOpen = true }, Manager);
+			var scheduled = events.Single(e => e.Change == TrainingClassWorkflowChanges.Scheduled);
+			scheduled.Trigger.Should().Be(WorkflowTriggerEventType.ClassSessionScheduled);
+			((int)scheduled.Trigger).Should().Be(240);
+			scheduled.SessionId.Should().Be(created.Single().LmsClassSessionId);
+			scheduled.ActingUserId.Should().Be(Manager);
+
+			var learner = LmsExternalLearnerIds.New();
+			h.Enrollments.Save(new LmsClassEnrollment { LmsClassSessionId = created.Single().LmsClassSessionId, DepartmentId = Dept, UserId = learner, Status = (int)LmsClassEnrollmentStatuses.Enrolled });
+			await h.Service.CancelAsync(Dept, created.Single().LmsClassSessionId, "Weather", Manager);
+			events.Single(e => e.Change == TrainingClassWorkflowChanges.Cancelled).Trigger.Should().Be(WorkflowTriggerEventType.ClassSessionCancelled);
+			h.LearnerMail.Verify(m => m.SendAsync(Dept, It.IsAny<LmsClassSession>(), It.Is<IEnumerable<string>>(ids => ids.Contains(learner)), LmsLearnerNoticeKinds.Cancelled, It.IsAny<CancellationToken>()), Times.Once);
+
+			var past = h.Add(capacity: 5, starts: DateTime.UtcNow.AddHours(-3));
+			h.Enrollments.Save(new LmsClassEnrollment { LmsClassSessionId = past.LmsClassSessionId, DepartmentId = Dept, UserId = "a", Status = (int)LmsClassEnrollmentStatuses.Enrolled, Attendance = (int)LmsClassAttendanceStates.Attended });
+			h.Enrollments.Save(new LmsClassEnrollment { LmsClassSessionId = past.LmsClassSessionId, DepartmentId = Dept, UserId = learner, Status = (int)LmsClassEnrollmentStatuses.Enrolled, Attendance = (int)LmsClassAttendanceStates.Attended });
+			await h.Service.SignOffAsync(Dept, past.LmsClassSessionId, Manager, DateTime.UtcNow);
+			await h.Service.SignOffAsync(Dept, past.LmsClassSessionId, Manager, DateTime.UtcNow);
+			var signedOff = events.Where(e => e.Change == TrainingClassWorkflowChanges.SignedOff).Should().ContainSingle("a second sign-off rewrites records, it is not a new event").Subject;
+			signedOff.Attended.Should().Be(2);
+			h.LearnerMail.Verify(m => m.SendAsync(Dept, It.IsAny<LmsClassSession>(), It.Is<IEnumerable<string>>(ids => ids.Single() == learner), LmsLearnerNoticeKinds.SignedOff, It.IsAny<CancellationToken>()), Times.Once);
+			Newtonsoft.Json.JsonConvert.SerializeObject(events).Should().NotContain("@");
+		}
+
+		#endregion Round 7B
+	
+		#region Round 10 A7 (LMS seats)
+
+		[Test]
+		public async Task Enrolling_oneself_and_qr_sign_in_need_an_lms_seat_while_a_manager_places_anyone()
+		{
+			var h = new Harness("seated", "unseated");
+			h.Unseated.Add("unseated");
+			var now = DateTime.UtcNow;
+			var session = h.Add(capacity: 10, starts: now.AddMinutes(20));
+			var code = h.Service.CurrentCode(session, now);
+
+			Func<Task> enrol = () => h.Service.EnrollSelfAsync(Dept, session.LmsClassSessionId, "unseated", now);
+			(await enrol.Should().ThrowAsync<InvalidOperationException>()).WithMessage("lms_class_no_seat");
+			Func<Task> signIn = () => h.Service.SignInAsync(Dept, session.LmsClassSessionId, "unseated", code, null, null, now);
+			(await signIn.Should().ThrowAsync<InvalidOperationException>()).WithMessage("lms_class_no_seat", "a QR walk-in is enrolling oneself too");
+			h.Enrollments.Rows.Should().BeEmpty("nothing is written for a refused learner action");
+
+			(await h.Service.EnrollSelfAsync(Dept, session.LmsClassSessionId, "seated", now)).Status.Should().Be((int)LmsClassEnrollmentStatuses.Enrolled);
+			(await h.Service.SignInAsync(Dept, session.LmsClassSessionId, "seated", code, null, null, now)).CheckInOn.Should().Be(now);
+
+			var placed = await h.Service.EnrollMemberAsync(Dept, session.LmsClassSessionId, "unseated", Manager, now);
+			placed.Status.Should().Be((int)LmsClassEnrollmentStatuses.Enrolled, "a class manager placing a member acts by permission, not as a learner");
+		}
+
+		#endregion Round 10 A7 (LMS seats)
+}
 }

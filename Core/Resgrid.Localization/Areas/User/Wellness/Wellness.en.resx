@@ -440,7 +440,7 @@
     <value>Peer support team certification</value>
   </data>
   <data name="PeerTeamHelp" xml:space="preserve">
-    <value>Members holding a current certification of this type receive the anniversary reminders members choose to share.</value>
+    <value>The peer support team's certification type, for example from the Peer Support Team Member template. With a role above, each team member's status shows below; with no role, its current holders are the team and receive the anniversary reminders members choose to share.</value>
   </data>
   <data name="RetentionYearsLabel" xml:space="preserve">
     <value>Keep entries for (years)</value>
@@ -696,5 +696,146 @@
   </data>
   <data name="Doc.Yes" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="WellnessOfficerCertificationLabel" xml:space="preserve">
+    <value>Wellness officer certification</value>
+  </data>
+  <data name="WellnessOfficerCertificationHelp" xml:space="preserve">
+    <value>Optional. One of your certification types, for example from the Wellness Officer template, with the courses, continuing-education hours or training sessions and the validity your organization decides. Each officer's status shows below.</value>
+  </data>
+  <data name="PeerTeamRoleLabel" xml:space="preserve">
+    <value>Peer support team role</value>
+  </data>
+  <data name="PeerTeamRoleHelp" xml:space="preserve">
+    <value>The members of this role are the peer support team. With no role, the members holding a current certification of the type below are the team.</value>
+  </data>
+  <data name="PeerTeamByCertificationOption" xml:space="preserve">
+    <value>No role: the certification holders</value>
+  </data>
+  <data name="RoleCertificationHeader" xml:space="preserve">
+    <value>Certification of the wellness roles</value>
+  </data>
+  <data name="RequireCertificationLabel" xml:space="preserve">
+    <value>Only members with a current certification act in these roles</value>
+  </data>
+  <data name="RequireCertificationHelp" xml:space="preserve">
+    <value>Off: the role decides who reads the logs and receives reports and reminders; the certification is shown as status. On: a role member also needs a current certification of the role's linked type. A role with no linked type is not affected.</value>
+  </data>
+  <data name="EditCertificationTypeLink" xml:space="preserve">
+    <value>Edit the type and its validity</value>
+  </data>
+  <data name="CertificationRequirementsLink" xml:space="preserve">
+    <value>Set its requirements</value>
+  </data>
+  <data name="CertificationTemplatesHint" xml:space="preserve">
+    <value>Add the Wellness Officer, Peer Support Team Member or Designated Exposure Control Officer type from the certification templates, then link it above.</value>
+  </data>
+  <data name="CertificationTypesLink" xml:space="preserve">
+    <value>Certification types</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Who acts in each role</value>
+  </data>
+  <data name="RosterIntro" xml:space="preserve">
+    <value>Role membership decides who acts. Each member's certification of the role's linked type shows as current, expiring, expired or missing.</value>
+  </data>
+  <data name="RosterMemberColumn" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="RosterCertificationColumn" xml:space="preserve">
+    <value>Certification status</value>
+  </data>
+  <data name="RosterActsColumn" xml:space="preserve">
+    <value>Acts in the role</value>
+  </data>
+  <data name="RosterKind.WellnessOfficer" xml:space="preserve">
+    <value>Wellness officers</value>
+  </data>
+  <data name="RosterKind.DesignatedOfficer" xml:space="preserve">
+    <value>Designated officers</value>
+  </data>
+  <data name="RosterKind.PeerSupportTeam" xml:space="preserve">
+    <value>Peer support team</value>
+  </data>
+  <data name="RosterNoRole" xml:space="preserve">
+    <value>No role named.</value>
+  </data>
+  <data name="RosterNoMembers" xml:space="preserve">
+    <value>Nobody holds this role.</value>
+  </data>
+  <data name="RosterFallsBack" xml:space="preserve">
+    <value>No designated officer role is named, so the wellness officer role serves.</value>
+  </data>
+  <data name="RosterByCertification" xml:space="preserve">
+    <value>No role is named: the current holders of the certification are the team.</value>
+  </data>
+  <data name="RosterNoType" xml:space="preserve">
+    <value>No certification linked.</value>
+  </data>
+  <data name="RosterTypeMissing" xml:space="preserve">
+    <value>The linked certification type no longer exists, so the role alone decides.</value>
+  </data>
+  <data name="RosterNobodyActs" xml:space="preserve">
+    <value>Nobody acts in this role right now.</value>
+  </data>
+  <data name="RosterRequiresCertification" xml:space="preserve">
+    <value>Only members with a current certification act.</value>
+  </data>
+  <data name="CertState.Current" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="CertState.CurrentUntil" xml:space="preserve">
+    <value>Current until {0}</value>
+  </data>
+  <data name="CertState.Expiring" xml:space="preserve">
+    <value>Expires {0}</value>
+  </data>
+  <data name="CertState.Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="CertState.ExpiredOn" xml:space="preserve">
+    <value>Expired {0}</value>
+  </data>
+  <data name="CertState.Missing" xml:space="preserve">
+    <value>Missing</value>
+  </data>
+  <data name="ActsYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="ActsNo" xml:space="preserve">
+    <value>No: no current certification</value>
+  </data>
+  <data name="Error.certification_switch_leaves_no_officer" xml:space="preserve">
+    <value>Nobody in the wellness officer or designated officer role holds a current certification of its linked type yet, so nobody would act. Record the certifications first, then turn this on.</value>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>Adding or changing wellness records needs the Workforce Pro add-on. Existing records stay readable.</value>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>Workforce Pro is not switched on for this member, so their records are read-only.</value>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>Member wellness is not available for this organization.</value>
+  </data>
+  <data name="WorkforcePro.RequiredTitle" xml:space="preserve">
+    <value>Workforce Pro required.</value>
+  </data>
+  <data name="WorkforcePro.ReadOnly" xml:space="preserve">
+    <value>Member wellness and workplace exposure are part of the Workforce Pro add-on, which this organization does not hold right now. Existing records are read-only: every member can still view and export their own, and officers can view what their role opens. Nothing can be added or changed.</value>
+  </data>
+  <data name="WorkforcePro.ViewAddon" xml:space="preserve">
+    <value>See the Workforce Pro add-on</value>
+  </data>
+  <data name="WorkforcePro.Grace" xml:space="preserve">
+    <value>A Workforce Pro payment failed. Everything keeps working until {0} while the payment is retried; after that, records become read-only until the add-on is paid.</value>
+  </data>
+  <data name="WorkforcePro.ManageSeats" xml:space="preserve">
+    <value>Manage Workforce Pro seats</value>
+  </data>
+  <data name="WorkforcePro.SeatMissingSelf" xml:space="preserve">
+    <value>Workforce Pro is not switched on for you, so your records here are read-only. Ask an administrator to switch it on.</value>
+  </data>
+  <data name="WorkforcePro.SeatMissing" xml:space="preserve">
+    <value>Workforce Pro is not switched on for {0}, so their records are read-only.</value>
   </data>
 </root>

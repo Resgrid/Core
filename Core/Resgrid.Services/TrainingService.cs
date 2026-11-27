@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
+using Resgrid.Localization.Areas.User.ContentNotices;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
@@ -44,16 +45,19 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly Lazy<ILearningRecordWriter> _learningRecords;
 		private readonly IKnowledgeIndexQueue _knowledgeQueue;
+		private readonly IUserProfileService _userProfiles;
 
 		public TrainingService(ITrainingRepository trainingRepository, ITrainingAttachmentRepository trainingAttachmentRepository,
 			ITrainingUserRepository trainingUserRepository, ITrainingQuestionRepository trainingQuestionRepository, ICommunicationService communicationService, IDepartmentsService departmentService,
-			IDepartmentSettingsService departmentSettingsService, IKnowledgeIndexQueue knowledgeQueue, Lazy<ISearchProjectionService> searchProjections = null, ITrainingQuizAttemptsRepository attemptsRepository = null,
+			IDepartmentSettingsService departmentSettingsService, IKnowledgeIndexQueue knowledgeQueue, IUserProfileService userProfiles,
+			Lazy<ISearchProjectionService> searchProjections = null, ITrainingQuizAttemptsRepository attemptsRepository = null,
 			ITrainingAudiencesRepository audiencesRepository = null, ITrainingCompletionHistoriesRepository historiesRepository = null, ITrainingQuestionFlagsRepository flagsRepository = null,
 			IMemberLeaveService leaveService = null, IEventAggregator eventAggregator = null, IDepartmentGroupsService departmentGroupsService = null,
 			Lazy<ILearningRecordWriter> learningRecords = null)
 		{
 			_learningRecords = learningRecords;
 			_knowledgeQueue = knowledgeQueue;
+			_userProfiles = userProfiles;
 			_searchProjections = searchProjections;
 			_trainingRepository = trainingRepository;
 			_trainingAttachmentRepository = trainingAttachmentRepository;
@@ -439,6 +443,7 @@ namespace Resgrid.Services
 				DueDays = source.DueDays,
 				ClosedToNewAssignees = false,
 				RepeatMonths = source.RepeatMonths,
+				RequiresAcknowledgment = source.RequiresAcknowledgment,
 				QuizAttemptLimit = source.QuizAttemptLimit,
 				OneQuestionPerPage = source.OneQuestionPerPage,
 				ReminderLeadDaysCsv = source.ReminderLeadDaysCsv,
@@ -515,7 +520,8 @@ namespace Resgrid.Services
 				return assignment;
 
 			var questions = await _trainingQuestionRepository.GetTrainingQuestionsByTrainingIdAsync(trainingId);
-			var completeWithoutQuiz = questions == null || !questions.Any();
+			// Round 9A: a read-and-confirm training waits for the member's confirmation (AcknowledgeTrainingAsync), not the first open.
+			var completeWithoutQuiz = (questions == null || !questions.Any()) && !training.RequiresAcknowledgment;
 
 			await _trainingUserRepository.MarkViewedAsync(assignment.TrainingUserId, now, completeWithoutQuiz, cancellationToken);
 
@@ -530,6 +536,32 @@ namespace Resgrid.Services
 					await WriteCompletionAsync(training.DepartmentId, trainingId, assignment.UserId, cancellationToken);
 			}
 
+			assignment.Training = training;
+			return assignment;
+		}
+
+		public async Task<TrainingUser> AcknowledgeTrainingAsync(int departmentId, int trainingId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var training = await GetTrainingRowByIdAsync(trainingId);
+			if (training == null || training.DepartmentId != departmentId || !training.RequiresAcknowledgment)
+				return null;
+			var assignment = FindAssignment(training, userId);
+			var now = DateTime.UtcNow;
+			if (assignment == null || training.IsArchived || !training.HasStarted(now))
+				return null;
+			var questions = await _trainingQuestionRepository.GetTrainingQuestionsByTrainingIdAsync(trainingId);
+			if (questions != null && questions.Any())
+				return null;
+			if (assignment.Complete)
+				return assignment;
+
+			// Viewed and completed together, written once (T-D13), then the transcript (T1) like any other completion.
+			await _trainingUserRepository.MarkViewedAsync(assignment.TrainingUserId, now, true, cancellationToken);
+			assignment.Viewed = true;
+			assignment.ViewedOn ??= now;
+			assignment.Complete = true;
+			assignment.CompletedOn ??= now;
+			await WriteCompletionAsync(training.DepartmentId, trainingId, assignment.UserId, cancellationToken);
 			assignment.Training = training;
 			return assignment;
 		}
@@ -639,15 +671,17 @@ namespace Resgrid.Services
 				CreatedOn = DateTime.UtcNow
 			}, cancellationToken, true);
 
-			// Feedback to the author: a notice to whoever created the training (English, as every outbound message).
+			// Feedback to the author: a notice to whoever created the training, in the author's language (round 9C).
 			if (!string.IsNullOrWhiteSpace(training.CreatedByUserId) && _communicationService != null && ConfigHelper.CanTransmit(departmentId))
 			{
 				try
 				{
 					var department = await _departmentService.GetDepartmentByIdAsync(departmentId, false);
 					var number = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(departmentId);
+					var (culture, profile) = await new ContentNoticeCultures(_userProfiles, department).ForMemberAsync(training.CreatedByUserId);
 					await _communicationService.SendNotificationAsync(training.CreatedByUserId, departmentId,
-						string.Format("A question in training ({0}) was flagged for review", training.Name), number, department, QuestionFlaggedTitle);
+						ContentNoticeText.Format("Training.QuestionFlagged.Message", culture, training.Name), number, department,
+						ContentNoticeText.Get("Training.QuestionFlagged.Title", culture), profile);
 				}
 				catch (Exception ex)
 				{
@@ -834,6 +868,7 @@ namespace Resgrid.Services
 			var leaves = await LeavesAsync(training.DepartmentId);
 			var canTransmit = ConfigHelper.CanTransmit(training.DepartmentId);
 			string departmentNumber = null;
+			ContentNoticeCultures cultures = null;
 			var sent = 0;
 			var overdueNow = 0;
 
@@ -867,7 +902,11 @@ namespace Resgrid.Services
 				if (canTransmit)
 				{
 					departmentNumber ??= await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(training.DepartmentId);
-					await _communicationService.SendNotificationAsync(assignment.UserId, training.DepartmentId, plan.Message, departmentNumber, department, plan.Title);
+					// The plan decides what is sent; the member reads it in their own language, the due date written their way (round 9C).
+					cultures ??= new ContentNoticeCultures(_userProfiles, department);
+					var (culture, profile) = await cultures.ForMemberAsync(assignment.UserId);
+					var notice = TrainingNoticeText.Render(plan, training, due, department, culture);
+					await _communicationService.SendNotificationAsync(assignment.UserId, training.DepartmentId, notice.Message, departmentNumber, department, notice.Title, profile);
 					sent++;
 				}
 
@@ -895,8 +934,11 @@ namespace Resgrid.Services
 			if (overdueNow > 0 && canTransmit && !string.IsNullOrWhiteSpace(training.CreatedByUserId) && active.Contains(training.CreatedByUserId))
 			{
 				departmentNumber ??= await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(training.DepartmentId);
-				await _communicationService.SendNotificationAsync(training.CreatedByUserId, training.DepartmentId, TrainingNoticePlanner.CreatorOverdueMessage(training, overdueNow),
-					departmentNumber, department, TrainingNoticePlanner.OverdueTitle);
+				cultures ??= new ContentNoticeCultures(_userProfiles, department);
+				var (culture, profile) = await cultures.ForMemberAsync(training.CreatedByUserId);
+				await _communicationService.SendNotificationAsync(training.CreatedByUserId, training.DepartmentId,
+					ContentNoticeText.Format("Training.CreatorOverdue", culture, overdueNow, training.Name), departmentNumber, department,
+					ContentNoticeText.Get("Training.Overdue.Title", culture), profile);
 				sent++;
 			}
 

@@ -77,6 +77,32 @@ namespace Resgrid.Model
 		/// <summary>The archive and delete right (Delete Training). Null follows the author right.</summary>
 		public TrainingRightScope Delete { get; set; }
 
+		/// <summary>
+		/// Round 7B: Record Training Completions (135). Its own row (no row: department admins only); ManagesAll for department admins and
+		/// the roles it names, a group admin's own members otherwise. Never null.
+		/// </summary>
+		public TrainingRightScope Record { get; set; } = new TrainingRightScope();
+
+		/// <summary>Round 7B: may record a completion for this member (never for themselves; a group admin only for their own group's members).</summary>
+		public bool CanRecordFor(string memberUserId)
+		{
+			if (string.IsNullOrWhiteSpace(memberUserId) || Record == null || string.Equals(memberUserId.Trim(), UserId, StringComparison.OrdinalIgnoreCase))
+				return false;
+			if (Record.ManagesAll)
+				return true;
+			return Record.AdministeredMemberUserIds != null && Record.AdministeredMemberUserIds.Contains(memberUserId.Trim());
+		}
+
+		/// <summary>Round 7B: holds the recording right at all (the record panels and actions show).</summary>
+		public bool CanRecordCompletions => Record != null && (Record.ManagesAll || Record.AdministeredMemberUserIds != null);
+
+		/// <summary>
+		/// Round 9B: reviews members' training hours submissions at all (the Training reviews section shows): the Record Training Completions
+		/// right (135, training captains and instructors) or T1's record reviewers (Assign Training department-wide, group admins). Whose
+		/// submissions exactly is ITrainingSubmissionService.GetReviewerScopeAsync.
+		/// </summary>
+		public bool CanReviewSubmissions => CanRecordCompletions || AssignRight.ManagesAll || AssignRight.AdministeredMemberUserIds != null;
+
 		/// <summary>Author right: every training.</summary>
 		public bool ManagesAll { get => Author.ManagesAll; set => Author.ManagesAll = value; }
 

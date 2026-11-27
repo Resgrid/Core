@@ -127,5 +127,22 @@ namespace Resgrid.Model.Lms
 
 		public static LmsCompetencyCatalogFramework Find(string key) =>
 			All.FirstOrDefault(f => string.Equals(f.Key, key, StringComparison.OrdinalIgnoreCase));
+
+		/// <summary>
+		/// The display text of a framework (round 9C): its name and description and each item's label. Keys, codes, the publisher and the
+		/// edition stay as they are, so imports and CASE identifiers are the same in every language.
+		/// </summary>
+		public static readonly ISet<string> TextProperties = SeedContentLocalization.Properties("Name", "Description", "Label");
+
+		/// <summary>A framework in a language (a translated copy; the framework itself in English or when the language ships no variant).</summary>
+		public static LmsCompetencyCatalogFramework Localized(LmsCompetencyCatalogFramework framework, string culture) =>
+			SeedContentLocalization.Localize(framework, SeedContentLocalization.CompetencyFrameworks, culture, TextProperties, framework?.Key);
+
+		public static IReadOnlyList<LmsCompetencyCatalogFramework> AllFor(string culture) => All.Select(f => Localized(f, culture)).ToList();
+
+		public static LmsCompetencyCatalogFramework Find(string key, string culture) => Localized(Find(key), culture);
+
+		/// <summary>Every English text of a framework (what the translations cover).</summary>
+		public static IReadOnlyList<string> TextOf(LmsCompetencyCatalogFramework framework) => SeedContentLocalization.CollectObject(framework, TextProperties);
 	}
 }

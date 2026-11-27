@@ -29,8 +29,8 @@ namespace Resgrid.Workers.Console.Tasks
 
 				var result = await new TrainingRecordsLogic().Process(cancellationToken);
 
-				if (result.Jobs > 0 || result.Failures > 0)
-					_logger.LogInformation($"TrainingRecords::Jobs {result.Jobs}, completed {result.Completed}, written {result.Written}, failures {result.Failures}");
+				if (result.Jobs > 0 || result.Failures > 0 || result.DigestNotices > 0)
+					_logger.LogInformation($"TrainingRecords::Jobs {result.Jobs}, completed {result.Completed}, written {result.Written}, failures {result.Failures}, review digests {result.DigestNotices}");
 
 				progress.Report(100, $"Finishing the {Name} Task");
 			}

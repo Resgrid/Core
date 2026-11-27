@@ -1,0 +1,216 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Models.LmsLearn.LmsLearnPlayerModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    The learner portal's course player: the outline with locks, the current lesson (sanitized content, video, document, protocol, test or
+    survey) and its completion. The same LMS runtime as members (seat time, watch share and test rules are the server's), keyed by the
+    learner's own id.
+*@
+@{
+    var player = Model.Player;
+    var key = ViewData["PortalKey"] as string;
+    var lesson = player.Lesson;
+    var outline = player.Outline;
+    var enrollmentId = player.Enrollment.LmsEnrollmentId;
+    ViewData["Title"] = outline.Version?.Title ?? outline.Course.Title;
+    var culture = CultureInfo.CurrentCulture;
+    var done = lesson != null && player.LessonProgress?.Status == (int)LmsLessonProgressStatuses.Completed;
+}
+<p><a href="~/Learn/@key/My"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Portal.MyLearning"]</a></p>
+<h1 class="h3">@ViewData["Title"]</h1>
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="alert alert-warning" role="alert">@Model.Error</div>
+}
+
+<div class="rgl-layout">
+    <nav class="rgl-panel" aria-label="@localizer["Portal.Lessons"]">
+        <h2 class="h4">@localizer["Portal.Lessons"]</h2>
+        <ol class="rgl-lessons">
+            @foreach (var item in outline.Lessons)
+            {
+                var locked = player.LockedLessonIds.Contains(item.LmsLessonId);
+                var complete = player.Progress.TryGetValue(item.LmsLessonId, out var p) && p.Status == (int)LmsLessonProgressStatuses.Completed;
+                <li class="@(lesson != null && item.LmsLessonId == lesson.LmsLessonId ? "active" : null)">
+                    @if (locked)
+                    {
+                        <span class="text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @item.Title <span class="sr-only">(@localizer["Portal.Locked"])</span></span>
+                    }
+                    else
+                    {
+                        <a href="~/Learn/@key/Play/@enrollmentId?lesson=@item.LmsLessonId" aria-current="@(lesson != null && item.LmsLessonId == lesson.LmsLessonId ? "step" : null)">
+                            @if (complete)
+                            {
+                                <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
+                            }
+                            @item.Title
+                        </a>
+                    }
+                </li>
+            }
+        </ol>
+    </nav>
+
+    <section class="rgl-panel" aria-labelledby="rgl-lesson">
+        @if (lesson == null)
+        {
+            <p class="text-muted">@localizer["Portal.NoLearning"]</p>
+        }
+        else
+        {
+            <h2 id="rgl-lesson">@lesson.Title</h2>
+            @switch ((LmsLessonKinds)lesson.Kind)
+            {
+                case LmsLessonKinds.Video:
+                    if (lesson.VideoSource == (int)LmsVideoSources.Embed && !string.IsNullOrWhiteSpace(lesson.VideoUrl))
+                    {
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="@lesson.VideoUrl" title="@lesson.Title" allow="fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-presentation" loading="lazy"></iframe>
+                        </div>
+                    }
+                    else if (lesson.VideoSource == (int)LmsVideoSources.Hosted && player.HostedVideoPlayable)
+                    {
+                        <video data-rgl-video controls preload="metadata" style="width:100%" src="~/Learn/@key/Video/@enrollmentId/@lesson.LmsLessonId">@localizer["Portal.WatchVideo"]</video>
+                    }
+                    else if (!string.IsNullOrWhiteSpace(lesson.VideoUrl))
+                    {
+                        <video data-rgl-video controls preload="metadata" style="width:100%" src="@lesson.VideoUrl">@localizer["Portal.WatchVideo"]</video>
+                    }
+                    if (!string.IsNullOrWhiteSpace(lesson.TranscriptText))
+                    {
+                        <details class="m-t-sm"><summary>@localizer["Portal.Transcript"]</summary><p style="white-space: pre-line">@lesson.TranscriptText</p></details>
+                    }
+                    break;
+                case LmsLessonKinds.Document:
+                    if (!string.IsNullOrWhiteSpace(lesson.DocumentUrl))
+                    {
+                        <p><a class="btn btn-default" href="@lesson.DocumentUrl" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link" aria-hidden="true"></i> @(string.IsNullOrWhiteSpace(lesson.DocumentName) ? localizer["Portal.OpenDocument"].Value : lesson.DocumentName)</a></p>
+                    }
+                    break;
+                case LmsLessonKinds.ProtocolVersion:
+                    if (player.Protocol != null)
+                    {
+                        <div class="protocol-content">@Html.ProtocolContent(player.Protocol.ContentHtml)</div>
+                    }
+                    else if (player.ProtocolWithheld)
+                    {
+                        <div class="alert alert-warning" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["Portal.Err.ProtocolWithheld"]</div>
+                    }
+                    break;
+                case LmsLessonKinds.Assessment:
+                    if (player.Attempts.Count > 0)
+                    {
+                        <ul class="list-unstyled">
+                            @foreach (var attempt in player.Attempts.Where(a => a.SubmittedOn.HasValue))
+                            {
+                                <li>@string.Format(culture, localizer["Portal.Score"].Value, attempt.Percent.ToString("0", culture)) &middot; @(attempt.Passed == true ? localizer["Portal.Passed"] : localizer["Portal.NotPassed"])</li>
+                            }
+                        </ul>
+                    }
+                    if (!done && player.AttemptBlockedBy == LmsErrors.None)
+                    {
+                        <form method="post" action="~/Learn/@key/Play/@enrollmentId/Test" data-submit-once>
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="lesson" value="@lesson.LmsLessonId" />
+                            @if (lesson.RequireAttestation)
+                            {
+                                <div class="checkbox"><label><input type="checkbox" name="attested" value="true" required /> @localizer["Portal.Attest"]</label></div>
+                            }
+                            <button type="submit" class="btn btn-rgl"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Portal.StartTest"]</button>
+                        </form>
+                    }
+                    break;
+                case LmsLessonKinds.Survey:
+                    if (!player.SurveyAnswered)
+                    {
+                        <form method="post" action="~/Learn/@key/Play/@enrollmentId/Survey" data-submit-once>
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="lesson" value="@lesson.LmsLessonId" />
+                            @foreach (var question in Model.SurveyQuestions)
+                            {
+                                var id = "rgl-q-" + question.Key;
+                                <div class="form-group">
+                                    <label for="@id">@question.Text</label>
+                                    @if (question.Kind == (int)LmsSurveyQuestionKinds.Text)
+                                    {
+                                        <textarea id="@id" name="q_@question.Key" class="form-control" rows="3" maxlength="2000"></textarea>
+                                    }
+                                    else
+                                    {
+                                        var options = question.Kind == (int)LmsSurveyQuestionKinds.Rating ? new List<string> { "1", "2", "3", "4", "5" } : question.Options;
+                                        <select id="@id" name="q_@question.Key" class="form-control">
+                                            <option value=""></option>
+                                            @foreach (var option in options)
+                                            {
+                                                <option value="@option">@option</option>
+                                            }
+                                        </select>
+                                    }
+                                </div>
+                            }
+                            <button type="submit" class="btn btn-rgl"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["Portal.SubmitSurvey"]</button>
+                        </form>
+                    }
+                    break;
+            }
+
+            @if (!string.IsNullOrWhiteSpace(lesson.ContentHtml) && lesson.Kind != (int)LmsLessonKinds.ProtocolVersion)
+            {
+                <div class="lesson-content">@Html.ProtocolContent(lesson.ContentHtml)</div>
+            }
+
+            @if (lesson.Kind != (int)LmsLessonKinds.Assessment && lesson.Kind != (int)LmsLessonKinds.Survey && !done)
+            {
+                <form method="post" action="~/Learn/@key/Play/@enrollmentId/Complete" enctype="multipart/form-data" data-submit-once class="m-t-md">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="lesson" value="@lesson.LmsLessonId" />
+                    @if (!string.IsNullOrWhiteSpace(lesson.FreeResponsePrompt))
+                    {
+                        <div class="form-group">
+                            <label for="rgl-response">@lesson.FreeResponsePrompt</label>
+                            <textarea id="rgl-response" name="responseText" class="form-control" rows="5" maxlength="8000" required></textarea>
+                        </div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(lesson.FileRequestPrompt))
+                    {
+                        <div class="form-group">
+                            <label for="rgl-file">@lesson.FileRequestPrompt</label>
+                            <input id="rgl-file" name="file" type="file" class="form-control" required />
+                        </div>
+                    }
+                    @if (lesson.MinimumSeatSeconds > 0)
+                    {
+                        <p class="rgl-meta">@localizer["Portal.SeatTime"]</p>
+                    }
+                    <button type="submit" class="btn btn-rgl"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Portal.MarkComplete"]</button>
+                </form>
+            }
+            else if (done)
+            {
+                <p class="text-success m-t-md"><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["Portal.Completed"]</p>
+            }
+
+            <div class="m-t-md">
+                @if (player.PreviousLessonId.HasValue)
+                {
+                    <a class="btn btn-default btn-sm" href="~/Learn/@key/Play/@enrollmentId?lesson=@player.PreviousLessonId"><i class="fa fa-chevron-left" aria-hidden="true"></i> @localizer["Portal.Previous"]</a>
+                }
+                @if (player.NextLessonId.HasValue && !player.LockedLessonIds.Contains(player.NextLessonId.Value))
+                {
+                    <a class="btn btn-default btn-sm" href="~/Learn/@key/Play/@enrollmentId?lesson=@player.NextLessonId">@localizer["Portal.Next"] <i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+                }
+            </div>
+            <div data-rgl-heartbeat data-url="@Url.Content("~/Learn/" + key + "/Play/" + enrollmentId + "/Progress")" data-lesson="@lesson.LmsLessonId" hidden></div>
+            @if (done || lesson.Kind == (int)LmsLessonKinds.Assessment || lesson.Kind == (int)LmsLessonKinds.Survey)
+            {
+                @Html.AntiForgeryToken()
+            }
+        }
+    </section>
+</div>
+
+@section Scripts {
+    <script src="~/js/app/public/resgrid.learner-portal.js" asp-append-version="true"></script>
+}

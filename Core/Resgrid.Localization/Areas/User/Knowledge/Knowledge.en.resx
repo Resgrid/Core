@@ -430,4 +430,7 @@
   <data name="PracticeOnlyNotice" xml:space="preserve">
     <value>Practice only: nothing is recorded on your transcript.</value>
   </data>
+  <data name="KindQuestionExplanation" xml:space="preserve">
+    <value>Question explanation</value>
+  </data>
 </root>

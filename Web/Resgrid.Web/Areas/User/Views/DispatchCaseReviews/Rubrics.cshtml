@@ -1,0 +1,124 @@
+@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Protocols.DispatchCaseRubricsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatchCaseReviews.DispatchCaseReviews> L
+@*
+    Protocols P5 QA: dispatch case rubrics. They are Records QA rubrics (criteria with weights, scores 0-100, the weighted score) kept
+    for dispatch cases; the "questions" and "instructions" criteria take the per-item compliance. Department administrators edit them;
+    each review keeps the criteria it was sampled with.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + L["RubricsTitle"];
+    ViewData["Title"] = L["RubricsTitle"].Value;
+    ViewData["Subtitle"] = L["RubricsIntro"].Value;
+    ViewData["CaseReviewPage"] = "Rubrics";
+    var form = Model.Form;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_CaseReviewNav")
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    @if (Model.Rubrics.Count == 0)
+    {
+        <div class="rgw-next-action" role="status">
+            <i class="fa fa-info-circle" aria-hidden="true"></i> @L["NoRubrics"]
+            <form method="post" asp-action="CreateTemplateRubric" asp-route-area="User" style="display:inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-magic" aria-hidden="true"></i> @L["CreateTemplateButton"]</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="rgw-card-grid">
+            @foreach (var rubric in Model.Rubrics)
+            {
+                var criteria = Resgrid.Services.Records.RecordsQualityReviewService.ParseCriteria(rubric.CriteriaJson);
+                <div class="rgw-card">
+                    <h4>@rubric.Name
+                        @if (!rubric.IsActive) { <span class="label label-default"><i class="fa fa-pause" aria-hidden="true"></i> @L["InactiveLabel"]</span> }
+                    </h4>
+                    <ul class="small">
+                        @foreach (var criterion in criteria)
+                        {
+                            <li>@criterion.Text <span class="text-muted">(@string.Format(L["WeightLabel"].Value, criterion.Weight)@(DispatchCaseRubrics.IsDerived(criterion.Key) ? " · " + L["DerivedLabel"].Value : ""))</span></li>
+                        }
+                    </ul>
+                    @if (Model.IsAdmin)
+                    {
+                        <a class="btn btn-xs btn-default" asp-action="Rubrics" asp-route-area="User" asp-route-edit="@rubric.RmsQualityRubricId"><i class="fa fa-pencil" aria-hidden="true"></i> @L["EditButton"]</a>
+                    }
+                </div>
+            }
+        </div>
+        @if (Model.IsAdmin)
+        {
+            <div class="rgw-toolbar">
+                <form method="post" asp-action="CreateTemplateRubric" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-magic" aria-hidden="true"></i> @L["CreateTemplateButton"]</button>
+                </form>
+            </div>
+        }
+    }
+
+    @if (Model.IsAdmin)
+    {
+        <div class="ibox m-t-md">
+            <div class="ibox-title"><h5><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @(string.IsNullOrEmpty(form.RubricId) ? L["NewRubricHeader"] : L["EditRubricHeader"])</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-action="SaveRubric" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="RubricId" value="@form.RubricId" />
+                    <div class="row">
+                        <div class="col-sm-8 form-group">
+                            <label for="RubricName">@L["RubricNameLabel"]</label>
+                            <input type="text" class="form-control" id="RubricName" name="Name" value="@form.Name" maxlength="200" required />
+                        </div>
+                        <div class="col-sm-4 form-group">
+                            <div class="checkbox m-t-lg"><label><input type="checkbox" name="IsActive" value="true" checked="@form.IsActive" /> @L["ActiveLabel"]</label></div>
+                            <input type="hidden" name="IsActive" value="false" />
+                        </div>
+                    </div>
+                    <p class="help-block">@L["CriteriaHelp"]</p>
+                    <table class="table rgw-table">
+                        <thead><tr><th scope="col">@L["CriterionKeyColumn"]</th><th scope="col">@L["CriterionColumn"]</th><th scope="col">@L["WeightColumn"]</th></tr></thead>
+                        <tbody>
+                            @for (var i = 0; i < form.Criteria.Count; i++)
+                            {
+                                var criterion = form.Criteria[i];
+                                <tr>
+                                    <td><input type="text" class="form-control input-sm rgw-mono" name="Criteria[@i].Key" value="@criterion.Key" maxlength="40" aria-label="@L["CriterionKeyColumn"]" /></td>
+                                    <td><input type="text" class="form-control input-sm" name="Criteria[@i].Text" value="@criterion.Text" maxlength="500" aria-label="@L["CriterionColumn"]" /></td>
+                                    <td><input type="number" class="form-control input-sm" name="Criteria[@i].Weight" value="@criterion.Weight" min="1" max="10" style="width:6em" aria-label="@L["WeightColumn"]" /></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <div class="rgw-wizard-actions">
+                        @if (!string.IsNullOrEmpty(form.RubricId))
+                        {
+                            <a class="btn btn-default" asp-action="Rubrics" asp-route-area="User"><i class="fa fa-times" aria-hidden="true"></i> @L["CancelButton"]</a>
+                        }
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-floppy-o" aria-hidden="true"></i> @L["SaveRubricButton"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

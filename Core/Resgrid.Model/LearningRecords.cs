@@ -244,6 +244,35 @@ namespace Resgrid.Model
 
 		public string CreatedByUserId { get; set; }
 
+		/// <summary>
+		/// Round 7B (M0400): <see cref="LearningCompletionMethods"/>. RecordedByOther: an instructor recorded the completion for the member
+		/// (permission 135); never shown as the member's own. The recording row (<see cref="RecordedCompletionId"/>) has the source, note and
+		/// attestation.
+		/// </summary>
+		public int CompletionMethod { get; set; }
+
+		/// <summary>Who recorded the completion for the member (RecordedByOther only).</summary>
+		public string RecordedByUserId { get; set; }
+
+		/// <summary>When it was recorded (UTC; RecordedByOther only).</summary>
+		public DateTime? RecordedOn { get; set; }
+
+		/// <summary>The TrainingCompletionRecordings row (RecordedByOther only); no foreign key, like every source reference of the ledger.</summary>
+		public int? RecordedCompletionId { get; set; }
+
+		/// <summary>
+		/// Round 9B (M0408): <see cref="TrainingSubmissionReviewStates"/> of a member's submission (ExternalSubmission); null on every other
+		/// record, and on T1 submissions written before M0408 (read through TrainingSubmissionRules.StateOf).
+		/// </summary>
+		public int? ReviewState { get; set; }
+
+		/// <summary>Round 9B (M0408): when the member last handed the submission to reviewers (submitted or resubmitted, UTC).</summary>
+		public DateTime? SubmittedOn { get; set; }
+
+		[NotMapped]
+		[JsonIgnore]
+		public bool IsRecordedByOther => CompletionMethod == (int)LearningCompletionMethods.RecordedByOther;
+
 		[NotMapped]
 		[JsonIgnore]
 		public bool Counts => Status == (int)LearningRecordStatuses.Verified;
@@ -274,7 +303,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Counts", "IsVoided", "HasUnresolvedDuplicate" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Counts", "IsVoided", "HasUnresolvedDuplicate", "IsRecordedByOther" };
 	}
 
 	/// <summary>Evidence uploaded with an external submission. Bytes live here, never in a list query of LearningRecords.</summary>
@@ -301,6 +330,21 @@ namespace Resgrid.Model
 		public DateTime UploadedOn { get; set; }
 
 		public string UploadedByUserId { get; set; }
+
+		/// <summary>Round 9B (M0408): the submission the file belongs to (a submission may carry several); null for a file not linked yet.</summary>
+		public int? LearningRecordId { get; set; }
+
+		/// <summary>Round 9B (M0408): the stored size in bytes, so lists never read the bytes.</summary>
+		public long SizeBytes { get; set; }
+
+		/// <summary>Round 9B (M0408): SHA-256 of the stored bytes, lower-case hex.</summary>
+		public string Sha256 { get; set; }
+
+		/// <summary>Round 9B (M0408): <see cref="TrainingEvidenceKinds"/>.</summary>
+		public int EvidenceKind { get; set; }
+
+		/// <summary>Round 9B (M0408): the attachment scanner's verdict (RmsAttachmentScanState: Pending, Clean, Skipped; Rejected files are never stored).</summary>
+		public int ScanState { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]
@@ -599,6 +643,29 @@ namespace Resgrid.Model
 		/// <summary>Minimum years training records are kept after a member leaves, where a category sets none (§14). 0 = no minimum.</summary>
 		[ProtoMember(4)] public int DefaultRetentionYears { get; set; }
 
+		/// <summary>
+		/// Round 9B: <see cref="TrainingSubmissionReviewModes"/>. Always (the default, T1's behaviour): every member submission waits for a
+		/// reviewer; Off: accepted on submit as self-reported; Selected: only <see cref="ReviewCategoryIds"/> or above <see cref="ReviewAboveHours"/>.
+		/// </summary>
+		[ProtoMember(5)] public int SubmissionReviewMode { get; set; }
+
+		/// <summary>Round 9B: with Selected, submissions in these training categories wait for a reviewer.</summary>
+		[ProtoMember(6)] public List<int> ReviewCategoryIds { get; set; } = new List<int>();
+
+		/// <summary>Round 9B: with Selected, submissions of more than this many hours wait for a reviewer (0: no threshold).</summary>
+		[ProtoMember(7)] public decimal ReviewAboveHours { get; set; }
+
+		/// <summary>
+		/// Round 9B: reviewers named by role (Record Training Completions or Assign Training) review only the members of the group they are in;
+		/// department admins still review everyone and group admins their own group.
+		/// </summary>
+		[ProtoMember(8)] public bool RoleReviewersOwnGroupOnly { get; set; }
+
+		/// <summary>Round 9B: <see cref="TrainingReviewerNoticeModes"/>: a notice per submission (default), a daily digest, or none.</summary>
+		[ProtoMember(9)] public int ReviewerNotices { get; set; }
+
+		public const decimal MaxReviewAboveHours = 999m;
+
 		public TrainingRecordSettings Normalized()
 		{
 			return new TrainingRecordSettings
@@ -606,7 +673,12 @@ namespace Resgrid.Model
 				HoursRoundingMinutes = AllowedRoundingMinutes.Contains(HoursRoundingMinutes) ? HoursRoundingMinutes : 0,
 				HoursRoundingMode = Enum.IsDefined(typeof(TrainingHoursRoundingModes), HoursRoundingMode) ? HoursRoundingMode : 0,
 				MemberSubmissionsDisabled = MemberSubmissionsDisabled,
-				DefaultRetentionYears = Math.Clamp(DefaultRetentionYears, 0, 75)
+				DefaultRetentionYears = Math.Clamp(DefaultRetentionYears, 0, 75),
+				SubmissionReviewMode = Enum.IsDefined(typeof(TrainingSubmissionReviewModes), SubmissionReviewMode) ? SubmissionReviewMode : 0,
+				ReviewCategoryIds = (ReviewCategoryIds ?? new List<int>()).Where(id => id > 0).Distinct().OrderBy(id => id).Take(200).ToList(),
+				ReviewAboveHours = Math.Round(Math.Clamp(ReviewAboveHours, 0m, MaxReviewAboveHours), 2, MidpointRounding.AwayFromZero),
+				RoleReviewersOwnGroupOnly = RoleReviewersOwnGroupOnly,
+				ReviewerNotices = Enum.IsDefined(typeof(TrainingReviewerNoticeModes), ReviewerNotices) ? ReviewerNotices : 0
 			};
 		}
 

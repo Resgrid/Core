@@ -88,6 +88,8 @@ namespace Resgrid.Providers.Claims
 		public const string Training_Update = "Training_Update";
 		public const string Training_Create = "Training_Create";
 		public const string Training_Delete = "Training_Delete";
+		/// <summary>Round 7B (permission 135): record training completions for members (who is decided per member by the recording service).</summary>
+		public const string Training_RecordCompletions = "Training_RecordCompletions";
 
 		public const string PersonalInfo_View = "PersonalInfo_View";
 		public const string PersonalInfo_Update = "PersonalInfo_Update";

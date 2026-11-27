@@ -150,6 +150,50 @@ namespace Resgrid.Web.Areas.User.Models.LmsPrograms
 		public LmsProgramSettings Settings { get; set; }
 	}
 
+	/// <summary>Round 9A: Trainings → Programs → Certification requirements (one row per person-scoped certification type).</summary>
+	public sealed class LmsCertRequirementsView : LmsProgramPageView
+	{
+		public List<LmsCertificationRequirementSetRow> Rows { get; set; } = new List<LmsCertificationRequirementSetRow>();
+	}
+
+	/// <summary>A target the requirement-set editor offers for one item kind (a course, a training, a category or a path).</summary>
+	public sealed class LmsCertRequirementOption
+	{
+		public int Kind { get; set; }
+		public int Id { get; set; }
+		public string Name { get; set; }
+	}
+
+	/// <summary>Round 9A: one certification type's requirement set editor.</summary>
+	public sealed class LmsCertRequirementEditView : LmsProgramPageView
+	{
+		public DepartmentCertificationType Type { get; set; }
+		public LmsCertificationRequirementSet Set { get; set; }
+		public LmsCertificationRequirementSetInput Input { get; set; } = new LmsCertificationRequirementSetInput();
+		public List<LmsCertRequirementOption> Options { get; set; } = new List<LmsCertRequirementOption>();
+		/// <summary>Rows the form shows: the stored items and blank rows to add more (up to the set's maximum).</summary>
+		public int BlankRows { get; set; } = 3;
+	}
+
+	/// <summary>Round 9A: who holds a certification type and how close each is to lapsing (officers).</summary>
+	public sealed class LmsCertProgressView : LmsProgramPageView
+	{
+		public DepartmentCertificationType Type { get; set; }
+		public LmsCertificationRequirementSet Set { get; set; }
+		public List<LmsCertificationProgress> Rows { get; set; } = new List<LmsCertificationProgress>();
+	}
+
+	/// <summary>Round 9A: the certification progress cards (My Training and the certification record page).</summary>
+	public sealed class LmsCertificationProgressPanel
+	{
+		public List<LmsCertificationProgress> Items { get; set; } = new List<LmsCertificationProgress>();
+		public bool IsSelf { get; set; }
+		public bool IsLapsed { get; set; }
+		public bool CanSeeOfficerList { get; set; }
+		/// <summary>Dates show in the department's time zone.</summary>
+		public Department Department { get; set; }
+	}
+
 	/// <summary>A new or edited training request (the member's form).</summary>
 	public sealed class LmsTrainingRequestInput
 	{

@@ -3,6 +3,7 @@
 @using Resgrid.Web.Areas.User.Models.Training
 @model TrainingTranscriptView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> reviewText
 @*
     One member's transcript (Training T1, R-T1): every learning record from every source, its verification state, hours and
     category. Members read their own; an officer who reviews the member reads theirs (former members included) and opens the audit
@@ -22,6 +23,10 @@
         @if (Model.CanSubmit)
         {
             <a class="btn btn-primary" asp-controller="TrainingRecords" asp-action="Submit" asp-route-area="User"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Rec.SubmitButton"]</a>
+        }
+        @if (Model.IsSelf)
+        {
+            <a class="btn btn-default" asp-controller="TrainingReviews" asp-action="Mine" asp-route-area="User"><i class="fa fa-list" aria-hidden="true"></i> @reviewText["Inbox.MySubmissionsLink"]</a>
         }
         <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="TranscriptPdf" asp-route-area="User" asp-route-userId="@routeUser" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-categoryId="@Model.CategoryId" asp-route-source="@Model.Source"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Rec.ExportPdfButton"]</a>
         <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="TranscriptCsv" asp-route-area="User" asp-route-userId="@routeUser" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-categoryId="@Model.CategoryId" asp-route-source="@Model.Source"><i class="fa fa-file-excel-o" aria-hidden="true"></i> @localizer["Rec.ExportCsvButton"]</a>
@@ -182,6 +187,21 @@
                                             {
                                                 <span>@localizer["Doc.Instructors"]: @record.InstructorNames</span>
                                             }
+                                            @if (record.IsRecordedByOther)
+                                            {
+                                                var recording = Model.RecordingOf(record);
+                                                var recordedOn = record.RecordedOn ?? recording?.RecordedOn;
+                                                <span class="label label-primary"><i class="fa fa-user-circle-o" aria-hidden="true"></i> @localizer["RecordCompletions.Method"]</span>
+                                                <span>@string.Format(System.Globalization.CultureInfo.CurrentCulture, localizer["RecordCompletions.RecordedByFormat"].Value, Model.RecorderName(record.RecordedByUserId ?? recording?.RecordedByUserId), recordedOn.HasValue ? TrainingStatePresentation.LocalDate(recordedOn.Value, Model.Department) : string.Empty)</span>
+                                                @if (recording != null)
+                                                {
+                                                    <span>@localizer["RecordCompletions.Source." + (TrainingCompletionRecordingSources)recording.SourceKind]@if (recording.QuizWaived) { <text> · @localizer["RecordCompletions.QuizWaived"]</text> }</span>
+                                                    @if (!string.IsNullOrWhiteSpace(recording.Note))
+                                                    {
+                                                        <span><i class="fa fa-comment-o" aria-hidden="true"></i> @recording.Note</span>
+                                                    }
+                                                }
+                                            }
                                             @if (record.IsBackfill)
                                             {
                                                 <span><i class="fa fa-history" aria-hidden="true"></i> @localizer["Rec.BackfilledLabel"]</span>
@@ -215,7 +235,12 @@
                                             </details>
                                         }
                                     </td>
-                                    <td>@await Html.PartialAsync("_RecordSource", record.SourceKind)</td>
+                                    <td>
+                                        @await Html.PartialAsync("_RecordSource", record.SourceKind)
+                                        @{ var provenance = TrainingSubmissionRules.ProvenanceOf(record); }
+                                        @* Round 9B: self-reported vs reviewed vs recorded by an instructor, never left to guesswork. *@
+                                        <small class="rgw-sub text-muted"><i class="fa @TrainingReviewPresentation.ProvenanceIcon(provenance)" aria-hidden="true"></i> @reviewText[TrainingReviewPresentation.ProvenanceKey(provenance)]</small>
+                                    </td>
                                     <td>@(category == null ? localizer["Doc.Uncategorized"].Value : category.IsDeleted ? string.Format(localizer["Rec.RemovedCategory"].Value, category.Name) : category.Name)</td>
                                     <td class="text-right">@LearningRecordPresentation.Hours(record.Hours)</td>
                                     <td>@await Html.PartialAsync("_RecordStatus", record.Status)</td>
@@ -224,7 +249,12 @@
                                         {
                                             <a class="btn btn-xs btn-default" asp-controller="TrainingRecords" asp-action="Certificate" asp-route-area="User" asp-route-id="@record.LearningRecordId"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Rec.CertificateButton"]</a>
                                         }
-                                        @if (record.EvidenceFileId.HasValue)
+                                        @if (TrainingSubmissionRules.IsSubmission(record) && !record.IsVoided)
+                                        {
+                                            @* Round 9B: a submission's page carries every evidence file, its review and the member's resubmission. *@
+                                            <a class="btn btn-xs btn-default" asp-controller="TrainingReviews" asp-action="@(Model.IsSelf ? "Submission" : "Review")" asp-route-area="User" asp-route-id="@record.LearningRecordId"><i class="fa fa-paperclip" aria-hidden="true"></i> @reviewText["Transcript.SubmissionButton"]</a>
+                                        }
+                                        else if (record.EvidenceFileId.HasValue)
                                         {
                                             <a class="btn btn-xs btn-default" asp-controller="TrainingRecords" asp-action="Evidence" asp-route-area="User" asp-route-fileId="@record.EvidenceFileId"><i class="fa fa-paperclip" aria-hidden="true"></i> @localizer["Rec.EvidenceButton"]</a>
                                         }

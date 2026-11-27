@@ -42,6 +42,7 @@ namespace Resgrid.Tests.Web.User
 		private Mock<IMyTrainingService> _myTrainingService;
 		private Mock<IMemberLeaveService> _leaveService;
 		private Mock<IDepartmentSettingsService> _departmentSettings;
+		private Mock<IContentSetCopyLocks> _setLocks;
 		private TrainingsController _controller;
 
 		[SetUp]
@@ -53,6 +54,7 @@ namespace Resgrid.Tests.Web.User
 			_myTrainingService = new Mock<IMyTrainingService>();
 			_leaveService = new Mock<IMemberLeaveService>();
 			_departmentSettings = new Mock<IDepartmentSettingsService>();
+			_setLocks = new Mock<IContentSetCopyLocks>();
 
 			// A member with no training rights: they open what is assigned to them and manage nothing.
 			ScopeIs(TrainingManagementScope.None(UserId, DepartmentId));
@@ -85,7 +87,9 @@ namespace Resgrid.Tests.Web.User
 				Mock.Of<IUnitsService>(),
 				Mock.Of<IShiftsService>(),
 				Mock.Of<ILearningRecordService>(),
-				localizer.Object)
+				localizer.Object,
+				Mock.Of<ITrainingCompletionRecordingService>(),
+				_setLocks.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = httpContext }
 			};
@@ -381,6 +385,37 @@ namespace Resgrid.Tests.Web.User
 
 			edit.CanAuthor.Should().BeFalse();
 			edit.Questions.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task A_managed_set_copy_keeps_its_content_and_quiz_but_can_still_be_assigned()
+		{
+			// Round 10 A3: a training copied from a linked department's course set changes only through the set.
+			ScopeIs(new TrainingManagementScope
+			{
+				UserId = UserId, DepartmentId = DepartmentId,
+				Author = new TrainingRightScope { ManagesAll = true, ManagesOwn = true },
+				Assign = new TrainingRightScope { ManagesAll = true, ManagesOwn = true },
+				Delete = new TrainingRightScope()
+			});
+			var training = QuizTraining(1, "someone");
+			_trainingService.Setup(x => x.GetTrainingByIdAsync(1)).ReturnsAsync(training);
+			_trainingService.Setup(x => x.GetTrainingRowByIdAsync(1)).ReturnsAsync(training);
+			_setLocks.Setup(x => x.IsManagedCopyAsync(DepartmentId, ContentSetItemKinds.Training, 1)).ReturnsAsync(true);
+			_controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(_controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+
+			var edit = (await _controller.Edit(1)).Should().BeOfType<ViewResult>().Subject.Model.Should().BeOfType<EditTrainingModel>().Subject;
+			edit.CanAuthor.Should().BeFalse();
+			edit.CanAssign.Should().BeTrue();
+			edit.Message.Should().Contain("ManagedBySetMessage");
+
+			var form = new FormCollection(new Dictionary<string, Microsoft.Extensions.Primitives.StringValues> { ["question_1"] = "Changed?" });
+			await _controller.Edit(1, new EditTrainingModel { Name = "Renamed", TrainingText = "Rewritten" }, form, new List<IFormFile>());
+			await _controller.RemoveAttachment(1, 5);
+
+			_trainingService.Verify(x => x.SaveAsync(It.IsAny<Training>(), It.IsAny<CancellationToken>()), Times.Never);
+			_trainingService.Verify(x => x.RemoveAttachmentAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
+			training.Name.Should().NotBe("Renamed");
 		}
 
 		[Test]

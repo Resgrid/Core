@@ -565,4 +565,37 @@
   <data name="RefusalNotRequired" xml:space="preserve">
     <value>No step of the chain applies to this amount: it needs no approval.</value>
   </data>
+  <data name="KindMutualAidAgreementCountersignature" xml:space="preserve">
+    <value>Mutual-aid agreement countersignature</value>
+  </data>
+  <data name="PartnerCountersignNote" xml:space="preserve">
+    <value>Choose a Department Link and tick the box below to have the partner department countersign once your approval chain approves.</value>
+  </data>
+  <data name="RequiresCountersignatureLabel" xml:space="preserve">
+    <value>The partner department countersigns</value>
+  </data>
+  <data name="RequiresCountersignatureHelp" xml:space="preserve">
+    <value>After your chain approves, the agreement is sent over the link; any of the partner's department admins countersigns it against the same content.</value>
+  </data>
+  <data name="CountersignNone" xml:space="preserve">
+    <value>The partner's countersignature is requested once the agreement is approved.</value>
+  </data>
+  <data name="CountersignRequested" xml:space="preserve">
+    <value>Waiting for the partner department's countersignature.</value>
+  </data>
+  <data name="CountersignCountersigned" xml:space="preserve">
+    <value>Countersigned by the partner department.</value>
+  </data>
+  <data name="CountersignDeclined" xml:space="preserve">
+    <value>The partner department declined or let the request expire. Copy the agreement into a new draft to try again.</value>
+  </data>
+  <data name="CountersignLapsed" xml:space="preserve">
+    <value>The Department Link was disabled or removed before the partner countersigned.</value>
+  </data>
+  <data name="KindRecordDeploymentPartnerAcceptance" xml:space="preserve">
+    <value>Deployment partner acceptance</value>
+  </data>
+  <data name="KindDepartmentLinkAcceptance" xml:space="preserve">
+    <value>Link acceptance</value>
+  </data>
 </root>

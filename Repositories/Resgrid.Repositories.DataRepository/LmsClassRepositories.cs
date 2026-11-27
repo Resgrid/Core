@@ -14,7 +14,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	// Training T4 part 1 (round 5B, M0403–M0405). Portable SQL over RmsRepositoryBase; member ids are citext on PostgreSQL, so their
+	// Training T4 part 1 (round 5B, M0378–M0380). Portable SQL over RmsRepositoryBase; member ids are citext on PostgreSQL, so their
 	// parameters are cast (pg-citext-text-param-equality); list parameters use InList (postgres-dapper-in-list); nullable timestamps never
 	// decide the SQL shape through "IS NULL" on a parameter (pg-untyped-null-param-is-null).
 
@@ -218,6 +218,11 @@ namespace Resgrid.Repositories.DataRepository
 				$"{Col("UpdatedOn")} = {P}Now WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("LmsClassEnrollmentId")} = {P}Id AND {Col("Status")} = {P}Waitlisted",
 				parameters, cancellationToken) == 1;
 		}
+
+		public Task<int> ResetRemindersAsync(int departmentId, int lmsClassSessionId, CancellationToken cancellationToken = default) =>
+			ExecuteAsync($"UPDATE {Tbl("LmsClassEnrollments")} SET {Col("ReminderSentOn")} = NULL WHERE {Col("DepartmentId")} = {P}DepartmentId " +
+				$"AND {Col("LmsClassSessionId")} = {P}SessionId AND {Col("ReminderSentOn")} IS NOT NULL",
+				new { DepartmentId = departmentId, SessionId = lmsClassSessionId }, cancellationToken);
 	}
 
 	public class LmsClassInstructorsRepository : RmsRepositoryBase<LmsClassInstructor>, ILmsClassInstructorsRepository

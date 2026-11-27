@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -11,7 +13,7 @@ namespace Resgrid.Services
 {
 	/// <summary>
 	/// LMS add-on gate (protocols-training-knowledge-plan §17.3), cloned from ReadinessAccessService and EnhancedAiAccessService:
-	/// the Training.Lms operator flag (seeded off by M0350; general availability is the operator switching it on), the Trainings
+	/// the Training.Lms operator flag (seeded off by M0346; general availability is the operator switching it on), the Trainings
 	/// module switch and a PaymentAddons window for PlanAddonTypes.Lms with no entitlement cache. Fails closed on any error.
 	/// <para>
 	/// Since wave 3 it also answers for the pack add-on: the packs of the running interval, a failed renewal inside the dunning
@@ -32,10 +34,15 @@ namespace Resgrid.Services
 		private readonly ILmsAddonLapsesRepository _lapses;
 		private readonly ILmsMemberSeatsRepository _seats;
 		private readonly IDepartmentsService _departments;
+		private readonly IEventAggregator _events;
+		// The sponsorship service asks this gate whether the sponsor's add-on is entitled; Lazy keeps the construction acyclic.
+		private readonly Lazy<ILmsSponsorshipService> _sponsorships;
 
 		public LmsAccessService(IFeatureToggleService flags, IDepartmentSettingsService settings, ISubscriptionsService subscriptions,
-			ILmsAddonStatesRepository states, ILmsAddonLapsesRepository lapses, ILmsMemberSeatsRepository seats, IDepartmentsService departments)
+			ILmsAddonStatesRepository states, ILmsAddonLapsesRepository lapses, ILmsMemberSeatsRepository seats, IDepartmentsService departments,
+			IEventAggregator events, Lazy<ILmsSponsorshipService> sponsorships)
 		{
+			_sponsorships = sponsorships;
 			_flags = flags;
 			_settings = settings;
 			_subscriptions = subscriptions;
@@ -43,6 +50,7 @@ namespace Resgrid.Services
 			_lapses = lapses;
 			_seats = seats;
 			_departments = departments;
+			_events = events;
 		}
 
 		public async Task<bool> IsFlagEnabledAsync(int departmentId)
@@ -86,10 +94,21 @@ namespace Resgrid.Services
 			switch (origin)
 			{
 
-				// T5 item 2a / decision 8b: a sponsored set runs on the sponsor's add-on through the Department Link. Not built
-				// until A1/T5; until then nothing counts as sponsored.
+				// T5 item 2a / decision 8b (round 10 A3): a sponsored set runs on the sponsor's add-on through the Department Link: an active
+				// sponsorship from that sponsor whose link still shares Training and whose sponsor's add-on is entitled.
 				case LmsRunnableOrigins.Sponsored:
-					return false;
+					if (!sponsorDepartmentId.HasValue || sponsorDepartmentId.Value <= 0 || _sponsorships?.Value == null)
+						return false;
+					try
+					{
+						var grant = await _sponsorships.Value.GetGrantAsync(departmentId);
+						return grant?.Sponsorship != null && grant.Sponsorship.SponsorDepartmentId == sponsorDepartmentId.Value;
+					}
+					catch (Exception ex)
+					{
+						Framework.Logging.LogException(ex);
+						return false;
+					}
 
 				default:
 					return await GetActiveAddonStateAsync(departmentId) == true;
@@ -104,20 +123,69 @@ namespace Resgrid.Services
 			try
 			{
 				var subscription = await GetSubscriptionAsync(departmentId);
+				LmsSponsorshipGrant grant = null;
 				if (!subscription.IsEntitled)
-					return false;
+				{
+					// T5 item 2a: a sponsored department's members are seated in the sponsor's packs.
+					grant = _sponsorships?.Value == null ? null : await _sponsorships.Value.GetGrantAsync(departmentId);
+					if (grant?.Sponsorship == null)
+						return false;
+				}
 
 				var seats = await _seats.GetForDepartmentAsync(departmentId);
 				if (seats == null || !seats.Any(s => s != null && string.Equals(s.UserId, userId, StringComparison.OrdinalIgnoreCase)))
 					return false;
 
 				var active = await _departments.GetActiveMemberUserIdsAsync(departmentId);
-				return LmsSeatRules.Licensed(seats, active, subscription.Packs * LmsAddonConfig.PackSize, true).Contains(userId);
+				return grant != null
+					? Model.Lms.LmsSponsorshipRules.Licensed(seats, active, grant.Capacity).Contains(userId)
+					: LmsSeatRules.Licensed(seats, active, subscription.Packs * LmsAddonConfig.PackSize, true).Contains(userId);
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
 				return false;
+			}
+		}
+
+		public async Task<HashSet<string>> GetLearnerSeatHoldersAsync(int departmentId)
+		{
+			var none = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			if (departmentId <= 0 || !await IsFlagEnabledAsync(departmentId))
+				return none;
+
+			try
+			{
+				var seats = await _seats.GetForDepartmentAsync(departmentId);
+				if (seats == null || seats.Count == 0)
+					return none;
+
+				var subscription = await GetSubscriptionAsync(departmentId);
+				int? capacity = null;
+				if (subscription.IsEntitled)
+				{
+					capacity = subscription.Packs * LmsAddonConfig.PackSize;
+				}
+				else
+				{
+					// T5 item 2a: a sponsored department's members are seated in what the sponsor's packs leave it.
+					var grant = _sponsorships?.Value == null ? null : await _sponsorships.Value.GetGrantAsync(departmentId);
+					if (grant?.Sponsorship != null)
+						capacity = grant.Capacity;
+					else if (subscription.State == LmsSubscriptionStates.Lapsed && subscription.Packs > 0)
+						// Lapse rule 1: the seats stay; who held one at the packs last paid for keeps the lapse windows (rules 4 and 11).
+						capacity = subscription.Packs * LmsAddonConfig.PackSize;
+					// Otherwise (billing cannot say, or a sponsorship stopped paying) no figure is known: every counted seat, the lapse
+					// windows of the gate deciding what still runs.
+				}
+
+				var active = await _departments.GetActiveMemberUserIdsAsync(departmentId);
+				return LmsSeatRules.LearnerSeatHolders(seats.Where(s => s != null && s.DepartmentId == departmentId), active, capacity);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"LMS learner seats could not be read for DepartmentId: {departmentId}");
+				return none;
 			}
 		}
 
@@ -276,9 +344,15 @@ namespace Resgrid.Services
 				if (!changed)
 					return;
 
+				LmsAddonLapse closed = null;
 				if (reactivated)
 					// Lapse rule 12: the add-on is back; the closed lapse is what the reactivation re-base shifts paused due dates by.
-					await _lapses.CloseAsync(departmentId, now);
+					closed = await _lapses.CloseAsync(departmentId, now);
+
+				// A renewal that changed the packs (not a reactivation, which raises its own event): workflow trigger 274, once, by the request
+				// whose compare-and-set moved the stored packs.
+				var previousPacks = state?.Packs;
+				var packsChanged = state != null && !reactivated && state.Packs != packs && await _states.TryChangePacksAsync(departmentId, state.Packs, packs);
 
 				var row = state ?? new LmsAddonState { DepartmentId = departmentId };
 				row.Packs = packs;
@@ -288,6 +362,12 @@ namespace Resgrid.Services
 				row.LapsedSinceUtc = null;
 				row.UpdatedOn = now;
 				await _states.SaveForDepartmentAsync(row);
+
+				// Workflow trigger 268, once: only the request that closed the open lapse raises it (a concurrent one finds none open).
+				if (closed != null)
+					ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.AddonReactivated(departmentId, closed, current.EndingOn, packs, now));
+				if (packsChanged)
+					ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.SeatsChanged(departmentId, 0, 0, null, packs, previousPacks, null, now));
 			}
 			catch (Exception ex)
 			{
@@ -300,7 +380,7 @@ namespace Resgrid.Services
 			try
 			{
 				// Lapse rule 1: nothing is deleted. Seats stay enabled; the lapse is a period, not a cleanup.
-				await _lapses.OpenAsync(new LmsAddonLapse
+				var opened = await _lapses.OpenAsync(new LmsAddonLapse
 				{
 					DepartmentId = departmentId,
 					StartedOn = lapseStart,
@@ -313,6 +393,10 @@ namespace Resgrid.Services
 				state.LapsedSinceUtc = lapseStart;
 				state.UpdatedOn = now;
 				await _states.SaveForDepartmentAsync(state);
+
+				// Workflow trigger 267, once: the filtered unique index lets only one request open the lapse.
+				if (opened)
+					ContentWorkflowContext.Publish(_events, LmsWorkflowEvents.AddonLapsed(departmentId, reason, lapseStart, state.PaidThroughUtc, state.Packs, now));
 			}
 			catch (Exception ex)
 			{

@@ -1,0 +1,42 @@
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolSharingPageModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@using Resgrid.Web.Areas.User.Models
+@*
+    The Sharing section's own pages (Protocols P5) in a strip under the protocol module's strip: the community exchange, the template library,
+    the department's submissions, public pages (approvers), the open format export (managers) and the Resgrid review queue (system operators).
+    ViewData["SharingSection"] marks the current one; the alerts for TempData messages follow.
+*@
+@{
+    var current = ViewData["SharingSection"] as string ?? "Exchange";
+    var tabs = new ModuleTabsView { Label = text["SharingTab"].Value };
+    tabs.Tabs.Add(new ModuleTab(text["ExchangeTab"].Value, "fa-exchange", "ProtocolSharing", "Exchange", current == "Exchange"));
+    tabs.Tabs.Add(new ModuleTab(text["TemplatesTab"].Value, "fa-clone", "ProtocolSharing", "Templates", current == "Templates"));
+    if (Model.CanSubmit || current == "Submit")
+    {
+        tabs.Tabs.Add(new ModuleTab(text["SubmitTab"].Value, "fa-upload", "ProtocolSharing", "Submit", current == "Submit"));
+    }
+    tabs.Tabs.Add(new ModuleTab(text["MySubmissionsTab"].Value, "fa-list", "ProtocolSharing", "MySubmissions", current == "Mine"));
+    if (Model.CanApprove || current == "Public")
+    {
+        tabs.Tabs.Add(new ModuleTab(text["PublicTab"].Value, "fa-globe", "ProtocolSharing", "Public", current == "Public"));
+    }
+    if (Model.IsManager || current == "Export")
+    {
+        tabs.Tabs.Add(new ModuleTab(text["ExportTab"].Value, "fa-download", "ProtocolSharing", "Export", current == "Export"));
+    }
+    if (Model.IsReviewer || current == "Review")
+    {
+        tabs.Tabs.Add(new ModuleTab(text["ReviewTab"].Value, "fa-gavel", "ProtocolSharing", "ExchangeReview", current == "Review"));
+    }
+}
+<div class="rgw-module-navigation rgx-sharing-navigation">
+    @await Html.PartialAsync("~/Areas/User/Views/Shared/_ModuleTabs.cshtml", tabs)
+</div>
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+}
+@if (!string.IsNullOrEmpty(Model.Error))
+{
+    <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+}

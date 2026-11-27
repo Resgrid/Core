@@ -317,22 +317,22 @@
     <value>Create course</value>
   </data>
   <data name="CrewEndedMessage" xml:space="preserve">
-    <value>This crew viewing has ended.</value>
+    <value>This group viewing has ended.</value>
   </data>
   <data name="CrewQrAlt" xml:space="preserve">
-    <value>Crew viewing code</value>
+    <value>Group viewing code</value>
   </data>
   <data name="CrewQrRotates" xml:space="preserve">
     <value>The code changes every 30 seconds, so a photo of it stops working.</value>
   </data>
   <data name="CrewScanConfirm" xml:space="preserve">
-    <value>Mark yourself present for this crew viewing? The lesson shown counts as watched; you then take any quiz on your own phone.</value>
+    <value>Mark yourself present for this group viewing? The lesson shown counts as watched; you then take any quiz on your own phone.</value>
   </data>
   <data name="CrewScanInstruction" xml:space="preserve">
     <value>Scan this code with your own phone to be marked present.</value>
   </data>
   <data name="CrewViewingTitle" xml:space="preserve">
-    <value>Crew viewing</value>
+    <value>Group viewing</value>
   </data>
   <data name="DateLine" xml:space="preserve">
     <value>Date:</value>
@@ -1199,7 +1199,7 @@
     <value>Start</value>
   </data>
   <data name="StartCrewViewingButton" xml:space="preserve">
-    <value>Watch together (crew viewing)</value>
+    <value>Watch together (group viewing)</value>
   </data>
   <data name="StatusColumn" xml:space="preserve">
     <value>Status</value>
@@ -1401,5 +1401,401 @@
   </data>
   <data name="Notify.MicroLearning.Title" xml:space="preserve">
     <value>Weekly protocol question</value>
+  </data>
+  <data name="Studio.TabsLabel" xml:space="preserve">
+    <value>Course library sections</value>
+  </data>
+  <data name="Studio.StartersTab" xml:space="preserve">
+    <value>Starter courses</value>
+  </data>
+  <data name="Studio.DraftTab" xml:space="preserve">
+    <value>Draft with AI</value>
+  </data>
+  <data name="Studio.Outcome.NotEntitled" xml:space="preserve">
+    <value>Drafting courses and flashcards needs Enhanced AI with knowledge answers and the LMS add-on.</value>
+  </data>
+  <data name="Studio.Outcome.NotAllowed" xml:space="preserve">
+    <value>You need Manage Courses (or the course's edit right) and access to the source to do this.</value>
+  </data>
+  <data name="Studio.Outcome.NotFound" xml:space="preserve">
+    <value>The source or course could not be found, or it is not published.</value>
+  </data>
+  <data name="Studio.Outcome.Excluded" xml:space="preserve">
+    <value>This protocol is marked "no AI" or is licensed content, so it is never sent to a model.</value>
+  </data>
+  <data name="Studio.Outcome.KeptLocal" xml:space="preserve">
+    <value>Advanced Data Protection keeps your department's content local, so nothing can be drafted.</value>
+  </data>
+  <data name="Studio.Outcome.NoContent" xml:space="preserve">
+    <value>No readable text was found in the source (a scanned PDF has no text layer).</value>
+  </data>
+  <data name="Studio.Outcome.Unconfigured" xml:space="preserve">
+    <value>The AI model is not configured for this system. Ask your Resgrid operator.</value>
+  </data>
+  <data name="Studio.Outcome.Unavailable" xml:space="preserve">
+    <value>The AI model is not available right now. Try again in a few minutes.</value>
+  </data>
+  <data name="Studio.Outcome.Busy" xml:space="preserve">
+    <value>The AI model is busy. Try again in a minute.</value>
+  </data>
+  <data name="Studio.Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Your department's Enhanced AI allowance for this month is used up.</value>
+  </data>
+  <data name="Studio.Outcome.Refused" xml:space="preserve">
+    <value>The draft was refused: nothing it wrote could be checked against the cited sections.</value>
+  </data>
+  <data name="Studio.Outcome.Invalid" xml:space="preserve">
+    <value>The request was not valid. Check the file type (PDF, DOCX or TXT) and size.</value>
+  </data>
+  <data name="Studio.Outcome.NotSaved" xml:space="preserve">
+    <value>The draft could not be saved as a course. Nothing was kept.</value>
+  </data>
+  <data name="Studio.Outcome.Drafted" xml:space="preserve">
+    <value>Draft ready.</value>
+  </data>
+  <data name="Studio.Outcome.Created" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="Studio.StarterCloned" xml:space="preserve">
+    <value>Starter course copied as a draft: {0} lessons and {1} questions. Adapt it, then submit it for approval.</value>
+  </data>
+  <data name="Studio.Drafted" xml:space="preserve">
+    <value>Draft course created with {0} modules, {1} lessons and {2} questions. Check every lesson against its cited section, then submit it for approval.</value>
+  </data>
+  <data name="Studio.DraftDropped" xml:space="preserve">
+    <value>{0} drafted items were left out because they cited no section or held a number the source does not.</value>
+  </data>
+  <data name="Studio.DraftTruncated" xml:space="preserve">
+    <value>The source was long, so only its first sections were used.</value>
+  </data>
+  <data name="Studio.CardsDropped" xml:space="preserve">
+    <value>{0} drafted cards were left out because they held a number their section does not.</value>
+  </data>
+  <data name="Studio.CardsAccepted" xml:space="preserve">
+    <value>{0} cards added.</value>
+  </data>
+  <data name="Studio.CardSaved" xml:space="preserve">
+    <value>Card saved.</value>
+  </data>
+  <data name="Studio.CardReviewed" xml:space="preserve">
+    <value>Card checked against the version in force and shown to learners again.</value>
+  </data>
+  <data name="Studio.CardRemoved" xml:space="preserve">
+    <value>Card removed.</value>
+  </data>
+  <data name="Studio.DraftOverviewNote" xml:space="preserve">
+    <value>Drafted with Enhanced AI from {0}. Check every lesson against the section it cites before you submit this course.</value>
+  </data>
+  <data name="Studio.DraftTag" xml:space="preserve">
+    <value>ai-draft</value>
+  </data>
+  <data name="Studio.DraftBankName" xml:space="preserve">
+    <value>{0} — drafted questions</value>
+  </data>
+  <data name="Studio.DraftBankDescription" xml:space="preserve">
+    <value>Questions drafted with Enhanced AI from the course's source. Review them before you use them in an assessment.</value>
+  </data>
+  <data name="Studio.CheckModuleTitle" xml:space="preserve">
+    <value>Check your understanding</value>
+  </data>
+  <data name="Studio.CheckLessonTitle" xml:space="preserve">
+    <value>Course check</value>
+  </data>
+  <data name="Studio.KeyPoints" xml:space="preserve">
+    <value>Key points</value>
+  </data>
+  <data name="Studio.FromTheSource" xml:space="preserve">
+    <value>From the source</value>
+  </data>
+  <data name="Studio.CitedLabel" xml:space="preserve">
+    <value>Source:</value>
+  </data>
+  <data name="Studio.DraftAttribution" xml:space="preserve">
+    <value>Drafted with Enhanced AI from {0}; content of the department's own source.</value>
+  </data>
+  <data name="Studio.StarterAttribution" xml:space="preserve">
+    <value>Based on the Resgrid starter course "{0}" (revision {1}). Resgrid starter content is free for any Resgrid department to use and adapt; it carries no accreditation.</value>
+  </data>
+  <data name="Studio.StarterBankName" xml:space="preserve">
+    <value>{0} — check questions</value>
+  </data>
+  <data name="Studio.StartersTitle" xml:space="preserve">
+    <value>Starter courses</value>
+  </data>
+  <data name="Studio.StartersIntro" xml:space="preserve">
+    <value>Courses written by Resgrid to start from. Copy one into your department as a draft, adapt it, and publish it through your normal approval.</value>
+  </data>
+  <data name="Studio.AuthorNeeded" xml:space="preserve">
+    <value>Copying a starter needs Manage Courses and an active LMS add-on.</value>
+  </data>
+  <data name="Studio.StartersLicence" xml:space="preserve">
+    <value>Starters are Resgrid's own plain-language text: no standard's text and no accreditation. Your copy keeps its attribution.</value>
+  </data>
+  <data name="Studio.StarterFacts" xml:space="preserve">
+    <value>{0} modules · {1} lessons · {2} hours · revision {3}</value>
+  </data>
+  <data name="Studio.LicenceResgridStarter" xml:space="preserve">
+    <value>Resgrid starter licence: free to use and adapt</value>
+  </data>
+  <data name="Studio.CloneButton" xml:space="preserve">
+    <value>Copy as a draft</value>
+  </data>
+  <data name="Studio.PartnerHeader" xml:space="preserve">
+    <value>Partner content</value>
+  </data>
+  <data name="Studio.PartnerIntro" xml:space="preserve">
+    <value>Accredited continuing education stays with the partner who holds the accreditation. Resgrid launches it and records the completion.</value>
+  </data>
+  <data name="Studio.PartnerComing" xml:space="preserve">
+    <value>Arrives with standards support (LTI, SCORM and cmi5).</value>
+  </data>
+  <data name="Studio.Starter.resgrid-onboarding.Title" xml:space="preserve">
+    <value>Getting started with Resgrid</value>
+  </data>
+  <data name="Studio.Starter.resgrid-onboarding.Summary" xml:space="preserve">
+    <value>A new member's first course: account, status and staffing, responding to calls, messages, calendar and training.</value>
+  </data>
+  <data name="Studio.Starter.incident-safety-basics.Title" xml:space="preserve">
+    <value>Incident safety basics</value>
+  </data>
+  <data name="Studio.Starter.incident-safety-basics.Summary" xml:space="preserve">
+    <value>Safety habits for every incident: situational awareness, protective equipment, accountability and rehab.</value>
+  </data>
+  <data name="Studio.Starter.hazmat-awareness-outline.Title" xml:space="preserve">
+    <value>Hazardous materials awareness (outline)</value>
+  </data>
+  <data name="Studio.Starter.hazmat-awareness-outline.Summary" xml:space="preserve">
+    <value>An outline to fill with your procedures: recognize, isolate and deny entry, notify, protect yourself.</value>
+  </data>
+  <data name="Studio.Starter.driver-evo-basics.Title" xml:space="preserve">
+    <value>Driver and emergency vehicle operation basics</value>
+  </data>
+  <data name="Studio.Starter.driver-evo-basics.Summary" xml:space="preserve">
+    <value>Vehicle inspection, emergency driving, intersections, and backing with a spotter. Pair it with a practical session.</value>
+  </data>
+  <data name="Studio.Starter.partner-ce-lti.Title" xml:space="preserve">
+    <value>Partner continuing education (LTI 1.3)</value>
+  </data>
+  <data name="Studio.Starter.partner-ce-lti.Summary" xml:space="preserve">
+    <value>Accredited courses from a content partner, launched from Resgrid with completions reported to the transcript.</value>
+  </data>
+  <data name="Studio.Starter.partner-packages-scorm.Title" xml:space="preserve">
+    <value>Partner course packages (SCORM / cmi5)</value>
+  </data>
+  <data name="Studio.Starter.partner-packages-scorm.Summary" xml:space="preserve">
+    <value>Packages bought from a partner or exported from another learning system, played in a sandboxed player.</value>
+  </data>
+  <data name="Studio.DraftTitle" xml:space="preserve">
+    <value>Draft a course with AI</value>
+  </data>
+  <data name="Studio.DraftIntro" xml:space="preserve">
+    <value>Turn a published protocol or an SOP document into a draft course. Every lesson cites its source; nothing is published.</value>
+  </data>
+  <data name="Studio.DraftNeeds" xml:space="preserve">
+    <value>Course drafts need Enhanced AI with knowledge answers and the LMS add-on, and Manage Courses.</value>
+  </data>
+  <data name="Studio.DraftHeader" xml:space="preserve">
+    <value>Draft a course</value>
+  </data>
+  <data name="Studio.Drafting" xml:space="preserve">
+    <value>Drafting… this can take a minute.</value>
+  </data>
+  <data name="Studio.SourceLegend" xml:space="preserve">
+    <value>Draft from</value>
+  </data>
+  <data name="Studio.SourceProtocol" xml:space="preserve">
+    <value>A published protocol</value>
+  </data>
+  <data name="Studio.SourceDocument" xml:space="preserve">
+    <value>An SOP document (PDF, DOCX or TXT)</value>
+  </data>
+  <data name="Studio.ProtocolLabel" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="Studio.NoProtocols" xml:space="preserve">
+    <value>No published protocol you author can be used with AI.</value>
+  </data>
+  <data name="Studio.ProtocolHelp" xml:space="preserve">
+    <value>The version in force is used. Protocols marked "no AI" and licensed content are not listed.</value>
+  </data>
+  <data name="Studio.DocumentLabel" xml:space="preserve">
+    <value>SOP document</value>
+  </data>
+  <data name="Studio.DocumentHelp" xml:space="preserve">
+    <value>Up to {0} MB. Only the text is read; the file is not kept.</value>
+  </data>
+  <data name="Studio.TitleLabel" xml:space="preserve">
+    <value>Course title</value>
+  </data>
+  <data name="Studio.TitleHelp" xml:space="preserve">
+    <value>Leave blank to use the drafted title.</value>
+  </data>
+  <data name="Studio.QuestionsLabel" xml:space="preserve">
+    <value>Quiz questions to draft</value>
+  </data>
+  <data name="Studio.DraftButton" xml:space="preserve">
+    <value>Draft the course</value>
+  </data>
+  <data name="Studio.HowItWorks" xml:space="preserve">
+    <value>How drafting works</value>
+  </data>
+  <data name="Studio.Rule.Draft" xml:space="preserve">
+    <value>The result is a new draft course. You edit it and submit it through the normal approval; nothing is published.</value>
+  </data>
+  <data name="Studio.Rule.Citations" xml:space="preserve">
+    <value>Every lesson cites the sections it was written from and shows their text as the source wrote it.</value>
+  </data>
+  <data name="Studio.Rule.Numbers" xml:space="preserve">
+    <value>Any number the AI writes must appear in the sections it cites; no dose or rate is ever calculated.</value>
+  </data>
+  <data name="Studio.Rule.NoAi" xml:space="preserve">
+    <value>Protocols marked "no AI", licensed content and departments using Advanced Data Protection are never sent to a model.</value>
+  </data>
+  <data name="Studio.Rule.Logged" xml:space="preserve">
+    <value>Every draft is logged with the model and prompt version.</value>
+  </data>
+  <data name="Studio.FlashcardsTitle" xml:space="preserve">
+    <value>Flashcards</value>
+  </data>
+  <data name="Studio.FlashcardsTitleFormat" xml:space="preserve">
+    <value>Flashcards: {0}</value>
+  </data>
+  <data name="Studio.FlashcardsIntro" xml:space="preserve">
+    <value>Practice cards learners see in the course player. Cards are flagged for review when their source changes.</value>
+  </data>
+  <data name="Studio.CardsActive" xml:space="preserve">
+    <value>Shown to learners</value>
+  </data>
+  <data name="Studio.CardsFlagged" xml:space="preserve">
+    <value>Need review</value>
+  </data>
+  <data name="Studio.NoCardSources" xml:space="preserve">
+    <value>Publish the course (or draft it from a protocol) to draft flashcards from it.</value>
+  </data>
+  <data name="Studio.AcceptCardsButton" xml:space="preserve">
+    <value>Add the ticked cards</value>
+  </data>
+  <data name="Studio.NothingTicked" xml:space="preserve">
+    <value>Tick at least one card to add.</value>
+  </data>
+  <data name="Studio.CardSourceFormat" xml:space="preserve">
+    <value>Drafted from {0}.</value>
+  </data>
+  <data name="Studio.DraftCardsHeader" xml:space="preserve">
+    <value>Draft flashcards with AI</value>
+  </data>
+  <data name="Studio.CardSourceLabel" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Studio.ThisCourse" xml:space="preserve">
+    <value>This course</value>
+  </data>
+  <data name="Studio.CardCountLabel" xml:space="preserve">
+    <value>Cards</value>
+  </data>
+  <data name="Studio.DraftCardsButton" xml:space="preserve">
+    <value>Draft cards</value>
+  </data>
+  <data name="Studio.CardsRule" xml:space="preserve">
+    <value>Each card cites one section, and every number on it must appear in that section. Practice is never graded or recorded.</value>
+  </data>
+  <data name="Studio.CardsHeader" xml:space="preserve">
+    <value>Cards</value>
+  </data>
+  <data name="Studio.NoCards" xml:space="preserve">
+    <value>No flashcards yet.</value>
+  </data>
+  <data name="Studio.FrontColumn" xml:space="preserve">
+    <value>Front</value>
+  </data>
+  <data name="Studio.BackColumn" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Studio.SourceColumn" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="Studio.SaveCardButton" xml:space="preserve">
+    <value>Save card</value>
+  </data>
+  <data name="Studio.CardActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Studio.CardNeedsReview" xml:space="preserve">
+    <value>Needs review</value>
+  </data>
+  <data name="Studio.FlagUnavailable" xml:space="preserve">
+    <value>Its source can no longer be read.</value>
+  </data>
+  <data name="Studio.FlagSuperseded" xml:space="preserve">
+    <value>A newer version of its source is in force.</value>
+  </data>
+  <data name="Studio.ReviewCardButton" xml:space="preserve">
+    <value>Mark reviewed</value>
+  </data>
+  <data name="Studio.EditCardButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Studio.RemoveCardConfirm" xml:space="preserve">
+    <value>Remove this card?</value>
+  </data>
+  <data name="Studio.RemoveCardButton" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Studio.OriginAiHeader" xml:space="preserve">
+    <value>Drafted with AI from</value>
+  </data>
+  <data name="Studio.OriginAiCheck" xml:space="preserve">
+    <value>Check every lesson against the section it cites before you submit this course for approval.</value>
+  </data>
+  <data name="Studio.OriginCitationsFormat" xml:space="preserve">
+    <value>Citations of {0} drafted lessons</value>
+  </data>
+  <data name="Studio.OriginStarterHeader" xml:space="preserve">
+    <value>Starter course.</value>
+  </data>
+  <data name="Studio.OriginLicenceFormat" xml:space="preserve">
+    <value>Licence: {0}</value>
+  </data>
+  <data name="Studio.PracticeCardFormat" xml:space="preserve">
+    <value>{0} of {1} cards known</value>
+  </data>
+  <data name="Studio.PracticeDone" xml:space="preserve">
+    <value>You know every card for now. Come back later or start again.</value>
+  </data>
+  <data name="Studio.PracticeSource" xml:space="preserve">
+    <value>From:</value>
+  </data>
+  <data name="Studio.PracticeHeader" xml:space="preserve">
+    <value>Practice cards</value>
+  </data>
+  <data name="Studio.PracticeIntro" xml:space="preserve">
+    <value>Practice only: nothing here is graded or recorded on your transcript.</value>
+  </data>
+  <data name="Studio.PracticeShow" xml:space="preserve">
+    <value>Show answer</value>
+  </data>
+  <data name="Studio.PracticeAgain" xml:space="preserve">
+    <value>Again</value>
+  </data>
+  <data name="Studio.PracticeKnown" xml:space="preserve">
+    <value>I knew it</value>
+  </data>
+  <data name="Studio.PracticeRestart" xml:space="preserve">
+    <value>Start again</value>
+  </data>
+  <data name="Studio.FlashcardsButton" xml:space="preserve">
+    <value>Flashcards</value>
+  </data>
+  <data name="Kind.LtiLink" xml:space="preserve">
+    <value>LTI tool</value>
+  </data>
+  <data name="Studio.StarterSuggested" xml:space="preserve">
+    <value>Suggested for your organization</value>
+  </data>
+  <data name="Error.NotLicensed" xml:space="preserve">
+    <value>You need an LMS seat for this. Ask your administrator to enable LMS access for you. The Academy and your training records stay available.</value>
+  </data>
+  <data name="AssignedNotLicensedMessage" xml:space="preserve">
+    <value>{0} of them hold no LMS seat and were not enrolled; enable their LMS access, then assign again.</value>
   </data>
 </root>

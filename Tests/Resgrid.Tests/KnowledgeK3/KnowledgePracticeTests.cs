@@ -34,7 +34,6 @@ namespace Resgrid.Tests.KnowledgeK3
 
 		private string _endpoint, _apiKey, _model, _revision, _digest;
 		private Mock<IAiKnowledgeService> _knowledge;
-		private Mock<ILmsAccessService> _lms;
 		private Mock<IDepartmentDataProtectionService> _protection;
 		private Mock<IProtocolAccessService> _access;
 		private Mock<IProtocolVersionsRepository> _versions;
@@ -58,8 +57,6 @@ namespace Resgrid.Tests.KnowledgeK3
 
 			_knowledge = new Mock<IAiKnowledgeService>();
 			_knowledge.Setup(k => k.IsEntitledAsync(Dept)).ReturnsAsync(true);
-			_lms = new Mock<ILmsAccessService>();
-			_lms.Setup(l => l.CanRunItemAsync(Dept, LmsRunnableOrigins.Department, null)).ReturnsAsync(true);
 			var departments = new Mock<IDepartmentsService>();
 			departments.Setup(x => x.GetDepartmentByIdAsync(Dept, false)).ReturnsAsync(new Department { DepartmentId = Dept, ManagingUserId = "owner" });
 			departments.Setup(x => x.GetDepartmentMemberAsync(Member, Dept, false)).ReturnsAsync(new DepartmentMember { DepartmentId = Dept, UserId = Member });
@@ -96,7 +93,7 @@ namespace Resgrid.Tests.KnowledgeK3
 
 			_sent = new List<LlmRequest>();
 			_llm = new Mock<ILlmClient>();
-			_service = new KnowledgePracticeService(_knowledge.Object, _lms.Object, departments.Object, _protection.Object, _access.Object, _versions.Object, protection.Object,
+			_service = new KnowledgePracticeService(_knowledge.Object, departments.Object, _protection.Object, _access.Object, _versions.Object, protection.Object,
 				admission.Object, usage.Object, new Lazy<ILlmClient>(() => _llm.Object), _generations.Object, Mock.Of<IDepartmentSettingsRepository>(), TimeProvider.System);
 		}
 
@@ -134,11 +131,9 @@ namespace Resgrid.Tests.KnowledgeK3
 			(await _service.GetStatusAsync(Reader())).Available.Should().BeFalse();
 			_knowledge.Setup(k => k.IsEntitledAsync(Dept)).ReturnsAsync(true);
 
-			_lms.Setup(l => l.CanRunItemAsync(Dept, LmsRunnableOrigins.Department, null)).ReturnsAsync(false);
-			(await _service.StartAsync(Reader(), ProtocolId)).Outcome.Should().Be(KnowledgeOutcomes.NotEntitled, "the tutor needs the LMS add-on (§17.2 row AI)");
-			_lms.Setup(l => l.CanRunItemAsync(Dept, LmsRunnableOrigins.Department, null)).ThrowsAsync(new InvalidOperationException("billing down"));
-			(await _service.StartAsync(Reader(), ProtocolId)).Outcome.Should().Be(KnowledgeOutcomes.NotEntitled, "an unreadable gate is closed");
-			_lms.Setup(l => l.CanRunItemAsync(Dept, LmsRunnableOrigins.Department, null)).ReturnsAsync(true);
+			_knowledge.Setup(k => k.IsEntitledAsync(Dept)).ThrowsAsync(new InvalidOperationException("billing down"));
+			(await _service.GetStatusAsync(Reader())).Available.Should().BeFalse("an unreadable gate is closed");
+			_knowledge.Setup(k => k.IsEntitledAsync(Dept)).ReturnsAsync(true);
 
 			(await _service.StartAsync(Reader(protocols: false), ProtocolId)).Outcome.Should().Be(KnowledgeOutcomes.NotEntitled, "no Protocols view claim");
 
@@ -163,6 +158,19 @@ namespace Resgrid.Tests.KnowledgeK3
 
 			NoModelCall();
 			_rows.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Practice_needs_only_Enhanced_AI_and_runs_with_the_LMS_off()
+		{
+			// Round 7A (decision 2026-11-25): protocol practice has no LMS gate at all; a department with Enhanced AI and no LMS practises.
+			// "Ask this course" keeps needing both (LmsCourseKnowledgeSourceTests.Ask_this_course_builds_the_learners_own_version_and_refuses_another_or_a_closed_gate).
+			typeof(KnowledgePracticeService).GetConstructors().SelectMany(c => c.GetParameters()).Select(p => p.ParameterType)
+				.Should().NotContain(new[] { typeof(ILmsAccessService), typeof(ILmsGateService) });
+			ScenarioReply();
+
+			(await _service.GetStatusAsync(Reader())).Available.Should().BeTrue();
+			(await _service.StartAsync(Reader(), ProtocolId)).Outcome.Should().Be(KnowledgePracticeOutcomes.Ready);
 		}
 
 		#endregion Gates

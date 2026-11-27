@@ -14,14 +14,18 @@ namespace Resgrid.Workers.Framework.Logic
 		public int Renewed { get; set; }
 		public int Alerts { get; set; }
 		public int FamiliarizationWritten { get; set; }
+		/// <summary>Round 9A: certifications issued or renewed by their requirement sets, and "requirements due" notices sent.</summary>
+		public int RequirementIssued { get; set; }
+		public int RequirementDueNotices { get; set; }
 		public int Failures { get; set; }
 	}
 
 	/// <summary>
 	/// Worker 94 (Training T3 part 2, round 4C): scheduled LMS reports, certification cycle auto-renew and alerts, and
-	/// building-familiarization credit from Records. Each step starts from its own due-work query (due report definitions, departments
-	/// with cycle rules, departments with program settings) and asks the LMS gate once per department with due work (R-L9). One failing
-	/// step never stops the others; the next run picks the work up again.
+	/// building-familiarization credit from Records, and (round 9A) certification requirement sets: catch-up issue or renewal when a set is
+	/// complete and "requirements due" notices to holders whose expiry nears. Each step starts from its own due-work query (due report
+	/// definitions, departments with cycle rules, departments with program settings, departments with active requirement sets) and asks the
+	/// LMS gate once per department with due work (R-L9). One failing step never stops the others; the next run picks the work up again.
 	/// </summary>
 	public class LmsProgramsLogic
 	{
@@ -29,12 +33,17 @@ namespace Resgrid.Workers.Framework.Logic
 		{
 			using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
 			return await Process(scope.Resolve<ILmsReportCatalogService>(), scope.Resolve<ILmsCertificationCycleService>(), scope.Resolve<ILmsFamiliarizationCreditService>(),
-				DateTime.UtcNow, cancellationToken);
+				scope.Resolve<ILmsCertificationRequirementService>(), DateTime.UtcNow, cancellationToken);
 		}
+
+		/// <summary>The run without the requirement-set step (tests written before round 9A).</summary>
+		public static Task<LmsProgramsRunResult> Process(ILmsReportCatalogService reports, ILmsCertificationCycleService cycles, ILmsFamiliarizationCreditService familiarization,
+			DateTime utcNow, CancellationToken cancellationToken = default) =>
+			Process(reports, cycles, familiarization, null, utcNow, cancellationToken);
 
 		/// <summary>The run itself, with its services passed in (tests).</summary>
 		public static async Task<LmsProgramsRunResult> Process(ILmsReportCatalogService reports, ILmsCertificationCycleService cycles, ILmsFamiliarizationCreditService familiarization,
-			DateTime utcNow, CancellationToken cancellationToken = default)
+			ILmsCertificationRequirementService requirementSets, DateTime utcNow, CancellationToken cancellationToken = default)
 		{
 			var result = new LmsProgramsRunResult();
 			result.ReportsSent = await Step(() => reports.RunDueAsync(utcNow, cancellationToken), result, "scheduled reports", cancellationToken);
@@ -52,6 +61,14 @@ namespace Resgrid.Workers.Framework.Logic
 				result.Failures += run.Failures;
 				return run.Written;
 			}, result, "familiarization credit", cancellationToken);
+			if (requirementSets != null)
+				result.RequirementIssued = await Step(async () =>
+				{
+					var run = await requirementSets.RunDueAsync(utcNow, cancellationToken);
+					result.Failures += run.Failures;
+					result.RequirementDueNotices = run.DueNotices;
+					return run.Issued + run.Renewed;
+				}, result, "certification requirement sets", cancellationToken);
 			return result;
 		}
 

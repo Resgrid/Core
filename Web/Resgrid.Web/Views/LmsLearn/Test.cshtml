@@ -1,0 +1,52 @@
+@using Resgrid.Model.Lms
+@model Resgrid.Web.Models.LmsLearn.LmsLearnTestModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@* A test attempt: the learner view of the drawn questions (never a key); the server scores it. *@
+@{
+    var view = Model.Attempt;
+    var key = ViewData["PortalKey"] as string;
+    ViewData["Title"] = view.Lesson?.Title ?? localizer["Portal.StartTest"].Value;
+}
+<h1 class="h3">@ViewData["Title"]</h1>
+<form method="post" action="~/Learn/@key/Test/@view.Attempt.LmsAssessmentAttemptId" data-submit-once class="rgl-panel">
+    @Html.AntiForgeryToken()
+    @{ var number = 0; }
+    @foreach (var question in view.Questions)
+    {
+        number++;
+        var name = "a_" + question.QuestionId;
+        <fieldset class="form-group">
+            <legend class="h4">@number. @question.Text</legend>
+            @switch ((LmsQuestionKinds)question.Kind)
+            {
+                case LmsQuestionKinds.MultiChoice:
+                    foreach (var option in question.Options)
+                    {
+                        <div class="checkbox"><label><input type="checkbox" name="@name" value="@option.Key" /> @option.Text</label></div>
+                    }
+                    break;
+                case LmsQuestionKinds.ShortAnswer:
+                    <label class="sr-only" for="@(name)_text">@question.Text</label>
+                    <textarea id="@(name)_text" name="@(name)_text" class="form-control" rows="3" maxlength="4000"></textarea>
+                    break;
+                case LmsQuestionKinds.Ordering:
+                    <ol type="a">
+                        @foreach (var option in question.Options)
+                        {
+                            <li>@option.Key: @option.Text</li>
+                        }
+                    </ol>
+                    <label for="@(name)_order">@localizer["Portal.Order"]</label>
+                    <input id="@(name)_order" name="@(name)_order" class="form-control" maxlength="400" />
+                    break;
+                default:
+                    foreach (var option in question.Options)
+                    {
+                        <div class="radio"><label><input type="radio" name="@name" value="@option.Key" /> @option.Text</label></div>
+                    }
+                    break;
+            }
+        </fieldset>
+    }
+    <button type="submit" class="btn btn-rgl"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["Portal.SubmitTest"]</button>
+</form>

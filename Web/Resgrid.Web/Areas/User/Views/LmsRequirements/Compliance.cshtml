@@ -2,6 +2,7 @@
 @using Resgrid.Web.Areas.User.Models.Lms
 @model LmsComplianceView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> recordLocalizer
 @* The compliance matrix (T3 item 2): active members in the viewer's scope × live requirements, the certification dashboard's cell
    pattern (colour + text + date), state totals, filters, CSV and PDF; exemptions and extensions per member (R-C2). *@
 @{
@@ -121,6 +122,10 @@
                                                 @if (cell.Enforced)
                                                 {
                                                     <br /><span class="label label-danger"><i class="fa fa-shield" aria-hidden="true"></i> @localizer["EnforcedBadge"]</span>
+                                                }
+                                                @if (cell.RecordedByOther)
+                                                {
+                                                    <br /><span class="label label-primary"><i class="fa fa-user-circle-o" aria-hidden="true"></i> @recordLocalizer["RecordCompletions.Method"]</span>
                                                 }
                                                 @if (Model.CanChangeMembers && cell.State != LmsRequirementStates.NotLicensed)
                                                 {

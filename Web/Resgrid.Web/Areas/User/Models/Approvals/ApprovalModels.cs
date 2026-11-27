@@ -126,5 +126,11 @@ namespace Resgrid.Web.Areas.User.Models.Approvals
 		public List<SelectOption> Links { get; set; } = new List<SelectOption>();
 		public ApprovalSubjectStatus Approval { get; set; }
 		public string Error { get; set; }
+		/// <summary>Round 10 A3: the partner department countersigns over the link once the chain approved.</summary>
+		public bool RequiresCountersignature { get; set; }
+		public int CountersignStatus { get; set; }
+		public DateTime? CountersignRequestedOn { get; set; }
+		public DateTime? CountersignedOn { get; set; }
+		public string CountersignNote { get; set; }
 	}
 }

@@ -181,56 +181,74 @@
   </data>
   <data name="CredentialAudienceLabel" xml:space="preserve">
     <value>Efter certifiering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceNone" xml:space="preserve">
     <value>Ingen efter certifiering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceStatus" xml:space="preserve">
     <value>Certifieringsstatus</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceExpired" xml:space="preserve">
     <value>har gått ut</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceExpiring" xml:space="preserve">
     <value>går ut inom angivet antal dagar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceMissing" xml:space="preserve">
     <value>aldrig innehaft</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceDays" xml:space="preserve">
     <value>Dagar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceHelp" xml:space="preserve">
     <value>Lägger till de aktiva medlemmar vars certifiering matchar, tillsammans med mottagarna som valts ovan.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceNoMatch" xml:space="preserve">
     <value>Ingen medlem matchar den certifieringsstatus du valde.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceLabel" xml:space="preserve">
     <value>Lektionsdeltagare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceNone" xml:space="preserve">
     <value>Ingen lektion</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceStatus" xml:space="preserve">
     <value>Status på listan</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceEnrolled" xml:space="preserve">
     <value>Anmälda</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceAttended" xml:space="preserve">
     <value>Närvarande</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceAbsent" xml:space="preserve">
     <value>Frånvarande</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceWaitlisted" xml:space="preserve">
     <value>På väntelistan</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceHelp" xml:space="preserve">
     <value>Lägger till lektionens aktiva medlemmar med den statusen bland mottagarna.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceNoMatch" xml:space="preserve">
     <value>Ingen på lektionens lista har den statusen.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

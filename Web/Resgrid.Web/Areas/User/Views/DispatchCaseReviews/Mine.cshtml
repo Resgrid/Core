@@ -1,0 +1,86 @@
+@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Protocols.MyDispatchCaseReviewsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatchCaseReviews.DispatchCaseReviews> L
+@*
+    Protocols P5 QA: "My case reviews": the member's own dispatch cases that a reviewer sent back, newest first; the ones still to
+    acknowledge come first as next actions. Nobody else's reviews are listed here.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + L["MyCaseReviewsTab"];
+    ViewData["Title"] = L["MyCaseReviewsTab"].Value;
+    ViewData["Subtitle"] = L["MineIntro"].Value;
+    var toAcknowledge = Model.Reviews.Where(r => r.Status == (int)DispatchCaseReviewStatuses.Sent).ToList();
+    var scored = Model.Reviews.Where(r => r.Score.HasValue).ToList();
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["TileToAcknowledge"]</div><div class="rgw-stat-value @(toAcknowledge.Count > 0 ? "text-warning" : "")">@toAcknowledge.Count</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["TileReviews"]</div><div class="rgw-stat-value">@Model.Reviews.Count</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["TileAverageScore"]</div><div class="rgw-stat-value">@(scored.Count == 0 ? "–" : Math.Round(scored.Average(r => r.Score.Value), 1).ToString("0.#"))</div></div>
+    </div>
+
+    @if (Model.Reviews.Count == 0)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-check-circle text-success" aria-hidden="true"></i> @L["MineEmpty"]</div>
+    }
+    @foreach (var review in toAcknowledge)
+    {
+        <div class="rgw-next-action" role="group" aria-label="@(review.CallNumber ?? review.CallId.ToString())">
+            <i class="fa fa-commenting-o" aria-hidden="true"></i>
+            <strong>@string.Format(L["ReviewTitle"].Value, review.CallNumber ?? review.CallId.ToString())</strong>
+            <span class="text-muted small">@review.ProtocolCode @review.ProtocolName · @departmentTime.Format(review.SentOn)</span>
+            <a class="btn btn-xs btn-primary" asp-action="Review" asp-route-area="User" asp-route-id="@review.DispatchCaseReviewId"><i class="fa fa-eye" aria-hidden="true"></i> @L["ReadAndAcknowledgeButton"]</a>
+        </div>
+    }
+
+    @if (Model.Reviews.Count > 0)
+    {
+        <div class="ibox m-t-md">
+            <div class="ibox-content table-responsive">
+                <table class="table rgw-table">
+                    <caption class="sr-only">@L["MyCaseReviewsTab"]</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">@L["CallColumn"]</th>
+                            <th scope="col">@L["ProtocolColumn"]</th>
+                            <th scope="col">@L["ScoreLabel"]</th>
+                            <th scope="col">@L["StatusColumn"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <tr>
+                                <td><a asp-action="Review" asp-route-area="User" asp-route-id="@review.DispatchCaseReviewId">@(review.CallNumber ?? review.CallId.ToString())</a>
+                                    <div class="rgw-sub">@departmentTime.Format(review.CallLoggedOn)</div></td>
+                                <td>@review.ProtocolCode @review.ProtocolName
+                                    @if (!string.IsNullOrEmpty(review.Determinant)) { <div class="rgw-sub rgw-mono">@review.Determinant</div> }</td>
+                                <td>@(review.Score.HasValue ? review.Score.Value.ToString() : "–")</td>
+                                <td>@await Html.PartialAsync("_Status", review.Status)
+                                    @if (!string.IsNullOrEmpty(review.DispatcherComment)) { <div class="rgw-sub"><i class="fa fa-reply" aria-hidden="true"></i> @L["RepliedLabel"]</div> }</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

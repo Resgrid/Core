@@ -27,7 +27,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for e-Signature S3 (M0391) on both engines: the migration re-runs as a no-op, rolls back (removing the
+	/// Real-database proof for e-Signature S3 (M0371) on both engines: the migration re-runs as a no-op, rolls back (removing the
 	/// requests that hold member steps first) and applies again; the step columns round-trip; and the new queries — a member's
 	/// pending steps (case-insensitive user id, open and unexpired requests of the department only), due reminders and the
 	/// conditional reminder claim, requests by id with the IN-list on PostgreSQL. Set RESGRID_ADP_SQLSERVER_TEST_CONNECTION /
@@ -156,7 +156,7 @@ namespace Resgrid.Tests.Repositories
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 391");
+				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 371");
 
 			using var runner = Runner();
 			using var scope = runner.CreateScope();
@@ -180,7 +180,7 @@ namespace Resgrid.Tests.Repositories
 				SignatureRequestId = s2.SignatureRequestId, DepartmentId = Dept, Role = 0, ExternalName = "Casey", AuthMethod = 5, Status = 0, CreatedOn = DateTime.UtcNow
 			}, default, true);
 
-			migrations.MigrateDown(390);
+			migrations.MigrateDown(370);
 			(await ColumnCountAsync("SignerKind")).Should().Be(0);
 			(await ColumnCountAsync("NextReminderOn")).Should().Be(0);
 			(await ScalarAsync($"SELECT COUNT(*) FROM {T("SignatureRequests")} WHERE {T("SignatureRequestId")} = @Id", new { Id = memberRequest.SignatureRequestId }))

@@ -96,6 +96,15 @@ namespace Resgrid.Model
 		/// <summary>The assignment cycle: 0 for the first, then one more for each repeat or material re-assignment.</summary>
 		public int Cycle { get; set; }
 
+		/// <summary>
+		/// Round 7B (M0400): <see cref="LearningCompletionMethods"/> of this cycle's completion. RecordedByOther: an instructor recorded it
+		/// (permission 135, the quiz noted as waived); the member's own later attempt does not overwrite it (the first completion stands).
+		/// </summary>
+		public int CompletionMethod { get; set; }
+
+		/// <summary>The TrainingCompletionRecordings row of a recorded completion.</summary>
+		public int? RecordedCompletionId { get; set; }
+
 		/// <summary>True while an exemption is in force.</summary>
 		public bool IsExemptOn(DateTime utcNow) => ExemptOn.HasValue && (!ExemptUntil.HasValue || ExemptUntil.Value > utcNow);
 

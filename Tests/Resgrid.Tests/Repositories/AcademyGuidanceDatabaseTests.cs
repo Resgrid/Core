@@ -31,7 +31,7 @@ using Resgrid.Repositories.DataRepository.Transactions;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for A2/A3 on both engines: M0397 in the full chain, Up again as a no-op, Down and Up; member guidance states (upsert
+	/// Real-database proof for A2/A3 on both engines: M0375 in the full chain, Up again as a no-op, Down and Up; member guidance states (upsert
 	/// by department, member and key, member ids without case on PostgreSQL's citext); major lesson updates (recorded once, pending until
 	/// completed, the cursor) and the departments that assigned a lesson; and the department cleanup. Set RESGRID_ADP_SQLSERVER_TEST_CONNECTION
 	/// / RESGRID_ADP_POSTGRES_TEST_CONNECTION (server-level) to run.
@@ -298,12 +298,12 @@ namespace Resgrid.Tests.Repositories
 		}
 
 		[Test, Order(5)]
-		public async Task M0397_reruns_as_a_no_op_rolls_back_and_applies_again()
+		public async Task M0375_reruns_as_a_no_op_rolls_back_and_applies_again()
 		{
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 397");
+				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 375");
 			var tables = IsPostgres
 				? "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('academyguidancestates', 'academylessonupdates')"
 				: "SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME IN ('AcademyGuidanceStates', 'AcademyLessonUpdates')";
@@ -316,7 +316,7 @@ namespace Resgrid.Tests.Repositories
 				(await ScalarAsync(tables)).Should().Be(2);
 				(await ScalarAsync($"SELECT COUNT(*) FROM {T("AcademyLessonUpdates")}")).Should().Be(1, "the second Up keeps the rows");
 
-				migrations.MigrateDown(396);
+				migrations.MigrateDown(374);
 				(await ScalarAsync(tables)).Should().Be(0);
 
 				migrations.MigrateUp();

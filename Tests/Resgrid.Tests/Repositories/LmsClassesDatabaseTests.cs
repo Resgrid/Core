@@ -29,7 +29,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for Training T4 part 1 (M0403–M0405) on both engines: the migrations re-run as no-ops, roll back and apply again;
+	/// Real-database proof for Training T4 part 1 (M0378–M0380) on both engines: the migrations re-run as no-ops, roll back and apply again;
 	/// sessions, rosters (one row per member, case-insensitive), the reminder claim and the waitlist promotion run once; the worker 95
 	/// due-work queries; the purge refuses a roster inside its retention (the guard is in the statement) and removes the children after it;
 	/// resource bookings never overlap; lesson-plan versions move only from the expected status; department cleanup removes the new tables
@@ -150,7 +150,7 @@ namespace Resgrid.Tests.Repositories
 		{
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
-			await ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 403 AND {versionColumn} <= 405");
+			await ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 378 AND {versionColumn} <= 380");
 
 			using (var runner = Runner())
 			using (var scope = runner.CreateScope())
@@ -159,7 +159,7 @@ namespace Resgrid.Tests.Repositories
 				migrations.MigrateUp();
 				(await ScalarAsync(Exists(Tables))).Should().Be(Tables.Length, "a second Up over existing tables is a no-op");
 
-				migrations.MigrateDown(402);
+				migrations.MigrateDown(377);
 				(await ScalarAsync(Exists(Tables))).Should().Be(0);
 
 				migrations.MigrateUp();

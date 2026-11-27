@@ -243,6 +243,8 @@ namespace Resgrid.Services
 			var courses = (await _courses.GetForDepartmentAsync(actor.DepartmentId) ?? new List<LmsCourse>()).Where(c => IsIndexable(c, actor.DepartmentId)).ToList();
 			if (courses.Count == 0)
 				return readable;
+			if (!await ReadsAsLearnerAsync(actor))
+				return readable;
 			var enrolled = new HashSet<int>((await _enrollments.GetForUserAsync(actor.DepartmentId, actor.UserId) ?? new List<LmsEnrollment>())
 				.Where(e => e.DepartmentId == actor.DepartmentId && string.Equals(e.UserId, actor.UserId, StringComparison.OrdinalIgnoreCase) && e.Status != (int)LmsEnrollmentStatuses.Withdrawn)
 				.Select(e => e.LmsCourseId));
@@ -253,6 +255,26 @@ namespace Resgrid.Services
 					readable.Add(course.LmsCourseId);
 			}
 			return readable;
+		}
+
+		/// <summary>
+		/// Round 10 A7 (owner decision 2026-11-26): reading a department course's content through knowledge (search, "Ask this course") is being
+		/// trained on it, so a reader who reads it as a learner needs their LMS seat. A course manager or department admin reads by permission
+		/// (authoring and reporting never need a seat). Fails closed.
+		/// </summary>
+		private async Task<bool> ReadsAsLearnerAsync(LmsActor actor)
+		{
+			if (actor.MayManage)
+				return true;
+			try
+			{
+				return await _gate.HoldsLearnerSeatAsync(actor.DepartmentId, actor.UserId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "The reader's LMS seat could not be read.");
+				return false;
+			}
 		}
 
 		/// <summary>The catalog's own rule (ILmsLearnerService.GetCatalogAsync): self-enrollable and in its audience (managers see past it).</summary>
@@ -300,6 +322,9 @@ namespace Resgrid.Services
 			var course = await _courses.GetVisibleByIdAsync(reader.DepartmentId, courseId);
 			if (!IsIndexable(course, reader.DepartmentId) || course.LmsCourseId != courseId)
 				return KnowledgeVersionContent.Refused(KnowledgeOutcomes.Invalid);
+			// Round 10 A7: the course tutor is a learner item: without an LMS seat (and no manager permission) it is not entitled.
+			if (!await ReadsAsLearnerAsync(actor))
+				return KnowledgeVersionContent.Refused(KnowledgeOutcomes.NotEntitled);
 
 			var mine = (await _enrollments.GetForUserAsync(reader.DepartmentId, reader.UserId) ?? new List<LmsEnrollment>())
 				.Where(e => e.LmsCourseId == courseId && e.DepartmentId == reader.DepartmentId && string.Equals(e.UserId, reader.UserId, StringComparison.OrdinalIgnoreCase) &&

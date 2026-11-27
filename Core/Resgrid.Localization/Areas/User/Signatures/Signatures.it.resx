@@ -60,881 +60,1210 @@
   </resheader>
   <data name="AnyApprover" xml:space="preserve">
     <value>qualsiasi approvatore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BindsToContentHelp" xml:space="preserve">
     <value>La firma copre esattamente questo testo. Se il testo cambia, non corrisponde più ed è necessaria una nuova firma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CertificationVerificationStatement" xml:space="preserve">
     <value>Verifico la registrazione di certificazione {0} ({1}, ricevuta il {2}, scadenza {3}): l'ho controllata ed è autentica.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CommentLabel" xml:space="preserve">
     <value>Commento (facoltativo)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ContentCodeLabel" xml:space="preserve">
     <value>Codice contenuto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntentApprove" xml:space="preserve">
     <value>Approvazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntentAttest" xml:space="preserve">
     <value>Attestazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntentColumn" xml:space="preserve">
     <value>Significato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntentReview" xml:space="preserve">
     <value>Revisione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntentVerify" xml:space="preserve">
     <value>Verifica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntentWitness" xml:space="preserve">
     <value>Testimone</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LevelAttest" xml:space="preserve">
     <value>sessione autenticata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LevelBadge" xml:space="preserve">
     <value>Livello {0}: {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LevelColumn" xml:space="preserve">
     <value>Livello</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LevelStepUp" xml:space="preserve">
     <value>identità verificata di nuovo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MethodPasskey" xml:space="preserve">
     <value>Passkey</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MethodSession" xml:space="preserve">
     <value>Sessione autenticata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MethodStepUp" xml:space="preserve">
     <value>Verifica con secondo fattore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoSignatures" xml:space="preserve">
     <value>Ancora nessuna firma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OthersToSignLabel" xml:space="preserve">
     <value>Devono ancora firmare dopo di te:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PasskeyCancelled" xml:space="preserve">
     <value>La richiesta della passkey è stata chiusa. Non è stato firmato nulla.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PasskeyFailed" xml:space="preserve">
     <value>Non è stato possibile verificare la passkey. Non è stato firmato nulla.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PasskeyOnlyHelp" xml:space="preserve">
     <value>Il tuo dipartimento richiede una passkey per questa firma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PasskeyRequiredHelp" xml:space="preserve">
     <value>È richiesta una passkey.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PasskeyUnsupported" xml:space="preserve">
     <value>Questo browser non può usare le passkey. Usa invece Firma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtocolApprovalStatement" xml:space="preserve">
     <value>Approvo questa nuova stesura del protocollo {0} "{1}" (contenuto {2}) per la pubblicazione, come passaggio {3} di {4} della sua revisione.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtocolReviewStatement" xml:space="preserve">
     <value>Ho revisionato il protocollo {0} "{1}" versione {2} (contenuto {3}) ed è ancora corretto senza modifiche.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignApproveButton" xml:space="preserve">
     <value>Firma e approva</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignReviewButton" xml:space="preserve">
     <value>Firma la revisione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignWithPasskeyButton" xml:space="preserve">
     <value>Firma con passkey</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedOnColumn" xml:space="preserve">
     <value>Firmato il</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignerColumn" xml:space="preserve">
     <value>Firmatario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementLabel" xml:space="preserve">
     <value>Stai firmando questa dichiarazione:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepUpHelp" xml:space="preserve">
     <value>Firmando ti verrà chiesto di confermare la tua identità con il secondo fattore, se non lo hai appena fatto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationChanged" xml:space="preserve">
     <value>Contenuto modificato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationColumn" xml:space="preserve">
     <value>Controllo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationMissing" xml:space="preserve">
     <value>Contenuto non trovato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationValid" xml:space="preserve">
     <value>Corrisponde</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationVoided" xml:space="preserve">
     <value>Annullata</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AdoptTypedButton" xml:space="preserve">
     <value>Usa il nome in stampatello come firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditDepartment" xml:space="preserve">
     <value>Dipartimento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditDocument" xml:space="preserve">
     <value>Documento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditEvidence" xml:space="preserve">
     <value>Prova</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditMethod" xml:space="preserve">
     <value>Metodo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditNoSigners" xml:space="preserve">
     <value>Su questo documento non sono registrate firme; viene sigillato così come è stato emesso.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditPageTitle" xml:space="preserve">
     <value>Pagina di audit Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditPreparedOn" xml:space="preserve">
     <value>Preparato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditRevisionHash" xml:space="preserve">
     <value>Hash del contenuto (SHA-256)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditRole" xml:space="preserve">
     <value>Ruolo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditSealNote" xml:space="preserve">
     <value>Questa pagina fa parte del documento sigillato. Il sigillo (PAdES con marca temporale RFC 3161) dimostra che il file non è cambiato da quando è stato sigillato; verificalo in Verifica un documento in Resgrid o in qualsiasi lettore PDF.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditSigners" xml:space="preserve">
     <value>Firmatari</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AuditSubject" xml:space="preserve">
     <value>Oggetto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BackLink" xml:space="preserve">
     <value>Indietro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelLink" xml:space="preserve">
     <value>Annulla</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChannelInPerson" xml:space="preserve">
     <value>Di persona</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChannelLabel" xml:space="preserve">
     <value>Modalità</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChannelRemote" xml:space="preserve">
     <value>Tramite link</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearSignatureButton" xml:space="preserve">
     <value>Cancella</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClosedText" xml:space="preserve">
     <value>Questo link di firma non è più valido. Potrebbe essere già stato usato, ritirato o scaduto. Chiedi un nuovo link al mittente.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CodeAttemptsLeft" xml:space="preserve">
     <value>{0} tentativi rimasti.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CodeHeading" xml:space="preserve">
     <value>Inserisci il codice</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CodeLabel" xml:space="preserve">
     <value>Codice a sei cifre</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CodeNotSent" xml:space="preserve">
     <value>Non è stato possibile inviare il codice ora. Attendi un minuto e riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CodeSentEmail" xml:space="preserve">
     <value>Abbiamo inviato un codice a sei cifre a {0}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CodeSentSms" xml:space="preserve">
     <value>Abbiamo inviato un codice a sei cifre via SMS a {0}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CodeWrong" xml:space="preserve">
     <value>Il codice non è corretto o è scaduto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompletedPdfButton" xml:space="preserve">
     <value>Documento completato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConsentButton" xml:space="preserve">
     <value>Accetta e invia il codice</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConsentCheckbox" xml:space="preserve">
     <value>Accetto di firmare questo documento elettronicamente.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConsentCodeNote" xml:space="preserve">
     <value>Poi invieremo un codice monouso a {0} per confermare che sei tu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConsentHeading" xml:space="preserve">
     <value>Consenso alla firma elettronica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConsentRequired" xml:space="preserve">
     <value>Seleziona la casella per accettare prima di continuare.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConsentText" xml:space="preserve">
     <value>Ti viene chiesto di firmare un documento elettronicamente. Accettando, acconsenti a gestire questo documento in forma elettronica e riconosci che la tua firma elettronica è valida quanto una firma autografa. Puoi chiedere al mittente una copia cartacea e puoi revocare questo consenso non firmando. Il tuo nome, l'ora della firma e il codice che ti inviamo vengono registrati con la firma, e il documento firmato viene sigillato perché non possa essere modificato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ContinueButton" xml:space="preserve">
     <value>Continua</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ContinueInPersonLink" xml:space="preserve">
     <value>Continua di persona</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DetailIntro" xml:space="preserve">
     <value>Una richiesta di firma esterna: stato, firmatario e documenti.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DoneHeading" xml:space="preserve">
     <value>Grazie.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DoneText" xml:space="preserve">
     <value>La tua firma è stata registrata. Puoi chiudere questa pagina.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DrawSignatureHelp" xml:space="preserve">
     <value>Firma con il dito, una penna o il mouse. Senza puntatore, digita il nome e usalo come firma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DrawSignatureLabel" xml:space="preserve">
     <value>Firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DrawSignatureRequired" xml:space="preserve">
     <value>Firma nel riquadro o usa il nome come firma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignAccountHeading" xml:space="preserve">
     <value>Team Documenso di questo dipartimento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignActiveLabel" xml:space="preserve">
     <value>Usa questo account per i link di firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignClusterHeading" xml:space="preserve">
     <value>Servizi di firma di questa installazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignClusterHelp" xml:space="preserve">
     <value>Sono impostati dal gestore di questa installazione Resgrid. Senza la piattaforma di firma elettronica i link di firma non sono disponibili, mentre la firma di persona funziona comunque. Senza sigillo, i documenti vengono firmati e restano in attesa di sigillo finché non viene configurato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignIntro" xml:space="preserve">
     <value>L'account della piattaforma di firma elettronica che invia i documenti da firmare tramite link e lo stato del sigillo dei documenti.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignPlatformConfigured" xml:space="preserve">
     <value>Piattaforma di firma elettronica (Documenso)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignRemoveButton" xml:space="preserve">
     <value>Rimuovi token</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignSaved" xml:space="preserve">
     <value>Le impostazioni di firma elettronica sono state salvate.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignTab" xml:space="preserve">
     <value>Firma elettronica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignTeamIdLabel" xml:space="preserve">
     <value>ID del team</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignTitle" xml:space="preserve">
     <value>Impostazioni di firma elettronica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignTokenHelp" xml:space="preserve">
     <value>Un token API del team. È salvato cifrato e ne vengono mostrati solo gli ultimi quattro caratteri. Lascia vuoto per mantenere quello attuale.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ESignTokenLabel" xml:space="preserve">
     <value>Token API</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EmbedFrameTitle" xml:space="preserve">
     <value>Firma del documento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EmbedUnavailable" xml:space="preserve">
     <value>Il servizio di firma non è disponibile ora. Riprova più tardi.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExpiresLabel" xml:space="preserve">
     <value>Scade</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExternalPanelHelp" xml:space="preserve">
     <value>Un cliente, un occupante o un terzo può firmare questo documento di persona su questo dispositivo o, se disponibile, tramite un link di firma Resgrid.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExternalPanelTitle" xml:space="preserve">
     <value>Firma esterna</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FinishedButton" xml:space="preserve">
     <value>Ho finito di firmare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HandDeviceButton" xml:space="preserve">
     <value>Consegna il dispositivo al firmatario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HandDeviceHelp" xml:space="preserve">
     <value>Apre su questo dispositivo una pagina di firma per l'altra persona: consenso, nome e firma disegnata, con testimone facoltativo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HandDeviceTitle" xml:space="preserve">
     <value>Firma di persona</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HomeLink" xml:space="preserve">
     <value>Pagina iniziale</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InPersonSignedMessage" xml:space="preserve">
     <value>Firmato di persona. Il documento firmato viene sigillato quando il sigillo è disponibile.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LandingExpires" xml:space="preserve">
     <value>Questo link scade il {0}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LandingIntro" xml:space="preserve">
     <value>{0}, {1} ti chiede di leggere e firmare un documento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LevelExternal" xml:space="preserve">
     <value>Firmatario esterno</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LevelSealed" xml:space="preserve">
     <value>Documento sigillato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LinkOnceHelp" xml:space="preserve">
     <value>Non è stato possibile consegnare il link di firma. Puoi passarlo tu al firmatario; viene mostrato solo ora e si può usare una volta.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MethodExternalLink" xml:space="preserve">
     <value>Link di firma e codice</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MethodInPersonOffline" xml:space="preserve">
     <value>Di persona (offline)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MethodInPersonOnline" xml:space="preserve">
     <value>Di persona</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="No" xml:space="preserve">
     <value>No</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRightToRequest" xml:space="preserve">
     <value>Non puoi richiedere firme per questo elemento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenRequestStatus" xml:space="preserve">
     <value>Richiesta di firma: {0} ({1}), scade il {2}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OtpChannelEmail" xml:space="preserve">
     <value>Posta elettronica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OtpChannelLabel" xml:space="preserve">
     <value>Invia il codice monouso tramite</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OtpChannelSms" xml:space="preserve">
     <value>SMS</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PdfFailed" xml:space="preserve">
     <value>Non è stato possibile generare il PDF.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrintedNameLabel" xml:space="preserve">
     <value>Nome in stampatello</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtocolPdfButton" xml:space="preserve">
     <value>PDF</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalNone" xml:space="preserve">
     <value>Fatto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalInvalidRequest" xml:space="preserve">
     <value>Alcuni dati mancano o non sono validi.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalSubjectNotFound" xml:space="preserve">
     <value>Elemento non trovato o non puoi aprirlo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalRemoteNeedsAddon" xml:space="preserve">
     <value>La firma tramite link fa parte del componente aggiuntivo a cui appartiene questo documento. La firma di persona è disponibile.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalProviderUnavailable" xml:space="preserve">
     <value>La firma tramite link non è configurata per questo dipartimento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalRevisionChanged" xml:space="preserve">
     <value>Il documento è cambiato dopo essere stato mostrato per la firma. Ricomincia.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalRequestClosed" xml:space="preserve">
     <value>Questa richiesta non è più aperta.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalProviderFailed" xml:space="preserve">
     <value>La piattaforma di firma elettronica non ha potuto preparare il documento. Riprova più tardi.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalContactRequired" xml:space="preserve">
     <value>Inserisci un indirizzo e-mail valido o un numero di telefono in formato internazionale per il codice monouso.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteRequestButton" xml:space="preserve">
     <value>Richiedi firma tramite link</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteRequestHelp" xml:space="preserve">
     <value>Resgrid invia al firmatario un link monouso. Prima di firmare acconsente alla firma elettronica e inserisce un codice monouso inviato all'indirizzo e-mail o al numero indicato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteUnavailableNone" xml:space="preserve">
     <value>La firma tramite link è disponibile.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteUnavailableInvalidRequest" xml:space="preserve">
     <value>La firma tramite link non è offerta per questo elemento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteUnavailableSubjectNotFound" xml:space="preserve">
     <value>La firma tramite link non è offerta per questo elemento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteUnavailableRemoteNeedsAddon" xml:space="preserve">
     <value>La firma tramite link è inclusa nel componente aggiuntivo di questo documento; la firma di persona è gratuita.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteUnavailableProviderUnavailable" xml:space="preserve">
     <value>La firma tramite link non è configurata (firma elettronica); la firma di persona è disponibile.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteUnavailableRevisionChanged" xml:space="preserve">
     <value>La firma tramite link non è disponibile ora.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteUnavailableRequestClosed" xml:space="preserve">
     <value>La firma tramite link non è disponibile ora.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteUnavailableProviderFailed" xml:space="preserve">
     <value>La firma tramite link non è disponibile ora.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoteUnavailableContactRequired" xml:space="preserve">
     <value>La firma tramite link non è disponibile ora.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequestHeading" xml:space="preserve">
     <value>Richiesta di firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequestNotDeliveredMessage" xml:space="preserve">
     <value>La richiesta è stata creata ma non è stato possibile consegnare il link.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequestSentMessage" xml:space="preserve">
     <value>Il link di firma è stato inviato a {0}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequestVoidedMessage" xml:space="preserve">
     <value>La richiesta è stata ritirata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResendButton" xml:space="preserve">
     <value>Invia un nuovo link</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResendCodeButton" xml:space="preserve">
     <value>Invia un nuovo codice</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleCustomer" xml:space="preserve">
     <value>Cliente</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleOccupant" xml:space="preserve">
     <value>Occupante</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleExternalParty" xml:space="preserve">
     <value>Parte esterna</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleWitness" xml:space="preserve">
     <value>Testimone</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleCounterparty" xml:space="preserve">
     <value>Controparte</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Salva</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SealedPdfButton" xml:space="preserve">
     <value>PDF sigillato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SealingKey" xml:space="preserve">
     <value>Certificato di firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SealingPendingState" xml:space="preserve">
     <value>sigillo in attesa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SealingSidecar" xml:space="preserve">
     <value>Servizio di sigillo (EU DSS)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SealingStore" xml:space="preserve">
     <value>Archivio documenti sigillati</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SealingTsa" xml:space="preserve">
     <value>Autorità di marca temporale</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SendCodeButton" xml:space="preserve">
     <value>Invia il codice</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SendRequestButton" xml:space="preserve">
     <value>Invia richiesta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignNowButton" xml:space="preserve">
     <value>Firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignaturePageTitle" xml:space="preserve">
     <value>Firme</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignaturesHeading" xml:space="preserve">
     <value>Firme</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignaturesModuleTitle" xml:space="preserve">
     <value>Firme</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedByNote" xml:space="preserve">
     <value>{0} · {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedState" xml:space="preserve">
     <value>Firmato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignerEmailLabel" xml:space="preserve">
     <value>Indirizzo e-mail</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignerNameLabel" xml:space="preserve">
     <value>Nome del firmatario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignerPhoneLabel" xml:space="preserve">
     <value>Cellulare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignerStatusPending" xml:space="preserve">
     <value>In attesa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignerStatusOpened" xml:space="preserve">
     <value>Aperto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignerStatusVerified" xml:space="preserve">
     <value>Codice verificato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignerStatusSigned" xml:space="preserve">
     <value>Firmato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignerStatusDeclined" xml:space="preserve">
     <value>Rifiutato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningBeingConfirmed" xml:space="preserve">
     <value>La tua firma è in fase di conferma. Può richiedere un minuto; puoi chiudere questa pagina.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkLabel" xml:space="preserve">
     <value>Link di firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningPageTitle" xml:space="preserve">
     <value>Firma un documento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementTimeReport" xml:space="preserve">
     <value>Confermo che il tempo registrato su {0} è corretto (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementBid" xml:space="preserve">
     <value>Accetto {0} (codice contenuto {1}) per conto del cliente.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementServiceContract" xml:space="preserve">
     <value>Accetto {0} (codice contenuto {1}) per conto della mia organizzazione.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementRecordsInspection" xml:space="preserve">
     <value>Dichiaro di aver ricevuto i risultati di {0} (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementCustodyTransfer" xml:space="preserve">
     <value>Dichiaro di aver ricevuto il reperto di {0} (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusDraft" xml:space="preserve">
     <value>Bozza</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusSent" xml:space="preserve">
     <value>In attesa di firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusPartiallySigned" xml:space="preserve">
     <value>Firmato in parte</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusCompleted" xml:space="preserve">
     <value>Completato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusDeclined" xml:space="preserve">
     <value>Rifiutato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusExpired" xml:space="preserve">
     <value>Scaduto</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusVoided" xml:space="preserve">
     <value>Ritirato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusLabel" xml:space="preserve">
     <value>Stato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubjectUnavailable" xml:space="preserve">
     <value>Questo elemento non può essere firmato ora.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TooManyRequests" xml:space="preserve">
     <value>Troppe richieste. Attendi un minuto e riprova.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyButton" xml:space="preserve">
     <value>Verifica</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyCodeButton" xml:space="preserve">
     <value>Conferma codice</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyFileLabel" xml:space="preserve">
     <value>Documento PDF</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyFileRequired" xml:space="preserve">
     <value>Scegli un file PDF fino a 25 MB.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyFormatColumn" xml:space="preserve">
     <value>Formato</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyIndicationColumn" xml:space="preserve">
     <value>Esito</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyIntro" xml:space="preserve">
     <value>Carica un PDF per verificarne firme e marche temporali e se Resgrid ha emesso esattamente questo file.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyIssuedElsewhere" xml:space="preserve">
     <value>Resgrid ha emesso esattamente questo file, per un altro dipartimento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyIssuedHere" xml:space="preserve">
     <value>Resgrid ha emesso esattamente questo file per questo dipartimento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyIssuedLabel" xml:space="preserve">
     <value>Emesso da Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyNoSignatures" xml:space="preserve">
     <value>Il documento non contiene firme.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyNotIssued" xml:space="preserve">
     <value>Resgrid non ha traccia di aver emesso esattamente questo file. Un file modificato, anche di un solo byte, non corrisponde.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyNotPdf" xml:space="preserve">
     <value>Il file non è un PDF.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyResultHeading" xml:space="preserve">
     <value>Esito</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifySidecarMissing" xml:space="preserve">
     <value>Il servizio di convalida non è configurato in questa installazione, quindi vengono controllati solo i registri di Resgrid.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifySignaturesLabel" xml:space="preserve">
     <value>Firme valide</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyTab" xml:space="preserve">
     <value>Verifica un documento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyTimestampColumn" xml:space="preserve">
     <value>Marca temporale</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyTimestampedOn" xml:space="preserve">
     <value>marca temporale {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyTitle" xml:space="preserve">
     <value>Verifica un documento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyUploadHeading" xml:space="preserve">
     <value>Documento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerifyValidationUnavailable" xml:space="preserve">
     <value>Il servizio di convalida non ha risposto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ViewRequestLink" xml:space="preserve">
     <value>Dettagli</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidButton" xml:space="preserve">
     <value>Ritira richiesta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WitnessNameLabel" xml:space="preserve">
     <value>Testimone (facoltativo)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Sì</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>Azioni</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllMySignaturesLink" xml:space="preserve">
     <value>Tutte le mie firme</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AnyEligibleMember" xml:space="preserve">
     <value>qualsiasi membro idoneo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeclineButton" xml:space="preserve">
     <value>Rifiuta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeclineConfirmButton" xml:space="preserve">
     <value>Rifiuta di firmare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeclineHelp" xml:space="preserve">
     <value>Il rifiuto chiude la richiesta per tutti; al richiedente viene comunicato il tuo motivo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DeclineReasonLabel" xml:space="preserve">
     <value>Perché rifiuti?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DocumentColumn" xml:space="preserve">
     <value>Documento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueByLabel" xml:space="preserve">
     <value>entro il {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IssueReceiptButton" xml:space="preserve">
     <value>Ricevuta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IssueReceiptTitle" xml:space="preserve">
     <value>Ricevuta di assegnazione dell'attrezzatura</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberFallbackName" xml:space="preserve">
     <value>un membro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberRequestButton" xml:space="preserve">
     <value>Chiedi a {0} di firmare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberRequestHelp" xml:space="preserve">
     <value>Il membro firma in Resgrid dopo una nuova verifica dell'identità (livello 2); la richiesta compare in Le mie firme e nella sua pagina iniziale.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberRequestSentMessage" xml:space="preserve">
     <value>La richiesta di firma è stata inviata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MySignaturesIntro" xml:space="preserve">
     <value>Documenti in attesa della tua firma, con il passaggio che ti spetta.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MySignaturesTab" xml:space="preserve">
     <value>Le mie firme</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MySignaturesTitle" xml:space="preserve">
     <value>Le mie firme</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NothingToSign" xml:space="preserve">
     <value>Nulla è in attesa della tua firma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenDocumentLink" xml:space="preserve">
     <value>Apri il documento</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenSigningPageLink" xml:space="preserve">
     <value>Pagina di firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenStepButton" xml:space="preserve">
     <value>Esamina e firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OrderedHelp" xml:space="preserve">
     <value>I firmatari firmano nell'ordine del numero di passaggio; i passaggi con lo stesso numero possono firmare contemporaneamente.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutsideSignerFallbackName" xml:space="preserve">
     <value>firmatario esterno</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PendingSignaturesHeader" xml:space="preserve">
     <value>In attesa della tua firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReadinessProRequiredMessage" xml:space="preserve">
     <value>L'accettazione degli ordini di lavoro da parte dei fornitori e le ricevute di assegnazione dell'attrezzatura fanno parte di Readiness Pro.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignedCountLabel" xml:space="preserve">
     <value>Firmate</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SignStepButton" xml:space="preserve">
     <value>Firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepDeclinedMessage" xml:space="preserve">
     <value>Hai rifiutato di firmare. La richiesta è chiusa.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepOrderColumn" xml:space="preserve">
     <value>Passaggio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepPageIntro" xml:space="preserve">
     <value>Leggi la dichiarazione, controlla il codice contenuto e firma il tuo passaggio.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepPanelTitle" xml:space="preserve">
     <value>La tua firma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsHeading" xml:space="preserve">
     <value>Firmatari</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepSignedMessage" xml:space="preserve">
     <value>La tua firma è stata registrata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UnorderedHelp" xml:space="preserve">
     <value>Ogni firmatario può firmare in qualsiasi momento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VendorAcceptanceHeading" xml:space="preserve">
     <value>Accettazione del fornitore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WitnessNotYouNote" xml:space="preserve">
     <value>Chi ha compilato la lista di controllo non può farne da testimone.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WitnessPanelTitle" xml:space="preserve">
     <value>Firma del testimone</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WitnessSignatureHelp" xml:space="preserve">
     <value>Scrivi nella casella ciò a cui hai assistito. La tua firma è legata ai risultati mostrati (non alle note o al testo libero) e la lista di controllo è completata quando firmi.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WitnessSignButton" xml:space="preserve">
     <value>Firma come testimone</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WitnessSignedMessage" xml:space="preserve">
     <value>La tua firma di testimone è stata registrata e la lista di controllo è completata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WitnessSignFailedMessage" xml:space="preserve">
     <value>Non è stato possibile registrare la firma del testimone.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="YourStepColumn" xml:space="preserve">
     <value>Il tuo passaggio</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="YourStepNote" xml:space="preserve">
     <value>Il tuo passaggio: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalNotYourTurn" xml:space="preserve">
     <value>Non è ancora il tuo turno: non tutti i firmatari precedenti hanno firmato.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalNotEligible" xml:space="preserve">
     <value>Non possiedi una certificazione o un ruolo richiesto da questo passaggio.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalStepUpRequired" xml:space="preserve">
     <value>Questo passaggio richiede il livello 2: conferma la tua identità con il secondo fattore o una passkey, poi firma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalPasskeyRequired" xml:space="preserve">
     <value>Questo passaggio deve essere firmato con una passkey.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalNotASigner" xml:space="preserve">
     <value>Non sei un firmatario di questo passaggio.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusalArtifactMismatch" xml:space="preserve">
     <value>La conferma con passkey riguardava un contenuto diverso. Ricarica la pagina e firma di nuovo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleMember" xml:space="preserve">
     <value>Membro</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleCertifyingOfficial" xml:space="preserve">
     <value>Responsabile della certificazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleEvaluator" xml:space="preserve">
     <value>Valutatore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleVendor" xml:space="preserve">
     <value>Fornitore</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RoleRecipient" xml:space="preserve">
     <value>Destinatario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntentEvaluate" xml:space="preserve">
     <value>Valutazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntentCertify" xml:space="preserve">
     <value>Certificazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntentAccept" xml:space="preserve">
     <value>Accettazione</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutcomeStepUpRequired" xml:space="preserve">
     <value>Conferma la tua identità con il secondo fattore, poi firma di nuovo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutcomePasskeyRequired" xml:space="preserve">
     <value>Per firmare è richiesta una passkey.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutcomeArtifactMismatch" xml:space="preserve">
     <value>La conferma con passkey riguardava un contenuto diverso.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutcomeInvalidRequest" xml:space="preserve">
     <value>Non è stato possibile registrare la firma.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementWorkOrderVendorAcceptance" xml:space="preserve">
     <value>Accetto il lavoro completato su {0} (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementInventoryIssueReceipt" xml:space="preserve">
     <value>Confermo di aver ricevuto {0} (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementSkillEvaluation" xml:space="preserve">
     <value>Confermo la valutazione registrata per {0} (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementChecklistWitness" xml:space="preserve">
     <value>Ho assistito alla lista di controllo {0} per {1} e confermo che i risultati mostrati corrispondono a quanto registrato (codice contenuto {2}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementPurchaseRequisitionApproval" xml:space="preserve">
     <value>Approvo la richiesta d'acquisto {0} (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementIncidentPlanApproval" xml:space="preserve">
     <value>Approvo il piano d'azione dell'incidente {0} (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementInvoiceApproval" xml:space="preserve">
     <value>Approvo l'invio di {0} (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementPayrollRunApproval" xml:space="preserve">
     <value>Approvo l'elaborazione delle paghe {0} (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementCalOesMarsPackageApproval" xml:space="preserve">
     <value>Approvo il pacchetto Cal OES MARS {0} per l'invio (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatementMutualAidAgreementApproval" xml:space="preserve">
     <value>Approvo l'accordo di mutuo soccorso {0} a nome del dipartimento (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ApprovalsTab" xml:space="preserve">
     <value>Approvazioni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementMutualAidAgreementCountersignature" xml:space="preserve">
+    <value>Controfirmo l'accordo di mutuo soccorso {0} per conto del nostro dipartimento in qualità di partner (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementRecordDeploymentPartnerAcceptance" xml:space="preserve">
+    <value>Accetto l'incarico {0} per conto della nostra organizzazione, in qualità di partner collegato per cui viene evaso (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementDepartmentLinkAcceptance" xml:space="preserve">
+    <value>Accetto il collegamento con {0} per conto della nostra organizzazione, con la condivisione indicata (codice contenuto {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentFrom" xml:space="preserve">
+    <value>Organizzazione mittente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentOrder" xml:space="preserve">
+    <value>Ordine</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentRequest" xml:space="preserve">
+    <value>Richiesta / assegnazione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentResource" xml:space="preserve">
+    <value>Risorsa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentPosition" xml:space="preserve">
+    <value>Posizione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentFilledOn" xml:space="preserve">
+    <value>Accettato dal mittente</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

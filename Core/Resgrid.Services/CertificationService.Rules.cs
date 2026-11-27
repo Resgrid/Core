@@ -43,14 +43,25 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<PersonnelCertification> RestoreCertificationStateAsync(int certificationId, int departmentId, PersonnelCertificationStatuses status, DateTime? expiresOn,
-			string reason, string userId, CancellationToken cancellationToken = default)
+		public Task<PersonnelCertification> RestoreCertificationStateAsync(int certificationId, int departmentId, PersonnelCertificationStatuses status, DateTime? expiresOn,
+			string reason, string userId, CancellationToken cancellationToken = default) =>
+			RestoreAsync(certificationId, departmentId, status, expiresOn, false, null, reason, userId, cancellationToken);
+
+		public Task<PersonnelCertification> RollBackCertificationAsync(int certificationId, int departmentId, PersonnelCertificationStatuses status, DateTime? expiresOn,
+			DateTime? recievedOn, string reason, string userId, CancellationToken cancellationToken = default) =>
+			RestoreAsync(certificationId, departmentId, status, expiresOn, true, recievedOn, reason, userId, cancellationToken);
+
+		private async Task<PersonnelCertification> RestoreAsync(int certificationId, int departmentId, PersonnelCertificationStatuses status, DateTime? expiresOn,
+			bool restoreRecievedOn, DateTime? recievedOn, string reason, string userId, CancellationToken cancellationToken)
 		{
 			var (record, type) = await LoadRecordAsync(certificationId, departmentId);
 			var before = Snapshot(record);
 			var oldStatus = record.Status;
 			record.Status = (int)status;
 			record.ExpiresOn = expiresOn;
+			// Round 9A: a renewal a void took back also gives back the start date the renewal moved.
+			if (restoreRecievedOn)
+				record.RecievedOn = recievedOn;
 			record.StatusChangedOn = DateTime.UtcNow;
 			record.StatusChangedByUserId = userId ?? SystemUserId;
 			record.StatusReason = string.IsNullOrWhiteSpace(reason) ? null : reason.Trim();

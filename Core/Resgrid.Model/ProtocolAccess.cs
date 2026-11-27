@@ -17,6 +17,9 @@ namespace Resgrid.Model
 		public bool CanApprove { get; set; }
 		public bool CanManageAcknowledgments { get; set; }
 
+		/// <summary>P5 QA: holds Review Dispatch Cases (134): samples, scores and reports dispatch cases.</summary>
+		public bool CanReviewDispatchCases { get; set; }
+
 		/// <summary>Works dispatch (IDispatchAccessService): always reads Dispatch-kind protocols, whatever their audience.</summary>
 		public bool IsDispatcher { get; set; }
 
@@ -31,6 +34,8 @@ namespace Resgrid.Model
 		public bool MayAuthor => IsCurrentMember && (IsDepartmentAdmin || CanAuthor);
 
 		public bool MayApprove => IsCurrentMember && (IsDepartmentAdmin || CanApprove);
+
+		public bool MayReviewDispatchCases => IsCurrentMember && (IsDepartmentAdmin || CanReviewDispatchCases);
 
 		/// <summary>A reader for code paths with no person (workers, the system): reads nothing.</summary>
 		public static ProtocolReader Nobody(int departmentId) => new ProtocolReader { DepartmentId = departmentId };

@@ -60,1115 +60,1486 @@
   </resheader>
   <data name="Skl.ActionFailed" xml:space="preserve">
     <value>Åtgärden kunde inte slutföras.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Actions" xml:space="preserve">
     <value>Åtgärder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddEvidence" xml:space="preserve">
     <value>Lägg till underlag</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddStep" xml:space="preserve">
     <value>Lägg till steg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddTask" xml:space="preserve">
     <value>Lägg till uppgift</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddTimedNote" xml:space="preserve">
     <value>Lägg till anteckning (tiden registreras)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddonNotice" xml:space="preserve">
     <value>Färdighetsbedömningar och uppgiftsböcker kräver tillägget LMS. Allt som registrerats går fortfarande att läsa.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AllSheets" xml:space="preserve">
     <value>Alla färdighetsblad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AllStates" xml:space="preserve">
     <value>Alla lägen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AllTaskBooks" xml:space="preserve">
     <value>Alla uppgiftsböcker</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Annotation" xml:space="preserve">
     <value>Kommentar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Answer" xml:space="preserve">
     <value>Svar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AnyEligible" xml:space="preserve">
     <value>Valfri behörig medlem</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Attempt" xml:space="preserve">
     <value>Försök</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AwaitingCertification" xml:space="preserve">
     <value>Väntar på slutbedömaren och den certifierande befattningshavaren</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.BooksToEvaluate" xml:space="preserve">
     <value>Uppgiftsböcker där du kan signera uppgifter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CancelReason" xml:space="preserve">
     <value>Orsak till avbrottet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CancelTaskBook" xml:space="preserve">
     <value>Avbryt uppgiftsboken</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CancelTaskBookConfirm" xml:space="preserve">
     <value>Avbryta uppgiftsboken? Signerade uppgifter finns kvar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CertificationRequested" xml:space="preserve">
     <value>Certifieringen har begärts. Slutbedömaren signerar först.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CertifiedOn" xml:space="preserve">
     <value>Certifierad den</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CertifyingOfficial" xml:space="preserve">
     <value>Certifierande befattningshavare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.ChangeSummary" xml:space="preserve">
     <value>Sammanfattning av ändringar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Choose" xml:space="preserve">
     <value>Välj...</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Date" xml:space="preserve">
     <value>Datum</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Evaluation" xml:space="preserve">
     <value>Bedömning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Evaluator" xml:space="preserve">
     <value>Bedömare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Expires" xml:space="preserve">
     <value>Upphör</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Score" xml:space="preserve">
     <value>Poäng</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Signer" xml:space="preserve">
     <value>Undertecknare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Started" xml:space="preserve">
     <value>Påbörjad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Status" xml:space="preserve">
     <value>Läge</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Step" xml:space="preserve">
     <value>Steg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Version" xml:space="preserve">
     <value>Utgåva</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Complete" xml:space="preserve">
     <value>Klar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Average" xml:space="preserve">
     <value>Medelvärde</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Max" xml:space="preserve">
     <value>Högsta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Min" xml:space="preserve">
     <value>Lägsta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Sum" xml:space="preserve">
     <value>Summa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.ComputedHelp" xml:space="preserve">
     <value>Beräknas från de angivna stegen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Continue" xml:space="preserve">
     <value>Fortsätt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CrewHelp" xml:space="preserve">
-    <value>Ett formulär för hela besättningen: alla får samma resultat och post. Bryt ut en medlem som ska bedömas annorlunda.</value>
+    <value>Ett formulär för hela teamet: alla får samma resultat och registrering. Bryt ut en medlem som ska bedömas annorlunda.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CriticalFailedNotice" xml:space="preserve">
     <value>Ett kritiskt steg uppfylldes inte: bedömningen är inte godkänd oavsett poäng.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Declined" xml:space="preserve">
     <value>Avböjd</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Definition" xml:space="preserve">
     <value>Uppgiftsbokens mall</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionCreated" xml:space="preserve">
     <value>Mallen har skapats. Ange vem som signerar och certifierar och spara.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionDeleted" xml:space="preserve">
     <value>Mallen har tagits bort. Öppna uppgiftsböcker behåller sina uppgifter.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionIntro" xml:space="preserve">
     <value>Befattningskoden, uppgifterna och vem som signerar, rekommenderar och certifierar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionsIntro" xml:space="preserve">
     <value>Era uppgiftsböcker för befattningar och Resgrids mallar att utgå från.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionsTitle" xml:space="preserve">
     <value>Mallar för uppgiftsböcker</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteDefinition" xml:space="preserve">
     <value>Ta bort mallen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteDefinitionConfirm" xml:space="preserve">
     <value>Ta bort mallen? Öppna uppgiftsböcker behåller sina uppgifter.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteSheet" xml:space="preserve">
     <value>Avveckla färdighetsbladet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteSheetConfirm" xml:space="preserve">
     <value>Avveckla färdighetsbladet? Dess bedömningar finns kvar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Daily" xml:space="preserve">
     <value>Daglig sammanfattning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Immediate" xml:space="preserve">
     <value>Direkt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Off" xml:space="preserve">
     <value>Av</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Weekly" xml:space="preserve">
     <value>Veckovis sammanfattning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DigestHour" xml:space="preserve">
     <value>Tid för sammanfattning (avdelningens tid)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DigestMode" xml:space="preserve">
     <value>Leverera meddelanden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DigestWeekday" xml:space="preserve">
     <value>Dag för veckosammanfattning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Draft" xml:space="preserve">
     <value>Utkast</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DraftNotReady" xml:space="preserve">
     <value>Utkastet kan inte publiceras än:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DraftSaved" xml:space="preserve">
     <value>Utkastet har sparats.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DraftSteps" xml:space="preserve">
     <value>Steg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Edit" xml:space="preserve">
     <value>Redigera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EditorNeedsScript" xml:space="preserve">
     <value>Stegredigeraren kräver JavaScript.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Elapsed" xml:space="preserve">
     <value>Förfluten tid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Evaluate" xml:space="preserve">
     <value>Bedöm</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationIntro" xml:space="preserve">
     <value>Resultatet, varje steg, underlagen och signaturerna.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationStarted" xml:space="preserve">
     <value>Bedömningen har startat. Tidtagningen pågår.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Evaluations" xml:space="preserve">
     <value>Bedömningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationsIntro" xml:space="preserve">
     <value>Alla bedömningar i avdelningen per blad och läge.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationsTitle" xml:space="preserve">
     <value>Färdighetsbedömningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluatorComments" xml:space="preserve">
     <value>Bedömarens kommentarer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Evidence" xml:space="preserve">
     <value>Underlag</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceAdded" xml:space="preserve">
     <value>Underlaget har lagts till.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceFile" xml:space="preserve">
     <value>Foto, video eller fil</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceHelp" xml:space="preserve">
     <value>Upp till 30 MB per fil. Varje fils SHA-256 tas med i den förseglade posten.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceStep" xml:space="preserve">
     <value>För steg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceStepHelp" xml:space="preserve">
     <value>Lägg till foto, video eller fil nedan.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Fail" xml:space="preserve">
     <value>Underkänt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family" xml:space="preserve">
     <value>Kategori</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.Custom" xml:space="preserve">
     <value>Egen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.DriverOperator" xml:space="preserve">
     <value>Förare/operatör</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.FieldTraining" xml:space="preserve">
     <value>Fältutbildning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.NccpSkills" xml:space="preserve">
     <value>Verifiering av NCCP-färdigheter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.Officer" xml:space="preserve">
     <value>Befäl</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.OshaOperator" xml:space="preserve">
     <value>OSHA-bedömning av operatör</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.Wildland" xml:space="preserve">
     <value>Skogsbrand (NWCG)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.AllowCrew" xml:space="preserve">
-    <value>Tillåt bedömning av hela besättningen (ett formulär för flera medlemmar)</value>
+    <value>Tillåt teambedömningar (ett formulär för flera medlemmar)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.AllowSelf" xml:space="preserve">
     <value>Tillåt självbedömning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.AttemptWindow" xml:space="preserve">
     <value>Period för försök (dagar)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CallId" xml:space="preserve">
     <value>Ärendenummer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Category" xml:space="preserve">
     <value>Utbildningskategori som tillgodoräknas</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CertificationType" xml:space="preserve">
     <value>Certifiering som aktiveras</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CertificationTypeHelp" xml:space="preserve">
     <value>När boken startas öppnas en post ”Under utbildning” av den här typen; certifieringen gör den aktiv.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CertificationTypes" xml:space="preserve">
     <value>Certifieringstyper</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Code" xml:space="preserve">
     <value>Färdighetskod</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CodeHelp" xml:space="preserve">
     <value>Används som kurskod i utbildningsregistret och av kraven ”N godkända bedömningar”.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.DefaultMinutes" xml:space="preserve">
     <value>Minuter som tillgodoräknas utan tidtagning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.DeploymentId" xml:space="preserve">
     <value>Insatsnummer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Description" xml:space="preserve">
     <value>Beskrivning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Evaluators" xml:space="preserve">
     <value>Vem som får bedöma</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.EvaluatorsHelp" xml:space="preserve">
     <value>Medlemmar med giltig certifiering av vald typ eller vald roll. Inget valt: endast LMS-ansvariga.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Kind" xml:space="preserve">
     <value>Sort</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Location" xml:space="preserve">
     <value>Plats</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.MaxAttempts" xml:space="preserve">
     <value>Tillåtna misslyckade försök (0 = ingen gräns)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.NextSigner" xml:space="preserve">
     <value>Vem bedömaren får välja som nästa undertecknare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.NextSignerHelp" xml:space="preserve">
     <value>Om angivet måste bedömaren välja en medlem som regeln tillåter; den medlemmen signerar efter bedömaren.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.PassThreshold" xml:space="preserve">
     <value>Godkäntgräns (%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.RecertifyMonths" xml:space="preserve">
     <value>Bedöm igen efter (månader)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.RecertifyMonthsHelp" xml:space="preserve">
     <value>Den certifierade postens utgång (OSHA-operatörer: 36). 0 använder certifieringstypens egen giltighet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Roles" xml:space="preserve">
     <value>Roller</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.TimeLimit" xml:space="preserve">
     <value>Tidsgräns (sekunder, 0 = ingen)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Title" xml:space="preserve">
     <value>Rubrik</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.ValidityMonths" xml:space="preserve">
     <value>Giltig i (månader)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Filter" xml:space="preserve">
     <value>Filtrera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.FinalEvaluator" xml:space="preserve">
     <value>Slutbedömare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Grading" xml:space="preserve">
     <value>Bedömningsregler</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.HomeIntro" xml:space="preserve">
     <value>Bedömningar du genomför, signaturer som väntar, dina resultat och uppgiftsböcker.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.HomeTitle" xml:space="preserve">
     <value>Färdigheter och uppgiftsböcker</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.IncidentRequired" xml:space="preserve">
     <value>Uppgiften räknar bara bedömningar vid ett ärende eller en insats: ange numret.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.IncidentTask" xml:space="preserve">
     <value>Uppgift vid ärende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Initiate" xml:space="preserve">
     <value>Starta uppgiftsbok</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.InitiatedOn" xml:space="preserve">
     <value>Startad den</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Kind.ObservationReport" xml:space="preserve">
     <value>Daglig observationsrapport</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Kind.SkillSheet" xml:space="preserve">
     <value>Färdighetsblad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.LapsedNotice" xml:space="preserve">
     <value>Tillägget LMS är inte aktivt: registrerade färdigheter går att läsa och öppna bedömningar och böcker kan avslutas, men inget nytt kan startas.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MajorVersion" xml:space="preserve">
     <value>Huvudversion (ny bedömning kan behövas)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MemberSplit" xml:space="preserve">
     <value>Medlemmen har brutits ut till en egen bedömning.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MembersHelp" xml:space="preserve">
-    <value>Välj en medlem, eller flera för en besättningsbedömning om bladet tillåter det.</value>
+    <value>Välj en medlem, eller flera för en teambedömning när bladet tillåter det.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MembersToEvaluate" xml:space="preserve">
     <value>Bedömda medlemmar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MoveDown" xml:space="preserve">
     <value>Ned</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MoveUp" xml:space="preserve">
     <value>Upp</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MyOpenEvaluations" xml:space="preserve">
     <value>Bedömningar jag genomför</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MyResults" xml:space="preserve">
     <value>Mina resultat</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MySignatures" xml:space="preserve">
     <value>Bedömningar som väntar på min signatur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MyTaskBooks" xml:space="preserve">
     <value>Mina uppgiftsböcker</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NeedsAnswer" xml:space="preserve">
     <value>Svar saknas</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NewDefinition" xml:space="preserve">
     <value>Ny mall för uppgiftsbok</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NewSheet" xml:space="preserve">
     <value>Nytt färdighetsblad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NextSigner" xml:space="preserve">
     <value>Nästa undertecknare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NextSignerHelp" xml:space="preserve">
     <value>Bladet kräver en andra signatur från en medlem som regeln tillåter.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoDefinitions" xml:space="preserve">
     <value>Inga mallar ännu. Börja från en Resgrid-mall.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoEvaluations" xml:space="preserve">
     <value>Inga bedömningar matchar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoOpenEvaluations" xml:space="preserve">
     <value>Du genomför inga bedömningar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoResults" xml:space="preserve">
     <value>Inga bedömningar av dig ännu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSheet" xml:space="preserve">
     <value>Inget blad (godkänt/underkänt)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSheets" xml:space="preserve">
     <value>Inga färdighetsblad ännu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSheetsToEvaluate" xml:space="preserve">
     <value>Det finns inget publicerat blad som du får bedöma med.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSignatures" xml:space="preserve">
     <value>Inga bedömningar väntar på din signatur.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoTaskBooks" xml:space="preserve">
     <value>Inga uppgiftsböcker.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.None" xml:space="preserve">
     <value>Ingen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotApplicable" xml:space="preserve">
     <value>Ej tillämpligt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotApplicableReason" xml:space="preserve">
     <value>Varför det inte gäller</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotifyMembers" xml:space="preserve">
     <value>Meddela bedömda medlemmar och elever om deras egna bedömningar och böcker</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotifyOfficers" xml:space="preserve">
     <value>Meddela avdelningens administratörer om varje bedömning och bok</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Open" xml:space="preserve">
     <value>Öppna</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OpenSignature" xml:space="preserve">
     <value>Öppna signaturen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OpenTaskBooks" xml:space="preserve">
     <value>Öppna uppgiftsböcker</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluator" xml:space="preserve">
     <value>En extern bedömare signerar i stället</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorEmail" xml:space="preserve">
     <value>E-post (för en signeringslänk)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorHelp" xml:space="preserve">
     <value>Externa bedömare signerar på nivå L4, på plats på den här enheten eller via länk medan tillägget LMS är aktivt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorName" xml:space="preserve">
     <value>Namn</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorRemote" xml:space="preserve">
     <value>Skicka en signeringslänk i stället för att signera på enheten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Pass" xml:space="preserve">
     <value>Godkänt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassAll" xml:space="preserve">
     <value>Godkänn återstående steg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassAt" xml:space="preserve">
     <value>godkänt från</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassFailReport" xml:space="preserve">
     <value>Rapport godkänt/underkänt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassRange" xml:space="preserve">
     <value>Godkänt från-till:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassingRatingIs" xml:space="preserve">
     <value>Lägsta godkända värde:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Position" xml:space="preserve">
     <value>Befattningskod</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Publish" xml:space="preserve">
     <value>Publicera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PublishTitle" xml:space="preserve">
     <value>Publicera utkastet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Published" xml:space="preserve">
     <value>Versionen har publicerats. Nya bedömningar använder den.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RatingsReport" xml:space="preserve">
     <value>Värden per fråga</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Remove" xml:space="preserve">
     <value>Ta bort</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RequestCertification" xml:space="preserve">
     <value>Begär certifiering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RequestCertificationHelp" xml:space="preserve">
     <value>Alla uppgifter är klara. Slutbedömaren rekommenderar och sedan certifierar befattningshavaren; båda signerar på nivå L2.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Required" xml:space="preserve">
     <value>Bedömningar som krävs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Result.Failed" xml:space="preserve">
     <value>Ej godkänt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Result.Passed" xml:space="preserve">
     <value>Godkänt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Role.Evaluator" xml:space="preserve">
     <value>Bedömare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Role.NextSigner" xml:space="preserve">
     <value>Nästa undertecknare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RunIntro" xml:space="preserve">
     <value>Bedöm varje steg; kommentarer och underlag tas med i den förseglade posten.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Save" xml:space="preserve">
     <value>Spara</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SaveDraft" xml:space="preserve">
     <value>Spara utkast</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Saved" xml:space="preserve">
     <value>Sparat.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SealFailed" xml:space="preserve">
     <value>Bedömningen är signerad, men posten kunde inte förseglas. En administratör kan försöka igen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SealPending" xml:space="preserve">
     <value>Signerad, försegling väntar: den förseglade posten finns inte än.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SealedPdf" xml:space="preserve">
     <value>Förseglad post (PDF)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Seconds" xml:space="preserve">
     <value>sekunder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SettingsHelp" xml:space="preserve">
     <value>Dagliga och veckovisa sammanfattningar samlar alla meddelanden i ett meddelande per person. Inaktiva medlemmar får aldrig meddelanden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SettingsIntro" xml:space="preserve">
     <value>Hur meddelanden om bedömningar och uppgiftsböcker levereras.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SettingsTitle" xml:space="preserve">
     <value>Meddelanden om färdigheter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Sheet" xml:space="preserve">
     <value>Färdighetsblad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetCreated" xml:space="preserve">
     <value>Färdighetsbladet har skapats. Anpassa stegen och publicera.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetDeleted" xml:space="preserve">
     <value>Färdighetsbladet har avvecklats.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetDetails" xml:space="preserve">
     <value>Bladets uppgifter och undertecknare</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetIntro" xml:space="preserve">
     <value>Ordnade steg, kritiska kriterier och bedömning, versionshanterade.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetsIntro" xml:space="preserve">
     <value>Färdighetsblad efter prestationskrav och mallbiblioteket.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetsTitle" xml:space="preserve">
     <value>Färdighetsblad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Sign" xml:space="preserve">
     <value>Signera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Signatures" xml:space="preserve">
     <value>Signaturer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Signed" xml:space="preserve">
     <value>Signerad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SignerRulesHelp" xml:space="preserve">
     <value>En medlem är behörig genom giltig certifiering av vald typ eller vald roll. Utan regel bedömer LMS-ansvariga uppgifterna och administratörer rekommenderar och certifierar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SplitConfirm" xml:space="preserve">
     <value>Bryta ut medlemmen till en egen bedömning? Svaren hittills kopieras.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SplitOut" xml:space="preserve">
     <value>Bryt ut</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SplitTo" xml:space="preserve">
     <value>Bedömd separat</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StartEvaluation" xml:space="preserve">
     <value>Starta en bedömning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StartIntro" xml:space="preserve">
     <value>Välj blad och vem du bedömer. Tidtagningen startar nu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.AwaitingSignature" xml:space="preserve">
     <value>Väntar på signatur</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.Completed" xml:space="preserve">
     <value>Slutförd</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.InProgress" xml:space="preserve">
     <value>Pågår</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.Open" xml:space="preserve">
     <value>Öppna</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.Voided" xml:space="preserve">
     <value>Makulerad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.AllowNa" xml:space="preserve">
     <value>Tillåt ”ej tillämpligt”</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Compute" xml:space="preserve">
     <value>Beräkning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.ComputeKeys" xml:space="preserve">
     <value>Från steg (nycklar, kommaseparerade)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Critical" xml:space="preserve">
     <value>Kritiskt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.EvidenceOnFail" xml:space="preserve">
     <value>Underlag vid underkänt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Help" xml:space="preserve">
     <value>Instruktioner till bedömaren</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Key" xml:space="preserve">
     <value>Nyckel</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Label" xml:space="preserve">
     <value>Steg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Max" xml:space="preserve">
     <value>Högsta godkända värde</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Min" xml:space="preserve">
     <value>Lägsta godkända värde</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.NoteOnFail" xml:space="preserve">
     <value>Anteckning vid underkänt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Options" xml:space="preserve">
     <value>Alternativ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.OptionsHelp" xml:space="preserve">
     <value>En per rad: Etikett | poäng | fail (sista delen bara för ett alternativ som underkänner steget).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.PassingRating" xml:space="preserve">
     <value>Lägsta godkända värdering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Rating" xml:space="preserve">
     <value>Skala</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Required" xml:space="preserve">
     <value>Svar krävs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Type" xml:space="preserve">
     <value>Frågetyp</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Weight" xml:space="preserve">
     <value>Vikt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.ChooseAny" xml:space="preserve">
     <value>Välj flera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.ChooseOne" xml:space="preserve">
     <value>Välj ett</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Computed" xml:space="preserve">
     <value>Beräknat värde</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Date" xml:space="preserve">
     <value>Datum</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.DateTime" xml:space="preserve">
     <value>Datum och tid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Duration" xml:space="preserve">
     <value>Varaktighet (tidtagen)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Evidence" xml:space="preserve">
     <value>Foto, video eller fil</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Heading" xml:space="preserve">
     <value>Rubrik</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Instructions" xml:space="preserve">
     <value>Instruktioner</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Number" xml:space="preserve">
     <value>Tal</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.PassFail" xml:space="preserve">
     <value>Godkänt / underkänt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.RatingScale" xml:space="preserve">
     <value>Värderingsskala</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Text" xml:space="preserve">
     <value>Fritext</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Time" xml:space="preserve">
     <value>Klockslag</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.TimestampedNotes" xml:space="preserve">
     <value>Tidsstämplade anteckningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Steps" xml:space="preserve">
     <value>Steg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StripLabel" xml:space="preserve">
     <value>Avsnitt för färdigheter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SubmitAndSign" xml:space="preserve">
     <value>Skicka in och signera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SubmitConfirm" xml:space="preserve">
     <value>Skicka in bedömningen? Resultatet låses och signeringen öppnas.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SubmitTitle" xml:space="preserve">
     <value>Skicka in</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Submitted" xml:space="preserve">
     <value>Bedömningen har skickats in. Signera den för att slutföra.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Definitions" xml:space="preserve">
     <value>Mallar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Evaluations" xml:space="preserve">
     <value>Bedömningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Home" xml:space="preserve">
     <value>Översikt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Settings" xml:space="preserve">
     <value>Inställningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Sheets" xml:space="preserve">
     <value>Färdighetsblad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.TaskBooks" xml:space="preserve">
     <value>Uppgiftsböcker</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Task" xml:space="preserve">
     <value>Uppgift</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookCancelled" xml:space="preserve">
     <value>Uppgiftsboken har avbrutits.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookInitiated" xml:space="preserve">
     <value>Uppgiftsboken har startats.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookIntro" xml:space="preserve">
     <value>Uppgifter med sina bedömningar, sedan slutbedömarens rekommendation och certifiering.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.AwaitingCertification" xml:space="preserve">
     <value>Väntar på certifiering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Cancelled" xml:space="preserve">
     <value>Avbruten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Certified" xml:space="preserve">
     <value>Certifierad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Expired" xml:space="preserve">
     <value>Utgången</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Open" xml:space="preserve">
     <value>Öppen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookTemplates" xml:space="preserve">
     <value>Mallar för uppgiftsböcker</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookTemplatesIntro" xml:space="preserve">
     <value>Skrivna av Resgrid: endast befattningskoder, uppgiftsnummer och korta uppgiftsnamn. Ange varje uppgifts text från ert eget exemplar och anpassa till gällande utgåva.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBooksIntro" xml:space="preserve">
     <value>Uppgiftsböcker för befattningar: startas med ett datum, signeras uppgift för uppgift och certifieras sedan.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBooksTitle" xml:space="preserve">
     <value>Uppgiftsböcker för befattningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskEvaluators" xml:space="preserve">
     <value>Vem som signerar uppgifter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskNumber" xml:space="preserve">
     <value>Nr</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tasks" xml:space="preserve">
     <value>Uppgifter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TasksComplete" xml:space="preserve">
     <value>Klara uppgifter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TemplateLibrary" xml:space="preserve">
     <value>Mallbibliotek för färdighetsblad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TemplateLibraryIntro" xml:space="preserve">
     <value>Utgångspunkter skrivna av Resgrid, endast struktur. Anpassa dem till er utrustning och era rutiner före användning.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TimeExceededNotice" xml:space="preserve">
     <value>Tidsgränsen överskreds: bedömningen är inte godkänd.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Trainee" xml:space="preserve">
     <value>Elev</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Upload" xml:space="preserve">
     <value>Ladda upp</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.UseTemplate" xml:space="preserve">
     <value>Använd mallen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.ValidUntil" xml:space="preserve">
     <value>Giltig till</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Approved" xml:space="preserve">
     <value>Godkänd</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Draft" xml:space="preserve">
     <value>Utkast</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.InReview" xml:space="preserve">
     <value>Under granskning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Published" xml:space="preserve">
     <value>Gäller</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Retired" xml:space="preserve">
     <value>Avvecklad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Superseded" xml:space="preserve">
     <value>Ersatt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Versions" xml:space="preserve">
     <value>Versioner</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Void" xml:space="preserve">
     <value>Makulera bedömningen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VoidConfirm" xml:space="preserve">
     <value>Makulera bedömningen? Dess utbildningsposter makuleras också.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VoidReason" xml:space="preserve">
     <value>Orsak till makulering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Voided" xml:space="preserve">
     <value>Bedömningen har makulerats.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Waiting" xml:space="preserve">
     <value>Väntar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.WholeEvaluation" xml:space="preserve">
     <value>Hela bedömningen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_addon_required" xml:space="preserve">
     <value>Det här kräver tillägget LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_answer_unknown_step" xml:space="preserve">
     <value>Ett svar hör inte till den här versionen av bladet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_attempts_exhausted" xml:space="preserve">
     <value>Medlemmen har inga försök kvar under perioden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_crew_not_allowed" xml:space="preserve">
     <value>Bladet bedömer en medlem i taget.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evaluation_closed" xml:space="preserve">
     <value>Bedömningen pågår inte längre.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evaluation_not_found" xml:space="preserve">
     <value>Bedömningen hittades inte.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_count" xml:space="preserve">
     <value>Bedömningen har redan det högsta antalet underlag.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_size" xml:space="preserve">
     <value>Välj en fil på högst 30 MB.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_step" xml:space="preserve">
     <value>Steget finns inte på bladet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_type" xml:space="preserve">
     <value>Lägg till ett foto, en video, en PDF eller en textfil.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_idempotency_key_required" xml:space="preserve">
     <value>En inskickning offline behöver sin utkorgsnyckel.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_member_invalid" xml:space="preserve">
     <value>Välj aktiva medlemmar i avdelningen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_members_required" xml:space="preserve">
     <value>Välj vem som bedöms (högst 50 medlemmar).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_next_signer_not_allowed" xml:space="preserve">
     <value>Bladet kräver ingen nästa undertecknare.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_next_signer_not_eligible" xml:space="preserve">
     <value>Nästa undertecknare måste vara en annan aktiv medlem som regeln tillåter, inte bedömaren eller en bedömd.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_next_signer_required" xml:space="preserve">
     <value>Välj den nästa undertecknare som bladet kräver.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_allowed" xml:space="preserve">
     <value>Du kan inte göra det här.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_eligible" xml:space="preserve">
     <value>Du är inte en behörig bedömare för bladet eller boken.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_evaluator" xml:space="preserve">
     <value>Endast bedömaren kan ändra bedömningen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_found" xml:space="preserve">
     <value>Hittades inte.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_self_evaluation" xml:space="preserve">
     <value>Du kan inte bedöma dig själv med bladet eller boken.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_category_invalid" xml:space="preserve">
     <value>Välj en utbildningskategori i avdelningen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_change_summary_required" xml:space="preserve">
     <value>Beskriv vad som ändrats.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_kind_invalid" xml:space="preserve">
     <value>Välj färdighetsblad eller daglig observationsrapport.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_no_draft" xml:space="preserve">
     <value>Det finns inget utkast att publicera.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_no_gradable_step" xml:space="preserve">
     <value>Lägg till minst ett steg som bedömaren svarar på.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_not_found" xml:space="preserve">
     <value>Färdighetsbladet hittades inte.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_not_published" xml:space="preserve">
     <value>Bladet har ingen publicerad version.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_bounds" xml:space="preserve">
     <value>Ett lägsta värde är högre än det högsta.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_compute" xml:space="preserve">
     <value>Ett beräknat steg måste ange tidigare tal-, tids- eller skalsteg.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_count" xml:space="preserve">
     <value>Ett blad har 1 till 200 steg.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_critical" xml:space="preserve">
     <value>Bara poängsatta steg kan vara kritiska.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_key" xml:space="preserve">
     <value>Varje steg behöver en unik nyckel.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_label" xml:space="preserve">
     <value>Varje steg behöver en etikett på högst 300 tecken.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_options" xml:space="preserve">
     <value>Valsteg behöver 2 till 30 olika alternativ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_rating" xml:space="preserve">
     <value>En skala behöver ett lägsta och högsta värde och godkäntgränsen däremellan.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_type" xml:space="preserve">
     <value>Välj en frågetyp.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_weight" xml:space="preserve">
     <value>Vikter är 0 till 1000; ett kritiskt steg behöver vikt över 0.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_title_required" xml:space="preserve">
     <value>Ange en rubrik.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_signature_refused" xml:space="preserve">
     <value>Signaturbegäran kunde inte skapas; bedömningen pågår fortfarande.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_split_last_member" xml:space="preserve">
-    <value>Den sista medlemmen i en besättningsbedömning kan inte brytas ut.</value>
+    <value>Den sista medlemmen i en teambedömning kan inte brytas ut.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_split_not_crew" xml:space="preserve">
-    <value>Bara en besättningsbedömning kan bryta ut en medlem.</value>
+    <value>Endast en teambedömning kan bryta ut en medlem.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_stale" xml:space="preserve">
     <value>Någon annan har ändrat detta under tiden. Ladda om och försök igen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_evidence_required" xml:space="preserve">
     <value>Ett underkänt steg behöver underlag.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_invalid" xml:space="preserve">
     <value>Ett svar är inte giltigt för sitt steg.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_not_applicable" xml:space="preserve">
     <value>”Ej tillämpligt” kräver en orsak och tillåts inte på kritiska steg.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_note_required" xml:space="preserve">
     <value>Ett underkänt steg behöver en kommentar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_required" xml:space="preserve">
     <value>Besvara alla obligatoriska steg innan du skickar in.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_too_long" xml:space="preserve">
     <value>Ett svar eller en kommentar är för lång.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_template_not_found" xml:space="preserve">
     <value>Mallen hittades inte.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_void_reason_required" xml:space="preserve">
     <value>Ange en orsak.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_already_open" xml:space="preserve">
     <value>Medlemmen har redan en öppen uppgiftsbok av den här mallen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_certification_type_invalid" xml:space="preserve">
     <value>Välj en personcertifieringstyp i avdelningen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_certifying_official_not_eligible" xml:space="preserve">
     <value>Den certifierande befattningshavaren uppfyller inte mallens regel.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_certifying_official_required" xml:space="preserve">
     <value>Välj den certifierande befattningshavaren.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_code_required" xml:space="preserve">
     <value>Ange befattningskoden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_date_invalid" xml:space="preserve">
     <value>Startdatumet måste ligga inom giltigheten och inte i framtiden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_expired" xml:space="preserve">
     <value>Uppgiftsbokens giltighet har gått ut.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_family_invalid" xml:space="preserve">
     <value>Välj en kategori.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_final_evaluator_not_eligible" xml:space="preserve">
     <value>Slutbedömaren uppfyller inte mallens regel.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_final_evaluator_required" xml:space="preserve">
     <value>Välj slutbedömaren.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_member_mismatch" xml:space="preserve">
     <value>En uppgift i boken bedömer bara bokens elev.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_name_required" xml:space="preserve">
     <value>Ange befattningens namn.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_not_found" xml:space="preserve">
     <value>Uppgiftsboken hittades inte.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_not_open" xml:space="preserve">
     <value>Uppgiftsboken är inte öppen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_sheet_invalid" xml:space="preserve">
     <value>En uppgift anger ett blad som inte finns.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_signers_invalid" xml:space="preserve">
     <value>Eleven, slutbedömaren och den certifierande måste vara tre olika medlemmar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_count" xml:space="preserve">
     <value>En uppgiftsbok har 1 till 200 uppgifter.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_invalid" xml:space="preserve">
     <value>Varje uppgift behöver en rubrik och 1 till 50 bedömningar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_key" xml:space="preserve">
     <value>Varje uppgift behöver en unik nyckel.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_not_found" xml:space="preserve">
     <value>Uppgiften finns inte i boken.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_tasks_incomplete" xml:space="preserve">
     <value>Alla uppgifter måste vara klara före certifiering.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

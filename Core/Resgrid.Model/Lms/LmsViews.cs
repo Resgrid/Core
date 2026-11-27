@@ -27,6 +27,12 @@ namespace Resgrid.Model.Lms
 
 		public LmsDepartmentGate Gate { get; set; }
 
+		/// <summary>
+		/// Round 10 A7: the department's LMS learner seat holders when the caller already read them (a worker run reads once per department,
+		/// R-L9; the requirement engine passes its licensed members). Null until an assignment needs it; the LMS services fill it once per actor.
+		/// </summary>
+		public HashSet<string> SeatHolders { get; set; }
+
 		public ContentAudienceMemberFacts Facts { get; set; }
 
 		public bool MayManage => IsCurrentMember && (IsDepartmentAdmin || CanManageCourses);
@@ -142,6 +148,12 @@ namespace Resgrid.Model.Lms
 		public bool RandomizeAnswers { get; set; } = true;
 		public bool RequireAttestation { get; set; }
 		public List<LmsSurveyQuestion> SurveyQuestions { get; set; }
+
+		/// <summary>T5: Scorm / Cmi5 package, LtiLink tool, target link and custom parameters.</summary>
+		public int? LmsContentPackageId { get; set; }
+		public int? LmsLtiToolId { get; set; }
+		public string LtiTargetLinkUri { get; set; }
+		public string LtiCustomParameters { get; set; }
 	}
 
 	/// <summary>A course version's structure: modules with their lessons in order.</summary>
@@ -191,6 +203,17 @@ namespace Resgrid.Model.Lms
 		public LmsErrors BlockedBy { get; set; }
 	}
 
+	/// <summary>
+	/// Round 10 (Omni): a file the member uploaded for a file-request lesson, found through one of their own (not withdrawn) enrollments, with
+	/// that enrollment and its course (the caller applies the course's gate).
+	/// </summary>
+	public sealed class LmsMyLessonFile
+	{
+		public LmsLessonFile File { get; set; }
+		public LmsEnrollment Enrollment { get; set; }
+		public LmsCourse Course { get; set; }
+	}
+
 	/// <summary>A catalog entry the member may see and enrol in.</summary>
 	public sealed class LmsCatalogEntry
 	{
@@ -198,6 +221,9 @@ namespace Resgrid.Model.Lms
 		public LmsCourseVersion Version { get; set; }
 		public LmsEnrollment OpenEnrollment { get; set; }
 		public bool CanEnroll { get; set; }
+
+		/// <summary>Round 10 A7: why the member cannot enrol although the course itself takes enrolments (NotLicensed: no LMS seat); None otherwise.</summary>
+		public LmsErrors BlockedBy { get; set; }
 	}
 
 	/// <summary>What the player page renders (R-C8): the outline of the version the learner takes, progress, and the lesson open.</summary>
@@ -223,6 +249,12 @@ namespace Resgrid.Model.Lms
 
 		/// <summary>ProtocolVersion lesson: the protocol version shown (its published html).</summary>
 		public ProtocolVersion Protocol { get; set; }
+
+		/// <summary>
+		/// Security review M3: a ProtocolVersion lesson withheld from an external learner because the protocol fails the public-page rules
+		/// (licensed content, an audience, a document-backed version, disabled or not in force); <see cref="Protocol"/> is null then.
+		/// </summary>
+		public bool ProtocolWithheld { get; set; }
 
 		/// <summary>Video lesson: whether the hosted media may stream now (lapse rule 6).</summary>
 		public bool HostedVideoPlayable { get; set; }
@@ -360,6 +392,12 @@ namespace Resgrid.Model.Lms
 		public int Created { get; set; }
 		public int AlreadyEnrolled { get; set; }
 		public List<ContentAudienceSkip> Skipped { get; set; } = new List<ContentAudienceSkip>();
+
+		/// <summary>Round 10 A7: the members skipped because they hold no LMS seat (<see cref="ContentAudienceSkipReasons.NotLicensed"/>).</summary>
+		public int NotLicensed => Skipped?.Count(s => s != null && s.Reason == ContentAudienceSkipReasons.NotLicensed) ?? 0;
+
+		/// <summary>The members newly enrolled by this assignment (round 7C: the direct-assignment workflow event names each one).</summary>
+		public List<string> CreatedUserIds { get; set; } = new List<string>();
 	}
 
 	/// <summary>Hosted media storage per department against the included 100 GB (report only; no overage billing).</summary>

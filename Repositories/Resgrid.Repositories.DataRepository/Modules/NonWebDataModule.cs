@@ -243,29 +243,37 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<MemberLeavePeriodsRepository>().As<IMemberLeavePeriodsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<MemberPinnedItemsRepository>().As<IMemberPinnedItemsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LearningRecordsRepository>().As<ILearningRecordsRepository>().InstancePerLifetimeScope();
+			// Round 7B (M0400): recorded completions (permission 135)
+			builder.RegisterType<TrainingCompletionRecordingsRepository>().As<ITrainingCompletionRecordingsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<KnowledgeIndexRepository>().As<IKnowledgeIndexRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<KnowledgeGapsRepository>().As<IKnowledgeGapsRepository>().InstancePerLifetimeScope();
-			// Academy A2/A3 (M0397): member guidance states and major lesson revisions awaiting worker 88
+			// Academy A2/A3 (M0375): member guidance states and major lesson revisions awaiting worker 88
 			builder.RegisterType<AcademyGuidanceStatesRepository>().As<IAcademyGuidanceStatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<AcademyLessonUpdatesRepository>().As<IAcademyLessonUpdatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LearningRecordFilesRepository>().As<ILearningRecordFilesRepository>().InstancePerLifetimeScope();
+			// Round 9B: training hours submission review history and the reviewer digest claims
+			builder.RegisterType<LearningRecordReviewEventsRepository>().As<ILearningRecordReviewEventsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TrainingReviewDigestsRepository>().As<ITrainingReviewDigestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<TrainingCategoriesRepository>().As<ITrainingCategoriesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CategoryCreditMappingsRepository>().As<ICategoryCreditMappingsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LearningRecordBackfillsRepository>().As<ILearningRecordBackfillsRepository>().InstancePerLifetimeScope();
-			// Member wellness WL0 (M0376): exposure and critical-incident log, post-call flags, screening flags.
+			// Member wellness WL0 (M0360): exposure and critical-incident log, post-call flags, screening flags.
 			builder.RegisterType<RmsResponderExposuresRepository>().As<IRmsResponderExposuresRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsCallExposureFlagsRepository>().As<IRmsCallExposureFlagsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsResponderScreeningFlagsRepository>().As<IRmsResponderScreeningFlagsRepository>().InstancePerLifetimeScope();
-			// Member wellness WL1 (M0394-M0396): BBP exposure cases, injuries and duty periods, medical clearances.
+			// Member wellness WL1 (M0372-M0374): BBP exposure cases, injuries and duty periods, medical clearances.
 			builder.RegisterType<RmsExposureIncidentsRepository>().As<IRmsExposureIncidentsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsMemberInjuriesRepository>().As<IRmsMemberInjuriesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsInjuryDutyPeriodsRepository>().As<IRmsInjuryDutyPeriodsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<RmsMedicalClearancesRepository>().As<IRmsMedicalClearancesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsCertificateTemplatesRepository>().As<ILmsCertificateTemplatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsMemberSeatsRepository>().As<ILmsMemberSeatsRepository>().InstancePerLifetimeScope();
+			// Workforce Pro seats (PlanAddonTypes.WorkforcePro; member wellness and workplace exposure)
+			builder.RegisterType<WorkforceProSeatsRepository>().As<IWorkforceProSeatsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<WorkforceProAddonStatesRepository>().As<IWorkforceProAddonStatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsAddonStatesRepository>().As<ILmsAddonStatesRepository>().InstancePerLifetimeScope();
-			// Training T3 part 2 (round 4C, M0387-M0390): annual plan, competency frameworks, training requests, report catalog, certification cycles
-			// Training T4 part 2 (round 5C, M0407-M0410): skill sheets, evaluations, task books, the skill notification digest
+			// Training T3 part 2 (round 4C, M0367-M0370): annual plan, competency frameworks, training requests, report catalog, certification cycles
+			// Training T4 part 2 (round 5C, M0381-M0384): skill sheets, evaluations, task books, the skill notification digest
 			builder.RegisterType<LmsSkillSheetsRepository>().As<ILmsSkillSheetsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsSkillSheetVersionsRepository>().As<ILmsSkillSheetVersionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsSkillEvaluationsRepository>().As<ILmsSkillEvaluationsRepository>().InstancePerLifetimeScope();
@@ -274,7 +282,22 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<LmsTaskBookDefinitionsRepository>().As<ILmsTaskBookDefinitionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsTaskBooksRepository>().As<ILmsTaskBooksRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsSkillNotificationsRepository>().As<ILmsSkillNotificationsRepository>().InstancePerLifetimeScope();
+			// Training T5 standards (round 6C, M0392-M0394): content packages, runtime registrations and sessions, the cmi5 minimal LRS, LTI tools,
+			// platform keys and AGS tokens, and the xAPI outbox
+			builder.RegisterType<LmsContentPackagesRepository>().As<ILmsContentPackagesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsRuntimeRegistrationsRepository>().As<ILmsRuntimeRegistrationsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsRuntimeSessionsRepository>().As<ILmsRuntimeSessionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsCmi5StatementsRepository>().As<ILmsCmi5StatementsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsCmi5StateDocumentsRepository>().As<ILmsCmi5StateDocumentsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsLtiToolsRepository>().As<ILmsLtiToolsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsLtiPlatformKeysRepository>().As<ILmsLtiPlatformKeysRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsLtiAccessTokensRepository>().As<ILmsLtiAccessTokensRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsXapiOutboxRepository>().As<ILmsXapiOutboxRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsTrainingPlansRepository>().As<ILmsTrainingPlansRepository>().InstancePerLifetimeScope();
+			// Training T5 data exit (round 6D, M0395)
+			builder.RegisterType<LmsDataExportsRepository>().As<ILmsDataExportsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsDataExportBlobsRepository>().As<ILmsDataExportBlobsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsDataExportSourceRepository>().As<ILmsDataExportSourceRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsTrainingPlanItemsRepository>().As<ILmsTrainingPlanItemsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsCompetencyFrameworksRepository>().As<ILmsCompetencyFrameworksRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsCompetencyItemsRepository>().As<ILmsCompetencyItemsRepository>().InstancePerLifetimeScope();
@@ -287,8 +310,21 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<LmsCertificationCycleRulesRepository>().As<ILmsCertificationCycleRulesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsCertificationAlertsRepository>().As<ILmsCertificationAlertsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsProgramStatesRepository>().As<ILmsProgramStatesRepository>().InstancePerLifetimeScope();
-			// Training T4 part 1 (round 5B, M0403-M0405): class sessions, rosters, instructors, costs, resources and bookings, lesson plans
+			// Round 9A: certification requirement sets and the issuance ledger.
+			builder.RegisterType<LmsCertificationRequirementSetsRepository>().As<ILmsCertificationRequirementSetsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsCertificationRequirementItemsRepository>().As<ILmsCertificationRequirementItemsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsCertificationIssuancesRepository>().As<ILmsCertificationIssuancesRepository>().InstancePerLifetimeScope();
+			// Training T4 part 1 (round 5B, M0378-M0380): class sessions, rosters, instructors, costs, resources and bookings, lesson plans
 			builder.RegisterType<LmsClassSessionsRepository>().As<ILmsClassSessionsRepository>().InstancePerLifetimeScope();
+			// Training T5 external learners (round 6E)
+			builder.RegisterType<LmsLearnerPortalsRepository>().As<ILmsLearnerPortalsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsExternalLearnersRepository>().As<ILmsExternalLearnersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsExternalLearnerTokensRepository>().As<ILmsExternalLearnerTokensRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsPublicClassesRepository>().As<ILmsPublicClassesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsClassFeesRepository>().As<ILmsClassFeesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsExternalCourseAccessRepository>().As<ILmsExternalCourseAccessRepository>().InstancePerLifetimeScope();
+			// Round 7B (M0402): learner class e-mail claims
+			builder.RegisterType<LmsLearnerNoticesRepository>().As<ILmsLearnerNoticesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsClassEnrollmentsRepository>().As<ILmsClassEnrollmentsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsClassInstructorsRepository>().As<ILmsClassInstructorsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsClassCostLinesRepository>().As<ILmsClassCostLinesRepository>().InstancePerLifetimeScope();
@@ -298,7 +334,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<LmsLessonPlanVersionsRepository>().As<ILmsLessonPlanVersionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsFamiliarizationSourceRepository>().As<ILmsFamiliarizationSourceRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsAddonLapsesRepository>().As<ILmsAddonLapsesRepository>().InstancePerLifetimeScope();
-			// Training T2 LMS courses and assessments, A1 Academy (M0359/M0360)
+			// Training T2 LMS courses and assessments, A1 Academy (M0349/M0350)
 			builder.RegisterType<LmsCoursesRepository>().As<ILmsCoursesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsCourseVersionsRepository>().As<ILmsCourseVersionsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsCourseVersionApprovalsRepository>().As<ILmsCourseVersionApprovalsRepository>().InstancePerLifetimeScope();
@@ -312,6 +348,12 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<LmsProtocolLearningsRepository>().As<ILmsProtocolLearningsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsProtocolQuizAttemptsRepository>().As<ILmsProtocolQuizAttemptsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsMicroLearningRepository>().As<ILmsMicroLearningRepository>().InstancePerLifetimeScope();
+			// Round 6F (M0398): course origins (AI draft provenance, starter attribution) and course flashcards.
+			builder.RegisterType<LmsCourseOriginsRepository>().As<ILmsCourseOriginsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsFlashcardsRepository>().As<ILmsFlashcardsRepository>().InstancePerLifetimeScope();
+			// Enhanced AI on protocols (round 7A): protocol flashcards (M0399)
+			builder.RegisterType<ProtocolFlashcardsRepository>().As<IProtocolFlashcardsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallProtocolStepNotesRepository>().As<ICallProtocolStepNotesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsEnrollmentsRepository>().As<ILmsEnrollmentsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsLessonProgressRepository>().As<ILmsLessonProgressRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsLessonFilesRepository>().As<ILmsLessonFilesRepository>().InstancePerLifetimeScope();
@@ -319,7 +361,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<LmsCrewViewingsRepository>().As<ILmsCrewViewingsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsCrewViewingAttendeesRepository>().As<ILmsCrewViewingAttendeesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsPathAssignmentsRepository>().As<ILmsPathAssignmentsRepository>().InstancePerLifetimeScope();
-			// Training T3 (M0383-M0385): learning requirements, enforcement, worker 93's clock and learning paths
+			// Training T3 (M0364-M0366): learning requirements, enforcement, worker 93's clock and learning paths
 			builder.RegisterType<LmsRequirementsRepository>().As<ILmsRequirementsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsRequirementAudiencesRepository>().As<ILmsRequirementAudiencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<LmsRequirementMembersRepository>().As<ILmsRequirementMembersRepository>().InstancePerLifetimeScope();
@@ -376,20 +418,28 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<UnitActiveRolesRepository>().As<IUnitActiveRolesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatchProtocolQuestionAnswersRepository>().As<IDispatchProtocolQuestionAnswersRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DispatchProtocolSnapshotsRepository>().As<IDispatchProtocolSnapshotsRepository>().InstancePerLifetimeScope();
-			// Protocols P1 library and S0 signatures (M0342, M0343)
+			// Protocols P1 library and S0 signatures (M0341, M0342)
 			builder.RegisterType<SignatureRecordsRepository>().As<ISignatureRecordsRepository>().InstancePerLifetimeScope();
-			// e-Signature S1/S2 (M0371-M0374)
+			// e-Signature S1/S2 (M0356-M0359)
 			builder.RegisterType<SealedDocumentsRepository>().As<ISealedDocumentsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SealedDocumentInputsRepository>().As<ISealedDocumentInputsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SignatureRequestsRepository>().As<ISignatureRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SignatureRequestSignersRepository>().As<ISignatureRequestSignersRepository>().InstancePerLifetimeScope();
-			// e-Signature S4 approval chains (M0413) and mutual-aid agreements (M0414)
+			// e-Signature S4 approval chains (M0385) and mutual-aid agreements (M0386)
 			builder.RegisterType<ApprovalChainsRepository>().As<IApprovalChainsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ApprovalChainStepsRepository>().As<IApprovalChainStepsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ApprovalRequestsRepository>().As<IApprovalRequestsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ApprovalRequestStepsRepository>().As<IApprovalRequestStepsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ApprovalDelegatesRepository>().As<IApprovalDelegatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<MutualAidAgreementsRepository>().As<IMutualAidAgreementsRepository>().InstancePerLifetimeScope();
+			// Round 10 A3: protocol and course sets (M0415) and LMS sponsorships (M0416)
+			builder.RegisterType<ContentSetsRepository>().As<IContentSetsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSetItemsRepository>().As<IContentSetItemsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSetSubscriptionsRepository>().As<IContentSetSubscriptionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSetCopiesRepository>().As<IContentSetCopiesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSetUpdatesRepository>().As<IContentSetUpdatesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ContentSetProposalsRepository>().As<IContentSetProposalsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<LmsSponsorshipsRepository>().As<ILmsSponsorshipsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<SignatureCapturesRepository>().As<ISignatureCapturesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ESignProviderAccountsRepository>().As<IESignProviderAccountsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ESignWebhookEventsRepository>().As<IESignWebhookEventsRepository>().InstancePerLifetimeScope();
@@ -399,10 +449,20 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ProtocolAudiencesRepository>().As<IProtocolAudiencesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolCommentsRepository>().As<IProtocolCommentsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolLibraryRepository>().As<IProtocolLibraryRepository>().InstancePerLifetimeScope();
-			// Protocols P1 wave 2 (M0353) and P2 (M0354): primary files, file text, acknowledgments
+			// Protocols P1 wave 2 (M0347) and P2 (M0348): primary files, file text, acknowledgments
 			builder.RegisterType<ProtocolVersionFilesRepository>().As<IProtocolVersionFilesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolVersionTranslationsRepository>().As<IProtocolVersionTranslationsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolAiSuggestionsRepository>().As<IProtocolAiSuggestionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchCaseReviewsRepository>().As<IDispatchCaseReviewsRepository>().InstancePerLifetimeScope();
+			// Protocols P5 (M0388-M0390): attribution, public pages, search misses, analytics reads and the community exchange
+			builder.RegisterType<ContentAttributionsRepository>().As<IContentAttributionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtocolPublicLinksRepository>().As<IProtocolPublicLinksRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtocolSearchMissesRepository>().As<IProtocolSearchMissesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ProtocolAnalyticsRepository>().As<IProtocolAnalyticsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ExchangeListingsRepository>().As<IExchangeListingsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ExchangeRatingsRepository>().As<IExchangeRatingsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ExchangeCommentsRepository>().As<IExchangeCommentsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ExchangeImportsRepository>().As<IExchangeImportsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolFileTextsRepository>().As<IProtocolFileTextsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ProtocolAcknowledgmentsRepository>().As<IProtocolAcknowledgmentsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<FormsRepository>().As<IFormsRepository>().InstancePerLifetimeScope();

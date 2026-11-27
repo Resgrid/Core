@@ -60,98 +60,130 @@
   </resheader>
   <data name="AcceptButton" xml:space="preserve">
     <value>Accepter la sélection</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcceptedNotice" xml:space="preserve">
     <value>{0} ajouté(s) à l'éditeur. Enregistrez pour les conserver.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcceptedSummaryNotice" xml:space="preserve">
     <value>Le résumé des modifications a été rempli. Relisez-le avant de soumettre.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BudgetNotice" xml:space="preserve">
     <value>Le quota d'IA de votre service pour ce mois est épuisé.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BusyNotice" xml:space="preserve">
     <value>Le service d'IA est occupé. Réessayez dans un instant.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CorrectLabel" xml:space="preserve">
     <value>Correcte</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiscardButton" xml:space="preserve">
     <value>Ignorer</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftChangeSummaryButton" xml:space="preserve">
     <value>Rédiger un résumé des modifications</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftedNotice" xml:space="preserve">
     <value>Un brouillon fondé uniquement sur ce contenu. Relisez chaque élément ; rien n'est enregistré avant que vous l'acceptiez.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Drafting" xml:space="preserve">
     <value>Rédaction en cours…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftOutlineButton" xml:space="preserve">
     <value>Rédiger un plan de cours</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftQuizButton" xml:space="preserve">
     <value>Rédiger des questions</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DroppedNotice" xml:space="preserve">
     <value>{0} élément(s) ont été écartés car ils contenaient un nombre absent du contenu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExcludedNotice" xml:space="preserve">
     <value>Ce contenu est exclu de l'IA : les aides à la rédaction ne sont pas disponibles.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplanationLabel" xml:space="preserve">
     <value>Explication</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InvalidNotice" xml:space="preserve">
     <value>La demande n'est pas valide.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KeepLabel" xml:space="preserve">
     <value>Garder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KeptLocalNotice" xml:space="preserve">
     <value>La protection avancée des données garde le contenu de votre service en local : les aides à la rédaction ne sont pas disponibles.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ModuleNumber" xml:space="preserve">
     <value>Module {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoChangesNotice" xml:space="preserve">
     <value>Il n'y a pas de version antérieure à comparer, ou rien n'a changé.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoContentNotice" xml:space="preserve">
     <value>Ajoutez d'abord du contenu ; il n'y en a pas assez pour un brouillon.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotAllowedNotice" xml:space="preserve">
     <value>Vous ne pouvez pas rédiger ce contenu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotFoundNotice" xml:space="preserve">
     <value>Ce contenu est introuvable.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NothingSelectedNotice" xml:space="preserve">
     <value>Cochez au moins un élément à accepter.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ObjectiveLabel" xml:space="preserve">
     <value>Objectif</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PanelHeader" xml:space="preserve">
     <value>Aides à la rédaction</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PanelHelp" xml:space="preserve">
     <value>Rédigez un brouillon à partir de ce contenu avec l'IA, puis relisez-le. Rien n'est enregistré avant que vous l'acceptiez, et chaque nombre doit provenir du contenu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionCountLabel" xml:space="preserve">
     <value>Nombre de questions</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionCountOption" xml:space="preserve">
     <value>{0} questions</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionNumber" xml:space="preserve">
     <value>Question {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusedNotice" xml:space="preserve">
     <value>Le brouillon n'a pas pu être utilisé. Réessayez.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UnavailableNotice" xml:space="preserve">
     <value>Les aides à la rédaction ne sont pas disponibles pour le moment.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

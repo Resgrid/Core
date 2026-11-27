@@ -1004,42 +1004,55 @@
   </data>
   <data name="W.trainings.bulletin.Title" xml:space="preserve">
     <value>Tablón de formación</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.Description" xml:space="preserve">
     <value>Formación nueva para usted: asignaciones recientes y formaciones recién publicadas abiertas a todos los miembros.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.Setting.days" xml:space="preserve">
     <value>Días hacia atrás</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.Setting.maxItems" xml:space="preserve">
     <value>Número máximo de formaciones</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.Empty" xml:space="preserve">
     <value>No hay formación nueva.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.NewAssignedCount" xml:space="preserve">
     <value>{0} nuevas para usted</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.Training" xml:space="preserve">
     <value>Formación</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.Assigned" xml:space="preserve">
     <value>Asignada a usted</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.Catalog" xml:space="preserve">
     <value>Abierta a todos los miembros</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.CanEnrol" xml:space="preserve">
     <value>Abierta a todos, puede inscribirse</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.Due" xml:space="preserve">
     <value>Vence {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.OverdueSince" xml:space="preserve">
     <value>Venció {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.trainings.bulletin.Published" xml:space="preserve">
     <value>Publicada {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
     <value>Abrir documentos</value>
@@ -4052,5 +4065,9 @@
   </data>
   <data name="W.personnel.myStatus.Since" xml:space="preserve">
     <value>desde {0}</value>
+  </data>
+  <data name="W.admin.plan.Addon.WorkforcePro" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

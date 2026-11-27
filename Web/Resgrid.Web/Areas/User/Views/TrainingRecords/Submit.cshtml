@@ -2,6 +2,7 @@
 @using Resgrid.Web.Areas.User.Models.Training
 @model TrainingRecordSubmitView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> reviewText
 @*
     Submit outside training (an external submission): a course taken elsewhere, with hours and optional evidence. It waits for an
     officer and counts once verified. Refused while the department switched member submissions off.
@@ -30,7 +31,8 @@
     else
     {
         <div class="rgw-next-action">
-            <p class="m-b-none"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Rec.SubmitHowItWorks"]</p>
+            @* Round 9B: what happens next depends on the department's review settings. *@
+            <p class="m-b-none"><i class="fa fa-info-circle" aria-hidden="true"></i> @reviewText["Submit.ReviewNotice." + (Enum.IsDefined(typeof(TrainingSubmissionReviewModes), Model.ReviewMode) ? ((TrainingSubmissionReviewModes)Model.ReviewMode).ToString() : "Always")]</p>
         </div>
         <form method="post" asp-controller="TrainingRecords" asp-action="Submit" asp-route-area="User" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
@@ -103,9 +105,18 @@
                 <div class="ibox-content">
                     <div class="rgw-grid">
                         <div class="form-group">
-                            <label for="evidence">@localizer["Rec.EvidenceLabel"]</label>
-                            <input id="evidence" name="evidence" type="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx" aria-describedby="evidence-help" />
-                            <span class="help-block" id="evidence-help">@localizer["Rec.EvidenceHelp"]</span>
+                            <label for="evidence">@reviewText["Evidence.FilesLabel"]</label>
+                            <input id="evidence" name="evidence" type="file" multiple class="form-control" accept="@Resgrid.Services.TrainingEvidencePolicy.AcceptAttribute" aria-describedby="evidence-help" />
+                            <span class="help-block" id="evidence-help">@string.Format(reviewText["Evidence.FilesHelp"].Value, TrainingSubmissionRules.MaxFilesPerUpload, LearningRecordFile.MaxBytes / (1024 * 1024))</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="evidenceKind">@reviewText["Evidence.KindLabel"]</label>
+                            <select id="evidenceKind" name="evidenceKind" class="form-control">
+                                @foreach (var kind in Enum.GetValues<TrainingEvidenceKinds>())
+                                {
+                                    <option value="@((int)kind)" selected="@(kind == TrainingEvidenceKinds.Certificate)">@reviewText["Evidence.Kind." + kind]</option>
+                                }
+                            </select>
                         </div>
                         <div class="form-group rgw-wide">
                             <label for="Notes">@localizer["Rec.NotesLabel"]</label>

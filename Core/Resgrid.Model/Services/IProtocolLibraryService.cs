@@ -45,6 +45,9 @@ namespace Resgrid.Model.Services
 		public string Locale { get; set; }
 		public List<ContentAudienceRule> Audience { get; set; } = new List<ContentAudienceRule>();
 		public string UserId { get; set; }
+
+		/// <summary>P5: the attribution the first draft keeps (template library, community exchange, an attributed file); null for none.</summary>
+		public ContentAttribution Attribution { get; set; }
 	}
 
 	/// <summary>A draft save from the editor (autosave included).</summary>
@@ -68,6 +71,39 @@ namespace Resgrid.Model.Services
 	}
 
 	/// <summary>The outcome of a lifecycle step: the changed version, or why it was refused (with who changed it, for a stale save).</summary>
+	/// <summary>A subscriber's copy of a set protocol (round 10 A3).</summary>
+	public sealed class ProtocolSetCopyRequest
+	{
+		public int DepartmentId { get; set; }
+		public string UserId { get; set; }
+		public string Name { get; set; }
+		public string Code { get; set; }
+		public int Kind { get; set; }
+		public string Description { get; set; }
+		public string Tags { get; set; }
+		/// <summary>The merged block document (publisher content with the subscriber's changes).</summary>
+		public string ContentJson { get; set; }
+		public string Locale { get; set; }
+		public bool RequiresAcknowledgment { get; set; }
+		public string ChangeSummary { get; set; }
+		public ContentAttribution Attribution { get; set; }
+	}
+
+	/// <summary>New merged content for a managed copy (round 10 A3).</summary>
+	public sealed class ProtocolSetVersionRequest
+	{
+		public int DepartmentId { get; set; }
+		public int ProtocolId { get; set; }
+		public string UserId { get; set; }
+		public string ContentJson { get; set; }
+		public string Locale { get; set; }
+		public bool RequiresAcknowledgment { get; set; }
+		public string ChangeSummary { get; set; }
+		/// <summary>A new major version (the publisher's major changed); a minor otherwise.</summary>
+		public bool Major { get; set; }
+		public ContentAttribution Attribution { get; set; }
+	}
+
 	public sealed class ProtocolLifecycleResult
 	{
 		public ProtocolLifecycleErrors Error { get; set; }
@@ -240,6 +276,27 @@ namespace Resgrid.Model.Services
 		/// <see cref="ProtocolImportResult.Created"/> is how many would be created.
 		/// </summary>
 		Task<ProtocolImportResult> PreviewImportAsync(ProtocolReader reader, ProtocolExchangeDocument document);
+
+		/// <summary>P5: the attribution kept on a version (source, licence, source version), or null for the department's own content.</summary>
+		Task<ContentAttribution> GetAttributionAsync(int departmentId, int protocolVersionId);
+
+		// ---- P5 protocol sets (round 10 A3) --------------------------------------------------------------------------------
+
+		/// <summary>
+		/// A subscriber's copy of a set protocol: a new protocol (everyone's audience, no triggers) whose first version, the publisher's content
+		/// with the subscriber's changes, goes into force at once. Subscribing is the subscriber's decision and the publisher's chain approved
+		/// the source, so the copy has no approval steps of its own; the attribution names the publisher and its version.
+		/// </summary>
+		Task<ProtocolLifecycleResult> CreateSetCopyAsync(ProtocolSetCopyRequest request, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Puts new merged content into force on a managed copy now (worker 100 calls it at the update's apply time, never mid-shift): the version
+		/// in force is superseded and acknowledgments follow the subscriber's own P2 settings.
+		/// </summary>
+		Task<ProtocolLifecycleResult> PublishSetVersionAsync(ProtocolSetVersionRequest request, CancellationToken cancellationToken = default);
+
+		/// <summary>The HTML a block document renders to in a content language (the inbox redline of a set update; nothing is written).</summary>
+		string RenderContentJson(string contentJson, string locale);
 
 		// ---- worker 84 -------------------------------------------------------------------------------------------------------
 

@@ -43,10 +43,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IMfaEvidenceService _evidence;
 		private readonly IMfaPolicyService _mfaPolicy;
 
-		public ProtocolsController(IProtocolsService protocolsService, IAuthorizationService authorizationService = null, ICallsService callsService = null, IEventAggregator eventAggregator = null,
+		private readonly IStepUpCapabilityService _stepUp;
+
+		public ProtocolsController(IProtocolsService protocolsService, IStepUpCapabilityService stepUp, IAuthorizationService authorizationService = null, ICallsService callsService = null, IEventAggregator eventAggregator = null,
 			IProtocolAccessService protocolAccess = null, IProtocolLibraryService library = null, ISignatureService signatures = null, IMfaEvidenceService evidence = null,
 			IMfaPolicyService mfaPolicy = null)
 		{
+			_stepUp = stepUp;
 			_protocolsService = protocolsService;
 			_authorizationService = authorizationService;
 			_callsService = callsService;
@@ -351,6 +354,34 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(Saved(await _protocolsService.GetProtocolByIdAsync(saved.DispatchProtocolId) ?? saved));
 		}
 
+		/// <summary>
+		/// Round 10 (Omni): the department's protocol categories (the names behind ProtocolResultData.CategoryId), in their sort order. A category
+		/// with ParentId is nested under that one; Kind is the protocol kind it is for (null: any kind).
+		/// </summary>
+		[HttpGet("GetCategories")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Protocol_View)]
+		public async Task<ActionResult<GetProtocolCategoriesResult>> GetCategories()
+		{
+			var result = new GetProtocolCategoriesResult();
+			var categories = _library == null ? new List<ProtocolCategory>() : await _library.GetCategoriesAsync(DepartmentId) ?? new List<ProtocolCategory>();
+			result.Data = categories.Where(c => c != null && c.DepartmentId == DepartmentId)
+				.OrderBy(c => c.SortOrder).ThenBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase).ThenBy(c => c.ProtocolCategoryId)
+				.Select(c => new ProtocolCategoryResultData
+				{
+					CategoryId = c.ProtocolCategoryId,
+					Name = c.Name,
+					ParentId = c.ParentCategoryId,
+					SortOrder = c.SortOrder,
+					Kind = c.Kind
+				}).ToList();
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
 		#region Versions and lifecycle (P1)
 
 		/// <summary>The protocol's versions the caller may read (no content): members see published history, authors and approvers every version.</summary>
@@ -475,7 +506,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (input == null || _library == null)
 				return BadRequest();
-			return Lifecycle(await _library.ApproveAsync(await ReaderAsync(), input.ProtocolVersionId, input.Comment, await ProofAsync(cancellationToken), null, cancellationToken));
+			return await SignedLifecycleAsync(await _library.ApproveAsync(await ReaderAsync(), input.ProtocolVersionId, input.Comment, await ProofAsync(cancellationToken), null,
+				cancellationToken), cancellationToken);
 		}
 
 		/// <summary>Rejects the version back to draft; the comment is required.</summary>
@@ -509,7 +541,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (input == null || _library == null)
 				return BadRequest();
-			return Lifecycle(await _library.RecordReviewAsync(await ReaderAsync(), input.ProtocolId, await ProofAsync(cancellationToken), null, cancellationToken));
+			return await SignedLifecycleAsync(await _library.RecordReviewAsync(await ReaderAsync(), input.ProtocolId, await ProofAsync(cancellationToken), null, cancellationToken),
+				cancellationToken);
 		}
 
 		/// <summary>The versions waiting for approval; CanDecide marks the steps the caller may decide.</summary>
@@ -587,6 +620,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>The API session's step-up proof, from server-side evidence only (never the request body).</summary>
 		private Task<SignatureProof> ProofAsync(CancellationToken cancellationToken) =>
 			ApiSignatureProof.BuildAsync(HttpContext, UserId, DepartmentId, _evidence, _mfaPolicy, cancellationToken);
+
+		/// <summary>
+		/// An L2 signing action's answer: <c>SignatureRequired</c> (no step-up this department accepts for signatures on this session) is the
+		/// one step-up refusal (403 <c>step_up_required</c>, area <c>signatures</c>); every other outcome as <see cref="Lifecycle"/>.
+		/// </summary>
+		private async Task<ActionResult<ProtocolLifecycleActionResult>> SignedLifecycleAsync(Model.Services.ProtocolLifecycleResult outcome, CancellationToken cancellationToken)
+		{
+			if (outcome?.Error == ProtocolLifecycleErrors.SignatureRequired && _stepUp != null)
+				return await ApiStepUp.RefuseAsync(HttpContext, _stepUp, DepartmentId, UserId, Model.Security.StepUpArea.Signatures, cancellationToken);
+			return Lifecycle(outcome);
+		}
 
 		private ActionResult<ProtocolLifecycleActionResult> Lifecycle(Model.Services.ProtocolLifecycleResult outcome)
 		{

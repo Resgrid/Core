@@ -17,6 +17,10 @@
     Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
         <a class="btn btn-default" asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@training.TrainingId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ViewTrainingButton"]</a>
         <a class="btn btn-info" asp-controller="Trainings" asp-action="Edit" asp-route-area="User" asp-route-trainingId="@training.TrainingId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditButton"]</a>
+        @if (Resgrid.Web.Helpers.ClaimsAuthorizationHelper.CanApplyTrainingCompletions())
+        {
+            <a class="btn btn-default" asp-controller="Trainings" asp-action="RecordCompletions" asp-route-area="User" asp-route-targetId="@training.TrainingId"><i class="fa fa-check-circle-o" aria-hidden="true"></i> @localizer["RecordCompletions.Title"]</a>
+        }
     </text>;
     ViewData["HeaderActions"] = headerActions;
     var now = DateTime.UtcNow;

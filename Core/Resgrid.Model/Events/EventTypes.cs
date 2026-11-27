@@ -261,7 +261,57 @@ namespace Resgrid.Model.Events
 
 		/// <summary>A position task book was initiated, a task signed, the book recommended, certified or expired (to the trainee and the officers).</summary>
 		[NotMapped]
-		TaskBookNotice = 71
+		TaskBookNotice = 71,
+		// -- Protocols P5 QA 76 (protocols-training-knowledge-plan.md §5 P5). Member-targeted (the dispatcher whose case was reviewed, the
+		// reviewer the dispatcher replied to) and delivered directly by IDispatchCaseReviewNotifier with push + email, so NotMapped like
+		// 57-59. The push event code is "PQ:{reviewId}".
+
+		/// <summary>The member's dispatch case was reviewed (to the dispatcher), or the dispatcher replied to a review (to the reviewer).</summary>
+		[NotMapped]
+		DispatchCaseReviewNotice = 76,
+		// -- Round 9A block 77-78 (certifications backed by training). Member-targeted and delivered directly by the LMS certification engine
+		// through ILmsProgramNotifier with push + email in the member's language (their notification channel choices apply), so NotMapped like
+		// 61-63. The push event code is "CR:{personnelCertificationId}".
+
+		/// <summary>The member's certification was issued or renewed by its training requirements, or returned to its earlier state by a void.</summary>
+		[NotMapped]
+		CertificationChangedByTraining = 77,
+
+		/// <summary>The member's certification expires soon (or is in its grace period) and its requirement set is not complete yet.</summary>
+		[NotMapped]
+		CertificationRequirementsDue = 78,
+
+		// -- Training hours submissions and recorded completions 79-81 (round 9B). Member- and reviewer-targeted and delivered directly by
+		// ITrainingRecordNoticeService with push + email (the member's notification settings apply), so NotMapped like 57-59. Push event code
+		// prefixes: "LS:" submission (member), "LV:" review waiting (reviewer), "LC:" recorded completion (member).
+
+		/// <summary>The member's hours submission was received, accepted as self-reported, approved, denied (with the reason) or needs more information.</summary>
+		[NotMapped]
+		TrainingSubmissionNotice = 79,
+
+		/// <summary>A submission waits for the reviewer (each one, or the daily digest).</summary>
+		[NotMapped]
+		TrainingReviewNotice = 80,
+
+		/// <summary>An instructor recorded a completion for the member, or voided one.</summary>
+		[NotMapped]
+		TrainingCompletionNotice = 81,
+
+		// -- Round 10 A3 (83-85): protocol and course sets and LMS sponsorship over Department Links. Admin- and author-targeted and delivered
+		// directly by IContentSetNotifier with push + email (the member's notification settings apply), so NotMapped like 79-81. Push event
+		// code prefixes: "CU:" an update in the set inbox, "CP:" a proposal (received or answered), "SP:" a sponsorship started or ended.
+
+		/// <summary>A publisher's set update arrived in the department's inbox (subscriber's admins).</summary>
+		[NotMapped]
+		ContentSetUpdateNotice = 83,
+
+		/// <summary>A subscriber proposed a change to one of the department's set items, or the publisher answered the member's proposal.</summary>
+		[NotMapped]
+		ContentSetProposalNotice = 84,
+
+		/// <summary>A linked department started or stopped sponsoring the department's LMS seats.</summary>
+		[NotMapped]
+		LmsSponsorshipNotice = 85
 	}
 
 	public static class EventOptions

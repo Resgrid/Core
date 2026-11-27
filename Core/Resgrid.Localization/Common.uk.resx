@@ -842,11 +842,38 @@
   </data>
   <data name="ResgridAcademy" xml:space="preserve">
     <value>Академія Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyLearnThisPage" xml:space="preserve">
     <value>Урок про цю сторінку ({0} хв)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyAssignThisLesson" xml:space="preserve">
     <value>Призначити цей урок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessModule" xml:space="preserve">
+    <value>Добробут</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WellnessOfficersTerm" xml:space="preserve">
+    <value>Відповідальні за добробут</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TermWellnessOfficer" xml:space="preserve">
+    <value>Відповідальний за добробут</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficersTerm" xml:space="preserve">
+    <value>Призначені відповідальні особи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TermDesignatedOfficer" xml:space="preserve">
+    <value>Призначена відповідальна особа</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PeerSupportTeamTerm" xml:space="preserve">
+    <value>Команда підтримки колег</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

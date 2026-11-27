@@ -216,7 +216,7 @@ namespace Resgrid.Tests.Services
 				Mock.Of<ICommunicationService>(),
 				Mock.Of<IDepartmentsService>(),
 				Mock.Of<IDepartmentSettingsService>(),
-				Mock.Of<IKnowledgeIndexQueue>());
+				Mock.Of<IKnowledgeIndexQueue>(), Mock.Of<IUserProfileService>());
 		}
 
 		[Test]

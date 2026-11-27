@@ -201,8 +201,8 @@ namespace Resgrid.Model.Services
 	/// Scenario practice from a protocol version (K3 tutor, §13a "scenario practice from protocols"): a short scenario and questions written
 	/// only from the version's text, and the member's free-text answers scored against the cited content only (no clinical number the
 	/// protocol does not hold, K1's number-in-source rule). Practice only: nothing is written to the transcript, a certification or a quiz.
-	/// Gated like the tutor (§17.2 row "AI": Enhanced AI with Ai.Knowledge and the LMS add-on), fails closed. Every exchange is logged to
-	/// AiGenerations.
+	/// Gated by Enhanced AI with Ai.Knowledge only (round 7A, decision 2026-11-25: protocols live outside the LMS, so practice never needs it;
+	/// "Ask this course" still needs both), fails closed. Every exchange is logged to AiGenerations.
 	/// </summary>
 	public interface IKnowledgePracticeService
 	{

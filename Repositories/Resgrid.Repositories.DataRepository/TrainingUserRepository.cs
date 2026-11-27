@@ -80,7 +80,9 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			"Viewed", "ViewedOn", "Complete", "CompletedOn", "Score", "Passed", "AssignedOn", "DueOn", "AssignmentSource", "NotifiedOn", "RemindedOn",
 			"LastReminderLeadDays", "OverdueNotifiedOn", "RemovedOn", "RemovedByUserId", "OriginalDueOn", "ExtensionReason", "ExtendedByUserId",
-			"ExtendedOn", "ExemptOn", "ExemptReason", "ExemptByUserId", "ExemptUntil", "AttemptCount", "Cycle"
+			"ExtendedOn", "ExemptOn", "ExemptReason", "ExemptByUserId", "ExemptUntil", "AttemptCount", "Cycle",
+			// Round 7B (M0400): a completion recorded by an instructor (permission 135)
+			"CompletionMethod", "RecordedCompletionId"
 		};
 
 		public async Task<List<TrainingUser>> GetByTrainingIdAsync(int trainingId)

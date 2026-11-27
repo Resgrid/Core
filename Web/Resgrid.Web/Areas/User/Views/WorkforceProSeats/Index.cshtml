@@ -1,0 +1,112 @@
+@model Resgrid.Web.Areas.User.Models.Subscription.WorkforceProSeatsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@*
+    Workforce Pro seats (shifts plan §7.2 "per-member switch"): the seat counter and every active member with their switch. Department
+    administrators only. Switching a member off never deletes a record; their wellness records become read-only.
+*@
+@{
+    var summary = Model.Summary;
+    var title = addonLocalizer["WorkforceProSeatsTitle"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+}
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="WorkforceProBilling" asp-action="Index" asp-route-area="User">@addonLocalizer["WorkforceProTitle"]</a></li>
+            <li class="active"><strong>@title</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-4">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <a id="workforceProBillingButton" class="btn btn-primary top-button" asp-controller="WorkforceProBilling" asp-action="Index" asp-route-area="User">@addonLocalizer["WorkforceProSeatsBilling"]</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content">
+            @if (!string.IsNullOrWhiteSpace(Model.Message))
+            {
+                <div class="alert @(Model.MessageKind == "success" ? "alert-success" : "alert-warning")" role="status">
+                    @Model.Message
+                    @if (Model.MessageKind != "success")
+                    {
+                        <a asp-controller="WorkforceProBilling" asp-action="Index" asp-route-area="User">@addonLocalizer["WorkforceProAddPack"]</a>
+                    }
+                </div>
+            }
+            <div class="ibox float-e-margins" id="workforce-pro-seats">
+                <div class="ibox-title"><h5><i class="fa fa-id-badge" aria-hidden="true"></i> @title</h5></div>
+                <div class="ibox-content">
+                    <p>@addonLocalizer["WorkforceProSeatsIntro"]</p>
+                    <p>
+                        <strong id="workforce-pro-seat-counter">@string.Format(addonLocalizer["WorkforceProSeatCounter"].Value, summary.EnabledSeats, summary.PurchasedSeats, summary.AvailableSeats)</strong>
+                        @if (!summary.Licensed)
+                        {
+                            <br /><span class="text-muted">@addonLocalizer["WorkforceProSeatsNotPurchased"]</span>
+                        }
+                        @if (summary.InDunningGrace)
+                        {
+                            <br /><span class="text-warning" id="workforce-pro-grace">@string.Format(System.Globalization.CultureInfo.CurrentCulture, addonLocalizer["WorkforceProSeatsGrace"].Value, summary.GraceEndsUtc.Value.ToString("D", System.Globalization.CultureInfo.CurrentCulture))</span>
+                        }
+                        @if (summary.DormantSeats > 0)
+                        {
+                            <br /><span class="text-muted small">@string.Format(addonLocalizer["WorkforceProSeatDormant"].Value, summary.DormantSeats)</span>
+                        }
+                    </p>
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="workforce-pro-seat-table">
+                            <thead>
+                                <tr>
+                                    <th>@addonLocalizer["WorkforceProSeatMember"]</th>
+                                    <th>@addonLocalizer["WorkforceProSeatState"]</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var member in Model.Members)
+                                {
+                                    <tr>
+                                        <td>@member.Name</td>
+                                        <td>
+                                            @if (member.Enabled && member.Licensed)
+                                            {
+                                                <span class="label label-primary">@addonLocalizer["WorkforceProSeatOn"]</span>
+                                            }
+                                            else if (member.Enabled)
+                                            {
+                                                <span class="label label-warning">@addonLocalizer["WorkforceProSeatNotLicensed"]</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-default">@addonLocalizer["WorkforceProSeatOff"]</span>
+                                            }
+                                        </td>
+                                        <td class="text-right">
+                                            <form method="post" asp-controller="WorkforceProSeats" asp-action="SetSeat" asp-route-area="User" style="display:inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="userId" value="@member.UserId" />
+                                                @if (member.Enabled)
+                                                {
+                                                    <button type="submit" name="enabled" value="false" class="btn btn-default btn-xs"><i class="fa fa-toggle-off" aria-hidden="true"></i> @addonLocalizer["WorkforceProSeatDisable"]</button>
+                                                }
+                                                else
+                                                {
+                                                    <button type="submit" name="enabled" value="true" class="btn btn-primary btn-xs" @(summary.Licensed ? "" : "disabled")><i class="fa fa-toggle-on" aria-hidden="true"></i> @addonLocalizer["WorkforceProSeatEnable"]</button>
+                                                }
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="text-muted small m-t-sm m-b-none">@addonLocalizer["WorkforceProBillingFreeNote"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

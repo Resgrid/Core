@@ -29,7 +29,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for Training T3 part 2 (M0387–M0390) on both engines: the migrations re-run as no-ops, roll back and apply
+	/// Real-database proof for Training T3 part 2 (M0367–M0370) on both engines: the migrations re-run as no-ops, roll back and apply
 	/// again; plans, frameworks, tags, requests (the conditional transition, the null-step path), saved reports (the due-work query and the
 	/// run claim), cycle rules, alert claims, worker state and the Records familiarization reads all work; department cleanup removes the
 	/// new tables for that department only. Set RESGRID_ADP_SQLSERVER_TEST_CONNECTION / RESGRID_ADP_POSTGRES_TEST_CONNECTION (server-level
@@ -143,7 +143,7 @@ namespace Resgrid.Tests.Repositories
 		{
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
-			await ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 387");
+			await ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 367");
 
 			using (var runner = Runner())
 			using (var scope = runner.CreateScope())
@@ -152,7 +152,7 @@ namespace Resgrid.Tests.Repositories
 				migrations.MigrateUp();
 				(await ScalarAsync(Exists(Tables))).Should().Be(Tables.Length, "a second Up over existing tables is a no-op");
 
-				migrations.MigrateDown(386);
+				migrations.MigrateDown(366);
 				(await ScalarAsync(Exists(Tables))).Should().Be(0);
 
 				migrations.MigrateUp();

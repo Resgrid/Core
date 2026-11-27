@@ -1,0 +1,32 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ProtocolPracticeCardsPanelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolAi.ProtocolAi> localizer
+@*
+    Practice cards on the protocol view (round 7A, Enhanced AI only): the protocol's accepted flashcards drafted from the version in force, for
+    spaced practice. The deck is read once; which cards a member knows is kept in this browser only (never sent back, never graded, never a
+    learning record). Hidden when there are no cards (or Enhanced AI is off: the deck comes back empty).
+*@
+<section class="ibox" id="protocol-practice-cards" hidden aria-labelledby="protocol-practice-title"
+         data-deck-url="@Model.DeckUrl" data-protocol="@Model.ProtocolId"
+         data-card-format="@localizer["PracticeCardFormat"]" data-done-text="@localizer["PracticeDone"]" data-source-text="@localizer["PracticeSource"]">
+    <div class="ibox-title"><h5 id="protocol-practice-title"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["PracticeHeader"]</h5></div>
+    <div class="ibox-content">
+        <p class="small text-muted">@localizer["PracticeIntro"]</p>
+        <p class="rgw-progress-honest" id="protocol-practice-progress" role="status" aria-live="polite"></p>
+        <div class="well" id="protocol-practice-card" tabindex="-1">
+            <p class="lead" id="protocol-practice-front"></p>
+            <div id="protocol-practice-back" hidden>
+                <hr />
+                <p id="protocol-practice-answer"></p>
+                <p class="small text-muted" id="protocol-practice-source"></p>
+            </div>
+        </div>
+        <div class="rgw-toolbar">
+            <button type="button" class="btn btn-primary btn-sm" id="protocol-practice-show"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["PracticeShow"]</button>
+            <button type="button" class="btn btn-white btn-sm" id="protocol-practice-again" hidden><i class="fa fa-repeat" aria-hidden="true"></i> @localizer["PracticeAgain"]</button>
+            <button type="button" class="btn btn-white btn-sm" id="protocol-practice-known" hidden><i class="fa fa-check" aria-hidden="true"></i> @localizer["PracticeKnown"]</button>
+            <span class="rgw-toolbar-spacer"></span>
+            <button type="button" class="btn btn-white btn-xs" id="protocol-practice-restart"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["PracticeRestart"]</button>
+        </div>
+    </div>
+</section>

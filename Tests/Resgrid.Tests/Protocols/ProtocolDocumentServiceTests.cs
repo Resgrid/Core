@@ -40,6 +40,7 @@ namespace Resgrid.Tests.Protocols
 		private Mock<IProtocolLibraryService> _library;
 		private Mock<IProtocolTextExtractor> _extractor;
 		private Mock<IKnowledgeIndexQueue> KnowledgeQueue;
+		private Mock<IDepartmentDataProtectionService> Protection;
 		private ProtocolDocumentService _service;
 		private int _nextProtocol, _nextVersion, _nextFile, _nextText, _nextCategory;
 
@@ -47,6 +48,7 @@ namespace Resgrid.Tests.Protocols
 		public void SetUp()
 		{
 			KnowledgeQueue = new Mock<IKnowledgeIndexQueue>();
+			Protection = new Mock<IDepartmentDataProtectionService>();
 			_protocols.Clear(); _versions.Clear(); _files.Clear(); _texts.Clear(); _pages.Clear(); _categories.Clear(); _documents.Clear();
 			_nextProtocol = 1; _nextVersion = 100; _nextFile = 500; _nextText = 900; _nextCategory = 10;
 
@@ -134,7 +136,7 @@ namespace Resgrid.Tests.Protocols
 
 			_service = new ProtocolDocumentService(_library.Object, Mock.Of<IProtocolAccessService>(), protocolsService.Object, versions.Object, files.Object, texts.Object,
 				documents.Object, _extractor.Object, Mock.Of<IEventAggregator>(), new Lazy<ISearchProjectionService>(() => Mock.Of<ISearchProjectionService>()), acks.Object,
-				KnowledgeQueue.Object);
+				KnowledgeQueue.Object, Protection.Object);
 		}
 
 		private static ProtocolReader Reader(bool manager = true) => new ProtocolReader
@@ -243,6 +245,38 @@ namespace Resgrid.Tests.Protocols
 			_categories.Select(c => c.Name).Should().BeEquivalentTo("Fireground", "Policies");
 			_protocols[results[0].ProtocolId.Value].CategoryId.Should().Be(_categories.Single(c => c.Name == "Fireground").ProtocolCategoryId);
 			_protocols.Values.Should().OnlyContain(p => p.Kind == (int)ProtocolKinds.Sog);
+			results.Select(r => r.Category).Should().Equal("Fireground", "Fireground", "Policies", null);
+		}
+
+		[Test]
+		public async Task Bulk_upload_results_show_the_category_each_file_was_filed_in()
+		{
+			_categories.Add(new ProtocolCategory { ProtocolCategoryId = 3, DepartmentId = DepartmentId, Name = "Operations" });
+			var size = ProtocolTextExtractorTests.Pdf("Size up");
+			var files = new List<ProtocolUploadFile>
+			{
+				new ProtocolUploadFile { FileName = "SOG-1 Size up.pdf", Data = size },
+				new ProtocolUploadFile { FileName = "SOG-2 Mayday.pdf", Folder = "Binder/Fireground", Data = ProtocolTextExtractorTests.Pdf("Mayday") },
+				new ProtocolUploadFile { FileName = "copy of size up.pdf", Folder = "Binder/New folder", Data = size }
+			};
+
+			// Folders on: a loose file shows the chosen category (it used to show nothing), a foldered file its folder's category, and a
+			// duplicate where it would have gone, without creating a category for its folder.
+			var results = await _service.BulkUploadAsync(Reader(), (int)ProtocolKinds.Sog, 3, true, files);
+
+			results.Select(r => r.Category).Should().Equal("Operations", "Fireground", "Operations");
+			_protocols[results[0].ProtocolId.Value].CategoryId.Should().Be(3);
+			results[2].Error.Should().Be("duplicate");
+			_categories.Select(c => c.Name).Should().BeEquivalentTo("Operations", "Fireground");
+
+			// Folders off: the file lands in the chosen category, and the result says so instead of the zip folder path.
+			var off = await _service.BulkUploadAsync(Reader(), (int)ProtocolKinds.Sog, 3, false, new List<ProtocolUploadFile>
+			{
+				new ProtocolUploadFile { FileName = "SOG-3 Overhaul.pdf", Folder = "Binder/Fireground", Data = ProtocolTextExtractorTests.Pdf("Overhaul") }
+			});
+
+			off.Single().Category.Should().Be("Operations");
+			_protocols[off.Single().ProtocolId.Value].CategoryId.Should().Be(3);
 		}
 
 		[Test]
@@ -287,6 +321,20 @@ namespace Resgrid.Tests.Protocols
 			// Moving it again lands on the same protocol; any kind other than Reference is a Policy.
 			(await _service.MoveFromDocumentAsync(Reader(), 7, (int)ProtocolKinds.Dispatch, false)).ProtocolId.Should().Be(protocol.DispatchProtocolId);
 			_protocols.Should().HaveCount(1);
+		}
+
+		[Test]
+		public async Task Adp_no_document_of_a_protected_department_is_moved_even_one_its_enrollment_night_has_not_swept()
+		{
+			// Round 8: Documents.Data, Description and Filename are cataloged; moving one out would copy it into the protocol library, search
+			// and the knowledge index (all unprotected, operational stores).
+			Protection.Setup(x => x.ShouldEncryptNewWritesAsync(DepartmentId)).ReturnsAsync(true);
+			_documents[7] = new Document { DocumentId = 7, DepartmentId = DepartmentId, Name = "Uniform policy", Filename = "POL-3 Uniforms.pdf", Category = "Policies", Data = ProtocolTextExtractorTests.Pdf("Uniforms"), UserId = "u" };
+
+			(await _service.MoveFromDocumentAsync(Reader(), 7, (int)ProtocolKinds.Reference, canSeeAdminsOnly: false)).Error.Should().Be("protected");
+			_protocols.Should().BeEmpty();
+			_documents[7].MovedToProtocolId.Should().BeNull();
+			_documents[7].Data.Should().NotBeEmpty();
 		}
 
 		[Test]

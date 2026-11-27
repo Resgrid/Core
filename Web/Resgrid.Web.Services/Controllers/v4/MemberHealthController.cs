@@ -19,6 +19,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 	/// reporting a bloodborne-pathogen or infectious-disease exposure, reporting an injury, and the duty board for supervisors and staffing
 	/// (operational only: duty and clearance status, never why). The member endpoints act on the caller's own records only; there is no
 	/// parameter naming another member. Officer work (case steps, duty status, clearances, the OSHA log) stays on the web.
+	/// Workforce Pro (2026-11-26): 404 while the Workforce.Pro flag is off; while the add-on is not licensed (or the member holds no seat) the
+	/// reads still answer and the reports are refused with 400 and the code workforce_pro_required / workforce_pro_seat_required.
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -27,10 +29,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class MemberHealthController : V4AuthenticatedApiControllerbase
 	{
 		private readonly IMemberHealthService _health;
+		private readonly IWorkforceProAccessService _workforcePro;
 
-		public MemberHealthController(IMemberHealthService health)
+		public MemberHealthController(IMemberHealthService health, IWorkforceProAccessService workforcePro)
 		{
 			_health = health;
+			_workforcePro = workforcePro;
 		}
 
 		private static T Populate<T>(T result, int pageSize, string status = ResponseHelper.Success) where T : StandardApiResponseV4Base
@@ -41,12 +45,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
+		/// <summary>Workforce Pro: every endpoint answers 404 while the Workforce.Pro flag is off (the service refuses as well; data is kept).</summary>
+		private Task<bool> OfferedAsync() => _workforcePro.IsOfferedAsync(DepartmentId);
+
 		/// <summary>The signed-in member's duty status, clearance status, exposure cases and injuries.</summary>
 		[HttpGet("GetMyHealth")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<ActionResult<MyHealthResult>> GetMyHealth()
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			try
 			{
 				var result = new MyHealthResult();
@@ -67,6 +76,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<ActionResult<DutyStatusResult>> GetMyDutyStatus()
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			try
 			{
 				var result = new DutyStatusResult { Data = MapStatus(await _health.GetDutyStatusAsync(DepartmentId, UserId, UserId)) };
@@ -84,6 +95,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<ActionResult<MyInjuriesResult>> GetMyInjuries()
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			try
 			{
 				var result = new MyInjuriesResult { Data = (await _health.GetInjuriesForMemberAsync(DepartmentId, UserId, UserId)).Select(MapInjury).ToList() };
@@ -103,6 +116,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<DutyBoardResult>> GetDutyBoard()
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			var result = new DutyBoardResult { Data = (await _health.GetDutyBoardAsync(DepartmentId, UserId) ?? new List<MemberDutyStatus>()).Select(MapStatus).ToList() };
 			return Ok(Populate(result, result.Data.Count));
 		}
@@ -114,6 +129,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<ActionResult<ExposureCaseResult>> ReportExposure([FromBody] ReportExposureInput input, CancellationToken cancellationToken)
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			if (input == null)
 				return BadRequest();
 			var result = new ExposureCaseResult();
@@ -150,6 +167,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<ActionResult<InjuryResult>> ReportInjury([FromBody] ReportInjuryInput input, CancellationToken cancellationToken)
 		{
+			if (!await OfferedAsync())
+				return NotFound();
 			if (input == null)
 				return BadRequest();
 			var result = new InjuryResult();

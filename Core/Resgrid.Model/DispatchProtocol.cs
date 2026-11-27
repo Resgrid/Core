@@ -67,7 +67,7 @@ namespace Resgrid.Model
 
 		public virtual ICollection<DispatchProtocolQuestion> Questions { get; set; }
 
-		// ---- P1 library and lifecycle (M0343) ----------------------------------------------------------------------------
+		// ---- P1 library and lifecycle (M0342) ----------------------------------------------------------------------------
 
 		public const int NumberMaxLength = 32;
 		public const int TagsMaxLength = 500;
@@ -117,7 +117,7 @@ namespace Resgrid.Model
 		/// <summary>Legal hold: none of its versions is purged by retention, whatever the kind's period (R-P10).</summary>
 		public bool LegalHold { get; set; }
 
-		// ---- P2 distribution and acknowledgment (M0354) -------------------------------------------------------------------
+		// ---- P2 distribution and acknowledgment (M0348) -------------------------------------------------------------------
 
 		/// <summary>
 		/// Days a member has to acknowledge a version, counted from the day they were assigned it (publish, or the day they entered

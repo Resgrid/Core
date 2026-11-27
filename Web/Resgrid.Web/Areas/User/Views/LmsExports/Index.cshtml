@@ -1,0 +1,137 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsExports
+@model LmsDataExportsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExports.LmsExports> localizer
+@*
+    Trainings → Programs → Data export (T5 data exit, R-C12): the department's owners and admins queue a zip of everything the department
+    put in (courses, question banks with keys, records, attempts, certificates, xAPI statements, programs, SCORM packages); worker 99 builds
+    it and the download link expires. Works after the LMS add-on lapses.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Exit.Title"];
+    ViewData["Title"] = localizer["Exit.Title"].Value;
+    ViewData["Subtitle"] = localizer["Exit.Intro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.IsLapsed)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Exit.LapsedNotice"]</div>
+    }
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-archive" aria-hidden="true"></i> @localizer["Exit.NewExport"]</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-controller="LmsExports" asp-action="Queue" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <fieldset class="form-group">
+                    <legend class="h5">@localizer["Exit.ScopeLabel"]</legend>
+                    <div class="radio">
+                        <label for="scope-full"><input id="scope-full" type="radio" name="scope" value="@((int)LmsDataExportScopes.Full)" checked /> <strong>@localizer["Exit.Scope.Full"]</strong></label>
+                        <p class="help-block">@localizer["Exit.Scope.FullHelp"]</p>
+                    </div>
+                    <div class="radio">
+                        <label for="scope-records"><input id="scope-records" type="radio" name="scope" value="@((int)LmsDataExportScopes.RecordsOnly)" /> <strong>@localizer["Exit.Scope.RecordsOnly"]</strong></label>
+                        <p class="help-block">@localizer["Exit.Scope.RecordsOnlyHelp"]</p>
+                    </div>
+                </fieldset>
+                <div class="checkbox">
+                    <label for="includeMedia"><input id="includeMedia" type="checkbox" name="includeMedia" value="true" checked /> @localizer["Exit.IncludeMedia"]</label>
+                    <input type="hidden" name="includeMedia" value="false" />
+                </div>
+                <p class="help-block">@string.Format(localizer["Exit.LinkHelp"].Value, Model.LinkDays)</p>
+                <div class="alert alert-warning" role="note"><i class="fa fa-key" aria-hidden="true"></i> @localizer["Exit.KeysWarning"]</div>
+                @if (Model.CanRequest)
+                {
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-download" aria-hidden="true"></i> @localizer["Exit.Queue"]</button>
+                }
+                else
+                {
+                    <p class="text-muted"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @localizer["Exit.Error.TooManyActive"]</p>
+                }
+            </form>
+        </div>
+    </div>
+
+    <h3>@localizer["Exit.History"]</h3>
+    @if (Model.Exports.Count == 0)
+    {
+        <p class="text-muted">@localizer["Exit.None"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th scope="col">@localizer["Exit.Col.Requested"]</th>
+                        <th scope="col">@localizer["Exit.Col.Scope"]</th>
+                        <th scope="col">@localizer["Exit.Col.Status"]</th>
+                        <th scope="col">@localizer["Exit.Col.Contents"]</th>
+                        <th scope="col">@localizer["Exit.Col.Expires"]</th>
+                        <th scope="col"><span class="sr-only">@localizer["Exit.Col.Actions"]</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var export in Model.Exports)
+                    {
+                        var downloadable = LmsDataExitRules.IsDownloadable(export, Model.UtcNow);
+                        var counts = export.Counts;
+                        <tr>
+                            <td>
+                                @Model.Time(export.RequestedOn)
+                                <div class="rgw-sub">@Model.NameOf(export.RequestedByUserId)</div>
+                            </td>
+                            <td>
+                                @localizer["Exit.Scope." + (Enum.IsDefined(typeof(LmsDataExportScopes), export.Scope) ? ((LmsDataExportScopes)export.Scope).ToString() : "Full")]
+                                @if (export.IncludeMedia)
+                                {
+                                    <div class="rgw-sub">@localizer["Exit.WithMedia"]</div>
+                                }
+                            </td>
+                            <td>
+                                <span class="label @(export.Status == (int)LmsDataExportStatuses.Completed ? "label-primary" : export.Status == (int)LmsDataExportStatuses.Failed ? "label-danger" : "label-default")">
+                                    @localizer["Exit.Status." + (Enum.IsDefined(typeof(LmsDataExportStatuses), export.Status) ? ((LmsDataExportStatuses)export.Status).ToString() : "Queued")]
+                                </span>
+                                @if (!string.IsNullOrWhiteSpace(export.Error) && export.Status != (int)LmsDataExportStatuses.Completed)
+                                {
+                                    <div class="rgw-sub text-danger">@export.Error</div>
+                                }
+                            </td>
+                            <td>
+                                @if (export.Status == (int)LmsDataExportStatuses.Completed)
+                                {
+                                    <div>@LmsDataExportsView.Size(export.SizeBytes)</div>
+                                    <div class="rgw-sub">
+                                        @string.Format(localizer["Exit.CountsLine"].Value,
+                                            counts.TryGetValue("learningRecords", out var records) ? records : 0,
+                                            counts.TryGetValue("courses", out var courses) ? courses : 0,
+                                            counts.TryGetValue("assessmentAttempts", out var attempts) ? attempts : 0)
+                                    </div>
+                                }
+                            </td>
+                            <td>@(export.ExpiresOn.HasValue ? Model.Time(export.ExpiresOn) : "—")</td>
+                            <td class="rgw-row-actions">
+                                @if (downloadable)
+                                {
+                                    <a class="btn btn-white btn-sm" asp-controller="LmsExports" asp-action="Download" asp-route-area="User" asp-route-id="@export.LmsDataExportId"><i class="fa fa-download" aria-hidden="true"></i> @localizer["Exit.Download"]</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <p class="help-block"><i class="fa fa-book" aria-hidden="true"></i> @localizer["Exit.FormatHelp"]</p>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

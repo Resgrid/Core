@@ -295,7 +295,7 @@ namespace Resgrid.Web.Helpers
 				return null;
 
 			var client = new DepartmentTermClientRules();
-			foreach (var term in DepartmentTerms.All.Where(t => t.Category == DepartmentTermCategories.Module))
+			foreach (var term in DepartmentTerms.All.Where(t => t.ReplacesWords))
 			{
 				var name = config.TextFor(term.Key);
 				var singular = config.SingularFor(term.Key);
@@ -349,7 +349,7 @@ namespace Resgrid.Web.Helpers
 		{
 			var english = IsEnglish(culture);
 			var translated = string.Equals(culture.Name, CultureInfo.CurrentUICulture.Name, StringComparison.OrdinalIgnoreCase);
-			foreach (var term in DepartmentTerms.All.Where(t => t.Category == DepartmentTermCategories.Module))
+			foreach (var term in DepartmentTerms.All.Where(t => t.ReplacesWords))
 			{
 				var names = new List<string>();
 				var singulars = new List<string>();
@@ -511,6 +511,11 @@ namespace Resgrid.Web.Helpers
 			{ DepartmentTerms.WorkOrders, new ResourceKey(ResourceSource.WorkOrders, "WorkOrders") },
 			{ DepartmentTerms.Checklists, new ResourceKey(ResourceSource.Checklists, "Checklists") },
 			{ DepartmentTerms.WorkforceBusiness, new ResourceKey(ResourceSource.Common, "NavigationWorkforceBusiness") },
+			// Member wellness (2026-11-26): the same Common names the notices use (Services WellnessTerms.ResourceNames).
+			{ DepartmentTerms.Wellness, new ResourceKey(ResourceSource.Common, Resgrid.Services.Wellness.WellnessTerms.ResourceNames[DepartmentTerms.Wellness].Name) },
+			{ DepartmentTerms.WellnessOfficers, new ResourceKey(ResourceSource.Common, Resgrid.Services.Wellness.WellnessTerms.ResourceNames[DepartmentTerms.WellnessOfficers].Name) },
+			{ DepartmentTerms.DesignatedOfficers, new ResourceKey(ResourceSource.Common, Resgrid.Services.Wellness.WellnessTerms.ResourceNames[DepartmentTerms.DesignatedOfficers].Name) },
+			{ DepartmentTerms.PeerSupportTeam, new ResourceKey(ResourceSource.Common, Resgrid.Services.Wellness.WellnessTerms.ResourceNames[DepartmentTerms.PeerSupportTeam].Name) },
 			{ DepartmentTerms.RecordTypeKey(RmsDefinitionKeys.Run), new ResourceKey(ResourceSource.RecordTypes, "RecordTypeRun") },
 			{ DepartmentTerms.RecordTypeKey(RmsDefinitionKeys.Training), new ResourceKey(ResourceSource.RecordTypes, "RecordTypeTraining") },
 			{ DepartmentTerms.RecordTypeKey(RmsDefinitionKeys.Work), new ResourceKey(ResourceSource.RecordTypes, "RecordTypeWork") },
@@ -536,7 +541,9 @@ namespace Resgrid.Web.Helpers
 			{ DepartmentTerms.Notes, new ResourceKey(ResourceSource.Common, "TermNote") },
 			{ DepartmentTerms.Trainings, new ResourceKey(ResourceSource.Common, "TermTraining") },
 			{ DepartmentTerms.WorkOrders, new ResourceKey(ResourceSource.Common, "TermWorkOrder") },
-			{ DepartmentTerms.Checklists, new ResourceKey(ResourceSource.Common, "TermChecklist") }
+			{ DepartmentTerms.Checklists, new ResourceKey(ResourceSource.Common, "TermChecklist") },
+			{ DepartmentTerms.WellnessOfficers, new ResourceKey(ResourceSource.Common, Resgrid.Services.Wellness.WellnessTerms.ResourceNames[DepartmentTerms.WellnessOfficers].Singular) },
+			{ DepartmentTerms.DesignatedOfficers, new ResourceKey(ResourceSource.Common, Resgrid.Services.Wellness.WellnessTerms.ResourceNames[DepartmentTerms.DesignatedOfficers].Singular) }
 		};
 
 		/// <summary>English names a module also ships under, besides its catalog name. Empty while every module ships under one name.</summary>
@@ -544,7 +551,7 @@ namespace Resgrid.Web.Helpers
 
 		/// <summary>"Resource.Name|termKey" for every string that is a module's name.</summary>
 		private static readonly HashSet<string> ModuleNameStrings = new HashSet<string>(
-			ResourceKeys.Where(k => DepartmentTerms.Find(k.Key)?.Category == DepartmentTermCategories.Module)
+			ResourceKeys.Where(k => DepartmentTerms.Find(k.Key)?.ReplacesWords == true)
 				.Select(k => k.Value.ResourceName + "." + k.Value.Name + "|" + k.Key), StringComparer.Ordinal);
 
 		/// <summary>Term keys whose shipped name comes from a resource (test hook: every catalog term must have one).</summary>

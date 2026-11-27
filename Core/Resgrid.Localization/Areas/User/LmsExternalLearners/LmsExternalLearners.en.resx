@@ -1,0 +1,1044 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers &amp; schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Access" xml:space="preserve">
+    <value>External learners</value>
+  </data>
+  <data name="Access.Assigned" xml:space="preserve">
+    <value>Department enrols learners</value>
+  </data>
+  <data name="Access.Catalog" xml:space="preserve">
+    <value>Listed on the portal</value>
+  </data>
+  <data name="Access.None" xml:space="preserve">
+    <value>Members only</value>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>That did not work. Please try again.</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="AddonInactive" xml:space="preserve">
+    <value>The LMS add-on is not active: external learners cannot sign in and none can be added.</value>
+  </data>
+  <data name="Attendance" xml:space="preserve">
+    <value>Attendance</value>
+  </data>
+  <data name="Attendance.Absent" xml:space="preserve">
+    <value>Absent</value>
+  </data>
+  <data name="Attendance.Attended" xml:space="preserve">
+    <value>Attended</value>
+  </data>
+  <data name="Attendance.Excused" xml:space="preserve">
+    <value>Excused</value>
+  </data>
+  <data name="Attendance.Unmarked" xml:space="preserve">
+    <value>Not marked</value>
+  </data>
+  <data name="BillingCustomer" xml:space="preserve">
+    <value>Learner's own customer</value>
+  </data>
+  <data name="Class.Currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
+  <data name="Class.Due" xml:space="preserve">
+    <value>Fees due</value>
+  </data>
+  <data name="Class.Export" xml:space="preserve">
+    <value>Export roster (CSV)</value>
+  </data>
+  <data name="Class.Fee" xml:space="preserve">
+    <value>Fee per external learner</value>
+  </data>
+  <data name="Class.FeeHelp" xml:space="preserve">
+    <value>Leave empty for a free class. Resgrid never takes payment: export the roster or raise invoices through Business Operations.</value>
+  </data>
+  <data name="Class.Header" xml:space="preserve">
+    <value>Public class and fees</value>
+  </data>
+  <data name="Class.Invoiced" xml:space="preserve">
+    <value>Invoiced</value>
+  </data>
+  <data name="Class.InvoicesRaised" xml:space="preserve">
+    <value>{0} draft invoice(s) raised for {1} learner(s). Review and send them in Business Operations.</value>
+  </data>
+  <data name="Class.Mode.PerLearner" xml:space="preserve">
+    <value>One invoice per learner</value>
+  </data>
+  <data name="Class.Mode.PerOrganization" xml:space="preserve">
+    <value>One invoice per sponsoring organization</value>
+  </data>
+  <data name="Class.NoInvoicing" xml:space="preserve">
+    <value>Business Operations invoicing is not active for this department: export the roster for your own billing.</value>
+  </data>
+  <data name="Class.Public" xml:space="preserve">
+    <value>List this class on the learner portal</value>
+  </data>
+  <data name="Class.RaiseInvoices" xml:space="preserve">
+    <value>Raise invoices</value>
+  </data>
+  <data name="Class.RateItem" xml:space="preserve">
+    <value>Business Operations rate item</value>
+  </data>
+  <data name="Class.Roster" xml:space="preserve">
+    <value>Roster and fees</value>
+  </data>
+  <data name="Class.Skipped" xml:space="preserve">
+    <value>Not invoiced:</value>
+  </data>
+  <data name="Classes" xml:space="preserve">
+    <value>Classes</value>
+  </data>
+  <data name="Course" xml:space="preserve">
+    <value>Course</value>
+  </data>
+  <data name="CourseAccess" xml:space="preserve">
+    <value>Courses for external learners</value>
+  </data>
+  <data name="Courses" xml:space="preserve">
+    <value>Courses</value>
+  </data>
+  <data name="Csv.Attendance" xml:space="preserve">
+    <value>Attendance</value>
+  </data>
+  <data name="Csv.Currency" xml:space="preserve">
+    <value>Currency</value>
+  </data>
+  <data name="Csv.Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="Csv.Fee" xml:space="preserve">
+    <value>Fee</value>
+  </data>
+  <data name="Csv.FeeStatus" xml:space="preserve">
+    <value>Fee status</value>
+  </data>
+  <data name="Csv.Hours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="Csv.Invoice" xml:space="preserve">
+    <value>Invoice</value>
+  </data>
+  <data name="Csv.Kind" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="Csv.Learner" xml:space="preserve">
+    <value>Learner</value>
+  </data>
+  <data name="Csv.Organization" xml:space="preserve">
+    <value>Organization</value>
+  </data>
+  <data name="Csv.Roster" xml:space="preserve">
+    <value>Roster</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="EnrollClass" xml:space="preserve">
+    <value>Register for a class</value>
+  </data>
+  <data name="EnrollCourse" xml:space="preserve">
+    <value>Enrol in a course</value>
+  </data>
+  <data name="Enrolled" xml:space="preserve">
+    <value>Enrolled.</value>
+  </data>
+  <data name="Erase" xml:space="preserve">
+    <value>Erase learner</value>
+  </data>
+  <data name="EraseConfirm" xml:space="preserve">
+    <value>I understand this cannot be undone</value>
+  </data>
+  <data name="EraseConfirmRequired" xml:space="preserve">
+    <value>Tick the confirmation to erase the learner.</value>
+  </data>
+  <data name="Erased" xml:space="preserve">
+    <value>The learner was erased.</value>
+  </data>
+  <data name="EraseHeader" xml:space="preserve">
+    <value>Data and erasure (GDPR)</value>
+  </data>
+  <data name="EraseHelp" xml:space="preserve">
+    <value>Erasing removes the learner's account, course progress, attempts, learning records and certificates, and clears their name from class rosters. Invoices already raised stay in Business Operations. This cannot be undone.</value>
+  </data>
+  <data name="ExportData" xml:space="preserve">
+    <value>Export data (GDPR)</value>
+  </data>
+  <data name="FairUseNote" xml:space="preserve">
+    <value>External learners are included up to 25% of your purchased seats (minimum 25). Beyond that each one uses a seat, like a member.</value>
+  </data>
+  <data name="Fee" xml:space="preserve">
+    <value>Fee</value>
+  </data>
+  <data name="FeeStatus" xml:space="preserve">
+    <value>Fee status</value>
+  </data>
+  <data name="FeeStatus.Due" xml:space="preserve">
+    <value>Due</value>
+  </data>
+  <data name="FeeStatus.Invoiced" xml:space="preserve">
+    <value>Invoiced</value>
+  </data>
+  <data name="FeeStatus.NotDue" xml:space="preserve">
+    <value>Not due</value>
+  </data>
+  <data name="FeeStatus.Waived" xml:space="preserve">
+    <value>Waived</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>People outside the department (mutual-aid partners, contractors, volunteers and the public) take your courses and public classes on a learner portal without becoming members.</value>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Send invitation</value>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>Invitation sent.</value>
+  </data>
+  <data name="InviteHeader" xml:space="preserve">
+    <value>Invite an external learner</value>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="Kind.External" xml:space="preserve">
+    <value>External learner</value>
+  </data>
+  <data name="Kind.Member" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="LastSignIn" xml:space="preserve">
+    <value>Last sign-in</value>
+  </data>
+  <data name="LearnerHeader" xml:space="preserve">
+    <value>Learner</value>
+  </data>
+  <data name="lms_class_enrollment_closed" xml:space="preserve">
+    <value>Registration for this class is closed.</value>
+  </data>
+  <data name="lms_class_enrollment_cutoff" xml:space="preserve">
+    <value>Registration closed shortly before the class.</value>
+  </data>
+  <data name="lms_class_full" xml:space="preserve">
+    <value>This class is full.</value>
+  </data>
+  <data name="lms_class_not_enrolled" xml:space="preserve">
+    <value>You are not on this class's roster.</value>
+  </data>
+  <data name="lms_class_not_found" xml:space="preserve">
+    <value>That class could not be found.</value>
+  </data>
+  <data name="lms_class_not_member" xml:space="preserve">
+    <value>Only external learners can be placed this way.</value>
+  </data>
+  <data name="lms_class_not_open" xml:space="preserve">
+    <value>This class is not open for registration.</value>
+  </data>
+  <data name="lms_class_signed_off" xml:space="preserve">
+    <value>This class is signed off; its roster cannot change.</value>
+  </data>
+  <data name="lms_class_unenroll_closed" xml:space="preserve">
+    <value>This class does not allow withdrawing; contact the department.</value>
+  </data>
+  <data name="lms_xl_accent_invalid" xml:space="preserve">
+    <value>Enter the accent colour as #rrggbb.</value>
+  </data>
+  <data name="lms_xl_addon_inactive" xml:space="preserve">
+    <value>The LMS add-on is not active, so external learners cannot be added or take training right now.</value>
+  </data>
+  <data name="lms_xl_course_closed" xml:space="preserve">
+    <value>This course is not open to external learners.</value>
+  </data>
+  <data name="lms_xl_course_not_found" xml:space="preserve">
+    <value>That course could not be found or is not published.</value>
+  </data>
+  <data name="lms_xl_course_refused" xml:space="preserve">
+    <value>The enrolment was not possible.</value>
+  </data>
+  <data name="lms_xl_customer_invalid" xml:space="preserve">
+    <value>Choose a customer from Business Operations.</value>
+  </data>
+  <data name="lms_xl_email_invalid" xml:space="preserve">
+    <value>Enter a valid e-mail address.</value>
+  </data>
+  <data name="lms_xl_exists" xml:space="preserve">
+    <value>An external learner with this e-mail address already exists.</value>
+  </data>
+  <data name="lms_xl_fee_invalid" xml:space="preserve">
+    <value>Enter a fee between 0 and 100,000.</value>
+  </data>
+  <data name="lms_xl_fee_invoiced" xml:space="preserve">
+    <value>This fee is already invoiced; change it in Business Operations.</value>
+  </data>
+  <data name="lms_xl_fee_not_found" xml:space="preserve">
+    <value>That fee could not be found.</value>
+  </data>
+  <data name="lms_xl_invoice_failed" xml:space="preserve">
+    <value>the invoice could not be made</value>
+  </data>
+  <data name="lms_xl_invoicing_unavailable" xml:space="preserve">
+    <value>Business Operations invoicing is not active for this department.</value>
+  </data>
+  <data name="lms_xl_locked" xml:space="preserve">
+    <value>Too many wrong passwords. Try again in 15 minutes.</value>
+  </data>
+  <data name="lms_xl_name_required" xml:space="preserve">
+    <value>Enter the first and last name.</value>
+  </data>
+  <data name="lms_xl_no_customer" xml:space="preserve">
+    <value>no Business Operations customer</value>
+  </data>
+  <data name="lms_xl_no_sponsor" xml:space="preserve">
+    <value>no sponsoring organization</value>
+  </data>
+  <data name="lms_xl_not_found" xml:space="preserve">
+    <value>That learner could not be found.</value>
+  </data>
+  <data name="lms_xl_not_invited" xml:space="preserve">
+    <value>Only an invitation that is not accepted yet can be sent again.</value>
+  </data>
+  <data name="lms_xl_not_verified" xml:space="preserve">
+    <value>Confirm your e-mail address first: use the link we sent you.</value>
+  </data>
+  <data name="lms_xl_password_length" xml:space="preserve">
+    <value>The password must be 8 to 128 characters long.</value>
+  </data>
+  <data name="lms_xl_password_weak" xml:space="preserve">
+    <value>The password needs an upper case letter, a lower case letter and a digit.</value>
+  </data>
+  <data name="lms_xl_portal_full" xml:space="preserve">
+    <value>Registration is not available right now. Please contact the department.</value>
+  </data>
+  <data name="lms_xl_portal_off" xml:space="preserve">
+    <value>Turn the learner portal on first.</value>
+  </data>
+  <data name="lms_xl_rate_item_invalid" xml:space="preserve">
+    <value>Choose a rate item from Business Operations.</value>
+  </data>
+  <data name="lms_xl_registration_closed" xml:space="preserve">
+    <value>Registration is not open on this portal.</value>
+  </data>
+  <data name="lms_xl_seats_full" xml:space="preserve">
+    <value>Beyond the free allowance each external learner uses a seat, and no seat is left. Add {0} pack(s) to invite more.</value>
+  </data>
+  <data name="lms_xl_signin_failed" xml:space="preserve">
+    <value>The e-mail address or password is not right.</value>
+  </data>
+  <data name="lms_xl_status_invalid" xml:space="preserve">
+    <value>That change is not possible.</value>
+  </data>
+  <data name="lms_xl_suspended" xml:space="preserve">
+    <value>Your access is paused. Please contact the department.</value>
+  </data>
+  <data name="lms_xl_token_invalid" xml:space="preserve">
+    <value>This link is not valid any more. Ask for a new one.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>No published courses yet.</value>
+  </data>
+  <data name="NoLearners" xml:space="preserve">
+    <value>No external learners yet.</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Organization" xml:space="preserve">
+    <value>Organization</value>
+  </data>
+  <data name="Portal.Attest" xml:space="preserve">
+    <value>I confirm I am taking this test myself, without help.</value>
+  </data>
+  <data name="Portal.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Portal.Catalog" xml:space="preserve">
+    <value>Open classes and courses</value>
+  </data>
+  <data name="Portal.CatalogCourses" xml:space="preserve">
+    <value>Courses</value>
+  </data>
+  <data name="Portal.Certificate" xml:space="preserve">
+    <value>Certificate</value>
+  </data>
+  <data name="Portal.ChoosePassword" xml:space="preserve">
+    <value>Choose your password</value>
+  </data>
+  <data name="Portal.Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="Portal.CompletedOn" xml:space="preserve">
+    <value>Completed on</value>
+  </data>
+  <data name="Portal.ConfirmPassword" xml:space="preserve">
+    <value>Confirm password</value>
+  </data>
+  <data name="Portal.Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Portal.CourseDone" xml:space="preserve">
+    <value>Course complete. It is on your transcript.</value>
+  </data>
+  <data name="Portal.Enroll" xml:space="preserve">
+    <value>Enrol</value>
+  </data>
+  <data name="Portal.EnrolledMessage" xml:space="preserve">
+    <value>You are enrolled.</value>
+  </data>
+  <data name="Portal.EraseMine" xml:space="preserve">
+    <value>Delete my account</value>
+  </data>
+  <data name="Portal.EraseMineDone" xml:space="preserve">
+    <value>Your account was deleted.</value>
+  </data>
+  <data name="Portal.EraseMineHelp" xml:space="preserve">
+    <value>Deletes your account, course progress, learning records and certificates with this department. Enter your password to confirm. This cannot be undone.</value>
+  </data>
+  <data name="Portal.Err.FileTooLarge" xml:space="preserve">
+    <value>That file is too large.</value>
+  </data>
+  <data name="Portal.Err.Lesson" xml:space="preserve">
+    <value>This lesson cannot be completed right now.</value>
+  </data>
+  <data name="Portal.Err.Locked" xml:space="preserve">
+    <value>Finish the earlier lessons first.</value>
+  </data>
+  <data name="Portal.Err.Requirement" xml:space="preserve">
+    <value>Pass the test or answer the survey first.</value>
+  </data>
+  <data name="Portal.Err.Response" xml:space="preserve">
+    <value>Write your response first.</value>
+  </data>
+  <data name="Portal.Err.SeatTime" xml:space="preserve">
+    <value>Spend a little more time on this lesson first.</value>
+  </data>
+  <data name="Portal.ExportMine" xml:space="preserve">
+    <value>Download my data</value>
+  </data>
+  <data name="Portal.FeeLabel" xml:space="preserve">
+    <value>Fee</value>
+  </data>
+  <data name="Portal.Forgot" xml:space="preserve">
+    <value>Forgot your password?</value>
+  </data>
+  <data name="Portal.ForgotSent" xml:space="preserve">
+    <value>If that address has an account, a reset link is on its way.</value>
+  </data>
+  <data name="Portal.Free" xml:space="preserve">
+    <value>Free</value>
+  </data>
+  <data name="Portal.Full" xml:space="preserve">
+    <value>Full</value>
+  </data>
+  <data name="Portal.Hours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="Portal.LessonDone" xml:space="preserve">
+    <value>Lesson complete.</value>
+  </data>
+  <data name="Portal.Lessons" xml:space="preserve">
+    <value>Lessons</value>
+  </data>
+  <data name="Portal.Locked" xml:space="preserve">
+    <value>locked</value>
+  </data>
+  <data name="Portal.MarkComplete" xml:space="preserve">
+    <value>Mark complete</value>
+  </data>
+  <data name="Portal.MyClasses" xml:space="preserve">
+    <value>My classes</value>
+  </data>
+  <data name="Portal.MyCourses" xml:space="preserve">
+    <value>My courses</value>
+  </data>
+  <data name="Portal.MyData" xml:space="preserve">
+    <value>My data</value>
+  </data>
+  <data name="Portal.MyLearning" xml:space="preserve">
+    <value>My learning</value>
+  </data>
+  <data name="Portal.Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Portal.NoClasses" xml:space="preserve">
+    <value>No open public classes right now.</value>
+  </data>
+  <data name="Portal.NoCourses" xml:space="preserve">
+    <value>No courses are open right now.</value>
+  </data>
+  <data name="Portal.NoLearning" xml:space="preserve">
+    <value>Nothing here yet.</value>
+  </data>
+  <data name="Portal.NotPassed" xml:space="preserve">
+    <value>Not passed</value>
+  </data>
+  <data name="Portal.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Portal.OpenDocument" xml:space="preserve">
+    <value>Open document</value>
+  </data>
+  <data name="Portal.Order" xml:space="preserve">
+    <value>Put these in order (enter the letters, separated by commas)</value>
+  </data>
+  <data name="Portal.Organization" xml:space="preserve">
+    <value>Organization (optional)</value>
+  </data>
+  <data name="Portal.Passed" xml:space="preserve">
+    <value>Passed</value>
+  </data>
+  <data name="Portal.Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Portal.PasswordHelp" xml:space="preserve">
+    <value>At least 8 characters with an upper case letter, a lower case letter and a digit.</value>
+  </data>
+  <data name="Portal.PasswordMismatch" xml:space="preserve">
+    <value>The passwords do not match.</value>
+  </data>
+  <data name="Portal.PasswordSet" xml:space="preserve">
+    <value>Your password is set. Sign in to continue.</value>
+  </data>
+  <data name="Portal.PoweredBy" xml:space="preserve">
+    <value>Powered by Resgrid</value>
+  </data>
+  <data name="Portal.Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="Portal.PrivacyNote" xml:space="preserve">
+    <value>Your details are used only by {0} for its training records.</value>
+  </data>
+  <data name="Portal.PublicClasses" xml:space="preserve">
+    <value>Public classes</value>
+  </data>
+  <data name="Portal.Register" xml:space="preserve">
+    <value>Create an account</value>
+  </data>
+  <data name="Portal.RegisteredMessage" xml:space="preserve">
+    <value>Your place is recorded. Check its status below.</value>
+  </data>
+  <data name="Portal.RegisterForClass" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Portal.RegisterSent" xml:space="preserve">
+    <value>Check your e-mail: we sent a link to confirm your address.</value>
+  </data>
+  <data name="Portal.Score" xml:space="preserve">
+    <value>Score: {0}%</value>
+  </data>
+  <data name="Portal.SeatsLeft" xml:space="preserve">
+    <value>{0} seats left</value>
+  </data>
+  <data name="Portal.SeatTime" xml:space="preserve">
+    <value>Keep this page open; time spent counts toward this lesson.</value>
+  </data>
+  <data name="Portal.SendResetLink" xml:space="preserve">
+    <value>Send reset link</value>
+  </data>
+  <data name="Portal.SetPassword" xml:space="preserve">
+    <value>Set password</value>
+  </data>
+  <data name="Portal.SignIn" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Portal.SignInToRegister" xml:space="preserve">
+    <value>Sign in or create an account to register.</value>
+  </data>
+  <data name="Portal.SignOut" xml:space="preserve">
+    <value>Sign out</value>
+  </data>
+  <data name="Portal.Skip" xml:space="preserve">
+    <value>Skip to content</value>
+  </data>
+  <data name="Portal.StartTest" xml:space="preserve">
+    <value>Start the test</value>
+  </data>
+  <data name="Portal.SubmitSurvey" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Portal.SubmitTest" xml:space="preserve">
+    <value>Submit answers</value>
+  </data>
+  <data name="Portal.Throttled" xml:space="preserve">
+    <value>Too many attempts have come from your network. Please wait a while and try again.</value>
+  </data>
+  <data name="Portal.Title" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="Portal.Transcript" xml:space="preserve">
+    <value>Transcript and certificates</value>
+  </data>
+  <data name="Portal.Unavailable" xml:space="preserve">
+    <value>This training portal is not available right now.</value>
+  </data>
+  <data name="Portal.Verified" xml:space="preserve">
+    <value>Your e-mail address is confirmed. Sign in to continue.</value>
+  </data>
+  <data name="Portal.Waitlist" xml:space="preserve">
+    <value>Join the waitlist</value>
+  </data>
+  <data name="Portal.WatchVideo" xml:space="preserve">
+    <value>Watch video</value>
+  </data>
+  <data name="Portal.When" xml:space="preserve">
+    <value>When</value>
+  </data>
+  <data name="Portal.Where" xml:space="preserve">
+    <value>Where</value>
+  </data>
+  <data name="Portal.Withdraw" xml:space="preserve">
+    <value>Withdraw</value>
+  </data>
+  <data name="Portal.WithdrawnMessage" xml:space="preserve">
+    <value>You withdrew from the class.</value>
+  </data>
+  <data name="PortalHeader" xml:space="preserve">
+    <value>Learner portal</value>
+  </data>
+  <data name="PortalLink" xml:space="preserve">
+    <value>Portal address</value>
+  </data>
+  <data name="PortalOff" xml:space="preserve">
+    <value>The learner portal is off. Turn it on in the portal settings to invite learners.</value>
+  </data>
+  <data name="PortalSettings" xml:space="preserve">
+    <value>Portal settings</value>
+  </data>
+  <data name="PublicFeesLink" xml:space="preserve">
+    <value>Public class and fees</value>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Reactivate</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ResendInvite" xml:space="preserve">
+    <value>Resend invitation</value>
+  </data>
+  <data name="Roster" xml:space="preserve">
+    <value>Roster</value>
+  </data>
+  <data name="Roster.Declined" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="Roster.Enrolled" xml:space="preserve">
+    <value>Registered</value>
+  </data>
+  <data name="Roster.PendingApproval" xml:space="preserve">
+    <value>Awaiting approval</value>
+  </data>
+  <data name="Roster.Removed" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="Roster.Waitlisted" xml:space="preserve">
+    <value>On the waitlist</value>
+  </data>
+  <data name="Roster.Withdrawn" xml:space="preserve">
+    <value>Withdrawn</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="Settings.Accent" xml:space="preserve">
+    <value>Accent colour</value>
+  </data>
+  <data name="Settings.AccentHelp" xml:space="preserve">
+    <value>A colour like #1ab394. Leave empty for the Resgrid colour. The logo comes from the department profile.</value>
+  </data>
+  <data name="Settings.Enabled" xml:space="preserve">
+    <value>Turn the learner portal on</value>
+  </data>
+  <data name="Settings.HideLogo" xml:space="preserve">
+    <value>Hide the department logo</value>
+  </data>
+  <data name="Settings.Preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="Settings.PublicListing" xml:space="preserve">
+    <value>Show open public classes and catalog courses to visitors who are not signed in</value>
+  </data>
+  <data name="Settings.Regenerate" xml:space="preserve">
+    <value>Change the portal address</value>
+  </data>
+  <data name="Settings.RegenerateHelp" xml:space="preserve">
+    <value>Old links stop working and signed-in learners are signed out.</value>
+  </data>
+  <data name="Settings.SelfRegistration" xml:space="preserve">
+    <value>Let people create their own learner account (for public classes and catalog courses)</value>
+  </data>
+  <data name="Settings.Welcome" xml:space="preserve">
+    <value>Welcome text</value>
+  </data>
+  <data name="Source.Invited" xml:space="preserve">
+    <value>Invited by the department</value>
+  </data>
+  <data name="Source.SelfRegistered" xml:space="preserve">
+    <value>Registered on the portal</value>
+  </data>
+  <data name="Sponsor" xml:space="preserve">
+    <value>Sponsoring organization (Business Operations customer)</value>
+  </data>
+  <data name="Stat.Allowance" xml:space="preserve">
+    <value>Included free</value>
+  </data>
+  <data name="Stat.FreeSeats" xml:space="preserve">
+    <value>Free seats</value>
+  </data>
+  <data name="Stat.InPacks" xml:space="preserve">
+    <value>Counted in packs</value>
+  </data>
+  <data name="Stat.Learners" xml:space="preserve">
+    <value>External learners</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Status.Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Status.Erased" xml:space="preserve">
+    <value>Erased</value>
+  </data>
+  <data name="Status.Invited" xml:space="preserve">
+    <value>Invited</value>
+  </data>
+  <data name="Status.Pending" xml:space="preserve">
+    <value>Not verified</value>
+  </data>
+  <data name="Status.Removed" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="Status.Suspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Suspend</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>External learners</value>
+  </data>
+  <data name="Transcript" xml:space="preserve">
+    <value>Transcript</value>
+  </data>
+  <data name="Waive" xml:space="preserve">
+    <value>Waived</value>
+  </data>
+  <data name="Mail.Greeting" xml:space="preserve">
+    <value>Hello {0},</value>
+  </data>
+  <data name="Mail.Enrolled.Subject" xml:space="preserve">
+    <value>Your place is confirmed: {0}</value>
+  </data>
+  <data name="Mail.Enrolled.Body" xml:space="preserve">
+    <value>Your place in {0} on {1} is confirmed.</value>
+  </data>
+  <data name="Mail.Waitlisted.Subject" xml:space="preserve">
+    <value>You are on the waitlist: {0}</value>
+  </data>
+  <data name="Mail.Waitlisted.Body" xml:space="preserve">
+    <value>{0} on {1} is full. You are number {2} on the waitlist. We will e-mail you if a seat opens for you.</value>
+  </data>
+  <data name="Mail.Promoted.Subject" xml:space="preserve">
+    <value>A seat opened for you: {0}</value>
+  </data>
+  <data name="Mail.Promoted.Body" xml:space="preserve">
+    <value>A seat opened in {0} on {1}, and it is yours: your place is confirmed.</value>
+  </data>
+  <data name="Mail.Reminder.Subject" xml:space="preserve">
+    <value>Reminder: {0}</value>
+  </data>
+  <data name="Mail.Reminder.Body" xml:space="preserve">
+    <value>This is a reminder that {0} starts on {1}.</value>
+  </data>
+  <data name="Mail.Changed.Subject" xml:space="preserve">
+    <value>Class changed: {0}</value>
+  </data>
+  <data name="Mail.Changed.Body" xml:space="preserve">
+    <value>{0} has changed. It now takes place on {1}.</value>
+  </data>
+  <data name="Mail.Cancelled.Subject" xml:space="preserve">
+    <value>Class cancelled: {0}</value>
+  </data>
+  <data name="Mail.Cancelled.Body" xml:space="preserve">
+    <value>{0} on {1} has been cancelled.</value>
+  </data>
+  <data name="Mail.CancelReason" xml:space="preserve">
+    <value>Reason: {0}</value>
+  </data>
+  <data name="Mail.SignedOff.Subject" xml:space="preserve">
+    <value>Your training record: {0}</value>
+  </data>
+  <data name="Mail.SignedOff.Body" xml:space="preserve">
+    <value>Your attendance at {0} has been recorded. Your training record, and any certificate, is under My learning.</value>
+  </data>
+  <data name="Mail.CompletionRecorded.Subject" xml:space="preserve">
+    <value>Course completed: {0}</value>
+  </data>
+  <data name="Mail.CompletionRecorded.Body" xml:space="preserve">
+    <value>Your instructor recorded that you completed {0}. It is on your training record under My learning.</value>
+  </data>
+  <data name="Mail.Where" xml:space="preserve">
+    <value>Where: {0}</value>
+  </data>
+  <data name="Mail.Online" xml:space="preserve">
+    <value>Join online: {0}</value>
+  </data>
+  <data name="Mail.OpenPortal" xml:space="preserve">
+    <value>Open My learning</value>
+  </data>
+  <data name="Mail.Footer" xml:space="preserve">
+    <value>Sent by {0} through Resgrid because you have a place in this class.</value>
+  </data>
+  <data name="Mail.Unsubscribe" xml:space="preserve">
+    <value>Stop class reminder e-mails</value>
+  </data>
+  <data name="Portal.Resend" xml:space="preserve">
+    <value>Resend my e-mail</value>
+  </data>
+  <data name="Portal.ResendHelp" xml:space="preserve">
+    <value>Didn't get the e-mail to confirm your address, or your invitation? Enter your address and we will send it again.</value>
+  </data>
+  <data name="Portal.ResendSend" xml:space="preserve">
+    <value>Send again</value>
+  </data>
+  <data name="Portal.ResendSent" xml:space="preserve">
+    <value>If an account is waiting for this address, we have sent the e-mail again. Check your inbox and spam folder.</value>
+  </data>
+  <data name="Portal.ResendLink" xml:space="preserve">
+    <value>Didn't get your e-mail?</value>
+  </data>
+  <data name="Portal.Unsubscribe" xml:space="preserve">
+    <value>Class reminders</value>
+  </data>
+  <data name="Portal.UnsubscribeHelp" xml:space="preserve">
+    <value>Stop class reminder e-mails? You will still get e-mails about your own places (confirmed, waitlisted, changed or cancelled).</value>
+  </data>
+  <data name="Portal.UnsubscribeConfirm" xml:space="preserve">
+    <value>Stop reminders</value>
+  </data>
+  <data name="Portal.UnsubscribeDone" xml:space="preserve">
+    <value>You will not get class reminder e-mails any more. You can turn them on again under My learning.</value>
+  </data>
+  <data name="Portal.Preferences" xml:space="preserve">
+    <value>E-mail preferences</value>
+  </data>
+  <data name="Portal.EmailLanguage" xml:space="preserve">
+    <value>E-mail language</value>
+  </data>
+  <data name="Portal.EmailLanguageDefault" xml:space="preserve">
+    <value>The department's language</value>
+  </data>
+  <data name="Portal.RemindersOff" xml:space="preserve">
+    <value>Don't send me class reminders</value>
+  </data>
+  <data name="Portal.RemindersOffHelp" xml:space="preserve">
+    <value>E-mails about your own places (confirmed, waitlisted, changed or cancelled) are always sent.</value>
+  </data>
+  <data name="Portal.SavePreferences" xml:space="preserve">
+    <value>Save preferences</value>
+  </data>
+  <data name="Portal.PreferencesSaved" xml:space="preserve">
+    <value>Your preferences were saved.</value>
+  </data>
+  <data name="Portal.WaitlistPosition" xml:space="preserve">
+    <value>Number {0} on the waitlist</value>
+  </data>
+  <data name="Portal.VerifyTitle" xml:space="preserve">
+    <value>Confirm your e-mail address</value>
+  </data>
+  <data name="Portal.VerifyHelp" xml:space="preserve">
+    <value>Confirm the training account registered on {0} for {1}. If you did not create this account, close this page: nothing changes.</value>
+  </data>
+  <data name="Portal.VerifyConfirm" xml:space="preserve">
+    <value>Confirm my e-mail address</value>
+  </data>
+  <data name="Portal.Err.ProtocolWithheld" xml:space="preserve">
+    <value>This protocol cannot be shown on the learner portal. Ask the department that runs this course.</value>
+  </data>
+  <data name="lms_xl_course_protocol_licensed" xml:space="preserve">
+    <value>This course includes a protocol with licensed content, which cannot be shown to external learners. Remove that lesson before opening the course to them.</value>
+  </data>
+  <data name="lms_xl_course_protocol_audience" xml:space="preserve">
+    <value>This course includes a protocol limited to an audience, which external learners are never part of. Remove that lesson or the protocol's audience before opening the course to them.</value>
+  </data>
+  <data name="lms_xl_course_protocol_document" xml:space="preserve">
+    <value>This course includes a document-backed protocol, which cannot be shown to external learners. Use an authored protocol version, or remove that lesson, before opening the course to them.</value>
+  </data>
+  <data name="lms_xl_course_protocol_unavailable" xml:space="preserve">
+    <value>This course includes a protocol that is disabled or no longer in force, so it cannot be shown to external learners. Update the lesson to the version in force, or remove it, before opening the course to them.</value>
+  </data>
+  <data name="Portal.VerifyPasswordHelp" xml:space="preserve">
+    <value>Choose the password you will sign in with. Only the password chosen here works: one typed when the account was registered is not kept.</value>
+  </data>
+  <data name="lms_xl_busy" xml:space="preserve">
+    <value>The account was changed at the same moment. Try again.</value>
+  </data>
+  <data name="Portal.Privacy.Title" xml:space="preserve">
+    <value>How your details are used</value>
+  </data>
+  <data name="Portal.Privacy.Link" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="Portal.Privacy.Short" xml:space="preserve">
+    <value>{0} is responsible for the details you give here and uses them only for your training.</value>
+  </data>
+  <data name="Portal.Privacy.Controller" xml:space="preserve">
+    <value>{0} runs this training portal, decides how your details are used and is responsible for them. Resgrid provides the portal on behalf of {0}.</value>
+  </data>
+  <data name="Portal.Privacy.WhatKept" xml:space="preserve">
+    <value>What is kept: your name, e-mail address and organization (if you gave one); your e-mail language and reminder choices; your registrations, attendance, course progress, test answers and scores; and the learning records and certificates you earn.</value>
+  </data>
+  <data name="Portal.Privacy.Why" xml:space="preserve">
+    <value>Why: to run your training and to keep the training records {0} needs. Your details are not used for advertising or marketing.</value>
+  </data>
+  <data name="Portal.Privacy.Rights" xml:space="preserve">
+    <value>Your choices: under My learning you can download a copy of your data or delete your account at any time, and stop class reminder e-mails.</value>
+  </data>
+  <data name="Portal.Privacy.Retention" xml:space="preserve">
+    <value>Some records may stay after you delete your account, such as invoices already raised, where {0} must keep them by law or under its own policy.</value>
+  </data>
+  <data name="Portal.Privacy.Contact" xml:space="preserve">
+    <value>For any other question or request about your details, such as correcting them, contact {0}.</value>
+  </data>
+  <data name="Settings.WelcomeHelp" xml:space="preserve">
+    <value>Shown at the top of the portal. You can add your privacy contact or a link to your privacy policy here.</value>
+  </data>
+  <data name="Settings.PrivacyHelp" xml:space="preserve">
+    <value>Your department or organization is responsible for learners' details. The portal shows learners a privacy page that names you, says what is kept and why, and lets them download their data or delete their account. Add a privacy contact to the welcome text if your rules require one.</value>
+  </data>
+</root>

@@ -40,7 +40,7 @@ namespace Resgrid.Tests.Services
 
 			_service = new ProtocolsService(_protocols.Object, attachments.Object, questions.Object, triggers.Object,
 				Mock.Of<IDispatchProtocolQuestionAnswersRepository>(), new Lazy<IDispatchTriggerFactsService>(() => Mock.Of<IDispatchTriggerFactsService>()),
-				new Lazy<IProtocolAiSuggestionService>(() => Mock.Of<IProtocolAiSuggestionService>()));
+				new Lazy<IProtocolAiSuggestionService>(() => Mock.Of<IProtocolAiSuggestionService>()), new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()));
 		}
 
 		[Test]

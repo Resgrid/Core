@@ -77,6 +77,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewData["IsAdmin"] = reader.IsDepartmentAdmin;
 			ViewData["ManagesAcknowledgments"] = ManagesAcknowledgments(reader);
 			ViewData["CanIssueBulletins"] = reader.MayApprove;
+			ViewData["ReviewsDispatchCases"] = reader?.MayReviewDispatchCases == true;
 		}
 
 		#region Member
@@ -241,7 +242,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true)]
+		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Acknowledgments)]
 		public async Task<IActionResult> SignWithStepUp(int versionId, string contentHash, CancellationToken cancellationToken = default) =>
 			await SignCoreAsync(versionId, contentHash, SessionProof(), cancellationToken);
 
@@ -249,7 +250,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var proof = SignatureProof.SessionOnly(UserId, IpAddressHelper.GetRequestIP(Request, true), Request?.Headers["User-Agent"].ToString());
 			// Server-side step-up evidence of this session, when the step-up action set it.
-			proof.StepUpVerifiedOnUtc = HttpContext?.Items["mfa_verified_at"] as DateTime?;
+			Resgrid.Web.Helpers.WebStepUpProof.Apply(proof, HttpContext);
 			return proof;
 		}
 
@@ -557,7 +558,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Protocol_Approve)]
-		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true)]
+		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Signatures)]
 		public async Task<IActionResult> Countersign(int id, CancellationToken cancellationToken = default)
 		{
 			var result = await _acknowledgments.CountersignBulletinAsync(await ReaderAsync(), id, SessionProof(), cancellationToken);

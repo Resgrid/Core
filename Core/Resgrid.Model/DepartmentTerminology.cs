@@ -13,7 +13,13 @@ namespace Resgrid.Model
 		Module = 1,
 
 		/// <summary>A built-in record type, and the legacy log type with the same number (Run, Training, Work ...).</summary>
-		RecordType = 2
+		RecordType = 2,
+
+		/// <summary>
+		/// A role or team a feature names (the wellness officer, the designated officer, the peer support team): its plural and the
+		/// word for one person, carried through the text like a module's names. The personnel role itself keeps its own name.
+		/// </summary>
+		Role = 3
 	}
 
 	/// <summary>One name a department may replace with its own word.</summary>
@@ -44,6 +50,11 @@ namespace Resgrid.Model
 
 		/// <summary>Whether the department also names one item of this term (a singular form next to the module name).</summary>
 		public bool HasSingular => DefaultSingular != null;
+
+		/// <summary>
+		/// Whether the term's words are replaced in Resgrid's text (modules and roles). A record type is only ever shown as a name.
+		/// </summary>
+		public bool ReplacesWords => Category == DepartmentTermCategories.Module || Category == DepartmentTermCategories.Role;
 	}
 
 	/// <summary>
@@ -75,6 +86,21 @@ namespace Resgrid.Model
 		public const string Checklists = "module.checklists";
 		public const string WorkforceBusiness = "module.workforce-business";
 
+		/// <summary>Member wellness (protocols-training-knowledge-plan §13b): the section under Personnel, not a navigation module.</summary>
+		public const string Wellness = "module.wellness";
+
+		/// <summary>The wellness officers (Wellness settings: the wellness officer role and its certification).</summary>
+		public const string WellnessOfficers = "role.wellness-officer";
+
+		/// <summary>The designated officers for bloodborne-pathogen and infectious-disease exposures (WL1).</summary>
+		public const string DesignatedOfficers = "role.designated-officer";
+
+		/// <summary>The peer support team (anniversary reminders a member chooses to share).</summary>
+		public const string PeerSupportTeam = "role.peer-support-team";
+
+		/// <summary>Prefix of every role term.</summary>
+		public const string RolePrefix = "role.";
+
 		/// <summary>Prefix of every record type term; the rest is the locked definition key without "system.".</summary>
 		public const string RecordTypePrefix = "record-type.";
 
@@ -98,6 +124,7 @@ namespace Resgrid.Model
 			new DepartmentTermDefinition(WorkOrders, DepartmentTermCategories.Module, "Work Orders", "Work Order"),
 			new DepartmentTermDefinition(Checklists, DepartmentTermCategories.Module, "Checklists", "Checklist"),
 			new DepartmentTermDefinition(WorkforceBusiness, DepartmentTermCategories.Module, "Business Ops"),
+			new DepartmentTermDefinition(Wellness, DepartmentTermCategories.Module, "Wellness"),
 
 			new DepartmentTermDefinition(RecordTypeKey(RmsDefinitionKeys.Run), DepartmentTermCategories.RecordType, "Run"),
 			new DepartmentTermDefinition(RecordTypeKey(RmsDefinitionKeys.Training), DepartmentTermCategories.RecordType, "Training"),
@@ -106,7 +133,11 @@ namespace Resgrid.Model
 			new DepartmentTermDefinition(RecordTypeKey(RmsDefinitionKeys.Coroner), DepartmentTermCategories.RecordType, "Coroner"),
 			new DepartmentTermDefinition(RecordTypeKey(RmsDefinitionKeys.Callback), DepartmentTermCategories.RecordType, "Callback"),
 			new DepartmentTermDefinition(RecordTypeKey(RmsDefinitionKeys.UnitActivity), DepartmentTermCategories.RecordType, "Unit activity"),
-			new DepartmentTermDefinition(RecordTypeKey(RmsDefinitionKeys.NerisIncidentReport), DepartmentTermCategories.RecordType, "NERIS incident report")
+			new DepartmentTermDefinition(RecordTypeKey(RmsDefinitionKeys.NerisIncidentReport), DepartmentTermCategories.RecordType, "NERIS incident report"),
+
+			new DepartmentTermDefinition(WellnessOfficers, DepartmentTermCategories.Role, "Wellness officers", "Wellness officer"),
+			new DepartmentTermDefinition(DesignatedOfficers, DepartmentTermCategories.Role, "Designated officers", "Designated officer"),
+			new DepartmentTermDefinition(PeerSupportTeam, DepartmentTermCategories.Role, "Peer support team")
 		};
 
 		private static readonly Dictionary<string, DepartmentTermDefinition> ByKey = All.ToDictionary(t => t.Key, StringComparer.Ordinal);

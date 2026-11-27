@@ -60,140 +60,186 @@
   </resheader>
   <data name="AllTours" xml:space="preserve">
     <value>Todos los recorridos</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissTour" xml:space="preserve">
     <value>Ocultar este recorrido</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissWhatsNew" xml:space="preserve">
     <value>Ocultar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DocsHeader" xml:space="preserve">
     <value>Funciones y referencia</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DoneLabel" xml:space="preserve">
     <value>Hecho</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EarlierReleases" xml:space="preserve">
     <value>Otras versiones</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FeatureBadge" xml:space="preserve">
     <value>Función</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GoToPage" xml:space="preserve">
     <value>Ir a la página</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HelpCenterHeader" xml:space="preserve">
     <value>Centro de ayuda</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HowDoIHeader" xml:space="preserve">
     <value>¿Cómo puedo…?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HowDoIHelp" xml:space="preserve">
     <value>Haga una pregunta sobre el uso de Resgrid. Las respuestas proceden solo de Resgrid Academy y enlazan con las lecciones que usan.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonMinutes" xml:space="preserve">
     <value>{0} min</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonsHeader" xml:space="preserve">
     <value>Lecciones de la Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkDone" xml:space="preserve">
     <value>Marcar como hecho</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkNotDone" xml:space="preserve">
     <value>Marcar como no hecho</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkRead" xml:space="preserve">
     <value>Marcar como leído</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MenuSearchHelp" xml:space="preserve">
     <value>Buscar ayuda</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MenuTours" xml:space="preserve">
     <value>Recorridos guiados</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MenuWhatsNew" xml:space="preserve">
     <value>Novedades</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoDocs" xml:space="preserve">
     <value>Ninguna función ni artículo de referencia coincide con su búsqueda.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoLessons" xml:space="preserve">
     <value>Ninguna lección de la Academy coincide con su búsqueda.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoTours" xml:space="preserve">
     <value>No hay recorridos guiados para su departamento.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenDocs" xml:space="preserve">
     <value>Documentación</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenPage" xml:space="preserve">
     <value>Abrir página</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReadLabel" xml:space="preserve">
     <value>Leído</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReadMinutes" xml:space="preserve">
     <value>Leer ({0} min)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReferenceBadge" xml:space="preserve">
     <value>Referencia</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReopenTour" xml:space="preserve">
     <value>Mostrar este recorrido de nuevo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchButton" xml:space="preserve">
     <value>Buscar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchEmptyHelp" xml:space="preserve">
     <value>Escriba unas palabras sobre lo que quiere hacer. También puede seguir el recorrido de su rol o ver las novedades.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchIntro" xml:space="preserve">
     <value>Busque en Resgrid Academy y en la referencia del producto.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchLabel" xml:space="preserve">
     <value>Buscar ayuda</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchPlaceholder" xml:space="preserve">
     <value>¿Qué quiere hacer? Por ejemplo: añadir una unidad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchTab" xml:space="preserve">
     <value>Buscar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchTitle" xml:space="preserve">
     <value>Buscar ayuda</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TourProgress" xml:space="preserve">
     <value>{0} de {1} hechos</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TourReopened" xml:space="preserve">
     <value>El recorrido vuelve a mostrarse.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToursIntro" xml:space="preserve">
     <value>Primeros pasos para cada rol, cada uno con una breve lección de la Academy.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToursTab" xml:space="preserve">
     <value>Recorridos guiados</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToursTitle" xml:space="preserve">
     <value>Recorridos guiados</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TryIt" xml:space="preserve">
     <value>Probarlo</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WatchLesson" xml:space="preserve">
     <value>Ver lección</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatsNewSubtitle" xml:space="preserve">
     <value>Publicado el {0} · {1} min de lectura</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatsNewTab" xml:space="preserve">
     <value>Novedades</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatsNewTitle" xml:space="preserve">
     <value>Novedades</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="YourTourBadge" xml:space="preserve">
     <value>Su rol</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

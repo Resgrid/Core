@@ -214,6 +214,40 @@ namespace Resgrid.Tests.Signatures
 		}
 
 		[Test]
+		public async Task Documenso_sends_no_mail_and_no_reminders_of_its_own()
+		{
+			ESignConfig.DocumensoBaseUrl = "http://documenso.test";
+			var handler = new RecordingHandler
+			{
+				Respond = r => r.RequestUri.AbsolutePath.EndsWith("/create") ? Json(new { id = "envelope_9" })
+					: Json(new { id = "envelope_9", status = "PENDING", recipients = new[] { new { id = 31, email = "signer-100@signers.resgrid.invalid", name = "Casey", signingOrder = 1, token = "tok-31", signingStatus = "NOT_SIGNED" } } })
+			};
+			var provider = new DocumensoESignProvider(new HttpClient(handler));
+
+			await provider.CreateEnvelopeAsync("api_abc", new ESignEnvelopeRequest
+			{
+				Title = "DTR 7", ExternalId = "resgrid:11:4", Pdf = Encoding.ASCII.GetBytes("%PDF-1.4"), FileName = "dtr.pdf",
+				Recipients = { new ESignRecipient { Reference = "100", Name = "Casey", SigningOrder = 1 } }
+			});
+
+			// The create call is multipart: the "payload" part is one line of JSON.
+			var payload = JObject.Parse(handler.Calls[0].Body.Split('\n').Select(l => l.Trim()).First(l => l.StartsWith("{\"type\":\"DOCUMENT\"")));
+			var createMeta = (JObject)payload["meta"];
+			var distributeMeta = (JObject)JObject.Parse(handler.Calls[1].Body)["meta"];
+
+			// Documenso v2.22.0's flags, each on by default; documentCompleted / ownerDocumentCompleted were the retries seen live.
+			DocumensoESignProvider.EmailSettingFlags.Should().HaveCount(9).And.Contain(new[] { "documentCompleted", "ownerDocumentCompleted", "recipientSigningRequest" });
+			foreach (var meta in new[] { createMeta, distributeMeta })
+			{
+				var settings = (JObject)meta["emailSettings"];
+				settings.Properties().Select(p => p.Name).Should().BeEquivalentTo(DocumensoESignProvider.EmailSettingFlags);
+				settings.Properties().Should().OnlyContain(p => p.Value.Type == JTokenType.Boolean && !(bool)p.Value);
+			}
+			createMeta["reminderSettings"]["sendAfter"]["disabled"].Value<bool>().Should().BeTrue();
+			createMeta["reminderSettings"]["repeatEvery"]["disabled"].Value<bool>().Should().BeTrue();
+		}
+
+		[Test]
 		public void An_unset_base_url_means_remote_signing_is_unavailable()
 		{
 			ESignConfig.DocumensoBaseUrl = "";
@@ -306,6 +340,31 @@ namespace Resgrid.Tests.Signatures
 				(await controller.Documenso(CancellationToken.None)).Should().BeOfType<OkResult>();
 
 				webhooks.Verify(x => x.RecordHintAsync(ESignProviderKinds.Documenso, "evt-77", "DOCUMENT_SIGNED", "resgrid:11:4", It.IsAny<CancellationToken>()), Times.Once);
+			}
+			finally
+			{
+				ESignConfig.WebhookAllowedNetworks = allowed;
+				ESignConfig.WebhookSecret = secret;
+			}
+		}
+
+		[Test]
+		public async Task Security_review_L3_a_blank_shared_secret_refuses_every_hint_even_from_the_cluster()
+		{
+			var allowed = ESignConfig.WebhookAllowedNetworks;
+			var secret = ESignConfig.WebhookSecret;
+			try
+			{
+				ESignConfig.WebhookAllowedNetworks = "10.42.0.0/16";
+				ESignConfig.WebhookSecret = "  ";
+				var webhooks = new Mock<IESignWebhookService>(MockBehavior.Strict);
+				var controller = new ESignWebhooksController(webhooks.Object) { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
+				controller.HttpContext.Connection.RemoteIpAddress = IPAddress.Parse("10.42.3.3");
+				controller.HttpContext.Request.Headers["X-Documenso-Event-Id"] = "evt-78";
+				controller.HttpContext.Request.Body = new System.IO.MemoryStream(Encoding.UTF8.GetBytes("{\"event\":\"DOCUMENT_SIGNED\",\"payload\":{\"id\":\"envelope_1\"}}"));
+
+				(await controller.Documenso(CancellationToken.None)).Should().BeOfType<StatusCodeResult>().Which.StatusCode.Should().Be(403, "fail closed, like a blank network list");
+				webhooks.VerifyNoOtherCalls();
 			}
 			finally
 			{

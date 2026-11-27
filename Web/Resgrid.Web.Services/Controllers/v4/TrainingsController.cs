@@ -39,25 +39,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ILearningRecordService _learningRecordService;
+		private readonly ITrainingSubmissionService _submissions;
 
-		/// <summary>Evidence types an outside training submission may carry, by extension; the stored content type follows it.</summary>
-		private static readonly Dictionary<string, string> EvidenceTypes = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-		{
-			{ "pdf", "application/pdf" },
-			{ "jpg", "image/jpeg" },
-			{ "jpeg", "image/jpeg" },
-			{ "png", "image/png" },
-			{ "gif", "image/gif" },
-			{ "doc", "application/msword" },
-			{ "docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document" }
-		};
-
-		/// <summary>A 10 MB evidence file is about 13.4 MB as base64; the rest of the body is small.</summary>
-		private const int MaxSubmissionRequestBytes = 16 * 1024 * 1024;
+		/// <summary>
+		/// Round 9B: 30 MB of evidence (TrainingSubmissionRules.MaxUploadBytes) is about 40 MB as base64; the rest of the body is small. Types,
+		/// sizes and contents are checked again by the service (TrainingEvidencePolicy).
+		/// </summary>
+		public const int MaxSubmissionRequestBytes = 44 * 1024 * 1024;
 
 		public TrainingsController(ITrainingService trainingService, ITrainingAssignmentService assignmentService, IMyTrainingService myTrainingService,
-			IAuthorizationService authorizationService, IDepartmentSettingsService departmentSettingsService, ILearningRecordService learningRecordService)
+			IAuthorizationService authorizationService, IDepartmentSettingsService departmentSettingsService, ILearningRecordService learningRecordService,
+			ITrainingCompletionRecordingService recordings, ITrainingSubmissionService submissions, ITrainingRecordDocumentService documents)
 		{
+			_documents = documents;
+			_submissions = submissions;
+			_recordings = recordings;
 			_trainingService = trainingService;
 			_assignmentService = assignmentService;
 			_myTrainingService = myTrainingService;
@@ -65,6 +61,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_learningRecordService = learningRecordService;
 		}
+
+		private readonly ITrainingCompletionRecordingService _recordings;
+
+		/// <summary>Round 10: the member's own transcript and certificate PDFs (the web pages' documents).</summary>
+		private readonly ITrainingRecordDocumentService _documents;
 
 		/// <summary>True when the department switched the Trainings module off (T0 item 1b): every endpoint then answers 404.</summary>
 		private async Task<bool> TrainingDisabledAsync()
@@ -330,6 +331,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Populate(result, result.Data == null ? 0 : 1);
 		}
 
+		/// <summary>
+		/// Round 9A read and confirm (Omni): the member confirms they read and reviewed a training that asks for it (no quiz); the assignment
+		/// completes and goes on the transcript. 400 when the training does not ask for it, has a quiz, has not started or is not assigned.
+		/// </summary>
+		[HttpPost("AcknowledgeTraining")]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<TrainingAssignmentResult>> AcknowledgeTraining([FromBody] TrainingIdInput input, CancellationToken cancellationToken)
+		{
+			if (await TrainingDisabledAsync())
+				return NotFound();
+			if (input == null || input.TrainingId <= 0)
+				return BadRequest();
+
+			var now = DateTime.UtcNow;
+			var acknowledged = await _trainingService.AcknowledgeTrainingAsync(DepartmentId, input.TrainingId, UserId, cancellationToken);
+			var result = new TrainingAssignmentResult();
+			if (acknowledged == null || !acknowledged.Complete)
+				return BadRequest(Populate(result, 0, ResponseHelper.Failure));
+
+			var status = (await _trainingService.GetAssignmentsForUserAsync(DepartmentId, UserId, now))?.FirstOrDefault(x => x.Training?.TrainingId == input.TrainingId);
+			result.Data = status != null ? MapAssignment(status, now) : null;
+			return Populate(result, result.Data == null ? 0 : 1);
+		}
+
 		/// <summary>"Flag this question": the member tells the author a question of a quiz they may take looks wrong.</summary>
 		[HttpPost("FlagQuestion")]
 		[Authorize(Policy = ResgridResources.Training_View)]
@@ -482,14 +510,106 @@ namespace Resgrid.Web.Services.Controllers.v4
 				(from, to) = (to, from);
 
 			var names = CategoryNames(await _learningRecordService.GetCategoriesAsync(DepartmentId, true));
-			var records = (await _learningRecordService.GetTranscriptAsync(DepartmentId, target, from, to, null, null, false) ?? new List<LearningRecord>())
+			var rows = (await _learningRecordService.GetTranscriptAsync(DepartmentId, target, from, to, null, null, false) ?? new List<LearningRecord>())
 				.Where(r => r != null && r.DepartmentId == DepartmentId && !r.IsVoided && string.Equals(r.UserId, target, StringComparison.OrdinalIgnoreCase))
-				.OrderByDescending(r => r.CompletedOn).ThenByDescending(r => r.LearningRecordId)
-				.Select(r => MapLearningRecord(r, names))
-				.ToList();
+				.OrderByDescending(r => r.CompletedOn).ThenByDescending(r => r.LearningRecordId).ToList();
+			// Round 7B: a completion recorded by an instructor carries who, when, from where, the note and the attestation.
+			var recordings = await _recordings.GetForRecordsAsync(DepartmentId, rows) ?? new Dictionary<int, TrainingCompletionRecording>();
+			var records = rows.Select(r => MapLearningRecord(r, names, recordings)).ToList();
 
 			var result = new LearningRecordsResult { Data = records };
 			return Populate(result, records.Count);
+		}
+
+		/// <summary>
+		/// The documents' language: <paramref name="locale"/>, else the first Accept-Language tag (the app's language), else English. Mapped to a
+		/// supported culture by the service.
+		/// </summary>
+		private string DocumentLocale(string locale)
+		{
+			if (!string.IsNullOrWhiteSpace(locale) && locale.Trim().Length <= 16)
+				return locale.Trim();
+			var header = Request?.Headers["Accept-Language"].ToString();
+			if (string.IsNullOrWhiteSpace(header))
+				return "en";
+			var first = header.Split(',')[0].Split(';')[0].Trim();
+			return first.Length == 0 || first.Length > 16 ? "en" : first;
+		}
+
+		private TrainingRecordDocumentRequest DocumentRequest(string locale) => new TrainingRecordDocumentRequest
+		{
+			DepartmentId = DepartmentId,
+			UserId = UserId,
+			UserName = UserName,
+			Culture = DocumentLocale(locale),
+			QrDataUrl = ApiQrCode.DataUrl
+		};
+
+		private ActionResult PdfFile(TrainingRecordDocumentFile file)
+		{
+			Response.Headers["X-Resgrid-Seal"] = file.Sealed ? "sealed" : "pending";
+			return File(file.Bytes, string.IsNullOrWhiteSpace(file.ContentType) ? "application/pdf" : file.ContentType, file.FileName);
+		}
+
+		/// <summary>
+		/// The caller's own transcript as a PDF (the web's Training records → Transcript PDF): the same lines, hours by category and provenance,
+		/// sealed at L3 when sealing is configured (header X-Resgrid-Seal: sealed or pending). Only the caller's own; voided records left out.
+		/// </summary>
+		/// <param name="from">Optional first day (department-local date, yyyy-MM-dd) of the completion window.</param>
+		/// <param name="to">Optional last day (department-local date, yyyy-MM-dd) of the completion window.</param>
+		/// <param name="categoryId">Optional training category.</param>
+		/// <param name="source">Optional record source (LearningRecordSourceKinds value).</param>
+		/// <param name="locale">The document's language (ar, de, el, en, es, fr, it, pl, sv, uk); the Accept-Language header when left out.</param>
+		[HttpGet("GetTranscriptPdf")]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+		public async Task<ActionResult> GetTranscriptPdf(DateTime? from = null, DateTime? to = null, int? categoryId = null, int? source = null, string locale = null,
+			CancellationToken cancellationToken = default)
+		{
+			if (await TrainingDisabledAsync())
+				return NotFound();
+
+			try
+			{
+				var file = await _documents.GetMyTranscriptPdfAsync(DocumentRequest(locale), from, to, categoryId, source, cancellationToken);
+				return file?.Bytes == null ? NotFound() : PdfFile(file);
+			}
+			catch (Exception ex) when (ex is not OperationCanceledException)
+			{
+				Logging.LogException(ex, "Training transcript PDF could not be generated.");
+				return StatusCode(StatusCodes.Status503ServiceUnavailable);
+			}
+		}
+
+		/// <summary>
+		/// The certificate of completion of one of the caller's own verified learning records as a PDF (the web's Training records → Certificate):
+		/// with the LMS add-on, the verification code, its QR and the department's default template; sealed like the transcript. 404 for another
+		/// member's, an unverified or an unknown record.
+		/// </summary>
+		/// <param name="learningRecordId">The record (LearningRecordData.LearningRecordId from GetTranscript).</param>
+		/// <param name="locale">The document's language; the Accept-Language header when left out.</param>
+		[HttpGet("GetCertificate")]
+		[Authorize(Policy = ResgridResources.Training_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
+		public async Task<ActionResult> GetCertificate(int learningRecordId, string locale = null, CancellationToken cancellationToken = default)
+		{
+			if (await TrainingDisabledAsync())
+				return NotFound();
+
+			try
+			{
+				var file = await _documents.GetMyCertificatePdfAsync(DocumentRequest(locale), learningRecordId, cancellationToken);
+				return file?.Bytes == null ? NotFound() : PdfFile(file);
+			}
+			catch (Exception ex) when (ex is not OperationCanceledException)
+			{
+				Logging.LogException(ex, "Training certificate PDF could not be generated.");
+				return StatusCode(StatusCodes.Status503ServiceUnavailable);
+			}
 		}
 
 		/// <summary>The department's training categories (removed ones left out), for the submission form and the transcript.</summary>
@@ -522,10 +642,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// The member submits a course they completed outside the department, with optional evidence (base64; PDF, JPG, JPEG,
-		/// PNG, GIF, DOC or DOCX; at most 10 MB decoded). It is Pending until an officer verifies it. Refused with
-		/// <c>submissions_disabled</c> when the department does not take outside training from members; other refusals name the
-		/// field (see <see cref="ExternalTrainingSubmissionResult.Error"/>).
+		/// The member submits training hours they completed outside the department (continuing education, CPD, a course), with optional
+		/// evidence: <c>Data</c> (one file) and/or <c>Files</c> (round 9B: up to 5; PDF, JPG, JPEG, PNG, GIF, WEBP, DOC, DOCX or
+		/// ODT; 10 MB each, 30 MB together, base64). Depending on the department's review settings it waits for a reviewer (Pending,
+		/// <c>ReviewRequired</c> true) or is accepted at once as self-reported. Refused with <c>submissions_disabled</c> when the department
+		/// does not take submissions from members; other refusals name the field (see <see cref="ExternalTrainingSubmissionResult.Error"/>).
 		/// </summary>
 		[HttpPost("SubmitExternalTraining")]
 		[Authorize(Policy = ResgridResources.Training_View)]
@@ -544,25 +665,74 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var categories = (await _learningRecordService.GetCategoriesAsync(DepartmentId, false) ?? new List<TrainingCategory>())
 				.Where(c => c != null && c.DepartmentId == DepartmentId && !c.IsDeleted).ToList();
 			var error = BuildExternalSubmission(input, UserId, categories, DateTime.UtcNow, out var draft, out var fileName, out var contentType, out var data);
+			var files = new List<TrainingEvidenceUpload>();
+			if (error == null)
+				error = BuildEvidenceFiles(input.Files, out files);
 			if (error != null)
 				return SubmissionRefused(error);
 
-			LearningRecord saved;
-			try
-			{
-				saved = await _learningRecordService.SubmitExternalAsync(DepartmentId, UserId, draft, fileName, contentType, data, cancellationToken);
-			}
-			catch (InvalidOperationException ex) when (IsServiceCode(ex))
-			{
-				return SubmissionRefused(ex.Message);
-			}
+			var evidence = new List<TrainingEvidenceUpload>();
+			if (data != null)
+				evidence.Add(new TrainingEvidenceUpload { FileName = fileName, ContentType = contentType, Data = data });
+			evidence.AddRange(files);
+			if (evidence.Count > TrainingSubmissionRules.MaxFilesPerUpload)
+				return SubmissionRefused("too_many_files");
 
-			// Null: the department switched member submissions off.
-			if (saved == null)
-				return SubmissionRefused("submissions_disabled");
+			// Round 9B: through the submission service (review decision, review history, notices and workflow triggers).
+			var outcome = await _submissions.SubmitAsync(DepartmentId, UserId, draft, evidence, cancellationToken);
+			if (outcome?.Refusal != null || outcome?.Record == null)
+				return SubmissionRefused(outcome?.Refusal == "learning_record_submissions_disabled" ? "submissions_disabled" : outcome?.Refusal ?? "learning_record_not_found");
 
-			var result = new ExternalTrainingSubmissionResult { Data = MapLearningRecord(saved, CategoryNames(categories)) };
+			var result = new ExternalTrainingSubmissionResult { Data = MapLearningRecord(outcome.Record, CategoryNames(categories)), ReviewRequired = outcome.ReviewRequired };
 			return Populate(result, 1);
+		}
+
+		/// <summary>
+		/// Round 9B: decodes the extra evidence files of a submission or resubmission (name, accepted type by extension, base64, size). Returns
+		/// the refusal code (file_name_required, file_type_not_allowed, file_too_large, file_invalid, too_many_files), or null.
+		/// </summary>
+		public static string BuildEvidenceFiles(IReadOnlyCollection<TrainingEvidenceFileInput> inputs, out List<TrainingEvidenceUpload> files)
+		{
+			files = new List<TrainingEvidenceUpload>();
+			var given = (inputs ?? Array.Empty<TrainingEvidenceFileInput>()).Where(f => f != null && !string.IsNullOrWhiteSpace(f.Data)).ToList();
+			if (given.Count > TrainingSubmissionRules.MaxFilesPerUpload)
+				return "too_many_files";
+
+			long total = 0;
+			foreach (var input in given)
+			{
+				var name = System.IO.Path.GetFileName((input.FileName ?? string.Empty).Trim());
+				if (name.Length == 0)
+					return "file_name_required";
+				if (name.Length > 255)
+					return "text_too_long";
+				var type = Resgrid.Services.TrainingEvidencePolicy.ContentTypeOf(name);
+				if (type == null)
+					return "file_type_not_allowed";
+				if (input.Data.Length > (LearningRecordFile.MaxBytes + 2) / 3 * 4 + 4096)
+					return "file_too_large";
+
+				byte[] bytes;
+				try
+				{
+					bytes = Convert.FromBase64String(input.Data);
+				}
+				catch (FormatException)
+				{
+					return "file_invalid";
+				}
+
+				if (bytes.Length == 0)
+					return "file_invalid";
+				if (bytes.Length > LearningRecordFile.MaxBytes)
+					return "file_too_large";
+				total += bytes.Length;
+				if (total > TrainingSubmissionRules.MaxUploadBytes)
+					return "file_too_large";
+				files.Add(new TrainingEvidenceUpload { FileName = name, ContentType = type, Data = bytes, Kind = input.Kind });
+			}
+
+			return null;
 		}
 
 		private ActionResult SubmissionRefused(string error) =>
@@ -620,7 +790,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return "file_name_required";
 				if (name.Length > 255)
 					return "text_too_long";
-				if (!EvidenceTypes.TryGetValue(System.IO.Path.GetExtension(name).TrimStart('.'), out var type))
+				var type = Resgrid.Services.TrainingEvidencePolicy.ContentTypeOf(name);
+				if (type == null)
 					return "file_type_not_allowed";
 
 				// Base64 is 4 characters per 3 bytes: refuse on the encoded length before decoding allocates an oversized buffer
@@ -670,7 +841,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			(categories ?? Enumerable.Empty<TrainingCategory>()).Where(c => c != null)
 				.GroupBy(c => c.TrainingCategoryId).ToDictionary(g => g.Key, g => g.First().Name);
 
-		public static LearningRecordData MapLearningRecord(LearningRecord record, IReadOnlyDictionary<int, string> categoryNames)
+		public static LearningRecordData MapLearningRecord(LearningRecord record, IReadOnlyDictionary<int, string> categoryNames,
+			IReadOnlyDictionary<int, TrainingCompletionRecording> recordings = null)
 		{
 			string categoryName = null;
 			if (record.CategoryId.HasValue && categoryNames != null)
@@ -693,7 +865,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 				CeProvider = record.CeProvider,
 				CeCourseNumber = record.CeCourseNumber,
 				IsBackfill = record.IsBackfill,
-				PossibleDuplicate = record.HasUnresolvedDuplicate
+				PossibleDuplicate = record.HasUnresolvedDuplicate,
+				CompletionMethod = Enum.IsDefined(typeof(LearningCompletionMethods), record.CompletionMethod) ? ((LearningCompletionMethods)record.CompletionMethod).ToString() : null,
+				RecordedByUserId = record.IsRecordedByOther ? record.RecordedByUserId : null,
+				RecordedOn = record.IsRecordedByOther ? record.RecordedOn : null,
+				RecordedSource = record.IsRecordedByOther && record.RecordedCompletionId.HasValue && recordings != null && recordings.TryGetValue(record.RecordedCompletionId.Value, out var recording)
+					? TrainingCompletionRecordingRules.SourceLabel(recording) : null,
+				RecordedNote = record.IsRecordedByOther && record.RecordedCompletionId.HasValue && recordings != null && recordings.TryGetValue(record.RecordedCompletionId.Value, out var noted)
+					? noted.Note : null,
+				AttestationVersion = record.IsRecordedByOther && record.RecordedCompletionId.HasValue && recordings != null && recordings.TryGetValue(record.RecordedCompletionId.Value, out var attested)
+					? attested.AttestationVersion : null,
+				// Round 9B: self-reported vs reviewed vs recorded by an instructor, and a submission's review.
+				Provenance = TrainingSubmissionRules.ProvenanceOf(record).ToString(),
+				ReviewState = TrainingSubmissionRules.StateOf(record)?.ToString(),
+				SubmittedOn = TrainingSubmissionRules.IsSubmission(record) ? record.SubmittedOn : null,
+				ReviewNote = TrainingSubmissionRules.IsSubmission(record) ? record.ReviewNote : null
 			};
 		}
 
@@ -763,6 +949,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				CeProvider = training.CeProvider,
 				CeCourseNumber = training.CeCourseNumber,
 				HasQuiz = training.HasQuiz,
+				RequiresAcknowledgment = training.RequiresAcknowledgment,
 				Assignment = assignment,
 				Attachments = (training.Attachments ?? Enumerable.Empty<TrainingAttachment>()).Where(a => a != null).Select(a => new TrainingAttachmentData
 				{

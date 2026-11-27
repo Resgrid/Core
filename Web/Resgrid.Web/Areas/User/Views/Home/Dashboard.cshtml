@@ -43,6 +43,7 @@
   @* e-Signature S3: steps of multi-signer requests whose turn it is (home and My Training). *@
   @await Component.InvokeAsync("PendingSignatures")
   @await Component.InvokeAsync("PendingApprovals")
+  @await Component.InvokeAsync("PendingTrainingReviews")
   @await Component.InvokeAsync("AdminAssistSetupPrompt")
   @await Component.InvokeAsync("AcademyGuidance")
   @if (Model.ModernAvailable)

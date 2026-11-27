@@ -83,6 +83,7 @@
 
 
 Η ομάδα του Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GdprExportWithheldNotice" xml:space="preserve">
     <value>Η υπηρεσία σας χρησιμοποιεί την Προηγμένη Προστασία Δεδομένων, επομένως ορισμένες τιμές σε αυτήν την εξαγωγή είναι κρυπτογραφημένες και εμφανίζονται ως REDACTED. Εξακολουθούν να αποτελούν μέρος των δεδομένων σας και δεν έχουν διαγραφεί.</value>
@@ -128,6 +129,7 @@
 
 
 Η ομάδα του Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">
     <value>Κωδικός επαλήθευσης Resgrid</value>
@@ -177,6 +179,7 @@
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Αυτή είναι μια αυτόματη ειδοποίηση ασφαλείας για τον λογαριασμό σας Resgrid.</value></data>
   <data name="SigningLinkEmailSubject" xml:space="preserve">
     <value>{0}: ένα έγγραφο για υπογραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkEmailBody" xml:space="preserve">
     <value>Γεια σας {0},
@@ -189,12 +192,15 @@
 Ο σύνδεσμος χρησιμοποιείται μία φορά και λήγει στις {4}. Πριν υπογράψετε θα επιβεβαιώσετε έναν κωδικό μίας χρήσης.
 
 Αν δεν περιμένατε αυτό το μήνυμα, μπορείτε να το αγνοήσετε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkSmsBody" xml:space="preserve">
     <value>Η υπηρεσία {0} σας ζητά να υπογράψετε το "{1}": {2}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailSubject" xml:space="preserve">
     <value>{0}: ο κωδικός υπογραφής σας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailBody" xml:space="preserve">
     <value>Γεια σας {0},
@@ -202,8 +208,10 @@
 Ο κωδικός σας για την υπογραφή του εγγράφου από {3} είναι {1}. Λήγει σε {2} λεπτά.
 
 Αν δεν ζητήσατε αυτόν τον κωδικό, μπορείτε να αγνοήσετε το μήνυμα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeSmsBody" xml:space="preserve">
     <value>Ο κωδικός υπογραφής σας για {2} είναι {0}. Λήγει σε {1} λεπτά.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

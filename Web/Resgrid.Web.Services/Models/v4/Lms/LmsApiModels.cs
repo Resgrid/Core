@@ -64,10 +64,36 @@ namespace Resgrid.Web.Services.Models.v4.Lms
 		/// <summary>R-T11: only an untimed, unlimited, non-pre-test quiz that issues no certification may be answered offline.</summary>
 		public bool MayAnswerOffline { get; set; }
 		public bool AvailableOffline { get; set; }
+
+		/// <summary>
+		/// Round 10: a ProtocolVersion lesson's protocol version (open it with ProtocolContent/GetVersionContent, which applies the protocol read
+		/// rule); null for every other kind.
+		/// </summary>
+		public int? ProtocolVersionId { get; set; }
+
+		/// <summary>Round 10: the files the member uploaded for this lesson (a file-request lesson's answer); the bytes come from Lms/GetLessonFile.</summary>
+		public List<LmsLessonFileData> Files { get; set; } = new List<LmsLessonFileData>();
+
+		/// <summary>Round 10: a Survey lesson's questions (answered with Lms/SubmitSurvey); empty for every other kind.</summary>
+		public List<LmsSurveyQuestionData> SurveyQuestions { get; set; } = new List<LmsSurveyQuestionData>();
+
+		/// <summary>
+		/// Round 10: a Video lesson's caption tracks. An uploaded track has no Url here: read it with Lms/GetLessonCaptions (bearer) or the signed
+		/// URL Lms/GetLessonPlaylist hands out; an Academy track carries its public https URL.
+		/// </summary>
+		public List<LmsCaptionTrackData> Captions { get; set; } = new List<LmsCaptionTrackData>();
 	}
 
 	public class LmsCourseResult : StandardApiResponseV4Base
 	{
+		/// <summary>
+		/// Null when the course may run now; otherwise the LmsErrors name of why not (Status is Failure then): "NotLicensed" when the member
+		/// holds no LMS seat, "LapseWindowEnded" when the add-on lapsed and the window to finish has passed, "AddonRequired" and so on. Round 10
+		/// A7: the enrollment is read-only then, so the lessons carry their titles, kinds and the member's progress only (no content, media
+		/// links, prompts, survey questions or captions).
+		/// </summary>
+		public string Error { get; set; }
+
 		public LmsMyCourseData Course { get; set; }
 		public int? CurrentLessonId { get; set; }
 		public List<LmsLessonData> Lessons { get; set; } = new List<LmsLessonData>();
@@ -88,6 +114,14 @@ namespace Resgrid.Web.Services.Models.v4.Lms
 		public int EnrollmentId { get; set; }
 		public int LessonId { get; set; }
 		public string ResponseText { get; set; }
+
+		/// <summary>
+		/// Round 10: a file-request lesson's answer (optional otherwise): the file name, its type (PDF, JPEG, PNG, GIF, WEBP, plain text, DOC,
+		/// DOCX, XLS or XLSX) and its bytes as base64, at most 10 MB. Refusals: FileTooLarge, UnsupportedFile, ResponseRequired.
+		/// </summary>
+		public string FileName { get; set; }
+		public string FileContentType { get; set; }
+		public string FileData { get; set; }
 	}
 
 	/// <summary>The outcome of an LMS action: Status is Success or Failure; Error names the LmsErrors value.</summary>

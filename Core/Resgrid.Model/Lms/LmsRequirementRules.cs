@@ -58,6 +58,9 @@ namespace Resgrid.Model.Lms
 
 		public int? LastLearningRecordId { get; set; }
 
+		/// <summary>Round 7B: the last completion was recorded by an instructor (the matrix says so; never as the member's own).</summary>
+		public bool LastRecordedByOther { get; set; }
+
 		/// <summary>Rule 12: nothing becomes overdue or enforceable before this moment.</summary>
 		public DateTime? HoldUntilUtc { get; set; }
 
@@ -113,6 +116,7 @@ namespace Resgrid.Model.Lms
 			var last = mine.LastOrDefault();
 			status.LastCompletedUtc = last?.CompletedOn;
 			status.LastLearningRecordId = last?.LearningRecordId;
+			status.LastRecordedByOther = last?.CompletionMethod == (int)LearningCompletionMethods.RecordedByOther;
 
 			if (!requirement.IsCounted)
 			{

@@ -11,8 +11,9 @@ using Resgrid.Web.Helpers;
 namespace Resgrid.Web.Services.Helpers
 {
 	/// <summary>
-	/// What an API caller can prove for a signature (S0): the validated session's latest second-factor evidence, read from the
-	/// server-side evidence store (never from the request body or token claims). The signing service decides the level.
+	/// What an API caller can prove for a signature (S0): the validated session's latest second-factor evidence, and its latest password
+	/// or SSO reauthentication, read from the server-side evidence store (never from the request body or token claims). Evidence that
+	/// names another department is not offered. The signing service decides the level under the department's step-up rule.
 	/// </summary>
 	public static class ApiSignatureProof
 	{
@@ -32,10 +33,19 @@ namespace Resgrid.Web.Services.Helpers
 					return proof;
 
 				var latest = await evidence.GetLatestSecondFactorAsync(userId, sessionKey, session.AuthenticationGeneration, cancellationToken);
-				if (latest != null && (policy == null || await policy.IsEvidenceAcceptedAsync(departmentId, MfaMethodScope.Login, latest, cancellationToken)))
+				if (latest != null && InDepartment(latest, departmentId) &&
+					(policy == null || await policy.IsEvidenceAcceptedAsync(departmentId, MfaMethodScope.Login, latest, cancellationToken)))
 				{
 					proof.StepUpVerifiedOnUtc = latest.VerifiedOnUtc;
 					proof.StepUpMethod = latest.Method;
+				}
+
+				// The password or SSO entered again: offered as such, never as a second factor; the department's rule decides whether it counts.
+				var reauthentication = await evidence.GetLatestReauthenticationAsync(userId, sessionKey, session.AuthenticationGeneration, cancellationToken);
+				if (reauthentication != null && InDepartment(reauthentication, departmentId))
+				{
+					proof.ReauthenticatedOnUtc = reauthentication.VerifiedOnUtc;
+					proof.ReauthenticationMethod = reauthentication.Method;
 				}
 			}
 			catch (Exception ex) when (!(ex is OperationCanceledException))
@@ -46,5 +56,8 @@ namespace Resgrid.Web.Services.Helpers
 
 			return proof;
 		}
+
+		/// <summary>Evidence recorded for one department (a step-up made there) never serves another; sign-in evidence names none.</summary>
+		private static bool InDepartment(MfaEvidence evidence, int departmentId) => evidence.DepartmentId == null || evidence.DepartmentId == departmentId;
 	}
 }

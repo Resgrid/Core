@@ -1,0 +1,77 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetAvailableModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3, subscriber: a set a linked department shares with the department. Its items, how locked each is, and for a course set whether
+    the department can receive the LMS items (its own add-on or the publisher's sponsorship). Subscribing copies the items into the department.
+*@
+@{
+    var set = Model.Set.Set;
+    var training = set.Kind == (int)ContentSetKinds.Training;
+    ViewBag.Title = "Resgrid | " + set.Name;
+    ViewData["Title"] = set.Name;
+    ViewData["Subtitle"] = string.Format(text["AvailableSubtitle"].Value, Model.Set.PublisherName);
+    ViewData["SetSection"] = training ? "Training" : "Protocols";
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
+        <div class="ibox-content">
+            @if (!string.IsNullOrWhiteSpace(set.Description))
+            {
+                <p>@set.Description</p>
+            }
+            <p class="small text-muted">@string.Format(text["DeferDaysSummary"].Value, set.LockedDeferDays)</p>
+            @if (training)
+            {
+                <div class="alert @(Model.Set.CanRunLms ? "alert-info" : "alert-warning")">
+                    @(Model.Set.SponsoredByPublisher ? string.Format(text["SponsoredBy"].Value, Model.Set.PublisherName) : Model.Set.CanRunLms ? text["LmsReady"] : text["LmsNeeded"])
+                </div>
+            }
+            <div class="table-responsive">
+                <table class="table rgw-table">
+                    <thead><tr><th scope="col">@text["ColumnItem"]</th><th scope="col">@text["ColumnVersion"]</th><th scope="col">@text["LockModeLabel"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model.Set.Items)
+                        {
+                            <tr>
+                                <td>@item.Title
+                                    @if (item.NeedsLms) { <span class="label label-info">@text["LmsItemLabel"]</span> }
+                                    @if (!string.IsNullOrEmpty(item.Problem)) { <span class="label label-warning">@text["Problem_" + item.Problem]</span> }
+                                    @if (item.Blocks.Count > 0) { <div class="small text-muted">@text["YouCanChange"] @string.Join(", ", item.Blocks.Select(b => b.Label))</div> }
+                                </td>
+                                <td>@item.VersionLabel</td>
+                                <td>@text["LockMode" + (ContentSetLockModes)item.Item.LockMode]</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @if (Model.Set.Subscription != null)
+            {
+                <p><span class="label label-primary">@text["StatusSubscribed"]</span> <a asp-action="Index" asp-route-kind="@set.Kind">@text["SubscriptionsHeader"]</a></p>
+            }
+            else if (Model.CanManage)
+            {
+                <form method="post" asp-action="Subscribe" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@set.ContentSetId" />
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="autoAccept" value="true" /> @text["AutoAcceptLabel"]</label>
+                        <input type="hidden" name="autoAccept" value="false" />
+                        <span class="help-block small">@text["AutoAcceptHelp"]</span>
+                    </div>
+                    <button type="submit" class="btn btn-primary" data-confirm="@text["SubscribeConfirm"]"><i class="fa fa-download" aria-hidden="true"></i> @text["SubscribeButton"]</button>
+                </form>
+            }
+            else
+            {
+                <p class="text-muted">@text["ManagersSubscribe"]</p>
+            }
+        </div>
+    </div>
+</div>

@@ -60,98 +60,130 @@
   </resheader>
   <data name="AcceptButton" xml:space="preserve">
     <value>Прийняти вибране</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcceptedNotice" xml:space="preserve">
     <value>{0} додано до редактора. Збережіть, щоб їх залишити.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcceptedSummaryNotice" xml:space="preserve">
     <value>Підсумок змін заповнено. Перевірте його перед надсиланням.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BudgetNotice" xml:space="preserve">
     <value>Місячний ліміт ШІ вашого підрозділу вичерпано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BusyNotice" xml:space="preserve">
     <value>Сервіс ШІ зайнятий. Спробуйте ще раз за мить.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CorrectLabel" xml:space="preserve">
     <value>Правильна</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiscardButton" xml:space="preserve">
     <value>Відхилити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftChangeSummaryButton" xml:space="preserve">
     <value>Створити підсумок змін</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftedNotice" xml:space="preserve">
     <value>Чернетка лише з цього вмісту. Перевірте кожен елемент; нічого не зберігається, доки ви не приймете.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Drafting" xml:space="preserve">
     <value>Створення чернетки…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftOutlineButton" xml:space="preserve">
     <value>Створити план курсу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftQuizButton" xml:space="preserve">
     <value>Створити запитання тесту</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DroppedNotice" xml:space="preserve">
     <value>{0} елемент(ів) пропущено, бо вони містили число, якого немає у вмісті.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExcludedNotice" xml:space="preserve">
     <value>Цей вміст виключено зі ШІ, тож помічники для чернеток недоступні.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplanationLabel" xml:space="preserve">
     <value>Пояснення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InvalidNotice" xml:space="preserve">
     <value>Запит недійсний.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KeepLabel" xml:space="preserve">
     <value>Залишити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KeptLocalNotice" xml:space="preserve">
     <value>Розширений захист даних тримає вміст підрозділу локально, тож помічники для чернеток недоступні.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ModuleNumber" xml:space="preserve">
     <value>Модуль {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoChangesNotice" xml:space="preserve">
     <value>Немає попередньої версії для порівняння, або нічого не змінилося.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoContentNotice" xml:space="preserve">
     <value>Спершу додайте більше вмісту; його замало для чернетки.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotAllowedNotice" xml:space="preserve">
     <value>Ви не можете редагувати цей вміст.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotFoundNotice" xml:space="preserve">
     <value>Цей вміст не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NothingSelectedNotice" xml:space="preserve">
     <value>Позначте принаймні один елемент.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ObjectiveLabel" xml:space="preserve">
     <value>Мета</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PanelHeader" xml:space="preserve">
     <value>Помічники для чернеток</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PanelHelp" xml:space="preserve">
     <value>Створіть чернетку з цього вмісту за допомогою ШІ, а потім перевірте її. Нічого не зберігається, доки ви не приймете, і кожне число має походити з вмісту.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionCountLabel" xml:space="preserve">
     <value>Кількість запитань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionCountOption" xml:space="preserve">
     <value>{0} запитань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionNumber" xml:space="preserve">
     <value>Запитання {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RefusedNotice" xml:space="preserve">
     <value>Чернетку не вдалося використати. Спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UnavailableNotice" xml:space="preserve">
     <value>Помічники для чернеток зараз недоступні.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

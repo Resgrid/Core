@@ -60,803 +60,1090 @@
   </resheader>
   <data name="HealthRecordsTab" xml:space="preserve">
     <value>Hälsojournaler</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearancesTab" xml:space="preserve">
     <value>Medicinsk klarering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaTab" xml:space="preserve">
     <value>OSHA-logg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthRecordsTitle" xml:space="preserve">
     <value>Hälsojournaler</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthRecordsIntro" xml:space="preserve">
     <value>Dina exponeringsärenden, skador, tjänstestatus och medicinska klarering. Bara du och organisationens hälsoansvariga ser dem.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportExposureButton" xml:space="preserve">
     <value>Rapportera exponering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportInjuryButton" xml:space="preserve">
     <value>Rapportera skada</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DutyStatusLabel" xml:space="preserve">
     <value>Tjänstestatus</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExpectedReturnLabel" xml:space="preserve">
     <value>Väntas tillbaka</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceStatusLabel" xml:space="preserve">
     <value>Medicinsk klarering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoClearance" xml:space="preserve">
     <value>Ingen registrerad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ValidUntilLabel" xml:space="preserve">
     <value>Nästa bedömning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenCasesLabel" xml:space="preserve">
     <value>Öppna exponeringsärenden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenInjuriesLabel" xml:space="preserve">
     <value>Öppna skador</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenCasesHeader" xml:space="preserve">
     <value>Öppna exponeringsärenden (utsedd ansvarig)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoOpenCases" xml:space="preserve">
     <value>Inget exponeringsärende är öppet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberColumn" xml:space="preserve">
     <value>Medlem</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MemberLabel" xml:space="preserve">
     <value>Medlem</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DateColumn" xml:space="preserve">
     <value>Datum för händelsen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RouteColumn" xml:space="preserve">
     <value>Exponeringssätt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StageColumn" xml:space="preserve">
     <value>Steg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>Åtgärder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenButton" xml:space="preserve">
     <value>Öppna</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotificationOverdue" xml:space="preserve">
     <value>Svar försenat</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenInjuriesHeader" xml:space="preserve">
     <value>Öppna skador</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoOpenInjuries" xml:space="preserve">
     <value>Ingen skada är öppen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaseNumberColumn" xml:space="preserve">
     <value>Ärendenr</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyCasesHeader" xml:space="preserve">
     <value>Mina exponeringsärenden</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCasesSelf" xml:space="preserve">
     <value>Du har inget exponeringsärende. Rapportera här en exponering för blodburen smitta eller smittsam sjukdom, eller från en exponeringspost.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyInjuriesHeader" xml:space="preserve">
     <value>Mina skador</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoInjuriesSelf" xml:space="preserve">
     <value>Du har ingen registrerad skada.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StateColumn" xml:space="preserve">
     <value>Läge</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DutyBoardHeader" xml:space="preserve">
     <value>Översikt över tjänstestatus</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DutyBoardHelp" xml:space="preserve">
     <value>Medlemmar i begränsad tjänst, ur tjänst eller utan full klarering. Visar bara statusen, aldrig varför.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoDutyBoard" xml:space="preserve">
     <value>Alla du ansvarar för är i full tjänst och klarerade.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SinceLabel" xml:space="preserve">
     <value>Sedan</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrivacyNote" xml:space="preserve">
     <value>Journalerna är begränsade: du, den utsedda ansvariga och friskvårdsansvariga ser dem. Administratörer och chefer ser bara tjänstestatus, aldrig medicinska detaljer. De är aldrig sökbara och används aldrig av AI.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Duty.FullDuty" xml:space="preserve">
     <value>Full tjänst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Duty.RestrictedDuty" xml:space="preserve">
     <value>Begränsad tjänst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Duty.OffDuty" xml:space="preserve">
     <value>Ur tjänst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Clearance.Cleared" xml:space="preserve">
     <value>Klarerad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Clearance.ClearedWithRestrictions" xml:space="preserve">
     <value>Klarerad med begränsningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Clearance.NotCleared" xml:space="preserve">
     <value>Inte klarerad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryState.Open" xml:space="preserve">
     <value>Öppen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryState.Cleared" xml:space="preserve">
     <value>Åter i tjänst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryState.Voided" xml:space="preserve">
     <value>Registrerad av misstag</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.Reported" xml:space="preserve">
     <value>Rapporterat</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.SourceFollowUpRequested" xml:space="preserve">
     <value>Uppföljning av källan begärd</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.NotificationRequested" xml:space="preserve">
     <value>Underrättelse begärd (Ryan White)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.NotificationReceived" xml:space="preserve">
     <value>Underrättelse besvarad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.FollowUp" xml:space="preserve">
     <value>Uppföljning efter exponering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.Closed" xml:space="preserve">
     <value>Avslutat</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Stage.Withdrawn" xml:space="preserve">
     <value>Registrerat av misstag</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.Percutaneous" xml:space="preserve">
     <value>Stick- eller skärskada</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.MucousMembrane" xml:space="preserve">
     <value>Stänk i ögon, näsa eller mun</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.NonIntactSkin" xml:space="preserve">
     <value>Kontakt med skadad hud</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.Airborne" xml:space="preserve">
     <value>Luftburen smittsam sjukdom</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Route.Other" xml:space="preserve">
     <value>Annat</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaseTitle" xml:space="preserve">
     <value>Exponeringsärende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaseIntro" xml:space="preserve">
     <value>En exponering för blodburen smitta eller smittsam sjukdom, från rapport till avslut. Den utsedda ansvariga för ärendet vidare.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedWithheldNotice" xml:space="preserve">
     <value>Vissa uppgifter är skyddade och döljs utan behörighet till skyddade data.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotificationOverdueHelp" xml:space="preserve">
     <value>Vårdinrättningen har inte besvarat begäran om underrättelse inom 48 timmar. Påminn inrättningen eller börja uppföljningen ändå.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CaseFactsHeader" xml:space="preserve">
     <value>Exponeringen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OccurredLabel" xml:space="preserve">
     <value>När det hände</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CallLabel" xml:space="preserve">
     <value>Larm</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportedLabel" xml:space="preserve">
     <value>Rapporterad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SourceFacilityLabel" xml:space="preserve">
     <value>Mottagande vårdinrättning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotificationDueLabel" xml:space="preserve">
     <value>Svar senast</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPatientIdentityNote" xml:space="preserve">
     <value>Ange aldrig källpatientens namn eller journalnummer. Ärendet pekar på larmet; den mottagande inrättningen identifierar källan utifrån det.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BbpTrainingHeader" xml:space="preserve">
     <value>Utbildning i blodburen smitta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExpiresLabel" xml:space="preserve">
     <value>Går ut</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.NotTracked" xml:space="preserve">
     <value>Följs inte upp av organisationen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.Current" xml:space="preserve">
     <value>Giltig</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.ExpiringSoon" xml:space="preserve">
     <value>Går snart ut</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.Expired" xml:space="preserve">
     <value>Utgången</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Bbp.None" xml:space="preserve">
     <value>Ingen post</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordInjuryButton" xml:space="preserve">
     <value>Registrera som skada</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordInjuryHelp" xml:space="preserve">
     <value>En stick- eller skärskada med blodsmitta är ett sekretessärende som ska föras in enligt OSHA. Registrera den som skada så att den hamnar i OSHA-loggen utan medlemmens namn.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextStepHeader" xml:space="preserve">
     <value>Nästa steg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextStepHelp" xml:space="preserve">
     <value>Ange när steget skedde och eventuella anteckningar och välj sedan steget. Den mottagande inrättningen krävs för att begära uppföljning av källan.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepDateLabel" xml:space="preserve">
     <value>När (tomt = nu)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepNotesLabel" xml:space="preserve">
     <value>Anteckningar för steget</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtectedFieldHelp" xml:space="preserve">
     <value>Skyddat: bara medlemmen och de ansvariga läser det.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MoveToFormat" xml:space="preserve">
     <value>Gå till: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotesHeader" xml:space="preserve">
     <value>Skyddade anteckningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SourceFollowUpNotesLabel" xml:space="preserve">
     <value>Uppföljning av källan</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotificationResponseLabel" xml:space="preserve">
     <value>Svar på underrättelsen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MedicalNotesLabel" xml:space="preserve">
     <value>Anteckningar om provtagning och behandling</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClosureNotesLabel" xml:space="preserve">
     <value>Avslutande anteckningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Spara</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WithheldValue" xml:space="preserve">
     <value>Dolt (skyddat)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpsHeader" xml:space="preserve">
     <value>Uppföljningsuppgifter efter exponering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoFollowUps" xml:space="preserve">
     <value>Inga uppföljningsuppgifter ännu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpColumn" xml:space="preserve">
     <value>Uppgift</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssigneeColumn" xml:space="preserve">
     <value>Tilldelad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueColumn" xml:space="preserve">
     <value>Förfaller</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CompleteButton" xml:space="preserve">
     <value>Klar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CancelButton" xml:space="preserve">
     <value>Avbryt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddFollowUpButton" xml:space="preserve">
     <value>Lägg till uppgift</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpPrivacyHelp" xml:space="preserve">
     <value>En uppgift anger bara sin typ, aldrig ett resultat; den går till medlemmen eller en utsedd ansvarig.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.baseline_testing" xml:space="preserve">
     <value>Utgångsprover</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.prophylaxis_review" xml:space="preserve">
     <value>Bedömning av profylax</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.six_week_test" xml:space="preserve">
     <value>Prov efter sex veckor</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.three_month_test" xml:space="preserve">
     <value>Prov efter tre månader</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.six_month_test" xml:space="preserve">
     <value>Prov efter sex månader</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.counselling" xml:space="preserve">
     <value>Rådgivning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpKind.other" xml:space="preserve">
     <value>Annat</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Open" xml:space="preserve">
     <value>Öppen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Acknowledged" xml:space="preserve">
     <value>Kvitterad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Completed" xml:space="preserve">
     <value>Klar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FollowUpState.Cancelled" xml:space="preserve">
     <value>Avbruten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportExposureTitle" xml:space="preserve">
     <value>Rapportera exponering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportExposureIntro" xml:space="preserve">
     <value>En exponering för blodburen smitta eller smittsam sjukdom. Den utsedda ansvariga får besked direkt och tar över.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExistingEntryLabel" xml:space="preserve">
     <value>Från en av dina exponeringsposter</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExistingEntryHelp" xml:space="preserve">
     <value>Välj en post du redan har loggat eller lämna tomt för en ny.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewEntryOption" xml:space="preserve">
     <value>En ny exponering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCallOption" xml:space="preserve">
     <value>Inget larm</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NarrativeLabel" xml:space="preserve">
     <value>Vad som hände</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PpeWornLabel" xml:space="preserve">
     <value>Skyddsutrustning som bars</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubmitReportButton" xml:space="preserve">
     <value>Skicka rapporten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReportInjuryTitle" xml:space="preserve">
     <value>Rapportera skada</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryTitle" xml:space="preserve">
     <value>Skada</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryIntro" xml:space="preserve">
     <value>Vad som hände, tjänstestatus med datum, begränsningar och klarering för återgång i tjänst. Chefer ser bara tjänstestatus.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReturnedOnLabel" xml:space="preserve">
     <value>Åter i full tjänst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LinkedCaseLabel" xml:space="preserve">
     <value>Öppna exponeringsärendet som skadan kommer från</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatHappenedHeader" xml:space="preserve">
     <value>Vad som hände</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LocationLabel" xml:space="preserve">
     <value>Var det hände</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="JobTitleLabel" xml:space="preserve">
     <value>Befattning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DescriptionLabel" xml:space="preserve">
     <value>Vad medlemmen gjorde och vad som hände</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryDetailsLabel" xml:space="preserve">
     <value>Skadan, kroppsdelen och orsaken</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TreatmentLabel" xml:space="preserve">
     <value>Läkare, inrättning och behandling</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaHeader" xml:space="preserve">
     <value>OSHA-klassificering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaHelp" xml:space="preserve">
     <value>Ett rapporteringspliktigt ärende förs in i årets OSHA 300-logg och får en 301-rapport. Dagarna räknas från historiken över tjänstestatus.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaTypeLabel" xml:space="preserve">
     <value>Typ av skada eller sjukdom</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DiedOnLabel" xml:space="preserve">
     <value>Dödsdatum</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordableLabel" xml:space="preserve">
     <value>Rapporteringspliktigt OSHA-ärende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrivacyCaseLabel" xml:space="preserve">
     <value>Sekretessärende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrivacyCaseHelp" xml:space="preserve">
     <value>Namnet utelämnas i 300-loggen (29 CFR 1904.29(b)).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EmergencyRoomLabel" xml:space="preserve">
     <value>Behandlad på akutmottagning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HospitalizedLabel" xml:space="preserve">
     <value>Inlagd över natten</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaOfficerOnlyNote" xml:space="preserve">
     <value>Organisationens hälsoansvariga granskar rapporten och fyller i OSHA-klassificeringen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DutyHistoryHeader" xml:space="preserve">
     <value>Historik för tjänstestatus</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RestrictionsLabel" xml:space="preserve">
     <value>Begränsningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPeriods" xml:space="preserve">
     <value>Full tjänst hela tiden.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FromColumn" xml:space="preserve">
     <value>Från</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToColumn" xml:space="preserve">
     <value>Till</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OngoingLabel" xml:space="preserve">
     <value>Pågår</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SetDutyStatusHeader" xml:space="preserve">
     <value>Begränsad tjänst eller ur tjänst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RestrictionsHelp" xml:space="preserve">
     <value>Skyddat. Chefer ser bara att medlemmen har begränsad tjänst.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SetDutyStatusButton" xml:space="preserve">
     <value>Ange tjänstestatus</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReturnHeader" xml:space="preserve">
     <value>Återgång i tjänst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReturnHelp" xml:space="preserve">
     <value>Klareringen för återgång i full tjänst avslutar skadans tjänsteperioder.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceNotesLabel" xml:space="preserve">
     <value>Anteckningar om klarering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearReturnButton" xml:space="preserve">
     <value>Klarera för full tjänst</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidInjuryButton" xml:space="preserve">
     <value>Registrerad av misstag</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidInjuryHelp" xml:space="preserve">
     <value>Posten sparas under bevarandetiden och lämnar OSHA-loggen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearancesTitle" xml:space="preserve">
     <value>Medicinsk klarering (NFPA 1582)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearancesIntro" xml:space="preserve">
     <value>Arbetsmedicinska bedömningar med begränsningsstatus. Befäl och bemanning ser statusen; detaljerna om begränsningarna är skyddade.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceTypeMissingNote" xml:space="preserve">
     <value>Ange en certifikattyp för medicinsk klarering i friskvårdsinställningarna (från mallen "Medical Clearance (NFPA 1582)") så att varje bedömning även registreras som ett certifikat.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CurrentClearancesHeader" xml:space="preserve">
     <value>Aktuell klarering per medlem</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoClearances" xml:space="preserve">
     <value>Ingen klarering registrerad ännu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EvaluatedOnLabel" xml:space="preserve">
     <value>Bedömd</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HistoryButton" xml:space="preserve">
     <value>Historik</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordClearanceHeader" xml:space="preserve">
     <value>Registrera en bedömning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RestrictionDetailLabel" xml:space="preserve">
     <value>Begränsningar och skäl</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceDetailHelp" xml:space="preserve">
     <value>Skyddat (ADP). Befäl och bemanning ser bara Klarerad, Klarerad med begränsningar eller Inte klarerad.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecordClearanceButton" xml:space="preserve">
     <value>Spara bedömningen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HistoryHeaderFormat" xml:space="preserve">
     <value>Klareringshistorik: {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidedLabel" xml:space="preserve">
     <value>Ogiltigförklarad</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VoidButton" xml:space="preserve">
     <value>Ogiltigförklara</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HealthSettingsHeader" xml:space="preserve">
     <value>Exponeringsärenden, skador och medicinsk klarering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DesignatedOfficerRoleLabel" xml:space="preserve">
     <value>Roll för utsedd ansvarig</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DesignatedOfficerRoleHelp" xml:space="preserve">
     <value>Medlemmar i rollen tar emot rapporter om exponering för blodburen smitta och smittsamma sjukdomar (Ryan White del G) och driver ärendena.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SameAsWellnessOfficerOption" xml:space="preserve">
     <value>Rollen för friskvårdsansvarig</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BbpTrainingTypeLabel" xml:space="preserve">
     <value>Certifikat för utbildning i blodburen smitta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BbpTrainingTypeHelp" xml:space="preserve">
     <value>Varje exponeringsärende visar medlemmens aktuella status i denna årliga utbildning (OSHA 1910.1030).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceTypeLabel" xml:space="preserve">
     <value>Certifikat för medicinsk klarering</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ClearanceTypeHelp" xml:space="preserve">
     <value>Varje NFPA 1582-bedömning registreras också som ett certifikat av denna typ; Inte klarerad stänger av det.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryRetentionYearsLabel" xml:space="preserve">
     <value>Spara skadejournaler (år)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InjuryRetentionYearsHelp" xml:space="preserve">
     <value>Efter utgången av skadeåret: minst 5 (OSHA 1904.33). Exponeringsärenden och klareringar följer exponeringarnas 30-åriga bevarande.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaTitle" xml:space="preserve">
     <value>OSHA 300 och 301</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OshaIntro" xml:space="preserve">
     <value>Årets logg över rapporteringspliktiga skador och händelserapporterna, byggda från skadejournalerna. Sekretessärenden visas utan namn.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowButton" xml:space="preserve">
     <value>Visa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Export300Csv" xml:space="preserve">
     <value>300-logg (CSV)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Export300Pdf" xml:space="preserve">
     <value>300-logg (PDF)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Export301Csv" xml:space="preserve">
     <value>301-rapporter (CSV)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Export301Pdf" xml:space="preserve">
     <value>301-rapporter (PDF)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoCasesOnLog" xml:space="preserve">
     <value>Inga rapporteringspliktiga ärenden i år.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PrivacyMaskNote" xml:space="preserve">
     <value>Ett sekretessärende visar "Sekretessärende" i stället för namnet, här och i varje export av 300-loggen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OutcomeColumn" xml:space="preserve">
     <value>Utfall</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outcome.Death" xml:space="preserve">
     <value>Dödsfall</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outcome.DaysAwayFromWork" xml:space="preserve">
     <value>Frånvarodagar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outcome.JobTransferOrRestriction" xml:space="preserve">
     <value>Omplacering eller begränsning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Outcome.OtherRecordable" xml:space="preserve">
     <value>Annat rapporteringspliktigt ärende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.LogTitle" xml:space="preserve">
     <value>Logg över arbetsrelaterade skador och sjukdomar (enligt OSHA-formulär 300)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.ReportTitle" xml:space="preserve">
     <value>Händelserapport om skada eller sjukdom (enligt OSHA-formulär 301)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Establishment" xml:space="preserve">
     <value>Arbetsställe</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Year" xml:space="preserve">
     <value>År</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.CaseNumber" xml:space="preserve">
     <value>Ärendenr</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.EmployeeName" xml:space="preserve">
     <value>Den anställdes namn</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.JobTitle" xml:space="preserve">
     <value>Befattning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DateOfInjury" xml:space="preserve">
     <value>Datum för skadan eller sjukdomens början</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Where" xml:space="preserve">
     <value>Plats för händelsen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Description" xml:space="preserve">
     <value>Skada eller sjukdom, drabbade kroppsdelar och föremål eller ämne</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Death" xml:space="preserve">
     <value>Dödsfall</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DaysAwayCase" xml:space="preserve">
     <value>Frånvarodagar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.RestrictedCase" xml:space="preserve">
     <value>Omplacering eller begränsning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.OtherRecordable" xml:space="preserve">
     <value>Annat rapporteringspliktigt ärende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DaysAway" xml:space="preserve">
     <value>Borta från arbetet (dagar)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DaysRestricted" xml:space="preserve">
     <value>Omplacerad eller begränsad (dagar)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.Injury" xml:space="preserve">
     <value>Skada</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.SkinDisorder" xml:space="preserve">
     <value>Hudsjukdom</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.RespiratoryCondition" xml:space="preserve">
     <value>Andningsbesvär</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.Poisoning" xml:space="preserve">
     <value>Förgiftning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.HearingLoss" xml:space="preserve">
     <value>Hörselnedsättning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Type.AllOtherIllnesses" xml:space="preserve">
     <value>Alla andra sjukdomar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Totals" xml:space="preserve">
     <value>Summor</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.TimeOfEvent" xml:space="preserve">
     <value>Tidpunkt för händelsen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.WhatHappened" xml:space="preserve">
     <value>Vad gjorde den anställde och vad hände?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.InjuryDetails" xml:space="preserve">
     <value>Vilken var skadan eller sjukdomen och vad orsakade den?</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Treatment" xml:space="preserve">
     <value>Läkare, inrättning och behandling</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.EmergencyRoom" xml:space="preserve">
     <value>Behandlad på akutmottagning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Hospitalized" xml:space="preserve">
     <value>Inlagd över natten som slutenvårdspatient</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.DateOfDeath" xml:space="preserve">
     <value>Dödsdatum</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.PrivacyCase" xml:space="preserve">
     <value>Sekretessärende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.PrivacyCaseName" xml:space="preserve">
     <value>Sekretessärende</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.EmployeeDetailsNote" xml:space="preserve">
     <value>Den anställdes adress, födelsedatum, anställningsdatum och kön fylls i från personalakten.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Withheld" xml:space="preserve">
     <value>Dolt (skyddat)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Yes" xml:space="preserve">
     <value>Ja</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.No" xml:space="preserve">
     <value>Nej</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Retention" xml:space="preserve">
     <value>Spara dessa uppgifter i fem år efter utgången av det år de gäller (29 CFR 1904.33).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Osha.Generated" xml:space="preserve">
     <value>Skapad {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ExposureReported" xml:space="preserve">
     <value>Exponeringen rapporterades och den utsedda ansvariga fick besked.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.CaseMoved" xml:space="preserve">
     <value>Ärendet gick vidare till nästa steg.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.Saved" xml:space="preserve">
     <value>Sparat.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpAdded" xml:space="preserve">
     <value>Uppföljningsuppgiften lades till.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCompleted" xml:space="preserve">
     <value>Uppföljningsuppgiften är klar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.FollowUpCancelled" xml:space="preserve">
     <value>Uppföljningsuppgiften avbröts.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.InjuryReported" xml:space="preserve">
     <value>Skadan rapporterades.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.DutyStatusSaved" xml:space="preserve">
     <value>Tjänstestatusen angavs.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ReturnedToDuty" xml:space="preserve">
     <value>Medlemmen är klarerad för full tjänst.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.InjuryVoided" xml:space="preserve">
     <value>Skadan är markerad som registrerad av misstag.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ClearanceRecorded" xml:space="preserve">
     <value>Bedömningen registrerades.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Msg.ClearanceVoided" xml:space="preserve">
     <value>Bedömningen ogiltigförklarades.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.Generic" xml:space="preserve">
     <value>Det gick inte att spara. Kontrollera formuläret och försök igen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.NotAllowed" xml:space="preserve">
     <value>Du har inte behörighet att göra det.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.ExportFailed" xml:space="preserve">
     <value>Exporten kunde inte skapas. Försök igen senare.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.date_invalid" xml:space="preserve">
     <value>Ange ett giltigt datum (inte i framtiden).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.member_not_found" xml:space="preserve">
     <value>Personen är inte nuvarande medlem i organisationen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.route_required" xml:space="preserve">
     <value>Välj exponeringssätt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.entry_not_bloodborne" xml:space="preserve">
     <value>Ett ärende kan bara följa en bekräftad post om blodburen smitta (eller annat).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.case_exists" xml:space="preserve">
     <value>Posten har redan ett öppet ärende.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.call_not_found" xml:space="preserve">
     <value>Larmet hittades inte i organisationen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.case_changed" xml:space="preserve">
     <value>Någon annan har ändrat ärendet. Ladda om det och försök igen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.stage_not_allowed" xml:space="preserve">
     <value>Ärendet kan inte gå till det steget härifrån.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.facility_required" xml:space="preserve">
     <value>Ange den mottagande vårdinrättningen för att begära uppföljning av källan.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_ups_open" xml:space="preserve">
     <value>Slutför eller avbryt öppna uppföljningsuppgifter innan ärendet avslutas.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.case_closed" xml:space="preserve">
     <value>Ärendet är avslutat.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
     <value>En uppgift går till den exponerade medlemmen eller en utsedd ansvarig.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.duty_status_required" xml:space="preserve">
     <value>Välj begränsad tjänst eller ur tjänst.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.return_date_invalid" xml:space="preserve">
     <value>Beräknad återgång måste vara efter startdatumet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.date_before_current_status" xml:space="preserve">
     <value>Datumet ligger före den nuvarande tjänstestatusens början.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.injury_not_open" xml:space="preserve">
     <value>Bara en öppen skada kan klareras för tjänst.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.clearance_status_required" xml:space="preserve">
     <value>Välj klareringsstatus.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.valid_until_invalid" xml:space="preserve">
     <value>Nästa bedömning måste vara efter bedömningsdatumet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.injury_changed" xml:space="preserve">
     <value>Någon annan har ändrat skadan. Ladda om den och försök igen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Error.protected_write_refused" xml:space="preserve">
     <value>Skyddade uppgifter kunde inte sparas just nu. Försök igen senare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerCertificationLabel" xml:space="preserve">
+    <value>Certifiering för utsedd ansvarig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerCertificationHelp" xml:space="preserve">
+    <value>Valfritt. En av era certifieringstyper, till exempel från mallen Utsedd ansvarig för exponeringskontroll. Utan en vald roll för utsedd ansvarig gäller rollen för välmåendeansvarig och dess certifiering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>Att lägga till eller ändra välmåenderegister kräver tillägget Workforce Pro. Befintliga register går fortfarande att läsa.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>Workforce Pro är inte påslaget för den här medlemmen, så medlemmens register är skrivskyddade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>Medlemmars välmående är inte tillgängligt för den här organisationen.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

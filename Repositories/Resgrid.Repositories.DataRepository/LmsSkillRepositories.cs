@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	// Training T4 part 2 (round 5C, M0407-M0410). Portable SQL over the LMS repository base; member ids are citext on PostgreSQL, so their
+	// Training T4 part 2 (round 5C, M0381-M0384). Portable SQL over the LMS repository base; member ids are citext on PostgreSQL, so their
 	// parameters are cast (pg-citext-text-param-equality); list parameters use InList (postgres-dapper-in-list); list queries never select
 	// evidence bytes; nullable timestamps never decide the SQL shape in SQL (pg-untyped-null-param-is-null).
 

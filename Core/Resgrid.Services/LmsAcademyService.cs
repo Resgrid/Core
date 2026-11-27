@@ -498,7 +498,8 @@ namespace Resgrid.Services
 			var course = await GetCourseForLessonAsync(lessonId);
 			if (course == null)
 				return new LmsAssignOutcome { Error = LmsErrors.NotFound };
-			return await _learner.AssignAsync(actor, course.LmsCourseId, who, dueOnUtc, LmsEnrollmentSources.Assigned, null, cancellationToken);
+			// An officer's own assignment of a lesson: the direct-assignment workflow event (271) too.
+			return await _learner.AssignDirectAsync(actor, course.LmsCourseId, who, dueOnUtc, cancellationToken);
 		}
 
 		public async Task<LmsAssignOutcome> AssignPathAsync(LmsActor actor, string pathKey, IEnumerable<IContentAudienceRule> who, DateTime? dueOnUtc,

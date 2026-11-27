@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	/// <summary>Member exposure and critical-incident entries (§13b WL0, M0376).</summary>
+	/// <summary>Member exposure and critical-incident entries (§13b WL0, M0360).</summary>
 	public interface IRmsResponderExposuresRepository : IRepository<RmsResponderExposure>
 	{
 		Task<RmsResponderExposure> GetByIdForDepartmentAsync(int departmentId, string exposureId);
@@ -42,7 +42,7 @@ namespace Resgrid.Model.Repositories
 		Task<int> DeleteForDepartmentAsync(int departmentId, string exposureId, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>Post-call critical-incident and exposure flags on calls (§13b WL0, M0376).</summary>
+	/// <summary>Post-call critical-incident and exposure flags on calls (§13b WL0, M0360).</summary>
 	public interface IRmsCallExposureFlagsRepository : IRepository<RmsCallExposureFlag>
 	{
 		Task<RmsCallExposureFlag> GetByIdForDepartmentAsync(int departmentId, string flagId);
@@ -64,7 +64,7 @@ namespace Resgrid.Model.Repositories
 		Task<int> ReleaseGenerationAsync(int departmentId, string flagId, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>At-risk screening flags on members (§13b WL0, M0376).</summary>
+	/// <summary>At-risk screening flags on members (§13b WL0, M0360).</summary>
 	public interface IRmsResponderScreeningFlagsRepository : IRepository<RmsResponderScreeningFlag>
 	{
 		Task<RmsResponderScreeningFlag> GetByIdForDepartmentAsync(int departmentId, string flagId);

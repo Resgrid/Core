@@ -91,6 +91,8 @@ namespace Resgrid.Tests.Web.User
 			["Knowledge/Settings"] = "editors are plain name= inputs (IncludeDocuments, DosingToolUrl), not asp-for; Field is the input's id for the deep link",
 			["LmsRequirements/Enforcement"] = "editors are plain name= inputs posted as LmsSettingsForm, not asp-for; Field is the input's id for the deep link",
 			["LmsSkills/Settings"] = "editors are plain inputs named after the action's parameters, not asp-for; Field is the input's id for the deep link",
+			["LmsExports/Ce"] = "editors are plain inputs named after the action's parameters, not asp-for; Field is the input's id for the deep link",
+			["LmsStandards/Xapi"] = "editors are plain inputs named after the action's parameters (the secret is never echoed), not asp-for; Field is the input's id for the deep link",
 		};
 
 		private static readonly string[] SwitchFields = { "MessagingEnabled", "MappingEnabled", "ShiftsEnabled", "LogsEnabled", "ReportsEnabled", "DocumentsEnabled",

@@ -1,0 +1,125 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@model Resgrid.Web.Models.LmsLearn.LmsLearnCatalogModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    Learner portal home: the open public classes (seats, fee, register or join the waitlist) and the catalog courses. Signed-out visitors see
+    it only when the department lists them publicly.
+*@
+@{
+    ViewData["Title"] = localizer["Portal.Catalog"].Value;
+    var branding = ViewData["Branding"] as LmsLearnerPortalBranding;
+    var key = ViewData["PortalKey"] as string;
+    var culture = CultureInfo.CurrentCulture;
+}
+
+@if (!string.IsNullOrEmpty(branding?.WelcomeText))
+{
+    <div class="rgl-panel rgl-welcome">@branding.WelcomeText</div>
+}
+
+<section class="rgl-panel" aria-labelledby="rgl-classes">
+    <h2 id="rgl-classes"><i class="fa fa-users" aria-hidden="true"></i> @localizer["Portal.PublicClasses"]</h2>
+    @if (Model.Catalog.Classes.Count == 0)
+    {
+        <p class="text-muted">@localizer["Portal.NoClasses"]</p>
+    }
+    else
+    {
+        <div class="rgl-cards">
+            @foreach (var item in Model.Catalog.Classes)
+            {
+                var session = item.Session;
+                var left = session.Capacity > 0 ? Math.Max(0, session.Capacity - item.SeatsTaken) : (int?)null;
+                <article class="rgl-card">
+                    <h3>@session.Title</h3>
+                    <div class="rgl-meta"><i class="fa fa-calendar" aria-hidden="true"></i> @localizer["Portal.When"]: @((branding?.Local(session.StartsOn) ?? session.StartsOn).ToString("f", culture))</div>
+                    @if (!string.IsNullOrWhiteSpace(session.Location))
+                    {
+                        <div class="rgl-meta"><i class="fa fa-map-marker" aria-hidden="true"></i> @localizer["Portal.Where"]: @session.Location</div>
+                    }
+                    <div class="rgl-meta"><i class="fa fa-money" aria-hidden="true"></i> @localizer["Portal.FeeLabel"]:
+                        @(item.PublicClass.HasFee ? item.PublicClass.FeeAmount.Value.ToString("0.00", culture) + " " + item.PublicClass.Currency : localizer["Portal.Free"].Value)</div>
+                    @if (left.HasValue)
+                    {
+                        <div class="rgl-meta">@(item.IsFull ? localizer["Portal.Full"].Value : string.Format(culture, localizer["Portal.SeatsLeft"].Value, left.Value))</div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(session.Description))
+                    {
+                        <p>@session.Description</p>
+                    }
+                    <div class="rgl-actions">
+                        @if (item.Mine != null)
+                        {
+                            <span class="label label-success">@localizer["Roster." + (LmsClassEnrollmentStatuses)item.Mine.Status]</span>
+                            @if (item.WaitlistPosition.HasValue)
+                            {
+                                <span class="rgl-meta">@string.Format(culture, localizer["Portal.WaitlistPosition"].Value, item.WaitlistPosition.Value)</span>
+                            }
+                        }
+                        else if (Model.Learner != null)
+                        {
+                            <form method="post" action="~/Learn/@key/Class/@session.LmsClassSessionId/Register" data-submit-once>
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-rgl btn-sm"><i class="fa fa-check" aria-hidden="true"></i> @(item.IsFull && session.WaitlistEnabled ? localizer["Portal.Waitlist"] : localizer["Portal.RegisterForClass"])</button>
+                            </form>
+                        }
+                        else if (ViewData["SelfRegistration"] as bool? == true)
+                        {
+                            <a class="btn btn-rgl btn-sm" href="~/Learn/@key/Register?classId=@session.LmsClassSessionId"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["Portal.RegisterForClass"]</a>
+                            <div class="rgl-meta">@localizer["Portal.SignInToRegister"]</div>
+                        }
+                        else
+                        {
+                            <a class="btn btn-default btn-sm" href="~/Learn/@key/SignIn"><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["Portal.SignIn"]</a>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>
+
+<section class="rgl-panel" aria-labelledby="rgl-courses">
+    <h2 id="rgl-courses"><i class="fa fa-play-circle" aria-hidden="true"></i> @localizer["Portal.CatalogCourses"]</h2>
+    @if (Model.Catalog.Courses.Count == 0)
+    {
+        <p class="text-muted">@localizer["Portal.NoCourses"]</p>
+    }
+    else
+    {
+        <div class="rgl-cards">
+            @foreach (var item in Model.Catalog.Courses)
+            {
+                <article class="rgl-card">
+                    <h3>@(item.Version?.Title ?? item.Course.Title)</h3>
+                    @if (!string.IsNullOrWhiteSpace(item.Course.Summary))
+                    {
+                        <p>@item.Course.Summary</p>
+                    }
+                    @if (item.Version != null && item.Version.Hours > 0)
+                    {
+                        <div class="rgl-meta">@localizer["Portal.Hours"]: @item.Version.Hours.ToString("0.##", culture)</div>
+                    }
+                    <div class="rgl-actions">
+                        @if (item.Mine != null)
+                        {
+                            <a class="btn btn-rgl btn-sm" href="~/Learn/@key/Play/@item.Mine.LmsEnrollmentId"><i class="fa fa-play" aria-hidden="true"></i> @(item.Mine.IsOpen ? localizer["Portal.Continue"] : localizer["Portal.Completed"])</a>
+                        }
+                        else if (Model.Learner != null)
+                        {
+                            <form method="post" action="~/Learn/@key/Course/@item.Course.LmsCourseId/Enroll" data-submit-once>
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-rgl btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Portal.Enroll"]</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a class="btn btn-default btn-sm" href="~/Learn/@key/SignIn"><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["Portal.SignIn"]</a>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>

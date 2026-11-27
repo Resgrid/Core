@@ -86,11 +86,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		/// <summary>An L2 step after a fresh step-up (the form is held across the step-up and replayed).</summary>
 		[HttpPost, ValidateAntiForgeryToken]
-		[RequiresRecentTwoFactor(RequireForOperation = true)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Signatures)]
 		public Task<IActionResult> SignStepUp(int id, int signerId, string returnUrl, CancellationToken cancellationToken)
 		{
 			var proof = SessionProof();
-			proof.StepUpVerifiedOnUtc = HttpContext?.Items["mfa_verified_at"] as DateTime?;
+			Resgrid.Web.Helpers.WebStepUpProof.Apply(proof, HttpContext);
 			return SignStepCoreAsync(id, signerId, returnUrl, proof, cancellationToken);
 		}
 
@@ -232,11 +232,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#region Checklist witness signature (free with Checklists)
 
 		[HttpPost, ValidateAntiForgeryToken]
-		[RequiresRecentTwoFactor(RequireForOperation = true)]
+		[RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Signatures)]
 		public async Task<IActionResult> WitnessChecklist(string id, string submissionHash, string attestation, CancellationToken cancellationToken)
 		{
 			var proof = SessionProof();
-			proof.StepUpVerifiedOnUtc = HttpContext?.Items["mfa_verified_at"] as DateTime?;
+			Resgrid.Web.Helpers.WebStepUpProof.Apply(proof, HttpContext);
 			string message;
 			try
 			{

@@ -51,6 +51,12 @@ namespace Resgrid.Model.Services
 		/// <summary>The version's primary file (no bytes), its extraction and its pages, for the reading view.</summary>
 		Task<ProtocolDocumentView> GetDocumentViewAsync(int departmentId, int protocolVersionId);
 
+		/// <summary>
+		/// Round 10 (Omni): the version's primary file without its bytes, its extraction or its pages (name, type and size for the reader's
+		/// download button); null when the version is not document-backed. The caller applied the read rule.
+		/// </summary>
+		Task<ProtocolVersionFile> GetFileInfoAsync(int departmentId, int protocolVersionId);
+
 		/// <summary>Many files at once into a category as draft document-backed protocols (title and number from the file name).</summary>
 		Task<List<ProtocolBulkUploadItem>> BulkUploadAsync(ProtocolReader reader, int kind, int? categoryId, bool foldersAsCategories, IReadOnlyList<ProtocolUploadFile> files,
 			CancellationToken cancellationToken = default);

@@ -51,7 +51,7 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<IEnumerable<DispatchProtocolAttachment>> GetAttachmentHashesByDepartmentIdAsync(int departmentId)
 		{
-			// Rows stored before M0381 (or written by a path that does not hash) are hashed in the database, once.
+			// Rows stored before M0363 (or written by a path that does not hash) are hashed in the database, once.
 			var hash = IsPostgres ? "encode(sha256(data), 'hex')" : "LOWER(CONVERT(varchar(64), HASHBYTES('SHA2_256', [Data]), 2))";
 			await ExecuteAsync(
 				$"UPDATE {Tbl("DispatchProtocolAttachments")} SET {Col("Sha256")} = {hash} " +

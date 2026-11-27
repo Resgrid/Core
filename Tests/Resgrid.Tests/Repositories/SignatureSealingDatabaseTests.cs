@@ -27,7 +27,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for e-Signature S1/S2 (M0371–M0374) on both engines: the migrations re-run as no-ops, roll back and
+	/// Real-database proof for e-Signature S1/S2 (M0356–M0359) on both engines: the migrations re-run as no-ops, roll back and
 	/// apply again; the repositories' SQL (due-work queries, conditional claims, the single-use link consumption, the webhook
 	/// hint's insert-if-absent, the IN-list on PostgreSQL); an external signature with no member (SignerUserId nullable); and the
 	/// department cleanup of the new tables. Set RESGRID_ADP_SQLSERVER_TEST_CONNECTION / RESGRID_ADP_POSTGRES_TEST_CONNECTION
@@ -129,7 +129,7 @@ namespace Resgrid.Tests.Repositories
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 371");
+				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 356");
 
 			using var runner = Runner();
 			using var scope = runner.CreateScope();
@@ -145,7 +145,7 @@ namespace Resgrid.Tests.Repositories
 				await database.ExecuteAsync($"INSERT INTO {T("SignatureRecords")} ({T("DepartmentId")}, {T("SubjectKind")}, {T("SubjectId")}, {T("SignerUserId")}, {T("ExternalSignerName")}, {T("Intent")}, {T("Level")}, {T("Method")}, {T("ArtifactSha256")}, {T("SignedOn")}, {T("CreatedOn")}) " +
 					$"VALUES (@D, 6, 'dtr-x', NULL, 'Casey', 0, 4, 3, @H, @N, @N)", new { D = Dept, H = new string('a', 64), N = DateTime.UtcNow });
 
-			migrations.MigrateDown(370);
+			migrations.MigrateDown(355);
 			(await TableExistsAsync("SealedDocuments")).Should().BeFalse();
 			(await TableExistsAsync("ESignWebhookEvents")).Should().BeFalse();
 			(await ScalarAsync(IsPostgres
@@ -307,5 +307,116 @@ namespace Resgrid.Tests.Repositories
 				(await ScalarAsync($"SELECT COUNT(*) FROM {T(table)} WHERE {T("DepartmentId")} = @D", new { D = Dept })).Should().Be(0, table);
 			(await ScalarAsync($"SELECT COUNT(*) FROM {T("SealedDocuments")} WHERE {T("DepartmentId")} = @D", new { D = OtherDept })).Should().Be(1, "another department's rows are untouched");
 		}
+
+		#region Security review M4 (2026-11-25): the one-time-code attempt cap under parallel posts
+
+		private const string Code = "246810";
+
+		/// <summary>An open remote request and a consented signer holding <see cref="Code"/> (unexpired, no attempts) and a signing session.</summary>
+		private async Task<(SignatureRequestSigner Signer, string Session)> SignerWithCodeAsync()
+		{
+			var requests = Repository((c, s, u, q) => new SignatureRequestsRepository(c, s, u, q));
+			var signers = Repository((c, s, u, q) => new SignatureRequestSignersRepository(c, s, u, q));
+			var now = DateTime.UtcNow;
+			var request = await requests.InsertAsync(new SignatureRequestRecord
+			{
+				DepartmentId = OtherDept, SubjectKind = 6, SubjectId = "DTR-OTP", ArtifactSha256 = new string('a', 64), RequiredLevel = 4, Status = (int)SignatureRequestStatuses.Sent,
+				Channel = (int)SignatureRequestChannels.Remote, ExpiresOn = now.AddDays(1), ProviderKind = 1, CreatedOn = now
+			}, default, true);
+			var session = SignatureTokens.NewToken();
+			var signer = await signers.InsertAsync(new SignatureRequestSigner
+			{
+				SignatureRequestId = request.SignatureRequestId, DepartmentId = OtherDept, SignerOrder = 1, Role = 0, ExternalName = "Casey", AuthMethod = (int)SignatureSignerAuthMethods.EmailOtp,
+				Status = (int)SignatureSignerStatuses.Opened, SessionHash = SignatureTokens.Hash(session), SessionExpiresOn = now.AddHours(1), ConsentedOn = now,
+				ConsentTextVersion = SignatureTokens.ConsentTextVersion, OtpExpiresOn = now.AddMinutes(10), OtpAttempts = 0, OtpSentOn = now, CreatedOn = now
+			}, default, true);
+			signer.OtpHash = SignatureTokens.CodeHash(signer.SignatureRequestSignerId, Code);
+			await signers.UpdateAsync(signer, default, true);
+			return (signer, session);
+		}
+
+		private Resgrid.Services.Signatures.SignatureRequestService SigningPage() => new Resgrid.Services.Signatures.SignatureRequestService(
+			Repository((c, s, u, q) => new SignatureRequestsRepository(c, s, u, q)), Repository((c, s, u, q) => new SignatureRequestSignersRepository(c, s, u, q)),
+			Mock.Of<Resgrid.Model.Repositories.ISignatureCapturesRepository>(), Mock.Of<Resgrid.Model.Repositories.ISignatureRecordsRepository>(),
+			Mock.Of<Resgrid.Model.Repositories.IESignWebhookEventsRepository>(), Mock.Of<Resgrid.Model.Repositories.IRmsSignaturesRepository>(),
+			Array.Empty<Resgrid.Model.Services.ISignatureSubjectSource>(), Mock.Of<Resgrid.Model.Providers.IESignProvider>(), Mock.Of<Resgrid.Model.Services.IESignAccountService>(),
+			Mock.Of<Resgrid.Model.Services.IDocumentSealingService>(), Mock.Of<Resgrid.Model.Providers.IPdfProvider>(), Mock.Of<Resgrid.Model.Services.IEncryptionService>(),
+			Mock.Of<Resgrid.Model.Providers.IEmailSender>(), Mock.Of<Resgrid.Model.Providers.ITextMessageProvider>(), Mock.Of<Resgrid.Model.Services.IDepartmentsService>(),
+			Mock.Of<Resgrid.Model.Services.IDepartmentSettingsService>(), Mock.Of<Resgrid.Model.Services.IBusinessOperationsAccessService>(),
+			Mock.Of<Resgrid.Model.Services.IReadinessAccessService>(), Mock.Of<Resgrid.Model.Services.IIncidentBackOfficeAccessService>(), Mock.Of<Resgrid.Model.Services.ILmsAccessService>(),
+			Mock.Of<Resgrid.Model.Providers.ICacheProvider>(), Mock.Of<Resgrid.Model.Providers.IEventAggregator>(), Mock.Of<Resgrid.Model.Services.ISignatureService>(),
+			Mock.Of<Resgrid.Model.Services.ISignerEligibilityService>(), Mock.Of<Resgrid.Model.Services.ISignatureNotificationService>(),
+			Mock.Of<Resgrid.Model.Services.IDepartmentDataProtectionService>(), new Lazy<Resgrid.Model.Services.IProtectedWriteService>(() => Mock.Of<Resgrid.Model.Services.IProtectedWriteService>()));
+
+		private async Task<SignatureRequestSigner> StoredAsync(string session) =>
+			await Repository((c, s, u, q) => new SignatureRequestSignersRepository(c, s, u, q)).GetBySessionHashAsync(SignatureTokens.Hash(session));
+
+		[Test, Order(6)]
+		public async Task Parallel_attempts_are_counted_atomically_and_never_pass_the_cap()
+		{
+			var (signer, _) = await SignerWithCodeAsync();
+			var signers = Repository((c, s, u, q) => new SignatureRequestSignersRepository(c, s, u, q));
+			var now = DateTime.UtcNow;
+
+			var taken = await Task.WhenAll(Enumerable.Range(0, 20).Select(_ => Task.Run(() => signers.TryCountOtpAttemptAsync(signer.SignatureRequestSignerId, signer.OtpHash, 5, now))));
+
+			taken.Count(t => t).Should().Be(5, "twenty parallel posts get exactly the five attempts");
+			(await ScalarAsync($"SELECT {T("OtpAttempts")} FROM {T("SignatureRequestSigners")} WHERE {T("SignatureRequestSignerId")} = @Id", new { Id = signer.SignatureRequestSignerId })).Should().Be(5);
+			(await signers.TryCountOtpAttemptAsync(signer.SignatureRequestSignerId, new string('f', 64), 5, now)).Should().BeFalse("another code never counts");
+			await signers.WipeExhaustedOtpAsync(signer.SignatureRequestSignerId, signer.OtpHash, 5);
+			(await signers.MarkOtpVerifiedAsync(signer.SignatureRequestSignerId, signer.OtpHash, now)).Should().BeFalse("a wiped code cannot be verified");
+			(await signers.GetByIdAsync(signer.SignatureRequestSignerId)).OtpHash.Should().BeNull();
+
+			var fresh = new string('d', 64);
+			(await signers.IssueOtpAsync(signer.SignatureRequestSignerId, fresh, now.AddMinutes(10), now, (int)SignatureSignerAuthMethods.EmailOtp)).Should().BeTrue("a new code starts over");
+			var reissued = await signers.GetByIdAsync(signer.SignatureRequestSignerId);
+			(reissued.OtpHash, reissued.OtpAttempts).Should().Be((fresh, 0));
+			(await signers.MarkOtpVerifiedAsync(signer.SignatureRequestSignerId, fresh, now)).Should().BeTrue();
+			(await signers.MarkOtpVerifiedAsync(signer.SignatureRequestSignerId, fresh, now)).Should().BeFalse("recorded once");
+			(await signers.IssueOtpAsync(signer.SignatureRequestSignerId, new string('e', 64), now.AddMinutes(10), now, (int)SignatureSignerAuthMethods.EmailOtp))
+				.Should().BeFalse("a code sent after the verification never undoes it");
+			var verified = await signers.GetByIdAsync(signer.SignatureRequestSignerId);
+			verified.OtpVerifiedOn.Should().NotBeNull();
+			verified.Status.Should().Be((int)SignatureSignerStatuses.Verified);
+			verified.OtpHash.Should().BeNull();
+		}
+
+		[Test, Order(7)]
+		public async Task Parallel_wrong_codes_on_the_signing_page_stop_at_the_cap_and_wipe_the_code()
+		{
+			var (signer, session) = await SignerWithCodeAsync();
+			var page = SigningPage();
+
+			var states = await Task.WhenAll(Enumerable.Range(0, 20).Select(i => Task.Run(() => page.VerifyCodeAsync(session, (100000 + i).ToString()))));
+
+			states.Should().OnlyContain(s => s.Step == SigningPageSteps.Code && s.EmbedUrl == null);
+			var stored = await StoredAsync(session);
+			stored.OtpAttempts.Should().Be(ESignConfig.MaxCodeAttempts, "no parallel post compares a code past the cap");
+			stored.OtpHash.Should().BeNull("the exhausted code is wiped");
+			stored.OtpVerifiedOn.Should().BeNull();
+			(await page.VerifyCodeAsync(session, Code)).Step.Should().Be(SigningPageSteps.Code, "the right code no longer works once the attempts are used");
+			signer.SignatureRequestSignerId.Should().Be(stored.SignatureRequestSignerId);
+		}
+
+		[Test, Order(8)]
+		public async Task A_wrong_code_posted_alongside_the_right_one_never_undoes_the_verification()
+		{
+			for (var round = 0; round < 5; round++)
+			{
+				var (_, session) = await SignerWithCodeAsync();
+				var page = SigningPage();
+				var posts = new[] { "111111", Code, "222222", "333333" };
+
+				await Task.WhenAll(posts.Select(code => Task.Run(() => page.VerifyCodeAsync(session, code))));
+
+				var stored = await StoredAsync(session);
+				stored.OtpVerifiedOn.Should().NotBeNull("round " + round + ": four posts fit in the cap, so the right one is compared and recorded");
+				stored.Status.Should().Be((int)SignatureSignerStatuses.Verified);
+				stored.OtpHash.Should().BeNull();
+				stored.OtpAttempts.Should().BeLessThanOrEqualTo(ESignConfig.MaxCodeAttempts);
+			}
+		}
+
+		#endregion
 	}
 }

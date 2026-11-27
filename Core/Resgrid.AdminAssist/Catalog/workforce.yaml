@@ -1,0 +1,94 @@
+{
+  "Version": "2026.09.25.2",
+  "Areas": [
+    {
+      "Id": "workforce-pro",
+      "LabelKey": "Area.workforce-pro",
+      "PurposeKey": "AreaPurpose.workforce-pro",
+      "Order": 25,
+      "Archetypes": [],
+      "Tier": "AddOn",
+      "Addon": "WorkforcePro",
+      "Global": false,
+      "ValueKey": "AreaValue.workforce-pro",
+      "ExampleKey": "AreaExample.workforce-pro",
+      "AdoptionKey": "ModuleAdoption.workforce-pro",
+      "MinimumMinutes": 15,
+      "MaximumMinutes": 60,
+      "DocsPath": "/web-app/workforce-pro/"
+    }
+  ],
+  "Settings": [],
+  "Capabilities": [
+    {
+      "Id": "addon-workforce-pro",
+      "AreaId": "workforce-pro",
+      "LabelKey": "Feature.addon-workforce-pro",
+      "PurposeKey": "FeaturePurpose.addon-workforce-pro",
+      "ValueKey": "FeatureValue.addon-workforce-pro",
+      "ExampleKey": "FeatureExample.addon-workforce-pro",
+      "AdoptionKey": "FeatureAdoption.addon-workforce-pro",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "WorkforceProBilling",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Workforce.Pro"
+        },
+        {
+          "Kind": "addon",
+          "Id": "WorkforcePro"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/workforce-pro/"
+    },
+    {
+      "Id": "workforce-pro-seats",
+      "AreaId": "workforce-pro",
+      "LabelKey": "Feature.workforce-pro-seats",
+      "PurposeKey": "FeaturePurpose.workforce-pro-seats",
+      "ValueKey": "FeatureValue.workforce-pro-seats",
+      "ExampleKey": "FeatureExample.workforce-pro-seats",
+      "AdoptionKey": "FeatureSetup.workforce-pro-seats",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "WorkforceProSeats",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Workforce.Pro"
+        },
+        {
+          "Kind": "addon",
+          "Id": "WorkforcePro"
+        }
+      ],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/workforce-pro/seats/"
+    }
+  ],
+  "Rules": [],
+  "Articles": [
+    {
+      "Id": "workforce-pro-seats",
+      "Locale": "en",
+      "TitleKey": "Feature.workforce-pro-seats",
+      "Body": "Workforce Pro Seats Switch Workforce Pro on for the members whose wellness and workplace exposure records your organization keeps, within the seats your 25-member packs buy. You pay only for those members; officers and managers acting on others need their permission, not a seat. A combination department switches Workforce Pro on for its 40 career staff and leaves its volunteers off. Open Workforce Pro seats from the Workforce Pro add-on page and switch members on. Switching a member off never deletes a record: their records become read-only. If the add-on ends, existing records stay readable and exportable.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "workforce-pro-seats",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    }
+  ]
+}

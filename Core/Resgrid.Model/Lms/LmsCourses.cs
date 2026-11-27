@@ -497,6 +497,20 @@ namespace Resgrid.Model.Lms
 		/// <summary>Survey: the questions (<see cref="LmsSurveyQuestion"/> list as JSON).</summary>
 		public string SurveyJson { get; set; }
 
+		// ---- Standards (T5, M0394) --------------------------------------------------------------------------------------------
+
+		/// <summary>Scorm / Cmi5: the content package played (LmsContentPackages).</summary>
+		public int? LmsContentPackageId { get; set; }
+
+		/// <summary>LtiLink: the registered LTI tool launched (LmsLtiTools). <see cref="PassMark"/> is the score the tool must pass back (0: completion only).</summary>
+		public int? LmsLtiToolId { get; set; }
+
+		/// <summary>LtiLink: the target link URI of this lesson (https); the tool's launch URL when empty.</summary>
+		public string LtiTargetLinkUri { get; set; }
+
+		/// <summary>LtiLink: custom parameters of this lesson, "key=value" per line (added to the tool's own).</summary>
+		public string LtiCustomParameters { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

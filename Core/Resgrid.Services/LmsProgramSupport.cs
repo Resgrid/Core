@@ -137,12 +137,18 @@ namespace Resgrid.Services
 			_events = events;
 		}
 
-		public async Task<LmsProgramSettings> GetAsync(int departmentId)
+		public Task<LmsProgramSettings> GetAsync(int departmentId) => ReadAsync(_settings, departmentId);
+
+		/// <summary>
+		/// Reads setting 144 through the department settings service (normalized; defaults when missing or unreadable). Shared with the class and
+		/// public class services, which take the department's training currency from it without depending on this service.
+		/// </summary>
+		public static async Task<LmsProgramSettings> ReadAsync(IDepartmentSettingsService settings, int departmentId)
 		{
-			if (departmentId <= 0)
+			if (departmentId <= 0 || settings == null)
 				return new LmsProgramSettings().Normalized();
 
-			var setting = await _settings.GetSettingByTypeAsync(departmentId, DepartmentSettingTypes.LmsProgramSettings);
+			var setting = await settings.GetSettingByTypeAsync(departmentId, DepartmentSettingTypes.LmsProgramSettings);
 			if (!string.IsNullOrWhiteSpace(setting?.Setting))
 			{
 				try
@@ -158,6 +164,20 @@ namespace Resgrid.Services
 			}
 
 			return new LmsProgramSettings().Normalized();
+		}
+
+		/// <summary>The department's training currency (setting 144), or the cluster default when it chose none or the read fails.</summary>
+		public static async Task<string> TrainingCurrencyAsync(IDepartmentSettingsService settings, int departmentId)
+		{
+			try
+			{
+				return LmsTrainingCurrency.Resolve((await ReadAsync(settings, departmentId))?.RequestCurrency);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"The training currency of department {departmentId} could not be read.");
+				return LmsTrainingCurrency.SystemDefault;
+			}
 		}
 
 		public async Task<LmsProgramSettings> SaveAsync(int departmentId, LmsProgramSettings settings, string userId, CancellationToken cancellationToken = default)

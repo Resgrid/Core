@@ -286,6 +286,15 @@ namespace Resgrid.Tests.TrainingT2
 	{
 		public Task<LmsLessonFile> GetByIdForDepartmentAsync(int departmentId, int lmsLessonFileId) =>
 			Task.FromResult(One(f => f.DepartmentId == departmentId && f.LmsLessonFileId == lmsLessonFileId));
+
+		/// <summary>Like the Dapper metadata select: the bytes never come back.</summary>
+		public Task<List<LmsLessonFile>> GetMetadataByIdsAsync(int departmentId, IEnumerable<int> lmsLessonFileIds)
+		{
+			var ids = new HashSet<int>(lmsLessonFileIds ?? Enumerable.Empty<int>());
+			var rows = Out(Rows.Where(f => f.DepartmentId == departmentId && ids.Contains(f.LmsLessonFileId)));
+			rows.ForEach(f => f.Data = null);
+			return Task.FromResult(rows);
+		}
 	}
 
 	public class FakeLmsSurveys : MemRepo<LmsSurveyResponse>, ILmsSurveyResponsesRepository

@@ -73,7 +73,7 @@ namespace Resgrid.Web.ViewComponents
 			var sealedDoc = model.Summary.LatestSealed;
 			var urlHelper = Url;
 			var signedBy = completed == null ? null : string.Join(", ", model.Summary.Signers.Where(s => s.SignatureRequestId == completed.SignatureRequestId && s.Status == (int)SignatureSignerStatuses.Signed)
-				.OrderBy(s => s.SignerOrder).Select(s => s.IsMember ? (s.UserId != null && model.Names.TryGetValue(s.UserId, out var n) ? n : s.StepLabel) : s.ExternalName)
+				.OrderBy(s => s.SignerOrder).Select(s => s.IsMember ? (s.UserId != null && model.Names.TryGetValue(s.UserId, out var n) ? n : s.StepLabel) : s.ExternalNameForDisplay)
 				.Where(n => !string.IsNullOrWhiteSpace(n)));
 			model.Panel = new SignaturePanelModel
 			{

@@ -90,6 +90,13 @@ jobs:
             dockerfile: Workers/Resgrid.Workers.Console/Dockerfile
           - image: resgridllc/resgridtrackergateway
             dockerfile: Workers/Resgrid.TrackerGateway/Dockerfile
+          # e-Signature L3 sealing sidecar: upstream EU DSS (dss-demonstrations) at a pinned commit on Docker
+          # Hardened Images. It copies nothing from the repo, so its context is its own folder. extra_tag is the
+          # DSS version Fleet pins (resgrid-sealing.yaml); keep it equal to DSS_VERSION in the Dockerfile.
+          - image: resgridllc/resgridsealing
+            dockerfile: Docker/sealing/Dockerfile
+            context: Docker/sealing
+            extra_tag: '6.5.1'
 
     steps:
     - uses: actions/checkout@v4
@@ -118,11 +125,12 @@ jobs:
           type=raw,value=${{ steps.version.outputs.version }}
           type=raw,value=latest
           type=sha,prefix=
+          type=raw,value=${{ matrix.extra_tag }},enable=${{ matrix.extra_tag != '' }}
 
     - name: Build and push Docker image
       uses: docker/build-push-action@v6
       with:
-        context: .
+        context: ${{ matrix.context || '.' }}
         file: ${{ matrix.dockerfile }}
         push: true
         build-args: BUILD_VERSION=${{ steps.version.outputs.version }}

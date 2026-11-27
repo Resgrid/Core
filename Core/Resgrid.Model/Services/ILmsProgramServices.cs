@@ -56,11 +56,17 @@ namespace Resgrid.Model.Services
 	public interface ILmsCompetencyService
 	{
 		IReadOnlyList<LmsCompetencyCatalogFramework> GetCatalog();
+
+		/// <summary>The framework catalog in a language (round 9C: machine-translated variants, English when the language ships none); keys and codes are the same in every language.</summary>
+		IReadOnlyList<LmsCompetencyCatalogFramework> GetCatalog(string culture);
 		Task<List<LmsCompetencyFramework>> GetFrameworksAsync(int departmentId);
 		Task<LmsCompetencyFramework> GetFrameworkAsync(int departmentId, int lmsCompetencyFrameworkId);
 		Task<List<LmsCompetencyItem>> GetItemsAsync(int departmentId, int lmsCompetencyFrameworkId);
 		/// <summary>Applies a catalog framework (structure and identifiers only); an applied one is returned again rather than duplicated.</summary>
 		Task<LmsCompetencyFramework> ApplyCatalogAsync(int departmentId, string catalogKey, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>Adds a catalog framework with its display names in a language (English when none ships); keys and codes stay.</summary>
+		Task<LmsCompetencyFramework> ApplyCatalogAsync(int departmentId, string catalogKey, string userId, string culture, CancellationToken cancellationToken = default);
 		/// <summary>Imports a CASE 1.1 package (CFDocument, CFItems, isChildOf associations). Re-importing the same document updates it.</summary>
 		Task<LmsCaseImportResult> ImportCaseAsync(int departmentId, byte[] json, string userId, CancellationToken cancellationToken = default);
 		Task<LmsCompetencyFramework> SaveFrameworkAsync(LmsCompetencyFramework framework, string userId, CancellationToken cancellationToken = default);

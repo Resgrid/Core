@@ -810,7 +810,7 @@ namespace Resgrid.Model.Lms
 		/// <summary><see cref="LmsSkillNotificationKinds"/>.</summary>
 		public int Kind { get; set; }
 
-		/// <summary>The one-line text (English, like the rest of Resgrid's outbound messages).</summary>
+		/// <summary>The notice: since round 9C a {"k":key,"a":[args]} JSON payload rendered in each recipient's language at send time (older rows hold plain text, sent as stored).</summary>
 		public string Text { get; set; }
 
 		public DateTime CreatedOn { get; set; }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Lms;
@@ -35,13 +36,14 @@ namespace Resgrid.Services
 		private readonly ILmsGateService _gate;
 		private readonly ILmsLearnerService _learner;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly ILmsXapiStatementQueue _xapi;
 
 		/// <summary>The draw's randomness (a seam for tests).</summary>
 		public Func<Random> RandomFactory { get; set; } = () => new Random();
 
 		public LmsAssessmentService(ILmsAssessmentAttemptsRepository attempts, ILmsEnrollmentsRepository enrollments, ILmsLessonsRepository lessons,
 			ILmsCourseVersionsRepository versions, ILmsCoursesRepository courses, ILmsCourseOwnersRepository owners, ILmsQuestionsRepository questions,
-			ILmsGateService gate, ILmsLearnerService learner, IEventAggregator eventAggregator)
+			ILmsGateService gate, ILmsLearnerService learner, IEventAggregator eventAggregator, ILmsXapiStatementQueue xapi)
 		{
 			_attempts = attempts;
 			_enrollments = enrollments;
@@ -53,6 +55,41 @@ namespace Resgrid.Services
 			_gate = gate;
 			_learner = learner;
 			_eventAggregator = eventAggregator;
+			_xapi = xapi;
+		}
+
+		/// <summary>
+		/// T5 xAPI out: a finished, scored attempt becomes "passed" or "failed" for the lesson (department courses only; pre-tests are not
+		/// results). Non-fatal; the queue drops it when the department has no LRS.
+		/// </summary>
+		private async Task QueueAttemptXapiAsync(LmsAssessmentAttempt attempt, LmsLesson lesson, CancellationToken cancellationToken)
+		{
+			if (_xapi == null || attempt == null || !attempt.Passed.HasValue || attempt.IsPreTest)
+				return;
+			try
+			{
+				var version = await _versions.GetVisibleByIdAsync(attempt.DepartmentId, attempt.LmsCourseVersionId);
+				if (version == null || version.DepartmentId != attempt.DepartmentId)
+					return;
+				await _xapi.EnqueueAsync(new LmsXapiEvent
+				{
+					DepartmentId = attempt.DepartmentId,
+					UserId = attempt.UserId,
+					VerbId = attempt.Passed.Value ? LmsXapiVerbs.Passed : LmsXapiVerbs.Failed,
+					LmsCourseId = version.LmsCourseId,
+					CourseTitle = version.Title,
+					LmsLessonId = attempt.LmsLessonId,
+					LessonTitle = lesson?.Title,
+					Success = attempt.Passed.Value,
+					ScorePercent = attempt.Percent,
+					DurationSeconds = attempt.SubmittedOn.HasValue ? (int)Math.Max(0, Math.Min(int.MaxValue, (attempt.SubmittedOn.Value - attempt.StartedOn).TotalSeconds)) : (int?)null,
+					OccurredOn = attempt.SubmittedOn ?? DateTime.UtcNow
+				}, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "An assessment xAPI statement could not be queued.");
+			}
 		}
 
 		public async Task<LmsAttemptView> StartAttemptAsync(int departmentId, string userId, int lmsEnrollmentId, int lmsLessonId, bool attested, string ipAddress,
@@ -114,7 +151,24 @@ namespace Resgrid.Services
 			if (attempt == null || !string.Equals(attempt.UserId, userId, StringComparison.OrdinalIgnoreCase))
 				return new LmsAttemptView { Error = LmsErrors.NotFound };
 			var lesson = await _lessons.GetVisibleByIdAsync(departmentId, attempt.LmsLessonId);
+			// Round 10 A7: answering an open attempt of a department course is a learner action (the member's LMS seat); a finished one stays
+			// readable as the member's own record.
+			if (attempt.Status == (int)LmsAttemptStatuses.InProgress && !await SeatedForAsync(departmentId, userId, attempt))
+				return new LmsAttemptView { Error = LmsErrors.NotLicensed, Attempt = attempt, Lesson = lesson };
 			return View(attempt, lesson, DateTime.UtcNow);
+		}
+
+		/// <summary>
+		/// Round 10 A7 (owner decision 2026-11-26): whether the member may still act on this attempt as a learner: an attempt of a department
+		/// course (or one whose course cannot be read) needs their LMS seat; the Academy and external learners never ask.
+		/// </summary>
+		private async Task<bool> SeatedForAsync(int departmentId, string userId, LmsAssessmentAttempt attempt)
+		{
+			var version = await _versions.GetVisibleByIdAsync(departmentId, attempt.LmsCourseVersionId);
+			var course = version == null ? null : await _courses.GetVisibleByIdAsync(departmentId, version.LmsCourseId);
+			if (!LmsLearnerSeats.Needed(course?.IsSystem ?? false, userId))
+				return true;
+			return await _gate.HoldsLearnerSeatAsync(departmentId, userId);
 		}
 
 		private static LmsAttemptView View(LmsAssessmentAttempt attempt, LmsLesson lesson, DateTime now)
@@ -145,6 +199,9 @@ namespace Resgrid.Services
 				return new LmsAttemptResultView { Error = LmsErrors.NotFound };
 			if (attempt.Status != (int)LmsAttemptStatuses.InProgress)
 				return new LmsAttemptResultView { Error = LmsErrors.AlreadySubmitted, Attempt = attempt };
+			// Round 10 A7: submitting is a learner action; without the LMS seat nothing is scored or changed (the attempt stays open).
+			if (!await SeatedForAsync(departmentId, userId, attempt))
+				return new LmsAttemptResultView { Error = LmsErrors.NotLicensed, Attempt = attempt };
 
 			var lesson = await _lessons.GetVisibleByIdAsync(departmentId, attempt.LmsLessonId);
 			var now = DateTime.UtcNow;
@@ -178,6 +235,10 @@ namespace Resgrid.Services
 				return new LmsAttemptResultView { Error = LmsErrors.AlreadySubmitted, Attempt = await _attempts.GetByIdForDepartmentAsync(departmentId, lmsAssessmentAttemptId), Lesson = lesson };
 
 			RaiseFailed(attempt, lesson?.Title);
+			// Workflow trigger 272: an answer needs a grader (the compare-and-set above submitted it once).
+			if (attempt.Status == (int)LmsAttemptStatuses.PendingGrading)
+				await RaiseAttemptAsync(departmentId, attempt, lesson, (a, l, v) => LmsWorkflowEvents.AwaitingGrading(a, l, v, DateTime.UtcNow));
+			await QueueAttemptXapiAsync(attempt, lesson, cancellationToken);
 			var completed = attempt.Passed == true && await _learner.OnAttemptFinishedAsync(attempt, cancellationToken);
 			var view = Review(attempt, lesson, includeAnswersForGrader: false);
 			view.CourseCompleted = completed;
@@ -205,6 +266,23 @@ namespace Resgrid.Services
 				Score = attempt.Percent,
 				OccurredOn = DateTime.UtcNow
 			});
+		}
+
+		private async Task RaiseAttemptAsync(int departmentId, LmsAssessmentAttempt attempt, LmsLesson lesson,
+			Func<LmsAssessmentAttempt, LmsLesson, LmsCourseVersion, CourseWorkflowEvent> build)
+		{
+			LmsCourseVersion version = null;
+			try
+			{
+				version = await _versions.GetVisibleByIdAsync(departmentId, attempt.LmsCourseVersionId);
+			}
+			catch (Exception ex)
+			{
+				// The course's name is a convenience in the payload; the event goes out with the ids.
+				Logging.LogException(ex, $"The course version of attempt {attempt.LmsAssessmentAttemptId} could not be read.");
+			}
+
+			ContentWorkflowContext.Publish(_eventAggregator, build(attempt, lesson, version));
 		}
 
 		private async Task ExpireAsync(LmsAssessmentAttempt attempt, CancellationToken cancellationToken)
@@ -345,7 +423,10 @@ namespace Resgrid.Services
 			});
 
 			var gradedLesson = await _lessons.GetVisibleByIdAsync(actor.DepartmentId, attempt.LmsLessonId);
+			// Workflow trigger 261 (the compare-and-set above graded it once): pass or fail and the score, never an answer or the notes.
+			await RaiseAttemptAsync(actor.DepartmentId, attempt, gradedLesson, (a, l, v) => LmsWorkflowEvents.AssessmentGraded(a, l, v, v?.LmsCourseId, DateTime.UtcNow));
 			RaiseFailed(attempt, gradedLesson?.Title);
+			await QueueAttemptXapiAsync(attempt, gradedLesson, cancellationToken);
 			var completed = attempt.Passed == true && await _learner.OnAttemptFinishedAsync(attempt, cancellationToken);
 			var view = Review(attempt, gradedLesson, includeAnswersForGrader: true);
 			view.CourseCompleted = completed;

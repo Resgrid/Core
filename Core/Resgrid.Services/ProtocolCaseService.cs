@@ -29,10 +29,17 @@ namespace Resgrid.Services
 		private readonly Lazy<IIntakeConversationService> _conversations;
 		private readonly Lazy<ITtsAudioService> _tts;
 		private readonly IEventAggregator _events;
+		private readonly Lazy<IProtectedReadService> _protectedRead;
+		private readonly Lazy<IProtectedWriteService> _protectedWrite;
+		private readonly IProtectedGrantContext _grant;
 
 		public ProtocolCaseService(IProtocolsService protocols, IProtocolVersionsRepository versions, ICallProtocolsRepository callProtocols,
-			Lazy<IIntakeConversationService> conversations, Lazy<ITtsAudioService> tts, IEventAggregator events)
+			Lazy<IIntakeConversationService> conversations, Lazy<ITtsAudioService> tts, IEventAggregator events,
+			Lazy<IProtectedReadService> protectedRead, Lazy<IProtectedWriteService> protectedWrite, IProtectedGrantContext grant)
 		{
+			_protectedRead = protectedRead;
+			_protectedWrite = protectedWrite;
+			_grant = grant;
 			_protocols = protocols;
 			_versions = versions;
 			_callProtocols = callProtocols;
@@ -130,12 +137,15 @@ namespace Resgrid.Services
 			var row = await _callProtocols.GetForDepartmentCallAsync(departmentId, callId, callProtocolId);
 			if (row == null || row.IsRemoved)
 				return ProtocolCaseUpdateResult.Of(ProtocolCaseUpdateOutcomes.NotFound);
+			if (!await RevealAsync(departmentId, row, userId, cancellationToken))
+				return ProtocolCaseUpdateResult.Of(ProtocolCaseUpdateOutcomes.ProtectedDataRequired);
 
 			var record = CallProtocolCase.Parse(row.CaseJson);
 			if (record == null)
 				return ProtocolCaseUpdateResult.Of(ProtocolCaseUpdateOutcomes.NoCase);
 
-			var before = new { row.CallId, row.CallProtocolId, row.DispatchProtocolId, record.Determinant, record.Overridden, record.OverrideReason };
+			// The audit keeps ids and determinants; the override reason is free text about the call (ADP catalog 39) and stays on the row.
+			var before = new { row.CallId, row.CallProtocolId, row.DispatchProtocolId, record.Determinant, record.Overridden };
 			var chosen = ProtocolDecisionGraphs.NormalizeDeterminant(determinant);
 
 			// A blank determinant on this path means "back to what the case flow reached".
@@ -152,11 +162,31 @@ namespace Resgrid.Services
 			row.OverrideReason = record.Overridden ? record.OverrideReason : null;
 			row.CaseJson = record.ToJson();
 
-			if (!await _callProtocols.TryUpdateCaseAsync(departmentId, row.CallProtocolId, row.Determinant, row.OverrideReason, row.CaseJson, cancellationToken))
+			if (!await WriteCaseAsync(departmentId, row, cancellationToken))
 				return ProtocolCaseUpdateResult.Of(ProtocolCaseUpdateOutcomes.NotFound);
 
 			Audit(departmentId, userId, AuditLogTypes.ProtocolDeterminantOverridden, JsonConvert.SerializeObject(before),
-				JsonConvert.SerializeObject(new { row.CallId, row.CallProtocolId, row.DispatchProtocolId, record.Determinant, record.ComputedDeterminant, record.Overridden, record.OverrideReason }));
+				JsonConvert.SerializeObject(new { row.CallId, row.CallProtocolId, row.DispatchProtocolId, record.Determinant, record.ComputedDeterminant, record.Overridden }));
+
+			// Workflow trigger 254 after the stored change: the determinants and ids, never the case answers or the override reason.
+			if (!string.Equals(before.Determinant, record.Determinant, StringComparison.Ordinal) || before.Overridden != record.Overridden)
+				ContentWorkflowContext.Publish(_events, new DispatchCaseWorkflowEvent
+				{
+					DepartmentId = departmentId,
+					Change = DispatchCaseWorkflowChanges.DeterminantChanged,
+					CallId = row.CallId,
+					CallProtocolId = row.CallProtocolId,
+					ProtocolId = row.DispatchProtocolId,
+					ProtocolVersionId = row.ProtocolVersionId,
+					ProtocolCode = record.ProtocolCode,
+					ProtocolName = record.ProtocolName,
+					Determinant = record.Determinant,
+					PreviousDeterminant = before.Determinant,
+					ComputedDeterminant = record.ComputedDeterminant,
+					Overridden = record.Overridden,
+					UserId = userId,
+					OccurredOn = DateTime.UtcNow
+				});
 
 			return new ProtocolCaseUpdateResult { Outcome = ProtocolCaseUpdateOutcomes.Done, CallProtocol = row, Case = record };
 		}
@@ -167,6 +197,8 @@ namespace Resgrid.Services
 			var row = await _callProtocols.GetForDepartmentCallAsync(departmentId, callId, callProtocolId);
 			if (row == null || row.IsRemoved)
 				return ProtocolCaseUpdateResult.Of(ProtocolCaseUpdateOutcomes.NotFound);
+			if (!await RevealAsync(departmentId, row, userId, cancellationToken))
+				return ProtocolCaseUpdateResult.Of(ProtocolCaseUpdateOutcomes.ProtectedDataRequired);
 
 			var record = CallProtocolCase.Parse(row.CaseJson);
 			if (record == null)
@@ -205,7 +237,7 @@ namespace Resgrid.Services
 				{
 					record.CallerMessages.Add(new ProtocolCallerMessage { SentOn = DateTime.UtcNow, ByUserId = userId, NodeKey = nodeKey, Text = text, Result = sent.ToString() });
 					row.CaseJson = record.ToJson();
-					await _callProtocols.TryUpdateCaseAsync(departmentId, row.CallProtocolId, row.Determinant, row.OverrideReason, row.CaseJson, cancellationToken);
+					await WriteCaseAsync(departmentId, row, cancellationToken);
 				}
 
 				Audit(departmentId, userId, AuditLogTypes.ProtocolCallerInstructionSent, null,
@@ -213,6 +245,39 @@ namespace Resgrid.Services
 			}
 
 			return new ProtocolCaseUpdateResult { Outcome = outcome, CallProtocol = row, Case = record };
+		}
+
+		/// <summary>
+		/// ADP catalog 39: a sealed case is read only for an attended dispatcher holding a grant (the read-modify-write needs the plaintext);
+		/// false when it stays withheld, so the caller is asked to step up. Unsealed rows pass straight through.
+		/// </summary>
+		private async Task<bool> RevealAsync(int departmentId, CallProtocol row, string userId, CancellationToken cancellationToken)
+		{
+			if (!CallProtocolProtection.IsSealed(row))
+				return !CallProtocolProtection.HasPlaceholder(row);
+
+			await CallProtocolProtection.ResolveAsync(_protectedRead?.Value, departmentId, new[] { row }, _grant?.GrantToken, _grant?.UserId ?? userId, cancellationToken);
+			return !CallProtocolProtection.IsWithheld(row);
+		}
+
+		/// <summary>
+		/// Writes the case (determinant in force, override reason, case record). For a department that encrypts new writes the protected
+		/// columns are enveloped first (workload encrypt-only lane), so no plaintext reaches the row; the returned row keeps the plaintext the
+		/// attended caller already holds.
+		/// </summary>
+		private async Task<bool> WriteCaseAsync(int departmentId, CallProtocol row, CancellationToken cancellationToken)
+		{
+			var stored = new CallProtocol { CallProtocolId = row.CallProtocolId, CallId = row.CallId, CaseJson = row.CaseJson, OverrideReason = row.OverrideReason };
+			if (_protectedWrite != null)
+			{
+				var write = await _protectedWrite.Value.PrepareRecordsEntityWriteAsync(departmentId, stored, null,
+					stored.CallProtocolId.ToString(System.Globalization.CultureInfo.InvariantCulture), ContentProtectedFields.CallProtocols, null, null, null,
+					workloadCaller: true, cancellationToken);
+				if (write != null && !write.Success)
+					throw new InvalidOperationException($"Protected write blocked ({write.Reason}); the case of call protocol {row.CallProtocolId} was not saved.");
+			}
+
+			return await _callProtocols.TryUpdateCaseAsync(departmentId, row.CallProtocolId, row.Determinant, stored.OverrideReason, stored.CaseJson, cancellationToken);
 		}
 
 		/// <summary>The text an instruction step marked for the caller (or an outcome's post-dispatch instructions) sends; null for anything else.</summary>

@@ -373,5 +373,5 @@
   <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>L'unité n'a jamais signalé Sur les lieux pour cet appel ; la ligne facture donc le temps entre l'enregistrement de l'appel et sa clôture. Vérifiez la quantité avant l'envoi.</value></data>
   <data name="TimeSourceUnitStatus" xml:space="preserve"><value>temps sur les lieux d'après le statut de l'unité</value></data>
   <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>L'unité a elle-même lié son statut Sur les lieux, et le statut qui l'a terminé, à cet appel.</value></data>
-  <data name="invoicing_approval_required" xml:space="preserve"><value>Cette facture doit être approuvée avant son envoi. Soumettez-la pour approbation, ou envoyez-la une fois approuvée.</value></data>
+  <data name="invoicing_approval_required" xml:space="preserve"><value>Cette facture doit être approuvée avant son envoi. Soumettez-la pour approbation, ou envoyez-la une fois approuvée.</value><comment>machine-translated</comment></data>
 </root>

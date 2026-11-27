@@ -166,6 +166,48 @@ namespace Resgrid.Tests.Services
 
 		#endregion Co-editing
 
+		#region Submit
+
+		/// <summary>A Dispatch protocol's draft carrying <paramref name="graph"/> as its decision graph (P4).</summary>
+		private ProtocolVersion DraftWithGraph(ProtocolDecisionGraph graph)
+		{
+			_world.AddProtocol(1, kind: ProtocolKinds.Dispatch);
+			var version = _world.AddVersion(100, 1, ProtocolVersionStatuses.Draft, OldHtml);
+			var document = ProtocolContentDocument.FromStoredHtml(OldHtml);
+			document.Graph = graph;
+			version.ContentJson = document.ToJson();
+			return version;
+		}
+
+		[Test]
+		public async Task SubmitAsync_refuses_a_draft_whose_decision_graph_does_not_validate_and_opens_no_review()
+		{
+			// No first step: at dispatch this graph would be dropped silently, so it must never reach review.
+			var graph = Resgrid.Tests.Protocols.ProtocolDecisionEngineTests.Sample();
+			graph.Nodes.ForEach(n => n.IsRoot = false);
+			ProtocolDecisionGraphs.Validate(graph).Should().NotBeEmpty();
+			DraftWithGraph(graph);
+
+			var result = await _world.Service.SubmitAsync(Manager(), 100, "Case flow");
+
+			result.Error.Should().Be(ProtocolLifecycleErrors.DecisionGraphInvalid);
+			_world.Versions[100].Status.Should().Be((int)ProtocolVersionStatuses.Draft);
+			_world.Approvals.Values.Should().NotContain(a => a.ProtocolVersionId == 100);
+		}
+
+		[Test]
+		public async Task SubmitAsync_sends_a_draft_with_a_valid_decision_graph_to_review()
+		{
+			DraftWithGraph(Resgrid.Tests.Protocols.ProtocolDecisionEngineTests.Sample());
+
+			var result = await _world.Service.SubmitAsync(Manager(), 100, "Case flow");
+
+			result.Succeeded.Should().BeTrue();
+			_world.Versions[100].Status.Should().Be((int)ProtocolVersionStatuses.InReview);
+		}
+
+		#endregion Submit
+
 		#region Approval
 
 		private ProtocolVersion InReview(int steps = 1)
@@ -378,6 +420,37 @@ namespace Resgrid.Tests.Services
 
 			(await _world.Service.RetireAsync(Manager(), 1)).Succeeded.Should().BeTrue();
 			_world.KnowledgeQueue.Verify(x => x.EnqueueAsync(DepartmentId, KnowledgeSourceKinds.Protocol, "1", It.IsAny<CancellationToken>()), Times.Exactly(2));
+		}
+
+		[Test]
+		public async Task Publishing_calls_the_content_version_hooks_and_a_failing_hook_never_fails_the_publish()
+		{
+			// T5 (round 6F): flashcards drafted from an earlier version are flagged through this seam.
+			PublishedWithApprovedRevision();
+			var failing = new Mock<IContentVersionPublishedHook>();
+			failing.Setup(x => x.OnVersionPublishedAsync(It.IsAny<ContentVersionPublished>(), It.IsAny<CancellationToken>())).ThrowsAsync(new InvalidOperationException("hook down"));
+			var seen = new List<ContentVersionPublished>();
+			var recording = new Mock<IContentVersionPublishedHook>();
+			recording.Setup(x => x.OnVersionPublishedAsync(It.IsAny<ContentVersionPublished>(), It.IsAny<CancellationToken>()))
+				.Callback((ContentVersionPublished p, CancellationToken _) => seen.Add(p)).Returns(Task.CompletedTask);
+			_world.PublishedHooks.Add(failing.Object);
+			_world.PublishedHooks.Add(recording.Object);
+
+			(await _world.Service.PublishAsync(Manager(), 100, false, "Uphill as well as upwind.", null, null)).Succeeded.Should().BeTrue();
+			seen.Should().ContainSingle();
+			seen[0].Should().Match<ContentVersionPublished>(p => p.DepartmentId == DepartmentId && p.Kind == ContentVersionKinds.ProtocolVersion && p.ItemId == 1 && p.VersionId == 100);
+		}
+
+		[Test]
+		public async Task A_scheduled_publish_calls_no_content_version_hook_until_it_is_in_force()
+		{
+			PublishedWithApprovedRevision();
+			var hook = new Mock<IContentVersionPublishedHook>();
+			_world.PublishedHooks.Add(hook.Object);
+
+			(await _world.Service.PublishAsync(Manager(), 100, false, "Later.", DateTime.UtcNow.AddDays(3), null)).Succeeded.Should().BeTrue();
+
+			hook.Verify(x => x.OnVersionPublishedAsync(It.IsAny<ContentVersionPublished>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -659,12 +732,26 @@ namespace Resgrid.Tests.Services
 		public readonly Mock<IProtocolFileTextsRepository> FileTexts = new Mock<IProtocolFileTextsRepository>();
 		public readonly Mock<IProtocolAcknowledgmentService> Acknowledgments = new Mock<IProtocolAcknowledgmentService>();
 		public readonly Mock<IProtocolNotificationService> Notifications = new Mock<IProtocolNotificationService>();
+		// Round 6 A (P5): attribution kept on versions, the attachments manifest and approved translations of the open format.
+		public readonly Dictionary<(int Kind, int Id), ContentAttribution> Attributions = new Dictionary<(int Kind, int Id), ContentAttribution>();
+		public readonly Mock<IContentAttributionsRepository> AttributionsRepository = new Mock<IContentAttributionsRepository>();
+		public readonly Mock<IDispatchProtocolAttachmentRepository> AttachmentHashes = new Mock<IDispatchProtocolAttachmentRepository>();
+		public readonly Mock<IProtocolVersionTranslationsRepository> Translations = new Mock<IProtocolVersionTranslationsRepository>();
+		public readonly Mock<IUserProfileService> UserProfiles = new Mock<IUserProfileService>();
+		public readonly Mock<IContentSetCopyLocks> SetLocks = new Mock<IContentSetCopyLocks>();
 
 		public readonly SignatureService SignatureService;
 		public readonly ProtocolLibraryService Service;
 
+		/// <summary>T5: the publish hooks the service calls after a version goes into force (round 6F flashcards).</summary>
+		public readonly List<IContentVersionPublishedHook> PublishedHooks = new List<IContentVersionPublishedHook>();
+
 		public ProtocolLibraryWorld()
 		{
+			AttributionsRepository.Setup(x => x.GetForSubjectAsync(It.IsAny<int>(), It.IsAny<ContentAttributionSubjects>(), It.IsAny<int>()))
+				.ReturnsAsync((int departmentId, ContentAttributionSubjects kind, int id) => Attributions.TryGetValue(((int)kind, id), out var a) && a.DepartmentId == departmentId ? a : null);
+			AttributionsRepository.Setup(x => x.SaveForSubjectAsync(It.IsAny<ContentAttribution>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((ContentAttribution a, CancellationToken _) => { Attributions[(a.SubjectKind, a.SubjectId)] = a; return a; });
 			ProtocolsService.Setup(x => x.GetProtocolHeaderByIdAsync(It.IsAny<int>()))
 				.ReturnsAsync((int id) => Protocols.TryGetValue(id, out var p) ? Copy(p) : null);
 			ProtocolsService.Setup(x => x.InvalidateProtocolCachesAsync(It.IsAny<int>())).Returns(Task.CompletedTask);
@@ -772,14 +859,15 @@ namespace Resgrid.Tests.Services
 				It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<bool>())).ReturnsAsync(true);
 
 			SignatureService = new SignatureService(SignatureRepository.Object, VersionsRepository.Object, Certifications.Object, Profiles.Object, Roles.Object, Events.Object,
-				Files.Object);
+				Files.Object, Resgrid.Tests.Security.StepUpTestPolicies.Strict());
 			Service = new ProtocolLibraryService(ProtocolsService.Object, ProtocolRepository.Object, VersionsRepository.Object, ApprovalsRepository.Object,
 				Audiences.Object, Comments.Object, Categories.Object, Library.Object, SignatureService, SettingsRepository.Object, SettingsService.Object,
 				Pins.Object, Departments.Object, Roles.Object, Groups.Object, Events.Object, UnitOfWork.Object,
 				new Lazy<ICallsService>(() => Calls.Object), new Lazy<IShiftsService>(() => Shifts.Object),
 				new Lazy<ICommunicationService>(() => Communication.Object), new Lazy<IDocumentNumberingService>(() => Numbering.Object),
 				new Lazy<ISearchProjectionService>(() => SearchProjections.Object), KnowledgeQueue.Object, Files.Object, FileTexts.Object,
-				new Lazy<IProtocolAcknowledgmentService>(() => Acknowledgments.Object), new Lazy<IProtocolNotificationService>(() => Notifications.Object));
+				new Lazy<IProtocolAcknowledgmentService>(() => Acknowledgments.Object), new Lazy<IProtocolNotificationService>(() => Notifications.Object),
+				AttributionsRepository.Object, AttachmentHashes.Object, Translations.Object, PublishedHooks, UserProfiles.Object, SetLocks.Object);
 		}
 
 		public static ProtocolReader Manager() => new ProtocolReader

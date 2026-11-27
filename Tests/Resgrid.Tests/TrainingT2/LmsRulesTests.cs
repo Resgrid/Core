@@ -31,7 +31,11 @@ namespace Resgrid.Tests.TrainingT2
 			"ILmsAddonLapsesRepository", "ILmsAddonStatesRepository", "ILmsBillingService", "ILmsMemberSeatsRepository", "ILmsReactivationService",
 			"ILmsSeatService", "LmsAddonLapse", "LmsAddonState", "LmsBillingCheckout", "LmsBillingStatus", "LmsDueItem", "LmsLapseReasons",
 			"LmsLapseRebase", "LmsMemberSeat", "LmsPackChangeResult", "LmsPackPricing", "LmsRebasedDue", "LmsSeatBulkResult",
-			"LmsSeatChangeResult", "LmsSeatOutcomes", "LmsSeatRules", "LmsSeatSummary", "LmsSubscriptionSnapshot", "LmsSubscriptionStates"
+			"LmsSeatChangeResult", "LmsSeatOutcomes", "LmsSeatRules", "LmsSeatSummary", "LmsSubscriptionSnapshot", "LmsSubscriptionStates",
+			// Round 10 A3: sponsored seats (T5 item 2a) are the seat ledger seen from the paying side. The set, link and sponsorship screens use them
+			// (who pays, how many seats); they carry no course data, and course copies stay behind ILmsCourseService in the Lms-named source.
+			"ILmsSponsorshipService", "ILmsSponsorshipsRepository", "LmsSponsorship", "LmsSponsorshipView", "LmsSponsorshipGrant", "LmsSponsorshipErrors",
+			"LmsSponsorshipStatuses", "LmsSponsorshipEndReasons", "LmsSponsorshipRules", "LmsSponsorshipWorkflowChanges", "LmsSponsorshipWorkflowEvent"
 		};
 
 		/// <summary>The one seam baseline code may call into (Protocols P2 asks whether a member passed a course version).</summary>
@@ -60,7 +64,16 @@ namespace Resgrid.Tests.TrainingT2
 					// T4 part 1: the Classes pages (Views/LmsClasses) are LMS views by their folder too.
 					name.Contains("_Views_LmsClasses_") || (t.FullName ?? string.Empty).Contains("_Views_LmsClasses_") ||
 					// T4 part 2: the Skills pages (Views/LmsSkills) are LMS views by their folder.
-					name.Contains("_Views_LmsSkills_") || (t.FullName ?? string.Empty).Contains("_Views_LmsSkills_"))
+					name.Contains("_Views_LmsSkills_") || (t.FullName ?? string.Empty).Contains("_Views_LmsSkills_") ||
+					// T5 data exit and CE reporting (round 6D): the Data export and CE reporting pages (Views/LmsExports) are LMS views by their folder.
+					name.Contains("_Views_LmsExports_") || (t.FullName ?? string.Empty).Contains("_Views_LmsExports_") ||
+					// T5: the External learners pages (Areas/User/Views/LmsExternalLearners) and the learner portal (Views/LmsLearn).
+					name.Contains("_Views_LmsExternalLearners_") || (t.FullName ?? string.Empty).Contains("_Views_LmsExternalLearners_") ||
+					name.StartsWith("Views_LmsLearn_", StringComparison.Ordinal) || (t.FullName ?? string.Empty).Contains("Views_LmsLearn_") ||
+					// T5 (round 6F): the course studio pages (Views/LmsStudio: starter library, AI drafts, flashcards) are LMS views by their folder.
+					name.Contains("_Views_LmsStudio_") || (t.FullName ?? string.Empty).Contains("_Views_LmsStudio_") ||
+					// T5 standards: the Standards pages and the player / lesson-field partials (Views/LmsStandards) are LMS views by their folder.
+					name.Contains("_Views_LmsStandards_") || (t.FullName ?? string.Empty).Contains("_Views_LmsStandards_"))
 					return true;
 				var ns = t.Namespace ?? string.Empty;
 				if (ns == "Resgrid.Model.Lms" || ns.EndsWith(".Courses", StringComparison.Ordinal) || ns.EndsWith(".Lms", StringComparison.Ordinal))

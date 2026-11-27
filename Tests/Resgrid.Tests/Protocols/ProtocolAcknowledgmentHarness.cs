@@ -57,6 +57,9 @@ namespace Resgrid.Tests.Protocols
 		public readonly Mock<IProtocolVersionApprovalsRepository> Approvals = new Mock<IProtocolVersionApprovalsRepository>();
 		public readonly Mock<IDispatchProtocolRepository> ProtocolRows = new Mock<IDispatchProtocolRepository>();
 		public readonly ProtocolAcknowledgmentService Service;
+		public readonly Mock<IEventAggregator> Events = new Mock<IEventAggregator>();
+		public readonly List<Resgrid.Model.Events.ProtocolAcknowledgmentWorkflowEvent> AcknowledgmentEvents = new List<Resgrid.Model.Events.ProtocolAcknowledgmentWorkflowEvent>();
+		public readonly List<Resgrid.Model.Events.ProtocolWorkflowEvent> ProtocolEvents = new List<Resgrid.Model.Events.ProtocolWorkflowEvent>();
 		private int _nextAck = 1;
 		private int _nextSignature = 1;
 
@@ -203,7 +206,7 @@ namespace Resgrid.Tests.Protocols
 			var roles = new Mock<IPersonnelRolesService>();
 			roles.Setup(x => x.GetRolesForUserAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(new List<PersonnelRole>());
 			var signatures = new SignatureService(signatureRows.Object, versions.Object, Mock.Of<IPersonnelCertificationRepository>(), profiles.Object, roles.Object,
-				Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>());
+				Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>(), Resgrid.Tests.Security.StepUpTestPolicies.Strict());
 
 			Lms.Setup(x => x.CanAuthorAndManageAsync(It.IsAny<int>())).ReturnsAsync(() => LmsActive);
 			Library.Setup(x => x.GetSettingsAsync(It.IsAny<int>())).ReturnsAsync(() => Settings);
@@ -227,9 +230,15 @@ namespace Resgrid.Tests.Protocols
 				It.IsAny<ProtocolVersion>(), It.IsAny<CancellationToken>())).ReturnsAsync((int d, IReadOnlyCollection<string> users, string n, DispatchProtocol p, ProtocolVersion v, CancellationToken _) => users.Count);
 			Notifications.Setup(x => x.NotifyBundleAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(1);
 
+			// Round 7C: the workflow events the service raises (triggers 235, 251-253).
+			Events.Setup(x => x.SendMessage(It.IsAny<Resgrid.Model.Events.ProtocolAcknowledgmentWorkflowEvent>()))
+				.Callback((Resgrid.Model.Events.ProtocolAcknowledgmentWorkflowEvent e) => AcknowledgmentEvents.Add(e));
+			Events.Setup(x => x.SendMessage(It.IsAny<Resgrid.Model.Events.ProtocolWorkflowEvent>()))
+				.Callback((Resgrid.Model.Events.ProtocolWorkflowEvent e) => ProtocolEvents.Add(e));
+
 			Service = new ProtocolAcknowledgmentService(acks.Object, versions.Object, Mock.Of<IProtocolVersionFilesRepository>(), audiences.Object, Approvals.Object,
 				ProtocolRows.Object, protocols.Object, audienceService.Object, departments.Object, Groups.Object, signatures, Lms.Object, Notifications.Object,
-				Mock.Of<IEventAggregator>(), new Lazy<IProtocolLibraryService>(() => Library.Object), new Lazy<ILearningRecordWriter>(() => writer.Object),
+				Events.Object, new Lazy<IProtocolLibraryService>(() => Library.Object), new Lazy<ILearningRecordWriter>(() => writer.Object),
 				new Lazy<ITrainingService>(() => Trainings.Object), new Lazy<ITrainingAssignmentService>(() => TrainingAssignments.Object),
 				new Lazy<ISearchProjectionService>(() => Mock.Of<ISearchProjectionService>()), new Lazy<IProtocolLearningExtensions>(() => Learning.Object));
 		}

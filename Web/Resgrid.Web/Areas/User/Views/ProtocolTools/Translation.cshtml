@@ -2,6 +2,8 @@
 @using Resgrid.Web.Areas.User.Controllers
 @model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolTranslationEditModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolAi.ProtocolAi> protocolAiText
+@inject Resgrid.Model.Services.IProtocolTranslationDraftService translationDrafts
 @*
     One translation beside its source (P3). Only wording is translated: the structure, doses, links, attachments and scope tags stay
     the source's (the server copies them over again on every save). Approval is an L2 signature bound to the translation's own hash.
@@ -26,6 +28,13 @@
         foreach (var v in b.Variants ?? new List<ProtocolVariant>()) { if (v.Key != null) { translatedVariants[v.Key] = v; } }
     }
     ProtocolContentBlock T(ProtocolContentBlock source) => source.Key != null && translatedByKey.TryGetValue(source.Key, out var t) ? t : source;
+    // Round 7A: "Draft translation with AI" (Enhanced AI only) on a draft the member may edit; the service decides and fails closed.
+    var aiDraftOpen = false;
+    if (Model.CanEdit && !Model.IsAiDraft)
+    {
+        try { aiDraftOpen = (await translationDrafts.GetStatusAsync(ClaimsAuthorizationHelper.GetDepartmentId(), ClaimsAuthorizationHelper.GetUserId(), tr.ProtocolVersionTranslationId))?.Available == true; }
+        catch (Exception) { aiDraftOpen = false; }
+    }
 }
 
 @await Html.PartialAsync("../Protocols/_Shell")
@@ -48,6 +57,22 @@
         <i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["TranslationRulesCallout"]
         <a class="btn btn-xs btn-default" asp-controller="ProtocolTools" asp-action="Translations" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-versionId="@Model.Version.ProtocolVersionId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["TranslationsHeader"]</a>
     </div>
+
+    @if (Model.IsAiDraft)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-magic" aria-hidden="true"></i> @Model.AiNotice @protocolAiText["TranslationReviewNotice"]</div>
+    }
+    else if (aiDraftOpen)
+    {
+        <form method="post" asp-controller="ProtocolAi" asp-action="DraftTranslation" asp-route-area="User" class="m-b-md" id="protocol-ai-translation-form" data-busy-text="@protocolAiText["Drafting"]">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+            <input type="hidden" name="translationId" value="@tr.ProtocolVersionTranslationId" />
+            <button type="submit" class="btn btn-default"><i class="fa fa-magic" aria-hidden="true"></i> @protocolAiText["DraftTranslationButton"]</button>
+            <span class="small text-muted">@protocolAiText["DraftTranslationHelp"]</span>
+            <p class="rgw-progress-honest m-t-sm" id="protocol-ai-translation-busy" role="status" aria-live="polite"></p>
+        </form>
+    }
 
     @if (Model.CanEdit)
     {
@@ -199,4 +224,5 @@
 @section Scripts
 {
     <script src="~/js/app/internal/protocols/resgrid.protocols.translation.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/protocols/resgrid.protocols.ai.js" asp-append-version="true"></script>
 }

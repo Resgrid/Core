@@ -30,6 +30,12 @@ namespace Resgrid.Model
 
 		public bool IncludeVoided { get; set; }
 
+		/// <summary>
+		/// The user ids external learners (Training T5) carry: a reserved prefix no member id has. A department-wide query (no
+		/// <see cref="UserIds"/>) leaves their records out, so members' reports and sweeps never count people who are not members.
+		/// </summary>
+		public const string ExternalLearnerUserIdPrefix = "xl-";
+
 		/// <summary>Title or course code contains (case-insensitive).</summary>
 		public string Search { get; set; }
 
@@ -38,6 +44,12 @@ namespace Resgrid.Model
 		public bool BackfillOnly { get; set; }
 
 		public bool UnresolvedDuplicatesOnly { get; set; }
+
+		/// <summary>Round 9B: only member submissions in these review states (TrainingSubmissionReviewStates); AwaitingReview (0) also matches a T1 submission without one.</summary>
+		public List<int> ReviewStates { get; set; }
+
+		/// <summary>Round 9B: oldest (re)submission first instead of newest completion first (the reviewer inbox).</summary>
+		public bool OldestSubmittedFirst { get; set; }
 
 		public int Skip { get; set; }
 
@@ -74,9 +86,35 @@ namespace Resgrid.Model
 		public bool IsBackfill { get; set; }
 		public int? EvidenceFileId { get; set; }
 		public string VerifiedByUserId { get; set; }
+		/// <summary>Round 7B: <see cref="LearningCompletionMethods"/> and, for a recorded completion, who recorded it, when and its recording row.</summary>
+		public int CompletionMethod { get; set; }
+		public string RecordedByUserId { get; set; }
+		public DateTime? RecordedOn { get; set; }
+		public int? RecordedCompletionId { get; set; }
+		/// <summary>Round 9B: a member submission's TrainingSubmissionReviewStates and when it was handed to reviewers.</summary>
+		public int? ReviewState { get; set; }
+		public DateTime? SubmittedOn { get; set; }
 	}
 
 	/// <summary>What one write of a source did.</summary>
+	/// <summary>
+	/// Round 9A: what one write changed on the transcript, told to the <see cref="Services.ILearningRecordObserver"/>s after it is stored:
+	/// records that now count (written verified, or verified by an officer) and records that were voided.
+	/// </summary>
+	public sealed class LearningRecordChange
+	{
+		public int DepartmentId { get; set; }
+
+		/// <summary>Who caused it (the officer, the recorder, the member); null or "system" for a worker.</summary>
+		public string ActingUserId { get; set; }
+
+		public List<LearningRecord> Written { get; set; } = new List<LearningRecord>();
+
+		public List<LearningRecord> Voided { get; set; } = new List<LearningRecord>();
+
+		public bool IsEmpty => (Written == null || Written.Count == 0) && (Voided == null || Voided.Count == 0);
+	}
+
 	public class LearningRecordWriteResult
 	{
 		public int Written { get; set; }

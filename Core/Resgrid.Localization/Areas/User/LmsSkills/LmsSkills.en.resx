@@ -182,7 +182,7 @@
     <value>Continue</value>
   </data>
   <data name="Skl.CrewHelp" xml:space="preserve">
-    <value>One form for the whole crew: everyone gets the same result and record. Split out a member who should be graded differently.</value>
+    <value>One form for the whole team: everyone gets the same result and record. Split out a member who should be graded differently.</value>
   </data>
   <data name="Skl.CriticalFailedNotice" xml:space="preserve">
     <value>A critical step was not met: the evaluation is not passed, whatever the score.</value>
@@ -329,7 +329,7 @@
     <value>Wildland (NWCG)</value>
   </data>
   <data name="Skl.Field.AllowCrew" xml:space="preserve">
-    <value>Allow crew-wide evaluations (one form for several members)</value>
+    <value>Allow team evaluations (one form for several members)</value>
   </data>
   <data name="Skl.Field.AllowSelf" xml:space="preserve">
     <value>Allow members to evaluate themselves</value>
@@ -452,7 +452,7 @@
     <value>The member was split out to their own evaluation.</value>
   </data>
   <data name="Skl.MembersHelp" xml:space="preserve">
-    <value>Choose one member, or several for a crew-wide evaluation when the sheet allows it.</value>
+    <value>Choose one member, or several for a team evaluation when the sheet allows it.</value>
   </data>
   <data name="Skl.MembersToEvaluate" xml:space="preserve">
     <value>Members evaluated</value>
@@ -1076,10 +1076,10 @@
     <value>The signature request could not be created; the evaluation stays in progress.</value>
   </data>
   <data name="lms_skill_split_last_member" xml:space="preserve">
-    <value>The last member of a crew evaluation cannot be split out.</value>
+    <value>The last member of a team evaluation cannot be split out.</value>
   </data>
   <data name="lms_skill_split_not_crew" xml:space="preserve">
-    <value>Only a crew evaluation can split a member out.</value>
+    <value>Only a team evaluation can split a member out.</value>
   </data>
   <data name="lms_skill_stale" xml:space="preserve">
     <value>Someone else changed this meanwhile. Reload and try again.</value>

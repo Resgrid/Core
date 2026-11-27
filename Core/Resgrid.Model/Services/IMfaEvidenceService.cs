@@ -36,6 +36,13 @@ namespace Resgrid.Model.Services
 		Task<MfaEvidence> GetLatestStepUpAsync(string userId, string sessionKey, long currentGeneration,
 			CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// The latest explicit reauthentication (password or SSO entered again, never a sign-in) for this session under the user's current
+		/// generation: the password and SSO kinds of department step-up (owner decision 2026-11-26). Never a second factor.
+		/// </summary>
+		Task<MfaEvidence> GetLatestReauthenticationAsync(string userId, string sessionKey, long currentGeneration,
+			CancellationToken cancellationToken = default);
+
 		/// <summary>Retires every piece of evidence for the user (MFA turned off or replaced, factors recovered).</summary>
 		Task RevokeForUserAsync(string userId, CancellationToken cancellationToken = default);
 

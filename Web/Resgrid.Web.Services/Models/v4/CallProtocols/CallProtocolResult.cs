@@ -113,6 +113,18 @@ namespace Resgrid.Web.Services.Models.v4.CallProtocols
 
 		/// <summary>On a call (P1): SHA-256 of the text as dispatched (null for rows recorded before content hashes).</summary>
 		public string ContentHash { get; set; }
+
+		/// <summary>
+		/// On a call: when the protocol was taken off it (CallProtocols/RemoveCallProtocol); null while it is still on the call.
+		/// Optional: the call reads still list a removed protocol, and a client that ignores this field shows it as before.
+		/// </summary>
+		public DateTime? RemovedOn { get; set; }
+
+		/// <summary>
+		/// The protocol was deleted from the department's library after it was attached. The call still cites it, so the call
+		/// reads still list it. Optional: a client that ignores this field shows it as before.
+		/// </summary>
+		public bool IsDeleted { get; set; }
 	}
 
 	public class CallProtocolAnswerResultData

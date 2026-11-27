@@ -36,6 +36,15 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int GradeAssessments { get; set; }
 		public IEnumerable<SelectListItem> GradeAssessmentsPermissions { get; set; }
 
+		public int ReviewDispatchCases { get; set; }
+		public IEnumerable<SelectListItem> ReviewDispatchCasesPermissions { get; set; }
+
+		public int RecordTrainingCompletions { get; set; }
+		public IEnumerable<SelectListItem> RecordTrainingCompletionsPermissions { get; set; }
+
+		public int ManageContentSets { get; set; }
+		public IEnumerable<SelectListItem> ManageContentSetsPermissions { get; set; }
+
 		public int CreateDocument { get; set; }
 		public IEnumerable<SelectListItem> CreateDocumentPermissions { get; set; }
 

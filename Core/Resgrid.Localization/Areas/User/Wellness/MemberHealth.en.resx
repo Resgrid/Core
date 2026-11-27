@@ -859,4 +859,19 @@
   <data name="Error.protected_write_refused" xml:space="preserve">
     <value>Protected details could not be saved right now. Try again later.</value>
   </data>
+  <data name="DesignatedOfficerCertificationLabel" xml:space="preserve">
+    <value>Designated officer certification</value>
+  </data>
+  <data name="DesignatedOfficerCertificationHelp" xml:space="preserve">
+    <value>Optional. One of your certification types, for example from the Designated Exposure Control Officer template. With no designated officer role named, the wellness officer role and its certification serve.</value>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>Adding or changing wellness records needs the Workforce Pro add-on. Existing records stay readable.</value>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>Workforce Pro is not switched on for this member, so their records are read-only.</value>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>Member wellness is not available for this organization.</value>
+  </data>
 </root>

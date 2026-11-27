@@ -1,0 +1,52 @@
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetSettingsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3, department setting 151: the local time accepted set updates go into force (so nothing changes mid-shift by surprise) and whether
+    who is told when an update arrives, a proposal is answered, a sponsorship changes or an LTI tool needs registering: the department's
+    admins (unless turned off) and the members of the roles chosen here.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["SettingsTab"];
+    ViewData["Title"] = text["SettingsTab"].Value;
+    ViewData["Subtitle"] = text["SettingsIntro"].Value;
+    ViewData["SetSection"] = "Settings";
+    var minutes = Model.Settings.UpdateTimeOfDayMinutes;
+    var value = (minutes / 60).ToString("00") + ":" + (minutes % 60).ToString("00");
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
+        <div class="ibox-content">
+            <form method="post" asp-action="Settings" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="control-label" for="updateTime">@text["UpdateTimeLabel"]</label>
+                    <input id="updateTime" name="updateTime" type="time" class="form-control" value="@value" style="max-width: 160px" />
+                    <span class="help-block small">@text["UpdateTimeHelp"]</span>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="notifyManagers" value="true" checked="@Model.Settings.NotifyManagers" /> @text["NotifyManagersLabel"]</label>
+                    <input type="hidden" name="notifyManagers" value="false" />
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="notifyAdmins" value="true" checked="@Model.Settings.NotifyAdmins" /> @text["NotifyAdminsLabel"]</label>
+                    <input type="hidden" name="notifyAdmins" value="false" />
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="notifyRoleIds">@text["NotifyRolesLabel"]</label>
+                    <select id="notifyRoleIds" name="notifyRoleIds" class="form-control" multiple="multiple" size="@Math.Min(8, Math.Max(3, Model.Roles.Count))" style="max-width: 420px">
+                        @foreach (var role in Model.Roles)
+                        {
+                            <option value="@role.Key" selected="@Model.Settings.NotifyRoleIds.Contains(role.Key)">@role.Value</option>
+                        }
+                    </select>
+                    <span class="help-block small">@text["NotifyRolesHelp"]</span>
+                </div>
+                <button type="submit" class="btn btn-primary">@text["SaveButton"]</button>
+            </form>
+        </div>
+    </div>
+</div>

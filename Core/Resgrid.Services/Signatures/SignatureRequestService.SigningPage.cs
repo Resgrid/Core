@@ -102,7 +102,9 @@ namespace Resgrid.Services.Signatures
 			signer.OtpAttempts = 0;
 			signer.OtpSentOn = now;
 			signer.OtpChannel = signer.AuthMethod == (int)SignatureSignerAuthMethods.SmsOtp ? (int)SignatureSignerAuthMethods.SmsOtp : (int)SignatureSignerAuthMethods.EmailOtp;
-			await _signers.UpdateAsync(signer, cancellationToken, true);
+			// Security review M4: only the code columns, and only while unverified (a send racing a verification never undoes it).
+			if (!await _signers.IssueOtpAsync(signer.SignatureRequestSignerId, signer.OtpHash, signer.OtpExpiresOn.Value, now, signer.OtpChannel.Value, cancellationToken))
+				return await StateAsync(request, await ReloadSignerAsync(sessionToken, signer));
 
 			var sent = await SendCodeMessageAsync(request, signer, code, culture);
 			var state = await StateAsync(request, signer, sent ? SignatureRequestRefusals.None : SignatureRequestRefusals.ProviderFailed);
@@ -122,27 +124,34 @@ namespace Resgrid.Services.Signatures
 			if (string.IsNullOrEmpty(signer.OtpHash) || !signer.OtpExpiresOn.HasValue || signer.OtpExpiresOn.Value <= now)
 				return await StateAsync(request, signer, SignatureRequestRefusals.InvalidRequest);
 
-			var digits = new string((code ?? string.Empty).Where(char.IsDigit).ToArray());
-			if (digits.Length == 6 && SignatureTokens.HashEquals(SignatureTokens.CodeHash(signer.SignatureRequestSignerId, digits), signer.OtpHash))
+			// Security review M4 (2026-11-25): the attempt is taken in one conditional statement before the code is compared, so parallel posts
+			// can never compare more than the cap; only the changed columns are written, so no stale full-row write can undo a success.
+			var max = Math.Max(1, ESignConfig.MaxCodeAttempts);
+			var codeHash = signer.OtpHash;
+			if (!await _signers.TryCountOtpAttemptAsync(signer.SignatureRequestSignerId, codeHash, max, now, cancellationToken))
 			{
-				signer.OtpVerifiedOn = now;
-				signer.OtpHash = null;
-				signer.OtpExpiresOn = null;
-				signer.Status = (int)SignatureSignerStatuses.Verified;
-				await _signers.UpdateAsync(signer, cancellationToken, true);
-				return await StateAsync(request, signer);
+				// Out of attempts (or the code changed meanwhile): the code is wiped and a new one must be sent.
+				await _signers.WipeExhaustedOtpAsync(signer.SignatureRequestSignerId, codeHash, max, cancellationToken);
+				return await StateAsync(request, await ReloadSignerAsync(sessionToken, signer), SignatureRequestRefusals.InvalidRequest);
 			}
 
-			signer.OtpAttempts++;
-			if (signer.OtpAttempts >= Math.Max(1, ESignConfig.MaxCodeAttempts))
+			var digits = new string((code ?? string.Empty).Where(char.IsDigit).ToArray());
+			if (digits.Length == 6 && SignatureTokens.HashEquals(SignatureTokens.CodeHash(signer.SignatureRequestSignerId, digits), codeHash))
 			{
-				// Too many guesses: the code is wiped and a new one must be sent.
-				signer.OtpHash = null;
-				signer.OtpExpiresOn = null;
+				await _signers.MarkOtpVerifiedAsync(signer.SignatureRequestSignerId, codeHash, now, cancellationToken);
+				// A parallel post may have recorded it first; either way the stored row is what the page shows.
+				var fresh = await ReloadSignerAsync(sessionToken, signer);
+				return await StateAsync(request, fresh, fresh.OtpVerifiedOn.HasValue ? SignatureRequestRefusals.None : SignatureRequestRefusals.InvalidRequest);
 			}
-			await _signers.UpdateAsync(signer, cancellationToken, true);
-			return await StateAsync(request, signer, SignatureRequestRefusals.InvalidRequest);
+
+			// Too many guesses: the code is wiped once the cap is reached (a no-op below it).
+			await _signers.WipeExhaustedOtpAsync(signer.SignatureRequestSignerId, codeHash, max, cancellationToken);
+			return await StateAsync(request, await ReloadSignerAsync(sessionToken, signer), SignatureRequestRefusals.InvalidRequest);
 		}
+
+		/// <summary>The signer row as stored now (after a conditional update), else the copy in hand.</summary>
+		private async Task<SignatureRequestSigner> ReloadSignerAsync(string sessionToken, SignatureRequestSigner current) =>
+			await _signers.GetBySessionHashAsync(SignatureTokens.Hash(sessionToken)) ?? current;
 
 		public async Task<SigningPageState> CheckCompletionAsync(string sessionToken, CancellationToken cancellationToken = default)
 		{

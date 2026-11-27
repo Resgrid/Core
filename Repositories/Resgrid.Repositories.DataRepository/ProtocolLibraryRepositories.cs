@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>Signatures (S0, M0342). Every read starts at the department.</summary>
+	/// <summary>Signatures (S0, M0341). Every read starts at the department.</summary>
 	public class SignatureRecordsRepository : RmsRepositoryBase<SignatureRecord>, ISignatureRecordsRepository
 	{
 		public SignatureRecordsRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -49,7 +49,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Library categories (P1, M0343).</summary>
+	/// <summary>Library categories (P1, M0342).</summary>
 	public class ProtocolCategoriesRepository : RmsRepositoryBase<ProtocolCategory>, IProtocolCategoriesRepository
 	{
 		public ProtocolCategoriesRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -70,7 +70,7 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
-	/// <summary>Protocol versions (P1, M0343). Header reads never select ContentJson or ContentHtml.</summary>
+	/// <summary>Protocol versions (P1, M0342). Header reads never select ContentJson or ContentHtml.</summary>
 	public class ProtocolVersionsRepository : RmsRepositoryBase<ProtocolVersion>, IProtocolVersionsRepository
 	{
 		private static readonly string[] HeaderColumns =
@@ -209,7 +209,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var key = new { DepartmentId = departmentId, Id = protocolVersionId };
 				// What hangs off the version goes with it (R-P10: retention, never a user action), under the same guard as the version
-				// itself so a version that is not purgeable keeps everything: acknowledgments (P2), the primary file and its text (M0353).
+				// itself so a version that is not purgeable keeps everything: acknowledgments (P2), the primary file and its text (M0347).
 				var purgeable = $"EXISTS (SELECT 1 FROM {Tbl("ProtocolVersions")} pv WHERE pv.{Col("ProtocolVersionId")} = {P}Id AND pv.{Col("DepartmentId")} = {P}DepartmentId " +
 					$"AND pv.{Col("Status")} IN ({(int)ProtocolVersionStatuses.Superseded}, {(int)ProtocolVersionStatuses.Retired}) " +
 					$"AND NOT EXISTS (SELECT 1 FROM {Tbl("CallProtocols")} c WHERE c.{Col("ProtocolVersionId")} = {P}Id))";
@@ -220,7 +220,7 @@ namespace Resgrid.Repositories.DataRepository
 				await ExecuteAsync($"DELETE FROM {Tbl("ProtocolFileTexts")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("SourceKind")} = {(int)ProtocolFileSourceKinds.VersionFile} " +
 					$"AND {Col("ProtocolVersionId")} = {P}Id AND {purgeable}", key, cancellationToken);
 				await ExecuteAsync($"DELETE FROM {Tbl("ProtocolVersionFiles")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ProtocolVersionId")} = {P}Id AND {purgeable}", key, cancellationToken);
-				// P3 (M0380): the version's translations go with it (a schema without the table has none).
+				// P3 (M0362): the version's translations go with it (a schema without the table has none).
 				if (await HasTableAsync("ProtocolVersionTranslations", cancellationToken))
 					await ExecuteAsync($"DELETE FROM {Tbl("ProtocolVersionTranslations")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ProtocolVersionId")} = {P}Id AND {purgeable}", key, cancellationToken);
 				await ExecuteAsync($"DELETE FROM {Tbl("ProtocolVersionApprovals")} WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("ProtocolVersionId")} = {P}Id", key, cancellationToken);

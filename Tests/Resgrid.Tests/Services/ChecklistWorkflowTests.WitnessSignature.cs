@@ -32,7 +32,7 @@ namespace Resgrid.Tests.Services
 			repository.Setup(x => x.GetForSubjectAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()))
 				.ReturnsAsync((int d, int k, string s) => records.Where(r => r.DepartmentId == d && r.SubjectKind == k && r.SubjectId == s).ToList());
 			var signatures = new SignatureService(repository.Object, Mock.Of<IProtocolVersionsRepository>(), Mock.Of<IPersonnelCertificationRepository>(), Mock.Of<IUserProfileService>(),
-				Mock.Of<IPersonnelRolesService>(), Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>());
+				Mock.Of<IPersonnelRolesService>(), Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>(), Resgrid.Tests.Security.StepUpTestPolicies.Strict());
 			return (new ChecklistWitnessSignatureService(_service, signatures, Mock.Of<IEventAggregator>()), records);
 		}
 

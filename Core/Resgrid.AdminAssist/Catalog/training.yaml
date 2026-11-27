@@ -314,6 +314,181 @@
       "Availability": "available"
     },
     {
+      "Id": "field.TrainingRecordSettings.SubmissionReviewMode",
+      "AreaId": "training",
+      "LabelKey": "Field.TrainingRecordSettings.SubmissionReviewMode",
+      "HelpKey": "FieldHelp.TrainingRecordSettings.SubmissionReviewMode",
+      "Binding": "TrainingRecordSettings.SubmissionReviewMode",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "TrainingRecords",
+        "Action": "Settings",
+        "Field": "SubmissionReviewMode"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.training",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.TrainingRecordSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.TrainingRecordSettings.SubmissionReviewMode",
+      "DefaultValue": "0 (every submission waits for a reviewer)",
+      "AllowedValues": "0 every submission, 1 no review (self-reported), 2 selected categories or above an hours threshold",
+      "EvidenceSource": "TrainingRecordSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.TrainingRecordSettings.ReviewCategoryIds",
+      "AreaId": "training",
+      "LabelKey": "Field.TrainingRecordSettings.ReviewCategoryIds",
+      "HelpKey": "FieldHelp.TrainingRecordSettings.ReviewCategoryIds",
+      "Binding": "TrainingRecordSettings.ReviewCategoryIds",
+      "ValueType": "reference-list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "TrainingRecords",
+        "Action": "Settings",
+        "Field": "ReviewCategoryIds"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.training",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.TrainingRecordSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.TrainingRecordSettings.ReviewCategoryIds",
+      "DefaultValue": "none",
+      "AllowedValues": "the department's training categories",
+      "EvidenceSource": "TrainingRecordSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.TrainingRecordSettings.ReviewAboveHours",
+      "AreaId": "training",
+      "LabelKey": "Field.TrainingRecordSettings.ReviewAboveHours",
+      "HelpKey": "FieldHelp.TrainingRecordSettings.ReviewAboveHours",
+      "Binding": "TrainingRecordSettings.ReviewAboveHours",
+      "ValueType": "number",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "TrainingRecords",
+        "Action": "Settings",
+        "Field": "ReviewAboveHours"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.training",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.TrainingRecordSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.TrainingRecordSettings.ReviewAboveHours",
+      "DefaultValue": "0 (no threshold)",
+      "AllowedValues": "0 to 999 hours",
+      "EvidenceSource": "TrainingRecordSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.TrainingRecordSettings.RoleReviewersOwnGroupOnly",
+      "AreaId": "training",
+      "LabelKey": "Field.TrainingRecordSettings.RoleReviewersOwnGroupOnly",
+      "HelpKey": "FieldHelp.TrainingRecordSettings.RoleReviewersOwnGroupOnly",
+      "Binding": "TrainingRecordSettings.RoleReviewersOwnGroupOnly",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "TrainingRecords",
+        "Action": "Settings",
+        "Field": "RoleReviewersOwnGroupOnly"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.training",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.TrainingRecordSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.TrainingRecordSettings.RoleReviewersOwnGroupOnly",
+      "DefaultValue": "false (role reviewers review everyone)",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "TrainingRecordSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.TrainingRecordSettings.ReviewerNotices",
+      "AreaId": "training",
+      "LabelKey": "Field.TrainingRecordSettings.ReviewerNotices",
+      "HelpKey": "FieldHelp.TrainingRecordSettings.ReviewerNotices",
+      "Binding": "TrainingRecordSettings.ReviewerNotices",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "TrainingRecords",
+        "Action": "Settings",
+        "Field": "ReviewerNotices"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.training",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.TrainingRecordSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.TrainingRecordSettings.ReviewerNotices",
+      "DefaultValue": "0 (a notice for each submission)",
+      "AllowedValues": "0 each submission, 1 daily summary, 2 none",
+      "EvidenceSource": "TrainingRecordSettings",
+      "Availability": "available"
+    },
+    {
       "Id": "setting.LmsProgramSettings",
       "AreaId": "lms",
       "LabelKey": "Setting.LmsProgramSettings",
@@ -971,6 +1146,667 @@
       "AllowedValues": "true or false",
       "EvidenceSource": "LmsSkillSettings",
       "Availability": "available"
+    },
+    {
+      "Id": "setting.LmsCeReportingSettings",
+      "AreaId": "lms",
+      "LabelKey": "Setting.LmsCeReportingSettings",
+      "HelpKey": "SettingHelp.LmsCeReportingSettings",
+      "Binding": "DepartmentSettingTypes.LmsCeReportingSettings",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.LmsCeReportingSettings",
+      "DefaultValue": "no CAPCE provider, no identifier certification types, the default columns of every file",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.CapceProviderNumber",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeReportingSettings.CapceProviderNumber",
+      "HelpKey": "FieldHelp.LmsCeReportingSettings.CapceProviderNumber",
+      "Binding": "LmsCeReportingSettings.CapceProviderNumber",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": "CapceProviderNumber"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeReportingSettings.CapceProviderNumber",
+      "DefaultValue": "empty",
+      "AllowedValues": "Up to 40 characters",
+      "EvidenceSource": "LmsCeReportingSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.CapceProviderName",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeReportingSettings.CapceProviderName",
+      "HelpKey": "FieldHelp.LmsCeReportingSettings.CapceProviderName",
+      "Binding": "LmsCeReportingSettings.CapceProviderName",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": "CapceProviderName"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeReportingSettings.CapceProviderName",
+      "DefaultValue": "empty",
+      "AllowedValues": "Up to 200 characters",
+      "EvidenceSource": "LmsCeReportingSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.LicenseCertificationTypeId",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeReportingSettings.LicenseCertificationTypeId",
+      "HelpKey": "FieldHelp.LmsCeReportingSettings.LicenseCertificationTypeId",
+      "Binding": "LmsCeReportingSettings.LicenseCertificationTypeId",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": "licenseCertificationTypeId"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeReportingSettings.LicenseCertificationTypeId",
+      "DefaultValue": "0 (none)",
+      "AllowedValues": "A certification type of the department, or 0",
+      "EvidenceSource": "LmsCeReportingSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.NremtCertificationTypeId",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeReportingSettings.NremtCertificationTypeId",
+      "HelpKey": "FieldHelp.LmsCeReportingSettings.NremtCertificationTypeId",
+      "Binding": "LmsCeReportingSettings.NremtCertificationTypeId",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": "nremtCertificationTypeId"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeReportingSettings.NremtCertificationTypeId",
+      "DefaultValue": "0 (none)",
+      "AllowedValues": "A certification type of the department, or 0",
+      "EvidenceSource": "LmsCeReportingSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.NemsidCertificationTypeId",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeReportingSettings.NemsidCertificationTypeId",
+      "HelpKey": "FieldHelp.LmsCeReportingSettings.NemsidCertificationTypeId",
+      "Binding": "LmsCeReportingSettings.NemsidCertificationTypeId",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": "nemsidCertificationTypeId"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeReportingSettings.NemsidCertificationTypeId",
+      "DefaultValue": "0 (none)",
+      "AllowedValues": "A certification type of the department, or 0",
+      "EvidenceSource": "LmsCeReportingSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.CeBrokerProviderNumber",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeReportingSettings.CeBrokerProviderNumber",
+      "HelpKey": "FieldHelp.LmsCeReportingSettings.CeBrokerProviderNumber",
+      "Binding": "LmsCeReportingSettings.CeBrokerProviderNumber",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": "CeBrokerProviderNumber"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeReportingSettings.CeBrokerProviderNumber",
+      "DefaultValue": "empty",
+      "AllowedValues": "Up to 40 characters, e.g. 50-2486",
+      "EvidenceSource": "LmsCeReportingSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.ColumnMaps",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeReportingSettings.ColumnMaps",
+      "HelpKey": "FieldHelp.LmsCeReportingSettings.ColumnMaps",
+      "Binding": "LmsCeReportingSettings.ColumnMaps",
+      "ValueType": "list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeReportingSettings.ColumnMaps",
+      "DefaultValue": "default columns",
+      "AllowedValues": "At most 40 columns per file type",
+      "EvidenceSource": "LmsCeReportingSettings",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.LmsCeColumnMap.ExporterKey",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeColumnMap.ExporterKey",
+      "HelpKey": "FieldHelp.LmsCeColumnMap.ExporterKey",
+      "Binding": "LmsCeColumnMap.ExporterKey",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeColumnMap.ExporterKey",
+      "DefaultValue": "unset",
+      "AllowedValues": "capce, fl-ems, va-ems, nj-ems, fl-fire, state-ce, state-roster",
+      "EvidenceSource": "LmsCeColumnMap",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.LmsCeColumnMap.Columns",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeColumnMap.Columns",
+      "HelpKey": "FieldHelp.LmsCeColumnMap.Columns",
+      "Binding": "LmsCeColumnMap.Columns",
+      "ValueType": "list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeColumnMap.Columns",
+      "DefaultValue": "the file type's defaults",
+      "AllowedValues": "1 to 40 columns",
+      "EvidenceSource": "LmsCeColumnMap",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.LmsCeColumn.Header",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeColumn.Header",
+      "HelpKey": "FieldHelp.LmsCeColumn.Header",
+      "Binding": "LmsCeColumn.Header",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeColumn.Header",
+      "DefaultValue": "unset",
+      "AllowedValues": "Up to 80 characters",
+      "EvidenceSource": "LmsCeColumn",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.LmsCeColumn.Source",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeColumn.Source",
+      "HelpKey": "FieldHelp.LmsCeColumn.Source",
+      "Binding": "LmsCeColumn.Source",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeColumn.Source",
+      "DefaultValue": "Constant",
+      "AllowedValues": "LmsCeColumnSources: 0 Constant to 33 SourceKind",
+      "EvidenceSource": "LmsCeColumn",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.LmsCeColumn.Argument",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsCeColumn.Argument",
+      "HelpKey": "FieldHelp.LmsCeColumn.Argument",
+      "Binding": "LmsCeColumn.Argument",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsCeReportingSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsCeColumn.Argument",
+      "DefaultValue": "unset",
+      "AllowedValues": "Up to 80 characters",
+      "EvidenceSource": "LmsCeColumn",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "setting.LmsStandardsSettings",
+      "AreaId": "lms",
+      "LabelKey": "Setting.LmsStandardsSettings",
+      "HelpKey": "SettingHelp.LmsStandardsSettings",
+      "Binding": "DepartmentSettingTypes.LmsStandardsSettings",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsStandards",
+        "Action": "Xapi",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.LmsStandardsSettings",
+      "DefaultValue": "off (no statements are sent)",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.XapiEnabled",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsStandardsSettings.XapiEnabled",
+      "HelpKey": "FieldHelp.LmsStandardsSettings.XapiEnabled",
+      "Binding": "LmsStandardsSettings.XapiEnabled",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsStandards",
+        "Action": "Xapi",
+        "Field": "XapiEnabled"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsStandardsSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsStandardsSettings.XapiEnabled",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "LmsStandardsSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.LrsEndpoint",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsStandardsSettings.LrsEndpoint",
+      "HelpKey": "FieldHelp.LmsStandardsSettings.LrsEndpoint",
+      "Binding": "LmsStandardsSettings.LrsEndpoint",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsStandards",
+        "Action": "Xapi",
+        "Field": "LrsEndpoint"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsStandardsSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsStandardsSettings.LrsEndpoint",
+      "DefaultValue": "unset",
+      "AllowedValues": "An https URL",
+      "EvidenceSource": "LmsStandardsSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.LrsKey",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsStandardsSettings.LrsKey",
+      "HelpKey": "FieldHelp.LmsStandardsSettings.LrsKey",
+      "Binding": "LmsStandardsSettings.LrsKey",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsStandards",
+        "Action": "Xapi",
+        "Field": "LrsKey"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsStandardsSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsStandardsSettings.LrsKey",
+      "DefaultValue": "unset",
+      "AllowedValues": "Text up to 500 characters",
+      "EvidenceSource": "LmsStandardsSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.LrsSecretEncrypted",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsStandardsSettings.LrsSecretEncrypted",
+      "HelpKey": "FieldHelp.LmsStandardsSettings.LrsSecretEncrypted",
+      "Binding": "LmsStandardsSettings.LrsSecretEncrypted",
+      "ValueType": "secret",
+      "Classification": "Restricted",
+      "Secret": true,
+      "Location": {
+        "Controller": "LmsStandards",
+        "Action": "Xapi",
+        "Field": "LrsSecret"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsStandardsSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsStandardsSettings.LrsSecretEncrypted",
+      "DefaultValue": "unset",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "LmsStandardsSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.ShareEmailInActor",
+      "AreaId": "lms",
+      "LabelKey": "Field.LmsStandardsSettings.ShareEmailInActor",
+      "HelpKey": "FieldHelp.LmsStandardsSettings.ShareEmailInActor",
+      "Binding": "LmsStandardsSettings.ShareEmailInActor",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "LmsStandards",
+        "Action": "Xapi",
+        "Field": "ShareEmailInActor"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.lms",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.LmsStandardsSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.LmsStandardsSettings.ShareEmailInActor",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "LmsStandardsSettings",
+      "Availability": "available"
     }
   ],
   "Capabilities": [
@@ -1333,6 +2169,65 @@
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/trainings/hours-report/"
+    },
+    {
+      "Id": "training-record-completions",
+      "AreaId": "training",
+      "LabelKey": "Feature.training-record-completions",
+      "PurposeKey": "FeaturePurpose.training-record-completions",
+      "ValueKey": "FeatureValue.training-record-completions",
+      "ExampleKey": "FeatureExample.training-record-completions",
+      "AdoptionKey": "FeatureSetup.training-record-completions",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Trainings",
+        "Action": "Manage"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Training"
+        },
+        {
+          "Kind": "permission",
+          "Id": "RecordTrainingCompletions"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled",
+        "permission.RecordTrainingCompletions"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/"
+    },
+    {
+      "Id": "training-submission-reviews",
+      "AreaId": "training",
+      "LabelKey": "Feature.training-submission-reviews",
+      "PurposeKey": "FeaturePurpose.training-submission-reviews",
+      "ValueKey": "FeatureValue.training-submission-reviews",
+      "ExampleKey": "FeatureExample.training-submission-reviews",
+      "AdoptionKey": "FeatureSetup.training-submission-reviews",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "TrainingReviews",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled",
+        "setting.TrainingRecordSettings",
+        "permission.RecordTrainingCompletions"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/training-reviews/"
     },
     {
       "Id": "addon-lms",
@@ -1990,6 +2885,108 @@
       "DocsPath": "/web-app/trainings/lms/"
     },
     {
+      "Id": "lms-external-learners",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-external-learners",
+      "PurposeKey": "FeaturePurpose.lms-external-learners",
+      "ValueKey": "FeatureValue.lms-external-learners",
+      "ExampleKey": "FeatureExample.lms-external-learners",
+      "AdoptionKey": "FeatureSetup.lms-external-learners",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "LmsExternalLearners",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "addon",
+          "Id": "Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
+      "Id": "lms-learner-portal",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-learner-portal",
+      "PurposeKey": "FeaturePurpose.lms-learner-portal",
+      "ValueKey": "FeatureValue.lms-learner-portal",
+      "ExampleKey": "FeatureExample.lms-learner-portal",
+      "AdoptionKey": "FeatureSetup.lms-learner-portal",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "LmsExternalLearners",
+        "Action": "Settings"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "addon",
+          "Id": "Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
+      "Id": "lms-public-class-fees",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-public-class-fees",
+      "PurposeKey": "FeaturePurpose.lms-public-class-fees",
+      "ValueKey": "FeatureValue.lms-public-class-fees",
+      "ExampleKey": "FeatureExample.lms-public-class-fees",
+      "AdoptionKey": "FeatureSetup.lms-public-class-fees",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "LmsExternalLearners",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "addon",
+          "Id": "Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
       "Id": "lms-lesson-plans",
       "AreaId": "lms",
       "LabelKey": "Feature.lms-lesson-plans",
@@ -2157,6 +3154,318 @@
       "SettingIds": [
         "module.TrainingDisabled",
         "setting.LmsSkillSettings"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
+      "Id": "lms-data-export",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-data-export",
+      "PurposeKey": "FeaturePurpose.lms-data-export",
+      "ValueKey": "FeatureValue.lms-data-export",
+      "ExampleKey": "FeatureExample.lms-data-export",
+      "AdoptionKey": "FeatureSetup.lms-data-export",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
+      "Id": "lms-ce-reporting",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-ce-reporting",
+      "PurposeKey": "FeaturePurpose.lms-ce-reporting",
+      "ValueKey": "FeatureValue.lms-ce-reporting",
+      "ExampleKey": "FeatureExample.lms-ce-reporting",
+      "AdoptionKey": "FeatureSetup.lms-ce-reporting",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "LmsExports",
+        "Action": "Ce"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "addon",
+          "Id": "Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled",
+        "setting.LmsCeReportingSettings"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
+      "Id": "lms-starter-courses",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-starter-courses",
+      "PurposeKey": "FeaturePurpose.lms-starter-courses",
+      "ValueKey": "FeatureValue.lms-starter-courses",
+      "ExampleKey": "FeatureExample.lms-starter-courses",
+      "AdoptionKey": "FeatureSetup.lms-starter-courses",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "LmsStudio",
+        "Action": "Starters"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "addon",
+          "Id": "Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
+      "Id": "lms-content-standards",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-content-standards",
+      "PurposeKey": "FeaturePurpose.lms-content-standards",
+      "ValueKey": "FeatureValue.lms-content-standards",
+      "ExampleKey": "FeatureExample.lms-content-standards",
+      "AdoptionKey": "FeatureSetup.lms-content-standards",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "LmsStandards",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "addon",
+          "Id": "Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled",
+        "setting.LmsStandardsSettings"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
+      "Id": "lms-certification-requirements",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-certification-requirements",
+      "PurposeKey": "FeaturePurpose.lms-certification-requirements",
+      "ValueKey": "FeatureValue.lms-certification-requirements",
+      "ExampleKey": "FeatureExample.lms-certification-requirements",
+      "AdoptionKey": "FeatureSetup.lms-certification-requirements",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "LmsPrograms",
+        "Action": "CertificationRequirements"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "addon",
+          "Id": "Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
+      "Id": "certification-validity-rules",
+      "AreaId": "training",
+      "LabelKey": "Feature.certification-validity-rules",
+      "PurposeKey": "FeaturePurpose.certification-validity-rules",
+      "ValueKey": "FeatureValue.certification-validity-rules",
+      "ExampleKey": "FeatureExample.certification-validity-rules",
+      "AdoptionKey": "FeatureSetup.certification-validity-rules",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Certifications",
+        "Action": "Types"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Certifications"
+        }
+      ],
+      "SettingIds": [
+        "module.CertificationsDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/business-ops/certifications/"
+    },
+    {
+      "Id": "training-read-and-confirm",
+      "AreaId": "training",
+      "LabelKey": "Feature.training-read-and-confirm",
+      "PurposeKey": "FeaturePurpose.training-read-and-confirm",
+      "ValueKey": "FeatureValue.training-read-and-confirm",
+      "ExampleKey": "FeatureExample.training-read-and-confirm",
+      "AdoptionKey": "FeatureSetup.training-read-and-confirm",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Trainings",
+        "Action": "New"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/"
+    },
+    {
+      "Id": "course-sets",
+      "AreaId": "training",
+      "LabelKey": "Feature.course-sets",
+      "PurposeKey": "FeaturePurpose.course-sets",
+      "ValueKey": "AreaValue.training",
+      "ExampleKey": "AreaExample.training",
+      "AdoptionKey": "ModuleAdoption.training",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ContentSets",
+        "Action": "Index"
+      },
+      "Requirements": [
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "permission.ManageContentSets",
+        "setting.ContentSetSettings",
+        "module.TrainingDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/"
+    },
+    {
+      "Id": "lms-course-sets",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-course-sets",
+      "PurposeKey": "FeaturePurpose.lms-course-sets",
+      "ValueKey": "AreaValue.lms",
+      "ExampleKey": "AreaExample.lms",
+      "AdoptionKey": "ModuleAdoption.lms",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "ContentSets",
+        "Action": "Available"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "permission.ManageContentSets"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/trainings/lms/"
+    },
+    {
+      "Id": "lms-sponsorship",
+      "AreaId": "lms",
+      "LabelKey": "Feature.lms-sponsorship",
+      "PurposeKey": "FeaturePurpose.lms-sponsorship",
+      "ValueKey": "AreaValue.lms",
+      "ExampleKey": "AreaExample.lms",
+      "AdoptionKey": "ModuleAdoption.lms",
+      "ReleaseStatus": "planned",
+      "Location": {
+        "Controller": "ContentSets",
+        "Action": "Sponsorships"
+      },
+      "Requirements": [
+        {
+          "Kind": "flag",
+          "Id": "Training.Lms"
+        },
+        {
+          "Kind": "addon",
+          "Id": "Lms"
+        },
+        {
+          "Kind": "module",
+          "Id": "Training"
+        }
+      ],
+      "SettingIds": [
+        "permission.ManageContentSets"
       ],
       "RuleIds": [],
       "Prominence": "Detail",
@@ -2362,6 +3671,72 @@
       "ReviewedOn": "2026-11-24T00:00:00Z"
     },
     {
+      "Id": "field.TrainingRecordSettings.SubmissionReviewMode",
+      "Locale": "en",
+      "TitleKey": "Field.TrainingRecordSettings.SubmissionReviewMode",
+      "Body": "Training record settings / Review of member submissions. Whether training hours members submit wait for a reviewer before they count: every submission (the default), none (accepted on submit and shown as self-reported), or only selected categories or above an hours threshold.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-trainingrecordsettings-submissionreviewmode",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.TrainingRecordSettings.ReviewCategoryIds",
+      "Locale": "en",
+      "TitleKey": "Field.TrainingRecordSettings.ReviewCategoryIds",
+      "Body": "Training record settings / Categories that need review. With review of selected submissions, submissions in these training categories wait for a reviewer.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-trainingrecordsettings-reviewcategoryids",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.TrainingRecordSettings.ReviewAboveHours",
+      "Locale": "en",
+      "TitleKey": "Field.TrainingRecordSettings.ReviewAboveHours",
+      "Body": "Training record settings / Review submissions above (hours). With review of selected submissions, submissions of more hours than this wait for a reviewer. 0 means no threshold.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-trainingrecordsettings-reviewabovehours",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.TrainingRecordSettings.RoleReviewersOwnGroupOnly",
+      "Locale": "en",
+      "TitleKey": "Field.TrainingRecordSettings.RoleReviewersOwnGroupOnly",
+      "Body": "Training record settings / Role reviewers only for their own group. When on, reviewers named by role (Record Training Completions or Assign Training) review only the members of the group they are in. Department admins still review everyone and group admins their own group.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-trainingrecordsettings-rolereviewersowngrouponly",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.TrainingRecordSettings.ReviewerNotices",
+      "Locale": "en",
+      "TitleKey": "Field.TrainingRecordSettings.ReviewerNotices",
+      "Body": "Training record settings / Reviewer notices. How reviewers hear about new submissions: a notice for each one (the default), one summary a day, or none (the Training reviews inbox and the home page item only).",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-trainingrecordsettings-reviewernotices",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "training-submission-reviews",
+      "Locale": "en",
+      "TitleKey": "Feature.training-submission-reviews",
+      "Body": "Training reviews (members' training hours with evidence) Members record continuing education or training hours done elsewhere with a certificate, photo, document or receipt; reviewers approve them, deny them or ask for more information. Outside training reaches the transcript with its proof, reviewed when the department wants it, and members are told at every step. A member uploads a photo of a hazardous materials refresher certificate with 8 hours; the training captain sees it in Training reviews, opens the photo and approves it. Choose the review in Training record settings and give training captains and instructors Record Training Completions on the Security page.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "training-submission-reviews",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
       "Id": "training-transcript",
       "Locale": "en",
       "TitleKey": "Feature.training-transcript",
@@ -2376,7 +3751,7 @@
       "Id": "training-external-submissions",
       "Locale": "en",
       "TitleKey": "Feature.training-external-submissions",
-      "Body": "Outside Training Submissions Members submit courses they completed outside the department, with hours and an optional certificate; an officer verifies or rejects each one in the records queue. Outside courses and continuing education reach the transcript with proof attached, and nothing counts until an officer has checked it. A paramedic finishes an online continuing education course and submits it with the certificate and 4 hours; the training officer verifies it in the queue and the hours count. Members choose Submit outside training on their transcript. Officers open the records queue to verify, reject or resolve possible duplicates. Submissions can be switched off in Training record settings.",
+      "Body": "Outside Training Submissions Members submit courses they completed outside the department, with hours and evidence (a certificate, photo, document or receipt); a reviewer approves or denies each one in Training reviews, unless the department accepts them as self-reported. Outside courses and continuing education reach the transcript with proof attached, checked by a reviewer when the department wants that. A member finishes an online safety course and submits it with the certificate and 4 hours; the training officer approves it in Training reviews and the hours count. Members choose Submit outside training on their transcript. Reviewers open Training reviews to approve, deny or ask for more information; possible duplicates stay in the records queue. Submissions can be switched off in Training record settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "training-external-submissions",
       "PackVersion": "2026.09.25.2",
@@ -2387,7 +3762,7 @@
       "Id": "training-categories",
       "Locale": "en",
       "TitleKey": "Feature.training-categories",
-      "Body": "Training Categories Group training hours into categories with optional hour targets and retention, start from templates such as ISO, NCCP or OSHA, and categorize existing records in bulk. Hours add up the way your state, insurer or accreditor asks for them, and targets show who is behind. A department applies the ISO template, sets an annual target for company training, then categorizes last year's drill records in bulk by course name. In Trainings, open Training records, then Training categories. Apply a template or add your own, then use Categorize history to give uncategorized records a category.",
+      "Body": "Training Categories Group training hours into categories with optional hour targets and retention, start from templates for fire (ISO), EMS (NCCP), workplace safety (OSHA), industry, search and rescue, law enforcement, security, CPD, Canada or the EU, and categorize existing records in bulk. Hours add up the way your regulator, licensing body, insurer or accreditor asks for them, and targets show who is behind. A department applies the ISO template, sets an annual target for company training, then categorizes last year's drill records in bulk by course name. In Trainings, open Training records, then Training categories. Apply a template or add your own, then use Categorize history to give uncategorized records a category.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "training-categories",
       "PackVersion": "2026.09.25.2",
@@ -2552,7 +3927,7 @@
       "Id": "field.LmsProgramSettings.RequestCurrency",
       "Locale": "en",
       "TitleKey": "Field.LmsProgramSettings.RequestCurrency",
-      "Body": "Training program settings / Training request currency. The three-letter currency code training request costs are entered and totalled in.",
+      "Body": "Training program settings / Training currency. The three-letter currency code (EUR, CAD, USD …) the department's training request costs, class costs and class fees are entered and totalled in. A class can name its own.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "field-lmsprogramsettings-requestcurrency",
       "PackVersion": "2026.09.25.2",
@@ -2618,7 +3993,7 @@
       "Id": "lms-training-plan",
       "Locale": "en",
       "TitleKey": "Feature.lms-training-plan",
-      "Body": "Annual Training Plan A year of planned sessions and hours per category and month for the department, a group or a shift, compared with the hours actually recorded. The written plan ISO and state audits ask for, and a shortfall against the annual targets that shows in June, not at the audit. The training officer plans 16 hours of company training each month; by June the forecast shows the department will miss the 192-hour target by 20 hours. Nothing to set up yet: the annual plan is part of the LMS add-on, which is not available yet.",
+      "Body": "Annual Training Plan A year of planned sessions and hours per category and month for the department, a group or a shift, compared with the hours actually recorded. The written plan auditors, regulators and accreditors ask for, and a shortfall against the annual targets that shows in June, not at the audit. The training officer plans 16 hours of company training each month; by June the forecast shows the department will miss the 192-hour target by 20 hours. Nothing to set up yet: the annual plan is part of the LMS add-on, which is not available yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "lms-training-plan",
       "PackVersion": "2026.09.25.2",
@@ -2629,7 +4004,7 @@
       "Id": "lms-competency-frameworks",
       "Locale": "en",
       "TitleKey": "Feature.lms-competency-frameworks",
-      "Body": "Competency Frameworks Job performance requirements, positions and skills, tagged on the courses, trainings and certifications that evidence them, with a gap report per member. Shows for every member which requirements have evidence, how old it is, and which have none. A department imports its state's firefighter framework, tags its courses, and sees a recruit still has no evidence for three requirements. Nothing to set up yet: competency frameworks are part of the LMS add-on, which is not available yet.",
+      "Body": "Competency Frameworks Job performance requirements, positions and skills, tagged on the courses, trainings and certifications that evidence them, with a gap report per member. Shows for every member which requirements have evidence, how old it is, and which have none. A department imports its regulator's competency framework, tags its courses, and sees a recruit still has no evidence for three requirements. Nothing to set up yet: competency frameworks are part of the LMS add-on, which is not available yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "lms-competency-frameworks",
       "PackVersion": "2026.09.25.2",
@@ -2805,7 +4180,7 @@
       "Id": "lms-training-resources",
       "Locale": "en",
       "TitleKey": "Feature.lms-training-resources",
-      "Body": "Facility and Prop Booking The department's drill grounds, classrooms, props, apparatus and equipment, booked for class times so nothing is double-booked. Two classes never plan on the same burn building or engine for the same afternoon. The ladder evolution books the training tower and Engine 3 for Saturday morning; a second class asking for the tower then is refused. Nothing to set up yet: facility booking is part of the LMS add-on, which is not available yet.",
+      "Body": "Facility and Prop Booking The organization's training grounds, classrooms, props, vehicles and equipment, booked for class times so nothing is double-booked. Two classes never plan on the same burn building or engine for the same afternoon. The ladder evolution books the training tower and Engine 3 for Saturday morning; a second class asking for the tower then is refused. Nothing to set up yet: facility booking is part of the LMS add-on, which is not available yet.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "lms-training-resources",
       "PackVersion": "2026.09.25.2",
@@ -2910,6 +4285,325 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "setting.LmsCeReportingSettings",
+      "Locale": "en",
+      "TitleKey": "Setting.LmsCeReportingSettings",
+      "Body": "CE reporting settings. The CAPCE and CE Broker provider numbers, the certification types that hold members' license, NREMT and National EMS ID numbers, and the column lists of the CE / CPD training-hours file and the CAPCE, state CE and state roster files.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-lmscereportingsettings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.CapceProviderNumber",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeReportingSettings.CapceProviderNumber",
+      "Body": "CE reporting settings / CAPCE provider number. The department's CAPCE provider number when it is a CAPCE-accredited provider. Without it no CAPCE completion file is built.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscereportingsettings-capceprovidernumber",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.CapceProviderName",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeReportingSettings.CapceProviderName",
+      "Body": "CE reporting settings / CAPCE provider name. The provider name as the department enters it on courses and records; completions naming it count as the department's own CE.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscereportingsettings-capceprovidername",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.LicenseCertificationTypeId",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeReportingSettings.LicenseCertificationTypeId",
+      "Body": "CE reporting settings / State license certification type. The certification type whose number, area, type and expiry the files report as the member's state license.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscereportingsettings-licensecertificationtypeid",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.NremtCertificationTypeId",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeReportingSettings.NremtCertificationTypeId",
+      "Body": "CE reporting settings / NREMT certification type. The certification type whose number and expiry the files report as the NREMT number and next re-registration date.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscereportingsettings-nremtcertificationtypeid",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.NemsidCertificationTypeId",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeReportingSettings.NemsidCertificationTypeId",
+      "Body": "CE reporting settings / National EMS ID certification type. The certification type whose number the files report as the member's National EMS ID (NEMSID).",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscereportingsettings-nemsidcertificationtypeid",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.CeBrokerProviderNumber",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeReportingSettings.CeBrokerProviderNumber",
+      "Body": "CE reporting settings / CE Broker provider number. The CE Broker provider tracking number (Florida) written in column A of the CE Broker file without its 50- prefix.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscereportingsettings-cebrokerprovidernumber",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeReportingSettings.ColumnMaps",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeReportingSettings.ColumnMaps",
+      "Body": "CE reporting settings / CE file column lists. The department's own column lists, one per file type; a file type without one uses its default columns.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscereportingsettings-columnmaps",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeColumnMap.ExporterKey",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeColumnMap.ExporterKey",
+      "Body": "CE reporting settings / CE file type. Which file a column list belongs to: training-hours, capce, fl-ems, va-ems, nj-ems, fl-fire, state-ce or state-roster.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscecolumnmap-exporterkey",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeColumnMap.Columns",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeColumnMap.Columns",
+      "Body": "CE reporting settings / CE file columns. The columns of the file, in order.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscecolumnmap-columns",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeColumn.Header",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeColumn.Header",
+      "Body": "CE reporting settings / CE column heading. The heading written in the file's header row; files without a header row leave it out.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscecolumn-header",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeColumn.Source",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeColumn.Source",
+      "Body": "CE reporting settings / CE column value. Which value the column carries: a member, record, certification or provider field, or fixed text.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscecolumn-source",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsCeColumn.Argument",
+      "Locale": "en",
+      "TitleKey": "Field.LmsCeColumn.Argument",
+      "Body": "CE reporting settings / CE column format. A date or number format for the value, or the text of a fixed-text column.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmscecolumn-argument",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "lms-data-export",
+      "Locale": "en",
+      "TitleKey": "Feature.lms-data-export",
+      "Body": "Training data export Department owners and admins export everything the department put into Training: courses with their versions, lessons and media, question banks with answer keys, and every learning record, attempt and certificate as CSV and xAPI statements, with a SCORM 1.2 package per course where the lessons allow. A department can always take its training content and evidence with it, also after the LMS add-on lapses. Before moving to a regional academy's system, the training officer exports everything, loads the xAPI statements into the new record store and keeps the CSV records for the audit. Open Trainings, choose Programs, then Data export, pick Everything or Records only and start the export; download the zip when it is ready.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "lms-data-export",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "lms-ce-reporting",
+      "Locale": "en",
+      "TitleKey": "Feature.lms-ce-reporting",
+      "Body": "CE reporting files Builds a CE / CPD training-hours file with the columns your regulator or professional body asks for, and for US departments the CAPCE completion file, state CE files (Florida's CE Broker layout and a configurable CSV for other states) and a state-ready roster for systems such as Acadis, with a preview and per-department columns. Completions reach your regulator, professional body, CAPCE or state office without retyping a roster, and nothing is submitted before someone checks the file. Each month the EMS coordinator previews last month's CAPCE file, fixes two members missing a state license number and uploads the CSV to CAPCE. Open Trainings, choose Programs, then CE reporting, enter the provider numbers and the certification types that hold license numbers, then build a file for a date range.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "lms-ce-reporting",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "lms-starter-courses",
+      "Locale": "en",
+      "TitleKey": "Feature.lms-starter-courses",
+      "Body": "Starter courses Courses written by Resgrid (getting started with Resgrid, incident safety basics, a hazardous materials awareness outline, driver basics) to copy into the department as a draft. A department gets a structured first course in minutes and adapts it to its own procedures; the copy keeps its attribution, and partner slots show where accredited content will plug in. A volunteer department copies Getting started with Resgrid, adds its radio channels and station names, and assigns it to every new member after approval. Needs the LMS add-on and Manage Courses; open Trainings, Course library, Starter courses. Starters carry no standard's text and no accreditation.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "lms-starter-courses",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "setting.LmsStandardsSettings",
+      "Locale": "en",
+      "TitleKey": "Setting.LmsStandardsSettings",
+      "Body": "xAPI (LRS) settings. Whether LMS course and lesson results are sent as xAPI statements to the department's Learning Record Store, with which key and secret, and whether members are identified by e-mail address.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-lmsstandardssettings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.XapiEnabled",
+      "Locale": "en",
+      "TitleKey": "Field.LmsStandardsSettings.XapiEnabled",
+      "Body": "xAPI (LRS) settings / Send xAPI statements. Course and lesson results (attempted, completed, passed, failed) are queued and sent to the LRS by the standards worker, with retries.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmsstandardssettings-xapienabled",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.LrsEndpoint",
+      "Locale": "en",
+      "TitleKey": "Field.LmsStandardsSettings.LrsEndpoint",
+      "Body": "xAPI (LRS) settings / LRS endpoint. The https address of the Learning Record Store's xAPI endpoint; statements are posted to its statements resource.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmsstandardssettings-lrsendpoint",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.LrsKey",
+      "Locale": "en",
+      "TitleKey": "Field.LmsStandardsSettings.LrsKey",
+      "Body": "xAPI (LRS) settings / LRS key. The basic-auth key (user name) the LRS issued.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmsstandardssettings-lrskey",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.LrsSecretEncrypted",
+      "Locale": "en",
+      "TitleKey": "Field.LmsStandardsSettings.LrsSecretEncrypted",
+      "Body": "xAPI (LRS) settings / LRS secret. The basic-auth secret, stored encrypted for the department and never shown again.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmsstandardssettings-lrssecretencrypted",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.LmsStandardsSettings.ShareEmailInActor",
+      "Locale": "en",
+      "TitleKey": "Field.LmsStandardsSettings.ShareEmailInActor",
+      "Body": "xAPI (LRS) settings / Identify members by e-mail. Off: each member is a pseudonymous department account. On: the member's e-mail address is sent as the statement's actor.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-lmsstandardssettings-shareemailinactor",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "lms-content-standards",
+      "Locale": "en",
+      "TitleKey": "Feature.lms-content-standards",
+      "Body": "SCORM, cmi5, xAPI and LTI Import SCORM 1.2/2004 and cmi5 packages played in a sandboxed player, launch third-party CE courses over LTI 1.3 with score passback, and send results to an external LRS as xAPI statements. Partner and purchased e-learning runs inside Resgrid and lands on the transcript, and results can flow to the department's own LRS. A CAPCE provider's cardiac course launches from a course lesson over LTI; the score comes back, the lesson completes and the credit lands on the member's transcript. Open Trainings, choose Standards, upload a package or register an LTI tool, then add a SCORM, cmi5 or LTI lesson to a course.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "lms-content-standards",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "lms-certification-requirements",
+      "Locale": "en",
+      "TitleKey": "Feature.lms-certification-requirements",
+      "Body": "Certification Requirement Sets A certification is issued or renewed automatically when a member completes every item of its set inside the cycle: LMS courses, a course set, trainings, a supervised practical recorded by an instructor, skill evaluations or continuing-education hours. Voiding a completion behind it takes the certification back. Members and officers see exactly what is left (\"3 of 4 done\"), nobody re-enters a renewal by hand, and a mistaken completion never leaves a certification standing on nothing. An operator certification needs the yearly driving course, the vehicle checks course and a slow speed course an instructor signs off; when the last one is recorded the certification renews to the next 31 December. Nothing to set up yet: certification requirement sets are part of the LMS add-on, which is not available yet.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "lms-certification-requirements",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "certification-validity-rules",
+      "Locale": "en",
+      "TitleKey": "Feature.certification-validity-rules",
+      "Body": "Certification Validity Rules A certification type expires a number of months after issue, at the end of each calendar year, at the end of the organization's own year, or on a fixed date, with an optional grace period and renewal window. Annual and fiscal-year authorizations expire the same day for everyone, renewals land in the right year, and dates follow the organization's time zone. A forklift authorization set to expire on 31 March each year renews to the following 31 March when the refresher is completed in February. Open Certifications, then a certification type, and choose how it expires.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "certification-validity-rules",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "training-read-and-confirm",
+      "Locale": "en",
+      "TitleKey": "Feature.training-read-and-confirm",
+      "Body": "Read and Confirm Trainings A training without a quiz can ask each member to confirm they read and reviewed it before its due date, and repeat every year: an employee handbook, a code of conduct or a site rule. Opening a document is no longer counted as reading it: the record shows who confirmed and when, ready for an audit. The employee handbook is assigned every January with a 31 January due date; each member ticks \"I have read and reviewed this training\" and the transcript shows the date. Create a training, attach or write the document, tick \"Members confirm they have read and reviewed it\", set a due date and repeat every 12 months.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "training-read-and-confirm",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "course-sets",
+      "Locale": "en",
+      "TitleKey": "Feature.course-sets",
+      "Body": "Course Sets Publish trainings (and, with the LMS, courses and learning paths) to linked organizations as a set; subscribers receive their own copies, locked or open as the publisher chooses, and each update arrives in their inbox to go into force at their update time. Trainings need no add-on, and quiz changes flow down with each update.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "course-sets",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "lms-course-sets",
+      "Locale": "en",
+      "TitleKey": "Feature.lms-course-sets",
+      "Body": "LMS Courses And Paths In Sets LMS courses and learning paths travel in course sets: hosted video and SCORM or cmi5 packages are shared with the subscriber, an LTI lesson uses the subscriber's own registration with the tool (its managers are told to finish it), and a path points at the subscriber's copies of its courses. Needs the subscriber's LMS add-on or the publisher's sponsorship.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "lms-course-sets",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "lms-sponsorship",
+      "Locale": "en",
+      "TitleKey": "Feature.lms-sponsorship",
+      "Body": "Sponsored LMS Seats Pay for a linked department's LMS-enabled members from your own packs, optionally up to a seat limit. The sponsored department needs no add-on, may be on the free plan, runs your course sets only and sees who pays; ending the sponsorship or the link lapses access with the usual lapse rules.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "lms-sponsorship",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
     }
   ]
 }

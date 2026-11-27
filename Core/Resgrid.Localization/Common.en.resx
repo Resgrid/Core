@@ -907,4 +907,22 @@
   <data name="AcademyAssignThisLesson" xml:space="preserve">
     <value>Assign this lesson</value>
   </data>
+  <data name="WellnessModule" xml:space="preserve">
+    <value>Wellness</value>
+  </data>
+  <data name="WellnessOfficersTerm" xml:space="preserve">
+    <value>Wellness officers</value>
+  </data>
+  <data name="TermWellnessOfficer" xml:space="preserve">
+    <value>Wellness officer</value>
+  </data>
+  <data name="DesignatedOfficersTerm" xml:space="preserve">
+    <value>Designated officers</value>
+  </data>
+  <data name="TermDesignatedOfficer" xml:space="preserve">
+    <value>Designated officer</value>
+  </data>
+  <data name="PeerSupportTeamTerm" xml:space="preserve">
+    <value>Peer support team</value>
+  </data>
 </root>

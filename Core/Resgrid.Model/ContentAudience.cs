@@ -66,7 +66,13 @@ namespace Resgrid.Model
 		Deleted = 1,
 		Disabled = 2,
 		Hidden = 3,
-		NotActivated = 4
+		NotActivated = 4,
+
+		/// <summary>
+		/// Round 10 A7 (§17.4): LMS assignments only: the member holds no LMS seat, so they cannot be enrolled in a department course or path
+		/// (the Academy and baseline trainings never skip for this). They are assigned once a seat is enabled and the assignment runs again.
+		/// </summary>
+		NotLicensed = 5
 	}
 
 	public class ContentAudienceSkip

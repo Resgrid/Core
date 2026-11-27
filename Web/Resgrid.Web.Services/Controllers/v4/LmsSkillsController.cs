@@ -41,9 +41,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IMfaEvidenceService _evidence;
 		private readonly IMfaPolicyService _mfaPolicy;
 
+		private readonly IStepUpCapabilityService _stepUp;
+
 		public LmsSkillsController(ILmsGateService gate, ILmsAccessService access, ILmsSkillSheetService sheets, ILmsSkillEvaluationService evaluations, ILmsTaskBookService taskBooks,
-			ISignatureRequestService requests, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy)
+			ISignatureRequestService requests, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy, IStepUpCapabilityService stepUp)
 		{
+			_stepUp = stepUp;
 			_gate = gate;
 			_access = access;
 			_sheets = sheets;
@@ -362,6 +365,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				SignatureRequestId = view.Evaluation.SignatureRequestId.Value,
 				Proof = proof
 			}, cancellationToken);
+			if (outcome?.Refusal == SignatureRequestRefusals.StepUpRequired)
+				return await ApiStepUp.RefuseAsync(HttpContext, _stepUp, DepartmentId, UserId, Model.Security.StepUpArea.Signatures, cancellationToken);
 			var after = await _evaluations.GetViewAsync(DepartmentId, input.EvaluationId);
 			var result = new LmsSkillSignResult
 			{

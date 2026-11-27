@@ -6,7 +6,7 @@ using Resgrid.Model.Lms;
 
 namespace Resgrid.Model.Repositories
 {
-	// Training T3 part 2 (round 4C, M0387–M0390). Every read is department scoped; no list query loads more than its page.
+	// Training T3 part 2 (round 4C, M0367–M0370). Every read is department scoped; no list query loads more than its page.
 
 	public interface ILmsTrainingPlansRepository : IRepository<LmsTrainingPlan>
 	{
@@ -113,6 +113,9 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Claims the department-local day of the cycle sweep; false when that day was already claimed.</summary>
 		Task<bool> TryClaimCycleSweepAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default);
 		Task ReleaseCycleSweepAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default);
+		/// <summary>Round 9A: claims the department-local day of the requirement-set sweep; false when that day was already claimed.</summary>
+		Task<bool> TryClaimRequirementSetSweepAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default);
+		Task ReleaseRequirementSetSweepAsync(int departmentId, DateTime localDate, CancellationToken cancellationToken = default);
 		Task SetFamiliarizationScannedThroughAsync(int departmentId, DateTime scannedThroughUtc, CancellationToken cancellationToken = default);
 		/// <summary>Departments that saved program settings (the familiarization due-work query reads only these).</summary>
 		Task<List<int>> GetDepartmentsWithProgramSettingsAsync();

@@ -1098,6 +1098,87 @@ var resgrid;
                 }
                 initPermRoles("#gradeAssessmentsRoles", 133);
                 ////////////////////////////////////////////////////////
+                // ReviewDispatchCases (Protocols P5 QA)
+                ////////////////////////////////////////////////////////
+                $('#ReviewDispatchCases').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=134&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#ReviewDispatchCases").val() === "2") {
+                        $('#reviewDispatchCasesNoRolesSpan').hide();
+                        $('#reviewDispatchCasesRolesDiv').show();
+                    } else {
+                        $('#reviewDispatchCasesNoRolesSpan').show();
+                        $('#reviewDispatchCasesRolesDiv').hide();
+                    }
+                });
+                if ($("#ReviewDispatchCases").val() === "2") {
+                    $('#reviewDispatchCasesNoRolesSpan').hide();
+                    $('#reviewDispatchCasesRolesDiv').show();
+                } else {
+                    $('#reviewDispatchCasesNoRolesSpan').show();
+                    $('#reviewDispatchCasesRolesDiv').hide();
+                }
+                initPermRoles("#reviewDispatchCasesRoles", 134);
+                ////////////////////////////////////////////////////////
+                // RecordTrainingCompletions (round 7B, 135)
+                ////////////////////////////////////////////////////////
+                $('#RecordTrainingCompletions').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=135&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#RecordTrainingCompletions").val() === "2") {
+                        $('#recordTrainingCompletionsNoRolesSpan').hide();
+                        $('#recordTrainingCompletionsRolesDiv').show();
+                    } else {
+                        $('#recordTrainingCompletionsNoRolesSpan').show();
+                        $('#recordTrainingCompletionsRolesDiv').hide();
+                    }
+                });
+                if ($("#RecordTrainingCompletions").val() === "2") {
+                    $('#recordTrainingCompletionsNoRolesSpan').hide();
+                    $('#recordTrainingCompletionsRolesDiv').show();
+                } else {
+                    $('#recordTrainingCompletionsNoRolesSpan').show();
+                    $('#recordTrainingCompletionsRolesDiv').hide();
+                }
+                initPermRoles("#recordTrainingCompletionsRoles", 135);
+                ////////////////////////////////////////////////////////
+                // ManageContentSets (round 10 A3, 136)
+                ////////////////////////////////////////////////////////
+                $('#ManageContentSets').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=136&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#ManageContentSets").val() === "2") {
+                        $('#manageContentSetsNoRolesSpan').hide();
+                        $('#manageContentSetsRolesDiv').show();
+                    } else {
+                        $('#manageContentSetsNoRolesSpan').show();
+                        $('#manageContentSetsRolesDiv').hide();
+                    }
+                });
+                if ($("#ManageContentSets").val() === "2") {
+                    $('#manageContentSetsNoRolesSpan').hide();
+                    $('#manageContentSetsRolesDiv').show();
+                } else {
+                    $('#manageContentSetsNoRolesSpan').show();
+                    $('#manageContentSetsRolesDiv').hide();
+                }
+                initPermRoles("#manageContentSetsRoles", 136);
+                ////////////////////////////////////////////////////////
                 // View Command Boards
                 ////////////////////////////////////////////////////////
                 $('#ViewCommandBoards').change(function () {

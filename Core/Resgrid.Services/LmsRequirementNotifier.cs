@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Resgrid.Framework;
+using Resgrid.Localization.Areas.User.ContentNotices;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
@@ -18,8 +18,8 @@ namespace Resgrid.Services
 	/// code "LR:{requirementId}" the apps route on and the web link in the text for the older apps. Members are told when a requirement
 	/// applies to them, when it is at risk or overdue, and when enforcement acted or was undone; supervisors (the admins of the member's
 	/// group) and named people when a member is overdue or, if the requirement asks, completes it (§13a); the department's active admins
-	/// when a sweep refused to act (R-L11). Active members only; nothing goes out where the department cannot transmit. Outbound text is
-	/// English, like the rest of Resgrid's outbound messages.
+	/// when a sweep refused to act (R-L11). Active members only; nothing goes out where the department cannot transmit. The text comes from
+	/// ContentNotices in each recipient's language, dates in the department's zone (round 9C).
 	/// </summary>
 	public class LmsRequirementNotifier : ILmsRequirementNotifier
 	{
@@ -27,13 +27,16 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departments;
 		private readonly IDepartmentSettingsService _settings;
 		private readonly IDepartmentGroupsService _groups;
+		private readonly IUserProfileService _profiles;
 
-		public LmsRequirementNotifier(Lazy<ICommunicationService> communication, IDepartmentsService departments, IDepartmentSettingsService settings, IDepartmentGroupsService groups)
+		public LmsRequirementNotifier(Lazy<ICommunicationService> communication, IDepartmentsService departments, IDepartmentSettingsService settings, IDepartmentGroupsService groups,
+			IUserProfileService profiles)
 		{
 			_communication = communication;
 			_departments = departments;
 			_settings = settings;
 			_groups = groups;
+			_profiles = profiles;
 		}
 
 		/// <summary>The member's My Training page, where requirements are listed with their next action.</summary>
@@ -47,9 +50,17 @@ namespace Resgrid.Services
 		{
 			if (requirement == null)
 				return 0;
-			var due = await LocalDateAsync(departmentId, dueUtc);
-			var message = $"New training requirement: {requirement.Name} ({targetName}){(due == null ? string.Empty : ", due " + due)}. {MyTrainingLink()}";
-			return await SendAsync(departmentId, new[] { userId }, "Training requirement", message, EventCode(requirement), cancellationToken);
+			return await SendAsync(departmentId, new[] { userId }, (culture, department) => AssignedNotice(requirement, targetName, dueUtc, department, culture),
+				EventCode(requirement), cancellationToken);
+		}
+
+		/// <summary>"New training requirement" in <paramref name="culture"/>, the due date in the department's zone.</summary>
+		public static ContentNoticeDelivery.Notice AssignedNotice(LmsRequirement requirement, string targetName, DateTime? dueUtc, Department department, CultureInfo culture)
+		{
+			var due = ContentNoticeCultures.LocalDate(dueUtc, department, culture);
+			return new ContentNoticeDelivery.Notice(ContentNoticeText.Get("Requirement.Assigned.Title", culture), due == null
+				? ContentNoticeText.Format("Requirement.Assigned.Message", culture, requirement.Name, targetName, MyTrainingLink())
+				: ContentNoticeText.Format("Requirement.Assigned.MessageDue", culture, requirement.Name, targetName, due, MyTrainingLink()));
 		}
 
 		public async Task<int> NotifyDueAsync(int departmentId, string userId, LmsRequirement requirement, string targetName, LmsRequirementStates state, DateTime? dueUtc,
@@ -57,12 +68,17 @@ namespace Resgrid.Services
 		{
 			if (requirement == null || (state != LmsRequirementStates.AtRisk && state != LmsRequirementStates.Overdue))
 				return 0;
-			var due = await LocalDateAsync(departmentId, dueUtc);
-			var title = state == LmsRequirementStates.Overdue ? "Training requirement overdue" : "Training requirement due soon";
-			var message = state == LmsRequirementStates.Overdue
-				? $"{requirement.Name} ({targetName}) was due{(due == null ? string.Empty : " on " + due)} and is overdue. {MyTrainingLink()}"
-				: $"{requirement.Name} ({targetName}) is due{(due == null ? " soon" : " on " + due)}. {MyTrainingLink()}";
-			return await SendAsync(departmentId, new[] { userId }, title, message, EventCode(requirement), cancellationToken);
+			return await SendAsync(departmentId, new[] { userId }, (culture, department) =>
+			{
+				var due = ContentNoticeCultures.LocalDate(dueUtc, department, culture);
+				var overdue = state == LmsRequirementStates.Overdue;
+				var message = overdue
+					? due == null ? ContentNoticeText.Format("Requirement.Overdue.Message", culture, requirement.Name, targetName, MyTrainingLink())
+						: ContentNoticeText.Format("Requirement.Overdue.MessageOn", culture, requirement.Name, targetName, due, MyTrainingLink())
+					: due == null ? ContentNoticeText.Format("Requirement.DueSoon.Message", culture, requirement.Name, targetName, MyTrainingLink())
+						: ContentNoticeText.Format("Requirement.DueSoon.MessageOn", culture, requirement.Name, targetName, due, MyTrainingLink());
+				return new ContentNoticeDelivery.Notice(ContentNoticeText.Get(overdue ? "Requirement.Overdue.Title" : "Requirement.DueSoon.Title", culture), message);
+			}, EventCode(requirement), cancellationToken);
 		}
 
 		public async Task<int> NotifySupervisorsAsync(int departmentId, string memberUserId, LmsRequirement requirement, string targetName, bool completed,
@@ -87,11 +103,13 @@ namespace Resgrid.Services
 				return 0;
 
 			var name = (await _departments.GetAllPersonnelNamesForDepartmentAsync(departmentId) ?? new List<PersonName>())
-				.FirstOrDefault(p => string.Equals(p.UserId, memberUserId, StringComparison.OrdinalIgnoreCase))?.Name ?? "A member";
-			var message = completed
-				? $"{name} completed {requirement.Name} ({targetName}). {ComplianceLink()}"
-				: $"{name} is overdue on {requirement.Name} ({targetName}). {ComplianceLink()}";
-			return await SendAsync(departmentId, recipients, completed ? "Training requirement completed" : "Training requirement overdue", message, EventCode(requirement), cancellationToken);
+				.FirstOrDefault(p => string.Equals(p.UserId, memberUserId, StringComparison.OrdinalIgnoreCase))?.Name;
+			return await SendAsync(departmentId, recipients, (culture, _) =>
+			{
+				var who = string.IsNullOrWhiteSpace(name) ? ContentNoticeText.Get("Requirement.AMember", culture) : name;
+				return new ContentNoticeDelivery.Notice(ContentNoticeText.Get(completed ? "Requirement.Supervisor.CompletedTitle" : "Requirement.Overdue.Title", culture),
+					ContentNoticeText.Format(completed ? "Requirement.Supervisor.Completed" : "Requirement.Supervisor.Overdue", culture, who, requirement.Name, targetName, ComplianceLink()));
+			}, EventCode(requirement), cancellationToken);
 		}
 
 		public async Task<int> NotifyEnforcementAsync(int departmentId, string userId, LmsRequirement requirement, string certificationName, bool undone,
@@ -99,10 +117,12 @@ namespace Resgrid.Services
 		{
 			if (requirement == null)
 				return 0;
-			var message = undone
-				? $"Your completion of {requirement.Name} restored the certification and roles it had affected. {MyTrainingLink()}"
-				: $"{requirement.Name} is overdue, so your {certificationName ?? "certification"} has expired. Complete it to restore the certification. {MyTrainingLink()}";
-			return await SendAsync(departmentId, new[] { userId }, undone ? "Training requirement met" : "Certification expired by training requirement", message,
+			return await SendAsync(departmentId, new[] { userId }, (culture, _) => undone
+				? new ContentNoticeDelivery.Notice(ContentNoticeText.Get("Requirement.Met.Title", culture),
+					ContentNoticeText.Format("Requirement.Met.Message", culture, requirement.Name, MyTrainingLink()))
+				: new ContentNoticeDelivery.Notice(ContentNoticeText.Get("Requirement.Enforced.Title", culture),
+					ContentNoticeText.Format("Requirement.Enforced.Message", culture, requirement.Name,
+						string.IsNullOrWhiteSpace(certificationName) ? ContentNoticeText.Get("Requirement.Enforced.Certification", culture) : certificationName, MyTrainingLink())),
 				EventCode(requirement), cancellationToken);
 		}
 
@@ -111,50 +131,20 @@ namespace Resgrid.Services
 			if (breaches == null || breaches.Count == 0)
 				return 0;
 			var admins = (await _departments.GetActiveAdminsForDepartmentAsync(departmentId) ?? new List<Model.Identity.IdentityUser>()).Select(a => a.UserId).ToList();
-			var roles = string.Join("; ", breaches.Take(10).Select(b => $"{b.RoleName ?? "role " + b.PersonnelRoleId.ToString(CultureInfo.InvariantCulture)}: {b.Losing} of {b.Holders}"));
-			var message = $"Training-backed enforcement did not run today: it would have removed more than {maxSharePercent}% of a role's members ({roles}). " +
-				$"Review the requirements and the enforcement preview. {ComplianceLink().Replace("/Compliance", "/Enforcement")}";
-			return await SendAsync(departmentId, admins, "Training enforcement refused", message, "LR:0", cancellationToken);
-		}
-
-		private async Task<string> LocalDateAsync(int departmentId, DateTime? utc)
-		{
-			if (!utc.HasValue)
-				return null;
-			var department = await _departments.GetDepartmentByIdAsync(departmentId, false);
-			return department == null ? utc.Value.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)
-				: DateTime.SpecifyKind(utc.Value, DateTimeKind.Utc).TimeConverter(department).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-		}
-
-		private async Task<int> SendAsync(int departmentId, IEnumerable<string> userIds, string title, string message, string eventCode, CancellationToken cancellationToken)
-		{
-			var wanted = (userIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-			if (wanted.Count == 0 || !ConfigHelper.CanTransmit(departmentId))
-				return 0;
-
-			var department = await _departments.GetDepartmentByIdAsync(departmentId, false);
-			if (department == null)
-				return 0;
-
-			// Inactive-member policy: deleted, disabled and hidden members are never addressed by automation.
-			var active = await _departments.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-			var number = await _settings.GetTextToCallNumberForDepartmentAsync(departmentId);
-			var sent = 0;
-			foreach (var userId in wanted.Where(id => active.Contains(id)))
+			var link = ComplianceLink().Replace("/Compliance", "/Enforcement");
+			return await SendAsync(departmentId, admins, (culture, _) =>
 			{
-				cancellationToken.ThrowIfCancellationRequested();
-				try
-				{
-					if (await _communication.Value.SendNotificationAsync(userId, departmentId, message, number, department, title, null, false, eventCode))
-						sent++;
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex, $"Learning requirement notice to {userId} in department {departmentId} failed.");
-				}
-			}
-
-			return sent;
+				var roles = string.Join("; ", breaches.Take(10).Select(b => ContentNoticeText.Format("Requirement.Refused.Breach", culture,
+					b.RoleName ?? ContentNoticeText.Format("Requirement.Refused.Role", culture, b.PersonnelRoleId), b.Losing, b.Holders)));
+				return new ContentNoticeDelivery.Notice(ContentNoticeText.Get("Requirement.Refused.Title", culture),
+					ContentNoticeText.Format("Requirement.Refused.Message", culture, maxSharePercent, roles, link));
+			}, "LR:0", cancellationToken);
 		}
+
+		/// <summary>Active members only, each in their own language (<see cref="ContentNoticeDelivery"/>).</summary>
+		private Task<int> SendAsync(int departmentId, IEnumerable<string> userIds, Func<CultureInfo, Department, ContentNoticeDelivery.Notice> compose, string eventCode,
+			CancellationToken cancellationToken) =>
+			ContentNoticeDelivery.SendAsync(_communication.Value, _departments, _settings, _profiles, departmentId, userIds, compose, eventCode, "Learning requirement notice",
+				cancellationToken);
 	}
 }

@@ -25,6 +25,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// </summary>
 	[Area("User")]
 	[Authorize]
+	[DepartmentLocalTime]
 	public class KnowledgeController : SecureBaseController
 	{
 		/// <summary>TempData key carrying a gap's question to Trainings/New (kept out of the URL).</summary>

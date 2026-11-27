@@ -28,11 +28,13 @@ namespace Resgrid.Services.Wellness
 				throw new UnauthorizedAccessException("A signed-in member is required.");
 
 			var memberUserId = string.IsNullOrWhiteSpace(input.UserId) ? actorUserId : input.UserId.Trim();
+			await RequireReadableAsync(departmentId);
 			var access = await GetAccessAsync(departmentId, actorUserId);
 			if (!access.IsMember || (!Same(actorUserId, memberUserId) && !access.IsHealthOfficer))
 				throw new UnauthorizedAccessException("Only the member or a health officer reports an injury.");
 			if (!await IsCurrentMemberAsync(departmentId, memberUserId))
 				throw new MemberWellnessException("member_not_found");
+			await RequireWritableForAsync(departmentId, memberUserId);
 			ValidateDate(input.OccurredOn, "date_invalid");
 			await ValidateCallAsync(departmentId, input.CallId);
 			var incident = await LinkedIncidentAsync(departmentId, memberUserId, input.ExposureIncidentId);
@@ -77,8 +79,8 @@ namespace Resgrid.Services.Wellness
 			Audit(departmentId, actorUserId, AuditLogTypes.MemberInjuryReported, null, Snapshot(row));
 
 			var name = await NameOfAsync(departmentId, memberUserId);
-			await NotifyAsync(departmentId, (await HealthOfficersAsync(departmentId)).Where(o => !Same(o, actorUserId)), "Injury reported",
-				$"{name} has an injury report from {LocalDate(occurred, department).ToString("d", CultureInfo.InvariantCulture)} to review. {Link("/User/MemberHealth/Injury?id=" + row.RmsMemberInjuryId)}",
+			await NotifyAsync(departmentId, (await HealthOfficersAsync(departmentId)).Where(o => !Same(o, actorUserId)), "Health.InjuryReported.Title",
+				"Health.InjuryReported.Message", name, () => new object[] { LocalDate(occurred, department), Link("/User/MemberHealth/Injury?id=" + row.RmsMemberInjuryId) },
 				EventTypes.DutyStatusNotice, row.RmsMemberInjuryId, cancellationToken);
 			return row;
 		}
@@ -123,6 +125,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<RmsMemberInjury> GetInjuryAsync(int departmentId, string viewerUserId, string injuryId)
 		{
+			await RequireReadableAsync(departmentId);
 			if (string.IsNullOrWhiteSpace(injuryId))
 				return null;
 			var row = await _injuries.GetByIdForDepartmentAsync(departmentId, injuryId.Trim());
@@ -134,6 +137,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsMemberInjury>> GetInjuriesForMemberAsync(int departmentId, string viewerUserId, string memberUserId)
 		{
+			await RequireReadableAsync(departmentId);
 			if (!await CanReadAsync(departmentId, viewerUserId, memberUserId, false))
 				throw new UnauthorizedAccessException("Injury records are restricted to the member and the health officers.");
 			var rows = (await _injuries.GetForUserAsync(departmentId, memberUserId) ?? Enumerable.Empty<RmsMemberInjury>()).ToList();
@@ -143,6 +147,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsMemberInjury>> GetOpenInjuriesAsync(int departmentId, string officerUserId)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireHealthOfficerAsync(departmentId, officerUserId);
 			var rows = (await _injuries.GetOpenForDepartmentAsync(departmentId) ?? Enumerable.Empty<RmsMemberInjury>()).ToList();
 			Blank(rows, MemberHealthProtectedFields.Injuries);
@@ -151,6 +156,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<RmsInjuryDutyPeriod>> GetDutyPeriodsAsync(int departmentId, string viewerUserId, string injuryId)
 		{
+			await RequireReadableAsync(departmentId);
 			var row = string.IsNullOrWhiteSpace(injuryId) ? null : await _injuries.GetByIdForDepartmentAsync(departmentId, injuryId.Trim());
 			if (row == null || !await CanReadAsync(departmentId, viewerUserId, row.UserId, false))
 				throw new UnauthorizedAccessException("Injury records are restricted to the member and the health officers.");
@@ -163,10 +169,13 @@ namespace Resgrid.Services.Wellness
 
 		private async Task<RmsMemberInjury> LoadInjuryForOfficerAsync(int departmentId, string officerUserId, string injuryId)
 		{
+			await RequireReadableAsync(departmentId);
 			await RequireHealthOfficerAsync(departmentId, officerUserId);
 			var row = string.IsNullOrWhiteSpace(injuryId) ? null : await _injuries.GetByIdForDepartmentAsync(departmentId, injuryId.Trim());
 			if (row == null)
 				throw new MemberWellnessException("injury_not_found");
+			// Every caller changes the injury: editable only while the member holds a Workforce Pro seat.
+			await RequireWritableForAsync(departmentId, row.UserId);
 			return row;
 		}
 
@@ -359,6 +368,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<MemberDutyStatus> GetDutyStatusAsync(int departmentId, string viewerUserId, string memberUserId)
 		{
+			await RequireReadableAsync(departmentId);
 			if (string.IsNullOrWhiteSpace(memberUserId))
 				return null;
 			if (!Same(viewerUserId, memberUserId))
@@ -377,6 +387,7 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<List<MemberDutyStatus>> GetDutyBoardAsync(int departmentId, string viewerUserId)
 		{
+			await RequireReadableAsync(departmentId);
 			var visible = await VisibleMembersAsync(departmentId, viewerUserId);
 			if (visible != null && visible.Count == 0)
 				return new List<MemberDutyStatus>();
@@ -446,6 +457,8 @@ namespace Resgrid.Services.Wellness
 
 		public async Task<OshaLog> BuildOshaLogAsync(int departmentId, string officerUserId, int year, Func<string, string> nameOf)
 		{
+			// The OSHA log stays exportable while read-only (existing records, already-permitted officers).
+			await RequireReadableAsync(departmentId);
 			await RequireHealthOfficerAsync(departmentId, officerUserId);
 			if (year < 1971 || year > DateTime.UtcNow.Year + 1)
 				throw new MemberWellnessException("year_invalid");

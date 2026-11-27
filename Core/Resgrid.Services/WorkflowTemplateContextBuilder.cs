@@ -67,6 +67,10 @@ namespace Resgrid.Services
 
 			string triggeringUserId = null;
 
+			// Protocols, Training/LMS, signing and knowledge (round 7C): one table maps every payload of the content triggers.
+			if (ContentWorkflowTriggers.IsContent((int)eventType))
+				triggeringUserId = ContentWorkflowContext.Apply(scriptObject, eventType, eventPayloadJson);
+
 			// Deserialize event payload and map event-specific variables
 			switch (eventType)
 			{
@@ -706,6 +710,89 @@ namespace Resgrid.Services
 					}
 					break;
 				}
+				case WorkflowTriggerEventType.ClassSessionScheduled:
+				case WorkflowTriggerEventType.ClassSessionCancelled:
+				case WorkflowTriggerEventType.ClassSessionSignedOff:
+				case WorkflowTriggerEventType.ClassWaitlistPromoted:
+				{
+					var evt = TryDeserialize<TrainingClassWorkflowEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var tc = new ScriptObject();
+						tc["change"] = evt.Change.ToString();
+						tc["session_id"] = evt.SessionId;
+						tc["title"] = evt.Title;
+						tc["course_kind"] = evt.CourseKind;
+						tc["course_id"] = evt.CourseId ?? 0;
+						tc["training_id"] = evt.TrainingId ?? 0;
+						tc["starts_on"] = evt.StartsOn;
+						tc["ends_on"] = evt.EndsOn;
+						tc["capacity"] = evt.Capacity;
+						tc["enrolled"] = evt.Enrolled;
+						tc["waitlisted"] = evt.Waitlisted;
+						tc["attended"] = evt.Attended;
+						tc["absent"] = evt.Absent;
+						tc["series_key"] = evt.SeriesKey;
+						tc["user_id"] = evt.UserId;
+						tc["is_external_learner"] = evt.IsExternalLearner;
+						tc["acting_user_id"] = evt.ActingUserId;
+						scriptObject["training_class"] = tc;
+						// An external learner is never a member: the user.* block only follows a member.
+						triggeringUserId = evt.IsExternalLearner ? evt.ActingUserId : evt.UserId ?? evt.ActingUserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.TrainingCompletionRecorded:
+				{
+					var evt = TryDeserialize<TrainingCompletionRecordedEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var rc = new ScriptObject();
+						rc["id"] = evt.RecordingId;
+						rc["user_id"] = evt.UserId;
+						rc["is_external_learner"] = evt.IsExternalLearner;
+						rc["recorded_by_user_id"] = evt.RecordedByUserId;
+						rc["target_kind"] = evt.TargetKind;
+						rc["target_id"] = evt.TargetId;
+						rc["target_name"] = evt.TargetName;
+						rc["source"] = evt.Source;
+						rc["session_id"] = evt.SessionId ?? 0;
+						rc["learning_record_id"] = evt.LearningRecordId ?? 0;
+						rc["certification_id"] = evt.CertificationId ?? 0;
+						rc["quiz_waived"] = evt.QuizWaived;
+						rc["attestation_version"] = evt.AttestationVersion;
+						rc["completed_on"] = evt.CompletedOn;
+						scriptObject["recorded_completion"] = rc;
+						triggeringUserId = evt.IsExternalLearner ? evt.RecordedByUserId : evt.UserId;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.ExternalLearnerRegistered:
+				case WorkflowTriggerEventType.ExternalLearnerEnrolled:
+				case WorkflowTriggerEventType.ExternalLearnerCompletedCourse:
+				{
+					var evt = TryDeserialize<ExternalLearnerWorkflowEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var xl = new ScriptObject();
+						xl["change"] = evt.Change.ToString();
+						xl["id"] = evt.LearnerId;
+						xl["user_id"] = evt.LearnerUserId;
+						xl["source"] = evt.Source;
+						xl["subject"] = evt.Subject;
+						xl["session_id"] = evt.SessionId ?? 0;
+						xl["course_id"] = evt.CourseId ?? 0;
+						xl["title"] = evt.Title;
+						xl["status"] = evt.Status;
+						xl["fee"] = evt.Fee ?? 0m;
+						xl["currency"] = evt.Currency;
+						xl["starts_on"] = evt.StartsOn;
+						xl["completed_on"] = evt.CompletedOn;
+						xl["learning_record_id"] = evt.LearningRecordId ?? 0;
+						scriptObject["external_learner"] = xl;
+					}
+					break;
+				}
 				case WorkflowTriggerEventType.StationCoverageGapDetected:
 				{
 					var evt = TryDeserialize<StationCoverageGapEvent>(eventPayloadJson);
@@ -1108,6 +1195,10 @@ namespace Resgrid.Services
 			// Structural, never protected: a condition may branch on it. The subject identifiers are deliberately absent
 			// from call.*; they are only ever available as protected.call.subject_ids under an Active release.
 			c["part2_consent_on_file"] = call.Part2ConsentOnFile;
+			// P4 (round 7C): the determinant a protocol case reached as the call was saved, so a Call Added workflow can branch on it
+			// (an override afterwards is CallDeterminantChanged, 254). The determinant only: never the case answers or an override reason.
+			c["determinant"] = string.Join(", ", (call.Protocols ?? new List<CallProtocol>())
+				.Where(p => p != null && !p.IsRemoved && !string.IsNullOrWhiteSpace(p.Determinant)).Select(p => p.Determinant.Trim()).Distinct(StringComparer.OrdinalIgnoreCase));
 			c["is_deleted"] = call.IsDeleted;
 			c["deleted_reason"] = ProtectedDataEnvelope.SafeDisplay(call.DeletedReason) ?? string.Empty;
 

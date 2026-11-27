@@ -36,6 +36,8 @@ namespace Resgrid.Tests.LmsBilling
 		private Dictionary<string, DepartmentMember> _members;
 		private LmsSubscriptionSnapshot _subscription;
 		private LmsSeatService _service;
+		private Mock<ILmsExternalLearnersRepository> _externalLearners;
+		private int _learners;
 
 		[SetUp]
 		public void SetUp()
@@ -67,8 +69,11 @@ namespace Resgrid.Tests.LmsBilling
 			_groups = new Mock<IDepartmentGroupsService>();
 			_groups.Setup(g => g.GetGroupByIdAsync(GroupId, It.IsAny<bool>())).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = GroupId, DepartmentId = DepartmentId, Name = "Career" });
 			_events = new Mock<IEventAggregator>();
+			_learners = 0;
+			_externalLearners = new Mock<ILmsExternalLearnersRepository>();
+			_externalLearners.Setup(r => r.CountCountedAsync(DepartmentId)).ReturnsAsync(() => _learners);
 
-			_service = new LmsSeatService(_seats.Object, _access.Object, _departments.Object, _groups.Object, _events.Object);
+			_service = new LmsSeatService(_seats.Object, _access.Object, _departments.Object, _groups.Object, _events.Object, _externalLearners.Object, null);
 		}
 
 		private void Member(string userId, bool hidden = false, bool disabled = false, bool deleted = false)
@@ -156,6 +161,27 @@ namespace Resgrid.Tests.LmsBilling
 		}
 
 		[Test]
+		public async Task Seat_changes_raise_seats_changed_with_counts_only_and_no_change_raises_nothing()
+		{
+			// Round 7C, workflow trigger 274: counts and the acting officer, never which members.
+			var raised = new List<Resgrid.Model.Events.TrainingAdminWorkflowEvent>();
+			_events.Setup(e => e.SendMessage(It.IsAny<Resgrid.Model.Events.TrainingAdminWorkflowEvent>())).Callback((Resgrid.Model.Events.TrainingAdminWorkflowEvent e) => raised.Add(e));
+			Member("pat");
+			Enabled("sam");
+
+			(await _service.SetSeatAsync(DepartmentId, "pat", true, "admin")).Outcome.Should().Be(LmsSeatOutcomes.Enabled);
+			(await _service.SetSeatAsync(DepartmentId, "pat", true, "admin")).Outcome.Should().Be(LmsSeatOutcomes.Unchanged);
+			(await _service.SetSeatAsync(DepartmentId, "sam", false, "admin")).Outcome.Should().Be(LmsSeatOutcomes.Disabled);
+			(await _service.SetSeatAsync(DepartmentId, "sam", false, "admin")).Outcome.Should().Be(LmsSeatOutcomes.Unchanged);
+
+			raised.Should().HaveCount(2);
+			raised.Should().OnlyContain(e => e.Trigger == WorkflowTriggerEventType.LmsSeatsChanged && e.UserId == "admin" && e.DepartmentId == DepartmentId);
+			(raised[0].SeatsAdded, raised[0].SeatsRemoved, raised[0].EnabledSeats, raised[0].Packs).Should().Be((1, 0, (int?)2, 1));
+			(raised[1].SeatsAdded, raised[1].SeatsRemoved, raised[1].EnabledSeats).Should().Be((0, 1, (int?)1));
+			Newtonsoft.Json.JsonConvert.SerializeObject(raised).Should().NotContain("pat").And.NotContain("sam");
+		}
+
+		[Test]
 		public async Task Nothing_is_enabled_while_the_lms_is_off_or_the_add_on_is_not_working()
 		{
 			Member("pat");
@@ -236,6 +262,28 @@ namespace Resgrid.Tests.LmsBilling
 				Enabled("m" + i);
 
 			(await _service.GetMinimumPacksAsync(DepartmentId)).Should().Be(3, "51 enabled members need three 25-member packs");
+		}
+
+		[Test]
+		public async Task External_learners_beyond_fair_use_hold_seats_members_cannot_take()
+		{
+			// T5 (§17.4 decision 10): one pack = 25 seats, fair use = max(25, 25%) = 25 external learners free; 28 learners = 3 in the packs.
+			for (var i = 0; i < 22; i++)
+				Enabled("m" + i);
+			Member("next");
+			_learners = 28;
+
+			var summary = await _service.GetSummaryAsync(DepartmentId);
+			summary.ExternalLearnerSeats.Should().Be(3);
+			summary.AvailableSeats.Should().Be(0, "22 members and 3 external learners fill the 25 seats");
+
+			var result = await _service.SetSeatAsync(DepartmentId, "next", true, "admin");
+			result.Outcome.Should().Be(LmsSeatOutcomes.SeatsFull);
+			result.PacksNeeded.Should().Be(1);
+			(await _service.GetMinimumPacksAsync(DepartmentId)).Should().Be(1, "the 3 beyond fair use fit beside 22 members in one pack");
+
+			_learners = 25;
+			(await _service.SetSeatAsync(DepartmentId, "next", true, "admin")).Outcome.Should().Be(LmsSeatOutcomes.Enabled, "within fair use external learners take no seat");
 		}
 	}
 }

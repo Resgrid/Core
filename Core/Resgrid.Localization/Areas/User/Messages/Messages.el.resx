@@ -239,56 +239,74 @@
   </data>
   <data name="CredentialAudienceLabel" xml:space="preserve">
     <value>Βάσει πιστοποίησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceNone" xml:space="preserve">
     <value>Κανείς βάσει πιστοποίησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceStatus" xml:space="preserve">
     <value>Κατάσταση πιστοποίησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceExpired" xml:space="preserve">
     <value>έχει λήξει</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceExpiring" xml:space="preserve">
     <value>λήγει εντός των ημερών</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceMissing" xml:space="preserve">
     <value>δεν την είχε ποτέ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceDays" xml:space="preserve">
     <value>Ημέρες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceHelp" xml:space="preserve">
     <value>Προσθέτει τα ενεργά μέλη των οποίων η πιστοποίηση ταιριάζει, μαζί με τους παραλήπτες που επιλέχθηκαν παραπάνω.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CredentialAudienceNoMatch" xml:space="preserve">
     <value>Κανένα μέλος δεν ταιριάζει με την κατάσταση πιστοποίησης που επιλέξατε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceLabel" xml:space="preserve">
     <value>Συμμετέχοντες μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceNone" xml:space="preserve">
     <value>Χωρίς μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceStatus" xml:space="preserve">
     <value>Κατάσταση στη λίστα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceEnrolled" xml:space="preserve">
     <value>Εγγεγραμμένοι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceAttended" xml:space="preserve">
     <value>Παρόντες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceAbsent" xml:space="preserve">
     <value>Απόντες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceWaitlisted" xml:space="preserve">
     <value>Σε αναμονή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceHelp" xml:space="preserve">
     <value>Προσθέτει στους παραλήπτες τα ενεργά μέλη του μαθήματος με αυτή την κατάσταση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RosterAudienceNoMatch" xml:space="preserve">
     <value>Κανείς στη λίστα του μαθήματος δεν έχει αυτή την κατάσταση.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

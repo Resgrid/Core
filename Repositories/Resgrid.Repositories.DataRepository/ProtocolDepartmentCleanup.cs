@@ -18,7 +18,7 @@ namespace Resgrid.Repositories.DataRepository
 		/// <summary>The tables this cleanup clears, in delete order.</summary>
 		internal static readonly string[] Tables =
 		{
-			"ProtocolAiSuggestions", "CallProtocols", "ProtocolAcknowledgments", "ProtocolFileTextPages", "ProtocolFileTexts", "ProtocolVersionFiles", "ProtocolVersionTranslations",
+			"ProtocolAiSuggestions", "DispatchCaseReviews", "ProtocolFlashcards", "CallProtocolStepNotes", "CallProtocols", "ProtocolAcknowledgments", "ProtocolFileTextPages", "ProtocolFileTexts", "ProtocolVersionFiles", "ProtocolVersionTranslations",
 			"ProtocolVersionApprovals", "ProtocolComments", "ProtocolAudiences", "ProtocolVersions", "ProtocolCategories",
 			"DispatchProtocolSnapshots", "DispatchProtocolQuestionAnswers", "DispatchProtocolQuestions", "DispatchProtocolAttachments",
 			"DispatchProtocolTriggers", "DispatchProtocols"
@@ -33,23 +33,35 @@ namespace Resgrid.Repositories.DataRepository
 			if (!await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "DispatchProtocols", ct))
 				return;
 
-			// P4 (M0400): AI suggestions carry the department id and no keys.
+			// P4 (M0377): AI suggestions carry the department id and no keys.
 			if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "ProtocolAiSuggestions", ct))
 				await DepartmentCleanupCommands.DeleteByDepartmentAsync(connection, transaction, type, departmentId, new[] { "ProtocolAiSuggestions" }, ct);
 
+			// P5 QA (M0391): dispatch case reviews carry the department id and no keys; they go before the call rows they reviewed.
+			if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "DispatchCaseReviews", ct))
+				await DepartmentCleanupCommands.DeleteByDepartmentAsync(connection, transaction, type, departmentId, new[] { "DispatchCaseReviews" }, ct);
+
+			// Round 7A (M0399): protocol flashcards carry the department id and no keys.
+			if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "ProtocolFlashcards", ct))
+				await DepartmentCleanupCommands.DeleteByDepartmentAsync(connection, transaction, type, departmentId, new[] { "ProtocolFlashcards" }, ct);
+
+			// Round 8 (M0403): step-through notes carry the department id and no keys; they go with their call protocols.
+			if (await DepartmentCleanupCommands.ExistsAsync(connection, transaction, type, "CallProtocolStepNotes", ct))
+				await DepartmentCleanupCommands.DeleteByDepartmentAsync(connection, transaction, type, departmentId, new[] { "CallProtocolStepNotes" }, ct);
+
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "CallProtocols", false, ct, protocols, ("Calls", "CallId", "CallId"));
 
-			// P2 (M0354) acknowledgments and P1 wave 2 (M0353) file text pages, extractions and primary files reference versions and
+			// P2 (M0348) acknowledgments and P1 wave 2 (M0347) file text pages, extractions and primary files reference versions and
 			// protocols: they go before the versions.
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolAcknowledgments", true, ct, protocols);
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolFileTextPages", true, ct, ("ProtocolFileTexts", "ProtocolFileTextId", "ProtocolFileTextId"));
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolFileTexts", true, ct, protocols);
 			// A primary file's key is its version (FK_ProtocolVersionFiles_ProtocolVersions), never its unkeyed protocol id.
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolVersionFiles", true, ct, ("ProtocolVersions", "ProtocolVersionId", "ProtocolVersionId"));
-			// P3 (M0380): content translations reference their version.
+			// P3 (M0362): content translations reference their version.
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolVersionTranslations", true, ct, ("ProtocolVersions", "ProtocolVersionId", "ProtocolVersionId"));
 
-			// P1 (M0343): approval steps, comments and audiences, then the versions they hang off; categories have no keys.
+			// P1 (M0342): approval steps, comments and audiences, then the versions they hang off; categories have no keys.
 			// Retention and legal hold never stop a department deletion (R-P10).
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolVersionApprovals", true, ct, ("ProtocolVersions", "ProtocolVersionId", "ProtocolVersionId"));
 			await DepartmentCleanupCommands.DeleteChildAsync(connection, transaction, type, departmentId, "ProtocolComments", true, ct, protocols);

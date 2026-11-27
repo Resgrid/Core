@@ -245,7 +245,7 @@ namespace Resgrid.Tests.Web
 		}
 
 		private V4.ProtocolsController ApiProtocols(string userId) =>
-			new V4.ProtocolsController(_protocolsService.Object, Mock.Of<IAuthorizationService>(), Mock.Of<ICallsService>(), Mock.Of<IEventAggregator>(), _access)
+			new V4.ProtocolsController(_protocolsService.Object, Resgrid.Tests.Security.StepUpTestPolicies.Capabilities(), Mock.Of<IAuthorizationService>(), Mock.Of<ICallsService>(), Mock.Of<IEventAggregator>(), _access)
 			{
 				ControllerContext = new ControllerContext { HttpContext = SignIn(userId) }
 			};
@@ -259,7 +259,7 @@ namespace Resgrid.Tests.Web
 		private WebProtocols WebLibrary(string userId)
 		{
 			var http = SignIn(userId);
-			var controller = new WebProtocols(_protocolsService.Object, Mock.Of<ICallsService>(), Mock.Of<IAuthorizationService>(), _departments.Object, Mock.Of<IMappingService>(), Mock.Of<IEventAggregator>(),
+			var controller = new WebProtocols(_protocolsService.Object, Mock.Of<ICallsService>(), Mock.Of<IAuthorizationService>(), _departments.Object, Mock.Of<IMappingService>(), Mock.Of<IProtocolAnalyticsService>(), Mock.Of<IEventAggregator>(),
 				access: _access, library: _library.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = http }

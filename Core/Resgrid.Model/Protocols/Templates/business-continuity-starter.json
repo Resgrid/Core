@@ -1,0 +1,108 @@
+{
+  "format": "resgrid-protocols",
+  "version": 2,
+  "exportedOn": "2026-11-25T00:00:00Z",
+  "set": {
+    "key": "business-continuity-starter",
+    "title": "Business continuity starter set",
+    "description": "Four continuity procedures written by Resgrid as a starting point for agencies, dispatch centres and businesses: activating the continuity plan, losing communications, evacuating and relocating a facility, and running manually when the computer systems are down.",
+    "publisher": "Resgrid",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "setVersion": "1.0"
+  },
+  "protocols": [
+    {
+      "code": "BC-101",
+      "name": "Continuity plan activation",
+      "kind": "Policy",
+      "tags": "continuity,activation,leadership",
+      "description": "Who can activate the continuity plan, and the first steps once it is active.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "paragraph", "key": "intro", "html": "<p>The continuity plan keeps essential functions running when people, facilities, systems or suppliers are lost.</p>" },
+          { "type": "steps", "key": "activate", "title": "Activation", "items": [
+            { "key": "a1", "html": "<p>The people named in your plan (and their alternates, in order) may activate it.</p>" },
+            { "key": "a2", "html": "<p>Notify leadership, staff and key partners that the plan is active, and say which functions come first.</p>" },
+            { "key": "a3", "html": "<p>Open a log of decisions, actions and costs from the moment of activation.</p>" },
+            { "key": "a4", "html": "<p>Review the situation at set intervals and decide when to return to normal operations.</p>" }
+          ] }
+        ]
+      }
+    },
+    {
+      "code": "BC-102",
+      "name": "Loss of communications",
+      "kind": "Procedure",
+      "tags": "continuity,radio,telephone",
+      "description": "Fallback communication when phones, radio or data networks fail.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "fallback", "title": "Fall back in this order (adapt to your systems)", "items": [
+            { "key": "f1", "html": "<p>Switch to the backup radio channel or talk group.</p>" },
+            { "key": "f2", "html": "<p>Use mobile phones and text messages.</p>" },
+            { "key": "f3", "html": "<p>Use satellite phones or other independent links where you have them.</p>" },
+            { "key": "f4", "html": "<p>Send runners, and post staff at agreed meeting points.</p>" }
+          ] },
+          { "type": "caution", "key": "report", "title": "Report the outage", "html": "<p>Report the failure to the system owner and to neighbouring agencies who may be relying on you.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "BC-103",
+      "name": "Facility evacuation and relocation",
+      "kind": "Procedure",
+      "tags": "continuity,evacuation,alternate site",
+      "description": "Leaving the primary facility and moving essential work to the alternate site.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "leave", "title": "Evacuation", "items": [
+            { "key": "l1", "html": "<p>Evacuate by the posted routes to the assembly point and account for everyone.</p>" },
+            { "key": "l2", "html": "<p>Take the go-kit if it is safe to do so.</p>" }
+          ] },
+          { "type": "steps", "key": "move", "title": "Relocation", "items": [
+            { "key": "m1", "html": "<p>Decide whether to relocate, and announce it to staff and partners.</p>" },
+            { "key": "m2", "html": "<p>Open the alternate site and restore essential functions in the plan's order.</p>" },
+            { "key": "m3", "html": "<p>Forward phone lines and update the addresses and numbers partners use to reach you.</p>" }
+          ] }
+        ]
+      }
+    },
+    {
+      "code": "BC-104",
+      "name": "Computer system outage: manual operations",
+      "kind": "Procedure",
+      "tags": "continuity,cad,downtime",
+      "description": "Keeping dispatch and records work going on paper while computer systems are down, and catching up afterwards.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "down", "title": "While systems are down", "items": [
+            { "key": "d1", "html": "<p>Announce the outage and switch to the paper forms and status boards in the downtime kit.</p>" },
+            { "key": "d2", "html": "<p>Number each incident by hand in the series your plan reserves, and note every time.</p>" },
+            { "key": "d3", "html": "<p>Track unit status on the board; confirm assignments by radio.</p>" }
+          ] },
+          { "type": "steps", "key": "back", "title": "When systems return", "items": [
+            { "key": "b1", "html": "<p>Enter the paper records into the system, oldest first, and keep the paper as the original.</p>" },
+            { "key": "b2", "html": "<p>Check unit statuses against the board before switching back.</p>" }
+          ] }
+        ]
+      }
+    }
+  ]
+}

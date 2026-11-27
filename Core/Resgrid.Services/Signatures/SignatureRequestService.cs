@@ -57,6 +57,8 @@ namespace Resgrid.Services.Signatures
 		private readonly ISignatureService _memberSignatures;
 		private readonly ISignerEligibilityService _eligibility;
 		private readonly ISignatureNotificationService _notifications;
+		private readonly IDepartmentDataProtectionService _protection;
+		private readonly Lazy<IProtectedWriteService> _protectedWrite;
 
 		public SignatureRequestService(ISignatureRequestsRepository requests, ISignatureRequestSignersRepository signers, ISignatureCapturesRepository captures,
 			ISignatureRecordsRepository records, IESignWebhookEventsRepository webhookEvents, IRmsSignaturesRepository rmsSignatures,
@@ -64,8 +66,11 @@ namespace Resgrid.Services.Signatures
 			IEncryptionService encryption, IEmailSender emailSender, ITextMessageProvider textMessages, IDepartmentsService departments,
 			IDepartmentSettingsService departmentSettings, IBusinessOperationsAccessService businessOperations, IReadinessAccessService readiness,
 			IIncidentBackOfficeAccessService incidentBackOffice, ILmsAccessService lms, ICacheProvider cache, IEventAggregator eventAggregator,
-			ISignatureService memberSignatures, ISignerEligibilityService eligibility, ISignatureNotificationService notifications)
+			ISignatureService memberSignatures, ISignerEligibilityService eligibility, ISignatureNotificationService notifications,
+			IDepartmentDataProtectionService protection, Lazy<IProtectedWriteService> protectedWrite)
 		{
+			_protection = protection;
+			_protectedWrite = protectedWrite;
 			_memberSignatures = memberSignatures;
 			_eligibility = eligibility;
 			_notifications = notifications;
@@ -237,6 +242,7 @@ namespace Resgrid.Services.Signatures
 				Status = (int)SignatureSignerStatuses.Pending,
 				CreatedOn = now
 			}, cancellationToken, true);
+			await ProtectSignerAsync(request, signer, cancellationToken);
 
 			var result = new SignatureRequestResult { Request = request, Signer = signer };
 			if (remote)
@@ -545,6 +551,9 @@ namespace Resgrid.Services.Signatures
 			CancellationToken cancellationToken)
 		{
 			var now = DateTime.UtcNow;
+			// ADP catalog 39: on a Records-owned request of a protected department the outside signer's name is Records data. It is kept once,
+			// sealed (signer, record and capture), and never copied into the snapshot the signature lists read without a grant.
+			var protectsIdentity = await ProtectsSignerIdentityAsync(request);
 			var record = await _records.InsertAsync(new SignatureRecord
 			{
 				DepartmentId = request.DepartmentId,
@@ -553,7 +562,7 @@ namespace Resgrid.Services.Signatures
 				RevisionId = request.RevisionId,
 				SignerUserId = null,
 				ExternalSignerName = name,
-				SignerNameSnapshot = name,
+				SignerNameSnapshot = protectsIdentity ? null : name,
 				SignerRoleSnapshot = ((SignatureSignerRoles)signer.Role).ToString(),
 				Intent = (int)SignatureIntents.Attest,
 				StatementVersion = request.StatementVersion,
@@ -569,7 +578,7 @@ namespace Resgrid.Services.Signatures
 				CreatedOn = now
 			}, cancellationToken, true);
 
-			await _captures.InsertAsync(new SignatureCapture
+			var capture = await _captures.InsertAsync(new SignatureCapture
 			{
 				DepartmentId = request.DepartmentId,
 				SignatureRequestId = request.SignatureRequestId,
@@ -593,6 +602,8 @@ namespace Resgrid.Services.Signatures
 			signer.SignatureRecordId = record.SignatureRecordId;
 			signer.NextReminderOn = null;
 			await _signers.UpdateAsync(signer, cancellationToken, true);
+			if (protectsIdentity)
+				await ProtectIdentityAsync(request, signer, record, capture, cancellationToken);
 
 			_eventAggregator?.SendMessage<AuditEvent>(new AuditEvent
 			{
@@ -678,6 +689,12 @@ namespace Resgrid.Services.Signatures
 				.Where(r => r.DepartmentId == request.DepartmentId && r.SignatureRequestId == request.SignatureRequestId).ToList();
 			var captures = (await _captures.GetForRequestAsync(request.DepartmentId, request.SignatureRequestId) ?? new List<SignatureCapture>()).Where(c => c.DepartmentId == request.DepartmentId).ToList();
 
+			// ADP catalog 39: the sealed evidence of a Records-owned request of a protected department names its outside signers by role only and
+			// leaves out the witness name; the names stay sealed on the rows (this path is unattended and never decrypts them).
+			var protectsIdentity = await ProtectsSignerIdentityAsync(request);
+			if (protectsIdentity)
+				signers = signers.Select(MaskedSigner).ToList();
+
 			var images = new Dictionary<int, string>();
 			var witnesses = new Dictionary<int, string>();
 			foreach (var capture in captures)
@@ -685,7 +702,7 @@ namespace Resgrid.Services.Signatures
 				try
 				{
 					images[capture.SignatureRequestSignerId] = _encryption.Decrypt(capture.SignatureImageEncrypted);
-					if (!string.IsNullOrEmpty(capture.WitnessNameEncrypted))
+					if (!protectsIdentity && !string.IsNullOrEmpty(capture.WitnessNameEncrypted) && !ProtectedDataEnvelope.HasEnvelopePrefix(capture.WitnessNameEncrypted))
 						witnesses[capture.SignatureRequestSignerId] = _encryption.Decrypt(capture.WitnessNameEncrypted);
 				}
 				catch (Exception ex)

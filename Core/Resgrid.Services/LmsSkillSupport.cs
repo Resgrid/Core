@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Resgrid.Framework;
+using Resgrid.Localization.Areas.User.ContentNotices;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
@@ -74,7 +76,9 @@ namespace Resgrid.Services
 	/// The skill notification digest (EventTypes 70 SkillEvaluationNotice and 71 TaskBookNotice, the certification admin-digest pattern):
 	/// notices are queued per recipient, due now or at the department's digest time; worker 96 reads only due unsent rows (no department
 	/// sweep), claims each before sending, skips inactive members (marked skipped so they are never read again) and sends one push + email
-	/// per recipient with every notice due. Admin recipients are the active admins. Outbound text is English like the rest of Resgrid's.
+	/// per recipient with every notice due. Admin recipients are the active admins. A notice is queued as a ContentNotices key with its values
+	/// (<see cref="LmsSkillNoticeText"/>) and written at send time in each recipient's language (round 9C); text queued before that is sent as
+	/// it was stored.
 	/// </summary>
 	public class LmsSkillNotificationService : ILmsSkillNotificationService
 	{
@@ -86,15 +90,17 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departments;
 		private readonly IDepartmentSettingsService _departmentSettings;
 		private readonly Lazy<ICommunicationService> _communication;
+		private readonly IUserProfileService _profiles;
 
 		public LmsSkillNotificationService(ILmsSkillNotificationsRepository notifications, ILmsSkillSettingsService settings, IDepartmentsService departments,
-			IDepartmentSettingsService departmentSettings, Lazy<ICommunicationService> communication)
+			IDepartmentSettingsService departmentSettings, Lazy<ICommunicationService> communication, IUserProfileService profiles)
 		{
 			_notifications = notifications;
 			_settings = settings;
 			_departments = departments;
 			_departmentSettings = departmentSettings;
 			_communication = communication;
+			_profiles = profiles;
 		}
 
 		/// <summary>The push event code the apps route on ("SK:{kind}").</summary>
@@ -130,7 +136,9 @@ namespace Resgrid.Services
 				var due = LmsSkillRules.DueOn(settings, now,
 					utc => department == null ? utc : DateTime.SpecifyKind(utc, DateTimeKind.Utc).TimeConverter(department),
 					local => department == null ? local : DateTime.SpecifyKind(DateTime.SpecifyKind(local, DateTimeKind.Unspecified).DepartmentLocalToUtc(department), DateTimeKind.Utc));
-				var body = text.Length > 1000 ? text.Substring(0, 1000) : text;
+				// A key with its values longer than the column is stored as its English text instead (never a cut-off key).
+				var body = LmsSkillNoticeText.IsEncoded(text) && text.Length > LmsSkillNoticeText.MaxStoredLength ? LmsSkillNoticeText.Render(text, ContentNoticeText.English) : text;
+				body = body.Length > LmsSkillNoticeText.MaxStoredLength ? body.Substring(0, LmsSkillNoticeText.MaxStoredLength) : body;
 				foreach (var userId in recipients)
 					await _notifications.InsertAsync(new LmsSkillNotification
 					{
@@ -167,6 +175,7 @@ namespace Resgrid.Services
 					var active = new HashSet<string>(await _departments.GetActiveMemberUserIdsAsync(department.Key) ?? new HashSet<string>(), StringComparer.OrdinalIgnoreCase);
 					var dept = await _departments.GetDepartmentByIdAsync(department.Key, false);
 					var number = dept == null ? null : await _departmentSettings.GetTextToCallNumberForDepartmentAsync(department.Key);
+					var cultures = new ContentNoticeCultures(_profiles, dept);
 					foreach (var recipient in department.GroupBy(n => n.UserId, StringComparer.OrdinalIgnoreCase))
 					{
 						var claimed = new List<LmsSkillNotification>();
@@ -183,13 +192,14 @@ namespace Resgrid.Services
 						}
 
 						var ordered = claimed.OrderBy(n => n.CreatedOn).ThenBy(n => n.LmsSkillNotificationId).ToList();
-						var message = ordered.Count == 1 ? ordered[0].Text
-							: "Training skills digest: " + string.Join(" | ", ordered.Take(25).Select(n => n.Text)) + (ordered.Count > 25 ? " | +" + (ordered.Count - 25).ToString(CultureInfo.InvariantCulture) + " more" : string.Empty);
 						var kind = (LmsSkillNotificationKinds)ordered[0].Kind;
 						try
 						{
-							await _communication.Value.SendNotificationAsync(recipient.Key, department.Key, message, number, dept, ordered.Count == 1 ? "Training skills" : "Training skills digest",
-								null, false, EventCode(kind));
+							// The recipient's own language: each queued key is written now, the digest wording too (round 9C).
+							var (culture, profile) = await cultures.ForMemberAsync(recipient.Key);
+							var message = DigestMessage(ordered.Select(n => n.Text).ToList(), culture);
+							await _communication.Value.SendNotificationAsync(recipient.Key, department.Key, message, number, dept,
+								ContentNoticeText.Get(ordered.Count == 1 ? "Skill.Title" : "Skill.DigestTitle", culture), profile, false, EventCode(kind));
 							sent++;
 						}
 						catch (Exception ex)
@@ -210,6 +220,88 @@ namespace Resgrid.Services
 			}
 
 			return sent;
+		}
+
+		/// <summary>One recipient's due notices as one message in <paramref name="culture"/>: the notice itself, or the digest of up to 25.</summary>
+		public static string DigestMessage(IReadOnlyList<string> texts, CultureInfo culture)
+		{
+			var rendered = (texts ?? Array.Empty<string>()).Select(t => LmsSkillNoticeText.Render(t, culture)).ToList();
+			if (rendered.Count == 1)
+				return rendered[0];
+			var items = string.Join(" | ", rendered.Take(25));
+			if (rendered.Count > 25)
+				items += " | " + ContentNoticeText.Format("Skill.DigestMore", culture, rendered.Count - 25);
+			return ContentNoticeText.Format("Skill.Digest", culture, items);
+		}
+	}
+
+	/// <summary>
+	/// A skill or task book notice as it is queued (round 9C): the ContentNotices key and its values, stored as a small JSON document in
+	/// <see cref="LmsSkillNotification.Text"/> ("{"k":"Skill.TaskBookCertified","a":[...]}"), so worker 96 writes it in each recipient's
+	/// language when it sends. Values are text, numbers or dates (a date is stored as {"d":"yyyy-MM-dd"} and written the reader's way). Text
+	/// stored before round 9C is plain and is sent as it is.
+	/// </summary>
+	public static class LmsSkillNoticeText
+	{
+		/// <summary>The length of the notification text column.</summary>
+		public const int MaxStoredLength = 1000;
+
+		private const string Prefix = "{\"k\":";
+
+		/// <summary>Whether <paramref name="text"/> is a queued key rather than plain (pre-9C) text.</summary>
+		public static bool IsEncoded(string text) => text != null && text.StartsWith(Prefix, StringComparison.Ordinal);
+
+		/// <summary>The queued form of a notice: its key and values (text, numbers, or <see cref="DateTime"/> dates).</summary>
+		public static string Encode(string key, params object[] args)
+		{
+			var values = new JArray();
+			foreach (var arg in args ?? Array.Empty<object>())
+			{
+				switch (arg)
+				{
+					case null:
+						values.Add(JValue.CreateString(string.Empty));
+						break;
+					case DateTime date:
+						values.Add(new JObject { ["d"] = date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) });
+						break;
+					case decimal or double or float or int or long:
+						values.Add(new JObject { ["n"] = Convert.ToDecimal(arg, CultureInfo.InvariantCulture) });
+						break;
+					default:
+						values.Add(JValue.CreateString(Convert.ToString(arg, CultureInfo.InvariantCulture)));
+						break;
+				}
+			}
+			return new JObject { ["k"] = key, ["a"] = values }.ToString(Formatting.None);
+		}
+
+		/// <summary>The notice in <paramref name="culture"/>; plain (pre-9C) text unchanged; a document that cannot be read is sent as it is.</summary>
+		public static string Render(string text, CultureInfo culture)
+		{
+			if (!IsEncoded(text))
+				return text ?? string.Empty;
+			try
+			{
+				var document = JObject.Parse(text);
+				var key = document.Value<string>("k");
+				var args = new List<object>();
+				foreach (var token in document["a"] as JArray ?? new JArray())
+				{
+					if (token is JObject value && value["d"] != null
+						&& DateTime.TryParseExact(value.Value<string>("d"), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+						args.Add(date);
+					else if (token is JObject number && number["n"] != null)
+						args.Add(number.Value<decimal>("n"));
+					else
+						args.Add(token.Type == JTokenType.String ? token.Value<string>() : token.ToString());
+				}
+				return ContentNoticeText.Format(key, culture, args.ToArray());
+			}
+			catch (Exception ex) when (ex is JsonException || ex is FormatException || ex is InvalidCastException)
+			{
+				return text;
+			}
 		}
 	}
 

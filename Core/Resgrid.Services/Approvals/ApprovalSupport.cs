@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
+using Resgrid.Localization.Areas.User.ContentNotices;
 using Resgrid.Model;
 using Resgrid.Model.Approvals;
 using Resgrid.Model.Events;
@@ -110,19 +111,23 @@ namespace Resgrid.Services.Approvals
 
 	/// <summary>
 	/// Approval notifications (EventTypes 73-74): push + email through ICommunicationService with "AP:{approvalRequestId}" and the web link.
-	/// Active members only, nothing where the department cannot transmit; the text names the subject, its amount and content code.
+	/// Active members only, nothing where the department cannot transmit; the text names the subject, its amount and content code. The text
+	/// comes from ContentNotices in each recipient's language, the amount written their way (round 9C).
 	/// </summary>
 	public class ApprovalNotificationService : IApprovalNotificationService
 	{
 		private readonly Lazy<ICommunicationService> _communication;
 		private readonly IDepartmentsService _departments;
 		private readonly IDepartmentSettingsService _settings;
+		private readonly IUserProfileService _profiles;
 
-		public ApprovalNotificationService(Lazy<ICommunicationService> communication, IDepartmentsService departments, IDepartmentSettingsService settings)
+		public ApprovalNotificationService(Lazy<ICommunicationService> communication, IDepartmentsService departments, IDepartmentSettingsService settings,
+			IUserProfileService profiles)
 		{
 			_communication = communication;
 			_departments = departments;
 			_settings = settings;
+			_profiles = profiles;
 		}
 
 		public static string Link(int approvalRequestId) =>
@@ -130,60 +135,47 @@ namespace Resgrid.Services.Approvals
 
 		public static string EventCode(int approvalRequestId) => "AP:" + approvalRequestId.ToString(CultureInfo.InvariantCulture);
 
-		private static string Subject(ApprovalRequest r) =>
-			(r.Title + (r.Amount.HasValue ? " (" + ApprovalRouting.AmountText(r.Amount, r.Currency) + ")" : string.Empty)).Trim();
+		/// <summary>The subject and, when it has one, its amount written the reader's way ("Requisition 12 (1.250,00 EUR)").</summary>
+		private static string Subject(ApprovalRequest r, CultureInfo culture) =>
+			((r.Title ?? string.Empty) + (r.Amount.HasValue
+				? " (" + (r.Amount.Value.ToString("N2", culture ?? ContentNoticeText.English) + (string.IsNullOrWhiteSpace(r.Currency) ? string.Empty : " " + r.Currency.Trim().ToUpperInvariant())) + ")"
+				: string.Empty)).Trim();
 
-		public static string AwaitingMessage(ApprovalRequest r, bool escalated) =>
-			(escalated ? "Escalated: your approval is needed on " : "Your approval is needed on ") + Subject(r) + " (content code " + SignaturePolicy.ShortCode(r.ContentSha256) + "). " + Link(r.ApprovalRequestId);
+		/// <summary>"Your approval is needed on ..." in <paramref name="culture"/> (English when none is given).</summary>
+		public static string AwaitingMessage(ApprovalRequest r, bool escalated, CultureInfo culture = null) =>
+			ContentNoticeText.Format(escalated ? "Approval.Escalated.Message" : "Approval.Needed.Message", culture, Subject(r, culture),
+				SignaturePolicy.ShortCode(r.ContentSha256), Link(r.ApprovalRequestId));
 
-		public static string DecidedMessage(ApprovalRequest r)
+		/// <summary>How the request was decided, in <paramref name="culture"/> (English when none is given).</summary>
+		public static string DecidedMessage(ApprovalRequest r, CultureInfo culture = null)
 		{
-			var outcome = (ApprovalRequestStatuses)r.Status switch
+			var subject = Subject(r, culture);
+			var link = Link(r.ApprovalRequestId);
+			return (ApprovalRequestStatuses)r.Status switch
 			{
-				ApprovalRequestStatuses.Approved => "was approved",
-				ApprovalRequestStatuses.Rejected => "was rejected: " + (r.RejectReason ?? string.Empty),
-				ApprovalRequestStatuses.Expired => "expired before it was approved",
-				_ => "was closed"
+				ApprovalRequestStatuses.Approved => ContentNoticeText.Format("Approval.Decided.Approved", culture, subject, link),
+				ApprovalRequestStatuses.Rejected => ContentNoticeText.Format("Approval.Decided.Rejected", culture, subject, r.RejectReason ?? string.Empty, link),
+				ApprovalRequestStatuses.Expired => ContentNoticeText.Format("Approval.Decided.Expired", culture, subject, link),
+				_ => ContentNoticeText.Format("Approval.Decided.Other", culture, subject, link)
 			};
-			return "Your approval request for " + Subject(r) + " " + outcome + " " + Link(r.ApprovalRequestId);
 		}
 
 		public Task<int> NotifyAwaitingAsync(ApprovalRequest request, IReadOnlyCollection<string> userIds, bool escalated, CancellationToken cancellationToken = default) =>
 			request == null ? Task.FromResult(0)
-				: SendAsync(request.DepartmentId, userIds, escalated ? "Approval escalated" : "Approval needed", AwaitingMessage(request, escalated), EventCode(request.ApprovalRequestId), cancellationToken);
+				: SendAsync(request.DepartmentId, userIds, culture => new ContentNoticeDelivery.Notice(
+					ContentNoticeText.Get(escalated ? "Approval.Escalated.Title" : "Approval.Needed.Title", culture), AwaitingMessage(request, escalated, culture)),
+					EventCode(request.ApprovalRequestId), cancellationToken);
 
 		public Task<int> NotifyDecidedAsync(ApprovalRequest request, CancellationToken cancellationToken = default) =>
 			request == null || string.IsNullOrWhiteSpace(request.SubmittedByUserId) ? Task.FromResult(0)
-				: SendAsync(request.DepartmentId, new[] { request.SubmittedByUserId }, "Approval decided", DecidedMessage(request), EventCode(request.ApprovalRequestId), cancellationToken);
+				: SendAsync(request.DepartmentId, new[] { request.SubmittedByUserId }, culture => new ContentNoticeDelivery.Notice(
+					ContentNoticeText.Get("Approval.Decided.Title", culture), DecidedMessage(request, culture)), EventCode(request.ApprovalRequestId), cancellationToken);
 
-		private async Task<int> SendAsync(int departmentId, IEnumerable<string> userIds, string title, string message, string eventCode, CancellationToken cancellationToken)
-		{
-			var wanted = (userIds ?? Enumerable.Empty<string>()).Where(id => !string.IsNullOrWhiteSpace(id)).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
-			if (wanted.Count == 0 || !ConfigHelper.CanTransmit(departmentId))
-				return 0;
-			var department = await _departments.GetDepartmentByIdAsync(departmentId, false);
-			if (department == null)
-				return 0;
-
-			// Inactive-member policy: deleted, disabled and hidden members are never addressed by automation.
-			var active = new HashSet<string>(await _departments.GetActiveMemberUserIdsAsync(departmentId) ?? new HashSet<string>(), StringComparer.OrdinalIgnoreCase);
-			var number = await _settings.GetTextToCallNumberForDepartmentAsync(departmentId);
-			var sent = 0;
-			foreach (var userId in wanted.Where(active.Contains))
-			{
-				cancellationToken.ThrowIfCancellationRequested();
-				try
-				{
-					if (await _communication.Value.SendNotificationAsync(userId, departmentId, message, number, department, title, null, false, eventCode))
-						sent++;
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex, $"Approval notification to {userId} in department {departmentId} failed.");
-				}
-			}
-			return sent;
-		}
+		/// <summary>Active members only, each in their own language (<see cref="ContentNoticeDelivery"/>).</summary>
+		private Task<int> SendAsync(int departmentId, IEnumerable<string> userIds, Func<CultureInfo, ContentNoticeDelivery.Notice> compose, string eventCode,
+			CancellationToken cancellationToken) =>
+			ContentNoticeDelivery.SendAsync(_communication.Value, _departments, _settings, _profiles, departmentId, userIds, (culture, _) => compose(culture), eventCode,
+				"Approval notification", cancellationToken);
 	}
 
 	/// <summary>
@@ -223,11 +215,13 @@ namespace Resgrid.Services.Approvals
 	{
 		private readonly IMutualAidAgreementsRepository _agreements;
 		private readonly IEventAggregator _events;
+		private readonly IDepartmentLinksService _links;
 
-		public MutualAidAgreementService(IMutualAidAgreementsRepository agreements, IEventAggregator events)
+		public MutualAidAgreementService(IMutualAidAgreementsRepository agreements, IEventAggregator events, IDepartmentLinksService links)
 		{
 			_agreements = agreements;
 			_events = events;
+			_links = links;
 		}
 
 		public async Task<List<MutualAidAgreement>> GetAgreementsAsync(int departmentId) =>
@@ -245,6 +239,23 @@ namespace Resgrid.Services.Approvals
 				return null;
 			if (agreement.EffectiveOn.HasValue && agreement.ExpiresOn.HasValue && agreement.ExpiresOn.Value < agreement.EffectiveOn.Value)
 				return null;
+
+			// Round 10 A3: an agreement made over a Department Link names the link's other party as the partner (never a posted id), and only
+			// such an agreement can require the partner's countersignature.
+			if (agreement.DepartmentLinkId > 0)
+			{
+				var link = _links == null ? null : await _links.GetLinkByIdAsync(agreement.DepartmentLinkId.Value);
+				var other = DepartmentLinkSharing.GetOtherDepartmentId(link, agreement.DepartmentId);
+				if (!other.HasValue)
+					return null;
+				agreement.PartnerDepartmentId = other.Value;
+				if (string.IsNullOrWhiteSpace(agreement.PartnerName))
+					agreement.PartnerName = link.DepartmentId == other.Value ? link.Department?.Name : link.LinkedDepartment?.Name;
+			}
+			else
+			{
+				agreement.RequiresCountersignature = false;
+			}
 
 			var now = DateTime.UtcNow;
 			MutualAidAgreement saved;
@@ -280,6 +291,7 @@ namespace Resgrid.Services.Approvals
 			target.Terms = Trim(source.Terms, MutualAidAgreement.TermsMaxLength);
 			target.EffectiveOn = source.EffectiveOn;
 			target.ExpiresOn = source.ExpiresOn;
+			target.RequiresCountersignature = source.RequiresCountersignature && target.DepartmentLinkId.HasValue;
 		}
 
 		public async Task<bool> DeleteAsync(int departmentId, int mutualAidAgreementId, string userId, CancellationToken cancellationToken = default)

@@ -34,6 +34,8 @@ namespace Resgrid.Services
 
 		public IReadOnlyList<LmsLessonPlanStarter> GetStarters() => LmsLessonPlanStarterCatalog.All;
 
+		public IReadOnlyList<LmsLessonPlanStarter> GetStarters(string culture) => LmsLessonPlanStarterCatalog.AllFor(culture);
+
 		public async Task<List<LmsLessonPlan>> GetPlansAsync(int departmentId) =>
 			departmentId <= 0 ? new List<LmsLessonPlan>() : await _plans.GetForDepartmentAsync(departmentId) ?? new List<LmsLessonPlan>();
 
@@ -62,9 +64,13 @@ namespace Resgrid.Services
 		public async Task<LmsLessonPlan> CreateAsync(int departmentId, string title, LmsLessonPlanContent content, string userId, CancellationToken cancellationToken = default) =>
 			await CreateCoreAsync(departmentId, title, content, null, userId, cancellationToken);
 
-		public async Task<LmsLessonPlan> ApplyStarterAsync(int departmentId, string starterKey, string userId, CancellationToken cancellationToken = default)
+		public Task<LmsLessonPlan> ApplyStarterAsync(int departmentId, string starterKey, string userId, CancellationToken cancellationToken = default) =>
+			ApplyStarterAsync(departmentId, starterKey, userId, null, cancellationToken);
+
+		public async Task<LmsLessonPlan> ApplyStarterAsync(int departmentId, string starterKey, string userId, string culture, CancellationToken cancellationToken = default)
 		{
-			var starter = LmsLessonPlanStarterCatalog.Find(starterKey) ?? throw new InvalidOperationException("lms_class_plan_not_found");
+			// Round 9C: the draft carries the starter's text in the author's language (English when none ships).
+			var starter = LmsLessonPlanStarterCatalog.Localized(LmsLessonPlanStarterCatalog.Find(starterKey), culture) ?? throw new InvalidOperationException("lms_class_plan_not_found");
 			return await CreateCoreAsync(departmentId, starter.Title, starter.Content, starter.Key, userId, cancellationToken);
 		}
 

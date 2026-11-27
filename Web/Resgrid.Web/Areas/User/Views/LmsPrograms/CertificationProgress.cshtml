@@ -1,0 +1,92 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsCertProgressView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Round 9A: who holds a certification and how close each member is to lapsing: in grace first, then due soon, with their items done in
+    the current window. Members who have started the set without holding it are listed when it issues to non-holders.
+*@
+@{
+    var title = string.Format(localizer["CertReq.ProgressTitle"].Value, Model.Type.Type);
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["CertReq.ProgressIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var culture = CultureInfo.CurrentCulture;
+}
+
+@functions {
+    private static string StateCss(LmsCertificationProgressStates state) => state switch
+    {
+        LmsCertificationProgressStates.InGrace => "label-danger",
+        LmsCertificationProgressStates.Lapsed => "label-danger",
+        LmsCertificationProgressStates.DueSoon => "label-warning",
+        LmsCertificationProgressStates.Complete => "label-primary",
+        LmsCertificationProgressStates.Current => "label-success",
+        _ => "label-default"
+    };
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-toolbar">
+        <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="CertificationRequirements" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["CertReq.Back"]</a>
+    </div>
+
+    @if (Model.Rows.Count == 0)
+    {
+        <p class="text-muted">@localizer["CertReq.NoHolders"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th scope="col">@localizer["Prg.Col.Member"]</th>
+                        <th scope="col">@localizer["CertReq.Col.State"]</th>
+                        <th scope="col">@localizer["CertReq.Col.Done"]</th>
+                        <th scope="col">@localizer["CertReq.Col.Expires"]</th>
+                        <th scope="col">@localizer["CertReq.Col.Open"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Rows)
+                    {
+                        <tr>
+                            <td>@row.MemberName</td>
+                            <td><span class="label @StateCss(row.State)">@localizer["CertReq.State." + row.State]</span></td>
+                            <td>
+                                @string.Format(localizer["CertReq.DoneOf"].Value, row.Done, row.Total)
+                                <div class="progress progress-mini m-b-none" role="presentation"><div class="progress-bar" style="width: @(row.Total == 0 ? 0 : row.Done * 100 / row.Total)%"></div></div>
+                            </td>
+                            <td>
+                                @(row.ExpiresOn?.ToString("d", culture))
+                                @if (row.DaysUntilExpiry.HasValue)
+                                {
+                                    <span class="rgw-sub">@string.Format(localizer[row.DaysUntilExpiry.Value < 0 ? "CertReq.DaysAgo" : "CertReq.DaysLeft"].Value, Math.Abs(row.DaysUntilExpiry.Value))</span>
+                                }
+                            </td>
+                            <td>
+                                @foreach (var item in row.Items.Where(i => !i.Done))
+                                {
+                                    <span class="label label-default">@item.Label</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

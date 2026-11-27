@@ -1,0 +1,111 @@
+@using Resgrid.Model.Lms
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetSponsorshipsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3 (T5 item 2a, R-L3): LMS sponsorship over Department Links. A department with the LMS add-on pays for a linked department's
+    LMS-enabled members (they count in its packs, optionally up to a seat limit); the sponsored department runs the sponsor's course sets only,
+    sees who pays, and may decline. Ending a sponsorship or losing the link lapses access with the add-on's own lapse rules.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["SponsorshipsTab"];
+    ViewData["Title"] = text["SponsorshipsTab"].Value;
+    ViewData["Subtitle"] = text["SponsorshipsIntro"].Value;
+    ViewData["SetSection"] = "Sponsorships";
+    var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Grant != null)
+    {
+        <div class="alert alert-info">@string.Format(text["SponsoredBy"].Value, Model.Grant.SponsorName) · @string.Format(text["SponsoredCapacity"].Value, Model.Grant.Capacity)</div>
+    }
+
+    <div class="ibox">
+        <div class="ibox-content">
+            @if (Model.Sponsorships.Count == 0)
+            {
+                <p class="text-muted">@text["NoSponsorships"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead><tr><th scope="col">@text["ColumnSponsor"]</th><th scope="col">@text["ColumnSponsored"]</th><th scope="col">@text["ColumnSeats"]</th><th scope="col">@text["ColumnStatus"]</th><th scope="col"></th></tr></thead>
+                        <tbody>
+                            @foreach (var view in Model.Sponsorships)
+                            {
+                                var sponsorship = view.Sponsorship;
+                                var mine = sponsorship.SponsorDepartmentId == Model.DepartmentId;
+                                <tr>
+                                    <td>@view.SponsorName</td>
+                                    <td>@view.SponsoredName</td>
+                                    <td>@(sponsorship.IsActive ? view.SeatsUsed + (sponsorship.SeatLimit.HasValue ? " / " + sponsorship.SeatLimit.Value : string.Empty) : "-")</td>
+                                    <td>@(sponsorship.IsActive ? (view.LinkOk ? text["SponsorshipActive"] : text["SponsorshipLinkLapsed"]) : text["SponsorshipEnd" + (LmsSponsorshipEndReasons)sponsorship.EndReason])
+                                        <div class="small text-muted">@time.Format(sponsorship.StartedOn) @(sponsorship.EndedOn.HasValue ? "– " + time.Format(sponsorship.EndedOn) : null)</div></td>
+                                    <td>
+                                        @if (Model.CanManage && sponsorship.IsActive)
+                                        {
+                                            @if (mine)
+                                            {
+                                                <form method="post" asp-action="SeatLimit" asp-route-area="User" class="form-inline" style="display:inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@sponsorship.LmsSponsorshipId" />
+                                                    <label class="sr-only" for="limit-@sponsorship.LmsSponsorshipId">@text["SeatLimitLabel"]</label>
+                                                    <input id="limit-@sponsorship.LmsSponsorshipId" name="seatLimit" type="number" min="0" class="form-control input-sm" style="width: 90px" value="@sponsorship.SeatLimit" placeholder="@text["SeatLimitLabel"]" />
+                                                    <button type="submit" class="btn btn-xs btn-white">@text["SaveButton"]</button>
+                                                </form>
+                                            }
+                                            <form method="post" asp-action="EndSponsorship" asp-route-area="User" style="display:inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@sponsorship.LmsSponsorshipId" />
+                                                <button type="submit" class="btn btn-xs btn-danger" data-confirm="@text["EndSponsorshipConfirm"]">@(mine ? text["EndSponsorshipButton"] : text["DeclineSponsorshipButton"])</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (Model.CanManage)
+    {
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-handshake-o" aria-hidden="true"></i> @text["SponsorHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="small text-muted">@text["SponsorHelp"]</p>
+                @if (Model.Sponsorable.Count == 0)
+                {
+                    <p class="text-muted">@text["NoSponsorable"]</p>
+                }
+                else
+                {
+                    <form method="post" asp-action="Sponsor" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label class="control-label required" for="departmentId">@text["ColumnSponsored"]</label>
+                            <select id="departmentId" name="departmentId" class="form-control" required>
+                                @foreach (var pair in Model.Sponsorable)
+                                {
+                                    <option value="@pair.Key">@pair.Value</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="seatLimit">@text["SeatLimitLabel"]</label>
+                            <input id="seatLimit" name="seatLimit" type="number" min="0" class="form-control" />
+                            <span class="help-block small">@text["SeatLimitHelp"]</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary" data-confirm="@text["SponsorConfirm"]">@text["SponsorButton"]</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+</div>

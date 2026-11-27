@@ -2669,17 +2669,30 @@
   </data>
   <data name="DocumentNumberKindProtocol" xml:space="preserve">
     <value>Protocolos</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RunCardConditionProtocolOutcome" xml:space="preserve">
     <value>Un determinante de protocolo en la llamada</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RunCardDeterminantEquals" xml:space="preserve">
     <value>es igual a</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RunCardDeterminantStartsWith" xml:space="preserve">
     <value>empieza por</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RunCardDeterminantValue" xml:space="preserve">
     <value>Determinante (p. ej. 09-E)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TerminologyRoles" xml:space="preserve">
+    <value>Roles y equipos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TerminologyRolesHelp" xml:space="preserve">
+    <value>Los roles de bienestar. Indique el plural y la palabra para una persona, por ejemplo Responsables de seguridad y Responsable de seguridad, para que las páginas de bienestar, la ayuda de Admin Assist y las notificaciones usen sus palabras. Los roles de personal que asigna conservan los nombres que les dio.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

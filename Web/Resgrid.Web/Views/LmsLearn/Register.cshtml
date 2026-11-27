@@ -1,0 +1,64 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@model Resgrid.Web.Models.LmsLearn.LmsLearnRegisterModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    Self-registration (when the department turns it on): name, e-mail, organization and password; an e-mailed link confirms the address
+    and, when the visitor came from a public class, registers them for it. Rate limited per address and, round 7B, behind the Account/Register
+    reCAPTCHA standard (_Captcha).
+*@
+@{
+    ViewData["Title"] = localizer["Portal.Register"].Value;
+    var key = ViewData["PortalKey"] as string;
+    var branding = ViewData["Branding"] as LmsLearnerPortalBranding;
+}
+<div class="rgl-panel" style="max-width: 560px; margin: 0 auto;">
+    <h2><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["Portal.Register"]</h2>
+    @if (Model.ClassItem != null)
+    {
+        <div class="alert alert-info" role="status">
+            <strong>@Model.ClassItem.Session.Title</strong> &middot; @((branding?.Local(Model.ClassItem.Session.StartsOn) ?? Model.ClassItem.Session.StartsOn).ToString("f", CultureInfo.CurrentCulture))
+        </div>
+    }
+    <form method="post" action="~/Learn/@key/Register" data-submit-once autocomplete="on">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="ClassId" />
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+        <div class="row">
+            <div class="form-group col-sm-6">
+                <label asp-for="FirstName">@localizer["FirstName"]</label>
+                <input asp-for="FirstName" class="form-control" autocomplete="given-name" required />
+            </div>
+            <div class="form-group col-sm-6">
+                <label asp-for="LastName">@localizer["LastName"]</label>
+                <input asp-for="LastName" class="form-control" autocomplete="family-name" required />
+            </div>
+        </div>
+        <div class="form-group">
+            <label asp-for="Email">@localizer["Email"]</label>
+            <input asp-for="Email" class="form-control" type="email" autocomplete="email" required />
+        </div>
+        <div class="form-group">
+            <label asp-for="Organization">@localizer["Portal.Organization"]</label>
+            <input asp-for="Organization" class="form-control" autocomplete="organization" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Password">@localizer["Portal.Password"]</label>
+            <input asp-for="Password" class="form-control" autocomplete="new-password" aria-describedby="rgl-pwd-help" required />
+            <span id="rgl-pwd-help" class="help-block">@localizer["Portal.PasswordHelp"]</span>
+        </div>
+        <div class="form-group">
+            <label asp-for="ConfirmPassword">@localizer["Portal.ConfirmPassword"]</label>
+            <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" required />
+        </div>
+        <partial name="_PrivacyNotice" model="false" />
+        <partial name="_Captcha" model="Model.SiteKey" />
+        <button type="submit" class="btn btn-rgl"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Portal.Register"]</button>
+    </form>
+    <p class="m-t"><a href="~/Learn/@key/Resend">@localizer["Portal.ResendLink"]</a></p>
+</div>
+@section Scripts {
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="~/js/app/public/resgrid.recaptcha-field.js" asp-append-version="true"></script>
+}
+

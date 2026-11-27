@@ -6,6 +6,8 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signaturePdfText
 @inject Resgrid.Model.Services.IProtocolTranslationService translationService
 @inject Resgrid.Model.Services.IAiKnowledgeService knowledgeService
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> sharingText
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolAi.ProtocolAi> protocolAiText
 @{
     var departmentTime = DepartmentTime.From(ViewData);
     var p = Model.Protocol;
@@ -18,6 +20,13 @@
     var outline = localized?.Translation != null ? ProtocolContentDocument.OutlineFor(localized.ContentJson, localized.ContentHtml) : Model.Outline;
     string dosingToolUrl = null;
     try { dosingToolUrl = (await knowledgeService.GetSettingsAsync(ClaimsAuthorizationHelper.GetDepartmentId()))?.DosingToolUrl; } catch (Exception) { dosingToolUrl = null; }
+    // Round 7A: the protocol AI tools (practice cards, a training draft) need only Enhanced AI with knowledge answers, never the LMS; shown for a
+    // published protocol allowed to AI. The services check every gate again and fail closed.
+    var aiTools = false;
+    if (!Model.Preview && !p.IsDeleted && p.IsPublished && ProtocolLicensing.CanUseForAi(p))
+    {
+        try { aiTools = await knowledgeService.IsEntitledAsync(ClaimsAuthorizationHelper.GetDepartmentId()); } catch (Exception) { aiTools = false; }
+    }
     ViewBag.Title = "Resgrid | " + p.Name;
     ViewData["Title"] = p.Name;
     ViewData["Subtitle"] = p.Code + (string.IsNullOrEmpty(p.Number) ? "" : " · " + p.Number) + " · " + ProtocolDisplay.KindName(p.Kind, localizer);
@@ -58,6 +67,14 @@
         @if (!Model.Preview && Model.IsManager && shown != null && !shown.IsDocument && !ProtocolLifecycle.IsContentEditable(shown.Status) && shown.Status != (int)ProtocolVersionStatuses.Legacy)
         {
             <a class="btn btn-default" asp-controller="ProtocolTools" asp-action="Translations" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-versionId="@shown.ProtocolVersionId"><i class="fa fa-language" aria-hidden="true"></i> @localizer["TranslationsButton"]</a>
+        }
+        @if (aiTools && (Model.CanAuthor || Model.CanApprove))
+        {
+            <a class="btn btn-default" asp-controller="ProtocolAi" asp-action="Flashcards" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-clone" aria-hidden="true"></i> @protocolAiText["FlashcardsButton"]</a>
+            @if (ClaimsAuthorizationHelper.CanCreateTraining())
+            {
+                <a class="btn btn-default" asp-controller="ProtocolAi" asp-action="DraftTraining" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @protocolAiText["DraftTrainingLink"]</a>
+            }
         }
         @if (Model.CanModify && !p.IsBulletin)
         {
@@ -167,6 +184,8 @@
     {
         @* P2: the member's outstanding acknowledgment of this protocol, with read-and-sign. *@
         @await Component.InvokeAsync("ProtocolAcknowledgmentPrompt", new { protocolId = p.DispatchProtocolId })
+        @* Round 10 A3: a copy managed by a subscribed protocol set (publisher, lock, customize, propose a change). *@
+        @await Component.InvokeAsync("ContentSetCopyBanner", new { kind = (int)Resgrid.Model.ContentSetItemKinds.Protocol, localId = p.DispatchProtocolId })
     }
 
     <div class="row">
@@ -199,6 +218,11 @@
                 {
                     @await Html.PartialAsync("_KnowledgePractice", new Resgrid.Web.Areas.User.Models.Knowledge.KnowledgePracticePanelModel { ProtocolId = p.DispatchProtocolId, PanelId = "kpractice-protocol" })
                 }
+            }
+            @if (aiTools)
+            {
+                @* Round 7A: practice cards (Enhanced AI only), hidden until the deck has cards; practice is never recorded. *@
+                @await Html.PartialAsync("_ProtocolPracticeCards", new ProtocolPracticeCardsPanelModel { ProtocolId = p.DispatchProtocolId, DeckUrl = Url.Action("Deck", "ProtocolAi", new { area = "User", id = p.DispatchProtocolId }) })
             }
         </div>
         <div class="col-md-6">
@@ -275,6 +299,27 @@
                     @if (shown != null && !string.IsNullOrEmpty(shown.ChangeSummary))
                     {
                         <div class="m-t-md small text-muted"><strong>@localizer["ChangeSummaryLabel"]:</strong> @shown.ChangeSummary</div>
+                    }
+                    @if (ViewData["Attribution"] is ContentAttribution attribution)
+                    {
+                        @* P5: attribution kept from the template library, the community exchange or an attributed file. *@
+                        <div class="m-t-sm small text-muted rgx-attribution">
+                            <i class="fa fa-copyright" aria-hidden="true"></i> @sharingText["AttributionSource"] @attribution.SourceName
+                            @if (!string.IsNullOrWhiteSpace(attribution.Author)) { <span> · @attribution.Author</span> }
+                            @if (!string.IsNullOrWhiteSpace(attribution.License))
+                            {
+                                <span> · @sharingText["AttributionLicense"] </span>
+                                @if (!string.IsNullOrWhiteSpace(ContentLicenses.SafeUrl(attribution.LicenseUrl)))
+                                {
+                                    <a href="@ContentLicenses.SafeUrl(attribution.LicenseUrl)" target="_blank" rel="license noopener noreferrer nofollow">@attribution.License</a>
+                                }
+                                else
+                                {
+                                    <span>@attribution.License</span>
+                                }
+                            }
+                            @if (!string.IsNullOrWhiteSpace(attribution.SourceVersion)) { <span> · @string.Format(sharingText["PublicVersion"].Value, attribution.SourceVersion)</span> }
+                        </div>
                     }
                 </div>
             </div>
@@ -589,4 +634,8 @@
 {
     <script src="~/js/app/common/passkeys/resgrid.passkeys.js" asp-append-version="true"></script>
     <script src="~/js/app/internal/signatures/resgrid.signatures.js" asp-append-version="true"></script>
+    @if (aiTools)
+    {
+        <script src="~/js/app/internal/protocols/resgrid.protocols.cards.js" asp-append-version="true"></script>
+    }
 }

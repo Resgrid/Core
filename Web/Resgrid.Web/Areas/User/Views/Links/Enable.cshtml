@@ -59,6 +59,11 @@
               <div class="col-sm-10"><input type="text" class="form-control" asp-for="Link.DepartmentColor" /></div>
             </div>
 
+            @* Round 10 A3: accepting is an L2 signature (step-up), bound to the two organizations and what each shares now. *@
+            <div class="form-group">
+              <div class="col-sm-10 col-sm-offset-2"><span class="help-block small"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["LinkAcceptanceSignatureNote"]</span></div>
+            </div>
+
             <div class="form-group">
               <div class="col-sm-4 col-sm-offset-2">
                 <a class="btn btn-white" asp-controller="Links" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>

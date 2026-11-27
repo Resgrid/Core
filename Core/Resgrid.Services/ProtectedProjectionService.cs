@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Localization.Areas.User.SystemMessages;
 using Resgrid.Model.Services;
 
@@ -64,11 +65,17 @@ namespace Resgrid.Services
 			}
 
 			if (!enforced)
-				return JsonConvert.SerializeObject(eventPayload);
+			{
+				// Round 7C: a call's protocol rows never carry the case answers or free text into a workflow payload, protected or not.
+				var plain = JToken.FromObject(eventPayload);
+				CallWorkflowPayload.Trim(plain);
+				return plain.ToString(Formatting.None);
+			}
 
 			try
 			{
 				var root = JToken.FromObject(eventPayload);
+				CallWorkflowPayload.Trim(root);
 				var redactedFields = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
 				Redact(root, redactedFields);
 

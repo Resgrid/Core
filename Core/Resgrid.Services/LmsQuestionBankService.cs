@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,8 @@ namespace Resgrid.Services
 	/// <summary>
 	/// Question banks (T2 item 4, §13a): pools with tags, images, explanations and per-question points; department-shared banks any
 	/// course author may draw from, private banks only their owner and Manage Courses holders use. Questions are retired, never
-	/// deleted, because past attempts drew them (their own snapshots stand, R-T6). Needs the LMS add-on to change (rule 3).
+	/// deleted, because past attempts drew them (their own snapshots stand, R-T6). Needs the LMS add-on to change (rule 3). A change queues
+	/// the bank's explanations for reindex (<see cref="LmsQuestionExplanationKnowledgeSource"/>).
 	/// </summary>
 	public class LmsQuestionBankService : ILmsQuestionBankService
 	{
@@ -26,14 +28,21 @@ namespace Resgrid.Services
 		private readonly ILmsQuestionsRepository _questions;
 		private readonly ILmsCourseOwnersRepository _owners;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IKnowledgeIndexQueue _knowledgeQueue;
 
-		public LmsQuestionBankService(ILmsQuestionBanksRepository banks, ILmsQuestionsRepository questions, ILmsCourseOwnersRepository owners, IEventAggregator eventAggregator)
+		public LmsQuestionBankService(ILmsQuestionBanksRepository banks, ILmsQuestionsRepository questions, ILmsCourseOwnersRepository owners, IEventAggregator eventAggregator,
+			IKnowledgeIndexQueue knowledgeQueue)
 		{
 			_banks = banks;
 			_questions = questions;
 			_owners = owners;
 			_eventAggregator = eventAggregator;
+			_knowledgeQueue = knowledgeQueue;
 		}
+
+		/// <summary>The bank's question explanations are part of the knowledge corpus: reindex it (the queue never fails its caller).</summary>
+		private Task ReindexAsync(int departmentId, int lmsQuestionBankId, CancellationToken cancellationToken) =>
+			_knowledgeQueue.EnqueueAsync(departmentId, KnowledgeSourceKinds.QuestionExplanation, lmsQuestionBankId.ToString(CultureInfo.InvariantCulture), cancellationToken);
 
 		/// <summary>Whether the actor may draw from (and edit) the bank: a shared bank, their own, or any for Manage Courses.</summary>
 		public static bool MayUse(LmsActor actor, LmsQuestionBank bank) =>
@@ -99,6 +108,7 @@ namespace Resgrid.Services
 			stored.Tags = LmsCourseService.NormalizeTags(bank.Tags);
 			await _banks.SaveOrUpdateAsync(stored, cancellationToken, true);
 			Audit(actor, JsonConvert.SerializeObject(new { stored.LmsQuestionBankId, stored.Name, stored.IsShared }));
+			await ReindexAsync(stored.DepartmentId, stored.LmsQuestionBankId, cancellationToken);
 			return new LmsResult { Value = stored };
 		}
 
@@ -116,6 +126,7 @@ namespace Resgrid.Services
 			bank.IsDeleted = true;
 			await _banks.UpdateAsync(bank, cancellationToken, true);
 			Audit(actor, JsonConvert.SerializeObject(new { bank.LmsQuestionBankId, deleted = true }));
+			await ReindexAsync(bank.DepartmentId, bank.LmsQuestionBankId, cancellationToken);
 			return new LmsResult { Value = bank };
 		}
 
@@ -163,6 +174,7 @@ namespace Resgrid.Services
 			stored.Points = question.Points <= 0 ? 1 : Math.Min(100, question.Points);
 			stored.Options = NormalizeOptions(question);
 			await _questions.SaveOrUpdateAsync(stored, cancellationToken, true);
+			await ReindexAsync(stored.DepartmentId, stored.LmsQuestionBankId, cancellationToken);
 			return new LmsResult { Value = stored };
 		}
 
@@ -176,6 +188,7 @@ namespace Resgrid.Services
 			question.IsRetired = true;
 			question.UpdatedOn = DateTime.UtcNow;
 			await _questions.UpdateAsync(question, cancellationToken, true);
+			await ReindexAsync(question.DepartmentId, question.LmsQuestionBankId, cancellationToken);
 			return new LmsResult { Value = question };
 		}
 

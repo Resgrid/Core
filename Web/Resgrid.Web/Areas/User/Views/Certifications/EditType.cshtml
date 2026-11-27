@@ -1,5 +1,6 @@
 @model Resgrid.Web.Areas.User.Models.Certifications.CertificationTypeEditView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> localizer
+@inject Resgrid.Model.Services.ILmsAccessService lmsAccess
 @{
     var title = Model.IsNew ? localizer["NewType"].Value : localizer["EditType"].Value;
     ViewBag.Title = "Resgrid | " + title;
@@ -62,6 +63,59 @@
                         <div class="checkbox"><label><input type="checkbox" name="NeverExpires" value="true" checked="@t.NeverExpires" /> @localizer["NeverExpires"]</label></div>
                     </div>
                 </div>
+                @* Round 9A: how a record expires when training issues or renews it, the grace after expiry and the renewal window. *@
+                <div class="form-group" id="validity-rule-group">
+                    <label class="col-sm-3 control-label" for="ValidityRule">@localizer["Validity.Rule"]</label>
+                    <div class="col-sm-6">
+                        <select class="form-control" id="ValidityRule" name="ValidityRule" aria-describedby="validity-help">
+                            @foreach (Resgrid.Model.Certifications.CertificationValidityRules rule in Enum.GetValues(typeof(Resgrid.Model.Certifications.CertificationValidityRules)))
+                            {
+                                <option value="@((int)rule)" selected="@(t.ValidityRule == (int)rule)">@localizer["Validity.Rule." + rule]</option>
+                            }
+                        </select>
+                        <span class="help-block m-b-none" id="validity-help">@localizer["Validity.Help"]</span>
+                    </div>
+                </div>
+                <div class="form-group validity-fiscal">
+                    <label class="col-sm-3 control-label" for="ValidityYearEndMonth">@localizer["Validity.YearEnd"]</label>
+                    <div class="col-sm-3">
+                        <select class="form-control" id="ValidityYearEndMonth" name="ValidityYearEndMonth" aria-label="@localizer["Validity.YearEndMonth"]">
+                            @for (var month = 1; month <= 12; month++)
+                            {
+                                <option value="@month" selected="@((t.ValidityYearEndMonth ?? 12) == month)">@System.Globalization.CultureInfo.CurrentUICulture.DateTimeFormat.GetMonthName(month)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" id="ValidityYearEndDay" name="ValidityYearEndDay" value="@(t.ValidityYearEndDay ?? 31)" min="1" max="31" aria-label="@localizer["Validity.YearEndDay"]" />
+                    </div>
+                </div>
+                <div class="form-group validity-fixed">
+                    <label class="col-sm-3 control-label" for="ValidityFixedDate">@localizer["Validity.FixedDate"]</label>
+                    <div class="col-sm-3"><input type="date" class="form-control" id="ValidityFixedDate" name="ValidityFixedDate" value="@t.ValidityFixedDate?.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture)" /></div>
+                </div>
+                <div class="form-group validity-expiring">
+                    <label class="col-sm-3 control-label" for="RenewalGraceDays">@localizer["Validity.GraceDays"]</label>
+                    <div class="col-sm-2"><input type="number" class="form-control" id="RenewalGraceDays" name="RenewalGraceDays" value="@t.RenewalGraceDays" min="0" max="365" aria-describedby="grace-help" /></div>
+                    <div class="col-sm-4"><span class="help-block m-b-none" id="grace-help">@localizer["Validity.GraceHelp"]</span></div>
+                </div>
+                <div class="form-group validity-expiring">
+                    <label class="col-sm-3 control-label" for="RenewalWindowMonths">@localizer["Validity.WindowMonths"]</label>
+                    <div class="col-sm-2"><input type="number" class="form-control" id="RenewalWindowMonths" name="RenewalWindowMonths" value="@t.RenewalWindowMonths" min="1" max="60" aria-describedby="window-help" /></div>
+                    <div class="col-sm-4"><span class="help-block m-b-none" id="window-help">@localizer["Validity.WindowHelp"]</span></div>
+                </div>
+                @if (!Model.IsNew && t.AppliesTo == 0 && await lmsAccess.IsFlagEnabledAsync(Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetDepartmentId()))
+                {
+                    <div class="form-group person-only">
+                        <label class="col-sm-3 control-label">@localizer["Validity.RequirementSet"]</label>
+                        <div class="col-sm-6">
+                            <p class="form-control-static">@localizer["Validity.RequirementSetHelp"]</p>
+                            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="EditCertificationRequirements" asp-route-area="User" asp-route-typeId="@t.DepartmentCertificationTypeId">
+                                <i class="fa fa-list-ol" aria-hidden="true"></i> @localizer["Validity.RequirementSetEdit"]
+                            </a>
+                        </div>
+                    </div>
+                }
                 <div class="form-group person-only">
                     <label class="col-sm-3 control-label" for="RenewalCreditHoursRequired">@localizer["RenewalCreditHoursRequired"]</label>
                     <div class="col-sm-2"><input type="number" class="form-control" id="RenewalCreditHoursRequired" name="RenewalCreditHoursRequired" value="@t.RenewalCreditHoursRequired?.ToString(System.Globalization.CultureInfo.InvariantCulture)" min="0" step="0.5" /></div>
@@ -92,7 +146,15 @@
         $(function () {
             function scope() { $('.person-only').toggle($('#AppliesTo').val() === '0'); }
             $('#AppliesTo').on('change', scope); scope();
-            $('input[name=NeverExpires]').on('change', function () { $('#DefaultValidityMonths').prop('disabled', this.checked); }).trigger('change');
+            $('input[name=NeverExpires]').on('change', function () { $('#DefaultValidityMonths').prop('disabled', this.checked); validity(); }).trigger('change');
+            // Round 9A: only the fields of the chosen validity rule are shown (and posted).
+            function validity() {
+                var never = $('input[name=NeverExpires]').is(':checked'), rule = $('#ValidityRule').val();
+                $('#validity-rule-group, .validity-expiring').toggle(!never);
+                $('.validity-fiscal').toggle(!never && rule === '2').find('select,input').prop('disabled', never || rule !== '2');
+                $('.validity-fixed').toggle(!never && rule === '3').find('input').prop('disabled', never || rule !== '3');
+            }
+            $('#ValidityRule').on('change', validity); validity();
         });
     </script>
 }

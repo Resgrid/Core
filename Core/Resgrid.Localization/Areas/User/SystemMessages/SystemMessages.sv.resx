@@ -83,6 +83,7 @@ Om du inte har begärt detta, kontakta supporten.
 
 
 Resgrid-teamet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GdprExportWithheldNotice" xml:space="preserve">
     <value>Din organisation använder avancerat dataskydd, så vissa värden i den här exporten är krypterade och visas som REDACTED. De ingår fortfarande i dina uppgifter och har inte raderats.</value>
@@ -128,6 +129,7 @@ Koden upphör att gälla om {2} minuter. Om du inte har begärt detta kan du ign
 
 
 Resgrid-teamet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">
     <value>Resgrid verifieringskod</value>
@@ -177,6 +179,7 @@ Resgrid-teamet</value>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Detta är ett automatiskt säkerhetsmeddelande om ditt Resgrid-konto.</value></data>
   <data name="SigningLinkEmailSubject" xml:space="preserve">
     <value>{0}: ett dokument att signera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkEmailBody" xml:space="preserve">
     <value>Hej {0},
@@ -189,12 +192,15 @@ Resgrid-teamet</value>
 Länken kan användas en gång och går ut {4}. Innan du signerar bekräftar du en engångskod.
 
 Om du inte väntade dig meddelandet kan du bortse från det.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningLinkSmsBody" xml:space="preserve">
     <value>{0} ber dig signera "{1}": {2}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailSubject" xml:space="preserve">
     <value>{0}: din signeringskod</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeEmailBody" xml:space="preserve">
     <value>Hej {0},
@@ -202,8 +208,10 @@ Om du inte väntade dig meddelandet kan du bortse från det.</value>
 Din kod för att signera dokumentet från {3} är {1}. Den går ut om {2} minuter.
 
 Om du inte har begärt koden kan du bortse från meddelandet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SigningCodeSmsBody" xml:space="preserve">
     <value>Din signeringskod för {2} är {0}. Den går ut om {1} minuter.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

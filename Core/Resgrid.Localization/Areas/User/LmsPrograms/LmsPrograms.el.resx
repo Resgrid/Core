@@ -60,782 +60,1050 @@
   </resheader>
   <data name="AcademyPathsHeader" xml:space="preserve">
     <value>Διαδρομές ρόλων της Resgrid Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyPathsIntro" xml:space="preserve">
     <value>Δωρεάν για κάθε τμήμα. Η Resgrid συντηρεί τα βήματά τους, ενώ εσείς μπορείτε να τις αναθέτετε και να τις χρησιμοποιείτε σε απαιτήσεις.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyPrefix" xml:space="preserve">
     <value>Ακαδημία:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActedOn" xml:space="preserve">
     <value>Ημερομηνία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActiveLabel" xml:space="preserve">
     <value>Ενεργό</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddStep" xml:space="preserve">
     <value>Προσθήκη βήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddStepNoScript" xml:space="preserve">
     <value>Αποθηκεύστε για να προσθέσετε περισσότερα βήματα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AddonNotice" xml:space="preserve">
     <value>Οι απαιτήσεις εκπαίδευσης αποτελούν μέρος του πρόσθετου LMS. Μπορείτε να τις βλέπετε, αλλά η δημιουργία και η αλλαγή τους απαιτούν το πρόσθετο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertOnCompletionLabel" xml:space="preserve">
     <value>Ενημέρωση και όταν ένα μέλος την ολοκληρώνει ή την ανανεώνει</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertSupervisorsLabel" xml:space="preserve">
     <value>Ενημέρωση των διαχειριστών ομάδων του μέλους όταν το μέλος είναι εκπρόθεσμο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertUsersLabel" xml:space="preserve">
     <value>Ενημέρωση και αυτών των ατόμων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AlertsHeader" xml:space="preserve">
     <value>Ειδοποιήσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllGroups" xml:space="preserve">
     <value>Όλες οι ομάδες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllRequirements" xml:space="preserve">
     <value>Όλες οι απαιτήσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AllStates" xml:space="preserve">
     <value>Όλες οι καταστάσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AndMoreFormat" xml:space="preserve">
     <value>και {0} ακόμη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignAction" xml:space="preserve">
     <value>Ανάθεση διαδρομής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignHeader" xml:space="preserve">
     <value>Ανάθεση αυτής της διαδρομής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AssignedFormat" xml:space="preserve">
     <value>Ανατέθηκε σε {0} μέλη. {1} την είχαν ήδη.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AtRiskDaysLabel" xml:space="preserve">
     <value>Προειδοποίηση τόσες ημέρες πριν από την προθεσμία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceHelp" xml:space="preserve">
     <value>Μέλη οποιουδήποτε ρόλου, ομάδας, πιστοποίησης ή βάρδιας επιλέξετε. Όσοι εντάσσονται, λαμβάνουν τον ρόλο ή εισέρχονται στο κοινό με άλλον τρόπο αργότερα, λαμβάνουν δική τους προθεσμία.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceMember" xml:space="preserve">
     <value>ένα μέλος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AudienceOther" xml:space="preserve">
     <value>άλλο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AutoAssignLabel" xml:space="preserve">
     <value>Αυτόματη ανάθεση του μαθήματος ή της διαδρομής σε κάθε μέλος (ένταξη)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AutoAssigns" xml:space="preserve">
     <value>Αυτόματη ανάθεση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BacksHelp" xml:space="preserve">
     <value>Επιβολή βάσει εκπαίδευσης: όταν ένα μέλος είναι εκπρόθεσμο πέραν της περιόδου χάριτος, η πιστοποίησή του αυτού του τύπου μπορεί να λήξει. Εμφανίζονται μόνο τύποι πιστοποίησης που λήγουν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BacksLabel" xml:space="preserve">
     <value>Υποστηρίζει πιστοποίηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BreachFormat" xml:space="preserve">
     <value>{0}: {1} από {2} μέλη ({3}%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Cancel" xml:space="preserve">
     <value>Ακύρωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CategoryLabel" xml:space="preserve">
     <value>Κατηγορία εκπαίδευσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CertificationExpires" xml:space="preserve">
     <value>Πιστοποίηση που λήγει</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CertificationsLabel" xml:space="preserve">
     <value>Πιστοποιήσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChangeMember" xml:space="preserve">
     <value>Εξαίρεση ή παράταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ChooseOption" xml:space="preserve">
     <value>Επιλέξτε...</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColActions" xml:space="preserve">
     <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColHowOften" xml:space="preserve">
     <value>Συχνότητα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColMembers" xml:space="preserve">
     <value>Μέλη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColRequirement" xml:space="preserve">
     <value>Απαίτηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColWhat" xml:space="preserve">
     <value>Τι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColWho" xml:space="preserve">
     <value>Ποιος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ComplianceIntro" xml:space="preserve">
     <value>Κάθε ενεργό μέλος έναντι κάθε απαίτησης που ισχύει για αυτό. Τα μέλη χωρίς θέση LMS εμφανίζονται χωρίς άδεια χρήσης και δεν είναι ποτέ εκπρόθεσμα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ComplianceTitle" xml:space="preserve">
     <value>Συμμόρφωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmDelete" xml:space="preserve">
     <value>Διαγραφή αυτής της απαίτησης; Το ιστορικό των μελών διατηρείται και κάθε επιβολή που έκανε αναιρείται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmDeletePath" xml:space="preserve">
     <value>Διαγραφή αυτής της διαδρομής; Οι αναθέσεις και οι ολοκληρώσεις διατηρούνται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmPreviewLabel" xml:space="preserve">
     <value>Έχω ελέγξει ποιος θα έχανε ποιον ρόλο (απαιτείται για την ενεργοποίηση της επιβολής)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmRequired" xml:space="preserve">
     <value>Ελέγξτε την προεπισκόπηση παρακάτω και επιβεβαιώστε την για να ενεργοποιήσετε την επιβολή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConfirmUndo" xml:space="preserve">
     <value>Αναίρεση αυτής της ενέργειας; Η πιστοποίηση και οι ρόλοι που αφαιρέθηκαν επιστρέφονται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CountFormat" xml:space="preserve">
     <value>{0} αξιολογήσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CountLabel" xml:space="preserve">
     <value>Απαιτούμενες επιτυχείς αξιολογήσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CourseLabel" xml:space="preserve">
     <value>Μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DefaultAtRiskLabel" xml:space="preserve">
     <value>Προεπιλεγμένη προειδοποίηση για νέες απαιτήσεις (ημέρες πριν από την προθεσμία)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Delete" xml:space="preserve">
     <value>Διαγραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Deleted" xml:space="preserve">
     <value>Διαγράφηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DepartmentPathsHeader" xml:space="preserve">
     <value>Διαδρομές τμήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DescriptionLabel" xml:space="preserve">
     <value>Περιγραφή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDateLabel" xml:space="preserve">
     <value>Προθεσμία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDaysFormat" xml:space="preserve">
     <value>{0} ημέρες για ολοκλήρωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDaysHelp" xml:space="preserve">
     <value>Μετράει από την ημέρα που το μέλος εντάσσεται, λαμβάνει τον ρόλο ή εισέρχεται στο κοινό με άλλον τρόπο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueDaysLabel" xml:space="preserve">
     <value>Ημέρες για ολοκλήρωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueFormat" xml:space="preserve">
     <value>Προθεσμία {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DueOn" xml:space="preserve">
     <value>Προθεσμία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Edit" xml:space="preserve">
     <value>Επεξεργασία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ElectiveBadge" xml:space="preserve">
     <value>επιλογής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ElectiveFormat" xml:space="preserve">
     <value>ομάδα επιλογής {0}, απαιτούνται {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforceHelp" xml:space="preserve">
     <value>Απαιτεί επίσης ενεργή επιβολή για το τμήμα (Επιβολή). Οι ρόλοι που απαιτούν την πιστοποίηση αφαιρούνται τότε από την ενότητα πιστοποιήσεων μετά τη δική της περίοδο χάριτος, και όλα επιστρέφονται όταν το μέλος ολοκληρώσει την απαίτηση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforceLabel" xml:space="preserve">
     <value>Επιβολή: λήξη της πιστοποίησης όταν το μέλος είναι εκπρόθεσμο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcedBadge" xml:space="preserve">
     <value>Επιβάλλεται</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementEnabledHelp" xml:space="preserve">
     <value>Ανενεργή από προεπιλογή. Κάθε απαίτηση πρέπει επίσης να την ενεργοποιήσει ξεχωριστά. Τίποτα δεν επιβάλλεται όσο το πρόσθετο LMS είναι ανενεργό.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementEnabledLabel" xml:space="preserve">
     <value>Ενεργοποίηση επιβολής βάσει εκπαίδευσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementHeader" xml:space="preserve">
     <value>Επιβολή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementIntro" xml:space="preserve">
     <value>Επιτρέψτε σε μια εκπρόθεσμη επανεκπαίδευση να προκαλεί λήξη της πιστοποίησης που υποστηρίζει, με δικλίδα ασφαλείας που σταματά κάθε εκτέλεση που θα άδειαζε έναν ρόλο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EnforcementTitle" xml:space="preserve">
     <value>Επιβολή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Enforcing" xml:space="preserve">
     <value>Επιβάλλει</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.AddonRequired" xml:space="preserve">
     <value>Απαιτείται το πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.AudienceRequired" xml:space="preserve">
     <value>Επιλέξτε σε ποιους ισχύει η απαίτηση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.CertificationType" xml:space="preserve">
     <value>Επιλέξτε έναν τύπο πιστοποίησης για άτομα που λήγει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.CountRequired" xml:space="preserve">
     <value>Εισαγάγετε πόσες επιτυχείς αξιολογήσεις απαιτούνται (1 έως 1000).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.DaysRange" xml:space="preserve">
     <value>Οι ημέρες πρέπει να είναι από 0 έως 3650 (περίοδος χάριτος και προειδοποίηση έως 365).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.ExtensionInvalid" xml:space="preserve">
     <value>Επιλέξτε μελλοντική ημερομηνία και δώστε αιτιολογία.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.HoursRequired" xml:space="preserve">
     <value>Εισαγάγετε τις απαιτούμενες ώρες (περισσότερες από 0).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.IntervalRequired" xml:space="preserve">
     <value>Εισαγάγετε πόσους μήνες (1 έως 120).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.Invalid" xml:space="preserve">
     <value>Δεν ήταν δυνατή η αποθήκευση. Ελέγξτε τη φόρμα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.NameRequired" xml:space="preserve">
     <value>Εισαγάγετε όνομα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.NotAuthorized" xml:space="preserve">
     <value>Δεν έχετε δικαίωμα να το κάνετε αυτό.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.NotFound" xml:space="preserve">
     <value>Το στοιχείο δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathDuplicateStep" xml:space="preserve">
     <value>Το ίδιο μάθημα ή η ίδια εκπαίδευση εμφανίζεται δύο φορές.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathElectiveCount" xml:space="preserve">
     <value>Μια ομάδα επιλογής χρειάζεται τουλάχιστον 1 βήμα επιλογής και όχι περισσότερα από όσα περιέχει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathInvalidOrder" xml:space="preserve">
     <value>Η σειρά των βημάτων δεν είναι έγκυρη.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathInvalidStep" xml:space="preserve">
     <value>Ένα βήμα δεν είναι μάθημα ή εκπαίδευση που μπορεί να χρησιμοποιήσει αυτό το τμήμα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathNoSteps" xml:space="preserve">
     <value>Προσθέστε τουλάχιστον ένα βήμα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathPrerequisiteNotEarlier" xml:space="preserve">
     <value>Ένα βήμα μπορεί να απαιτεί μόνο προηγούμενα βήματα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.PathTooManySteps" xml:space="preserve">
     <value>Μια διαδρομή μπορεί να έχει έως 60 βήματα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.ReasonRequired" xml:space="preserve">
     <value>Δώστε αιτιολογία.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.SkillRequired" xml:space="preserve">
     <value>Εισαγάγετε τον κωδικό δεξιότητας.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Err.TargetRequired" xml:space="preserve">
     <value>Επιλέξτε τι ζητά η απαίτηση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Everyone" xml:space="preserve">
     <value>Όλοι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExemptAction" xml:space="preserve">
     <value>Εξαίρεση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportCsv" xml:space="preserve">
     <value>CSV</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExportPdf" xml:space="preserve">
     <value>PDF</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExtendAction" xml:space="preserve">
     <value>Παράταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Filter" xml:space="preserve">
     <value>Φίλτρο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterGroup" xml:space="preserve">
     <value>Ομάδα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterRequirement" xml:space="preserve">
     <value>Απαίτηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterState" xml:space="preserve">
     <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GraceDaysHelp" xml:space="preserve">
     <value>Μετά την προθεσμία το μέλος εμφανίζεται σε κίνδυνο για τόσες ημέρες και στη συνέχεια εκπρόθεσμο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GraceDaysLabel" xml:space="preserve">
     <value>Ημέρες χάριτος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GroupsLabel" xml:space="preserve">
     <value>Ομάδες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HistoryHeader" xml:space="preserve">
     <value>Ιστορικό επιβολής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursFormat" xml:space="preserve">
     <value>{0} ώρες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HoursLabel" xml:space="preserve">
     <value>Απαιτούμενες ώρες ανά περίοδο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InForce" xml:space="preserve">
     <value>Σε ισχύ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Inactive" xml:space="preserve">
     <value>Ανενεργό</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IntervalLabel" xml:space="preserve">
     <value>Κάθε πόσους μήνες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IssuesCertificationBadge" xml:space="preserve">
     <value>Εκδίδει πιστοποίηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IssuesCertificationLabel" xml:space="preserve">
     <value>Έκδοση πιστοποίησης με την ολοκλήρωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Course" xml:space="preserve">
     <value>Ολοκλήρωση μαθήματος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Training" xml:space="preserve">
     <value>Ολοκλήρωση εκπαίδευσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.CategoryHours" xml:space="preserve">
     <value>Καταγραφή ωρών σε κατηγορία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Path" xml:space="preserve">
     <value>Ολοκλήρωση διαδρομής μάθησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Kind.Evaluations" xml:space="preserve">
     <value>Επιτυχία σε αξιολογήσεις δεξιοτήτων</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindLabel" xml:space="preserve">
     <value>Τύπος απαίτησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LastCompleted" xml:space="preserve">
     <value>Ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LegendOther" xml:space="preserve">
     <value>Εξαιρείται, σε άδεια απουσίας ή χωρίς άδεια χρήσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LiftExemption" xml:space="preserve">
     <value>Άρση εξαίρεσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MaxShareHelp" xml:space="preserve">
     <value>Μια εκτέλεση που θα αφαιρούσε περισσότερο από αυτό το ποσοστό των μελών ενός ρόλου απορρίπτεται και οι διαχειριστές ενημερώνονται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MaxShareLabel" xml:space="preserve">
     <value>Μέγιστο ποσοστό μελών ενός ρόλου που μπορεί να αφαιρέσει μία εκτέλεση (%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Member" xml:space="preserve">
     <value>Μέλος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MembersLabel" xml:space="preserve">
     <value>Μέλη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Mode.Off" xml:space="preserve">
     <value>ανενεργή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Mode.WarnOnly" xml:space="preserve">
     <value>μόνο προειδοποίηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Mode.Enforce" xml:space="preserve">
     <value>Επιβολή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MyRequirementsHeader" xml:space="preserve">
     <value>Οι απαιτήσεις μου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NameLabel" xml:space="preserve">
     <value>Όνομα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NeedsStepsFormat" xml:space="preserve">
     <value>απαιτεί το βήμα {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewDueDateLabel" xml:space="preserve">
     <value>Νέα προθεσμία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewMembersOnlyLabel" xml:space="preserve">
     <value>Μόνο μέλη που εισέρχονται στο κοινό από εδώ και πέρα (ένταξη)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewOnboarding" xml:space="preserve">
     <value>Νέα ένταξη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewPath" xml:space="preserve">
     <value>Νέα διαδρομή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewRequirement" xml:space="preserve">
     <value>Νέα απαίτηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextRequirementHeader" xml:space="preserve">
     <value>Επόμενη απαίτηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoAssignees" xml:space="preserve">
     <value>Αυτή η διαδρομή δεν έχει ανατεθεί ακόμη σε κανέναν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoHistory" xml:space="preserve">
     <value>Δεν υπάρχει ακόμη ενέργεια επιβολής.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoMatrixRows" xml:space="preserve">
     <value>Κανένα μέλος δεν ταιριάζει.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoOnboarding" xml:space="preserve">
     <value>Δεν υπάρχει ακόμη ένταξη. Προσθέστε μια διαδρομή ανά ρόλο, που ανατίθεται όταν κάποιος εντάσσεται ή λαμβάνει τον ρόλο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoPaths" xml:space="preserve">
     <value>Δεν υπάρχουν ακόμη διαδρομές τμήματος.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRequirements" xml:space="preserve">
     <value>Δεν υπάρχουν ακόμη απαιτήσεις.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRolesLost" xml:space="preserve">
     <value>κανένας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoneOption" xml:space="preserve">
     <value>Κανένα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotApplicable" xml:space="preserve">
     <value>Δεν ισχύει</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnboardingIntro" xml:space="preserve">
     <value>Μια διαδρομή μάθησης ανά ρόλο, που ανατίθεται αυτόματα με προθεσμία όταν κάποιος εντάσσεται ή λαμβάνει τον ρόλο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OnboardingTitle" xml:space="preserve">
     <value>Ένταξη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenCourses" xml:space="preserve">
     <value>Τα μαθήματά μου</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenTraining" xml:space="preserve">
     <value>Άνοιγμα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathCompletedFormat" xml:space="preserve">
     <value>Ολοκληρώθηκε {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathCountsFormat" xml:space="preserve">
     <value>{0} βήματα · {1} ανατέθηκαν · {2} ολοκληρώθηκαν</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathIntro" xml:space="preserve">
     <value>Βήματα με προαπαιτούμενα και βήματα επιλογής. Η ολοκλήρωση της διαδρομής μπορεί να εκδίδει πιστοποίηση.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathLabel" xml:space="preserve">
     <value>Διαδρομή μάθησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathsIntro" xml:space="preserve">
     <value>Μαθήματα, ενότητες Academy και εκπαιδεύσεις με σειρά, με προαπαιτούμενα και βήματα επιλογής.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PathsTitle" xml:space="preserve">
     <value>Διαδρομές μάθησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PausedNotice" xml:space="preserve">
     <value>Το πρόσθετο LMS δεν είναι ενεργό, οπότε οι απαιτήσεις έχουν ανασταλεί: τίποτα δεν γίνεται εκπρόθεσμο και τίποτα δεν επιβάλλεται μέχρι να ενεργοποιηθεί ξανά.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviewEmpty" xml:space="preserve">
     <value>Κανείς: κανένα μέλος δεν είναι εκπρόθεσμο σε απαίτηση με επιβολή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviewHeader" xml:space="preserve">
     <value>Ποιος θα έχανε ποιον ρόλο σήμερα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviewModeFormat" xml:space="preserve">
     <value>Λειτουργία επιβολής πιστοποιήσεων: {0}. Οι ρόλοι αφαιρούνται μόνο σε λειτουργία Επιβολή, {1} ημέρες μετά τη λήξη της πιστοποίησης.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgramsTitle" xml:space="preserve">
     <value>Προγράμματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgressFormat" xml:space="preserve">
     <value>{0} από {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProgressHeader" xml:space="preserve">
     <value>Πρόοδος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReasonLabel" xml:space="preserve">
     <value>Αιτιολογία</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Recurrence.OneTime" xml:space="preserve">
     <value>Μία φορά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Recurrence.RollingMonths" xml:space="preserve">
     <value>Κάθε ορισμένους μήνες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Recurrence.CalendarYear" xml:space="preserve">
     <value>Κάθε ημερολογιακό έτος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceCalendarYear" xml:space="preserve">
     <value>Κάθε ημερολογιακό έτος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceLabel" xml:space="preserve">
     <value>Συχνότητα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceOneTime" xml:space="preserve">
     <value>Μία φορά</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecurrenceRolling" xml:space="preserve">
     <value>Κάθε {0} μήνες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RemoveStep" xml:space="preserve">
     <value>Αφαίρεση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Requirement" xml:space="preserve">
     <value>Απαίτηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementIntro" xml:space="preserve">
     <value>Τι πρέπει να ολοκληρώσουν τα μέλη, ποιοι πρέπει να το ολοκληρώσουν και έως πότε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementTitle" xml:space="preserve">
     <value>Απαίτηση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementsIntro" xml:space="preserve">
     <value>Μαθήματα, εκπαιδεύσεις, ώρες, διαδρομές και αξιολογήσεις που πρέπει να ολοκληρώσουν τα μέλη, με προθεσμίες από την ένταξή τους ή την ανάθεση ρόλου.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RequirementsTitle" xml:space="preserve">
     <value>Απαιτήσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RolesLabel" xml:space="preserve">
     <value>Ρόλοι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RolesLost" xml:space="preserve">
     <value>Ρόλοι που χάνονται</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Save" xml:space="preserve">
     <value>Αποθήκευση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Saved" xml:space="preserve">
     <value>Αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsHeader" xml:space="preserve">
     <value>Ρυθμίσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShiftsLabel" xml:space="preserve">
     <value>Βάρδιες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SkillCodeHelp" xml:space="preserve">
     <value>Ο κωδικός με τον οποίο καταγράφονται οι αξιολογήσεις δεξιοτήτων.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SkillCodeLabel" xml:space="preserve">
     <value>Κωδικός δεξιότητας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Compliant" xml:space="preserve">
     <value>Σε συμμόρφωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Pending" xml:space="preserve">
     <value>Προθεσμία αργότερα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.AtRisk" xml:space="preserve">
     <value>Σε κίνδυνο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Overdue" xml:space="preserve">
     <value>Εκπρόθεσμο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.Exempt" xml:space="preserve">
     <value>Εξαιρείται</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.OnLeave" xml:space="preserve">
     <value>Σε άδεια απουσίας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="State.NotLicensed" xml:space="preserve">
     <value>Χωρίς άδεια χρήσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepAvailable" xml:space="preserve">
     <value>διαθέσιμο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepDone" xml:space="preserve">
     <value>ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepElectiveLabel" xml:space="preserve">
     <value>Ομάδα επιλογής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepElectiveRequiredLabel" xml:space="preserve">
     <value>Απαιτούμενα βήματα επιλογής</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepKind.Course" xml:space="preserve">
     <value>Μάθημα ή ενότητα Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepKind.Training" xml:space="preserve">
     <value>Εκπαίδευση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepKindLabel" xml:space="preserve">
     <value>Τύπος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepLocked" xml:space="preserve">
     <value>κλειδωμένο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepPrerequisitesLabel" xml:space="preserve">
     <value>Απαιτούμενα βήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepTargetLabel" xml:space="preserve">
     <value>Μάθημα ή εκπαίδευση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsDoneFormat" xml:space="preserve">
     <value>{0} από {1} βήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsHeader" xml:space="preserve">
     <value>Βήματα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StepsHelp" xml:space="preserve">
     <value>Τα βήματα εκτελούνται με τη σειρά. Το πεδίο Απαιτούμενα βήματα αναφέρει τους αριθμούς προηγούμενων βημάτων (π.χ. 1,2) που πρέπει να ολοκληρωθούν πρώτα. Τα βήματα με τον ίδιο αριθμό ομάδας επιλογής είναι βήματα επιλογής: ο εκπαιδευόμενος χρειάζεται τόσα από αυτά όσα ορίζει το πεδίο Απαιτούμενα βήματα επιλογής.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubCompliance" xml:space="preserve">
     <value>Συμμόρφωση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubEnforcement" xml:space="preserve">
     <value>Επιβολή</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubOnboarding" xml:space="preserve">
     <value>Ένταξη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubPaths" xml:space="preserve">
     <value>Διαδρομές</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubRequirements" xml:space="preserve">
     <value>Απαιτήσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TrainingLabel" xml:space="preserve">
     <value>Εκπαίδευση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Undo" xml:space="preserve">
     <value>Αναίρεση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.0" xml:space="preserve">
     <value>-</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.Completed" xml:space="preserve">
     <value>ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.Lapse" xml:space="preserve">
     <value>το πρόσθετο έληξε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.NoLongerApplies" xml:space="preserve">
     <value>δεν ισχύει πλέον</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UndoReason.Manual" xml:space="preserve">
-    <value>αναιρέθηκε από αξιωματικό</value>
+    <value>αναιρέθηκε από υπεύθυνο εκπαίδευσης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Undone" xml:space="preserve">
     <value>Αναιρέθηκε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UntilLabel" xml:space="preserve">
     <value>Έως (προαιρετικό)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatHeader" xml:space="preserve">
     <value>Τι</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhenHeader" xml:space="preserve">
     <value>Πότε</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhoHeader" xml:space="preserve">
     <value>Ποιος</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WouldRefuseFormat" xml:space="preserve">
     <value>Η σημερινή εκτέλεση θα απορριπτόταν: θα αφαιρούσε περισσότερο από το {0}% των μελών αυτών των ρόλων.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SubRecommendations" xml:space="preserve">
     <value>Προτάσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationsTitle" xml:space="preserve">
     <value>Προτάσεις</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationsIntro" xml:space="preserve">
     <value>Διαδρομές μάθησης και μαθήματα για συνέχεια, από ανοιχτές απαιτήσεις, διαδρομές σε εξέλιξη, κενά δεξιοτήτων και τα μαθήματα που προσφέρονται σε κάθε ρόλο.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendedHeader" xml:space="preserve">
     <value>Προτείνεται για εσάς</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendedForFormat" xml:space="preserve">
     <value>Προτείνεται για {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationsForMembersLink" xml:space="preserve">
     <value>Τα μέλη σας</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ShowRecommendationsButton" xml:space="preserve">
     <value>Εμφάνιση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationColumn" xml:space="preserve">
     <value>Πρόταση</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReasonsColumn" xml:space="preserve">
     <value>Γιατί</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ActionsColumn" xml:space="preserve">
     <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindCourse" xml:space="preserve">
     <value>Μάθημα</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindPath" xml:space="preserve">
     <value>Διαδρομή μάθησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindAcademy" xml:space="preserve">
     <value>Μάθημα της Resgrid Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RequirementOverdue" xml:space="preserve">
     <value>Η απαίτηση «{0}» είναι εκπρόθεσμη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RequirementAtRisk" xml:space="preserve">
     <value>Η απαίτηση «{0}» είναι σε κίνδυνο</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RequirementDue" xml:space="preserve">
     <value>Η απαίτηση «{0}» δεν έχει καλυφθεί ακόμη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.PathInProgress" xml:space="preserve">
     <value>Η διαδρομή μάθησης «{0}» είναι σε εξέλιξη</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.CompetencyMissing" xml:space="preserve">
     <value>Δεν υπάρχει ακόμη τεκμήριο για τη δεξιότητα {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.CompetencyAged" xml:space="preserve">
     <value>Το τεκμήριο για τη δεξιότητα {0} είναι παλαιό</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Reason.RoleAudience" xml:space="preserve">
     <value>Προσφέρεται στον ρόλο {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RecommendationContinue" xml:space="preserve">
     <value>Συνέχεια</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRecommendations" xml:space="preserve">
     <value>Δεν υπάρχει κάτι να προταθεί αυτή τη στιγμή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainButton" xml:space="preserve">
     <value>Εξήγηση με ΤΝ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Explaining" xml:space="preserve">
     <value>Γίνεται εξήγηση…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainFailed" xml:space="preserve">
     <value>Δεν υπάρχει διαθέσιμη εξήγηση αυτή τη στιγμή.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainBusy" xml:space="preserve">
     <value>Η ΤΝ είναι απασχολημένη ή εξαντλήθηκε το όριο του μήνα. Δοκιμάστε αργότερα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AiExplanationNotice" xml:space="preserve">
     <value>Εξήγηση ΤΝ, γραμμένη μόνο από τους λόγους που εμφανίζονται.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ExplainPrivacyNote" xml:space="preserve">
     <value>Μόνο οι τίτλοι και οι λόγοι παραπάνω στέλνονται στο μοντέλο ΤΝ του τμήματος, ποτέ ονόματα.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicyLabel" xml:space="preserve">
     <value>Όταν η Resgrid Academy δημοσιεύει σημαντική ενημέρωση ενός μαθήματος που απαιτείται εδώ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicy.Notify" xml:space="preserve">
     <value>Ενημέρωση των μελών που το ολοκλήρωσαν</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicy.Reassign" xml:space="preserve">
     <value>Εκ νέου ανάθεση στα μέλη που το ολοκλήρωσαν, με προθεσμία τις ημέρες αυτής της απαίτησης</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicy.Nothing" xml:space="preserve">
     <value>Καμία ενέργεια</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AcademyUpdatePolicyHelp" xml:space="preserve">
     <value>Ισχύει για μαθήματα της Resgrid Academy, απευθείας ή στη διαδρομή. Τα δικά σας μαθήματα ακολουθούν την επιλογή που γίνεται κατά τη δημοσίευση κάθε έκδοσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedNotLicensedFormat" xml:space="preserve">
+    <value>{0} από αυτούς δεν έχουν θέση LMS και δεν εγγράφηκαν· ενεργοποιήστε τους στο LMS και αναθέστε ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Err.PathManagedBySet" xml:space="preserve">
+    <value>Αυτή η διαδρομή είναι διαχειριζόμενο αντίγραφο από το σύνολο μαθημάτων ενός συνδεδεμένου οργανισμού. Αλλάζει μόνο μέσω του συνόλου· μπορείτε ωστόσο να την αναθέσετε.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

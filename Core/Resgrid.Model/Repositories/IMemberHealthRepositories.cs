@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
 {
-	/// <summary>BBP / infectious-disease exposure cases (§13b WL1, M0394).</summary>
+	/// <summary>BBP / infectious-disease exposure cases (§13b WL1, M0372).</summary>
 	public interface IRmsExposureIncidentsRepository : IRepository<RmsExposureIncident>
 	{
 		Task<RmsExposureIncident> GetByIdForDepartmentAsync(int departmentId, string incidentId);
@@ -33,7 +33,7 @@ namespace Resgrid.Model.Repositories
 		Task<int> DeleteForDepartmentAsync(int departmentId, string incidentId, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>Member injuries with the OSHA 300/301 facts (§13b WL1, M0395).</summary>
+	/// <summary>Member injuries with the OSHA 300/301 facts (§13b WL1, M0373).</summary>
 	public interface IRmsMemberInjuriesRepository : IRepository<RmsMemberInjury>
 	{
 		Task<RmsMemberInjury> GetByIdForDepartmentAsync(int departmentId, string injuryId);
@@ -63,7 +63,7 @@ namespace Resgrid.Model.Repositories
 		Task<int> DeleteForDepartmentAsync(int departmentId, string injuryId, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>The duty status history of injuries (§13b WL1, M0395).</summary>
+	/// <summary>The duty status history of injuries (§13b WL1, M0373).</summary>
 	public interface IRmsInjuryDutyPeriodsRepository : IRepository<RmsInjuryDutyPeriod>
 	{
 		Task<IEnumerable<RmsInjuryDutyPeriod>> GetForInjuryAsync(int departmentId, string injuryId);
@@ -73,7 +73,7 @@ namespace Resgrid.Model.Repositories
 		Task<int> DeleteForInjuryAsync(int departmentId, string injuryId, CancellationToken cancellationToken = default);
 	}
 
-	/// <summary>NFPA 1582 medical clearances (§13b WL1, M0396).</summary>
+	/// <summary>NFPA 1582 medical clearances (§13b WL1, M0374).</summary>
 	public interface IRmsMedicalClearancesRepository : IRepository<RmsMedicalClearance>
 	{
 		Task<RmsMedicalClearance> GetByIdForDepartmentAsync(int departmentId, string clearanceId);

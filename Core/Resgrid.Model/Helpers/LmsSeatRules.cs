@@ -36,6 +36,22 @@ namespace Resgrid.Model.Helpers
 			return licensed;
 		}
 
+		/// <summary>
+		/// Round 10 A7 (owner decision 2026-11-26): the members who may act as learners on department LMS content now, before the lapse rules
+		/// decide what still runs. <paramref name="capacity"/> is the seats in force: the purchased seats while the add-on works, the seats a paying
+		/// sponsorship leaves the department, or the packs last paid for while the add-on is lapsed (lapse rule 1: seats stay enabled, so assigned
+		/// work stays takeable for the members who held one, rule 4). Null when no figure is known (billing cannot say, or a sponsorship stopped
+		/// paying): every counted seat, since the lapse windows already limit what runs. Licensing order as <see cref="Licensed"/>.
+		/// </summary>
+		public static HashSet<string> LearnerSeatHolders(IEnumerable<LmsMemberSeat> seats, ISet<string> activeUserIds, int? capacity)
+		{
+			var holders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			var counted = CountedSeats(seats, activeUserIds);
+			foreach (var seat in capacity.HasValue ? counted.Take(Math.Max(0, capacity.Value)) : counted)
+				holders.Add(seat.UserId);
+			return holders;
+		}
+
 		/// <summary>The packs needed to seat <paramref name="members"/> people beyond <paramref name="purchasedSeats"/> (0 when they fit).</summary>
 		public static int PacksNeeded(int members, int purchasedSeats, int packSize)
 		{

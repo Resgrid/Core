@@ -240,16 +240,28 @@
   <data name="PoiImportPending" xml:space="preserve">
     <value>Записів до імпорту: {0}.</value>
   </data>
+  <data name="PoiImportPendingOne" xml:space="preserve">
+    <value>Запис до імпорту: {0}.</value>
+  </data>
   <data name="PoiImportSummary" xml:space="preserve">
     <value>Імпортовано {0} з {1} записів.</value>
   </data>
   <data name="PoiImportGeocoded" xml:space="preserve">
     <value>Розташування визначено за адресою: {0}; перевірте їх положення на карті.</value>
   </data>
+  <data name="PoiImportGeocodedOne" xml:space="preserve">
+    <value>Розташування визначено за адресою: {0}; перевірте його положення на карті.</value>
+  </data>
   <data name="PoiImportSkipped" xml:space="preserve">
     <value>Пропущено, бо немає ні координат, ні адреси: {0}.</value>
   </data>
+  <data name="PoiImportSkippedOne" xml:space="preserve">
+    <value>Пропущено, бо немає ні координат, ні адреси: {0}.</value>
+  </data>
   <data name="PoiImportUnlocated" xml:space="preserve">
+    <value>Не імпортовано, бо не вдалося визначити адресу ({0}):</value>
+  </data>
+  <data name="PoiImportUnlocatedOne" xml:space="preserve">
     <value>Не імпортовано, бо не вдалося визначити адресу ({0}):</value>
   </data>
   <data name="PoiImportUnlocatedMore" xml:space="preserve">
@@ -264,7 +276,13 @@
   <data name="PoiImportRetrying" xml:space="preserve">
     <value>Служба пошуку адрес не відповіла для {0} записів; їх буде повторено після {1}.</value>
   </data>
+  <data name="PoiImportRetryingOne" xml:space="preserve">
+    <value>Служба пошуку адрес не відповіла для {0} запису; його буде повторено після {1}.</value>
+  </data>
   <data name="PoiImportLookupFailed" xml:space="preserve">
+    <value>Не імпортовано, бо служба пошуку адрес не відповіла навіть після повторних спроб ({0}):</value>
+  </data>
+  <data name="PoiImportLookupFailedOne" xml:space="preserve">
     <value>Не імпортовано, бо служба пошуку адрес не відповіла навіть після повторних спроб ({0}):</value>
   </data>
   <data name="PoiImportLookupFailedHint" xml:space="preserve">
@@ -273,10 +291,16 @@
   <data name="PoiImportLookupNotConfigured" xml:space="preserve">
     <value>Не імпортовано, бо пошук адрес не налаштовано на цьому сервері ({0}):</value>
   </data>
+  <data name="PoiImportLookupNotConfiguredOne" xml:space="preserve">
+    <value>Не імпортовано, бо пошук адрес не налаштовано на цьому сервері ({0}):</value>
+  </data>
   <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
     <value>Додайте до цих записів стовпці широти й довготи та імпортуйте їх повторно.</value>
   </data>
   <data name="PoiImportNotTried" xml:space="preserve">
+    <value>Не імпортовано, бо файл містить більше адрес, ніж шукає один імпорт ({0}):</value>
+  </data>
+  <data name="PoiImportNotTriedOne" xml:space="preserve">
     <value>Не імпортовано, бо файл містить більше адрес, ніж шукає один імпорт ({0}):</value>
   </data>
   <!-- Layers -->

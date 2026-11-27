@@ -1,0 +1,14 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    The learner portal's privacy page (round 9C): who is responsible for the learner's details, what is kept and why, and how to get a copy or
+    delete the account. Open to visitors who are not signed in, so it can be read before registering.
+*@
+@{
+    ViewData["Title"] = localizer["Portal.Privacy.Title"].Value;
+    var key = ViewData["PortalKey"] as string;
+}
+<section class="rgl-panel" aria-labelledby="rgl-privacy-title" style="max-width: 720px; margin: 0 auto;">
+    <h2 id="rgl-privacy-title"><i class="fa fa-shield" aria-hidden="true"></i> @localizer["Portal.Privacy.Title"]</h2>
+    <partial name="_PrivacyNotice" model="true" />
+    <p><a href="~/Learn/@key"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Portal.Back"]</a></p>
+</section>

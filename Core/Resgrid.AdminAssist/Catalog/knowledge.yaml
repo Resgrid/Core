@@ -644,6 +644,39 @@
       "AllowedValues": "An https link of up to 500 characters",
       "EvidenceSource": "KnowledgeSettings",
       "Availability": "available"
+    },
+    {
+      "Id": "setting.ContentSetSettings",
+      "AreaId": "knowledge",
+      "LabelKey": "Setting.ContentSetSettings",
+      "HelpKey": "SettingHelp.ContentSetSettings",
+      "Binding": "DepartmentSettingTypes.ContentSetSettings",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ContentSets",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.ContentSetSettings",
+      "DefaultValue": "07:00 local, notify department admins",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
     }
   ],
   "Capabilities": [
@@ -1120,6 +1153,46 @@
       "DocsPath": "/web-app/protocols/"
     },
     {
+      "Id": "dispatch-case-review",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.dispatch-case-review",
+      "PurposeKey": "FeaturePurpose.dispatch-case-review",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DispatchCaseReviews",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ReviewDispatchCases"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "my-case-reviews",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.my-case-reviews",
+      "PurposeKey": "FeaturePurpose.my-case-reviews",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DispatchCaseReviews",
+        "Action": "Mine"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
       "Id": "protocol-bulletins",
       "AreaId": "knowledge",
       "LabelKey": "Feature.protocol-bulletins",
@@ -1243,6 +1316,110 @@
       "DocsPath": "/web-app/protocols/"
     },
     {
+      "Id": "protocol-public-pages",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-public-pages",
+      "PurposeKey": "FeaturePurpose.protocol-public-pages",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Public"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ApproveProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-template-library",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-template-library",
+      "PurposeKey": "FeaturePurpose.protocol-template-library",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Templates"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "community-exchange",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.community-exchange",
+      "PurposeKey": "FeaturePurpose.community-exchange",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Exchange"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols",
+        "permission.ApproveProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-open-format",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-open-format",
+      "PurposeKey": "FeaturePurpose.protocol-open-format",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Export"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-analytics",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-analytics",
+      "PurposeKey": "FeaturePurpose.protocol-analytics",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Analytics"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
       "Id": "forms",
       "AreaId": "knowledge",
       "LabelKey": "Feature.forms",
@@ -1307,6 +1484,66 @@
       ],
       "Prominence": "Detail",
       "DocsPath": "/web-app/documents/"
+    },
+    {
+      "Id": "protocol-sets",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-sets",
+      "PurposeKey": "FeaturePurpose.protocol-sets",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ContentSets",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ManageContentSets",
+        "setting.ContentSetSettings"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "linked-department-protocols",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.linked-department-protocols",
+      "PurposeKey": "FeaturePurpose.linked-department-protocols",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Links",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "department-link-acceptance",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.department-link-acceptance",
+      "PurposeKey": "FeaturePurpose.department-link-acceptance",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Links",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
     }
   ],
   "Rules": [
@@ -1777,6 +2014,28 @@
       "ReviewedOn": "2026-11-25T00:00:00Z"
     },
     {
+      "Id": "dispatch-case-review",
+      "Locale": "en",
+      "TitleKey": "Feature.dispatch-case-review",
+      "Body": "Dispatch Case Review Officers sample calls by protocol, version, determinant, dispatcher and dates, score each recorded case question by question and instruction by instruction with a Records QA rubric beside the protocol's case flow, and send the review to the dispatcher. Reports show compliance by protocol, version, dispatcher and month, with CSV.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "dispatch-case-review",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "my-case-reviews",
+      "Locale": "en",
+      "TitleKey": "Feature.my-case-reviews",
+      "Body": "My Case Reviews Dispatchers read the reviews of calls they handled, with every question and instruction scored and the reviewer's comments, acknowledge each one once and may reply once; the reviewer is notified of the reply.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "my-case-reviews",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
       "Id": "protocol-bulletins",
       "Locale": "en",
       "TitleKey": "Feature.protocol-bulletins",
@@ -1838,6 +2097,61 @@
       "Body": "Protocol Content Translations An author can translate a submitted or published version into another language; only the wording is translated, while doses, links, attachments and the structure stay as in the source. An approver signs each translation at L2, bound to the translation's own content, and the source version's hash and signatures never change. Members read the approved translation in their language, or the department's content language when there is none, set under Protocols settings.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "protocol-translations",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-public-pages",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-public-pages",
+      "Body": "Public Protocol Pages Publish a protocol's version in force, or a category as a set, at an opt-in public address with an embed code. Drafts, audience-restricted and licensed content are never shown, and a page can be revoked at any time.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-public-pages",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-template-library",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-template-library",
+      "Body": "Protocol Template Library Clone starter sets written by Resgrid (fire SOGs, search and rescue, industrial hazards, business continuity, law enforcement policies, security post orders, workplace policies and an EMS outline without clinical text) into the library as drafts in your language, with the source, licence and version kept on each version.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-template-library",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "community-exchange",
+      "Locale": "en",
+      "TitleKey": "Feature.community-exchange",
+      "Body": "Community Exchange Share protocols and trainings with other departments for free. Department data is taken out, licensed content is refused, Resgrid reviews every contribution before it is listed, and other departments can rate, comment on and import a copy with the attribution kept.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "community-exchange",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-open-format",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-open-format",
+      "Body": "Protocol Open Format and Export Export the library or a category in the documented open JSON format (blocks, version history, decision graph, translations and an attachments list), as one HTML file or as the PDF book. Files in the older format still import.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-open-format",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-analytics",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-analytics",
+      "Body": "Protocol Analytics See how protocols are used on calls by version, the determinant distribution and override rate, time on protocol, acknowledgment compliance and searches that found nothing, with a CSV export.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-analytics",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-11-25T00:00:00Z"
@@ -1907,6 +2221,50 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "setting.ContentSetSettings",
+      "Locale": "en",
+      "TitleKey": "Setting.ContentSetSettings",
+      "Body": "Set update time. The local time accepted protocol and course set updates go into force on or after their effective date (default 07:00, so nothing changes mid-shift by surprise), and who is told when an update arrives, a proposal is answered, a sponsorship changes or an LTI tool needs registering: the administrators (unless turned off) and members of the roles chosen.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-contentsetsettings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "protocol-sets",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-sets",
+      "Body": "Protocol Sets Publish protocols to linked departments as a regional set, or subscribe to a county, medical director or corporate set. Locked content follows the publisher, customizable blocks keep local phone numbers and resources, every new version arrives as a redline in the update inbox and goes into force at your update time, and members propose changes upstream.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-sets",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "linked-department-protocols",
+      "Locale": "en",
+      "TitleKey": "Feature.linked-department-protocols",
+      "Body": "Linked Department Protocols Read a mutual-aid partner's published protocols over a Department Link that shares Protocols, read-only and only the version in force. Restricted, licensed and uploaded-document protocols are never shared, and turning the share off cuts access at once.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "linked-department-protocols",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "department-link-acceptance",
+      "Locale": "en",
+      "TitleKey": "Feature.department-link-acceptance",
+      "Body": "Signed Link Acceptance Accepting a link from another organization is a step-up signature by one of your administrators, bound to the two organizations and what each shares at that moment; without the step-up the link stays unaccepted.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "department-link-acceptance",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
     }
   ]
 }

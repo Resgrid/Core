@@ -341,15 +341,19 @@ namespace Resgrid.Services.Approvals
 
 	/// <summary>
 	/// Mutual-aid agreements (S4): the department's chain approves the agreement document and the completed chain seals it. Free with the
-	/// department (no add-on). The partner department's countersignature is owed (Department Links sharing is not on this branch).
+	/// department (no add-on). An agreement that requires it is then routed over its Department Link to the partner department for its
+	/// countersignature (round 10 A3, <see cref="IMutualAidCountersignService"/>).
 	/// </summary>
 	public class MutualAidAgreementApprovalSource : IApprovalSubjectSource
 	{
 		private readonly IMutualAidAgreementsRepository _agreements;
+		// The countersignature service reaches the signing layer, which reaches the approval chains: Lazy keeps construction acyclic.
+		private readonly Lazy<IMutualAidCountersignService> _countersign;
 
-		public MutualAidAgreementApprovalSource(IMutualAidAgreementsRepository agreements)
+		public MutualAidAgreementApprovalSource(IMutualAidAgreementsRepository agreements, Lazy<IMutualAidCountersignService> countersign)
 		{
 			_agreements = agreements;
+			_countersign = countersign;
 		}
 
 		public SignatureSubjectKinds Kind => SignatureSubjectKinds.MutualAidAgreementApproval;
@@ -366,7 +370,11 @@ namespace Resgrid.Services.Approvals
 
 		public static ApprovalSubjectInfo Describe(MutualAidAgreement a)
 		{
-			var stable = new { kind = "mutual-aid-agreement/1", id = a.MutualAidAgreementId, a.Title, a.DepartmentLinkId, a.PartnerDepartmentId, a.PartnerName, a.Terms, effective = ApprovalDocuments.Date(a.EffectiveOn), expires = ApprovalDocuments.Date(a.ExpiresOn) };
+			// The countersignature requirement is part of what is approved; it is only added to the hashed document when set, so every agreement
+			// approved before round 10 keeps its hash.
+			object stable = a.RequiresCountersignature
+				? new { kind = "mutual-aid-agreement/1", id = a.MutualAidAgreementId, a.Title, a.DepartmentLinkId, a.PartnerDepartmentId, a.PartnerName, a.Terms, effective = ApprovalDocuments.Date(a.EffectiveOn), expires = ApprovalDocuments.Date(a.ExpiresOn), countersign = true }
+				: new { kind = "mutual-aid-agreement/1", id = a.MutualAidAgreementId, a.Title, a.DepartmentLinkId, a.PartnerDepartmentId, a.PartnerName, a.Terms, effective = ApprovalDocuments.Date(a.EffectiveOn), expires = ApprovalDocuments.Date(a.ExpiresOn) };
 			return new ApprovalSubjectInfo
 			{
 				Kind = SignatureSubjectKinds.MutualAidAgreementApproval,
@@ -388,8 +396,25 @@ namespace Resgrid.Services.Approvals
 			(await _agreements.GetAllForDepartmentAsync(departmentId) ?? new List<MutualAidAgreement>()).Where(a => a.DepartmentId == departmentId && a.Status == (int)MutualAidAgreementStatuses.Draft)
 				.Take(take).Select(Describe).ToList();
 
-		public async Task OnApprovedAsync(ApprovalRequest approval, string approverUserId, CancellationToken cancellationToken = default) =>
+		public async Task OnApprovedAsync(ApprovalRequest approval, string approverUserId, CancellationToken cancellationToken = default)
+		{
 			await SetStatusAsync(approval, MutualAidAgreementStatuses.Approved, approverUserId, cancellationToken);
+			if (_countersign?.Value == null || !int.TryParse(approval?.SubjectId, NumberStyles.None, CultureInfo.InvariantCulture, out var id))
+				return;
+			try
+			{
+				// Round 10 A3: the partner department countersigns over the link; never fatal to the approval itself.
+				await _countersign.Value.RequestAsync(approval.DepartmentId, id, approverUserId, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex, $"Mutual-aid agreement {id}: the partner's countersignature could not be requested.");
+			}
+		}
 
 		public async Task OnRejectedAsync(ApprovalRequest approval, string userId, string reason, CancellationToken cancellationToken = default) =>
 			await SetStatusAsync(approval, MutualAidAgreementStatuses.Draft, userId, cancellationToken);

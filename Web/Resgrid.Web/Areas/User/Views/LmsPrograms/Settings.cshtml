@@ -1,6 +1,7 @@
 @using Resgrid.Web.Areas.User.Models.LmsPrograms
 @model LmsProgramSettingsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> classLocalizer
 @* Trainings → Programs → Settings (setting 144): training request approval and currency; building-familiarization credit from Records. *@
 @{
     ViewBag.Title = "Resgrid | " + localizer["Prg.SettingsTitle"];
@@ -26,7 +27,8 @@
                 <p class="help-block">@localizer["Prg.Set.RequestApprovalHelp"]</p>
                 <div class="form-group">
                     <label for="RequestCurrency">@localizer["Prg.Set.RequestCurrency"]</label>
-                    <input id="RequestCurrency" name="requestCurrency" class="form-control" maxlength="3" style="max-width:8em" value="@s.RequestCurrency" />
+                    <input id="RequestCurrency" name="requestCurrency" class="form-control" maxlength="3" style="max-width:8em" value="@s.RequestCurrency" aria-describedby="RequestCurrencyHelp" />
+                    <span id="RequestCurrencyHelp" class="help-block">@classLocalizer["Field.TrainingCurrencyHelp"]</span>
                 </div>
             </div>
         </div>

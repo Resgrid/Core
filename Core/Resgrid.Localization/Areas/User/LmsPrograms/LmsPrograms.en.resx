@@ -719,7 +719,7 @@
     <value>no longer applies</value>
   </data>
   <data name="UndoReason.Manual" xml:space="preserve">
-    <value>undone by an officer</value>
+    <value>undone by a training officer</value>
   </data>
   <data name="Undone" xml:space="preserve">
     <value>Undone</value>
@@ -837,5 +837,11 @@
   </data>
   <data name="AcademyUpdatePolicyHelp" xml:space="preserve">
     <value>Applies to Resgrid Academy lessons, directly or on the path. Your own courses follow the choice made when each version is published.</value>
+  </data>
+  <data name="AssignedNotLicensedFormat" xml:space="preserve">
+    <value>{0} of them hold no LMS seat and were not enrolled; enable their LMS access, then assign again.</value>
+  </data>
+  <data name="Err.PathManagedBySet" xml:space="preserve">
+    <value>This path is a managed copy from a linked organization's course set. It changes only through the set; you can still assign it.</value>
   </data>
 </root>

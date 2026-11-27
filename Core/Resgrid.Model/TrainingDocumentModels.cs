@@ -37,6 +37,17 @@ namespace Resgrid.Model
 		public string Method { get; set; }
 		public string Instructors { get; set; }
 		public bool Counts { get; set; }
+		/// <summary>
+		/// Round 7B: a completion recorded by an instructor (never the member's own): "recorded by" with who, when, from where and the note,
+		/// already localized by the caller; null for the member's own completion.
+		/// </summary>
+		public string RecordedBy { get; set; }
+
+		/// <summary>
+		/// Round 9B: how the record came about, already localized by the caller: recorded by the system, self-reported, reviewed, recorded by an
+		/// instructor, or imported.
+		/// </summary>
+		public string Provenance { get; set; }
 	}
 
 	public class TranscriptDocument

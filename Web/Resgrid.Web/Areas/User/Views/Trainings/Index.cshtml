@@ -28,6 +28,8 @@
 <div class="wrapper wrapper-content rgw-page">
     @* e-Signature S3: the member's signatures whose turn it is (evaluations, certifying sign-offs, receipts). *@
     @await Component.InvokeAsync("PendingSignatures")
+    @* Round 9B: training hours submissions waiting for this reviewer, and the member's own sent back for more information. *@
+    @await Component.InvokeAsync("PendingTrainingReviews")
     @if (my.OnLeave)
     {
         <div class="alert alert-info" role="status"><i class="fa fa-pause-circle" aria-hidden="true"></i> @localizer["OnLeaveNotice"]</div>
@@ -82,6 +84,9 @@
 
     @* Training T3 (LMS): the member's learning requirements and paths, rendered by name so this baseline page needs no LMS type. *@
     @await Component.InvokeAsync("LmsMyTraining", new { scope = Model.Scope })
+
+    @* Round 9A (LMS): progress on the certifications backed by requirement sets ("3 of 4 done"), also rendered by name. *@
+    @await Component.InvokeAsync("LmsCertificationProgress", new { userId = (string)null, certificationTypeId = 0 })
 
     @* K3 (LMS): "Recommended" — what to take next and why, also rendered by name. *@
     @await Component.InvokeAsync("LmsRecommendations", new { scope = Model.Scope })

@@ -30,8 +30,8 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for round 3 A on both engines: M0353 (document-backed versions, file text, the Documents redirect columns) and
-	/// M0354 (acknowledgments) over the P0/P1 schema, Up again is a no-op, Down removes them and Up rebuilds them. Then the repositories:
+	/// Real-database proof for round 3 A on both engines: M0347 (document-backed versions, file text, the Documents redirect columns) and
+	/// M0348 (acknowledgments) over the P0/P1 schema, Up again is a no-op, Down removes them and Up rebuilds them. Then the repositories:
 	/// file metadata never carries the bytes, the server-side copy, a submitted version's file cannot be deleted, extracted pages and
 	/// the search text of the version in force only, the claim of a queued extraction, attachments without text, the unique
 	/// (version, member) acknowledgment with case-insensitive members, the conditional status update, superseding, the reminder
@@ -69,19 +69,19 @@ namespace Resgrid.Tests.Repositories
 			? new IMigration[]
 			{
 				new Resgrid.Providers.MigrationsPg.Migrations.M0336_ProtocolFoundationPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocolsPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0342_AddSignatureRecordsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0343_AddProtocolLibraryAndVersionsPg(),
-				new Resgrid.Providers.MigrationsPg.Migrations.M0344_BackfillProtocolVersionsPg()
+				new Resgrid.Providers.MigrationsPg.Migrations.M0341_AddSignatureRecordsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0342_AddProtocolLibraryAndVersionsPg(),
+				new Resgrid.Providers.MigrationsPg.Migrations.M0343_BackfillProtocolVersionsPg()
 			}
 			: new IMigration[]
 			{
 				new Resgrid.Providers.Migrations.Migrations.M0336_ProtocolFoundation(), new Resgrid.Providers.Migrations.Migrations.M0337_ProtocolSnapshotsAndUniqueCallProtocols(),
-				new Resgrid.Providers.Migrations.Migrations.M0342_AddSignatureRecords(), new Resgrid.Providers.Migrations.Migrations.M0343_AddProtocolLibraryAndVersions(),
-				new Resgrid.Providers.Migrations.Migrations.M0344_BackfillProtocolVersions()
+				new Resgrid.Providers.Migrations.Migrations.M0341_AddSignatureRecords(), new Resgrid.Providers.Migrations.Migrations.M0342_AddProtocolLibraryAndVersions(),
+				new Resgrid.Providers.Migrations.Migrations.M0343_BackfillProtocolVersions()
 			};
 
 		private IMigration[] Round3() => IsPostgres
-			? new IMigration[] { new Resgrid.Providers.MigrationsPg.Migrations.M0353_AddProtocolDocumentsAndFileTextPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0354_AddProtocolAcknowledgmentsPg() }
-			: new IMigration[] { new Resgrid.Providers.Migrations.Migrations.M0353_AddProtocolDocumentsAndFileText(), new Resgrid.Providers.Migrations.Migrations.M0354_AddProtocolAcknowledgments() };
+			? new IMigration[] { new Resgrid.Providers.MigrationsPg.Migrations.M0347_AddProtocolDocumentsAndFileTextPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0348_AddProtocolAcknowledgmentsPg() }
+			: new IMigration[] { new Resgrid.Providers.Migrations.Migrations.M0347_AddProtocolDocumentsAndFileText(), new Resgrid.Providers.Migrations.Migrations.M0348_AddProtocolAcknowledgments() };
 
 		private void Migrate(IMigration[] migrations, Action<IMigrationRunner> run)
 		{
@@ -198,7 +198,7 @@ INSERT INTO {T("Documents")} ({T("DepartmentId")}, {T("Name")}, {T("Data")}) VAL
 			(await CountColumnsAsync()).Should().Be(8);
 
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync(IsPostgres ? "DELETE FROM \"VersionInfo\" WHERE \"Version\" IN (353, 354)" : "DELETE FROM [VersionInfo] WHERE [Version] IN (353, 354)");
+				await database.ExecuteAsync(IsPostgres ? "DELETE FROM \"VersionInfo\" WHERE \"Version\" IN (347, 348)" : "DELETE FROM [VersionInfo] WHERE [Version] IN (347, 348)");
 			Migrate(Round3(), r => r.MigrateUp());
 
 			(await CountTablesAsync()).Should().Be(4);
@@ -210,7 +210,7 @@ INSERT INTO {T("Documents")} ({T("DepartmentId")}, {T("Name")}, {T("Data")}) VAL
 		[Test, Order(2)]
 		public async Task Down_removes_them_and_up_again_rebuilds_them()
 		{
-			Migrate(Base().Concat(Round3()).ToArray(), r => r.MigrateDown(344));
+			Migrate(Base().Concat(Round3()).ToArray(), r => r.MigrateDown(343));
 			(await CountTablesAsync()).Should().Be(0);
 			(await CountColumnsAsync()).Should().Be(0);
 			await using (var database = Connect(_connection))

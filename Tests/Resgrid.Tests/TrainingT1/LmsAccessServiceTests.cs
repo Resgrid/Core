@@ -46,7 +46,8 @@ namespace Resgrid.Tests.TrainingT1
 				.ReturnsAsync(() => new List<PaymentAddon> { _payment });
 			// Round 3 F: the gate also records what it saw (lapse tracking); no state row means no grace for an ended interval.
 			_service = new LmsAccessService(_flags.Object, _settings.Object, _billing.Object, Mock.Of<Resgrid.Model.Repositories.ILmsAddonStatesRepository>(),
-				Mock.Of<Resgrid.Model.Repositories.ILmsAddonLapsesRepository>(), Mock.Of<Resgrid.Model.Repositories.ILmsMemberSeatsRepository>(), Mock.Of<IDepartmentsService>());
+				Mock.Of<Resgrid.Model.Repositories.ILmsAddonLapsesRepository>(), Mock.Of<Resgrid.Model.Repositories.ILmsMemberSeatsRepository>(), Mock.Of<IDepartmentsService>(),
+				Mock.Of<Resgrid.Model.Providers.IEventAggregator>(), new System.Lazy<Resgrid.Model.Services.ILmsSponsorshipService>(() => null));
 		}
 
 		[TearDown]

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -72,8 +73,16 @@ namespace Resgrid.Tests.LmsBilling
 			_departments = new Mock<IDepartmentsService>();
 			_departments.Setup(d => d.GetActiveMemberUserIdsAsync(It.IsAny<int>())).ReturnsAsync(() => _active);
 
-			_gate = new LmsAccessService(_flags.Object, _settings.Object, _billing.Object, _states.Object, _lapses.Object, _seats.Object, _departments.Object);
+			_workflow = new List<Resgrid.Model.Events.TrainingAdminWorkflowEvent>();
+			_events = new Mock<Resgrid.Model.Providers.IEventAggregator>();
+			_events.Setup(e => e.SendMessage(It.IsAny<Resgrid.Model.Events.TrainingAdminWorkflowEvent>()))
+				.Callback((Resgrid.Model.Events.TrainingAdminWorkflowEvent e) => _workflow.Add(e));
+
+			_gate = new LmsAccessService(_flags.Object, _settings.Object, _billing.Object, _states.Object, _lapses.Object, _seats.Object, _departments.Object, _events.Object, new System.Lazy<Resgrid.Model.Services.ILmsSponsorshipService>(() => null));
 		}
+
+		private Mock<Resgrid.Model.Providers.IEventAggregator> _events;
+		private List<Resgrid.Model.Events.TrainingAdminWorkflowEvent> _workflow;
 
 		[TearDown]
 		public void TearDown()
@@ -216,6 +225,68 @@ namespace Resgrid.Tests.LmsBilling
 			_lapses.Verify(l => l.CloseAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
 			_state.LapsedSinceUtc.Should().BeNull();
 			_state.RenewalCancelled.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task A_renewal_that_changes_the_packs_raises_seats_changed_once_from_the_request_that_moved_them()
+		{
+			// Round 7C, workflow trigger 274: the packs compare-and-set decides between concurrent requests.
+			LastSeen(DateTime.UtcNow.AddDays(27), packs: 2);
+			Running(4);
+			_states.Setup(s => s.TryChangePacksAsync(DepartmentId, 2, 4, It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			(await _gate.GetSubscriptionAsync(DepartmentId)).Packs.Should().Be(4);
+			_workflow.Should().BeEmpty("another request moved the packs first");
+
+			LastSeen(DateTime.UtcNow.AddDays(27), packs: 2);
+			_states.Setup(s => s.TryChangePacksAsync(DepartmentId, 2, 4, It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			(await _gate.GetSubscriptionAsync(DepartmentId)).Packs.Should().Be(4);
+			(await _gate.GetSubscriptionAsync(DepartmentId)).Packs.Should().Be(4);
+
+			var changed = _workflow.Should().ContainSingle().Subject;
+			changed.Trigger.Should().Be(WorkflowTriggerEventType.LmsSeatsChanged);
+			(changed.Packs, changed.PreviousPacks, changed.SeatsAdded, changed.SeatsRemoved, changed.UserId).Should().Be((4, (int?)2, 0, 0, (string)null));
+		}
+
+		[Test]
+		public async Task A_lapse_raises_the_lapsed_workflow_event_only_from_the_request_that_opened_it()
+		{
+			// Round 7C, workflow trigger 267: the filtered unique index lets one request open the lapse.
+			var paidThrough = DateTime.UtcNow.AddDays(-30);
+			LastSeen(paidThrough, cancelled: true);
+			_lapses.Setup(l => l.OpenAsync(It.IsAny<LmsAddonLapse>(), It.IsAny<CancellationToken>())).ReturnsAsync(false);
+			(await _gate.GetActiveAddonStateAsync(DepartmentId)).Should().BeFalse();
+			_workflow.Should().BeEmpty("another request opened it");
+
+			LastSeen(paidThrough, cancelled: true);
+			_lapses.Setup(l => l.OpenAsync(It.IsAny<LmsAddonLapse>(), It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			(await _gate.GetActiveAddonStateAsync(DepartmentId)).Should().BeFalse();
+			(await _gate.GetActiveAddonStateAsync(DepartmentId)).Should().BeFalse("answered from the stored lapse; nothing opened again");
+
+			_workflow.Should().ContainSingle();
+			var lapsed = _workflow.Single();
+			lapsed.Trigger.Should().Be(WorkflowTriggerEventType.LmsAddonLapsed);
+			lapsed.DepartmentId.Should().Be(DepartmentId);
+			lapsed.LapseReason.Should().Be("RenewalCancelled");
+			lapsed.LapsedSince.Should().Be(paidThrough);
+			lapsed.Packs.Should().Be(2);
+		}
+
+		[Test]
+		public async Task Coming_back_raises_reactivated_only_when_this_request_closed_the_open_lapse()
+		{
+			// Round 7C, workflow trigger 268.
+			LastSeen(DateTime.UtcNow.AddDays(-40), cancelled: true, lapsedSince: DateTime.UtcNow.AddDays(-40));
+			Running(2);
+			_lapses.Setup(l => l.CloseAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync((LmsAddonLapse)null);
+			(await _gate.GetSubscriptionAsync(DepartmentId)).State.Should().Be(LmsSubscriptionStates.Active);
+			_workflow.Should().BeEmpty("a concurrent request closed it");
+
+			LastSeen(DateTime.UtcNow.AddDays(-40), cancelled: true, lapsedSince: DateTime.UtcNow.AddDays(-40));
+			_lapses.Setup(l => l.CloseAsync(DepartmentId, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(new LmsAddonLapse { DepartmentId = DepartmentId, StartedOn = DateTime.UtcNow.AddDays(-40), Reason = (int)LmsLapseReasons.RenewalCancelled, Packs = 2 });
+			(await _gate.GetSubscriptionAsync(DepartmentId)).State.Should().Be(LmsSubscriptionStates.Active);
+
+			_workflow.Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.LmsAddonReactivated && e.Packs == 2 && e.LapseReason == "RenewalCancelled");
 		}
 
 		[Test]

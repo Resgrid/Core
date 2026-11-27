@@ -175,6 +175,8 @@ namespace Resgrid.Model
 		public SignatureProof Proof { get; set; }
 		/// <summary>The department requires a passkey for this step.</summary>
 		public bool RequirePasskey { get; set; }
+		/// <summary>The department step-up area (approval chains pass <c>Approvals</c>); null = signatures.</summary>
+		public Security.StepUpArea? StepUpArea { get; set; }
 	}
 
 	/// <summary>One request as a member sees it (the shared panel): their step, its level and who else must sign.</summary>

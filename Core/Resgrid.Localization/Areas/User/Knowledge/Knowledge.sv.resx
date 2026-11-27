@@ -60,374 +60,502 @@
   </resheader>
   <data name="AllFilter" xml:space="preserve">
     <value>Alla</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskButton" xml:space="preserve">
     <value>Fråga</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskHeader" xml:space="preserve">
     <value>Fråga avdelningens kunskap</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskHeaderCall" xml:space="preserve">
     <value>Fråga om protokollet för det här larmet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskHeaderProtocol" xml:space="preserve">
     <value>Fråga om det här protokollet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskHeaderTraining" xml:space="preserve">
     <value>Fråga om den här utbildningen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskHelp" xml:space="preserve">
     <value>Svaren kommer bara från avdelningens publicerade protokoll och utbildningar och Resgrid Academy, och varje svar länkar till sina källor. Kontrollera källan innan du agerar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Asking" xml:space="preserve">
     <value>Söker i avdelningens protokoll och utbildningar...</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskLabel" xml:space="preserve">
     <value>Din fråga</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskPlaceholder" xml:space="preserve">
     <value>Ställ en fråga om era protokoll eller utbildningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BudgetNotice" xml:space="preserve">
     <value>Avdelningen har använt månadens AI-kvot. De här källorna matchar din fråga.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="BusyNotice" xml:space="preserve">
     <value>Svarsfunktionen är upptagen just nu. Försök igen om en stund. De här källorna matchar din fråga.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColumnActions" xml:space="preserve">
     <value>Åtgärder</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColumnAsked" xml:space="preserve">
     <value>Ställd</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColumnNearest" xml:space="preserve">
     <value>Närmaste källor</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColumnQuestion" xml:space="preserve">
     <value>Fråga</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ColumnReason" xml:space="preserve">
     <value>Orsak</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ConflictLabel" xml:space="preserve">
     <value>De här källorna säger olika saker</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CorpusHeader" xml:space="preserve">
     <value>Källor</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CorpusHelp" xml:space="preserve">
     <value>Publicerade protokoll och påbörjade utbildningar ingår alltid, utom innehåll som markerats att inte användas för AI. Utkast, quiz, utbildningsintyg och lärandeposter används aldrig.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissButton" xml:space="preserve">
     <value>Avfärda</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissedTile" xml:space="preserve">
     <value>Avfärdade</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DoseNotice" xml:space="preserve">
     <value>Doser citeras exakt som källan skriver dem. Inget har räknats ut. Kontrollera källan och ert doseringsverktyg.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DosingToolLink" xml:space="preserve">
     <value>Öppna avdelningens doseringsverktyg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DosingToolUrlHelp" xml:space="preserve">
     <value>En https-länk till avdelningens doseringsverktyg. Svar som citerar en dos länkar dit. Resgrid räknar aldrig ut en dos.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DosingToolUrlLabel" xml:space="preserve">
     <value>Länk till doseringsverktyg</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftFailed" xml:space="preserve">
     <value>Det gick inte att öppna ett utkast för det här protokollet.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DraftProtocolButton" xml:space="preserve">
     <value>Utkast till protokolländring</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EffectiveLabel" xml:space="preserve">
     <value>gäller sedan {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ErrorNotice" xml:space="preserve">
     <value>Något gick fel. Försök igen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FeedbackGap" xml:space="preserve">
     <value>Tack. Frågan har lagts till i rapporten över kunskapsluckor.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FeedbackThanks" xml:space="preserve">
     <value>Tack för din återkoppling.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FilterButton" xml:space="preserve">
     <value>Filtrera</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GapsIntro" xml:space="preserve">
     <value>Frågor som era protokoll och utbildningar inte besvarade, och svar som medlemmar markerat som inte hjälpsamma. Gör en lucka till ett utkast till protokolländring eller en ny utbildning.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GapsLink" xml:space="preserve">
     <value>Kunskapsluckor</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GapsTab" xml:space="preserve">
     <value>Kunskapsluckor</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GapsTitle" xml:space="preserve">
     <value>Kunskapsluckor</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GapSuggestionBody" xml:space="preserve">
     <value>Kunskapslucka: medlemmar frågade ”{0}” och protokollen besvarade det inte.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GapTrainingNoQuestion" xml:space="preserve">
     <value>Kunskapslucka (frågan sparades inte)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GapUpdated" xml:space="preserve">
     <value>Luckan har uppdaterats.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Helpful" xml:space="preserve">
     <value>Hjälpsamt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IncludeDocumentsHelp" xml:space="preserve">
     <value>Dokument blir källor för svaren. Dokument endast för administratörer används bara för administratörer. Används inte medan Advanced Data Protection är på.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IncludeDocumentsLabel" xml:space="preserve">
     <value>Ta med modulen Dokument</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IndexHeader" xml:space="preserve">
     <value>Index</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IndexNotBuilt" xml:space="preserve">
     <value>Indexet har inte byggts ännu. Det byggs i bakgrunden efter den första frågan.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IndexStatus" xml:space="preserve">
     <value>{0} avsnitt indexerade, {1} med inbäddningar. Senast uppdaterat {2}.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="IndexWarning" xml:space="preserve">
     <value>Vissa objekt kunde inte indexeras eller så var inbäddningstjänsten otillgänglig; nästa körning försöker igen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="InvalidUrl" xml:space="preserve">
     <value>Ange en https-länk.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KeptLocalNotice" xml:space="preserve">
     <value>Avdelningen använder Advanced Data Protection, så din fråga stannar i Resgrid. De här källorna matchar den.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KeptLocalStatus" xml:space="preserve">
     <value>Avdelningen använder Advanced Data Protection: din fråga stannar i Resgrid och du får de källor som matchar.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KeywordOnlyNotice" xml:space="preserve">
     <value>Söktjänsten svarade inte i tid, så källorna hittades bara med nyckelord.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindAcademy" xml:space="preserve">
     <value>Resgrid Academy</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindCourse" xml:space="preserve">
     <value>Kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindDocument" xml:space="preserve">
     <value>Dokument</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindProtocol" xml:space="preserve">
     <value>Protokoll</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindProtocolFile" xml:space="preserve">
     <value>Protokollfil</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindTraining" xml:space="preserve">
     <value>Utbildning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KindTrainingFile" xml:space="preserve">
     <value>Utbildningsfil</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="KnowledgeHeader" xml:space="preserve">
     <value>Kunskap</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MatchedNotice" xml:space="preserve">
     <value>De här källorna matchar din fråga.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NearestLabel" xml:space="preserve">
     <value>Närmaste innehåll</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NewTrainingButton" xml:space="preserve">
     <value>Ny utbildning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NextPage" xml:space="preserve">
     <value>Nästa</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoGaps" xml:space="preserve">
     <value>Inga kunskapsluckor här.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoNearest" xml:space="preserve">
     <value>Inga hittades</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoRole" xml:space="preserve">
     <value>Ingen roll</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotCovered" xml:space="preserve">
     <value>Avdelningens protokoll och utbildningar täcker inte detta.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoteLabel" xml:space="preserve">
     <value>Anteckning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NotHelpful" xml:space="preserve">
     <value>Inte hjälpsamt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenSource" xml:space="preserve">
     <value>Öppna</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenTile" xml:space="preserve">
     <value>Öppna</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PreviousPage" xml:space="preserve">
     <value>Föregående</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ProtocolsCrumb" xml:space="preserve">
     <value>Protokoll</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionNotKept" xml:space="preserve">
     <value>Frågan sparades inte (Advanced Data Protection)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="QuestionRequired" xml:space="preserve">
     <value>Skriv en fråga först.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReasonNotCovered" xml:space="preserve">
     <value>Inte täckt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReasonThumbsDown" xml:space="preserve">
     <value>Markerat som inte hjälpsamt</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RebuildButton" xml:space="preserve">
     <value>Bygg om indexet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="RebuildQueued" xml:space="preserve">
     <value>Indexet byggs om i bakgrunden inom några minuter.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReopenButton" xml:space="preserve">
     <value>Öppna igen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResolveButton" xml:space="preserve">
     <value>Lös</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ResolvedTile" xml:space="preserve">
     <value>Lösta</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SaveButton" xml:space="preserve">
     <value>Spara</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsIntro" xml:space="preserve">
     <value>Vad avdelningens kunskapssvar får använda.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsSaved" xml:space="preserve">
     <value>Kunskapsinställningarna har sparats.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsTab" xml:space="preserve">
     <value>Inställningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SettingsTitle" xml:space="preserve">
     <value>Kunskapsinställningar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SourcesLabel" xml:space="preserve">
     <value>Källor</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StaleCopyNotice" xml:space="preserve">
     <value>Din offlinekopia av ett citerat innehåll är äldre än den citerade versionen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="StatusFilterLabel" xml:space="preserve">
     <value>Status</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurfaceApi" xml:space="preserve">
     <value>Mobilapp</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurfaceAssistant" xml:space="preserve">
     <value>Assistent</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurfaceCall" xml:space="preserve">
     <value>Larm</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurfaceLibrary" xml:space="preserve">
     <value>Protokollbibliotek</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurfaceProtocol" xml:space="preserve">
     <value>Protokollsida</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurfaceTraining" xml:space="preserve">
     <value>Utbildningssida</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="UnavailableNotice" xml:space="preserve">
     <value>Svar är inte tillgängliga just nu. Försök igen om några minuter.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VersionLabel" xml:space="preserve">
     <value>version {0}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurfaceHelp" xml:space="preserve">
     <value>Hjälpsökning</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SurfaceCourse" xml:space="preserve">
     <value>Kurs</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskHeaderCallWide" xml:space="preserve">
     <value>Fråga om det här larmet</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskHelpCallWide" xml:space="preserve">
     <value>Svaren kommer bara från protokollen som larmet hänvisar till och från dess typ, prioritet, determinant och platstyp. Uppgifter om patient och inringare används aldrig.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskHeaderCourse" xml:space="preserve">
     <value>Fråga den här kursen</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="AskHelpCourse" xml:space="preserve">
     <value>Svaren kommer bara från den version av kursen som du går, och varje del länkar till sin lektion.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="CallContextNotice" xml:space="preserve">
     <value>Besvarat för det här larmet: dess protokoll, typ, prioritet, determinant och platstyp.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeHeader" xml:space="preserve">
     <value>Öva</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeHelp" xml:space="preserve">
     <value>Öva med ett kort scenario som skrivs utifrån den gällande versionen av protokollet. Dina svar bedöms bara mot protokollet, och inget registreras i din utbildningshistorik.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeStart" xml:space="preserve">
     <value>Starta ett scenario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeStarting" xml:space="preserve">
     <value>Skriver ett scenario…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeScenarioLabel" xml:space="preserve">
     <value>Scenario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeAnswerLabel" xml:space="preserve">
     <value>Ditt svar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeSubmit" xml:space="preserve">
     <value>Bedöm mina svar</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeScoring" xml:space="preserve">
     <value>Bedömer dina svar…</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeAgain" xml:space="preserve">
     <value>Ett nytt scenario</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeScoreFormat" xml:space="preserve">
     <value>Resultat: {0} av {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeItemScoreFormat" xml:space="preserve">
     <value>{0} av {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeNotScored" xml:space="preserve">
     <value>Svaret kunde inte bedömas.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeExcluded" xml:space="preserve">
     <value>Det här protokollet används inte med AI.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeKeptLocal" xml:space="preserve">
     <value>Avancerat dataskydd håller avdelningens innehåll lokalt, så övning är inte tillgänglig.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeNoContent" xml:space="preserve">
     <value>Protokollet har för lite text att öva på.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeRefused" xml:space="preserve">
     <value>Scenariot kunde inte kontrolleras mot protokollet. Försök igen.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeStale" xml:space="preserve">
     <value>Protokollet har ändrats sedan scenariot skrevs. Starta ett nytt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeAnswerRequired" xml:space="preserve">
     <value>Besvara minst en fråga.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="PracticeOnlyNotice" xml:space="preserve">
     <value>Endast övning: inget registreras i din utbildningshistorik.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindQuestionExplanation" xml:space="preserve">
+    <value>Förklaring till fråga</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

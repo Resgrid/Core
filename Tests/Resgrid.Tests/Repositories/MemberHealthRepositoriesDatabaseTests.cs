@@ -28,7 +28,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for member wellness WL1 (M0394-M0396) on both engines: the four tables, the queries worker 91 relies on (overdue
+	/// Real-database proof for member wellness WL1 (M0372-M0374) on both engines: the four tables, the queries worker 91 relies on (overdue
 	/// Ryan White answers and due return-to-duty reviews, each claimed once, the retention candidates), the case-insensitive member lookup,
 	/// case numbers unique per department and year, the duty-period IN list, then Up again after the version rows are gone changes nothing,
 	/// and Down removes the tables and Up rebuilds them.
@@ -62,8 +62,8 @@ namespace Resgrid.Tests.Repositories
 		private void Migrate(Action<IMigrationRunner> run)
 		{
 			IMigration[] migrations = IsPostgres
-				? new IMigration[] { new Resgrid.Providers.MigrationsPg.Migrations.M0394_AddExposureIncidentsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0395_AddMemberInjuriesPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0396_AddMedicalClearancesPg() }
-				: new IMigration[] { new Resgrid.Providers.Migrations.Migrations.M0394_AddExposureIncidents(), new Resgrid.Providers.Migrations.Migrations.M0395_AddMemberInjuries(), new Resgrid.Providers.Migrations.Migrations.M0396_AddMedicalClearances() };
+				? new IMigration[] { new Resgrid.Providers.MigrationsPg.Migrations.M0372_AddExposureIncidentsPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0373_AddMemberInjuriesPg(), new Resgrid.Providers.MigrationsPg.Migrations.M0374_AddMedicalClearancesPg() }
+				: new IMigration[] { new Resgrid.Providers.Migrations.Migrations.M0372_AddExposureIncidents(), new Resgrid.Providers.Migrations.Migrations.M0373_AddMemberInjuries(), new Resgrid.Providers.Migrations.Migrations.M0374_AddMedicalClearances() };
 			var source = new Mock<IMigrationSource>();
 			source.Setup(s => s.GetMigrations()).Returns(migrations);
 			using var provider = new ServiceCollection().AddFluentMigratorCore().ConfigureRunner(r =>
@@ -287,7 +287,7 @@ namespace Resgrid.Tests.Repositories
 				? "SELECT COUNT(*) FROM information_schema.tables WHERE table_name IN ('rmsexposureincidents', 'rmsmemberinjuries', 'rmsinjurydutyperiods', 'rmsmedicalclearances')"
 				: "SELECT COUNT(*) FROM sys.tables WHERE name IN ('RmsExposureIncidents', 'RmsMemberInjuries', 'RmsInjuryDutyPeriods', 'RmsMedicalClearances')";
 
-			Migrate(r => r.MigrateDown(393));
+			Migrate(r => r.MigrateDown(371));
 			await using (var database = Connect(_connection))
 				(await database.ExecuteScalarAsync<int>(exists)).Should().Be(0);
 

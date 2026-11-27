@@ -60,140 +60,186 @@
   </resheader>
   <data name="AllTours" xml:space="preserve">
     <value>كل الجولات</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissTour" xml:space="preserve">
     <value>إخفاء هذه الجولة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DismissWhatsNew" xml:space="preserve">
     <value>إخفاء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DocsHeader" xml:space="preserve">
     <value>الميزات والمرجع</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="DoneLabel" xml:space="preserve">
     <value>تم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="EarlierReleases" xml:space="preserve">
     <value>إصدارات أخرى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="FeatureBadge" xml:space="preserve">
     <value>ميزة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GoToPage" xml:space="preserve">
     <value>انتقل إلى الصفحة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HelpCenterHeader" xml:space="preserve">
     <value>مركز المساعدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HowDoIHeader" xml:space="preserve">
     <value>كيف أقوم بـ…؟</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="HowDoIHelp" xml:space="preserve">
     <value>اطرح سؤالًا عن استخدام Resgrid. تأتي الإجابات من أكاديمية Resgrid فقط وترتبط بالدروس التي تستند إليها.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonMinutes" xml:space="preserve">
     <value>{0} دقيقة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="LessonsHeader" xml:space="preserve">
     <value>دروس الأكاديمية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkDone" xml:space="preserve">
     <value>وضع علامة تم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkNotDone" xml:space="preserve">
     <value>إلغاء علامة تم</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MarkRead" xml:space="preserve">
     <value>وضع علامة مقروء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MenuSearchHelp" xml:space="preserve">
     <value>البحث في المساعدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MenuTours" xml:space="preserve">
     <value>الجولات الإرشادية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="MenuWhatsNew" xml:space="preserve">
     <value>ما الجديد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoDocs" xml:space="preserve">
     <value>لا توجد ميزة أو مقالة مرجعية تطابق بحثك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoLessons" xml:space="preserve">
     <value>لا يوجد درس في الأكاديمية يطابق بحثك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="NoTours" xml:space="preserve">
     <value>لا توجد جولات إرشادية لقسمك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenDocs" xml:space="preserve">
     <value>الوثائق</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="OpenPage" xml:space="preserve">
     <value>افتح الصفحة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReadLabel" xml:space="preserve">
     <value>مقروء</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReadMinutes" xml:space="preserve">
     <value>اقرأ ({0} دقيقة)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReferenceBadge" xml:space="preserve">
     <value>مرجع</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ReopenTour" xml:space="preserve">
     <value>أظهر هذه الجولة مرة أخرى</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchButton" xml:space="preserve">
     <value>بحث</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchEmptyHelp" xml:space="preserve">
     <value>اكتب بضع كلمات عمّا تريد فعله. يمكنك أيضًا اتباع الجولة الإرشادية الخاصة بدورك أو الاطلاع على الجديد.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchIntro" xml:space="preserve">
     <value>ابحث في أكاديمية Resgrid والمرجع الخاص بالمنتج.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchLabel" xml:space="preserve">
     <value>البحث في المساعدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchPlaceholder" xml:space="preserve">
     <value>ماذا تريد أن تفعل؟ مثال: إضافة وحدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchTab" xml:space="preserve">
     <value>بحث</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="SearchTitle" xml:space="preserve">
     <value>البحث في المساعدة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TourProgress" xml:space="preserve">
     <value>تم إنجاز {0} من {1}</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TourReopened" xml:space="preserve">
     <value>تظهر الجولة مرة أخرى.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToursIntro" xml:space="preserve">
     <value>الخطوات الأولى لكل دور، ولكل منها درس قصير من الأكاديمية.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToursTab" xml:space="preserve">
     <value>الجولات الإرشادية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="ToursTitle" xml:space="preserve">
     <value>الجولات الإرشادية</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="TryIt" xml:space="preserve">
     <value>جرّبه</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WatchLesson" xml:space="preserve">
     <value>شاهد الدرس</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatsNewSubtitle" xml:space="preserve">
     <value>صدر في {0} · قراءة {1} دقيقة</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatsNewTab" xml:space="preserve">
     <value>ما الجديد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="WhatsNewTitle" xml:space="preserve">
     <value>ما الجديد</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="YourTourBadge" xml:space="preserve">
     <value>دورك</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

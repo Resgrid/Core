@@ -23,7 +23,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 	/// Personnel → Wellness → Health records (member wellness WL1, protocols-training-knowledge-plan §13b): BBP / infectious-disease exposure
 	/// cases run by the designated officer, injuries with duty status and the return-to-duty clearance, NFPA 1582 medical clearances and the
 	/// OSHA 300/301 export. Every member reports and reads their own; department administration alone opens nothing. Every rule lives in
-	/// IMemberHealthService; this controller maps requests and localizes refusals.
+	/// IMemberHealthService; this controller maps requests and localizes refusals. Workforce Pro (2026-11-26): 404 while the Workforce.Pro flag
+	/// is off; read-only with the upsell banner while not licensed (enforced by the service).
 	/// </summary>
 	[Area("User")]
 	[Authorize]
@@ -36,40 +37,65 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IMemberWellnessService _wellness;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly ICallsService _callsService;
-		private readonly IPersonnelRolesService _rolesService;
 		private readonly IPdfProvider _pdfProvider;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> _localizer;
+		private readonly IWorkforceProAccessService _workforcePro;
+		private WorkforceProAccess _workforceProAccess;
 
 		private Department _department;
 		private Dictionary<string, string> _names;
 		private MemberHealthAccess _access;
 
 		public MemberHealthController(IMemberHealthService health, IMemberWellnessService wellness, IDepartmentsService departmentsService, ICallsService callsService,
-			IPersonnelRolesService rolesService, IPdfProvider pdfProvider, IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> localizer)
+			IPdfProvider pdfProvider, IWorkforceProAccessService workforcePro, IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> localizer)
 		{
+			_workforcePro = workforcePro;
 			_health = health;
 			_wellness = wellness;
 			_departmentsService = departmentsService;
 			_callsService = callsService;
-			_rolesService = rolesService;
 			_pdfProvider = pdfProvider;
 			_localizer = localizer;
 		}
 
 		public override async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
+			// Workforce Pro: invisible while the flag is off (data kept); read-only with the upsell banner while not licensed.
+			_workforceProAccess = await Resgrid.Web.Helpers.WorkforceProRequestGate.GetAccessAsync(HttpContext, _workforcePro, DepartmentId);
+			if (!_workforceProAccess.Offered)
+			{
+				context.Result = NotFound();
+				return;
+			}
+
 			_access = await _health.GetAccessAsync(DepartmentId, UserId);
 			ViewData["WellnessAccess"] = new WellnessAccessView
 			{
 				IsOfficer = _access.IsWellnessOfficer,
 				IsAdmin = _access.IsAdmin,
 				IsDesignatedOfficer = _access.IsDesignatedOfficer,
-				IsHealthOfficer = _access.IsHealthOfficer
+				IsHealthOfficer = _access.IsHealthOfficer,
+				WorkforceProReadOnly = _workforceProAccess.IsReadOnly,
+				WorkforceProLicensed = _workforceProAccess.Licensed,
+				ShowWorkforceProLinks = _access.IsAdmin,
+				WorkforceProGraceEndsUtc = _access.IsAdmin && _workforceProAccess.InDunningGrace ? _workforceProAccess.GraceEndsUtc : null
 			};
 			await next();
 		}
 
 		private MemberHealthAccess Access => _access ?? new MemberHealthAccess();
+
+		/// <summary>A page about one member: when Workforce Pro is licensed but the member holds no seat, their records are read-only (the notice).</summary>
+		private void MarkSeat(string memberUserId, string memberName)
+		{
+			if (_workforceProAccess == null || !_workforceProAccess.Licensed || _workforceProAccess.HoldsSeat(memberUserId))
+				return;
+			if (ViewData["WellnessAccess"] is WellnessAccessView view)
+			{
+				view.SeatMissingMemberName = memberName;
+				view.SeatMissingIsSelf = string.Equals(memberUserId, UserId, StringComparison.OrdinalIgnoreCase);
+			}
+		}
 
 		private string L(string key) => _localizer[key].Value;
 
@@ -176,6 +202,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (!Access.IsMember)
 				return Unauthorized();
+			MarkSeat(UserId, await NameOfAsync(UserId));
 			var model = new MemberHealthIndexView
 			{
 				Access = Access,
@@ -285,6 +312,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var incident = await _health.GetCaseAsync(DepartmentId, UserId, id);
 			if (incident == null)
 				return NotFound();
+			MarkSeat(incident.UserId, await NameOfAsync(incident.UserId));
 			var model = new ExposureCaseView
 			{
 				Case = incident,
@@ -303,11 +331,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			};
 			if (model.IsDesignatedOfficer)
 			{
-				var settings = await _wellness.GetSettingsAsync(DepartmentId);
-				var roleId = settings.DesignatedOfficerRoleId > 0 ? settings.DesignatedOfficerRoleId : settings.WellnessOfficerRoleId;
-				var officers = roleId > 0
-					? (await _rolesService.GetAllMembersOfRoleAsync(roleId) ?? new List<PersonnelRoleUser>()).Select(r => r.UserId).ToHashSet(StringComparer.OrdinalIgnoreCase)
-					: new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+				// The member and the designated officers who act today (role, and the certification rule when the switch is on).
+				var officers = (await _wellness.GetActingMemberIdsAsync(DepartmentId, WellnessRoleKinds.DesignatedOfficer) ?? new List<string>())
+					.ToHashSet(StringComparer.OrdinalIgnoreCase);
 				officers.Add(incident.UserId);
 				model.FollowUpAssignees = (await _departmentsService.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>()).Where(p => officers.Contains(p.UserId)).ToList();
 			}
@@ -482,6 +508,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var injury = await _health.GetInjuryAsync(DepartmentId, UserId, id);
 			if (injury == null)
 				return NotFound();
+			MarkSeat(injury.UserId, await NameOfAsync(injury.UserId));
 			var department = await DepartmentAsync();
 			var model = new InjuryView
 			{

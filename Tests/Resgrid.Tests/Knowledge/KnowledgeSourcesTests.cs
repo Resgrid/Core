@@ -360,7 +360,10 @@ namespace Resgrid.Tests.Knowledge
 			var sources = typeof(ProtocolKnowledgeSource).Assembly.GetTypes()
 				.Where(t => typeof(IKnowledgeCorpusSource).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).Select(t => t.Name).ToList();
 			// K3: LMS courses (published lessons only; never answer keys, attempts or learner data, see LmsCourseKnowledgeSourceTests).
-			sources.Should().BeEquivalentTo("ProtocolKnowledgeSource", "TrainingKnowledgeSource", "AcademyKnowledgeSource", "DocumentKnowledgeSource", "LmsCourseKnowledgeSource");
+			// 2026-11-26: question bank explanations, never options or keys, readable only by those shown the answer keys (see
+			// LmsQuestionExplanationKnowledgeSourceTests).
+			sources.Should().BeEquivalentTo("ProtocolKnowledgeSource", "TrainingKnowledgeSource", "AcademyKnowledgeSource", "DocumentKnowledgeSource", "LmsCourseKnowledgeSource",
+				"LmsQuestionExplanationKnowledgeSource");
 
 			var kinds = Enum.GetNames(typeof(KnowledgeSourceKinds));
 			kinds.Should().NotContain(k => k.Contains("Transcript") || k.Contains("Certification") || k.Contains("Learning") || k.Contains("Wellness") ||

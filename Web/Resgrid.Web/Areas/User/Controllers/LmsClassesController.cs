@@ -50,6 +50,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentGroupsService _groups;
 		private readonly ITrainingTimecardOffers _timecards;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> _localizer;
+		private readonly ILmsCompletionRecordingService _recordings;
+		private readonly ITrainingCompletionRecordingService _recorded;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> _trainingLocalizer;
 
 		private LmsActor _actor;
 		private Department _department;
@@ -57,7 +60,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		public LmsClassesController(ILmsGateService gate, ILmsAccessService access, ILmsClassService classes, ILmsLessonPlanService lessonPlans, ILmsCompetencyService competencies,
 			ILmsCourseService courses, ITrainingService trainings, ILearningRecordService learningRecords, IDepartmentsService departments, IDepartmentGroupsService groups,
-			ITrainingTimecardOffers timecards, IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer)
+			ITrainingTimecardOffers timecards, IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer, ILmsCompletionRecordingService recordings,
+			ITrainingCompletionRecordingService recorded, IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> trainingLocalizer)
 		{
 			_gate = gate;
 			_access = access;
@@ -71,6 +75,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_groups = groups;
 			_timecards = timecards;
 			_localizer = localizer;
+			_recordings = recordings;
+			_recorded = recorded;
+			_trainingLocalizer = trainingLocalizer;
 		}
 
 		#region Gates and helpers
@@ -282,6 +289,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			view.LessonPlans = (await _lessonPlans.GetPlansAsync(DepartmentId)).Where(p => p.CurrentVersionId.HasValue).ToList();
 			view.Groups = await _groups.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
 			view.Members = await SelectableMembersAsync();
+			view.DefaultCurrency = await _classes.GetTrainingCurrencyAsync(DepartmentId);
 			return view;
 		}
 
@@ -424,7 +432,75 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 			if (!string.IsNullOrWhiteSpace(detail.Session.SeriesKey))
 				view.Series = await _classes.GetSeriesAsync(DepartmentId, detail.Session.SeriesKey);
+			// Round 7B: the "Record completion" panel for holders of Record Training Completions (135).
+			if (ClaimsAuthorizationHelper.CanApplyTrainingCompletions())
+			{
+				var recording = await _recordings.GetClassRecordingViewAsync(DepartmentId, id, UserId);
+				view.Recording = recording?.CanRecord == true ? recording : null;
+			}
 			return View(view);
+		}
+
+		/// <summary>
+		/// Round 7B (permission 135): record that the selected roster members completed the class's LMS course or baseline training. The
+		/// service checks the permission and group scope, the roster, active members, seats and the attestation, member by member.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		public async Task<IActionResult> RecordCompletions(int id, List<string> userIds, string note, bool attested, string attestationVersion, CancellationToken cancellationToken)
+		{
+			var outcome = await _recordings.RecordFromClassAsync(DepartmentId, id, new TrainingCompletionRecordingRequest
+			{
+				RecorderUserId = UserId,
+				MemberUserIds = userIds ?? new List<string>(),
+				Note = note,
+				Attested = attested,
+				AttestationVersion = string.IsNullOrWhiteSpace(attestationVersion) ? TrainingCompletionAttestation.CurrentVersion : attestationVersion
+			}, cancellationToken);
+			FlashRecording(outcome);
+			return RedirectToAction("Session", new { id });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_RecordCompletions)]
+		public async Task<IActionResult> VoidRecordedCompletion(int id, int recordingId, string reason, CancellationToken cancellationToken)
+		{
+			var recording = await _recorded.GetAsync(DepartmentId, recordingId);
+			if (recording == null || recording.SourceKind != (int)TrainingCompletionRecordingSources.ClassSession ||
+				recording.SourceRefId != id.ToString(CultureInfo.InvariantCulture))
+				return NotFound();
+			var result = await _recorded.VoidAsync(DepartmentId, recordingId, UserId, reason, cancellationToken);
+			if (TempData != null)
+			{
+				if (result.Refusal == null)
+					TempData["LmsClassesMessage"] = T("RecordCompletions.VoidDone");
+				else
+					TempData["LmsClassesError"] = T(result.Refusal);
+			}
+			return RedirectToAction("Session", new { id });
+		}
+
+		private string T(string key)
+		{
+			var value = _trainingLocalizer?[key];
+			return value == null || value.ResourceNotFound || string.IsNullOrEmpty(value.Value) ? key : value.Value;
+		}
+
+		private void FlashRecording(TrainingCompletionRecordingOutcome outcome)
+		{
+			if (TempData == null)
+				return;
+			if (!outcome.Succeeded)
+			{
+				TempData["LmsClassesError"] = T(outcome.Error);
+				return;
+			}
+			TempData["LmsClassesMessage"] = string.Format(CultureInfo.CurrentCulture, T("RecordCompletions.ResultFormat"), outcome.Recorded, outcome.Refused);
+			var refusals = outcome.Results.Where(r => !r.Recorded).GroupBy(r => r.Refusal).Select(g => T(g.Key) + " (" + g.Count().ToString(CultureInfo.CurrentCulture) + ")").ToList();
+			if (refusals.Count > 0)
+				TempData["LmsClassesError"] = string.Join(" ", refusals);
 		}
 
 		[HttpGet]
@@ -871,7 +947,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 			var view = await PageAsync(new LmsLessonPlansView(), "LessonPlans");
 			view.Plans = await _lessonPlans.GetPlansAsync(DepartmentId);
-			view.Starters = _lessonPlans.GetStarters();
+			view.Starters = _lessonPlans.GetStarters(CultureInfo.CurrentUICulture.Name);
 			return View(view);
 		}
 
@@ -891,7 +967,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			LmsLessonPlan plan = null;
 			var ok = await TryAsync(async () => plan = string.IsNullOrWhiteSpace(starter)
 				? await _lessonPlans.CreateAsync(DepartmentId, title, new LmsLessonPlanContent(), UserId, cancellationToken)
-				: await _lessonPlans.ApplyStarterAsync(DepartmentId, starter, UserId, cancellationToken), "Created");
+				: await _lessonPlans.ApplyStarterAsync(DepartmentId, starter, UserId, CultureInfo.CurrentUICulture.Name, cancellationToken), "Created");
 			return ok ? RedirectToAction("LessonPlan", new { id = plan.LmsLessonPlanId }) : RedirectToAction("LessonPlans");
 		}
 

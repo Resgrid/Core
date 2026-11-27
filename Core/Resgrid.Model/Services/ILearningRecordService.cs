@@ -52,6 +52,25 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Removes the credits derived from a record (it was voided, rejected or re-categorized).</summary>
 		Task<int> RemoveCreditsAsync(LearningRecord record, string actingUserId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Round 9A: tells the registered <see cref="ILearningRecordObserver"/>s that records now count (<paramref name="written"/>) or were
+		/// voided, after the change is stored. Backfilled records are left out. Non-fatal: an observer's failure is logged. The writer calls
+		/// it itself at the end of every write and void; the other void paths (an officer's void, a merged duplicate, a recorded completion's
+		/// void) call it once their whole change is stored.
+		/// </summary>
+		Task NotifyChangedAsync(int departmentId, IReadOnlyCollection<LearningRecord> written, IReadOnlyCollection<LearningRecord> voided, string actingUserId,
+			CancellationToken cancellationToken = default);
+	}
+
+	/// <summary>
+	/// Round 9A seam (baseline): told after learning records became countable or were voided. The LMS layer registers its certification
+	/// engine here (a requirement set issues or renews when its last item completes; a void takes back what a voided completion issued), so
+	/// baseline code never references LMS types (§17.3). Observers run after the change is stored and must not throw for routine misses.
+	/// </summary>
+	public interface ILearningRecordObserver
+	{
+		Task OnLearningRecordsChangedAsync(LearningRecordChange change, CancellationToken cancellationToken = default);
 	}
 
 	/// <summary>Transcript reads, officer actions, categories, credit mappings, settings, reports and history backfill (Training T1).</summary>
@@ -90,6 +109,29 @@ namespace Resgrid.Model.Services
 
 		Task<LearningRecord> RejectAsync(int departmentId, int learningRecordId, string officerUserId, string note, CancellationToken cancellationToken = default);
 
+		// ---- Round 9B: hours submissions with evidence and their optional review (through ITrainingSubmissionService) --------------------
+
+		/// <summary>
+		/// A member submits hours with evidence files (each checked, cleaned and scanned, see TrainingEvidencePolicy): Pending and waiting
+		/// for a reviewer when the department's review settings ask for it (TrainingSubmissionRules.RequiresReview), otherwise Verified at
+		/// once as self-reported (credits follow). Null when the department switched member submissions off.
+		/// </summary>
+		Task<LearningRecord> SubmitExternalAsync(int departmentId, string userId, LearningRecordDraft draft, IReadOnlyList<TrainingEvidenceUpload> evidence,
+			CancellationToken cancellationToken = default);
+
+		/// <summary>A reviewer asks the member for more information (never on their own submission); the submission waits for the member.</summary>
+		Task<LearningRecord> RequestInfoAsync(int departmentId, int learningRecordId, string officerUserId, string note, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// The member resubmits their own pending submission with more evidence and corrections; it waits for a reviewer again (SubmittedOn
+		/// is now).
+		/// </summary>
+		Task<LearningRecord> ResubmitAsync(int departmentId, int learningRecordId, string userId, TrainingSubmissionCorrection correction,
+			IReadOnlyList<TrainingEvidenceUpload> evidence, CancellationToken cancellationToken = default);
+
+		/// <summary>The evidence of these submissions, without the bytes.</summary>
+		Task<List<LearningRecordFile>> GetEvidenceFilesAsync(int departmentId, IEnumerable<int> learningRecordIds);
+
 		/// <summary>An officer voids a record with a reason (a correction is a new record); its credits are removed.</summary>
 		Task<bool> VoidAsync(int departmentId, int learningRecordId, string officerUserId, string reason, CancellationToken cancellationToken = default);
 
@@ -108,6 +150,9 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Adds the template's categories the department does not have yet (matched by code); returns the count added.</summary>
 		Task<int> ApplyCategoryTemplateAsync(int departmentId, string templateKey, string userId, CancellationToken cancellationToken = default);
+
+		/// <summary>As above, the categories' names and descriptions in a language (round 9C; English when none ships). Codes stay.</summary>
+		Task<int> ApplyCategoryTemplateAsync(int departmentId, string templateKey, string userId, string culture, CancellationToken cancellationToken = default);
 
 		Task<List<LearningRecordGroup>> GetUncategorizedGroupsAsync(int departmentId, DateTime? fromUtc, DateTime? toUtc);
 
@@ -231,6 +276,16 @@ namespace Resgrid.Model.Services
 		/// ILmsSeatService.GetLicensedUserIdsAsync once per department instead (each call here is a billing read, R-L9).
 		/// </summary>
 		Task<bool> CanBeTrainedAsync(int departmentId, string userId);
+
+		/// <summary>
+		/// Round 10 A7 (owner decision 2026-11-26): the members who may act as learners on department LMS content (take a course, a sponsor's
+		/// managed copy, an assessment, hosted media, a lesson file, a survey, a class), which every learner path in the LMS services asks before
+		/// the action runs. Unlike <see cref="CanBeTrainedAsync"/> it is lapse-aware: while the add-on works, the licensed seats (the sponsor's
+		/// capacity for a sponsored department); while it is lapsed (or billing cannot say, or a sponsorship stopped paying), the members who held
+		/// a seat (lapse rule 1: nothing is removed), so the lapse rules (assigned work until its due date, rule 4) keep working for them. Empty
+		/// with the flag off; fails closed. One billing read; a worker asks once per department per run (R-L9).
+		/// </summary>
+		Task<HashSet<string>> GetLearnerSeatHoldersAsync(int departmentId);
 	}
 
 	/// <summary>

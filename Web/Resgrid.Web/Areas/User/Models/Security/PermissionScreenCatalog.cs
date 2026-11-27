@@ -92,6 +92,14 @@ namespace Resgrid.Web.Areas.User.Models.Security
 			// Training T2 (132-133): manage LMS courses and banks, grade assessments. No row: department admins only (LmsGateService).
 			new PermissionScreenEntry(PermissionTypes.ManageCourses, AdminsUpward, DepartmentAdmins),
 			new PermissionScreenEntry(PermissionTypes.GradeAssessments, AdminsUpward, DepartmentAdmins),
+			// Protocols P5 QA (134): dispatch case review. No row: department admins only (ProtocolAccessService, DispatchCaseReviewService).
+			new PermissionScreenEntry(PermissionTypes.ReviewDispatchCases, AdminsUpward, DepartmentAdmins),
+			// Round 7B (135): record training completions for members. No row: department admins only (ClaimsLogic.AddTrainingClaims,
+			// AuthorizationService.GetTrainingManagementScopeAsync: a group admin records for their own group's members only).
+			new PermissionScreenEntry(PermissionTypes.RecordTrainingCompletions, AdminsUpward, DepartmentAdmins),
+			// Round 10 A3 (136): protocol and course sets over Department Links and LMS sponsorship. No row: department admins only
+			// (ContentSetService.GetActorAsync).
+			new PermissionScreenEntry(PermissionTypes.ManageContentSets, AdminsUpward, DepartmentAdmins),
 			new PermissionScreenEntry(PermissionTypes.CreateDocument, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.CreateCalendarEntry, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.CreateNote, EveryoneFirst, Everyone),

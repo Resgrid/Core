@@ -43,11 +43,14 @@ namespace Resgrid.Services
 		private readonly IProtocolAcknowledgmentsRepository _acknowledgments;
 		private readonly IKnowledgeIndexQueue _knowledgeQueue;
 
+		private readonly IDepartmentDataProtectionService _protection;
+
 		public ProtocolDocumentService(IProtocolLibraryService library, IProtocolAccessService access, IProtocolsService protocolsService, IProtocolVersionsRepository versions,
 			IProtocolVersionFilesRepository files, IProtocolFileTextsRepository texts, IDocumentsService documents, IProtocolTextExtractor extractor,
 			IEventAggregator eventAggregator, Lazy<ISearchProjectionService> searchProjections, IProtocolAcknowledgmentsRepository acknowledgments,
-			IKnowledgeIndexQueue knowledgeQueue)
+			IKnowledgeIndexQueue knowledgeQueue, IDepartmentDataProtectionService protection)
 		{
+			_protection = protection;
 			_acknowledgments = acknowledgments;
 			_knowledgeQueue = knowledgeQueue;
 			_library = library;
@@ -253,6 +256,17 @@ namespace Resgrid.Services
 			return view;
 		}
 
+		public async Task<ProtocolVersionFile> GetFileInfoAsync(int departmentId, int protocolVersionId)
+		{
+			if (departmentId <= 0 || protocolVersionId <= 0)
+				return null;
+			var file = await _files.GetMetadataForVersionAsync(departmentId, protocolVersionId);
+			if (file == null || file.DepartmentId != departmentId)
+				return null;
+			file.Data = null;
+			return file;
+		}
+
 		#endregion Upload
 
 		#region Bulk upload and the move from Documents
@@ -275,20 +289,28 @@ namespace Resgrid.Services
 
 				var name = ProtocolDocumentRules.SafeFileName(file?.FileName);
 				var (number, title) = ProtocolDocumentRules.ParseFileName(name);
-				var item = new ProtocolBulkUploadItem { FileName = name, Number = number, Title = title, Category = file?.Folder };
+				var item = new ProtocolBulkUploadItem { FileName = name, Number = number, Title = title };
 
 				// The same file twice in one upload lands once.
 				var hash = file?.Data == null ? null : ProtocolDocumentRules.HashFile(file.Data);
-				if (hash != null && !seen.Add(hash))
+				var duplicate = hash != null && !seen.Add(hash);
+
+				// A duplicate is not filed, so it never creates a category; it shows where it would have gone.
+				var target = categoryId;
+				if (foldersAsCategories && !string.IsNullOrWhiteSpace(file?.Folder))
+					target = (duplicate
+						? ExistingCategoryForFolder(categories, file.Folder)
+						: await CategoryForFolderAsync(reader, categories, file.Folder, kind, cancellationToken)) ?? categoryId;
+
+				// The result shows the category the file is filed in (the chosen one for loose files), not the raw zip folder path.
+				item.Category = target.HasValue ? categories.FirstOrDefault(c => c.ProtocolCategoryId == target.Value)?.Name : null;
+
+				if (duplicate)
 				{
 					item.Error = "duplicate";
 					results.Add(item);
 					continue;
 				}
-
-				var target = categoryId;
-				if (foldersAsCategories && !string.IsNullOrWhiteSpace(file?.Folder))
-					target = await CategoryForFolderAsync(reader, categories, file.Folder, kind, cancellationToken) ?? categoryId;
 
 				try
 				{
@@ -327,13 +349,13 @@ namespace Resgrid.Services
 		/// <summary>The category a zip folder names (the last folder of its path), created under no parent when the department has none by that name.</summary>
 		private async Task<int?> CategoryForFolderAsync(ProtocolReader reader, List<ProtocolCategory> categories, string folder, int kind, CancellationToken cancellationToken)
 		{
-			var name = folder.Replace('\\', '/').Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault()?.Trim();
+			var name = FolderCategoryName(folder);
 			if (string.IsNullOrWhiteSpace(name))
 				return null;
 
-			var existing = categories.FirstOrDefault(c => string.Equals(c.Name?.Trim(), name, StringComparison.CurrentCultureIgnoreCase));
-			if (existing != null)
-				return existing.ProtocolCategoryId;
+			var existing = ExistingCategoryForFolder(categories, folder);
+			if (existing.HasValue)
+				return existing;
 
 			// Categories are a managers' structure: authors who are not managers file into the chosen category instead.
 			if (!reader.IsManager)
@@ -348,6 +370,19 @@ namespace Resgrid.Services
 				categories.Add(saved);
 			return saved?.ProtocolCategoryId;
 		}
+
+		/// <summary>The department category a zip folder already names, if any; never creates one.</summary>
+		private static int? ExistingCategoryForFolder(List<ProtocolCategory> categories, string folder)
+		{
+			var name = FolderCategoryName(folder);
+			if (string.IsNullOrWhiteSpace(name))
+				return null;
+
+			return categories.FirstOrDefault(c => string.Equals(c.Name?.Trim(), name, StringComparison.CurrentCultureIgnoreCase))?.ProtocolCategoryId;
+		}
+
+		private static string FolderCategoryName(string folder) =>
+			folder?.Replace('\\', '/').Split('/', StringSplitOptions.RemoveEmptyEntries).LastOrDefault()?.Trim();
 
 		public List<ProtocolUploadFile> ReadZip(byte[] zip)
 		{
@@ -434,8 +469,10 @@ namespace Resgrid.Services
 				return item;
 			}
 
-			// Advanced Data Protection: the server never decrypts a document to move it; a protected document stays in Documents.
-			if (document.IsProtected || ProtectedReadService.IsBinaryEnveloped(document.Data))
+			// Advanced Data Protection: the server never decrypts a document to move it; a protected document stays in Documents. That holds for
+			// every document of a department whose ADP is on, including one its enrollment night has not swept yet (Documents.Data, Description and
+			// Filename are cataloged): moving it would copy it out of protection into the protocol library, search and the knowledge index.
+			if (document.IsProtected || ProtectedReadService.IsBinaryEnveloped(document.Data) || await DepartmentProtectsDocumentsAsync(reader.DepartmentId))
 			{
 				item.Error = "protected";
 				return item;
@@ -475,6 +512,22 @@ namespace Resgrid.Services
 
 			item.ProtocolId = created.Protocol.DispatchProtocolId;
 			return item;
+		}
+
+		/// <summary>True when the department encrypts new writes (an unreadable state counts as protected: nothing is copied out).</summary>
+		private async Task<bool> DepartmentProtectsDocumentsAsync(int departmentId)
+		{
+			if (_protection == null)
+				return false;
+			try
+			{
+				return await _protection.ShouldEncryptNewWritesAsync(departmentId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"The protection state of department {departmentId} could not be read; the document stays in Documents.");
+				return true;
+			}
 		}
 
 		public async Task<List<ProtocolBulkUploadItem>> MoveCategoryFromDocumentsAsync(ProtocolReader reader, string category, int kind, bool canSeeAdminsOnly,

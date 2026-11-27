@@ -39,6 +39,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<IProtocolAccessService> _access;
 		private Mock<IProtocolLibraryService> _library;
 		private Mock<IAuthorizationService> _authorization;
+		private Mock<IProtocolDocumentService> _documents;
 
 		[SetUp]
 		public void SetUp()
@@ -49,6 +50,7 @@ namespace Resgrid.Tests.Web.Services
 			_access = new Mock<IProtocolAccessService>();
 			_library = new Mock<IProtocolLibraryService>();
 			_authorization = new Mock<IAuthorizationService>();
+			_documents = new Mock<IProtocolDocumentService>();
 			var http = new DefaultHttpContext
 			{
 				User = new ClaimsPrincipal(new ClaimsIdentity(new[] { new Claim(ClaimTypes.PrimarySid, UserId), new Claim(ClaimTypes.PrimaryGroupSid, DepartmentId.ToString()) }, "test"))
@@ -69,7 +71,7 @@ namespace Resgrid.Tests.Web.Services
 			var localizer = new Mock<IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols>>();
 			localizer.Setup(x => x[It.IsAny<string>()]).Returns((string key) => new LocalizedString(key, key == "StaleVersionMessage" ? "You are viewing {0}. {1} is in force since {2}." : key));
 			return new V4.ProtocolContentController(_offline.Object, _steps.Object, _translations.Object, _access.Object, _library.Object, Mock.Of<IAiKnowledgeService>(),
-				_authorization.Object, localizer.Object)
+				_authorization.Object, localizer.Object, _documents.Object)
 			{
 				ControllerContext = new ControllerContext { HttpContext = ApiClaims._httpContextAccessor.HttpContext }
 			};
@@ -160,6 +162,70 @@ namespace Resgrid.Tests.Web.Services
 			data.TranslationContentHash.Should().Be(new string('e', 64));
 			data.ContentHtml.Should().Contain("id=\"b-s-a\"");
 			data.Steps.Single().Id.Should().Be("s-a");
+			// Round 10: authored content is not a document and asks for no file.
+			data.IsDocument.Should().BeFalse();
+			data.DocumentFileName.Should().BeNull();
+			data.DocumentContentType.Should().BeNull();
+			data.DocumentSize.Should().BeNull();
+			_documents.Verify(x => x.GetFileInfoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+		}
+
+		private void ReadableDocumentVersion(int versionId)
+		{
+			var version = new ProtocolVersion
+			{
+				ProtocolVersionId = versionId, DepartmentId = DepartmentId, DispatchProtocolId = 9, Status = (int)ProtocolVersionStatuses.Published, Major = 2,
+				ContentKind = (int)ProtocolVersionContentKinds.Document, ContentHash = new string('c', 64)
+			};
+			var protocol = new DispatchProtocol { DispatchProtocolId = 9, DepartmentId = DepartmentId, Status = (int)ProtocolStatuses.Published, CurrentVersionId = versionId };
+			_library.Setup(x => x.GetVersionAsync(DepartmentId, versionId)).ReturnsAsync(version);
+			_library.Setup(x => x.GetAudienceAsync(DepartmentId, 9)).ReturnsAsync(new List<ProtocolAudience>());
+			_access.Setup(x => x.GetReadableAsync(DepartmentId, UserId, 9)).ReturnsAsync(protocol);
+			_access.Setup(x => x.GetReaderAsync(DepartmentId, UserId)).ReturnsAsync(new ProtocolReader { DepartmentId = DepartmentId, UserId = UserId, IsCurrentMember = true });
+			_translations.Setup(x => x.GetLocalizedAsync(DepartmentId, version, It.IsAny<string>())).ReturnsAsync(new ProtocolLocalizedContent { Version = version, Locale = "en", IsFallback = true });
+		}
+
+		[Test]
+		public async Task Round10_a_document_backed_version_names_its_file_type_and_size_without_content_or_bytes()
+		{
+			ReadableDocumentVersion(12);
+			_documents.Setup(x => x.GetFileInfoAsync(DepartmentId, 12)).ReturnsAsync(new ProtocolVersionFile
+			{
+				ProtocolVersionFileId = 4, DepartmentId = DepartmentId, ProtocolVersionId = 12, FileName = "..\\Hazmat SOP.pdf", ContentType = "application/pdf", Size = 2048
+			});
+
+			var data = ((GetProtocolVersionContentResult)((OkObjectResult)(await Controller().GetVersionContent(12)).Result).Value).Data;
+
+			data.IsDocument.Should().BeTrue();
+			data.DocumentFileName.Should().Be(ProtocolDocumentRules.SafeFileName("..\\Hazmat SOP.pdf")).And.NotContain("\\");
+			data.DocumentContentType.Should().Be("application/pdf");
+			data.DocumentSize.Should().Be(2048);
+			data.ContentHtml.Should().BeNull();
+			data.ContentJson.Should().BeNull();
+			data.Steps.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task Round10_a_document_version_whose_file_is_missing_or_another_versions_has_no_file_fields()
+		{
+			ReadableDocumentVersion(13);
+			_documents.Setup(x => x.GetFileInfoAsync(DepartmentId, 13)).ReturnsAsync(new ProtocolVersionFile { DepartmentId = DepartmentId, ProtocolVersionId = 99, FileName = "x.pdf" });
+
+			var data = ((GetProtocolVersionContentResult)((OkObjectResult)(await Controller().GetVersionContent(13)).Result).Value).Data;
+
+			data.IsDocument.Should().BeTrue();
+			data.DocumentFileName.Should().BeNull();
+			data.DocumentSize.Should().BeNull();
+		}
+
+		[Test]
+		public async Task Round10_an_unreadable_document_version_is_still_a_404()
+		{
+			ReadableDocumentVersion(14);
+			_access.Setup(x => x.GetReadableAsync(DepartmentId, UserId, 9)).ReturnsAsync((DispatchProtocol)null);
+
+			(await Controller().GetVersionContent(14)).Result.Should().BeOfType<NotFoundResult>();
+			_documents.Verify(x => x.GetFileInfoAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
 		}
 	}
 }

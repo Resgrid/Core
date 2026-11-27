@@ -1,0 +1,11 @@
+@model string
+@*
+    Round 7B: the reCAPTCHA of an anonymous learner-portal form that creates or e-mails something, following the Account/Register standard:
+    the same Google widget with the configured public site key (WebConfig.RecaptchaPublicKey, the model's SiteKey), the hidden
+    GoogleReCaptchaResponse field the GoogleReCaptchaValidation attribute checks on the server, and the same behaviour when the keys are blank
+    (the check is refused, as on Register). The page adds the api.js include and resgrid.recaptcha-field.js in its Scripts section.
+*@
+<div class="form-group">
+    <div class="g-recaptcha" data-sitekey="@Model"></div>
+    <input name="GoogleReCaptchaResponse" id="GoogleReCaptchaResponse" type="hidden" value="" />
+</div>

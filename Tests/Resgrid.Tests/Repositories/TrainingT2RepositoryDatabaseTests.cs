@@ -30,7 +30,7 @@ using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 namespace Resgrid.Tests.Repositories
 {
 	/// <summary>
-	/// Real-database proof for Training T2 (courses and assessments) on both engines: the whole migration chain, M0359/M0360 re-run as
+	/// Real-database proof for Training T2 (courses and assessments) on both engines: the whole migration chain, M0349/M0350 re-run as
 	/// no-ops and rolled back and forward again, and the LMS repositories' own SQL: department-or-system reads (the Academy is
 	/// DepartmentId 0), the one-open-enrollment key, row-version claims, the reminder claim with and without a previous value (the
 	/// PostgreSQL untyped-null trap), the progress and attendee unique races, the entitlement stamp upsert, the media queue claim
@@ -150,7 +150,7 @@ namespace Resgrid.Tests.Repositories
 			var version = IsPostgres ? "\"VersionInfo\"" : "[VersionInfo]";
 			var versionColumn = IsPostgres ? "\"Version\"" : "[Version]";
 			await using (var database = Connect(_connection))
-				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 359");
+				await database.ExecuteAsync($"DELETE FROM {version} WHERE {versionColumn} >= 349");
 
 			using (var runner = Runner())
 			using (var scope = runner.CreateScope())
@@ -159,7 +159,7 @@ namespace Resgrid.Tests.Repositories
 				migrations.MigrateUp();
 				(await CountLmsTablesAsync()).Should().Be(LmsTables.Length, "Up over the existing schema is a no-op");
 
-				migrations.MigrateDown(358);
+				migrations.MigrateDown(348);
 				(await CountLmsTablesAsync()).Should().Be(0, "Down removes every T2 table");
 
 				migrations.MigrateUp();
@@ -346,6 +346,44 @@ namespace Resgrid.Tests.Repositories
 
 			await surveys.InsertAsync(new LmsSurveyResponse { DepartmentId = _department, LmsCourseVersionId = _version.LmsCourseVersionId, LmsLessonId = _lesson.LmsLessonId, AnswersJson = "{\"q1\":\"4\"}", SubmittedOn = now.Date }, default, true);
 			(await surveys.GetForLessonAsync(_department, _lesson.LmsLessonId)).Should().ContainSingle();
+		}
+
+		/// <summary>Round 10 (Omni): the member's uploaded files listed by id without their bytes, inside the department only (the ANY / IN list).</summary>
+		[Test, Order(5)]
+		public async Task Lesson_file_metadata_is_read_by_id_without_the_bytes_and_only_in_its_department()
+		{
+			var files = Repository((c, s, u, q) => new LmsLessonFilesRepository(c, s, u, q));
+			var now = DateTime.UtcNow;
+			LmsLessonFile NewFile(int department, string name) => new LmsLessonFile
+			{
+				DepartmentId = department, LmsLessonId = _lesson.LmsLessonId, UserId = UserA, FileName = name, ContentType = "image/png", SizeBytes = 4, Data = new byte[] { 9, 8, 7, 6 }, UploadedOn = now
+			};
+			var first = await files.InsertAsync(NewFile(_department, "one.png"), default, true);
+			var second = await files.InsertAsync(NewFile(_department, "two.png"), default, true);
+			var foreign = await files.InsertAsync(NewFile(_otherDepartment, "theirs.png"), default, true);
+
+			var rows = await files.GetMetadataByIdsAsync(_department, new[] { first.LmsLessonFileId, second.LmsLessonFileId, foreign.LmsLessonFileId, first.LmsLessonFileId, 0 });
+
+			rows.Select(r => r.LmsLessonFileId).Should().BeEquivalentTo(new[] { first.LmsLessonFileId, second.LmsLessonFileId });
+			rows.Should().OnlyContain(r => r.Data == null, "the bytes stay in the table");
+			var one = rows.Single(r => r.LmsLessonFileId == first.LmsLessonFileId);
+			one.FileName.Should().Be("one.png");
+			one.ContentType.Should().Be("image/png");
+			one.SizeBytes.Should().Be(4);
+			one.UserId.Should().Be(UserA);
+			one.LmsLessonId.Should().Be(_lesson.LmsLessonId);
+			one.DepartmentId.Should().Be(_department);
+			one.UploadedOn.Should().BeCloseTo(now, TimeSpan.FromSeconds(1));
+
+			(await files.GetMetadataByIdsAsync(_department, Array.Empty<int>())).Should().BeEmpty();
+			(await files.GetMetadataByIdsAsync(_department, null)).Should().BeEmpty();
+			(await files.GetMetadataByIdsAsync(0, new[] { first.LmsLessonFileId })).Should().BeEmpty();
+			(await files.GetMetadataByIdsAsync(_otherDepartment, new[] { first.LmsLessonFileId, foreign.LmsLessonFileId })).Should().ContainSingle().Which.FileName.Should().Be("theirs.png");
+
+			// The other department's row points at this department's lesson only to prove the department filter; remove it so the department
+			// cleanup test below is not blocked by the lesson foreign key.
+			await using var database = Connect(_connection);
+			await database.ExecuteAsync($"DELETE FROM {T("LmsLessonFiles")} WHERE {T("LmsLessonFileId")} = @Id", new { Id = foreign.LmsLessonFileId });
 		}
 
 		[Test, Order(6)]

@@ -599,5 +599,123 @@ namespace Resgrid.Tests.Protocols
 		}
 
 		#endregion Bulletins
+
+		#region Workflow events (round 7C, triggers 235 and 251-253)
+
+		[Test]
+		public async Task Assignment_raises_one_assigned_event_per_new_row_and_a_repeat_raises_none()
+		{
+			var (protocol, version) = _h.Published(1, 101, dueDays: 14);
+
+			await _h.Service.OnVersionActivatedAsync(protocol, version, DateTime.UtcNow);
+			await _h.Service.AssignVersionAsync(protocol, version, DateTime.UtcNow);
+
+			_h.AcknowledgmentEvents.Should().HaveCount(2, "Alice and Bob were assigned once each; the second pass inserted nothing");
+			_h.AcknowledgmentEvents.Select(e => e.UserId).Should().BeEquivalentTo(Alice, Bob);
+			_h.AcknowledgmentEvents.Should().OnlyContain(e => e.Trigger == WorkflowTriggerEventType.ProtocolAcknowledgmentAssigned && e.ProtocolId == 1 &&
+				e.ProtocolVersionId == 101 && e.ProtocolCode == "P1" && e.VersionLabel == "1.0" && e.AssignmentSource == "Publish" && e.DueOn.HasValue && e.AcknowledgmentId > 0);
+		}
+
+		[Test]
+		public async Task Signing_raises_completed_once_and_a_refused_or_repeated_signature_raises_nothing()
+		{
+			var (protocol, version) = _h.Published(1, 101);
+			await _h.Service.AssignVersionAsync(protocol, version, DateTime.UtcNow);
+			_h.AcknowledgmentEvents.Clear();
+
+			// Not opened yet: refused, no event.
+			(await _h.Service.AcknowledgeAsync(_h.Reader(Alice), 101, version.ContentHash, SignatureProof.SessionOnly(Alice), false)).Outcome
+				.Should().Be(ProtocolAcknowledgeOutcomes.NotOpened);
+			_h.AcknowledgmentEvents.Should().BeEmpty();
+
+			(await SignAsync(Alice, 101)).Outcome.Should().Be(ProtocolAcknowledgeOutcomes.Acknowledged);
+			(await SignAsync(Alice, 101)).Outcome.Should().Be(ProtocolAcknowledgeOutcomes.AlreadyAcknowledged);
+
+			_h.AcknowledgmentEvents.Should().ContainSingle();
+			var completed = _h.AcknowledgmentEvents.Single();
+			completed.Trigger.Should().Be(WorkflowTriggerEventType.ProtocolAcknowledgmentCompleted);
+			completed.UserId.Should().Be(Alice);
+			completed.CompletedOn.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task A_quiz_gated_signature_completes_only_when_the_quiz_is_passed_and_raises_completed_then()
+		{
+			var (protocol, version) = _h.Published(1, 101);
+			_h.Versions[101].QuizTrainingId = 77;
+			version.QuizTrainingId = 77;
+			await _h.Service.AssignVersionAsync(protocol, Copy(_h.Versions[101]), DateTime.UtcNow);
+			_h.AcknowledgmentEvents.Clear();
+
+			(await SignAsync(Bob, 101)).Outcome.Should().Be(ProtocolAcknowledgeOutcomes.AwaitingQuiz);
+			_h.AcknowledgmentEvents.Should().BeEmpty("signed but not complete");
+
+			_h.TrainingUsers.Add(new TrainingUser { TrainingId = 77, UserId = Bob, Complete = true, Passed = true });
+			(await _h.Service.CompleteIfQuizPassedAsync(DepartmentId, 101, Bob, DateTime.UtcNow)).Should().BeTrue();
+			(await _h.Service.CompleteIfQuizPassedAsync(DepartmentId, 101, Bob, DateTime.UtcNow)).Should().BeFalse();
+
+			_h.AcknowledgmentEvents.Should().ContainSingle(e => e.Trigger == WorkflowTriggerEventType.ProtocolAcknowledgmentCompleted && e.UserId == Bob && e.QuizRequired);
+		}
+
+		[Test]
+		public async Task Overdue_is_raised_once_per_row_at_the_first_claimed_stage_past_due_and_never_for_a_signed_one()
+		{
+			var (protocol, version) = _h.Published(1, 101, dueDays: 5);
+			await _h.Service.AssignVersionAsync(protocol, version, DateTime.UtcNow.AddDays(-20));
+			await SignAsync(Alice, 101);
+			_h.AcknowledgmentEvents.Clear();
+
+			await _h.Service.SendRemindersAsync(DateTime.UtcNow);
+			await _h.Service.SendRemindersAsync(DateTime.UtcNow);
+
+			_h.AcknowledgmentEvents.Should().ContainSingle();
+			var overdue = _h.AcknowledgmentEvents.Single();
+			overdue.Trigger.Should().Be(WorkflowTriggerEventType.ProtocolAcknowledgmentOverdue);
+			overdue.UserId.Should().Be(Bob);
+			overdue.ReminderStage.Should().Be("Escalated", "first seen 15 days past due");
+			overdue.DaysOverdue.Should().BeInRange(14, 15);
+		}
+
+		[Test]
+		public async Task Issuing_a_bulletin_raises_bulletin_issued_once_and_a_refused_issue_raises_nothing()
+		{
+			_h.Library.Setup(x => x.CreateAsync(It.IsAny<ProtocolCreateRequest>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((ProtocolCreateRequest request, CancellationToken _) =>
+				{
+					var protocol = request.Protocol;
+					protocol.DispatchProtocolId = 9;
+					protocol.DepartmentId = request.DepartmentId;
+					_h.Protocols[9] = Copy(protocol);
+					var version = new ProtocolVersion
+					{
+						ProtocolVersionId = 901, DepartmentId = request.DepartmentId, DispatchProtocolId = 9, Status = (int)ProtocolVersionStatuses.Draft,
+						ContentHtml = request.ContentHtml, ContentHash = ProtocolContentHash.Compute(request.ContentHtml), RequiresAcknowledgment = request.RequiresAcknowledgment ?? false
+					};
+					_h.Versions[901] = Copy(version);
+					return new ProtocolLifecycleResult { Protocol = protocol, Version = version };
+				});
+			var approver = _h.Reader(Officer);
+			approver.CanApprove = true;
+
+			(await _h.Service.IssueBulletinAsync(_h.Reader(Alice), new ProtocolBulletinRequest { Title = "x", ContentHtml = "y", ExpiresOnUtc = DateTime.UtcNow.AddDays(1) }))
+				.Error.Should().Be(ProtocolLifecycleErrors.NotAuthorized);
+			_h.ProtocolEvents.Should().BeEmpty();
+
+			(await _h.Service.IssueBulletinAsync(approver, new ProtocolBulletinRequest
+			{
+				Title = "Hydrant 42 out of service", ContentHtml = "Do not use hydrant 42.", ExpiresOnUtc = DateTime.UtcNow.AddDays(3), MustRead = false
+			})).Succeeded.Should().BeTrue();
+
+			_h.ProtocolEvents.Should().ContainSingle();
+			var issued = _h.ProtocolEvents.Single();
+			issued.Trigger.Should().Be(WorkflowTriggerEventType.ProtocolBulletinIssued);
+			issued.ProtocolId.Should().Be(9);
+			issued.ProtocolKind.Should().Be("Bulletin");
+			issued.ProtocolName.Should().Be("Hydrant 42 out of service");
+			issued.ExpiresOn.Should().NotBeNull();
+			issued.UserId.Should().Be(Officer);
+		}
+
+		#endregion Workflow events (round 7C, triggers 235 and 251-253)
 	}
 }

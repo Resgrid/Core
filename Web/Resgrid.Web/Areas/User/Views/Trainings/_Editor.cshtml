@@ -71,6 +71,10 @@
                     <div class="form-group">
                         <div class="checkbox"><label><input type="checkbox" name="OneQuestionPerPage" value="true" checked="@Model.OneQuestionPerPage" /> @localizer["OneQuestionPerPageLabel"]</label></div>
                         <input type="hidden" name="OneQuestionPerPage" value="false" />
+                        @* Round 9A: read and confirm (a handbook or policy review completes only on the member's confirmation, not on opening it). *@
+                        <div class="checkbox"><label><input type="checkbox" name="RequiresAcknowledgment" value="true" checked="@Model.RequiresAcknowledgment" aria-describedby="ack-help" /> @localizer["AckLabel"]</label></div>
+                        <input type="hidden" name="RequiresAcknowledgment" value="false" />
+                        <span class="help-block" id="ack-help">@localizer["AckHelp"]</span>
                     </div>
                 </div>
                 <p class="text-muted">@localizer["QuestionsHelpText"]</p>
@@ -178,6 +182,12 @@
                         <input id="RepeatMonths" name="RepeatMonths" type="number" min="1" max="120" class="form-control" value="@Model.RepeatMonths" />
                         <span class="help-block">@localizer["RepeatMonthsHelp"]</span>
                     </div>
+                </div>
+                @* Round 9A: the recommended path for a yearly required reading (an employee handbook, a code of conduct, a site safety rule). *@
+                <div class="rgw-next-action" role="note">
+                    <p class="m-b-xs"><strong><i class="fa fa-lightbulb-o" aria-hidden="true"></i> @localizer["HandbookHintTitle"]</strong></p>
+                    <p class="m-b-xs">@localizer["HandbookHintTraining"]</p>
+                    <p class="m-b-none">@localizer["HandbookHintProtocol"] <a asp-controller="Protocols" asp-action="New" asp-route-area="User" asp-route-kind="@((int)Resgrid.Model.ProtocolKinds.Policy)">@localizer["HandbookHintProtocolLink"]</a></p>
                 </div>
                 <div class="checkbox"><label><input type="checkbox" name="ClosedToNewAssignees" value="true" checked="@Model.ClosedToNewAssignees" /> @localizer["ClosedToNewAssigneesLabel"]</label></div>
                 <input type="hidden" name="ClosedToNewAssignees" value="false" />

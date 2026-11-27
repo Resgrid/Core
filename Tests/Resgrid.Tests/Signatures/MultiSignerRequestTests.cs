@@ -44,6 +44,7 @@ namespace Resgrid.Tests.Signatures
 		private List<SignatureRecord> _records;
 		private List<SignatureCapture> _captures;
 		private List<SignatureRequestEvent> _events;
+		private List<SignatureStepWorkflowEvent> _stepEvents;
 		private List<(List<string> Users, bool Reminder)> _stepNotices;
 		private List<(List<string> Users, int Status)> _closedNotices;
 		private List<MailMessage> _mail;
@@ -86,6 +87,7 @@ namespace Resgrid.Tests.Signatures
 			_records = new List<SignatureRecord>();
 			_captures = new List<SignatureCapture>();
 			_events = new List<SignatureRequestEvent>();
+			_stepEvents = new List<SignatureStepWorkflowEvent>();
 			_stepNotices = new List<(List<string>, bool)>();
 			_closedNotices = new List<(List<string>, int)>();
 			_mail = new List<MailMessage>();
@@ -170,6 +172,7 @@ namespace Resgrid.Tests.Signatures
 
 			var events = new Mock<IEventAggregator>();
 			events.Setup(x => x.SendMessage(It.IsAny<SignatureRequestEvent>())).Callback((SignatureRequestEvent e) => _events.Add(e));
+			events.Setup(x => x.SendMessage(It.IsAny<SignatureStepWorkflowEvent>())).Callback((SignatureStepWorkflowEvent e) => _stepEvents.Add(e));
 
 			_eligibility = new Mock<ISignerEligibilityService>();
 			_eligibility.Setup(x => x.IsEligibleAsync(Dept, It.IsAny<string>(), It.IsAny<SignerEligibility>())).ReturnsAsync((int d, string u, SignerEligibility e) => _eligible.Contains(u));
@@ -184,12 +187,12 @@ namespace Resgrid.Tests.Signatures
 			var profiles = new Mock<IUserProfileService>();
 			profiles.Setup(x => x.GetProfileByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync((string id, bool _) => new UserProfile { UserId = id, FirstName = "M", LastName = id.Substring(0, 4) });
 			var memberSignatures = new SignatureService(records.Object, Mock.Of<IProtocolVersionsRepository>(), Mock.Of<IPersonnelCertificationRepository>(), profiles.Object,
-				Mock.Of<IPersonnelRolesService>(), Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>());
+				Mock.Of<IPersonnelRolesService>(), Mock.Of<IEventAggregator>(), Mock.Of<IProtocolVersionFilesRepository>(), Resgrid.Tests.Security.StepUpTestPolicies.Strict());
 
 			_service = new SignatureRequestService(requests.Object, signers.Object, captures.Object, records.Object, Mock.Of<IESignWebhookEventsRepository>(),
 				new Mock<IRmsSignaturesRepository>(MockBehavior.Strict).Object, new[] { (ISignatureSubjectSource)_source }, _provider.Object, accounts.Object, _sealing.Object, pdf.Object,
 				encryption.Object, email.Object, Mock.Of<ITextMessageProvider>(), departments.Object, Mock.Of<IDepartmentSettingsService>(), Mock.Of<IBusinessOperationsAccessService>(),
-				_readiness.Object, Mock.Of<IIncidentBackOfficeAccessService>(), _lms.Object, Mock.Of<ICacheProvider>(), events.Object, memberSignatures, _eligibility.Object, notifications.Object);
+				_readiness.Object, Mock.Of<IIncidentBackOfficeAccessService>(), _lms.Object, Mock.Of<ICacheProvider>(), events.Object, memberSignatures, _eligibility.Object, notifications.Object, Mock.Of<IDepartmentDataProtectionService>(), new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()));
 		}
 
 		[TearDown]
@@ -241,6 +244,30 @@ namespace Resgrid.Tests.Signatures
 
 			(await SignAsync(id, Session(Chief))).Succeeded.Should().BeTrue();
 			_requests.Single().Status.Should().Be((int)SignatureRequestStatuses.Completed);
+		}
+
+		[Test]
+		public async Task Each_member_turn_raises_your_turn_once_and_an_outside_signer_never_does()
+		{
+			// Round 7C, workflow trigger 270.
+			var created = await CreateAsync(true, SignatureRequestChannels.InPerson, MemberStep(Officer, 1), MemberStep(Chief, 2),
+				ExternalStep("Acme Hydrant Co", 3));
+			var id = created.Request.SignatureRequestId;
+
+			_stepEvents.Should().ContainSingle().Which.UserId.Should().Be(Officer);
+			(await SignAsync(id, Session(Chief))).Refusal.Should().Be(SignatureRequestRefusals.NotYourTurn);
+			_stepEvents.Should().HaveCount(1, "a refused signature starts no turn");
+
+			(await SignAsync(id, Session(Officer))).Succeeded.Should().BeTrue();
+			_stepEvents.Should().HaveCount(2);
+			var chief = _stepEvents.Last();
+			chief.Trigger.Should().Be(WorkflowTriggerEventType.SignatureStepAssigned);
+			(chief.SignatureRequestId, chief.UserId, chief.StepOrder, chief.SignerRole, chief.RequestedByUserId).Should().Be((id, Chief, 2, "Member", Requester));
+
+			(await SignAsync(id, Session(Chief))).Succeeded.Should().BeTrue();
+			_stepEvents.Should().HaveCount(2, "the outside signer's turn raises nothing");
+			var json = JsonConvert.SerializeObject(_stepEvents);
+			json.Should().NotContain("Acme").And.NotContain("vendor@example.com").And.NotContain("555");
 		}
 
 		[Test]

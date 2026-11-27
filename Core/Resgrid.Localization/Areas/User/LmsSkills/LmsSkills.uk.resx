@@ -60,1115 +60,1486 @@
   </resheader>
   <data name="Skl.ActionFailed" xml:space="preserve">
     <value>Не вдалося виконати дію.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Actions" xml:space="preserve">
     <value>Дії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddEvidence" xml:space="preserve">
     <value>Додати доказ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddStep" xml:space="preserve">
     <value>Додати крок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddTask" xml:space="preserve">
     <value>Додати завдання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddTimedNote" xml:space="preserve">
     <value>Додати нотатку (час фіксується)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AddonNotice" xml:space="preserve">
     <value>Оцінювання навичок і книжки завдань потребують доповнення LMS. Усе записане залишається доступним для читання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AllSheets" xml:space="preserve">
     <value>Усі листи навичок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AllStates" xml:space="preserve">
     <value>Усі стани</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AllTaskBooks" xml:space="preserve">
     <value>Усі книжки завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Annotation" xml:space="preserve">
     <value>Примітка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Answer" xml:space="preserve">
     <value>Відповідь</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AnyEligible" xml:space="preserve">
     <value>Будь-який уповноважений учасник</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Attempt" xml:space="preserve">
     <value>Спроба</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.AwaitingCertification" xml:space="preserve">
     <value>Очікує на остаточного оцінювача та посадову особу, що сертифікує</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.BooksToEvaluate" xml:space="preserve">
     <value>Книжки завдань, у яких ви можете підписувати завдання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CancelReason" xml:space="preserve">
     <value>Причина скасування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CancelTaskBook" xml:space="preserve">
     <value>Скасувати книжку завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CancelTaskBookConfirm" xml:space="preserve">
     <value>Скасувати цю книжку завдань? Підписані завдання залишаться в записах.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CertificationRequested" xml:space="preserve">
     <value>Запит на сертифікацію надіслано. Першим підписує остаточний оцінювач.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CertifiedOn" xml:space="preserve">
     <value>Сертифіковано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CertifyingOfficial" xml:space="preserve">
     <value>Посадова особа, що сертифікує</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.ChangeSummary" xml:space="preserve">
     <value>Підсумок змін</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Choose" xml:space="preserve">
     <value>Виберіть...</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Date" xml:space="preserve">
     <value>Дата</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Evaluation" xml:space="preserve">
     <value>Оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Evaluator" xml:space="preserve">
     <value>Оцінювач</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Expires" xml:space="preserve">
     <value>Спливає</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Score" xml:space="preserve">
     <value>Бал</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Signer" xml:space="preserve">
     <value>Підписант</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Started" xml:space="preserve">
     <value>Розпочато</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Status" xml:space="preserve">
     <value>Стан</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Step" xml:space="preserve">
     <value>Крок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Col.Version" xml:space="preserve">
     <value>Версія</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Complete" xml:space="preserve">
     <value>Виконано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Average" xml:space="preserve">
     <value>Середнє</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Max" xml:space="preserve">
     <value>Найбільше</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Min" xml:space="preserve">
     <value>Найменше</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Compute.Sum" xml:space="preserve">
     <value>Сума</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.ComputedHelp" xml:space="preserve">
     <value>Обчислюється з указаних кроків</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Continue" xml:space="preserve">
     <value>Продовжити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CrewHelp" xml:space="preserve">
-    <value>Одна форма для всього екіпажу: усі отримують однаковий результат і запис. Виокремте учасника, якого слід оцінити інакше.</value>
+    <value>Одна форма для всієї команди: усі отримують однаковий результат і запис. Виокремте члена команди, якого слід оцінити інакше.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.CriticalFailedNotice" xml:space="preserve">
     <value>Критичний крок не виконано: оцінювання не зараховано незалежно від балу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Declined" xml:space="preserve">
     <value>Відхилено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Definition" xml:space="preserve">
     <value>Визначення книжки завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionCreated" xml:space="preserve">
     <value>Визначення створено. Укажіть, хто підписує та сертифікує, і збережіть.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionDeleted" xml:space="preserve">
     <value>Визначення видалено. Відкриті книжки зберігають свої завдання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionIntro" xml:space="preserve">
     <value>Код посади, завдання та хто підписує, рекомендує й сертифікує.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionsIntro" xml:space="preserve">
     <value>Ваші книжки завдань для посад і шаблони Resgrid для їх створення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DefinitionsTitle" xml:space="preserve">
     <value>Визначення книжок завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteDefinition" xml:space="preserve">
     <value>Видалити визначення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteDefinitionConfirm" xml:space="preserve">
     <value>Видалити це визначення? Відкриті книжки збережуть свої завдання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteSheet" xml:space="preserve">
     <value>Вивести лист навичок з ужитку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DeleteSheetConfirm" xml:space="preserve">
     <value>Вивести цей лист з ужитку? Його оцінювання залишаться в записах.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Daily" xml:space="preserve">
     <value>Щоденний дайджест</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Immediate" xml:space="preserve">
     <value>Негайно</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Off" xml:space="preserve">
     <value>Вимкнено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Digest.Weekly" xml:space="preserve">
     <value>Щотижневий дайджест</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DigestHour" xml:space="preserve">
     <value>Час дайджесту (час підрозділу)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DigestMode" xml:space="preserve">
     <value>Надсилання сповіщень</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DigestWeekday" xml:space="preserve">
     <value>День щотижневого дайджесту</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Draft" xml:space="preserve">
     <value>Чернетка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DraftNotReady" xml:space="preserve">
     <value>Чернетку ще не можна опублікувати:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DraftSaved" xml:space="preserve">
     <value>Чернетку збережено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.DraftSteps" xml:space="preserve">
     <value>Кроки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Edit" xml:space="preserve">
     <value>Редагувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EditorNeedsScript" xml:space="preserve">
     <value>Редактору кроків потрібен JavaScript.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Elapsed" xml:space="preserve">
     <value>Минуло</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Evaluate" xml:space="preserve">
     <value>Оцінити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationIntro" xml:space="preserve">
     <value>Результат, кожен крок, докази та підписи.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationStarted" xml:space="preserve">
     <value>Оцінювання розпочато. Таймер працює.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Evaluations" xml:space="preserve">
     <value>Оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationsIntro" xml:space="preserve">
     <value>Усі оцінювання підрозділу за листом і станом.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluationsTitle" xml:space="preserve">
     <value>Оцінювання навичок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvaluatorComments" xml:space="preserve">
     <value>Коментарі оцінювача</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Evidence" xml:space="preserve">
     <value>Докази</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceAdded" xml:space="preserve">
     <value>Доказ додано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceFile" xml:space="preserve">
     <value>Фото, відео або файл</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceHelp" xml:space="preserve">
     <value>До 30 МБ на файл. SHA-256 кожного файлу потрапляє до запечатаного запису.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceStep" xml:space="preserve">
     <value>Для кроку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.EvidenceStepHelp" xml:space="preserve">
     <value>Додайте фото, відео або файл нижче.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Fail" xml:space="preserve">
     <value>Не зараховано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family" xml:space="preserve">
     <value>Категорія</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.Custom" xml:space="preserve">
     <value>Власна</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.DriverOperator" xml:space="preserve">
     <value>Водій/оператор</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.FieldTraining" xml:space="preserve">
     <value>Польова підготовка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.NccpSkills" xml:space="preserve">
     <value>Перевірка навичок NCCP</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.Officer" xml:space="preserve">
     <value>Командир</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.OshaOperator" xml:space="preserve">
     <value>Оцінювання оператора за OSHA</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Family.Wildland" xml:space="preserve">
     <value>Лісові пожежі (NWCG)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.AllowCrew" xml:space="preserve">
-    <value>Дозволити оцінювання всього екіпажу (одна форма для кількох учасників)</value>
+    <value>Дозволити командне оцінювання (одна форма для кількох членів)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.AllowSelf" xml:space="preserve">
     <value>Дозволити самооцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.AttemptWindow" xml:space="preserve">
     <value>Період спроб (днів)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CallId" xml:space="preserve">
     <value>Номер виклику</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Category" xml:space="preserve">
     <value>Зарахована категорія навчання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CertificationType" xml:space="preserve">
     <value>Сертифікація, що активується</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CertificationTypeHelp" xml:space="preserve">
     <value>Відкриття книжки створює запис «Стажист» цього типу; сертифікація робить його активним.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CertificationTypes" xml:space="preserve">
     <value>Типи сертифікацій</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Code" xml:space="preserve">
     <value>Код навички</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.CodeHelp" xml:space="preserve">
     <value>Використовується як код курсу в журналі навчання та у вимогах «N зарахованих оцінювань».</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.DefaultMinutes" xml:space="preserve">
     <value>Хвилини, що зараховуються без вимірювання часу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.DeploymentId" xml:space="preserve">
     <value>Номер відрядження</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Description" xml:space="preserve">
     <value>Опис</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Evaluators" xml:space="preserve">
     <value>Хто може оцінювати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.EvaluatorsHelp" xml:space="preserve">
     <value>Учасники з чинною сертифікацією вибраного типу або вибраною роллю. Нічого не вибрано: лише менеджери LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Kind" xml:space="preserve">
     <value>Вид</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Location" xml:space="preserve">
     <value>Місце</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.MaxAttempts" xml:space="preserve">
     <value>Дозволені невдалі спроби (0 = без обмежень)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.NextSigner" xml:space="preserve">
     <value>Кого оцінювач може обрати наступним підписантом</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.NextSignerHelp" xml:space="preserve">
     <value>Якщо задано, оцінювач має обрати учасника, якого дозволяє це правило; він підписує після оцінювача.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.PassThreshold" xml:space="preserve">
     <value>Прохідний бал (%)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.RecertifyMonths" xml:space="preserve">
     <value>Повторне оцінювання через (місяців)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.RecertifyMonthsHelp" xml:space="preserve">
     <value>Строк дії сертифікованого запису (оператори OSHA: 36). 0 — власний строк дії типу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Roles" xml:space="preserve">
     <value>Ролі</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.TimeLimit" xml:space="preserve">
     <value>Ліміт часу (секунди, 0 = немає)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.Title" xml:space="preserve">
     <value>Назва</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Field.ValidityMonths" xml:space="preserve">
     <value>Дійсна (місяців)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Filter" xml:space="preserve">
     <value>Фільтрувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.FinalEvaluator" xml:space="preserve">
     <value>Остаточний оцінювач</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Grading" xml:space="preserve">
     <value>Правила оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.HomeIntro" xml:space="preserve">
     <value>Ваші оцінювання, підписи, що очікують, ваші результати та книжки завдань.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.HomeTitle" xml:space="preserve">
     <value>Навички та книжки завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.IncidentRequired" xml:space="preserve">
     <value>Це завдання зараховує лише оцінювання на виклику чи у відрядженні: введіть номер.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.IncidentTask" xml:space="preserve">
     <value>Завдання на виклику</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Initiate" xml:space="preserve">
     <value>Відкрити книжку завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.InitiatedOn" xml:space="preserve">
     <value>Відкрито</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Kind.ObservationReport" xml:space="preserve">
     <value>Щоденний звіт спостереження</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Kind.SkillSheet" xml:space="preserve">
     <value>Лист навичок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.LapsedNotice" xml:space="preserve">
     <value>Доповнення LMS неактивне: записи доступні, відкриті оцінювання та книжки можна завершити, але нові не розпочати.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MajorVersion" xml:space="preserve">
     <value>Основна версія (може знадобитися повторне оцінювання)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MemberSplit" xml:space="preserve">
     <value>Учасника виокремлено в окреме оцінювання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MembersHelp" xml:space="preserve">
-    <value>Виберіть одного учасника або кількох для оцінювання екіпажу, якщо лист це дозволяє.</value>
+    <value>Виберіть одного члена або кількох для командного оцінювання, якщо аркуш це дозволяє.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MembersToEvaluate" xml:space="preserve">
     <value>Учасники, яких оцінюють</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MoveDown" xml:space="preserve">
     <value>Вниз</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MoveUp" xml:space="preserve">
     <value>Вгору</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MyOpenEvaluations" xml:space="preserve">
     <value>Мої поточні оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MyResults" xml:space="preserve">
     <value>Мої результати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MySignatures" xml:space="preserve">
     <value>Оцінювання, що очікують мого підпису</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.MyTaskBooks" xml:space="preserve">
     <value>Мої книжки завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NeedsAnswer" xml:space="preserve">
     <value>Потрібна відповідь</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NewDefinition" xml:space="preserve">
     <value>Нове визначення книжки завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NewSheet" xml:space="preserve">
     <value>Новий лист навичок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NextSigner" xml:space="preserve">
     <value>Наступний підписант</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NextSignerHelp" xml:space="preserve">
     <value>Лист вимагає другого підпису учасника, якого дозволяє його правило.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoDefinitions" xml:space="preserve">
     <value>Визначень ще немає. Почніть із шаблону Resgrid.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoEvaluations" xml:space="preserve">
     <value>Немає відповідних оцінювань.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoOpenEvaluations" xml:space="preserve">
     <value>Ви не проводите оцінювань.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoResults" xml:space="preserve">
     <value>Вас ще не оцінювали.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSheet" xml:space="preserve">
     <value>Без листа (зараховано/не зараховано)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSheets" xml:space="preserve">
     <value>Листів навичок ще немає.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSheetsToEvaluate" xml:space="preserve">
     <value>Немає опублікованого листа, за яким ви можете оцінювати.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoSignatures" xml:space="preserve">
     <value>Жодне оцінювання не очікує вашого підпису.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NoTaskBooks" xml:space="preserve">
     <value>Немає книжок завдань.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.None" xml:space="preserve">
     <value>Немає</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotApplicable" xml:space="preserve">
     <value>Не застосовується</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotApplicableReason" xml:space="preserve">
     <value>Чому не застосовується</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotifyMembers" xml:space="preserve">
     <value>Сповіщати оцінюваних учасників і стажистів про їхні оцінювання та книжки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.NotifyOfficers" xml:space="preserve">
     <value>Сповіщати адміністраторів підрозділу про кожне оцінювання та книжку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Open" xml:space="preserve">
     <value>Відкрити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OpenSignature" xml:space="preserve">
     <value>Відкрити підпис</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OpenTaskBooks" xml:space="preserve">
     <value>Відкриті книжки завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluator" xml:space="preserve">
     <value>Натомість підписує зовнішній оцінювач</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorEmail" xml:space="preserve">
     <value>Ел. пошта (для посилання на підпис)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorHelp" xml:space="preserve">
     <value>Зовнішні оцінювачі підписують на рівні L4 особисто на цьому пристрої або за посиланням, поки доповнення LMS активне.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorName" xml:space="preserve">
     <value>Ім'я</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.OutsideEvaluatorRemote" xml:space="preserve">
     <value>Надіслати посилання на підпис замість підпису на цьому пристрої</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Pass" xml:space="preserve">
     <value>Зараховано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassAll" xml:space="preserve">
     <value>Зарахувати решту кроків</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassAt" xml:space="preserve">
     <value>зараховано від</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassFailReport" xml:space="preserve">
     <value>Звіт про зарахування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassRange" xml:space="preserve">
     <value>Зараховано від-до:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PassingRatingIs" xml:space="preserve">
     <value>Мінімальна оцінка:</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Position" xml:space="preserve">
     <value>Код посади</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Publish" xml:space="preserve">
     <value>Опублікувати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.PublishTitle" xml:space="preserve">
     <value>Опублікувати чернетку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Published" xml:space="preserve">
     <value>Версію опубліковано. Нові оцінювання її використовують.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RatingsReport" xml:space="preserve">
     <value>Оцінки за питаннями</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Remove" xml:space="preserve">
     <value>Вилучити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RequestCertification" xml:space="preserve">
     <value>Запросити сертифікацію</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RequestCertificationHelp" xml:space="preserve">
     <value>Усі завдання виконано. Остаточний оцінювач рекомендує, потім посадова особа сертифікує; обидва підписують на рівні L2.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Required" xml:space="preserve">
     <value>Потрібні оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Result.Failed" xml:space="preserve">
     <value>Не зараховано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Result.Passed" xml:space="preserve">
     <value>Зараховано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Role.Evaluator" xml:space="preserve">
     <value>Оцінювач</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Role.NextSigner" xml:space="preserve">
     <value>Наступний підписант</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.RunIntro" xml:space="preserve">
     <value>Оцініть кожен крок; примітки та докази потраплять до запечатаного запису.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Save" xml:space="preserve">
     <value>Зберегти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SaveDraft" xml:space="preserve">
     <value>Зберегти чернетку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Saved" xml:space="preserve">
     <value>Збережено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SealFailed" xml:space="preserve">
     <value>Оцінювання підписано, але запис не вдалося запечатати. Адміністратор може повторити спробу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SealPending" xml:space="preserve">
     <value>Підписано, очікує на запечатування: запечатаний запис ще недоступний.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SealedPdf" xml:space="preserve">
     <value>Запечатаний запис (PDF)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Seconds" xml:space="preserve">
     <value>секунд</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SettingsHelp" xml:space="preserve">
     <value>Щоденні й щотижневі дайджести об'єднують сповіщення в одне повідомлення на особу. Неактивні учасники сповіщень не отримують.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SettingsIntro" xml:space="preserve">
     <value>Як надсилаються сповіщення про оцінювання та книжки завдань.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SettingsTitle" xml:space="preserve">
     <value>Сповіщення про навички</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Sheet" xml:space="preserve">
     <value>Лист навичок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetCreated" xml:space="preserve">
     <value>Лист навичок створено. Налаштуйте кроки й опублікуйте.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetDeleted" xml:space="preserve">
     <value>Лист навичок виведено з ужитку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetDetails" xml:space="preserve">
     <value>Відомості про лист і підписантів</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetIntro" xml:space="preserve">
     <value>Упорядковані кроки, критичні критерії та оцінювання з версіями.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetsIntro" xml:space="preserve">
     <value>Листи навичок за вимогами до виконання та бібліотека шаблонів.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SheetsTitle" xml:space="preserve">
     <value>Листи навичок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Sign" xml:space="preserve">
     <value>Підписати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Signatures" xml:space="preserve">
     <value>Підписи</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Signed" xml:space="preserve">
     <value>Підписано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SignerRulesHelp" xml:space="preserve">
     <value>Учасник відповідає вимогам завдяки чинній сертифікації вибраного типу або вибраній ролі. Без правила завдання оцінюють менеджери LMS, а рекомендують і сертифікують адміністратори.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SplitConfirm" xml:space="preserve">
     <value>Виокремити цього учасника в окреме оцінювання? Наявні відповіді буде скопійовано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SplitOut" xml:space="preserve">
     <value>Виокремити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SplitTo" xml:space="preserve">
     <value>Оцінено окремо</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StartEvaluation" xml:space="preserve">
     <value>Розпочати оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StartIntro" xml:space="preserve">
     <value>Виберіть лист і кого оцінюєте. Таймер запуститься зараз.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.AwaitingSignature" xml:space="preserve">
     <value>Очікує підпису</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.Completed" xml:space="preserve">
     <value>Завершено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.InProgress" xml:space="preserve">
     <value>Триває</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.Open" xml:space="preserve">
     <value>Відкриті</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Status.Voided" xml:space="preserve">
     <value>Анульовано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.AllowNa" xml:space="preserve">
     <value>Дозволити «не застосовується»</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Compute" xml:space="preserve">
     <value>Обчислення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.ComputeKeys" xml:space="preserve">
     <value>З кроків (ключі через кому)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Critical" xml:space="preserve">
     <value>Критичний</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.EvidenceOnFail" xml:space="preserve">
     <value>Доказ у разі незарахування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Help" xml:space="preserve">
     <value>Вказівки для оцінювача</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Key" xml:space="preserve">
     <value>Ключ</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Label" xml:space="preserve">
     <value>Крок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Max" xml:space="preserve">
     <value>Найбільше прийнятне значення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Min" xml:space="preserve">
     <value>Найменше прийнятне значення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.NoteOnFail" xml:space="preserve">
     <value>Нотатка в разі незарахування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Options" xml:space="preserve">
     <value>Варіанти</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.OptionsHelp" xml:space="preserve">
     <value>Один на рядок: Назва | бали | fail (остання частина лише для варіанта, що не зараховує крок).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.PassingRating" xml:space="preserve">
     <value>Найнижча прохідна оцінка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Rating" xml:space="preserve">
     <value>Шкала</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Required" xml:space="preserve">
     <value>Відповідь обов'язкова</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Type" xml:space="preserve">
     <value>Тип питання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Step.Weight" xml:space="preserve">
     <value>Вага</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.ChooseAny" xml:space="preserve">
     <value>Кілька варіантів</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.ChooseOne" xml:space="preserve">
     <value>Один варіант</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Computed" xml:space="preserve">
     <value>Обчислене значення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Date" xml:space="preserve">
     <value>Дата</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.DateTime" xml:space="preserve">
     <value>Дата й час</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Duration" xml:space="preserve">
     <value>Тривалість (вимірювана)</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Evidence" xml:space="preserve">
     <value>Фото, відео або файл</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Heading" xml:space="preserve">
     <value>Заголовок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Instructions" xml:space="preserve">
     <value>Інструкції</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Number" xml:space="preserve">
     <value>Число</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.PassFail" xml:space="preserve">
     <value>Зараховано / не зараховано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.RatingScale" xml:space="preserve">
     <value>Шкала оцінок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Text" xml:space="preserve">
     <value>Текст</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.Time" xml:space="preserve">
     <value>Час</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StepType.TimestampedNotes" xml:space="preserve">
     <value>Нотатки з позначкою часу</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Steps" xml:space="preserve">
     <value>Кроки</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.StripLabel" xml:space="preserve">
     <value>Розділи навичок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SubmitAndSign" xml:space="preserve">
     <value>Надіслати й підписати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SubmitConfirm" xml:space="preserve">
     <value>Надіслати оцінювання? Результат буде зафіксовано, і відкриється підпис.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.SubmitTitle" xml:space="preserve">
     <value>Надіслати</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Submitted" xml:space="preserve">
     <value>Оцінювання надіслано. Підпишіть його, щоб завершити.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Definitions" xml:space="preserve">
     <value>Визначення</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Evaluations" xml:space="preserve">
     <value>Оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Home" xml:space="preserve">
     <value>Огляд</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Settings" xml:space="preserve">
     <value>Налаштування</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.Sheets" xml:space="preserve">
     <value>Листи навичок</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tab.TaskBooks" xml:space="preserve">
     <value>Книжки завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Task" xml:space="preserve">
     <value>Завдання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookCancelled" xml:space="preserve">
     <value>Книжку завдань скасовано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookInitiated" xml:space="preserve">
     <value>Книжку завдань відкрито.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookIntro" xml:space="preserve">
     <value>Завдання з оцінюваннями, далі рекомендація остаточного оцінювача та сертифікація.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.AwaitingCertification" xml:space="preserve">
     <value>Очікує сертифікації</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Cancelled" xml:space="preserve">
     <value>Скасовано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Certified" xml:space="preserve">
     <value>Сертифіковано</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Expired" xml:space="preserve">
     <value>Сплив строк</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookStatus.Open" xml:space="preserve">
     <value>Відкрита</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookTemplates" xml:space="preserve">
     <value>Шаблони книжок завдань</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBookTemplatesIntro" xml:space="preserve">
     <value>Створено Resgrid: лише коди посад, номери та короткі назви завдань. Введіть текст кожного завдання з власного примірника й узгодьте з чинною редакцією.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBooksIntro" xml:space="preserve">
     <value>Книжки завдань посад: відкриваються з датою, підписуються завдання за завданням, потім сертифікуються.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskBooksTitle" xml:space="preserve">
     <value>Книжки завдань посад</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskEvaluators" xml:space="preserve">
     <value>Хто підписує завдання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TaskNumber" xml:space="preserve">
     <value>№</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Tasks" xml:space="preserve">
     <value>Завдання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TasksComplete" xml:space="preserve">
     <value>Виконані завдання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TemplateLibrary" xml:space="preserve">
     <value>Бібліотека шаблонів листів</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TemplateLibraryIntro" xml:space="preserve">
     <value>Відправні точки від Resgrid, лише структура. Перед використанням адаптуйте їх до свого обладнання й процедур.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.TimeExceededNotice" xml:space="preserve">
     <value>Ліміт часу перевищено: оцінювання не зараховано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Trainee" xml:space="preserve">
     <value>Стажист</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Upload" xml:space="preserve">
     <value>Завантажити</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.UseTemplate" xml:space="preserve">
     <value>Використати шаблон</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.ValidUntil" xml:space="preserve">
     <value>Дійсна до</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Approved" xml:space="preserve">
     <value>Схвалено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Draft" xml:space="preserve">
     <value>Чернетка</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.InReview" xml:space="preserve">
     <value>На розгляді</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Published" xml:space="preserve">
     <value>Чинна</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Retired" xml:space="preserve">
     <value>Виведено з ужитку</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VersionStatus.Superseded" xml:space="preserve">
     <value>Замінено</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Versions" xml:space="preserve">
     <value>Версії</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Void" xml:space="preserve">
     <value>Анулювати оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VoidConfirm" xml:space="preserve">
     <value>Анулювати це оцінювання? Його записи про навчання також буде анульовано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.VoidReason" xml:space="preserve">
     <value>Причина анулювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Voided" xml:space="preserve">
     <value>Оцінювання анульовано.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.Waiting" xml:space="preserve">
     <value>Очікує</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Skl.WholeEvaluation" xml:space="preserve">
     <value>Усе оцінювання</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_addon_required" xml:space="preserve">
     <value>Для цього потрібне доповнення LMS.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_answer_unknown_step" xml:space="preserve">
     <value>Відповідь не належить до цієї версії листа.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_attempts_exhausted" xml:space="preserve">
     <value>У цього учасника не залишилося спроб у цьому періоді.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_crew_not_allowed" xml:space="preserve">
     <value>Цей лист оцінює по одному учаснику.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evaluation_closed" xml:space="preserve">
     <value>Оцінювання вже не триває.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evaluation_not_found" xml:space="preserve">
     <value>Оцінювання не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_count" xml:space="preserve">
     <value>Це оцінювання вже має максимальну кількість файлів доказів.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_size" xml:space="preserve">
     <value>Виберіть файл до 30 МБ.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_step" xml:space="preserve">
     <value>Цього кроку немає в листі.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_evidence_type" xml:space="preserve">
     <value>Додайте фото, відео, PDF або текстовий файл.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_idempotency_key_required" xml:space="preserve">
     <value>Офлайн-надсилання потребує ключа черги вихідних.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_member_invalid" xml:space="preserve">
     <value>Виберіть активних учасників підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_members_required" xml:space="preserve">
     <value>Виберіть, кого оцінюють (до 50 учасників).</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_next_signer_not_allowed" xml:space="preserve">
     <value>Цей лист не передбачає наступного підписанта.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_next_signer_not_eligible" xml:space="preserve">
     <value>Наступним підписантом має бути інший активний учасник, дозволений правилом, не оцінювач і не оцінюваний.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_next_signer_required" xml:space="preserve">
     <value>Виберіть наступного підписанта, якого вимагає лист.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_allowed" xml:space="preserve">
     <value>Ви не можете цього зробити.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_eligible" xml:space="preserve">
     <value>Ви не є уповноваженим оцінювачем для цього листа чи книжки.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_evaluator" xml:space="preserve">
     <value>Лише оцінювач може змінити це оцінювання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_not_found" xml:space="preserve">
     <value>Не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_self_evaluation" xml:space="preserve">
     <value>Ви не можете оцінювати себе за цим листом чи книжкою.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_category_invalid" xml:space="preserve">
     <value>Виберіть категорію навчання підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_change_summary_required" xml:space="preserve">
     <value>Опишіть, що змінилося.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_kind_invalid" xml:space="preserve">
     <value>Виберіть лист навичок або щоденний звіт спостереження.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_no_draft" xml:space="preserve">
     <value>Немає чернетки для публікації.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_no_gradable_step" xml:space="preserve">
     <value>Додайте принаймні один крок, на який відповідає оцінювач.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_not_found" xml:space="preserve">
     <value>Лист навичок не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_not_published" xml:space="preserve">
     <value>Лист не має опублікованої версії.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_bounds" xml:space="preserve">
     <value>Найменше значення перевищує найбільше.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_compute" xml:space="preserve">
     <value>Обчислюваний крок має вказувати попередні кроки з числом, тривалістю чи шкалою.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_count" xml:space="preserve">
     <value>Лист має від 1 до 200 кроків.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_critical" xml:space="preserve">
     <value>Критичними можуть бути лише кроки з балами.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_key" xml:space="preserve">
     <value>Кожен крок потребує унікального ключа.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_label" xml:space="preserve">
     <value>Кожен крок потребує назви до 300 символів.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_options" xml:space="preserve">
     <value>Кроки з вибором потребують від 2 до 30 різних варіантів.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_rating" xml:space="preserve">
     <value>Шкала потребує найнижчої й найвищої оцінки та прохідної між ними.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_type" xml:space="preserve">
     <value>Виберіть тип питання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_step_weight" xml:space="preserve">
     <value>Вага від 0 до 1000; критичний крок потребує ваги понад 0.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_sheet_title_required" xml:space="preserve">
     <value>Введіть назву.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_signature_refused" xml:space="preserve">
     <value>Не вдалося створити запит на підпис; оцінювання триває.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_split_last_member" xml:space="preserve">
-    <value>Останнього учасника оцінювання екіпажу не можна виокремити.</value>
+    <value>Останнього члена командного оцінювання не можна виокремити.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_split_not_crew" xml:space="preserve">
-    <value>Виокремити учасника можна лише з оцінювання екіпажу.</value>
+    <value>Виокремити члена можна лише з командного оцінювання.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_stale" xml:space="preserve">
     <value>Хтось інший тим часом змінив це. Оновіть і спробуйте знову.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_evidence_required" xml:space="preserve">
     <value>Незарахований крок потребує доказу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_invalid" xml:space="preserve">
     <value>Відповідь недійсна для свого кроку.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_not_applicable" xml:space="preserve">
     <value>«Не застосовується» потребує причини й не дозволене для критичних кроків.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_note_required" xml:space="preserve">
     <value>Незарахований крок потребує примітки.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_required" xml:space="preserve">
     <value>Дайте відповідь на всі обов'язкові кроки перед надсиланням.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_step_too_long" xml:space="preserve">
     <value>Відповідь або примітка задовга.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_template_not_found" xml:space="preserve">
     <value>Шаблон не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_skill_void_reason_required" xml:space="preserve">
     <value>Введіть причину.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_already_open" xml:space="preserve">
     <value>Цей учасник уже має відкриту книжку цього визначення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_certification_type_invalid" xml:space="preserve">
     <value>Виберіть тип персональної сертифікації підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_certifying_official_not_eligible" xml:space="preserve">
     <value>Посадова особа не відповідає правилу визначення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_certifying_official_required" xml:space="preserve">
     <value>Виберіть посадову особу, що сертифікує.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_code_required" xml:space="preserve">
     <value>Введіть код посади.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_date_invalid" xml:space="preserve">
     <value>Дата відкриття має бути в межах строку дії й не в майбутньому.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_expired" xml:space="preserve">
     <value>Строк дії книжки завдань минув.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_family_invalid" xml:space="preserve">
     <value>Виберіть категорію.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_final_evaluator_not_eligible" xml:space="preserve">
     <value>Остаточний оцінювач не відповідає правилу визначення.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_final_evaluator_required" xml:space="preserve">
     <value>Виберіть остаточного оцінювача.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_member_mismatch" xml:space="preserve">
     <value>Завдання книжки оцінює лише її стажиста.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_name_required" xml:space="preserve">
     <value>Введіть назву посади.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_not_found" xml:space="preserve">
     <value>Книжку завдань не знайдено.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_not_open" xml:space="preserve">
     <value>Книжка завдань не відкрита.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_sheet_invalid" xml:space="preserve">
     <value>Завдання вказує неіснуючий лист навичок.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_signers_invalid" xml:space="preserve">
     <value>Стажист, остаточний оцінювач і посадова особа мають бути трьома різними учасниками.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_count" xml:space="preserve">
     <value>Книжка має від 1 до 200 завдань.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_invalid" xml:space="preserve">
     <value>Кожне завдання потребує назви та від 1 до 50 оцінювань.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_key" xml:space="preserve">
     <value>Кожне завдання потребує унікального ключа.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_task_not_found" xml:space="preserve">
     <value>Цього завдання немає в книжці.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="lms_task_book_tasks_incomplete" xml:space="preserve">
     <value>Перед сертифікацією всі завдання мають бути виконані.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

@@ -12,7 +12,7 @@ using Resgrid.Repositories.DataRepository.Configs;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	/// <summary>Protocol version translations (P3, M0380). Header reads never select ContentJson or ContentHtml.</summary>
+	/// <summary>Protocol version translations (P3, M0362). Header reads never select ContentJson or ContentHtml.</summary>
 	public class ProtocolVersionTranslationsRepository : RmsRepositoryBase<ProtocolVersionTranslation>, IProtocolVersionTranslationsRepository
 	{
 		private static readonly string[] HeaderColumns =

@@ -46,9 +46,12 @@ namespace Resgrid.Tests.Services
 		public void Catalog_27_keeps_only_internal_fields_and_binds_no_customer_facing_table()
 		{
 			var catalog = new ProtectedFieldCatalog();
-			catalog.Version.Should().Be(38, "Phase D rides 26, the completion pass 27, Phase E 28, the Protected Workflows subject identifiers 29 " +
+			catalog.Version.Should().Be(39, "Phase D rides 26, the completion pass 27, Phase E 28, the Protected Workflows subject identifiers 29 " +
 				"(nothing on 26-29 is deployed yet), Admin Assist findings and dispatch traces 30, shared AI generations 31, Admin Assist " +
-				"diagnostic runs 32, Admin Assist change plans 33 (registry §4G, §4I), the Incident Back Office 34-36 (registry §4C), member wellness WL0 37 and WL1 38");
+				"diagnostic runs 32, Admin Assist change plans 33 (registry §4G, §4I), the Incident Back Office 34-36 (registry §4C), member wellness WL0 37 and WL1 38, " +
+				"and the Protocols + Training/LMS copies of protected values 39 (round 8)");
+			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 39).Select(f => f.FieldId).Should().BeEquivalentTo(
+				Resgrid.Model.ContentProtectedFields.All().Select(f => f.Table.ToLowerInvariant() + "." + f.Column.ToLowerInvariant()));
 			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 38).Select(f => f.FieldId).Should().BeEquivalentTo(
 				Resgrid.Model.MemberHealthProtectedFields.All().Select(f => f.Table.ToLowerInvariant() + "." + f.Column.ToLowerInvariant()));
 			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 37).Select(f => f.FieldId).Should().BeEquivalentTo(

@@ -409,7 +409,13 @@ namespace Resgrid.Tests.Services
 				"RmsResponderExposures", "RmsResponderScreeningFlags",
 				// Member wellness WL1, catalog v38: read through the generic Records resolver with MemberHealthProtectedFields accessors
 				// (MemberHealthService.RevealAsync); a sealed value the caller cannot reveal shows as REDACTED.
-				"RmsExposureIncidents", "RmsMemberInjuries", "RmsMedicalClearances"
+				"RmsExposureIncidents", "RmsMemberInjuries", "RmsMedicalClearances",
+				// Protocols + Training/LMS under ADP, catalog v39: a call's protocols ride ResolveForReadAsync(call) and
+				// CallProtocolProtection.ResolveAsync; the Records-owned signature names are shown through
+				// SignatureRequestSigner.ExternalNameForDisplay (REDACTED without a grant) and never decrypted by the unattended evidence.
+				"CallProtocols", "SignatureRequestSigners", "SignatureRecords", "SignatureCaptures",
+				// Step-through notes (M0403, catalog v39): read with ContentProtectedFields.StepNotes in ProtocolStepThroughService.RevealNotesAsync.
+				"CallProtocolStepNotes"
 			};
 			// Incident Back Office, catalogs v34-v36: read through IncidentProtectionSeam with the generated
 			// IncidentBackOfficeProtectedFields accessor map of each table (IIncidentLedgerService<T>.GetAsync with reveal).

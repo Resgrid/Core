@@ -1,0 +1,10 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@* The portal is off, the LMS is dark, or the add-on is not working (lapse rule 7: external learners are suspended). *@
+@{
+    ViewData["Title"] = localizer["Portal.Title"].Value;
+    ViewData["PortalKey"] = null;
+}
+<div class="rgl-panel" style="max-width: 560px; margin: 0 auto;">
+    <h2><i class="fa fa-pause-circle" aria-hidden="true"></i> @localizer["Portal.Title"]</h2>
+    <p>@localizer["Portal.Unavailable"]</p>
+</div>

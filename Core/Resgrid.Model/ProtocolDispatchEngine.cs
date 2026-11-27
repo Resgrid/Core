@@ -27,7 +27,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>
-	/// An Enhanced AI protocol suggestion for a call (Protocols P4, M0400): the protocol the model picked from the intake transcript or SMS
+	/// An Enhanced AI protocol suggestion for a call (Protocols P4, M0377): the protocol the model picked from the intake transcript or SMS
 	/// thread and the case answers it prefilled. The dispatcher confirms it on the case flow; only then is it attached, and the call
 	/// records Source = AI with this row's id. Operational data (protocol content and call answers are not ADP, plan §4).
 	/// </summary>
@@ -138,7 +138,11 @@ namespace Resgrid.Model
 		NoMatch = 6,
 		/// <summary>Inference timed out or is down.</summary>
 		Unavailable = 7,
-		NotFound = 8
+		NotFound = 8,
+		/// <summary>Round 7A: the department's monthly Enhanced AI budget is used up; no model call (the dispatcher picks by hand).</summary>
+		BudgetExhausted = 9,
+		/// <summary>Round 7A: the shared inference slots stayed busy; no model call.</summary>
+		Busy = 10
 	}
 
 	/// <summary>The result of asking for an AI suggestion: the stored suggestion, or why there is none.</summary>
@@ -170,6 +174,11 @@ namespace Resgrid.Model
 		public decimal Confidence { get; set; }
 		public string Rationale { get; set; }
 		public string ModelRevision { get; set; }
+
+		/// <summary>Tokens the model call used (round 7A: charged to the department's Enhanced AI budget); 0 when nothing was sent.</summary>
+		public int InputTokens { get; set; }
+
+		public int OutputTokens { get; set; }
 	}
 
 	/// <summary>

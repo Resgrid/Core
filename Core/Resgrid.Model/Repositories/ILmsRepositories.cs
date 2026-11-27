@@ -6,7 +6,7 @@ using Resgrid.Model.Lms;
 
 namespace Resgrid.Model.Repositories
 {
-	// LMS courses and assessments (Training T2, M0359/M0360). Reads begin at the department; a read that may also return
+	// LMS courses and assessments (Training T2, M0349/M0350). Reads begin at the department; a read that may also return
 	// system-published content (DepartmentId 0, the Academy) says so. Baseline repositories never reference these (§17.3).
 
 	public interface ILmsCoursesRepository : IRepository<LmsCourse>
@@ -178,6 +178,9 @@ namespace Resgrid.Model.Repositories
 	public interface ILmsLessonFilesRepository : IRepository<LmsLessonFile>
 	{
 		Task<LmsLessonFile> GetByIdForDepartmentAsync(int departmentId, int lmsLessonFileId);
+
+		/// <summary>Round 10 (Omni): the department's files with these ids, metadata only (Data is never read: a list query).</summary>
+		Task<List<LmsLessonFile>> GetMetadataByIdsAsync(int departmentId, IEnumerable<int> lmsLessonFileIds);
 	}
 
 	public interface ILmsSurveyResponsesRepository : IRepository<LmsSurveyResponse>

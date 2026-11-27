@@ -1,0 +1,95 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsStandards
+@model LmsStandardsPackagesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsStandards.LmsStandards> localizer
+@*
+    Content packages (T5 item 3): SCORM 1.2 / 2004 and cmi5 zips are checked on upload (size, files, zip-slip, the manifest) and unpacked by
+    worker 98. A ready package is chosen in a Scorm or Cmi5 lesson of a course; removing one only hides it from new lessons.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Std.PackagesTitle"];
+    ViewData["Title"] = localizer["Std.PackagesTitle"].Value;
+    ViewData["Subtitle"] = localizer["Std.PackagesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (!Model.StoreConfigured)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["Std.StoreNotConfigured"]</div>
+    }
+    else if (Model.CanAuthor)
+    {
+        <form class="rgw-toolbar m-b-md" asp-controller="LmsStandards" asp-action="Upload" asp-route-area="User" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <label for="package-file">@localizer["Std.UploadLabel"]</label>
+            <input id="package-file" name="file" type="file" accept=".zip,application/zip" class="form-control" required />
+            <button type="submit" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Std.UploadButton"]</button>
+        </form>
+        <p class="help-block">@string.Format(localizer["Std.UploadHelp"].Value, Model.MaxUploadBytes / (1024 * 1024))</p>
+    }
+
+    @if (Model.Packages.Count == 0)
+    {
+        <p class="text-muted">@localizer["Std.NoPackages"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Std.Col.Title"]</th>
+                        <th>@localizer["Std.Col.Standard"]</th>
+                        <th>@localizer["Std.Col.Items"]</th>
+                        <th>@localizer["Std.Col.Status"]</th>
+                        <th>@localizer["Std.Col.Uploaded"]</th>
+                        <th class="rgw-row-actions">@localizer["Std.Col.Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var package in Model.Packages)
+                    {
+                        var manifest = LmsPackageManifest.Parse(package.ManifestJson);
+                        <tr>
+                            <td>@package.Title<span class="rgw-sub">@package.FileName</span></td>
+                            <td>@localizer["Std.Standard." + (LmsContentStandards)package.Standard]<span class="rgw-sub">@package.SchemaVersion</span></td>
+                            <td>@manifest.Items.Count<span class="rgw-sub">@string.Format(localizer["Std.FilesFormat"].Value, package.FileCount, Math.Round(package.ContentBytes / 1048576.0, 1))</span></td>
+                            <td>
+                                <span class="label @(package.Status == (int)LmsContentPackageStatuses.Ready ? "label-primary" : package.Status == (int)LmsContentPackageStatuses.Failed ? "label-danger" : "label-default")">@localizer["Std.PackageStatus." + (LmsContentPackageStatuses)package.Status]</span>
+                                @if (package.Status == (int)LmsContentPackageStatuses.Failed && !string.IsNullOrWhiteSpace(package.LastError))
+                                {
+                                    <span class="rgw-sub">@package.LastError</span>
+                                }
+                            </td>
+                            <td>@Model.When(package.CreatedOn)</td>
+                            <td class="rgw-row-actions">
+                                @if (Model.CanAuthor)
+                                {
+                                    <form asp-controller="LmsStandards" asp-action="DeletePackage" asp-route-area="User" method="post" class="inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@package.LmsContentPackageId" />
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Std.Remove"]</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    <p class="text-muted small m-t-md"><i class="fa fa-shield" aria-hidden="true"></i> @localizer["Std.SandboxNote"]</p>
+    @* Security review (2026-11-25, informational): SCORM and cmi5 results are reported by the package running in the learner's browser. *@
+    <div class="alert alert-info small" role="note"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Std.ClientReportedNote"]</div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

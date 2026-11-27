@@ -503,5 +503,11 @@
   <data name="ResumeGoBack" xml:space="preserve">
     <value>Go Back</value>
   </data>
+  <data name="StepUpUseReauthenticationLink" xml:space="preserve">
+    <value>Use your password or your organization's sign-in instead</value>
+  </data>
+  <data name="StepUpReauthenticateIntro" xml:space="preserve">
+    <value>For your security, confirm it is you to continue: enter your password, or sign in again with your organization's identity provider. This does not sign you out or extend your session.</value>
+  </data>
 </root>
 

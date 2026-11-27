@@ -115,4 +115,169 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>The partner/account code was saved for your department.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>That partner/account code is not valid or is no longer active.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Your department already has a partner/account code. Contact us if it needs to change.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value></data>
+  <data name="LmsTagline" xml:space="preserve"><value>Courses, formal training reports and verifiable certificates</value></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>Courses with lessons, question banks and quizzes</value></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>Hosted video lessons, 100 GB included per department</value></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>Formal ISO FSRS and NREMT NCCP training reports</value></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>Certificates with a verification code, QR and public verify page, on your own template</value></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>Seats only for the members you switch on; everyone keeps free Training</value></data>
+  <data name="LmsNote" xml:space="preserve"><value>Priced per 25-member pack, graduated: the first 4 packs at the full price, then cheaper. Billed monthly per department; no trial. Requires a paid Resgrid plan.</value></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>per {0}-member pack</value></data>
+  <data name="PackTierLine" xml:space="preserve"><value>Packs {0}–{1}: {2} per pack</value></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>Packs {0} and up: {1} per pack</value></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>The LMS is sold with a paid Resgrid plan. Choose a plan on the subscription page first.</value></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Each pack seats 25 members. Packs are priced in tiers: each pack is billed at the price of its own tier, so adding packs never makes earlier packs cheaper or dearer. Billed monthly; there is no trial and no annual term.</value></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Adding packs is charged at once, prorated to your billing date. Removing packs takes effect at the next billing date, and only down to the members who are LMS-enabled.</value></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Members who are not LMS-enabled keep the free Training module, their transcript and the Academy. Instructors, evaluators and officers need no seat.</value></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>Manage LMS seats on the personnel page</value></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>Packs added. The prorated charge for the rest of this billing period has been invoiced.</value></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>The pack decrease is scheduled for your next billing date. Your seats stay until then.</value></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>That would leave fewer seats than LMS-enabled members. Switch members off on the personnel page first.</value></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>The pack quantity could not be changed and nothing was charged. Please try again, or contact us.</value></data>
+  <data name="PacksHeading" xml:space="preserve"><value>Packs and seats</value></data>
+  <data name="PacksInForce" xml:space="preserve"><value>{0} packs: {1} seats, {2} in use</value></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>Next month's price: {0}</value></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Next month</value></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>From {0}: {1} packs.</value></data>
+  <data name="PacksLabel" xml:space="preserve"><value>Packs</value></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>Update packs</value></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>{0} packs ({1} seats): {2} a month.</value></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>{0} packs ({1} seats): {2} a month from now on. About {3} is charged now for the rest of this billing period.</value></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>{0} packs ({1} seats): {2} a month from {3}. Nothing is refunded and your seats stay until then.</value></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>This is the number of packs you have now.</value></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>At least {0} packs are needed for the members who are LMS-enabled. Switch some off on the personnel page first.</value></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>Choose between {0} and {1} packs.</value></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>The price could not be shown. Please try again.</value></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>LMS seat</value></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>LMS-enabled</value></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>This member can be trained through LMS courses and requirements.</value></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>Not LMS-enabled</value></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>This member keeps the free Training module, their transcript and the Academy.</value></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Not licensed</value></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>{0} of {1} seats in use</value></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>Enable LMS</value></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>Disable LMS</value></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>All {0} seats are in use. Packs to add: {1}.</value></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>Only active members can hold an LMS seat; deleted, disabled and hidden members cannot.</value></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Your department has no active LMS add-on, so no member can be LMS-enabled.</value></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>The LMS seat could not be changed. Please try again.</value></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>LMS seat updated.</value></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>Add a pack</value></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>LMS seats</value></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Group</value></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Enable group</value></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Disable group</value></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>{0} changed, {1} already set, {2} skipped because they are not active, {3} refused because no seats were left.</value></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>{0} seats belong to members who are no longer active and are not counted.</value></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>Manage packs</value></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>LMS packs and seats</value></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Your department has not bought the LMS add-on.</value></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>The LMS add-on has ended. Records, certificates and transcripts stay available and exportable.</value></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>A payment failed. The LMS keeps working until {0} while the payment is retried.</value></data>
+  <data name="EnhancedAiFeature7" xml:space="preserve">
+    <value>Protocol and training drafts, translations, flashcards and practice</value>
+  </data>
+  <data name="EnhancedAiFeature8" xml:space="preserve">
+    <value>Course drafts, tutor and course flashcards with the LMS add-on</value>
+  </data>
+  <data name="WorkforceProTitle" xml:space="preserve">
+    <value>Workforce Pro</value>
+  </data>
+  <data name="WorkforceProTagline" xml:space="preserve">
+    <value>Member wellness and workplace exposure records, for the members you choose</value>
+  </data>
+  <data name="WorkforceProFeature1" xml:space="preserve">
+    <value>Exposure log for carcinogens, bloodborne pathogens, hazardous substances and critical incidents, with entries suggested after a flagged call</value>
+  </data>
+  <data name="WorkforceProFeature2" xml:space="preserve">
+    <value>Exposure cases with a designated officer workflow and post-exposure follow-up</value>
+  </data>
+  <data name="WorkforceProFeature3" xml:space="preserve">
+    <value>Injuries with duty status, return to duty and injury log exports</value>
+  </data>
+  <data name="WorkforceProFeature4" xml:space="preserve">
+    <value>Medical clearances with restriction status, and wellness roles your organization names</value>
+  </data>
+  <data name="WorkforceProFeature5" xml:space="preserve">
+    <value>Seats only for the members you switch on; records stay readable if you stop</value>
+  </data>
+  <data name="WorkforceProNote" xml:space="preserve">
+    <value>Priced per 25-member pack, graduated: the first 4 packs at the full price, then cheaper. Billed monthly per department; no setup fee. Requires a paid Resgrid plan.</value>
+  </data>
+  <data name="WorkforceProRequiresPaidPlan" xml:space="preserve">
+    <value>Workforce Pro is sold with a paid Resgrid plan. Choose a plan on the subscription page first.</value>
+  </data>
+  <data name="WorkforceProBillingPacksNote" xml:space="preserve">
+    <value>Each pack seats 25 members. Packs are priced in tiers: each pack is billed at the price of its own tier, so adding packs never makes earlier packs cheaper or dearer. Billed monthly; there is no setup fee and no annual term.</value>
+  </data>
+  <data name="WorkforceProBillingSeatsNote" xml:space="preserve">
+    <value>Adding packs is charged at once, prorated to your billing date. Removing packs takes effect at the next billing date, and only down to the members who have Workforce Pro switched on.</value>
+  </data>
+  <data name="WorkforceProBillingFreeNote" xml:space="preserve">
+    <value>Seats are for the members whose records you keep; officers and managers acting on others need their permission, not a seat. If the add-on ends, existing records stay readable and exportable.</value>
+  </data>
+  <data name="WorkforceProManageSeats" xml:space="preserve">
+    <value>Manage Workforce Pro seats</value>
+  </data>
+  <data name="WorkforceProSeatsTitle" xml:space="preserve">
+    <value>Workforce Pro seats</value>
+  </data>
+  <data name="WorkforceProSeatsIntro" xml:space="preserve">
+    <value>Switch Workforce Pro on for the members whose wellness and workplace exposure records your organization keeps. Switching a member off never deletes a record: their records become read-only.</value>
+  </data>
+  <data name="WorkforceProSeatCounter" xml:space="preserve">
+    <value>{0} of {1} seats in use, {2} available</value>
+  </data>
+  <data name="WorkforceProSeatMember" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="WorkforceProSeatState" xml:space="preserve">
+    <value>Workforce Pro seat</value>
+  </data>
+  <data name="WorkforceProSeatOn" xml:space="preserve">
+    <value>On</value>
+  </data>
+  <data name="WorkforceProSeatOff" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="WorkforceProSeatNotLicensed" xml:space="preserve">
+    <value>On, not licensed</value>
+  </data>
+  <data name="WorkforceProSeatEnable" xml:space="preserve">
+    <value>Switch on</value>
+  </data>
+  <data name="WorkforceProSeatDisable" xml:space="preserve">
+    <value>Switch off</value>
+  </data>
+  <data name="WorkforceProSeatsFull" xml:space="preserve">
+    <value>All {0} seats are in use. Packs to add: {1}.</value>
+  </data>
+  <data name="WorkforceProSeatNotActive" xml:space="preserve">
+    <value>Only active members can hold a Workforce Pro seat; deleted, disabled and hidden members cannot.</value>
+  </data>
+  <data name="WorkforceProSeatAddonInactive" xml:space="preserve">
+    <value>Your organization has no active Workforce Pro add-on, so Workforce Pro cannot be switched on for anyone. Existing records stay read-only.</value>
+  </data>
+  <data name="WorkforceProSeatFailed" xml:space="preserve">
+    <value>The Workforce Pro seat could not be changed. Please try again.</value>
+  </data>
+  <data name="WorkforceProSeatSaved" xml:space="preserve">
+    <value>Workforce Pro seat updated.</value>
+  </data>
+  <data name="WorkforceProSeatDormant" xml:space="preserve">
+    <value>{0} seats belong to members who are no longer active and are not counted.</value>
+  </data>
+  <data name="WorkforceProAddPack" xml:space="preserve">
+    <value>Add a pack</value>
+  </data>
+  <data name="WorkforceProSeatsNotPurchased" xml:space="preserve">
+    <value>Your organization does not hold the Workforce Pro add-on right now. Existing wellness records stay readable; buy packs to add or change records.</value>
+  </data>
+  <data name="WorkforceProSeatsGrace" xml:space="preserve">
+    <value>A payment failed. Workforce Pro keeps working until {0} while the payment is retried.</value>
+  </data>
+  <data name="WorkforceProSeatsBilling" xml:space="preserve">
+    <value>Buy or change packs</value>
+  </data>
 </root>

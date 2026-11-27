@@ -34,6 +34,7 @@ namespace Resgrid.Tests.Dashboard
 		private Mock<IPersonnelRolesService> _roles;
 		private Mock<IDepartmentDataProtectionService> _protection;
 		private Mock<IDedicatedNumberAccessService> _dedicatedNumber;
+		private Mock<IWorkforceProAccessService> _workforcePro;
 
 		[SetUp]
 		public void SetUp()
@@ -53,6 +54,7 @@ namespace Resgrid.Tests.Dashboard
 			_roles = new Mock<IPersonnelRolesService>();
 			_protection = new Mock<IDepartmentDataProtectionService>();
 			_dedicatedNumber = new Mock<IDedicatedNumberAccessService>();
+			_workforcePro = new Mock<IWorkforceProAccessService>();
 
 			_settings.Setup(s => s.GetDepartmentModuleSettingsAsync(DepartmentId, It.IsAny<bool>())).ReturnsAsync(new DepartmentModuleSettings());
 			_roles.Setup(r => r.GetRolesForUserAsync(It.IsAny<string>(), DepartmentId)).ReturnsAsync(new List<PersonnelRole>());
@@ -60,7 +62,7 @@ namespace Resgrid.Tests.Dashboard
 
 		private DashboardEntitlementService Service() => new DashboardEntitlementService(_flags.Object, _settings.Object, _readiness.Object, _records.Object,
 			_business.Object, _ibo.Object, _ai.Object, _voice.Object, _aiDispatch.Object, _neris.Object, _recordsAuthorization.Object, _permissions.Object,
-			_roles.Object, _protection.Object, _dedicatedNumber.Object);
+			_roles.Object, _protection.Object, _dedicatedNumber.Object, _workforcePro.Object);
 
 		private static DashboardViewer Viewer(bool admin = false, params string[] policies) => new DashboardViewer
 		{
@@ -154,6 +156,21 @@ namespace Resgrid.Tests.Dashboard
 
 			held.OfferedAddons.Should().Contain(PlanAddonTypes.DedicatedNumber);
 			held.HeldAddons.Should().Contain(PlanAddonTypes.DedicatedNumber);
+		}
+
+		[Test]
+		public async Task Admin_completion_offers_Workforce_Pro_by_its_flag_and_reads_the_held_add_on()
+		{
+			var offered = await Service().CompleteViewerAsync(Viewer(admin: true));
+			offered.OfferedAddons.Should().NotContain(PlanAddonTypes.WorkforcePro, "Workforce.Pro is seeded off");
+			offered.HeldAddons.Should().NotContain(PlanAddonTypes.WorkforcePro);
+
+			_flags.Setup(f => f.IsEnabledAsync(FeatureFlagKeys.WorkforcePro, DepartmentId, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(true);
+			_workforcePro.Setup(d => d.HasActiveAddonAsync(DepartmentId)).ReturnsAsync(true);
+			var held = await Service().CompleteViewerAsync(Viewer(admin: true));
+
+			held.OfferedAddons.Should().Contain(PlanAddonTypes.WorkforcePro);
+			held.HeldAddons.Should().Contain(PlanAddonTypes.WorkforcePro);
 		}
 
 		[Test]

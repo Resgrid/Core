@@ -1,0 +1,115 @@
+{
+  "format": "resgrid-protocols",
+  "version": 2,
+  "exportedOn": "2026-11-25T00:00:00Z",
+  "set": {
+    "key": "industrial-hazard-starter",
+    "title": "Industrial hazard procedures starter set",
+    "description": "Four site emergency procedures written by Resgrid as a starting point for industrial and campus emergency response teams: chemical release and shelter in place, confined space rescue standby, lockout/tagout during an emergency, and hot work fire watch. Align them with your site's hazard assessments, permits and the occupational safety rules that apply to you.",
+    "publisher": "Resgrid",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "setVersion": "1.0"
+  },
+  "protocols": [
+    {
+      "code": "IND-101",
+      "name": "Chemical release and shelter in place",
+      "kind": "Procedure",
+      "tags": "hazmat,shelter in place,chemical release",
+      "description": "Protecting people on site when a hazardous chemical is released, inside or outside the facility.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "first", "title": "First actions", "items": [
+            { "key": "f1", "html": "<p>Move away from the release, upwind and uphill, and keep others away.</p>" },
+            { "key": "f2", "html": "<p>Raise the alarm and report the location, the product if known (label, placard, safety data sheet) and anyone hurt.</p>" },
+            { "key": "f3", "html": "<p>Only trained responders in the right protective equipment approach the release.</p>" }
+          ] },
+          { "type": "heading", "key": "sip", "text": "Shelter in place", "level": 2 },
+          { "type": "steps", "key": "shelter", "title": "When told to shelter in place", "items": [
+            { "key": "s1", "html": "<p>Go indoors to the designated shelter rooms; close doors and windows.</p>" },
+            { "key": "s2", "html": "<p>Shut down ventilation that brings in outside air.</p>" },
+            { "key": "s3", "html": "<p>Account for everyone and report missing people to the incident commander.</p>" },
+            { "key": "s4", "html": "<p>Stay until the all-clear, then ventilate the building.</p>" }
+          ] },
+          { "type": "warning", "key": "sds", "title": "Know the product", "html": "<p>Use the safety data sheet and your site's hazard information to choose protective equipment and decontamination.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "IND-102",
+      "name": "Confined space rescue standby",
+      "kind": "Procedure",
+      "tags": "confined space,rescue,permit",
+      "description": "The rescue team's duties while permit-required confined space entry is under way.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "before", "title": "Before entry", "items": [
+            { "key": "b1", "html": "<p>Review the entry permit, the space's hazards and the atmospheric readings.</p>" },
+            { "key": "b2", "html": "<p>Set up retrieval equipment and confirm the team can reach the space in the time the permit sets.</p>" },
+            { "key": "b3", "html": "<p>Agree communication signals with the attendant and the entrants.</p>" }
+          ] },
+          { "type": "steps", "key": "during", "title": "During entry", "items": [
+            { "key": "d1", "html": "<p>Stay ready and in contact with the attendant; do not take other work.</p>" },
+            { "key": "d2", "html": "<p>On an alarm, start non-entry rescue with the retrieval system first.</p>" },
+            { "key": "d3", "html": "<p>Enter only with atmospheric monitoring and the protection the hazard requires.</p>" }
+          ] },
+          { "type": "warning", "key": "attendant", "title": "Attendants do not enter", "html": "<p>The attendant never enters the space to rescue; they call the rescue team.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "IND-103",
+      "name": "Lockout/tagout during an emergency",
+      "kind": "Procedure",
+      "tags": "lockout,tagout,energy isolation",
+      "description": "Isolating energy when responders have to work on or near machinery during an emergency.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "isolate", "title": "Isolate", "items": [
+            { "key": "i1", "html": "<p>Find the machine's energy sources: electrical, hydraulic, pneumatic, mechanical, thermal and chemical.</p>" },
+            { "key": "i2", "html": "<p>With site maintenance where possible, shut down and isolate each source and apply locks and tags.</p>" },
+            { "key": "i3", "html": "<p>Release or block stored energy (springs, raised parts, pressure).</p>" },
+            { "key": "i4", "html": "<p>Try to start the machine to confirm it is isolated, then return the controls to off.</p>" }
+          ] },
+          { "type": "caution", "key": "handover", "title": "Hand back", "html": "<p>Record which locks responders applied and hand the isolation back to the site formally when the emergency ends.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "IND-104",
+      "name": "Hot work fire watch",
+      "kind": "Procedure",
+      "tags": "hot work,fire watch,permit",
+      "description": "The fire watch's duties during and after welding, cutting and other hot work.",
+      "requiresAcknowledgment": false,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "during", "title": "During the work", "items": [
+            { "key": "d1", "html": "<p>Check the hot work permit and that combustibles are moved away or covered.</p>" },
+            { "key": "d2", "html": "<p>Keep a suitable extinguisher at hand and know how to raise the alarm.</p>" },
+            { "key": "d3", "html": "<p>Watch for sparks and heat on both sides of walls, floors and ceilings.</p>" }
+          ] },
+          { "type": "steps", "key": "after", "title": "After the work", "items": [
+            { "key": "a1", "html": "<p>Stay for the period your site sets after the work ends and check the area again before leaving.</p>" }
+          ] }
+        ]
+      }
+    }
+  ]
+}

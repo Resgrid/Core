@@ -23,7 +23,23 @@ namespace Resgrid.Model
 
 		public string FileType { get; set; }
 
+		/// <summary>
+		/// The file's bytes. Never serialized (the offline Sync/Reference payload and its Redis copy carried them as base64) and
+		/// never loaded by a list: they stream from the one authorized download endpoint.
+		/// </summary>
+		[JsonIgnore]
 		public byte[] Data { get; set; }
+
+		/// <summary>The file's size in bytes, read by the metadata queries (DATALENGTH / octet_length) without loading the bytes.</summary>
+		[NotMapped]
+		public long? Size { get; set; }
+
+		/// <summary>
+		/// Lower-case hex SHA-256 of the bytes (M0363, P3 offline manifest). Filled by the database itself (backfill, and on the manifest read
+		/// for any row still without one), never by the ORM, so a list never loads the bytes to hash them.
+		/// </summary>
+		[NotMapped]
+		public string Sha256 { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]
@@ -43,6 +59,6 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Protocol" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Protocol", "Size", "Sha256" };
 	}
 }

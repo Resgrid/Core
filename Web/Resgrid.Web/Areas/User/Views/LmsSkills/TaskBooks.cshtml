@@ -1,0 +1,74 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsTaskBooksView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    Position task books (T4 item 3, NWCG model): the member's own books; for managers every book and "initiate" (a definition, a member and
+    the initiation date); for evaluators the open books whose tasks they may sign.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Skl.TaskBooksTitle"];
+    ViewData["Title"] = localizer["Skl.TaskBooksTitle"].Value;
+    ViewData["Subtitle"] = localizer["Skl.TaskBooksIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.IsManager && Model.CanAuthor && Model.Definitions.Count > 0)
+    {
+        <form class="rgw-toolbar m-b-md" asp-controller="LmsSkills" asp-action="Initiate" asp-route-area="User" method="post">
+            @Html.AntiForgeryToken()
+            <label class="sr-only" for="definitionId">@localizer["Skl.Definition"]</label>
+            <select id="definitionId" name="definitionId" class="form-control" required>
+                @foreach (var definition in Model.Definitions)
+                {
+                    <option value="@definition.LmsTaskBookDefinitionId">@definition.PositionCode - @definition.Name</option>
+                }
+            </select>
+            <label class="sr-only" for="userId">@localizer["Skl.Trainee"]</label>
+            <select id="userId" name="userId" class="form-control" required>
+                <option value="">@localizer["Skl.Trainee"]</option>
+                @foreach (var member in Model.Members)
+                {
+                    <option value="@member.Key">@member.Value</option>
+                }
+            </select>
+            <label class="sr-only" for="initiatedOn">@localizer["Skl.InitiatedOn"]</label>
+            <input id="initiatedOn" name="initiatedOn" type="date" class="form-control" value="@DateTime.UtcNow.ToString("yyyy-MM-dd")" title="@localizer["Skl.InitiatedOn"]" />
+            <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Skl.Initiate"]</button>
+        </form>
+    }
+    else if (Model.IsManager && Model.Definitions.Count == 0)
+    {
+        <div class="rgw-next-action m-b-md">
+            <p>@localizer["Skl.NoDefinitions"]</p>
+            <a class="btn btn-primary" asp-controller="LmsSkills" asp-action="Definitions" asp-route-area="User"><i class="fa fa-sitemap" aria-hidden="true"></i> @localizer["Skl.Tab.Definitions"]</a>
+        </div>
+    }
+
+    <h3>@localizer["Skl.MyTaskBooks"]</h3>
+    @if (Model.Mine.Count == 0)
+    {
+        <p class="text-muted">@localizer["Skl.NoTaskBooks"]</p>
+    }
+    else
+    {
+        @await Html.PartialAsync("_TaskBookTable", Model.Mine, new ViewDataDictionary(ViewData) { ["Page"] = Model })
+    }
+
+    @if (Model.All.Count > 0)
+    {
+        <h3>@(Model.IsManager ? localizer["Skl.AllTaskBooks"] : localizer["Skl.BooksToEvaluate"])</h3>
+        @await Html.PartialAsync("_TaskBookTable", Model.All, new ViewDataDictionary(ViewData) { ["Page"] = Model })
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

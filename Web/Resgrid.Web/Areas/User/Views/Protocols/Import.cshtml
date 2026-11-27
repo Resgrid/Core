@@ -1,0 +1,62 @@
+@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolImportModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* Import protocols from the open exchange format (JSON, "resgrid-protocols" version 1). Everything lands as a draft; nothing is published by an import. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ImportTab"];
+    ViewData["Title"] = localizer["ImportTab"].Value;
+    ViewData["Subtitle"] = localizer["ImportIntro"].Value;
+    ViewData["Section"] = "Import";
+    ViewData["CanCreate"] = true;
+    ViewData["IsManager"] = true;
+    var result = Model.Result;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (result != null)
+    {
+        if (!string.IsNullOrEmpty(result.Error))
+        {
+            <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["ImportError" + (result.Error == "unknown_format" ? "Format" : result.Error == "too_many" ? "TooMany" : result.Error == "not_authorized" ? "NotAuthorized" : "File")]</div>
+        }
+        else
+        {
+            <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @string.Format(localizer["ImportedMessage"].Value, result.Created)</div>
+        }
+        if (result.Skipped.Count > 0)
+        {
+            <div class="alert alert-warning" role="status">
+                <strong><i class="fa fa-exclamation-circle" aria-hidden="true"></i> @localizer["ImportSkippedHeader"]</strong>
+                <ul>@foreach (var s in result.Skipped) { <li>@s</li> }</ul>
+            </div>
+        }
+        if (result.Warnings.Count > 0)
+        {
+            <div class="alert alert-info" role="status">
+                <strong><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["ImportWarningsHeader"]</strong>
+                <ul>@foreach (var w in result.Warnings) { <li>@w</li> }</ul>
+            </div>
+        }
+    }
+    <div class="ibox">
+        <div class="ibox-content">
+            <p>@localizer["ImportHelp"]</p>
+            <form method="post" enctype="multipart/form-data" asp-controller="Protocols" asp-action="Import" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="control-label required" for="importFile">@localizer["ImportFileLabel"]</label>
+                    <input id="importFile" name="file" type="file" accept=".json,application/json" required />
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["ImportButton"]</button>
+                <a class="btn btn-default" asp-controller="Protocols" asp-action="Index" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["ProtocolsLabel"]</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

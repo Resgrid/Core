@@ -418,7 +418,7 @@ namespace Resgrid.Tests.Services
 			EnableConditions(Package(EnginePackageId, "Engine", engine));
 			_departmentSettingsService.Setup(x => x.GetDispatchResponseCodesAsync(DepartmentId, It.IsAny<bool>()))
 				.ReturnsAsync(new DispatchResponseCodesConfig { Codes = new List<DispatchResponseCode> { new DispatchResponseCode { Id = 4, Code = "C3", Name = "Lights and siren", Color = "#d9534f" } } });
-			_runCardsService.Setup(x => x.GetMatchingRunCardAsync(DepartmentId, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int?>())).ReturnsAsync(card);
+			_runCardsService.Setup(x => x.GetMatchingRunCardAsync(DepartmentId, It.IsAny<DispatchTriggerFacts>())).ReturnsAsync(card);
 
 			var result = await _service.GetRecommendationAsync(BuildRequest());
 			result.Units.Single().ResponseCode.Should().Be("C3");
@@ -552,7 +552,7 @@ namespace Resgrid.Tests.Services
 
 			result.MatchedRunCardId.Should().Be(5);
 			result.Decision.OutcomeNodeKey.Should().Be("ladder");
-			_runCardsService.Verify(x => x.GetMatchingRunCardAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+			_runCardsService.Verify(x => x.GetMatchingRunCardAsync(It.IsAny<int>(), It.IsAny<DispatchTriggerFacts>()), Times.Never);
 
 			card.DepartmentId = DepartmentId + 1;
 			(await _service.GetRecommendationAsync(request)).MatchedRunCardId.Should().BeNull();

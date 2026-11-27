@@ -1,0 +1,81 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsSkillEvaluationsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    Every evaluation of the department for LMS managers, filtered by sheet and state, with pass/fail tiles. The rating and pass/fail
+    reports (with scheduling and export) are in Programs → Reports.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Skl.EvaluationsTitle"];
+    ViewData["Title"] = localizer["Skl.EvaluationsTitle"].Value;
+    ViewData["Subtitle"] = localizer["Skl.EvaluationsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles m-b-md">
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@Model.Passed</span><span class="rgw-stat-label"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Skl.Result.Passed"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@Model.Failed</span><span class="rgw-stat-label"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Skl.Result.Failed"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@Model.Open</span><span class="rgw-stat-label"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Skl.Status.Open"]</span></div>
+        <a class="rgw-stat-tile" asp-controller="LmsPrograms" asp-action="Report" asp-route-area="User" asp-route-key="skill-pass-fail"><span class="rgw-stat-value"><i class="fa fa-table" aria-hidden="true"></i></span><span class="rgw-stat-label">@localizer["Skl.PassFailReport"]</span></a>
+        <a class="rgw-stat-tile" asp-controller="LmsPrograms" asp-action="Report" asp-route-area="User" asp-route-key="skill-ratings"><span class="rgw-stat-value"><i class="fa fa-bar-chart" aria-hidden="true"></i></span><span class="rgw-stat-label">@localizer["Skl.RatingsReport"]</span></a>
+    </div>
+
+    <form class="rgw-toolbar m-b-md" asp-controller="LmsSkills" asp-action="Evaluations" asp-route-area="User" method="get">
+        <label class="sr-only" for="sheetId">@localizer["Skl.Sheet"]</label>
+        <select id="sheetId" name="sheetId" class="form-control">
+            <option value="">@localizer["Skl.AllSheets"]</option>
+            @foreach (var sheet in Model.Sheets)
+            {
+                <option value="@sheet.LmsSkillSheetId" selected="@(Model.SheetId == sheet.LmsSkillSheetId)">@sheet.Title</option>
+            }
+        </select>
+        <label class="sr-only" for="status">@localizer["Skl.Col.Status"]</label>
+        <select id="status" name="status" class="form-control">
+            <option value="">@localizer["Skl.AllStates"]</option>
+            @foreach (LmsSkillEvaluationStatuses status in Enum.GetValues(typeof(LmsSkillEvaluationStatuses)))
+            {
+                <option value="@((int)status)" selected="@(Model.Status == (int)status)">@localizer["Skl.Status." + status]</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-white"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["Skl.Filter"]</button>
+    </form>
+
+    @if (Model.Evaluations.Count == 0)
+    {
+        <p class="text-muted">@localizer["Skl.NoEvaluations"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Skl.Col.Evaluation"]</th><th>@localizer["Skl.MembersToEvaluate"]</th><th>@localizer["Skl.Col.Evaluator"]</th><th>@localizer["Skl.Col.Date"]</th><th>@localizer["Skl.Col.Score"]</th><th>@localizer["Skl.Col.Status"]</th><th class="rgw-row-actions">@localizer["Skl.Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var evaluation in Model.Evaluations)
+                    {
+                        Model.Members.TryGetValue(evaluation.LmsSkillEvaluationId, out var members);
+                        var included = (members ?? new List<LmsSkillEvaluationMember>()).Where(m => m.IsIncluded).ToList();
+                        <tr>
+                            <td>@evaluation.Title<span class="rgw-sub">@evaluation.Code</span></td>
+                            <td>@string.Join(", ", included.Take(4).Select(m => Model.NameOf(m.UserId)))@(included.Count > 4 ? " +" + (included.Count - 4) : string.Empty)</td>
+                            <td>@(evaluation.ExternalEvaluatorName ?? Model.NameOf(evaluation.EvaluatorUserId))</td>
+                            <td>@Model.Date(evaluation.SubmittedOn ?? evaluation.StartedOn)</td>
+                            <td>@(evaluation.Score.HasValue ? evaluation.Score.Value.ToString("0.#") + "%" : string.Empty)</td>
+                            <td>@await Html.PartialAsync("_Status", evaluation)</td>
+                            <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsSkills" asp-action="Evaluation" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Skl.Open"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

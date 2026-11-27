@@ -1,0 +1,16 @@
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsRecommendedPanel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@* My Training's "Recommended" (K3), rendered by the LmsRecommendations view component: what to take next and why. *@
+<div class="ibox float-e-margins">
+    <div class="ibox-title">
+        <h5><i class="fa fa-lightbulb-o" aria-hidden="true"></i> @localizer["RecommendedHeader"]</h5>
+        @if (Model.CanSeeOthers)
+        {
+            <div class="ibox-tools"><a asp-controller="LmsRequirements" asp-action="Recommendations" asp-route-area="User"><i class="fa fa-users" aria-hidden="true"></i> @localizer["RecommendationsForMembersLink"]</a></div>
+        }
+    </div>
+    <div class="ibox-content">
+        @await Html.PartialAsync("~/Areas/User/Views/LmsRequirements/_RecommendationList.cshtml", Model.List)
+    </div>
+</div>

@@ -1,0 +1,82 @@
+{
+  "key": "hazmat-awareness-outline",
+  "revision": 1,
+  "kind": "course",
+  "title": "Hazardous materials awareness (outline)",
+  "code": "RG-HZA",
+  "summary": "An outline for an awareness-level hazardous materials course: recognize, isolate and deny entry, notify, and protect yourself. Fill each lesson with your department's procedures and reference material.",
+  "tags": "hazmat, awareness, outline, starter",
+  "hours": 1,
+  "license": "resgrid-starter",
+  "overview": "<p>This is an outline, not a complete course. It gives the structure and the plain-language points an awareness course usually covers. Add your department's procedures, your reference guide's instructions and your local contacts to every lesson. It does not reproduce any standard and does not certify anyone at any level.</p>",
+  "modules": [
+    {
+      "title": "Recognize",
+      "lessons": [
+        {
+          "title": "Clues that hazardous materials may be present",
+          "html": "<p>Hazardous materials are often found where you do not expect them. Learn to notice the clues.</p><ul><li>The location and occupancy: farms, factories, warehouses, labs, pools, rail lines and highways.</li><li>Containers, placards, labels and markings.</li><li>What your senses tell you: clouds, unusual smells, sounds and people becoming ill.</li></ul><p><em>Add your department's examples and photographs here.</em></p>"
+        },
+        {
+          "title": "Using your reference guide",
+          "html": "<p>Your department uses a reference guide to identify a material and find the first actions for it. Learn where it is kept, how it is organized and how to look up a material from what you can see from a safe distance.</p><p><em>Add your department's reference guide and how to use it.</em></p>"
+        }
+      ]
+    },
+    {
+      "title": "Isolate and deny entry",
+      "lessons": [
+        {
+          "title": "Keep people out",
+          "html": "<p>At the awareness level your job is to keep yourself and others away from the hazard until trained help arrives.</p><ul><li>Approach from upwind and uphill when you can.</li><li>Stay back, isolate the area and keep people from entering it.</li><li>Do not touch, walk through or taste anything, and do not try to stop the release.</li></ul><p><em>Add your department's isolation procedure and the distances your reference guide gives.</em></p>"
+        }
+      ]
+    },
+    {
+      "title": "Notify",
+      "lessons": [
+        {
+          "title": "Getting the right help",
+          "html": "<p>Tell your dispatcher and your officer what you see as early as possible: the location, what you can identify, the wind direction, and whether anyone is hurt or exposed.</p><p><em>Add your department's notification list: the hazardous materials team, mutual aid and the agencies your jurisdiction requires.</em></p>"
+        }
+      ]
+    },
+    {
+      "title": "Protect yourself",
+      "lessons": [
+        {
+          "title": "Exposure and decontamination",
+          "html": "<p>If you or someone else may have been exposed, stay away from others who were not, and follow your department's decontamination and reporting procedure.</p><ul><li>Report every possible exposure, even without symptoms.</li><li>Keep the people who may have been exposed together for assessment.</li></ul><p><em>Add your department's exposure reporting steps here.</em></p>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Awareness check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "At the awareness level, what is your main job at a release?",
+        "kind": "single",
+        "options": [ "Keep yourself and others away until trained help arrives", "Stop the release", "Collect a sample of the material" ],
+        "correct": 0,
+        "explanation": "At the awareness level you isolate the area and keep people out until trained help arrives."
+      },
+      {
+        "text": "When you can, approach a possible release from upwind and uphill.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 0,
+        "explanation": "Approaching from upwind and uphill keeps you away from vapours and run-off."
+      },
+      {
+        "text": "Which of these is a clue that hazardous materials may be present?",
+        "kind": "single",
+        "options": [ "Placards, labels or people becoming ill", "A clear sky", "A quiet street" ],
+        "correct": 0,
+        "explanation": "Containers, placards, labels and people becoming ill are all clues."
+      }
+    ]
+  }
+}

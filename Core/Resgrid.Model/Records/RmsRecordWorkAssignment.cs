@@ -35,6 +35,21 @@ namespace Resgrid.Model
 		public const string Acknowledge = "acknowledge";
 		public static readonly IReadOnlyList<string> All = new[] { Complete, Review, Correct, Attach, Acknowledge };
 		public static bool IsKnown(string purpose) => purpose != null && Array.IndexOf((string[])All, purpose.Trim().ToLowerInvariant()) >= 0;
+
+		/// <summary>
+		/// A member wellness screening follow-up (§13b WL0). Deliberately not in <see cref="All"/>: only the wellness service creates
+		/// it, and its RecordId names an <see cref="RmsResponderScreeningFlag"/>, not a Record, so every Record path (queue, record
+		/// list, acknowledge, complete) withholds it through the per-Record visibility check. The Note holds a
+		/// <see cref="ResponderFollowUpTaskKinds"/> code, never free text.
+		/// </summary>
+		public const string WellnessFollowUp = "wellness_follow_up";
+
+		/// <summary>
+		/// A post-exposure follow-up task of a BBP / infectious-disease exposure case (§13b WL1). Like <see cref="WellnessFollowUp"/>, not in
+		/// <see cref="All"/>: only the member health service creates it, its RecordId names an <see cref="RmsExposureIncident"/>, and its Note
+		/// holds an <see cref="ExposureCaseFollowUpKinds"/> code, never free text.
+		/// </summary>
+		public const string ExposureCaseFollowUp = "exposure_case_follow_up";
 	}
 
 	/// <summary>

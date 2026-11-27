@@ -42,6 +42,7 @@
                 nodeKind = n.NodeKind,
                 label = n.Label,
                 conditionType = n.ConditionType,
+                parametersJson = n.ParametersJson,
                 subjectStatusFilter = n.SubjectStatusFilter,
                 subjectStatusBaseTypes = n.SubjectStatusBaseTypes,
                 referenceStatusFilter = n.ReferenceStatusFilter,
@@ -625,11 +626,29 @@
             if (node.nodeKind === 2) {
                 html += '<div class="form-inline m-b-xs">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardOutcomePackageLabel"].Value)) <select class="form-control input-sm node-package">' + optionList(lookups.packages, node.responsePackageId, true, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardNoPackageOption"].Value))') + '</select></div>';
                 html += '<div>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardOutcomeAdviceLabel"].Value))<textarea class="form-control input-sm node-advice" maxlength="1000" rows="2">' + esc(node.adviceText) + '</textarea></div>';
+            } else if (node.conditionType === 3) {
+                // Protocols P4: a protocol determinant on the call (equals / starts with); no resources or times.
+                var parameters = {};
+                try { parameters = JSON.parse(node.parametersJson || '{}') || {}; } catch (e) { parameters = {}; }
+                html += '<div class="form-inline m-b-xs"><select class="form-control input-sm node-type">';
+                html += '<option value="1">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionArrivesBefore"].Value))</option>';
+                html += '<option value="2">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionAvailableWithin"].Value))</option>';
+                html += '<option value="3" selected>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionProtocolOutcome"].Value))</option></select></div>';
+                html += '<div class="form-inline m-b-xs"><label class="sr-only" for="det-match-' + esc(node.nodeKey) + '">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionProtocolOutcome"].Value))</label>' +
+                    '<select class="form-control input-sm node-det-match" id="det-match-' + esc(node.nodeKey) + '"><option value="0"' + (parameters.Match !== 1 ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardDeterminantEquals"].Value))</option>' +
+                    '<option value="1"' + (parameters.Match === 1 ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardDeterminantStartsWith"].Value))</option></select> ' +
+                    '<label class="sr-only" for="det-value-' + esc(node.nodeKey) + '">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardDeterminantValue"].Value))</label>' +
+                    '<input type="text" class="form-control input-sm node-det-value" id="det-value-' + esc(node.nodeKey) + '" maxlength="32" style="width: 140px" placeholder="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardDeterminantValue"].Value))" value="' + esc(parameters.Value || '') + '" /></div>';
+                html += '<div class="form-inline">';
+                html += '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionYesLabel"].Value)) <select class="form-control input-sm node-yes">' + nodeChoices(level, node.nodeKey, node.yesNodeKey) + '</select> ';
+                html += '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionNoLabel"].Value)) <select class="form-control input-sm node-no">' + nodeChoices(level, node.nodeKey, node.noNodeKey) + '</select>';
+                html += '</div>';
             } else {
                 var isBefore = node.conditionType !== 2;
                 html += '<div class="form-inline m-b-xs"><select class="form-control input-sm node-type">';
                 html += '<option value="1"' + (isBefore ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionArrivesBefore"].Value))</option>';
-                html += '<option value="2"' + (!isBefore ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionAvailableWithin"].Value))</option></select></div>';
+                html += '<option value="2"' + (!isBefore ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionAvailableWithin"].Value))</option>';
+                html += '<option value="3">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionProtocolOutcome"].Value))</option></select></div>';
                 html += '<div class="row m-b-xs"><div class="col-sm-6"><label>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionSubjectLabel"].Value))</label><select multiple class="form-control input-sm node-subject" size="5">' + targetOptions(node.subjectTargets) + '</select>' + statusFilterHtml('node-subject', node.subjectStatusFilter, node.subjectStatusBaseTypes) + '</div>';
                 if (isBefore) {
                     html += '<div class="col-sm-6"><label>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardConditionReferenceLabel"].Value))</label><select multiple class="form-control input-sm node-reference" size="5">' + targetOptions(node.referenceTargets) + '</select>' + statusFilterHtml('node-reference', node.referenceStatusFilter, node.referenceStatusBaseTypes) + '</div>';
@@ -704,6 +723,12 @@
         $('#alarmLevels').on('change', '.node-type', function () {
             nodeOf(this).conditionType = parseInt($(this).val(), 10);
             renderAlarmLevels();
+        });
+
+        // Protocols P4: a determinant condition's match and value.
+        $('#alarmLevels').on('change input', '.node-det-match, .node-det-value', function () {
+            var $node = $(this).closest('.decision-node');
+            nodeOf(this).parametersJson = JSON.stringify({ Match: parseInt($node.find('.node-det-match').val(), 10) || 0, Value: $node.find('.node-det-value').val() });
         });
 
         $('#alarmLevels').on('change', '.node-subject-filter, .node-reference-filter', function () {

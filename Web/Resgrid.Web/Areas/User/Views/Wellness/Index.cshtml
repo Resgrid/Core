@@ -1,0 +1,336 @@
+@using Microsoft.AspNetCore.Html
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model WellnessOverviewView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> localizer
+@*
+    A member's exposure and critical-incident log (member wellness WL0): "My exposures" for the member, or one member's log opened by a
+    wellness officer. Suggestions built after a flagged call wait for the member (or an officer) to confirm or dismiss them; nothing
+    counts until a person confirms it. Protected values show only to the member and the wellness officers.
+*@
+@{
+    var overview = Model.Overview ?? new MemberWellnessOverview();
+    var title = Model.IsSelf ? localizer["MyExposuresTitle"].Value : string.Format(localizer["MemberExposuresTitle"].Value, Model.MemberName);
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = Model.IsSelf ? "Mine" : "Report";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = Model.IsSelf ? localizer["MyExposuresIntro"].Value : localizer["MemberExposuresIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var routeUser = Model.IsSelf ? null : Model.MemberUserId;
+
+    Func<dynamic, IHtmlContent> headerActions = @<text>
+        <a class="btn btn-primary" asp-controller="Wellness" asp-action="New" asp-route-area="User" asp-route-userId="@routeUser">@localizer["LogExposureButton"]</a>
+        @if (Model.IsSelf)
+        {
+            <a class="btn btn-default" asp-controller="Wellness" asp-action="ExportPdf" asp-route-area="User">@localizer["ExportPdfButton"]</a>
+            <a class="btn btn-default" asp-controller="Wellness" asp-action="ExportCsv" asp-route-area="User">@localizer["ExportCsvButton"]</a>
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (overview.ProtectedWithheld)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ProtectedWithheldNotice"]</div>
+    }
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-list" aria-hidden="true"></i> @localizer["ConfirmedEntriesLabel"]</div>
+            <div class="rgw-stat-value">@overview.ConfirmedByCategory.Values.Sum()</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-heart" aria-hidden="true"></i> @localizer["CriticalIncidentsLabel"]</div>
+            <div class="rgw-stat-value">@overview.CriticalIncidentCount</div>
+        </div>
+        @foreach (var category in WellnessPresentation.Categories.Where(c => c != (int)ResponderExposureCategories.CriticalIncident))
+        {
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label"><i class="fa fa-tag" aria-hidden="true"></i> @localizer[WellnessPresentation.CategoryKey(category)]</div>
+                <div class="rgw-stat-value">@(overview.ConfirmedByCategory.TryGetValue(category, out var count) ? count : 0)</div>
+            </div>
+        }
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-inbox" aria-hidden="true"></i> @localizer["AwaitingReviewLabel"]</div>
+            <div class="rgw-stat-value">@overview.Suggestions.Count</div>
+        </div>
+    </div>
+
+    @if (overview.Suggestions.Count > 0)
+    {
+        <div class="ibox float-e-margins m-t-sm">
+            <div class="ibox-title"><h5><i class="fa fa-inbox" aria-hidden="true"></i> @localizer["SuggestionsHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["SuggestionsHelp"]</p>
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["DateColumn"]</th>
+                                <th>@localizer["CategoryColumn"]</th>
+                                <th>@localizer["CallColumn"]</th>
+                                <th class="text-right">@localizer["DurationColumn"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var suggestion in overview.Suggestions)
+                            {
+                                <tr>
+                                    <td class="text-nowrap">@WellnessPresentation.LocalDateTime(suggestion.OccurredOn, Model.Department)</td>
+                                    <td>
+                                        @localizer[WellnessPresentation.CategoryKey(suggestion.Category)]
+                                        @if (!string.IsNullOrWhiteSpace(suggestion.SuggestionBasis))
+                                        {
+                                            <small class="rgw-sub text-muted">@localizer["SuggestedFromLabel"]: @string.Join(", ", suggestion.SuggestionBasis.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(b => localizer[WellnessPresentation.BasisKey(b)].Value))</small>
+                                        }
+                                    </td>
+                                    <td>@Model.CallOf(suggestion.CallId)</td>
+                                    <td class="text-right">@WellnessPresentation.Duration(suggestion.DurationMinutes)</td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs btn-primary" asp-controller="Wellness" asp-action="Entry" asp-route-area="User" asp-route-id="@suggestion.RmsResponderExposureId"><i class="fa fa-check-square-o" aria-hidden="true"></i> @localizer["ReviewButton"]</a>
+                                        <form method="post" asp-controller="Wellness" asp-action="Dismiss" asp-route-area="User" asp-route-id="@suggestion.RmsResponderExposureId" class="wellness-inline-form">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-times" aria-hidden="true"></i> @localizer["DismissButton"]</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (overview.ScreeningFlag != null)
+    {
+        <div class="ibox float-e-margins m-t-sm">
+            <div class="ibox-title"><h5><i class="fa fa-stethoscope" aria-hidden="true"></i> @localizer["ScreeningHeader"]</h5></div>
+            <div class="ibox-content">
+                <p>@localizer[Model.IsSelf ? "ScreeningSelfText" : "ScreeningOfficerText"]</p>
+                @if (overview.ScreeningFlag.ReviewOn.HasValue)
+                {
+                    <p><strong>@localizer["ReviewOnLabel"]:</strong> @WellnessPresentation.LocalDate(overview.ScreeningFlag.ReviewOn, Model.Department)</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(overview.ScreeningFlag.PlanNotes))
+                {
+                    <p><strong>@localizer["PlanNotesLabel"]:</strong> @(WellnessPresentation.IsWithheld(overview.ScreeningFlag.PlanNotes) ? localizer["WithheldValue"].Value : overview.ScreeningFlag.PlanNotes)</p>
+                }
+                @if (overview.FollowUps.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["FollowUpColumn"]</th>
+                                    <th>@localizer["AssigneeColumn"]</th>
+                                    <th>@localizer["DueColumn"]</th>
+                                    <th>@localizer["StateColumn"]</th>
+                                    <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var task in overview.FollowUps)
+                                {
+                                    var mine = Model.IsOfficer || string.Equals(task.AssigneeUserId, Model.ViewerUserId, StringComparison.OrdinalIgnoreCase);
+                                    <tr class="@(task.IsOpen ? null : "text-muted")">
+                                        <td>@localizer[WellnessPresentation.FollowUpKindKey(task.Note)]</td>
+                                        <td>@Model.NameOf(task.AssigneeUserId)</td>
+                                        <td class="text-nowrap">@WellnessPresentation.LocalDate(task.DueOn, Model.Department)</td>
+                                        <td>@localizer[WellnessPresentation.FollowUpStateKey(task.State)]</td>
+                                        <td class="rgw-row-actions">
+                                            @if (task.IsOpen && mine)
+                                            {
+                                                <form method="post" asp-controller="Wellness" asp-action="CompleteFollowUp" asp-route-area="User" class="wellness-inline-form">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="assignmentId" value="@task.RmsRecordWorkAssignmentId" />
+                                                    <input type="hidden" name="userId" value="@Model.MemberUserId" />
+                                                    <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["CompleteButton"]</button>
+                                                </form>
+                                            }
+                                            @if (task.IsOpen && Model.IsOfficer)
+                                            {
+                                                <form method="post" asp-controller="Wellness" asp-action="CancelFollowUp" asp-route-area="User" class="wellness-inline-form">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="assignmentId" value="@task.RmsRecordWorkAssignmentId" />
+                                                    <input type="hidden" name="userId" value="@Model.MemberUserId" />
+                                                    <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["CancelButton"]</button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (!Model.IsSelf && Model.IsOfficer)
+    {
+        <div class="ibox float-e-margins m-t-sm">
+            <div class="ibox-title"><h5><i class="fa fa-stethoscope" aria-hidden="true"></i> @localizer["ScreeningManageHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["ScreeningManageHelp"]</p>
+                <form method="post" asp-controller="Wellness" asp-action="SetScreening" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="userId" value="@Model.MemberUserId" />
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="screening-category">@localizer["ScreeningCategoryLabel"]</label>
+                            <select id="screening-category" name="category" class="form-control">
+                                <option value="">@localizer["NoCategoryOption"]</option>
+                                @foreach (var category in WellnessPresentation.Categories)
+                                {
+                                    <option value="@category" selected="@(overview.ScreeningFlag?.Category == category)">@localizer[WellnessPresentation.CategoryKey(category)]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="screening-review">@localizer["ReviewOnLabel"]</label>
+                            <input id="screening-review" name="reviewOn" type="date" class="form-control" value="@(overview.ScreeningFlag?.ReviewOn?.ToString("yyyy-MM-dd"))" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="screening-plan">@localizer["PlanNotesLabel"]</label>
+                        <textarea id="screening-plan" name="planNotes" class="form-control" rows="3" maxlength="4000">@(overview.ScreeningFlag == null || WellnessPresentation.IsWithheld(overview.ScreeningFlag.PlanNotes) ? null : overview.ScreeningFlag.PlanNotes)</textarea>
+                        <small class="text-muted">@localizer["ProtectedFieldHelp"]</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save" aria-hidden="true"></i> @localizer[overview.ScreeningFlag == null ? "FlagForScreeningButton" : "SaveScreeningButton"]</button>
+                </form>
+                @if (overview.ScreeningFlag != null)
+                {
+                    <form method="post" asp-controller="Wellness" asp-action="ClearScreening" asp-route-area="User" class="m-t-sm">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@Model.MemberUserId" />
+                        <input type="hidden" name="flagId" value="@overview.ScreeningFlag.RmsResponderScreeningFlagId" />
+                        <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-check-circle-o" aria-hidden="true"></i> @localizer["ClearScreeningButton"]</button>
+                    </form>
+
+                    <hr />
+                    <h4>@localizer["AddFollowUpHeader"]</h4>
+                    <form method="post" asp-controller="Wellness" asp-action="AddFollowUp" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@Model.MemberUserId" />
+                        <input type="hidden" name="flagId" value="@overview.ScreeningFlag.RmsResponderScreeningFlagId" />
+                        <div class="rgw-grid">
+                            <div class="form-group">
+                                <label for="follow-up-kind">@localizer["FollowUpColumn"]</label>
+                                <select id="follow-up-kind" name="kind" class="form-control" required>
+                                    @foreach (var kind in ResponderFollowUpTaskKinds.All)
+                                    {
+                                        <option value="@kind">@localizer[WellnessPresentation.FollowUpKindKey(kind)]</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="follow-up-assignee">@localizer["AssigneeColumn"]</label>
+                                <select id="follow-up-assignee" name="assigneeUserId" class="form-control">
+                                    @foreach (var person in Model.FollowUpAssignees)
+                                    {
+                                        <option value="@person.UserId" selected="@(string.Equals(person.UserId, Model.MemberUserId, StringComparison.OrdinalIgnoreCase))">@person.Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="follow-up-due">@localizer["DueColumn"]</label>
+                                <input id="follow-up-due" name="dueOn" type="date" class="form-control" />
+                            </div>
+                        </div>
+                        <small class="text-muted d-block m-b-sm">@localizer["FollowUpPrivacyHelp"]</small>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddFollowUpButton"]</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-title"><h5><i class="fa fa-heartbeat" aria-hidden="true"></i> @localizer["EntriesHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (overview.Entries.Count == 0)
+            {
+                <p class="text-muted">@localizer[Model.IsSelf ? "NoEntriesSelf" : "NoEntriesMember"]</p>
+            }
+            else
+            {
+                <p class="text-muted small">@localizer["RetentionNotice"]</p>
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["DateColumn"]</th>
+                                <th>@localizer["CategoryColumn"]</th>
+                                <th>@localizer["CallColumn"]</th>
+                                <th class="text-right">@localizer["DurationColumn"]</th>
+                                <th>@localizer["StatusColumn"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var entry in overview.Entries)
+                            {
+                                <tr class="@(entry.Counts ? null : "text-muted")">
+                                    <td class="text-nowrap">@WellnessPresentation.LocalDateTime(entry.OccurredOn, Model.Department)</td>
+                                    <td>
+                                        @localizer[WellnessPresentation.CategoryKey(entry.Category)]
+                                        @if (!string.IsNullOrWhiteSpace(entry.Substance))
+                                        {
+                                            <small class="rgw-sub text-muted">@(WellnessPresentation.IsWithheld(entry.Substance) ? localizer["WithheldValue"].Value : entry.Substance)</small>
+                                        }
+                                        @if (entry.RemindMember || entry.RemindPeerTeam)
+                                        {
+                                            <small class="rgw-sub text-muted"><i class="fa fa-bell-o" aria-hidden="true"></i> @localizer["AnniversaryReminderOnLabel"]</small>
+                                        }
+                                    </td>
+                                    <td>@Model.CallOf(entry.CallId)</td>
+                                    <td class="text-right">@WellnessPresentation.Duration(entry.DurationMinutes)</td>
+                                    <td>@localizer[WellnessPresentation.StatusKey(entry.Status)]</td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs btn-default" asp-controller="Wellness" asp-action="Entry" asp-route-area="User" asp-route-id="@entry.RmsResponderExposureId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["OpenButton"]</a>
+                                        @if (entry.Counts)
+                                        {
+                                            <details class="wellness-row-action">
+                                                <summary class="btn btn-xs btn-default"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["VoidButton"]</summary>
+                                                <form method="post" asp-controller="Wellness" asp-action="Void" asp-route-area="User" asp-route-id="@entry.RmsResponderExposureId" class="m-t-xs">
+                                                    @Html.AntiForgeryToken()
+                                                    <p class="small">@localizer["VoidHelp"]</p>
+                                                    <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-check" aria-hidden="true"></i> @localizer["VoidConfirmButton"]</button>
+                                                </form>
+                                            </details>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (Model.IsSelf)
+    {
+        <div class="rgw-next-action m-t-sm" role="note">
+            <i class="fa fa-life-ring" aria-hidden="true"></i> @localizer["SupportNote"]
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .wellness-inline-form { display: inline-block; }
+        .wellness-row-action { display: inline-block; vertical-align: top; }
+        .wellness-row-action[open] form { display: block; min-width: 220px; white-space: normal; }
+        .wellness-row-action summary { list-style: none; cursor: pointer; }
+    </style>
+}

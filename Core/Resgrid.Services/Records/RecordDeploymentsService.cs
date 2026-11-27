@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Queries;
@@ -36,11 +37,14 @@ namespace Resgrid.Services.Records
 		private readonly IRecordsAuthorizationService _authorization;
 		private readonly IRmsAccessAuditsRepository _audits;
 		private readonly IUnitOfWork _unitOfWork;
+		// The partner's acceptance (round 10 A3) runs through the signing layer, whose sources read deployments: Lazy keeps construction acyclic.
+		private readonly Lazy<IRecordDeploymentPartnerService> _partners;
 
 		public RecordDeploymentsService(IRmsExternalOrdersRepository orders, IRmsExternalOrderFillsRepository fills, IRmsExternalReferencesRepository references, IRecordsService records,
 			IRmsOperationalRecordsRepository recordRows, IRecordDefinitionsService definitions, IRecordTemplatePacksService packs, IRecordsAuthorizationService authorization,
-			IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork)
+			IRmsAccessAuditsRepository audits, IUnitOfWork unitOfWork, Lazy<IRecordDeploymentPartnerService> partners)
 		{
+			_partners = partners;
 			_orders = orders;
 			_fills = fills;
 			_references = references;
@@ -374,7 +378,42 @@ namespace Resgrid.Services.Records
 				await TouchAsync(order, userId, cancellationToken);
 				await AuditAsync(departmentId, userId, order, $"Fill {fill.RequestNumber}: {from} -> {input.Status}", cancellationToken);
 			});
+			await PartnerAfterTransitionAsync(departmentId, userId, fill, input.Status, cancellationToken);
 			return fill;
+		}
+
+		/// <summary>
+		/// Round 10 A3: an accepted fill on an order that names a linked partner asks the partner's admins to accept the assignment (L2, over the
+		/// link); a declined fill voids an open request. The transition stands whatever the partner step does: it is logged, never rolled back.
+		/// </summary>
+		private async Task PartnerAfterTransitionAsync(int departmentId, string userId, RmsExternalOrderFill fill, RmsDeploymentFillStatus status, CancellationToken cancellationToken)
+		{
+			if (_partners == null || (status != RmsDeploymentFillStatus.Accepted && status != RmsDeploymentFillStatus.Declined))
+				return;
+			try
+			{
+				if (status == RmsDeploymentFillStatus.Accepted)
+				{
+					var requested = await _partners.Value.RequestAsync(departmentId, fill.RmsExternalOrderFillId, userId, cancellationToken);
+					if (requested != null)
+					{
+						fill.PartnerDepartmentId = requested.PartnerDepartmentId;
+						fill.PartnerSignStatus = requested.PartnerSignStatus;
+						fill.PartnerSignRequestId = requested.PartnerSignRequestId;
+						fill.PartnerSignRequestedOn = requested.PartnerSignRequestedOn;
+					}
+				}
+				else
+					await _partners.Value.LapseForFillAsync(departmentId, fill.RmsExternalOrderFillId, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Deployment fill {fill.RmsExternalOrderFillId}: the partner acceptance step failed after the transition.");
+			}
 		}
 
 		public async Task<RmsExternalOrder> RecordSourceSnapshotAsync(int departmentId, string userId, string orderId, string sourceVersion, byte[] artifact, string fileName, string contentType, CancellationToken cancellationToken = default)

@@ -909,6 +909,276 @@ var resgrid;
                 initPermRoles("#commandAppLoginRoles", 30);
                 ////////////////////////////////////////////////////////
 
+                // Assign Training (assign and report)
+                ////////////////////////////////////////////////////////
+                $('#AssignTraining').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=126&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#AssignTraining").val() === "2") {
+                        $('#trainingAssignNoRolesSpan').hide();
+                        $('#trainingAssignRolesDiv').show();
+                    } else {
+                        $('#trainingAssignNoRolesSpan').show();
+                        $('#trainingAssignRolesDiv').hide();
+                    }
+                });
+                if ($("#AssignTraining").val() === "2") {
+                    $('#trainingAssignNoRolesSpan').hide();
+                    $('#trainingAssignRolesDiv').show();
+                } else {
+                    $('#trainingAssignNoRolesSpan').show();
+                    $('#trainingAssignRolesDiv').hide();
+                }
+                initPermRoles("#trainingAssignRoles", 126);
+                ////////////////////////////////////////////////////////
+                // Delete Training (archive and delete)
+                ////////////////////////////////////////////////////////
+                $('#DeleteTraining').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=127&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#DeleteTraining").val() === "2") {
+                        $('#trainingDeleteNoRolesSpan').hide();
+                        $('#trainingDeleteRolesDiv').show();
+                    } else {
+                        $('#trainingDeleteNoRolesSpan').show();
+                        $('#trainingDeleteRolesDiv').hide();
+                    }
+                });
+                if ($("#DeleteTraining").val() === "2") {
+                    $('#trainingDeleteNoRolesSpan').hide();
+                    $('#trainingDeleteRolesDiv').show();
+                } else {
+                    $('#trainingDeleteNoRolesSpan').show();
+                    $('#trainingDeleteRolesDiv').hide();
+                }
+                initPermRoles("#trainingDeleteRoles", 127);
+                ////////////////////////////////////////////////////////
+                // AuthorProtocols
+                ////////////////////////////////////////////////////////
+                $('#AuthorProtocols').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=128&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#AuthorProtocols").val() === "2") {
+                        $('#protocolAuthorNoRolesSpan').hide();
+                        $('#protocolAuthorRolesDiv').show();
+                    } else {
+                        $('#protocolAuthorNoRolesSpan').show();
+                        $('#protocolAuthorRolesDiv').hide();
+                    }
+                });
+                if ($("#AuthorProtocols").val() === "2") {
+                    $('#protocolAuthorNoRolesSpan').hide();
+                    $('#protocolAuthorRolesDiv').show();
+                } else {
+                    $('#protocolAuthorNoRolesSpan').show();
+                    $('#protocolAuthorRolesDiv').hide();
+                }
+                initPermRoles("#protocolAuthorRoles", 128);
+                ////////////////////////////////////////////////////////
+                // ApproveProtocols
+                ////////////////////////////////////////////////////////
+                $('#ApproveProtocols').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=129&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#ApproveProtocols").val() === "2") {
+                        $('#protocolApproveNoRolesSpan').hide();
+                        $('#protocolApproveRolesDiv').show();
+                    } else {
+                        $('#protocolApproveNoRolesSpan').show();
+                        $('#protocolApproveRolesDiv').hide();
+                    }
+                });
+                if ($("#ApproveProtocols").val() === "2") {
+                    $('#protocolApproveNoRolesSpan').hide();
+                    $('#protocolApproveRolesDiv').show();
+                } else {
+                    $('#protocolApproveNoRolesSpan').show();
+                    $('#protocolApproveRolesDiv').hide();
+                }
+                initPermRoles("#protocolApproveRoles", 129);
+                ////////////////////////////////////////////////////////
+                // ManageProtocolAcknowledgments
+                ////////////////////////////////////////////////////////
+                $('#ManageProtocolAcknowledgments').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=130&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#ManageProtocolAcknowledgments").val() === "2") {
+                        $('#protocolAcknowledgeNoRolesSpan').hide();
+                        $('#protocolAcknowledgeRolesDiv').show();
+                    } else {
+                        $('#protocolAcknowledgeNoRolesSpan').show();
+                        $('#protocolAcknowledgeRolesDiv').hide();
+                    }
+                });
+                if ($("#ManageProtocolAcknowledgments").val() === "2") {
+                    $('#protocolAcknowledgeNoRolesSpan').hide();
+                    $('#protocolAcknowledgeRolesDiv').show();
+                } else {
+                    $('#protocolAcknowledgeNoRolesSpan').show();
+                    $('#protocolAcknowledgeRolesDiv').hide();
+                }
+                initPermRoles("#protocolAcknowledgeRoles", 130);
+                ////////////////////////////////////////////////////////
+                // ManageCourses
+                ////////////////////////////////////////////////////////
+                $('#ManageCourses').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=132&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#ManageCourses").val() === "2") {
+                        $('#manageCoursesNoRolesSpan').hide();
+                        $('#manageCoursesRolesDiv').show();
+                    } else {
+                        $('#manageCoursesNoRolesSpan').show();
+                        $('#manageCoursesRolesDiv').hide();
+                    }
+                });
+                if ($("#ManageCourses").val() === "2") {
+                    $('#manageCoursesNoRolesSpan').hide();
+                    $('#manageCoursesRolesDiv').show();
+                } else {
+                    $('#manageCoursesNoRolesSpan').show();
+                    $('#manageCoursesRolesDiv').hide();
+                }
+                initPermRoles("#manageCoursesRoles", 132);
+                ////////////////////////////////////////////////////////
+                // GradeAssessments
+                ////////////////////////////////////////////////////////
+                $('#GradeAssessments').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=133&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#GradeAssessments").val() === "2") {
+                        $('#gradeAssessmentsNoRolesSpan').hide();
+                        $('#gradeAssessmentsRolesDiv').show();
+                    } else {
+                        $('#gradeAssessmentsNoRolesSpan').show();
+                        $('#gradeAssessmentsRolesDiv').hide();
+                    }
+                });
+                if ($("#GradeAssessments").val() === "2") {
+                    $('#gradeAssessmentsNoRolesSpan').hide();
+                    $('#gradeAssessmentsRolesDiv').show();
+                } else {
+                    $('#gradeAssessmentsNoRolesSpan').show();
+                    $('#gradeAssessmentsRolesDiv').hide();
+                }
+                initPermRoles("#gradeAssessmentsRoles", 133);
+                ////////////////////////////////////////////////////////
+                // ReviewDispatchCases (Protocols P5 QA)
+                ////////////////////////////////////////////////////////
+                $('#ReviewDispatchCases').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=134&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#ReviewDispatchCases").val() === "2") {
+                        $('#reviewDispatchCasesNoRolesSpan').hide();
+                        $('#reviewDispatchCasesRolesDiv').show();
+                    } else {
+                        $('#reviewDispatchCasesNoRolesSpan').show();
+                        $('#reviewDispatchCasesRolesDiv').hide();
+                    }
+                });
+                if ($("#ReviewDispatchCases").val() === "2") {
+                    $('#reviewDispatchCasesNoRolesSpan').hide();
+                    $('#reviewDispatchCasesRolesDiv').show();
+                } else {
+                    $('#reviewDispatchCasesNoRolesSpan').show();
+                    $('#reviewDispatchCasesRolesDiv').hide();
+                }
+                initPermRoles("#reviewDispatchCasesRoles", 134);
+                ////////////////////////////////////////////////////////
+                // RecordTrainingCompletions (round 7B, 135)
+                ////////////////////////////////////////////////////////
+                $('#RecordTrainingCompletions').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=135&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#RecordTrainingCompletions").val() === "2") {
+                        $('#recordTrainingCompletionsNoRolesSpan').hide();
+                        $('#recordTrainingCompletionsRolesDiv').show();
+                    } else {
+                        $('#recordTrainingCompletionsNoRolesSpan').show();
+                        $('#recordTrainingCompletionsRolesDiv').hide();
+                    }
+                });
+                if ($("#RecordTrainingCompletions").val() === "2") {
+                    $('#recordTrainingCompletionsNoRolesSpan').hide();
+                    $('#recordTrainingCompletionsRolesDiv').show();
+                } else {
+                    $('#recordTrainingCompletionsNoRolesSpan').show();
+                    $('#recordTrainingCompletionsRolesDiv').hide();
+                }
+                initPermRoles("#recordTrainingCompletionsRoles", 135);
+                ////////////////////////////////////////////////////////
+                // ManageContentSets (round 10 A3, 136)
+                ////////////////////////////////////////////////////////
+                $('#ManageContentSets').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=136&perm=' + val,
+                        type: 'POST',
+                        headers: { 'RequestVerificationToken': antiForgeryToken() }
+                    }).done(function (results) {
+                    });
+                    if ($("#ManageContentSets").val() === "2") {
+                        $('#manageContentSetsNoRolesSpan').hide();
+                        $('#manageContentSetsRolesDiv').show();
+                    } else {
+                        $('#manageContentSetsNoRolesSpan').show();
+                        $('#manageContentSetsRolesDiv').hide();
+                    }
+                });
+                if ($("#ManageContentSets").val() === "2") {
+                    $('#manageContentSetsNoRolesSpan').hide();
+                    $('#manageContentSetsRolesDiv').show();
+                } else {
+                    $('#manageContentSetsNoRolesSpan').show();
+                    $('#manageContentSetsRolesDiv').hide();
+                }
+                initPermRoles("#manageContentSetsRoles", 136);
+                ////////////////////////////////////////////////////////
                 // View Command Boards
                 ////////////////////////////////////////////////////////
                 $('#ViewCommandBoards').change(function () {

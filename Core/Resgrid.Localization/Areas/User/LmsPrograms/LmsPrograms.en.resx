@@ -1,0 +1,847 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcademyPathsHeader" xml:space="preserve">
+    <value>Resgrid Academy role paths</value>
+  </data>
+  <data name="AcademyPathsIntro" xml:space="preserve">
+    <value>Free for every department. Resgrid maintains their steps; you can assign them and use them in requirements.</value>
+  </data>
+  <data name="AcademyPrefix" xml:space="preserve">
+    <value>Academy:</value>
+  </data>
+  <data name="ActedOn" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="AddStep" xml:space="preserve">
+    <value>Add step</value>
+  </data>
+  <data name="AddStepNoScript" xml:space="preserve">
+    <value>Save to add more steps.</value>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Learning requirements are part of the LMS add-on. You can view them; creating and changing them needs the add-on.</value>
+  </data>
+  <data name="AlertOnCompletionLabel" xml:space="preserve">
+    <value>Also tell them when a member completes or renews it</value>
+  </data>
+  <data name="AlertSupervisorsLabel" xml:space="preserve">
+    <value>Tell the member's group admins when the member is overdue</value>
+  </data>
+  <data name="AlertUsersLabel" xml:space="preserve">
+    <value>Also tell these people</value>
+  </data>
+  <data name="AlertsHeader" xml:space="preserve">
+    <value>Alerts</value>
+  </data>
+  <data name="AllGroups" xml:space="preserve">
+    <value>All groups</value>
+  </data>
+  <data name="AllRequirements" xml:space="preserve">
+    <value>All requirements</value>
+  </data>
+  <data name="AllStates" xml:space="preserve">
+    <value>All statuses</value>
+  </data>
+  <data name="AndMoreFormat" xml:space="preserve">
+    <value>and {0} more</value>
+  </data>
+  <data name="AssignAction" xml:space="preserve">
+    <value>Assign path</value>
+  </data>
+  <data name="AssignHeader" xml:space="preserve">
+    <value>Assign this path</value>
+  </data>
+  <data name="AssignedFormat" xml:space="preserve">
+    <value>Assigned to {0} member(s); {1} already had it.</value>
+  </data>
+  <data name="AtRiskDaysLabel" xml:space="preserve">
+    <value>Warn this many days before the due date</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Members of any role, group, certification or shift you pick. Members who join, are given the role or otherwise enter it later get their own due date.</value>
+  </data>
+  <data name="AudienceMember" xml:space="preserve">
+    <value>a member</value>
+  </data>
+  <data name="AudienceOther" xml:space="preserve">
+    <value>other</value>
+  </data>
+  <data name="AutoAssignLabel" xml:space="preserve">
+    <value>Assign the course or path to each member automatically (onboarding)</value>
+  </data>
+  <data name="AutoAssigns" xml:space="preserve">
+    <value>Auto-assigns</value>
+  </data>
+  <data name="BacksHelp" xml:space="preserve">
+    <value>Training-backed enforcement: when a member is overdue past the grace period, their certification of this type can be expired. Only certification types that expire are listed.</value>
+  </data>
+  <data name="BacksLabel" xml:space="preserve">
+    <value>Backs certification</value>
+  </data>
+  <data name="BreachFormat" xml:space="preserve">
+    <value>{0}: {1} of {2} members ({3}%)</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Training category</value>
+  </data>
+  <data name="CertificationExpires" xml:space="preserve">
+    <value>Certification that expires</value>
+  </data>
+  <data name="CertificationsLabel" xml:space="preserve">
+    <value>Certifications</value>
+  </data>
+  <data name="ChangeMember" xml:space="preserve">
+    <value>Exempt or extend</value>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Choose...</value>
+  </data>
+  <data name="ColActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="ColHowOften" xml:space="preserve">
+    <value>How often</value>
+  </data>
+  <data name="ColMembers" xml:space="preserve">
+    <value>Members</value>
+  </data>
+  <data name="ColRequirement" xml:space="preserve">
+    <value>Requirement</value>
+  </data>
+  <data name="ColWhat" xml:space="preserve">
+    <value>What</value>
+  </data>
+  <data name="ColWho" xml:space="preserve">
+    <value>Who</value>
+  </data>
+  <data name="ComplianceIntro" xml:space="preserve">
+    <value>Each active member against each requirement that applies to them. Members without an LMS seat show as not licensed and are never overdue.</value>
+  </data>
+  <data name="ComplianceTitle" xml:space="preserve">
+    <value>Compliance</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Delete this requirement? Members' history is kept, and any enforcement it took is undone.</value>
+  </data>
+  <data name="ConfirmDeletePath" xml:space="preserve">
+    <value>Delete this path? Assignments and completions are kept.</value>
+  </data>
+  <data name="ConfirmPreviewLabel" xml:space="preserve">
+    <value>I have reviewed who would lose which role (needed to turn enforcement on)</value>
+  </data>
+  <data name="ConfirmRequired" xml:space="preserve">
+    <value>Review the preview below and confirm it to turn enforcement on.</value>
+  </data>
+  <data name="ConfirmUndo" xml:space="preserve">
+    <value>Undo this action? The certification and the roles it took are given back.</value>
+  </data>
+  <data name="CountFormat" xml:space="preserve">
+    <value>{0} evaluations</value>
+  </data>
+  <data name="CountLabel" xml:space="preserve">
+    <value>Passed evaluations needed</value>
+  </data>
+  <data name="CourseLabel" xml:space="preserve">
+    <value>Course</value>
+  </data>
+  <data name="DefaultAtRiskLabel" xml:space="preserve">
+    <value>Default warning for new requirements (days before due)</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Deleted.</value>
+  </data>
+  <data name="DepartmentPathsHeader" xml:space="preserve">
+    <value>Department paths</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>Due date</value>
+  </data>
+  <data name="DueDaysFormat" xml:space="preserve">
+    <value>{0} days to complete</value>
+  </data>
+  <data name="DueDaysHelp" xml:space="preserve">
+    <value>Counted from the day the member joins, is given the role, or otherwise enters the audience.</value>
+  </data>
+  <data name="DueDaysLabel" xml:space="preserve">
+    <value>Days to complete</value>
+  </data>
+  <data name="DueFormat" xml:space="preserve">
+    <value>Due {0}</value>
+  </data>
+  <data name="DueOn" xml:space="preserve">
+    <value>Due</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ElectiveBadge" xml:space="preserve">
+    <value>elective</value>
+  </data>
+  <data name="ElectiveFormat" xml:space="preserve">
+    <value>elective group {0}, {1} needed</value>
+  </data>
+  <data name="EnforceHelp" xml:space="preserve">
+    <value>Also needs enforcement turned on for the department (Enforcement). Roles that require the certification are then removed by the certification module after its own grace period, and everything is given back when the member completes the requirement.</value>
+  </data>
+  <data name="EnforceLabel" xml:space="preserve">
+    <value>Enforce: expire the certification when the member is overdue</value>
+  </data>
+  <data name="EnforcedBadge" xml:space="preserve">
+    <value>Enforced</value>
+  </data>
+  <data name="EnforcementEnabledHelp" xml:space="preserve">
+    <value>Off by default. Each requirement must also opt in. Nothing is enforced while the LMS add-on is inactive.</value>
+  </data>
+  <data name="EnforcementEnabledLabel" xml:space="preserve">
+    <value>Turn on training-backed enforcement</value>
+  </data>
+  <data name="EnforcementHeader" xml:space="preserve">
+    <value>Enforcement</value>
+  </data>
+  <data name="EnforcementIntro" xml:space="preserve">
+    <value>Let an overdue refresher expire the certification it backs, with a guard that stops any run that would empty a role.</value>
+  </data>
+  <data name="EnforcementTitle" xml:space="preserve">
+    <value>Enforcement</value>
+  </data>
+  <data name="Enforcing" xml:space="preserve">
+    <value>Enforces</value>
+  </data>
+  <data name="Err.AddonRequired" xml:space="preserve">
+    <value>This needs the LMS add-on.</value>
+  </data>
+  <data name="Err.AudienceRequired" xml:space="preserve">
+    <value>Choose who the requirement applies to.</value>
+  </data>
+  <data name="Err.CertificationType" xml:space="preserve">
+    <value>Choose a certification type for people that expires.</value>
+  </data>
+  <data name="Err.CountRequired" xml:space="preserve">
+    <value>Enter how many passed evaluations are needed (1 to 1000).</value>
+  </data>
+  <data name="Err.DaysRange" xml:space="preserve">
+    <value>Days must be between 0 and 3650 (grace and warning up to 365).</value>
+  </data>
+  <data name="Err.ExtensionInvalid" xml:space="preserve">
+    <value>Choose a future date and give a reason.</value>
+  </data>
+  <data name="Err.HoursRequired" xml:space="preserve">
+    <value>Enter the hours needed (more than 0).</value>
+  </data>
+  <data name="Err.IntervalRequired" xml:space="preserve">
+    <value>Enter how many months (1 to 120).</value>
+  </data>
+  <data name="Err.Invalid" xml:space="preserve">
+    <value>That could not be saved. Check the form.</value>
+  </data>
+  <data name="Err.NameRequired" xml:space="preserve">
+    <value>Enter a name.</value>
+  </data>
+  <data name="Err.NotAuthorized" xml:space="preserve">
+    <value>You do not have the right to do that.</value>
+  </data>
+  <data name="Err.NotFound" xml:space="preserve">
+    <value>That item was not found.</value>
+  </data>
+  <data name="Err.PathDuplicateStep" xml:space="preserve">
+    <value>The same course or training is listed twice.</value>
+  </data>
+  <data name="Err.PathElectiveCount" xml:space="preserve">
+    <value>An elective group needs at least 1 elective and no more than it has.</value>
+  </data>
+  <data name="Err.PathInvalidOrder" xml:space="preserve">
+    <value>The step order is not valid.</value>
+  </data>
+  <data name="Err.PathInvalidStep" xml:space="preserve">
+    <value>A step is not a course or training this department can use.</value>
+  </data>
+  <data name="Err.PathNoSteps" xml:space="preserve">
+    <value>Add at least one step.</value>
+  </data>
+  <data name="Err.PathPrerequisiteNotEarlier" xml:space="preserve">
+    <value>A step can only need earlier steps.</value>
+  </data>
+  <data name="Err.PathTooManySteps" xml:space="preserve">
+    <value>A path can have at most 60 steps.</value>
+  </data>
+  <data name="Err.ReasonRequired" xml:space="preserve">
+    <value>Give a reason.</value>
+  </data>
+  <data name="Err.SkillRequired" xml:space="preserve">
+    <value>Enter the skill code.</value>
+  </data>
+  <data name="Err.TargetRequired" xml:space="preserve">
+    <value>Choose what the requirement asks for.</value>
+  </data>
+  <data name="Everyone" xml:space="preserve">
+    <value>Everyone</value>
+  </data>
+  <data name="ExemptAction" xml:space="preserve">
+    <value>Exempt</value>
+  </data>
+  <data name="ExportCsv" xml:space="preserve">
+    <value>CSV</value>
+  </data>
+  <data name="ExportPdf" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="ExtendAction" xml:space="preserve">
+    <value>Extend</value>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="FilterGroup" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="FilterRequirement" xml:space="preserve">
+    <value>Requirement</value>
+  </data>
+  <data name="FilterState" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="GraceDaysHelp" xml:space="preserve">
+    <value>After the due date the member shows at risk for this many days, then overdue.</value>
+  </data>
+  <data name="GraceDaysLabel" xml:space="preserve">
+    <value>Grace days</value>
+  </data>
+  <data name="GroupsLabel" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="HistoryHeader" xml:space="preserve">
+    <value>Enforcement history</value>
+  </data>
+  <data name="HoursFormat" xml:space="preserve">
+    <value>{0} hours</value>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Hours needed per period</value>
+  </data>
+  <data name="InForce" xml:space="preserve">
+    <value>In force</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="IntervalLabel" xml:space="preserve">
+    <value>Every how many months</value>
+  </data>
+  <data name="IssuesCertificationBadge" xml:space="preserve">
+    <value>Issues a certification</value>
+  </data>
+  <data name="IssuesCertificationLabel" xml:space="preserve">
+    <value>Issue a certification on completion</value>
+  </data>
+  <data name="Kind.Course" xml:space="preserve">
+    <value>Complete a course</value>
+  </data>
+  <data name="Kind.Training" xml:space="preserve">
+    <value>Complete a training</value>
+  </data>
+  <data name="Kind.CategoryHours" xml:space="preserve">
+    <value>Log hours in a category</value>
+  </data>
+  <data name="Kind.Path" xml:space="preserve">
+    <value>Finish a learning path</value>
+  </data>
+  <data name="Kind.Evaluations" xml:space="preserve">
+    <value>Pass skill evaluations</value>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Requirement type</value>
+  </data>
+  <data name="LastCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="LegendOther" xml:space="preserve">
+    <value>Exempt, on leave or not licensed</value>
+  </data>
+  <data name="LiftExemption" xml:space="preserve">
+    <value>Lift exemption</value>
+  </data>
+  <data name="MaxShareHelp" xml:space="preserve">
+    <value>A run that would remove more than this share of a role's members is refused, and the admins are told.</value>
+  </data>
+  <data name="MaxShareLabel" xml:space="preserve">
+    <value>Largest share of a role's members one run may remove (%)</value>
+  </data>
+  <data name="Member" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Members</value>
+  </data>
+  <data name="Mode.Off" xml:space="preserve">
+    <value>off</value>
+  </data>
+  <data name="Mode.WarnOnly" xml:space="preserve">
+    <value>warn only</value>
+  </data>
+  <data name="Mode.Enforce" xml:space="preserve">
+    <value>Enforce</value>
+  </data>
+  <data name="MyRequirementsHeader" xml:space="preserve">
+    <value>My requirements</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NeedsStepsFormat" xml:space="preserve">
+    <value>needs step {0}</value>
+  </data>
+  <data name="NewDueDateLabel" xml:space="preserve">
+    <value>New due date</value>
+  </data>
+  <data name="NewMembersOnlyLabel" xml:space="preserve">
+    <value>Only members who enter the audience from now on (onboarding)</value>
+  </data>
+  <data name="NewOnboarding" xml:space="preserve">
+    <value>New onboarding</value>
+  </data>
+  <data name="NewPath" xml:space="preserve">
+    <value>New path</value>
+  </data>
+  <data name="NewRequirement" xml:space="preserve">
+    <value>New requirement</value>
+  </data>
+  <data name="NextRequirementHeader" xml:space="preserve">
+    <value>Next requirement</value>
+  </data>
+  <data name="NoAssignees" xml:space="preserve">
+    <value>Nobody is assigned this path yet.</value>
+  </data>
+  <data name="NoHistory" xml:space="preserve">
+    <value>No enforcement action yet.</value>
+  </data>
+  <data name="NoMatrixRows" xml:space="preserve">
+    <value>No members match.</value>
+  </data>
+  <data name="NoOnboarding" xml:space="preserve">
+    <value>No onboarding yet. Add a path per role, assigned when someone joins or is given the role.</value>
+  </data>
+  <data name="NoPaths" xml:space="preserve">
+    <value>No department paths yet.</value>
+  </data>
+  <data name="NoRequirements" xml:space="preserve">
+    <value>No requirements yet.</value>
+  </data>
+  <data name="NoRolesLost" xml:space="preserve">
+    <value>none</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>Does not apply</value>
+  </data>
+  <data name="OnboardingIntro" xml:space="preserve">
+    <value>A learning path per role, assigned automatically with a due date when someone joins or is given the role.</value>
+  </data>
+  <data name="OnboardingTitle" xml:space="preserve">
+    <value>Onboarding</value>
+  </data>
+  <data name="OpenCourses" xml:space="preserve">
+    <value>My courses</value>
+  </data>
+  <data name="OpenTraining" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="PathCompletedFormat" xml:space="preserve">
+    <value>Completed {0}</value>
+  </data>
+  <data name="PathCountsFormat" xml:space="preserve">
+    <value>{0} steps · {1} assigned · {2} completed</value>
+  </data>
+  <data name="PathIntro" xml:space="preserve">
+    <value>Steps with prerequisites and electives; finishing the path can issue a certification.</value>
+  </data>
+  <data name="PathLabel" xml:space="preserve">
+    <value>Learning path</value>
+  </data>
+  <data name="PathsIntro" xml:space="preserve">
+    <value>Courses, Academy lessons and trainings in order, with prerequisites and electives.</value>
+  </data>
+  <data name="PathsTitle" xml:space="preserve">
+    <value>Learning paths</value>
+  </data>
+  <data name="PausedNotice" xml:space="preserve">
+    <value>The LMS add-on is not active, so requirements are paused: nothing becomes overdue and nothing is enforced until it is reactivated.</value>
+  </data>
+  <data name="PreviewEmpty" xml:space="preserve">
+    <value>Nobody: no member is overdue on a requirement that enforces.</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Who would lose which role today</value>
+  </data>
+  <data name="PreviewModeFormat" xml:space="preserve">
+    <value>Certification enforcement is {0}. Roles are removed only in Enforce mode, {1} days after the certification expires.</value>
+  </data>
+  <data name="ProgramsTitle" xml:space="preserve">
+    <value>Programs</value>
+  </data>
+  <data name="ProgressFormat" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="ProgressHeader" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="Recurrence.OneTime" xml:space="preserve">
+    <value>Once</value>
+  </data>
+  <data name="Recurrence.RollingMonths" xml:space="preserve">
+    <value>Every few months</value>
+  </data>
+  <data name="Recurrence.CalendarYear" xml:space="preserve">
+    <value>Every calendar year</value>
+  </data>
+  <data name="RecurrenceCalendarYear" xml:space="preserve">
+    <value>Every calendar year</value>
+  </data>
+  <data name="RecurrenceLabel" xml:space="preserve">
+    <value>How often</value>
+  </data>
+  <data name="RecurrenceOneTime" xml:space="preserve">
+    <value>Once</value>
+  </data>
+  <data name="RecurrenceRolling" xml:space="preserve">
+    <value>Every {0} months</value>
+  </data>
+  <data name="RemoveStep" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Requirement" xml:space="preserve">
+    <value>Requirement</value>
+  </data>
+  <data name="RequirementIntro" xml:space="preserve">
+    <value>What members must complete, who must complete it, and by when.</value>
+  </data>
+  <data name="RequirementTitle" xml:space="preserve">
+    <value>Requirement</value>
+  </data>
+  <data name="RequirementsIntro" xml:space="preserve">
+    <value>Courses, trainings, hours, paths and evaluations members must complete, with due dates from when they join or are given a role.</value>
+  </data>
+  <data name="RequirementsTitle" xml:space="preserve">
+    <value>Requirements</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="RolesLost" xml:space="preserve">
+    <value>Roles lost</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="SettingsHeader" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ShiftsLabel" xml:space="preserve">
+    <value>Shifts</value>
+  </data>
+  <data name="SkillCodeHelp" xml:space="preserve">
+    <value>The code skill evaluations are recorded with.</value>
+  </data>
+  <data name="SkillCodeLabel" xml:space="preserve">
+    <value>Skill code</value>
+  </data>
+  <data name="State.Compliant" xml:space="preserve">
+    <value>Compliant</value>
+  </data>
+  <data name="State.Pending" xml:space="preserve">
+    <value>Due later</value>
+  </data>
+  <data name="State.AtRisk" xml:space="preserve">
+    <value>At risk</value>
+  </data>
+  <data name="State.Overdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="State.Exempt" xml:space="preserve">
+    <value>Exempt</value>
+  </data>
+  <data name="State.OnLeave" xml:space="preserve">
+    <value>On leave</value>
+  </data>
+  <data name="State.NotLicensed" xml:space="preserve">
+    <value>Not licensed</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="StepAvailable" xml:space="preserve">
+    <value>available</value>
+  </data>
+  <data name="StepDone" xml:space="preserve">
+    <value>done</value>
+  </data>
+  <data name="StepElectiveLabel" xml:space="preserve">
+    <value>Elective group</value>
+  </data>
+  <data name="StepElectiveRequiredLabel" xml:space="preserve">
+    <value>Electives needed</value>
+  </data>
+  <data name="StepKind.Course" xml:space="preserve">
+    <value>Course or Academy lesson</value>
+  </data>
+  <data name="StepKind.Training" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="StepKindLabel" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="StepLocked" xml:space="preserve">
+    <value>locked</value>
+  </data>
+  <data name="StepPrerequisitesLabel" xml:space="preserve">
+    <value>Needs steps</value>
+  </data>
+  <data name="StepTargetLabel" xml:space="preserve">
+    <value>Course or training</value>
+  </data>
+  <data name="StepsDoneFormat" xml:space="preserve">
+    <value>{0} of {1} steps</value>
+  </data>
+  <data name="StepsHeader" xml:space="preserve">
+    <value>Steps</value>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>Steps run in order. Needs steps lists the numbers of earlier steps (e.g. 1,2) that must be done first. Steps with the same elective group number are electives: the learner needs as many of them as Electives needed says.</value>
+  </data>
+  <data name="SubCompliance" xml:space="preserve">
+    <value>Compliance</value>
+  </data>
+  <data name="SubEnforcement" xml:space="preserve">
+    <value>Enforcement</value>
+  </data>
+  <data name="SubOnboarding" xml:space="preserve">
+    <value>Onboarding</value>
+  </data>
+  <data name="SubPaths" xml:space="preserve">
+    <value>Paths</value>
+  </data>
+  <data name="SubRequirements" xml:space="preserve">
+    <value>Requirements</value>
+  </data>
+  <data name="TrainingLabel" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="Undo" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="UndoReason.0" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="UndoReason.Completed" xml:space="preserve">
+    <value>completed</value>
+  </data>
+  <data name="UndoReason.Lapse" xml:space="preserve">
+    <value>add-on lapsed</value>
+  </data>
+  <data name="UndoReason.NoLongerApplies" xml:space="preserve">
+    <value>no longer applies</value>
+  </data>
+  <data name="UndoReason.Manual" xml:space="preserve">
+    <value>undone by a training officer</value>
+  </data>
+  <data name="Undone" xml:space="preserve">
+    <value>Undone</value>
+  </data>
+  <data name="UntilLabel" xml:space="preserve">
+    <value>Until (optional)</value>
+  </data>
+  <data name="WhatHeader" xml:space="preserve">
+    <value>What</value>
+  </data>
+  <data name="WhenHeader" xml:space="preserve">
+    <value>When</value>
+  </data>
+  <data name="WhoHeader" xml:space="preserve">
+    <value>Who</value>
+  </data>
+  <data name="WouldRefuseFormat" xml:space="preserve">
+    <value>Today's run would be refused: it would remove more than {0}% of these roles' members.</value>
+  </data>
+  <data name="SubRecommendations" xml:space="preserve">
+    <value>Recommendations</value>
+  </data>
+  <data name="RecommendationsTitle" xml:space="preserve">
+    <value>Recommendations</value>
+  </data>
+  <data name="RecommendationsIntro" xml:space="preserve">
+    <value>Learning paths and courses to take next, from open requirements, paths in progress, competency gaps and the courses offered to each role.</value>
+  </data>
+  <data name="RecommendedHeader" xml:space="preserve">
+    <value>Recommended for you</value>
+  </data>
+  <data name="RecommendedForFormat" xml:space="preserve">
+    <value>Recommended for {0}</value>
+  </data>
+  <data name="RecommendationsForMembersLink" xml:space="preserve">
+    <value>Your members</value>
+  </data>
+  <data name="ShowRecommendationsButton" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="RecommendationColumn" xml:space="preserve">
+    <value>Recommendation</value>
+  </data>
+  <data name="ReasonsColumn" xml:space="preserve">
+    <value>Why</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="KindCourse" xml:space="preserve">
+    <value>Course</value>
+  </data>
+  <data name="KindPath" xml:space="preserve">
+    <value>Learning path</value>
+  </data>
+  <data name="KindAcademy" xml:space="preserve">
+    <value>Resgrid Academy lesson</value>
+  </data>
+  <data name="Reason.RequirementOverdue" xml:space="preserve">
+    <value>Requirement “{0}” is overdue</value>
+  </data>
+  <data name="Reason.RequirementAtRisk" xml:space="preserve">
+    <value>Requirement “{0}” is at risk</value>
+  </data>
+  <data name="Reason.RequirementDue" xml:space="preserve">
+    <value>Requirement “{0}” is not met yet</value>
+  </data>
+  <data name="Reason.PathInProgress" xml:space="preserve">
+    <value>Learning path “{0}” is in progress</value>
+  </data>
+  <data name="Reason.CompetencyMissing" xml:space="preserve">
+    <value>No evidence yet for competency {0}</value>
+  </data>
+  <data name="Reason.CompetencyAged" xml:space="preserve">
+    <value>Evidence for competency {0} is out of date</value>
+  </data>
+  <data name="Reason.RoleAudience" xml:space="preserve">
+    <value>Offered to the role {0}</value>
+  </data>
+  <data name="RecommendationContinue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="NoRecommendations" xml:space="preserve">
+    <value>Nothing to recommend right now.</value>
+  </data>
+  <data name="ExplainButton" xml:space="preserve">
+    <value>Explain with AI</value>
+  </data>
+  <data name="Explaining" xml:space="preserve">
+    <value>Explaining…</value>
+  </data>
+  <data name="ExplainFailed" xml:space="preserve">
+    <value>No explanation is available right now.</value>
+  </data>
+  <data name="ExplainBusy" xml:space="preserve">
+    <value>AI is busy or this month's allowance is used up. Try again later.</value>
+  </data>
+  <data name="AiExplanationNotice" xml:space="preserve">
+    <value>AI explanation, written only from the reasons shown.</value>
+  </data>
+  <data name="ExplainPrivacyNote" xml:space="preserve">
+    <value>Only the titles and reasons above are sent to the department's AI model, never names.</value>
+  </data>
+  <data name="AcademyUpdatePolicyLabel" xml:space="preserve">
+    <value>When the Resgrid Academy publishes a major update of a lesson this requires</value>
+  </data>
+  <data name="AcademyUpdatePolicy.Notify" xml:space="preserve">
+    <value>Tell the members who completed it</value>
+  </data>
+  <data name="AcademyUpdatePolicy.Reassign" xml:space="preserve">
+    <value>Re-assign it to the members who completed it, due in this requirement's days</value>
+  </data>
+  <data name="AcademyUpdatePolicy.Nothing" xml:space="preserve">
+    <value>Do nothing</value>
+  </data>
+  <data name="AcademyUpdatePolicyHelp" xml:space="preserve">
+    <value>Applies to Resgrid Academy lessons, directly or on the path. Your own courses follow the choice made when each version is published.</value>
+  </data>
+  <data name="AssignedNotLicensedFormat" xml:space="preserve">
+    <value>{0} of them hold no LMS seat and were not enrolled; enable their LMS access, then assign again.</value>
+  </data>
+  <data name="Err.PathManagedBySet" xml:space="preserve">
+    <value>This path is a managed copy from a linked organization's course set. It changes only through the set; you can still assign it.</value>
+  </data>
+</root>

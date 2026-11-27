@@ -656,4 +656,12 @@
   <data name="ResumeGoBack" xml:space="preserve">
     <value>Назад</value>
   </data>
+  <data name="StepUpUseReauthenticationLink" xml:space="preserve">
+    <value>Натомість використати пароль або вхід вашої організації</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpReauthenticateIntro" xml:space="preserve">
+    <value>Для вашої безпеки підтвердьте, що це ви, щоб продовжити: введіть пароль або знову увійдіть через постачальника ідентичності вашої організації. Це не виведе вас із системи й не подовжить сеанс.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

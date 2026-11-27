@@ -314,7 +314,124 @@ RecordPermitExpiring = 163,
 		RecurringCallOccurrenceSkipped = 214,
 		RecurringCallOccurrenceDispatched = 215,
 		RecurringCallAlertRaised = 216,
-		RecurringCallAlertResolved = 217
+		RecurringCallAlertResolved = 217,
+
+		// e-Signature S2 (round 3, 220-223): external-signer requests. Raised in process by SignatureRequestService (web, API and
+		// worker 90); payload Events/SignatureRequestEvent.cs carries no signer name, e-mail or phone.
+		SignatureRequested = 220,
+		SignatureCompleted = 221,
+		SignatureDeclined = 222,
+		SignatureExpired = 223,
+
+		// Training T3 (round 4 B, 224-229): LMS assignments, completions, failed assessments, overdue and at-risk requirements and
+		// training-backed enforcement. Raised in process by the LMS requirement engine (web, API and worker 93) and the LMS learner
+		// runtime; payload Events/TrainingWorkflowEvent.cs carries ids, names of the training and dates, never a member's contact data.
+		TrainingAssigned = 224,
+		TrainingCompleted = 225,
+		TrainingFailed = 226,
+		TrainingOverdue = 227,
+		RequirementAtRisk = 228,
+		RequirementEnforced = 229,
+
+		// e-Signature S4 (round 5 E, 236-239): approval chains. Raised in process by ApprovalChainService (web, API and worker 97); payload
+		// Events/ApprovalWorkflowEvent.cs carries ids, the subject's title, amount and step, never a member's or outside party's contact data.
+		ApprovalRequested = 236,
+		ApprovalGranted = 237,
+		ApprovalRejected = 238,
+		ApprovalEscalated = 239,
+
+		// Protocols, Training/LMS, signing and knowledge (round 7C, 218-219, 230-235, 248-269): every state change of that build a
+		// department automates on. Raised in process after the change is stored (web, API and workers 83, 84, 86, 88, 90, 96, 99); one
+		// event family per area in Events/ContentWorkflowEvents.cs, variables and samples from Events/ContentWorkflowTriggers.cs. The
+		// payloads carry ids, content names, dates and statuses only: never contact details, protected (ADP) values, wellness or health
+		// data, answer keys or free-text comments. Wellness (WL0/WL1) and restricted Records content raise no workflow event at all.
+		DocumentSealed = 218,
+		DocumentSealingFailed = 219,
+		ProtocolVersionPublished = 230,
+		ProtocolRetired = 231,
+		ProtocolVersionExpired = 232,
+		ProtocolReviewDue = 233,
+		ProtocolReviewOverdue = 234,
+		ProtocolBulletinIssued = 235,
+		ProtocolBulletinWithdrawn = 248,
+		ProtocolTranslationApproved = 249,
+		ProtocolPublicLinkChanged = 250,
+		ProtocolAcknowledgmentAssigned = 251,
+		ProtocolAcknowledgmentCompleted = 252,
+		ProtocolAcknowledgmentOverdue = 253,
+		CallDeterminantChanged = 254,
+		DispatchCaseReviewSent = 255,
+		DispatchCaseReviewAcknowledged = 256,
+		ExchangeListingReviewed = 257,
+		KnowledgeGapRecorded = 258,
+		CourseVersionPublished = 259,
+		CourseCompleted = 260,
+		AssessmentGraded = 261,
+		SkillEvaluationCompleted = 262,
+		TaskBookClosed = 263,
+		RequirementEnforcementUndone = 264,
+		TrainingRequestSubmitted = 265,
+		TrainingRequestDecided = 266,
+		LmsAddonLapsed = 267,
+		LmsAddonReactivated = 268,
+		LmsDataExportReady = 269,
+
+		// Round 7C follow-up (270-274, from the 270-279 block): a member's turn to sign, a direct course assignment, an attempt waiting
+		// for a grader, a retired course and LMS seat or pack changes (counts only). Same families and rules as 218-269.
+		SignatureStepAssigned = 270,
+		CourseAssigned = 271,
+		AssessmentAwaitingGrading = 272,
+		CourseRetired = 273,
+		LmsSeatsChanged = 274,
+
+		// Certifications backed by training (round 9A, 275-278 of 275-279): a certification issued or renewed by its requirement set, an LMS
+		// course or path completion, or a cycle's hours; taken back by a void of the completion behind it; and its requirements due soon.
+		// Family "certification_event" in Events/ContentWorkflowTriggers.cs; ids, the type's name and code, dates and counts only.
+		CertificationIssuedByTraining = 275,
+		CertificationRenewedByTraining = 276,
+		CertificationRevokedByVoid = 277,
+		CertificationRequirementsDue = 278,
+		// Training classes, recorded completions and external learners (round 7B, 240-247). Raised in process by the class service (web, API
+		// and worker 95), the recorded-completion services and the external-learner service; payloads Events/TrainingClassWorkflowEvents.cs
+		// carry ids, the class or course title, dates and counts, never a member's or learner's name, e-mail address or phone number.
+		ClassSessionScheduled = 240,
+		ClassSessionCancelled = 241,
+		ClassSessionSignedOff = 242,
+		ClassWaitlistPromoted = 243,
+		TrainingCompletionRecorded = 244,
+		ExternalLearnerRegistered = 245,
+		ExternalLearnerEnrolled = 246,
+		ExternalLearnerCompletedCourse = 247,
+		// Training hours submissions (round 9B, 280-285): a member's submission received (waiting for review, or accepted as self-reported),
+		// approved, denied, more information asked for, resubmitted; and a completion an instructor recorded voided. Raised in process by
+		// ITrainingSubmissionService and the recorded-completion service; payload Events/ContentWorkflowEvents.cs TrainingSubmissionWorkflowEvent
+		// carries ids, the title, category, hours, states and counts only, never a note, file name, member name or contact detail.
+		TrainingSubmissionReceived = 280,
+		TrainingSubmissionApproved = 281,
+		TrainingSubmissionDenied = 282,
+		TrainingSubmissionInfoRequested = 283,
+		TrainingSubmissionResubmitted = 284,
+		TrainingCompletionRecordingVoided = 285,
+		// Round 10 A3 (286-295): protocol and course sets over Department Links (an update arrived in the subscriber's inbox or went into
+		// force, a department subscribed, a proposal reached the publisher or was answered), LMS sponsorship started or ended, and a mutual-aid
+		// agreement's partner countersignature requested, given or declined. Raised in process by IContentSetService, ILmsSponsorshipService
+		// and IMutualAidCountersignService; payloads Events/ContentWorkflowEvents.cs carry ids, names of sets and items, labels and states
+		// only, never a change summary, proposal text, member name or contact detail.
+		ContentSetUpdateArrived = 286,
+		ContentSetUpdateApplied = 287,
+		ContentSetSubscribed = 288,
+		ContentSetProposalReceived = 289,
+		ContentSetProposalAnswered = 290,
+		LmsSponsorshipStarted = 291,
+		LmsSponsorshipEnded = 292,
+		MutualAidCountersignRequested = 293,
+		MutualAidAgreementCountersigned = 294,
+		MutualAidCountersignDeclined = 295,
+
+		// Round 10 A3 follow-up (296-297): a Records deployment fill's acceptance by the linked partner department (e-Sign §20), raised in both
+		// departments: the L2 request went to the partner, and the partner decided (State Signed, Declined or Lapsed).
+		RecordDeploymentPartnerSignRequested = 296,
+		RecordDeploymentPartnerSignDecided = 297
 	}
 
 	public static class WorkflowTriggerEventTypes

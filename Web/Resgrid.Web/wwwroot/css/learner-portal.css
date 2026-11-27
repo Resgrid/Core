@@ -1,0 +1,32 @@
+/* The branded learner portal (Training T5): department accent from --rg-accent / --rg-accent-text (set per portal), Resgrid's otherwise. */
+:root { --rg-accent: #1ab394; --rg-accent-text: #ffffff; }
+body.rgl-body { background: #f3f3f4; color: #333; font-size: 15px; }
+.rgl-header { background: var(--rg-accent); color: var(--rg-accent-text); padding: 12px 0; margin-bottom: 20px; }
+.rgl-header a, .rgl-header button.rgl-link { color: var(--rg-accent-text); }
+.rgl-header .container { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.rgl-brand { display: flex; align-items: center; gap: 12px; font-size: 20px; font-weight: 600; margin-right: auto; text-decoration: none; }
+.rgl-brand:hover, .rgl-brand:focus { text-decoration: none; color: var(--rg-accent-text); }
+.rgl-brand img { max-height: 48px; max-width: 220px; background: #fff; border-radius: 4px; padding: 2px; }
+.rgl-nav { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0; padding: 0; list-style: none; }
+.rgl-nav form { display: inline; margin: 0; }
+.rgl-link { background: none; border: 0; padding: 6px 10px; text-decoration: underline; }
+.rgl-main { max-width: 1000px; padding-bottom: 40px; }
+.rgl-panel { background: #fff; border: 1px solid #e7eaec; border-radius: 4px; padding: 20px; margin-bottom: 20px; }
+.rgl-panel h2 { margin-top: 0; font-size: 20px; }
+.rgl-welcome { white-space: pre-line; }
+.btn-rgl { background: var(--rg-accent); border-color: var(--rg-accent); color: var(--rg-accent-text); }
+.btn-rgl:hover, .btn-rgl:focus { color: var(--rg-accent-text); filter: brightness(0.92); }
+.rgl-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.rgl-card { background: #fff; border: 1px solid #e7eaec; border-top: 4px solid var(--rg-accent); border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.rgl-card h3 { margin: 0 0 4px; font-size: 17px; }
+.rgl-card .rgl-actions { margin-top: auto; padding-top: 8px; }
+.rgl-meta { color: #676a6c; font-size: 13px; }
+.rgl-lessons { list-style: none; padding: 0; margin: 0; }
+.rgl-lessons li { padding: 6px 0; border-bottom: 1px solid #f0f0f0; }
+.rgl-lessons li.active { font-weight: 600; }
+.rgl-layout { display: grid; grid-template-columns: 260px 1fr; gap: 20px; }
+.rgl-footer { color: #888; font-size: 12px; text-align: center; padding: 20px 0; }
+.rgl-skip { position: absolute; left: -9999px; }
+.rgl-skip:focus { left: 8px; top: 8px; background: #fff; color: #000; padding: 6px; z-index: 1000; }
+.rgl-table { width: 100%; }
+@media (max-width: 767px) { .rgl-layout { grid-template-columns: 1fr; } .rgl-brand { font-size: 17px; } }

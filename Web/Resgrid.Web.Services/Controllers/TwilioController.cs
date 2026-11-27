@@ -2470,7 +2470,9 @@ namespace Resgrid.Web.Services.Controllers
 
 			var address = await ResolveCallAddressAsync(call);
 			var ttsLanguage = await GetDepartmentTtsLanguageAsync(call.DepartmentId);
-			var dispatchText = BuildDispatchPrompt(call, address);
+			// Protocols P4: the determinant sentence (setting 134, off by default), resolved exactly as the broadcast pre-warm does.
+			var protocolSentence = await DispatchVoicePromptBuilder.ResolveProtocolSentenceAsync(call, _departmentSettingsService, _callsService);
+			var dispatchText = DispatchVoicePromptBuilder.BuildDispatchPrompt(call, address, protocolSentence);
 
 			// Try to get the TTS URL within 3 seconds. If the audio is cached,
 			// the URL returns nearly instantly; if it needs generation, we let

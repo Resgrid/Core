@@ -1,0 +1,115 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolAcknowledgmentSettingsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    Per-protocol acknowledgment settings (P2): days to acknowledge (counted from the day a member is assigned or enters the audience),
+    the place in the onboarding bundle, the baseline Training whose quiz gates acknowledgment (free), and standards tags (LMS).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["AckSettingsHeader"];
+    ViewData["Title"] = localizer["AckSettingsHeader"].Value;
+    ViewData["Subtitle"] = Model.Protocol.Code + " · " + Model.Protocol.Name;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    <div class="ibox">
+        <div class="ibox-content">
+            <form method="post" asp-controller="ProtocolAcknowledgments" asp-action="Settings" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="ProtocolId" value="@Model.ProtocolId" />
+                <div class="rgw-builder-section">
+                    <div class="form-group">
+                        <label class="control-label" for="DueDays">@localizer["AckDueDaysLabel"]</label>
+                        <input id="DueDays" name="DueDays" type="number" min="1" max="@ProtocolAcknowledgmentRules.MaxDueDays" class="form-control" style="max-width: 160px;" value="@Model.DueDays" placeholder="@ProtocolAcknowledgmentRules.DefaultDueDays" />
+                        <span class="help-block">@string.Format(localizer["AckDueDaysHelp"].Value, ProtocolAcknowledgmentRules.DefaultDueDays)</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="BundleOrder">@localizer["AckBundleOrderLabel"]</label>
+                        <input id="BundleOrder" name="BundleOrder" type="number" class="form-control" style="max-width: 160px;" value="@Model.BundleOrder" />
+                        <span class="help-block">@localizer["AckBundleOrderHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="QuizTrainingId">@localizer["AckQuizTrainingLabel"]</label>
+                        <select id="QuizTrainingId" name="QuizTrainingId" class="form-control" style="max-width: 420px;">
+                            <option value="">@localizer["AckNoQuizOption"]</option>
+                            @foreach (var training in Model.Trainings)
+                            {
+                                <option value="@training.TrainingId" selected="@(Model.QuizTrainingId == training.TrainingId)">@training.Name</option>
+                            }
+                        </select>
+                        <span class="help-block">@localizer["AckQuizTrainingHelp"]</span>
+                    </div>
+                    <fieldset class="form-group">
+                        <legend class="h5">@localizer["LearningSettingsHeader"] <span class="label label-default">LMS</span></legend>
+                        @if (Model.LmsActive)
+                        {
+                            <div class="form-group">
+                                <label class="control-label" for="LearningBankId">@localizer["LearningBankLabel"]</label>
+                                <select id="LearningBankId" name="LearningBankId" class="form-control" style="max-width: 420px;" aria-describedby="LearningBankHelp">
+                                    <option value="">@localizer["LearningNoBankOption"]</option>
+                                    @foreach (var bank in Model.Banks)
+                                    {
+                                        <option value="@bank.Id" selected="@(Model.LearningBankId == bank.Id)">@bank.Name (@bank.DrawableQuestions)</option>
+                                    }
+                                </select>
+                                <span id="LearningBankHelp" class="help-block">@localizer["LearningBankHelp"]</span>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="LearningQuizRequired" value="true" checked="@Model.LearningQuizRequired" /> @localizer["LearningQuizRequiredLabel"]</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="LearningQuestionCount">@localizer["LearningQuestionCountLabel"]</label>
+                                <input id="LearningQuestionCount" name="LearningQuestionCount" type="number" min="1" max="50" class="form-control" style="max-width: 160px;" value="@Model.LearningQuestionCount" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="LearningPassMark">@localizer["LearningPassMarkLabel"]</label>
+                                <input id="LearningPassMark" name="LearningPassMark" type="number" min="1" max="100" class="form-control" style="max-width: 160px;" value="@Model.LearningPassMark" />
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="LearningTags">@localizer["LearningTagsLabel"]</label>
+                                <input id="LearningTags" name="LearningTags" class="form-control" maxlength="500" value="@Model.LearningTags" aria-describedby="LearningTagsHelp" />
+                                <span id="LearningTagsHelp" class="help-block">@localizer["LearningTagsHelp"]</span>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="LearningMicro" value="true" checked="@Model.LearningMicro" /> @localizer["LearningMicroLabel"]</label>
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="form-control-static text-muted">@localizer["LearningLmsOnly"]</p>
+                        }
+                    </fieldset>
+                    <div class="form-group">
+                        <label class="control-label" for="StandardsTags">@localizer["StandardsTagsLabel"] <span class="label label-default">LMS</span></label>
+                        @if (Model.LmsActive)
+                        {
+                            <input id="StandardsTags" name="StandardsTags" class="form-control" maxlength="@DispatchProtocol.TagsMaxLength" value="@Model.StandardsTags" placeholder="@string.Join(", ", ProtocolAcknowledgmentRules.SuggestedStandards)" />
+                            <span class="help-block">@localizer["StandardsTagsHelp"]</span>
+                        }
+                        else
+                        {
+                            <input type="hidden" name="StandardsTags" value="@Model.StandardsTags" />
+                            <p class="form-control-static text-muted">@localizer["StandardsTagsLmsOnly"]</p>
+                        }
+                    </div>
+                </div>
+                <div class="rgw-wizard-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveButton"]</button>
+                    <a class="btn btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@Model.ProtocolId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackButton"]</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

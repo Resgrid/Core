@@ -1,0 +1,81 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsStandards
+@model LmsStandardsXapiView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsStandards.LmsStandards> localizer
+@*
+    xAPI statements out (setting 147): course and lesson results (attempted, completed, passed, failed) go to the department's LRS. The actor
+    is a pseudonymous account by default; the e-mail address only when switched on. The secret is stored encrypted and never shown again.
+*@
+@{
+    var settings = Model.Overview.Settings;
+    ViewBag.Title = "Resgrid | " + localizer["Std.XapiTitle"];
+    ViewData["Title"] = localizer["Std.XapiTitle"].Value;
+    ViewData["Subtitle"] = localizer["Std.XapiIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-stat-tiles m-b-md">
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@Model.Overview.Pending</span><span class="rgw-stat-label">@localizer["Std.Outbox.Pending"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@Model.Overview.Delivered</span><span class="rgw-stat-label">@localizer["Std.Outbox.Delivered"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@Model.Overview.Failed</span><span class="rgw-stat-label">@localizer["Std.Outbox.Failed"]</span></div>
+    </div>
+
+    <form asp-controller="LmsStandards" asp-action="SaveXapi" asp-route-area="User" method="post" class="ibox" autocomplete="off">
+        @Html.AntiForgeryToken()
+        <fieldset class="ibox-content" disabled="@(!Model.CanAuthor)">
+            <div class="checkbox"><label><input id="XapiEnabled" type="checkbox" name="xapiEnabled" value="true" checked="@settings.XapiEnabled" /> @localizer["Std.Field.XapiEnabled"]</label></div>
+            <div class="rgw-grid">
+                <div class="form-group"><label for="LrsEndpoint">@localizer["Std.Field.LrsEndpoint"]</label><input id="LrsEndpoint" name="lrsEndpoint" type="url" class="form-control" value="@settings.LrsEndpoint" maxlength="2000" /></div>
+                <div class="form-group"><label for="LrsKey">@localizer["Std.Field.LrsKey"]</label><input id="LrsKey" name="lrsKey" class="form-control" value="@settings.LrsKey" maxlength="500" /></div>
+                <div class="form-group">
+                    <label for="LrsSecret">@localizer["Std.Field.LrsSecret"]</label>
+                    <input id="LrsSecret" name="lrsSecret" type="password" class="form-control" maxlength="500" autocomplete="new-password" placeholder="@(Model.Overview.HasSecret ? localizer["Std.SecretStored"].Value : string.Empty)" />
+                </div>
+            </div>
+            @if (Model.Overview.HasSecret)
+            {
+                <div class="checkbox"><label><input type="checkbox" name="clearSecret" value="true" /> @localizer["Std.Field.ClearSecret"]</label></div>
+            }
+            <div class="checkbox"><label><input id="ShareEmailInActor" type="checkbox" name="shareEmailInActor" value="true" checked="@settings.ShareEmailInActor" /> @localizer["Std.Field.ShareEmailInActor"]</label></div>
+            <p class="help-block">@localizer["Std.XapiHelp"]</p>
+            @if (Model.CanAuthor)
+            {
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Std.Save"]</button>
+            }
+        </fieldset>
+    </form>
+
+    @if (Model.Overview.RecentFailures.Count > 0)
+    {
+        <h3><i class="fa fa-exclamation-circle" aria-hidden="true"></i> @localizer["Std.Outbox.RecentFailures"]</h3>
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Std.Col.Statement"]</th><th>@localizer["Std.Col.Attempts"]</th><th>@localizer["Std.Col.LastError"]</th><th>@localizer["Std.Col.Queued"]</th></tr></thead>
+                <tbody>
+                    @foreach (var item in Model.Overview.RecentFailures)
+                    {
+                        <tr><td>@(LmsXapiVerbs.Display(item.VerbId) ?? item.VerbId)<span class="rgw-sub">@item.StatementId</span></td><td>@item.Attempts</td><td>@item.LastError</td><td>@Model.When(item.CreatedOn)</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.IsManager)
+        {
+            <form asp-controller="LmsStandards" asp-action="RetryXapi" asp-route-area="User" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-white"><i class="fa fa-repeat" aria-hidden="true"></i> @localizer["Std.Outbox.Retry"]</button>
+            </form>
+        }
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

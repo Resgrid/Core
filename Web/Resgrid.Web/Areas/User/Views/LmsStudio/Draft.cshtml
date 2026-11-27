@@ -1,0 +1,111 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model CourseDraftModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* Draft a course with Enhanced AI (T5 item 5, §13a "Learning Studio"): from a published protocol version or an uploaded SOP. The result is a new
+   DRAFT course whose lessons each cite their source sections; nothing is published. Needs Enhanced AI and the LMS (§17.2). *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Studio.DraftTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = localizer["Studio.DraftTitle"].Value;
+    ViewData["Subtitle"] = localizer["Studio.DraftIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var maxMb = Model.MaxDocumentBytes / (1024 * 1024);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.Status.AiAvailable)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Studio.Outcome." + (Model.Status.AiReason ?? LmsStudioOutcomes.NotEntitled)]</div>
+        <p class="text-muted">@localizer["Studio.DraftNeeds"]</p>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-magic" aria-hidden="true"></i> @localizer["Studio.DraftHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="LmsStudio" asp-action="Draft" asp-route-area="User" enctype="multipart/form-data" id="studio-draft-form"
+                              data-busy-text="@localizer["Studio.Drafting"]">
+                            @Html.AntiForgeryToken()
+                            <fieldset class="form-group">
+                                <legend class="h5">@localizer["Studio.SourceLegend"]</legend>
+                                <div class="radio">
+                                    <label><input type="radio" name="sourceKind" value="@((int)LmsCourseDraftSourceKinds.ProtocolVersion)" checked data-studio-source="protocol" /> @localizer["Studio.SourceProtocol"]</label>
+                                </div>
+                                <div class="radio">
+                                    <label><input type="radio" name="sourceKind" value="@((int)LmsCourseDraftSourceKinds.Document)" data-studio-source="document" /> @localizer["Studio.SourceDocument"]</label>
+                                </div>
+                            </fieldset>
+
+                            <div class="form-group" data-studio-panel="protocol">
+                                <label for="studio-protocol">@localizer["Studio.ProtocolLabel"]</label>
+                                @if (Model.Protocols.Count == 0)
+                                {
+                                    <p class="text-muted" id="studio-protocol">@localizer["Studio.NoProtocols"]</p>
+                                }
+                                else
+                                {
+                                    <select id="studio-protocol" name="protocolId" class="form-control">
+                                        @foreach (var protocol in Model.Protocols)
+                                        {
+                                            <option value="@protocol.ProtocolId" selected="@(Model.ProtocolId == protocol.ProtocolId)">@(string.IsNullOrWhiteSpace(protocol.Code) ? protocol.Name : protocol.Code + " · " + protocol.Name) (@protocol.VersionLabel)</option>
+                                        }
+                                    </select>
+                                    <span class="help-block">@localizer["Studio.ProtocolHelp"]</span>
+                                }
+                            </div>
+
+                            <div class="form-group" data-studio-panel="document" hidden>
+                                <label for="studio-file">@localizer["Studio.DocumentLabel"]</label>
+                                <input id="studio-file" name="file" type="file" class="form-control" accept=".pdf,.docx,.txt" />
+                                <span class="help-block">@string.Format(localizer["Studio.DocumentHelp"].Value, maxMb)</span>
+                            </div>
+
+                            <div class="rgw-grid">
+                                <div class="form-group">
+                                    <label for="studio-title">@localizer["Studio.TitleLabel"]</label>
+                                    <input id="studio-title" name="title" class="form-control" maxlength="250" />
+                                    <span class="help-block">@localizer["Studio.TitleHelp"]</span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="studio-questions">@localizer["Studio.QuestionsLabel"]</label>
+                                    <input id="studio-questions" name="questionCount" type="number" class="form-control" min="@LmsCourseDraftRequest.MinQuestions" max="@LmsCourseDraftRequest.MaxQuestions" value="5" />
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-magic" aria-hidden="true"></i> @localizer["Studio.DraftButton"]</button>
+                            <span class="rgw-progress-honest" id="studio-draft-busy" role="status" aria-live="polite"></span>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <aside class="col-lg-4" aria-label="@localizer["Studio.HowItWorks"]">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-shield" aria-hidden="true"></i> @localizer["Studio.HowItWorks"]</h5></div>
+                    <div class="ibox-content">
+                        <ul class="small">
+                            <li>@localizer["Studio.Rule.Draft"]</li>
+                            <li>@localizer["Studio.Rule.Citations"]</li>
+                            <li>@localizer["Studio.Rule.Numbers"]</li>
+                            <li>@localizer["Studio.Rule.NoAi"]</li>
+                            <li>@localizer["Studio.Rule.Logged"]</li>
+                        </ul>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/courses/resgrid.courses.studio.js" asp-append-version="true"></script>
+}

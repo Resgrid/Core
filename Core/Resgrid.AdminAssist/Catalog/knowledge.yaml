@@ -193,6 +193,490 @@
       "AllowedValues": "true or false",
       "EvidenceSource": "DepartmentSettingsService.GetDepartmentModuleSettingsAsync",
       "Availability": "available"
+    },
+    {
+      "Id": "setting.ProtocolLibrarySettings",
+      "AreaId": "knowledge",
+      "LabelKey": "Setting.ProtocolLibrarySettings",
+      "HelpKey": "SettingHelp.ProtocolLibrarySettings",
+      "Binding": "DepartmentSettingTypes.ProtocolLibrarySettings",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.ProtocolLibrarySettings",
+      "DefaultValue": "missing = the standard signature levels (approvals by a fresh step-up or a passkey), no default review interval, every version kept",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.RequirePasskeyForApproval",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.ProtocolLibrarySettings.RequirePasskeyForApproval",
+      "HelpKey": "FieldHelp.ProtocolLibrarySettings.RequirePasskeyForApproval",
+      "Binding": "ProtocolLibrarySettings.RequirePasskeyForApproval",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": "RequirePasskeyForApproval"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.ProtocolLibrarySettings.RequirePasskeyForApproval",
+      "DefaultValue": "false (a fresh step-up or a passkey)",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "ProtocolLibrarySettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp",
+      "HelpKey": "FieldHelp.ProtocolLibrarySettings.ReadAndSignRequiresStepUp",
+      "Binding": "ProtocolLibrarySettings.ReadAndSignRequiresStepUp",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": "ReadAndSignRequiresStepUp"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp",
+      "DefaultValue": "false (the signed-in session)",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "ProtocolLibrarySettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.DefaultReviewIntervalDays",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.ProtocolLibrarySettings.DefaultReviewIntervalDays",
+      "HelpKey": "FieldHelp.ProtocolLibrarySettings.DefaultReviewIntervalDays",
+      "Binding": "ProtocolLibrarySettings.DefaultReviewIntervalDays",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": "DefaultReviewIntervalDays"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.ProtocolLibrarySettings.DefaultReviewIntervalDays",
+      "DefaultValue": "0 (no review interval)",
+      "AllowedValues": "0 to 3650 days; larger values are capped when saved",
+      "EvidenceSource": "ProtocolLibrarySettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.LegalHold",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.ProtocolLibrarySettings.LegalHold",
+      "HelpKey": "FieldHelp.ProtocolLibrarySettings.LegalHold",
+      "Binding": "ProtocolLibrarySettings.LegalHold",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": "LegalHold"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.ProtocolLibrarySettings.LegalHold",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "ProtocolLibrarySettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.DefaultContentLocale",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.ProtocolLibrarySettings.DefaultContentLocale",
+      "HelpKey": "FieldHelp.ProtocolLibrarySettings.DefaultContentLocale",
+      "Binding": "ProtocolLibrarySettings.DefaultContentLocale",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": "DefaultContentLocale"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.ProtocolLibrarySettings.DefaultContentLocale",
+      "DefaultValue": "blank (English)",
+      "AllowedValues": "ar, de, el, en, es, fr, it, pl, sv, uk or blank",
+      "EvidenceSource": "ProtocolLibrarySettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.ShowDeterminantInDispatch",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.ProtocolLibrarySettings.ShowDeterminantInDispatch",
+      "HelpKey": "FieldHelp.ProtocolLibrarySettings.ShowDeterminantInDispatch",
+      "Binding": "ProtocolLibrarySettings.ShowDeterminantInDispatch",
+      "ValueType": "bool",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": "ShowDeterminantInDispatch"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.ProtocolLibrarySettings.ShowDeterminantInDispatch",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "ProtocolLibrarySettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.Retention",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.ProtocolLibrarySettings.Retention",
+      "HelpKey": "FieldHelp.ProtocolLibrarySettings.Retention",
+      "Binding": "ProtocolLibrarySettings.Retention",
+      "ValueType": "list",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": "RetentionDays"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.ProtocolLibrarySettings.Retention",
+      "DefaultValue": "empty (every version kept)",
+      "AllowedValues": "One entry per protocol kind with 1 to 36500 days; entries of 0 or for unknown kinds are dropped when saved",
+      "EvidenceSource": "ProtocolLibrarySettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.ProtocolKindRetention.Kind",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.ProtocolKindRetention.Kind",
+      "HelpKey": "FieldHelp.ProtocolKindRetention.Kind",
+      "Binding": "ProtocolKindRetention.Kind",
+      "ValueType": "enum",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.ProtocolKindRetention.Kind",
+      "DefaultValue": "unset",
+      "AllowedValues": "ProtocolKinds: 0 Dispatch, 1 Sog, 2 ClinicalGuideline, 3 Policy, 4 Procedure, 5 Reference",
+      "EvidenceSource": "ProtocolKindRetention",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "field.ProtocolKindRetention.KeepDays",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.ProtocolKindRetention.KeepDays",
+      "HelpKey": "FieldHelp.ProtocolKindRetention.KeepDays",
+      "Binding": "ProtocolKindRetention.KeepDays",
+      "ValueType": "integer",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z",
+      "Impact": {
+        "Risk": "High",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.ProtocolKindRetention.KeepDays",
+      "DefaultValue": "0 (keep)",
+      "AllowedValues": "1 to 36500; 0 is dropped when saved",
+      "EvidenceSource": "ProtocolKindRetention",
+      "Availability": "reference-only"
+    },
+    {
+      "Id": "setting.KnowledgeSettings",
+      "AreaId": "knowledge",
+      "LabelKey": "Setting.KnowledgeSettings",
+      "HelpKey": "SettingHelp.KnowledgeSettings",
+      "Binding": "DepartmentSettingTypes.KnowledgeSettings",
+      "ValueType": "protobuf",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Knowledge",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.KnowledgeSettings",
+      "DefaultValue": "missing = Documents not used, no dosing tool link",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.KnowledgeSettings.IncludeDocuments",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.KnowledgeSettings.IncludeDocuments",
+      "HelpKey": "FieldHelp.KnowledgeSettings.IncludeDocuments",
+      "Binding": "KnowledgeSettings.IncludeDocuments",
+      "ValueType": "boolean",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Knowledge",
+        "Action": "Settings",
+        "Field": "IncludeDocuments"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Medium",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.KnowledgeSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.KnowledgeSettings.IncludeDocuments",
+      "DefaultValue": "false",
+      "AllowedValues": "true or false",
+      "EvidenceSource": "KnowledgeSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "field.KnowledgeSettings.DosingToolUrl",
+      "AreaId": "knowledge",
+      "LabelKey": "Field.KnowledgeSettings.DosingToolUrl",
+      "HelpKey": "FieldHelp.KnowledgeSettings.DosingToolUrl",
+      "Binding": "KnowledgeSettings.DosingToolUrl",
+      "ValueType": "string",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "Knowledge",
+        "Action": "Settings",
+        "Field": "DosingToolUrl"
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [
+        "setting.KnowledgeSettings"
+      ],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "field.KnowledgeSettings.DosingToolUrl",
+      "DefaultValue": "unset (no dosing link)",
+      "AllowedValues": "An https link of up to 500 characters",
+      "EvidenceSource": "KnowledgeSettings",
+      "Availability": "available"
+    },
+    {
+      "Id": "setting.ContentSetSettings",
+      "AreaId": "knowledge",
+      "LabelKey": "Setting.ContentSetSettings",
+      "HelpKey": "SettingHelp.ContentSetSettings",
+      "Binding": "DepartmentSettingTypes.ContentSetSettings",
+      "ValueType": "structured",
+      "Classification": "Internal",
+      "Secret": false,
+      "Location": {
+        "Controller": "ContentSets",
+        "Action": "Settings",
+        "Field": null
+      },
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z",
+      "Impact": {
+        "Risk": "Low",
+        "AudienceKey": "Impact.Audience",
+        "OperationKey": "Area.knowledge",
+        "TimingKey": "Impact.Timing",
+        "ReversibilityKey": "Impact.Reversal",
+        "VerificationKey": "Impact.Verify"
+      },
+      "Requires": [],
+      "Affects": [],
+      "Conflicts": [],
+      "DocumentationId": "setting.ContentSetSettings",
+      "DefaultValue": "07:00 local, notify department admins",
+      "AllowedValues": "Validated by the owning editor and service; Admin Assist never saves a proposed value.",
+      "EvidenceSource": "DepartmentSettings",
+      "Availability": "available"
     }
   ],
   "Capabilities": [
@@ -425,6 +909,517 @@
       "DocsPath": "/web-app/protocols/"
     },
     {
+      "Id": "protocol-edit",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-edit",
+      "PurposeKey": "FeaturePurpose.protocol-edit",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-disable",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-disable",
+      "PurposeKey": "FeaturePurpose.protocol-disable",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "call-protocol-removal",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.call-protocol-removal",
+      "PurposeKey": "FeaturePurpose.call-protocol-removal",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Dispatch",
+        "Action": "Dashboard"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-case-flow",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-case-flow",
+      "PurposeKey": "FeaturePurpose.protocol-case-flow",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-review-queue",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-review-queue",
+      "PurposeKey": "FeaturePurpose.protocol-review-queue",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "ReviewQueue"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ApproveProtocols",
+        "field.ProtocolLibrarySettings.RequirePasskeyForApproval"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-review-stamp",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-review-stamp",
+      "PurposeKey": "FeaturePurpose.protocol-review-stamp",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ApproveProtocols",
+        "field.ProtocolLibrarySettings.DefaultReviewIntervalDays"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-compare",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-compare",
+      "PurposeKey": "FeaturePurpose.protocol-compare",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-categories",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-categories",
+      "PurposeKey": "FeaturePurpose.protocol-categories",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Categories"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ApproveProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-settings",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-settings",
+      "PurposeKey": "FeaturePurpose.protocol-settings",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Settings"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-import",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-import",
+      "PurposeKey": "FeaturePurpose.protocol-import",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Import"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-acknowledgments",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-acknowledgments",
+      "PurposeKey": "FeaturePurpose.protocol-acknowledgments",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolAcknowledgments",
+        "Action": "Mine"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "setting.ProtocolLibrarySettings"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-compliance",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-compliance",
+      "PurposeKey": "FeaturePurpose.protocol-compliance",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolAcknowledgments",
+        "Action": "Compliance"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ManageProtocolAcknowledgments"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "dispatch-case-review",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.dispatch-case-review",
+      "PurposeKey": "FeaturePurpose.dispatch-case-review",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DispatchCaseReviews",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ReviewDispatchCases"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "my-case-reviews",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.my-case-reviews",
+      "PurposeKey": "FeaturePurpose.my-case-reviews",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "DispatchCaseReviews",
+        "Action": "Mine"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-bulletins",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-bulletins",
+      "PurposeKey": "FeaturePurpose.protocol-bulletins",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolAcknowledgments",
+        "Action": "Bulletins"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ApproveProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-bulk-upload",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-bulk-upload",
+      "PurposeKey": "FeaturePurpose.protocol-bulk-upload",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolDocuments",
+        "Action": "BulkUpload"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-block-editor",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-block-editor",
+      "PurposeKey": "FeaturePurpose.protocol-block-editor",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Protocols",
+        "Action": "Edit"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-step-through",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-step-through",
+      "PurposeKey": "FeaturePurpose.protocol-step-through",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolTools",
+        "Action": "Steps"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-book",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-book",
+      "PurposeKey": "FeaturePurpose.protocol-book",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolTools",
+        "Action": "Book"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-translations",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-translations",
+      "PurposeKey": "FeaturePurpose.protocol-translations",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolTools",
+        "Action": "Translations"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols",
+        "permission.ApproveProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-public-pages",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-public-pages",
+      "PurposeKey": "FeaturePurpose.protocol-public-pages",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Public"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ApproveProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-template-library",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-template-library",
+      "PurposeKey": "FeaturePurpose.protocol-template-library",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Templates"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "community-exchange",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.community-exchange",
+      "PurposeKey": "FeaturePurpose.community-exchange",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Exchange"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols",
+        "permission.ApproveProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-open-format",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-open-format",
+      "PurposeKey": "FeaturePurpose.protocol-open-format",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Export"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.AuthorProtocols"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "protocol-analytics",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-analytics",
+      "PurposeKey": "FeaturePurpose.protocol-analytics",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ProtocolSharing",
+        "Action": "Analytics"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
       "Id": "forms",
       "AreaId": "knowledge",
       "LabelKey": "Feature.forms",
@@ -489,6 +1484,66 @@
       ],
       "Prominence": "Detail",
       "DocsPath": "/web-app/documents/"
+    },
+    {
+      "Id": "protocol-sets",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.protocol-sets",
+      "PurposeKey": "FeaturePurpose.protocol-sets",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "ContentSets",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [
+        "permission.ManageContentSets",
+        "setting.ContentSetSettings"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "linked-department-protocols",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.linked-department-protocols",
+      "PurposeKey": "FeaturePurpose.linked-department-protocols",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Links",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
+    },
+    {
+      "Id": "department-link-acceptance",
+      "AreaId": "knowledge",
+      "LabelKey": "Feature.department-link-acceptance",
+      "PurposeKey": "FeaturePurpose.department-link-acceptance",
+      "ValueKey": "AreaValue.knowledge",
+      "ExampleKey": "AreaExample.knowledge",
+      "AdoptionKey": "ModuleAdoption.knowledge",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Links",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/protocols/"
     }
   ],
   "Rules": [
@@ -629,6 +1684,116 @@
       "ReviewedOn": "2026-11-03T00:00:00Z"
     },
     {
+      "Id": "setting.ProtocolLibrarySettings",
+      "Locale": "en",
+      "TitleKey": "Setting.ProtocolLibrarySettings",
+      "Body": "Protocol Library Settings. Department-wide rules on the Protocols Settings page: whether approvals need a passkey and read-and-sign a step-up, the review interval new protocols start with, and how long superseded and retired versions are kept, with a legal hold that stops any deletion. Missing means the standard signature levels, no default interval and every version kept. Only department administrators can change it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-protocollibrarysettings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.RequirePasskeyForApproval",
+      "Locale": "en",
+      "TitleKey": "Field.ProtocolLibrarySettings.RequirePasskeyForApproval",
+      "Body": "Protocol Library Settings / Require Passkey for Approval. Approvals and \"reviewed, no change\" stamps must be signed with a passkey; a step-up by authenticator code or sign-in provider is no longer enough. Approvers without a registered passkey cannot sign until they add one. Off, any fresh step-up or passkey signs.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-protocollibrarysettings-requirepasskeyforapproval",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp",
+      "Locale": "en",
+      "TitleKey": "Field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp",
+      "Body": "Protocol Library Settings / Read-and-Sign Requires Step-Up. Read-and-sign acknowledgments will need a fresh step-up instead of the signed-in session alone. Read-and-sign is not available yet; the choice is saved for when it is.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-protocollibrarysettings-readandsignrequiresstepup",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.DefaultReviewIntervalDays",
+      "Locale": "en",
+      "TitleKey": "Field.ProtocolLibrarySettings.DefaultReviewIntervalDays",
+      "Body": "Protocol Library Settings / Default Review Interval Days. Days between reviews for new and imported protocols that do not set their own interval, 0 to 3650; 0 sets none. Existing protocols keep theirs. Publishing a version or recording \"reviewed, no change\" restarts the interval, and the protocol's owner, or the department administrators when it has none, is reminded 30 and 7 days before a review is due and again when it is overdue.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-protocollibrarysettings-defaultreviewintervaldays",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.LegalHold",
+      "Locale": "en",
+      "TitleKey": "Field.ProtocolLibrarySettings.LegalHold",
+      "Body": "Protocol Library Settings / Legal Hold. A department-wide legal hold: while it is on, no superseded or retired protocol version is deleted, whatever the retention days. An approver can also hold a single protocol from its edit page.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-protocollibrarysettings-legalhold",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.DefaultContentLocale",
+      "Locale": "en",
+      "TitleKey": "Field.ProtocolLibrarySettings.DefaultContentLocale",
+      "Body": "Protocol Library Settings / Content Language. The language protocols are written in. Members whose language has no approved translation of a version read it in this language, and block labels such as Caution are written in it. Blank means English.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-protocollibrarysettings-defaultcontentlocale",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.ShowDeterminantInDispatch",
+      "Locale": "en",
+      "TitleKey": "Field.ProtocolLibrarySettings.ShowDeterminantInDispatch",
+      "Body": "Protocol Library Settings / Determinant in dispatch texts. Adds the determinant and the protocol name of a call's case flow to the dispatch push title, the dispatch text message and the voice dispatch prompt. Off by default; with it off every dispatch text is as before.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-protocollibrarysettings-showdeterminantindispatch",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.ProtocolLibrarySettings.Retention",
+      "Locale": "en",
+      "TitleKey": "Field.ProtocolLibrarySettings.Retention",
+      "Body": "Protocol Library Settings / Retention. Days each protocol kind (Dispatch, SOG, Clinical Guideline, Policy, Procedure, Reference) keeps a version after it is superseded or retired, up to 36500; after that a background job deletes it. 0 keeps that kind's versions. A version still attached to a call is never deleted, and nothing is deleted while a legal hold is on.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-protocollibrarysettings-retention",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "field.ProtocolKindRetention.Kind",
+      "Locale": "en",
+      "TitleKey": "Field.ProtocolKindRetention.Kind",
+      "Body": "Protocol Kind Retention / Kind. The protocol kind the entry applies to: 0 Dispatch, 1 SOG, 2 Clinical Guideline, 3 Policy, 4 Procedure, 5 Reference. One entry per kind; a kind without an entry keeps every version.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-protocolkindretention-kind",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "field.ProtocolKindRetention.KeepDays",
+      "Locale": "en",
+      "TitleKey": "Field.ProtocolKindRetention.KeepDays",
+      "Body": "Protocol Kind Retention / Keep Days. Days after a version of that kind is superseded or retired before it may be deleted, 1 to 36500. An entry of 0 is dropped when saved, so the kind keeps its versions.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-protocolkindretention-keepdays",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
       "Id": "contacts",
       "Locale": "en",
       "TitleKey": "Feature.contacts",
@@ -654,12 +1819,12 @@
       "Id": "protocols",
       "Locale": "en",
       "TitleKey": "Feature.protocols",
-      "Body": "Protocols Dispatch protocols with scripted questions and instructions. Members find the current procedure, preplan or phone number when they need it instead of searching email. A department uploads its standard operating procedures, adds hospital and mutual-aid contacts and creates a medical dispatch protocol. Create protocols for the call types that need scripted questions.",
+      "Body": "Protocols Dispatch protocols with scripted questions and instructions. Members find the current procedure, preplan or phone number when they need it instead of searching email. A department uploads its standard operating procedures, adds hospital and mutual-aid contacts and creates a medical dispatch protocol. Create protocols for the call types that need scripted questions. The library also holds SOGs, clinical guidelines, policies, procedures and references. A change is written as a draft, submitted to the Review Queue, approved with a step-up or passkey signature and published now or on a set date; any two versions can be compared, and a protocol that is still current can be stamped \"reviewed, no change\". Categories set approval steps, Settings (department administrators) sets signature, review and retention rules, and Import brings protocols in from an exchange file as drafts.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "protocols",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-11-24T00:00:00Z"
     },
     {
       "Id": "new-contact",
@@ -728,6 +1893,270 @@
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
+      "Id": "protocol-edit",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-edit",
+      "Body": "Edit Protocols Change a protocol's content, triggers and questions in place; calls keep the text they were dispatched with. Triggers, questions and answers keep their ids when edited, and each call shows the text as dispatched, marked when the protocol has changed since.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-edit",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-disable",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-disable",
+      "Body": "Disable Protocols Stop suggesting and attaching a protocol without deleting it. A disabled protocol stays in the library, leaves the apps' lists and offline reference data, and is refused when a call form or app tries to attach it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-disable",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "call-protocol-removal",
+      "Locale": "en",
+      "TitleKey": "Feature.call-protocol-removal",
+      "Body": "Remove a Protocol from a Call Take a mis-attached protocol off a call with a reason; the record keeps it, marked removed. On View Call, open the Protocols tab and use Remove from call; the removal is written to the department's audit log.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "call-protocol-removal",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-review-queue",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-review-queue",
+      "Body": "Protocol Review Queue Approve or reject submitted protocol versions with a signed approval, then publish them now or on a set date. Authors and approvers see the queue. An approver opens a submitted version to read the redline against the version in force; its open review comments must be resolved before it can be approved, and a rejection needs a comment. A category can require several steps, each for a named member or role. Every approval is a step-up or passkey (L2) signature bound to the version's exact content, and an approved version is published as a major or minor version, now or on its effective date.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-review-queue",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-review-stamp",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-review-stamp",
+      "Body": "Record a Protocol Review Mark a published protocol \"reviewed, no change\" with a signed stamp, without a new version. The protocol's owner or an approver records it from the protocol's page. It is signed like an approval, restarts the review interval and its reminders, and members do not have to acknowledge the protocol again.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-review-stamp",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-compare",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-compare",
+      "Body": "Compare Protocol Versions See what changed between two versions of a protocol as a redline. Open Compare from the version history on a protocol's page. Members compare the versions they can read; authors and approvers can include drafts and versions in review.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-compare",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-categories",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-categories",
+      "Body": "Protocol Categories Group the library into categories and set the approval steps each category needs. Authors see the categories; approvers add, change and delete them. A category with no approval steps needs one approval from anyone with Approve Protocols, and a category still in use cannot be deleted.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-categories",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-settings",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-settings",
+      "Body": "Protocol Settings Set signature requirements, the default review interval, version retention and the department-wide legal hold. Department administrators only; saving asks for a recent two-factor step-up and is written to the department's audit log.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-settings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-import",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-import",
+      "Body": "Import Protocols Bring protocols in from a Resgrid protocol exchange file as drafts for review. A file holds up to 500 protocols. Categories, priorities, call types, groups and roles are matched to yours by name, and anything without a match is left out and listed. Nothing is published by an import. Export writes the whole library, or chosen protocols, in the same format.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-import",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-24T00:00:00Z"
+    },
+    {
+      "Id": "protocol-acknowledgments",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-acknowledgments",
+      "Body": "My Acknowledgments Every member sees what they owe: protocols that require acknowledgment, assigned when a version is published and whenever the member joins its audience, due a set number of days later, with priority bulletins first. Reading the version and signing records the member, the time and the exact content. A minor version keeps an earlier signature; a major version asks again. A protocol can be linked to a training whose quiz must be passed.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-acknowledgments",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-compliance",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-compliance",
+      "Body": "Acknowledgment Compliance The compliance grid lists every protocol in force that needs acknowledgment with its progress, and for one version every assigned member with their state, due date and signature time, filtered by group. Export it as CSV or PDF. Reminders go out at the due date and after, and overdue acknowledgments are escalated to the member's group admin. Standards tags and the proof-of-compliance report come with the LMS add-on.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-compliance",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "dispatch-case-review",
+      "Locale": "en",
+      "TitleKey": "Feature.dispatch-case-review",
+      "Body": "Dispatch Case Review Officers sample calls by protocol, version, determinant, dispatcher and dates, score each recorded case question by question and instruction by instruction with a Records QA rubric beside the protocol's case flow, and send the review to the dispatcher. Reports show compliance by protocol, version, dispatcher and month, with CSV.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "dispatch-case-review",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "my-case-reviews",
+      "Locale": "en",
+      "TitleKey": "Feature.my-case-reviews",
+      "Body": "My Case Reviews Dispatchers read the reviews of calls they handled, with every question and instruction scored and the reviewer's comments, acknowledge each one once and may reply once; the reviewer is notified of the reply.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "my-case-reviews",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-bulletins",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-bulletins",
+      "Body": "Priority Bulletins A priority bulletin carries short content, an audience, an expiry and must-read. It is in force at once, sent by push, and shown as a must-read card at the top of home until each member acknowledges it, never over the dispatch console or a call. An approver countersigns it afterwards or withdraws it, and it leaves the library by itself when it expires. Holders of Approve Protocols issue them.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-bulletins",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-bulk-upload",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-bulk-upload",
+      "Body": "Upload Protocol Documents Upload many PDF and Word files, or a zip, into a category; each becomes a draft document-backed protocol whose title and number come from the file name, and zip folders can become categories. The file is the protocol's content with the same review, publish, audience and acknowledgment, and its text is read for search. A document in Documents can also be moved to Protocols, leaving a redirect at its old link.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-bulk-upload",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-block-editor",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-block-editor",
+      "Body": "Structured Protocol Content New protocol drafts are written in a block editor: headings, paragraphs, ordered steps, caution and warning boxes, \"contact medical control\" gates, tables, images, video links, attachments, links to other protocols, POIs, inventory items, checklists and trainings, medications, adult/pediatric variant groups and scope-of-practice tags. Every block has a stable anchor that review comments and AI citations point at. Medication doses are shown exactly as authored and never calculated; the department dosing-tool link appears with every medication. An older rich-text draft keeps its editor until an author chooses Convert to blocks; published versions and their hashes never change.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-block-editor",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-step-through",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-step-through",
+      "Body": "Protocol Step-Through on Calls A Procedure or Dispatch protocol on a call can be stepped through like a checklist from View Call: each step is marked done, skipped or not applicable, timestamped by the server with who did it, and the log is kept on the call. Incident SOP checklists such as MAYDAY, RIT and hazmat entry are the department's Procedure protocols, started on a call from the same panel. Omni uses the same steps through the v4 API.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-step-through",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-book",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-book",
+      "Body": "Protocol PDF Book, QR Code and Print View The PDF book holds a table of contents and every protocol in force with its version, effective date and approver, for one category or the whole library, limited to what the member may read. It is sealed when document sealing is configured and otherwise recorded as sealing pending. Each protocol also has a print view and a QR code poster for apparatus and station walls that opens the version in force.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-book",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-translations",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-translations",
+      "Body": "Protocol Content Translations An author can translate a submitted or published version into another language; only the wording is translated, while doses, links, attachments and the structure stay as in the source. An approver signs each translation at L2, bound to the translation's own content, and the source version's hash and signatures never change. Members read the approved translation in their language, or the department's content language when there is none, set under Protocols settings.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-translations",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-public-pages",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-public-pages",
+      "Body": "Public Protocol Pages Publish a protocol's version in force, or a category as a set, at an opt-in public address with an embed code. Drafts, audience-restricted and licensed content are never shown, and a page can be revoked at any time.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-public-pages",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-template-library",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-template-library",
+      "Body": "Protocol Template Library Clone starter sets written by Resgrid (fire SOGs, search and rescue, industrial hazards, business continuity, law enforcement policies, security post orders, workplace policies and an EMS outline without clinical text) into the library as drafts in your language, with the source, licence and version kept on each version.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-template-library",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "community-exchange",
+      "Locale": "en",
+      "TitleKey": "Feature.community-exchange",
+      "Body": "Community Exchange Share protocols and trainings with other departments for free. Department data is taken out, licensed content is refused, Resgrid reviews every contribution before it is listed, and other departments can rate, comment on and import a copy with the attribution kept.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "community-exchange",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-open-format",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-open-format",
+      "Body": "Protocol Open Format and Export Export the library or a category in the documented open JSON format (blocks, version history, decision graph, translations and an attachments list), as one HTML file or as the PDF book. Files in the older format still import.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-open-format",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "protocol-analytics",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-analytics",
+      "Body": "Protocol Analytics See how protocols are used on calls by version, the determinant distribution and override rate, time on protocol, acknowledgment compliance and searches that found nothing, with a CSV export.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-analytics",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
       "Id": "forms",
       "Locale": "en",
       "TitleKey": "Feature.forms",
@@ -759,6 +2188,83 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "setting.KnowledgeSettings",
+      "Locale": "en",
+      "TitleKey": "Setting.KnowledgeSettings",
+      "Body": "Knowledge Settings. Department-wide rules for knowledge answers on the Knowledge Settings page: whether the Documents module is used, and the department's dosing tool link. Missing means Documents are not used and there is no dosing link. Only department administrators can change it.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-knowledgesettings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.KnowledgeSettings.IncludeDocuments",
+      "Locale": "en",
+      "TitleKey": "Field.KnowledgeSettings.IncludeDocuments",
+      "Body": "Knowledge Settings / Include Documents. Documents join the sources knowledge answers use. Admins-only documents are used only for administrators, and no document is used while Advanced Data Protection is on. Changing it rebuilds the department's knowledge index in the background.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-knowledgesettings-includedocuments",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "field.KnowledgeSettings.DosingToolUrl",
+      "Locale": "en",
+      "TitleKey": "Field.KnowledgeSettings.DosingToolUrl",
+      "Body": "Knowledge Settings / Dosing Tool Link. An https link to the department's dosing tool. Answers that quote a dose show it; doses are only ever quoted from a source, and neither the model nor Resgrid calculates one. Anything but an https link is refused.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "field-knowledgesettings-dosingtoolurl",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
+    },
+    {
+      "Id": "setting.ContentSetSettings",
+      "Locale": "en",
+      "TitleKey": "Setting.ContentSetSettings",
+      "Body": "Set update time. The local time accepted protocol and course set updates go into force on or after their effective date (default 07:00, so nothing changes mid-shift by surprise), and who is told when an update arrives, a proposal is answered, a sponsorship changes or an LTI tool needs registering: the administrators (unless turned off) and members of the roles chosen.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "setting-contentsetsettings",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "protocol-sets",
+      "Locale": "en",
+      "TitleKey": "Feature.protocol-sets",
+      "Body": "Protocol Sets Publish protocols to linked departments as a regional set, or subscribe to a county, medical director or corporate set. Locked content follows the publisher, customizable blocks keep local phone numbers and resources, every new version arrives as a redline in the update inbox and goes into force at your update time, and members propose changes upstream.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "protocol-sets",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "linked-department-protocols",
+      "Locale": "en",
+      "TitleKey": "Feature.linked-department-protocols",
+      "Body": "Linked Department Protocols Read a mutual-aid partner's published protocols over a Department Link that shares Protocols, read-only and only the version in force. Restricted, licensed and uploaded-document protocols are never shared, and turning the share off cuts access at once.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "linked-department-protocols",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
+    },
+    {
+      "Id": "department-link-acceptance",
+      "Locale": "en",
+      "TitleKey": "Feature.department-link-acceptance",
+      "Body": "Signed Link Acceptance Accepting a link from another organization is a step-up signature by one of your administrators, bound to the two organizations and what each shares at that moment; without the step-up the link stays unaccepted.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "department-link-acceptance",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-26T00:00:00Z"
     }
   ]
 }

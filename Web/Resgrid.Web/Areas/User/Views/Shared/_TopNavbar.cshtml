@@ -6,6 +6,7 @@
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> departmentLocalizer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Department.DedicatedNumber> dedicatedNumberLocalizer
 @inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Department.IntakeChannels> intakeChannelsLocalizer
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Academy.AcademyGuidance> academyGuidanceLocalizer
 @{
 	// Admin Assist opens on its setup tabs (Admin.Setup), or on its Admin AI tab once Admin.Assist and Ai.AdminAssist are on.
 	var adminAssistVisible = ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
@@ -133,6 +134,30 @@
             <li class="btn dropdown" id="menu-help">
                 <a href="#" data-toggle="dropdown" class="dropdown-toggle" title="@commonLocalizer["Help"]" aria-label="@commonLocalizer["Help"]"><span class="text">@commonLocalizer["Help"]</span><i class="fa fa-question-circle rg-topbar-help-icon" aria-hidden="true"></i>&nbsp;<b class="caret"></b></a>
                 <ul class="dropdown-menu">
+                    @{
+                        // Academy A0: the lesson for the module on screen (a page can name a closer one with ViewData["AcademyLesson"]).
+                        var academyHome = Resgrid.Model.Academy.AcademyCatalog.HomeUrl(Resgrid.Config.SystemBehaviorConfig.AcademyUrl);
+                        var academyLesson = academyHome == null ? null : Resgrid.Model.Academy.AcademyCatalog.ForPage(
+                            ViewContext.RouteData.Values["controller"] as string, ViewData["AcademyLesson"] as string);
+                    }
+                    @if (academyLesson != null)
+                    {
+                        <li><a href="@Resgrid.Model.Academy.AcademyCatalog.LessonUrl(Resgrid.Config.SystemBehaviorConfig.AcademyUrl, academyLesson)" target="_blank" rel="noopener" data-academy-lesson="@academyLesson.Id"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @string.Format(commonLocalizer["AcademyLearnThisPage"].Value, academyLesson.Minutes.ToString("0.#", System.Globalization.CultureInfo.CurrentCulture))</a></li>
+                        @* Academy A1: officers assign the lesson for this page from the Academy course set (free, Assign Training). *@
+                        if (ClaimsAuthorizationHelper.CanAssignTraining() || ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                        {
+                            <li><a asp-controller="Courses" asp-action="Academy" asp-route-area="User" asp-route-assign="@academyLesson.Id" asp-fragment="assign"><i class="fa fa-user-plus" aria-hidden="true"></i> @commonLocalizer["AcademyAssignThisLesson"]</a></li>
+                        }
+                    }
+                    @if (academyHome != null)
+                    {
+                        <li><a href="@academyHome" target="_blank" rel="noopener"><i class="fa fa-play-circle" aria-hidden="true"></i> @commonLocalizer["ResgridAcademy"]</a></li>
+                    }
+                    @* Academy A3: the Help center (free keyword search over the Academy and the reference), guided tours and the release's "What's new". *@
+                    <li><a asp-controller="Help" asp-action="Search" asp-route-area="User"><i class="fa fa-search" aria-hidden="true"></i> @academyGuidanceLocalizer["MenuSearchHelp"]</a></li>
+                    <li><a asp-controller="Help" asp-action="Tours" asp-route-area="User"><i class="fa fa-map-signs" aria-hidden="true"></i> @academyGuidanceLocalizer["MenuTours"]</a></li>
+                    <li><a asp-controller="Help" asp-action="WhatsNew" asp-route-area="User"><i class="fa fa-bullhorn" aria-hidden="true"></i> @academyGuidanceLocalizer["MenuWhatsNew"]</a></li>
+                    <li role="separator" class="divider"></li>
                     <li><a href="@Resgrid.Config.SystemBehaviorConfig.HelpAndSupportUrl" target="_blank">@commonLocalizer["HelpAndSupport"]</a></li>
                     @*<li><a href="https://resgrid.wistia.com/projects/9irn4g1q8c" target="_blank">@commonLocalizer["Videos"]</a></li>*@
                     <li><a href="@Resgrid.Config.SystemBehaviorConfig.BlogUrl" target="_blank">@commonLocalizer["Blog"]</a></li>

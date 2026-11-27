@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account.Greeting" xml:space="preserve">
+    <value>Hola {0}:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Subject" xml:space="preserve">
+    <value>{0} le invitó a una formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Body" xml:space="preserve">
+    <value>{0} le invitó a realizar una formación en su portal de aprendizaje. Elija su contraseña aquí:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Lifetime" xml:space="preserve">
+    <value>El enlace es válido durante {0} días.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Subject" xml:space="preserve">
+    <value>Confirme su dirección de correo electrónico</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Body" xml:space="preserve">
+    <value>Confirme su dirección de correo electrónico para terminar de crear su cuenta de formación:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Lifetime" xml:space="preserve">
+    <value>El enlace es válido durante {0} horas. Si no solicitó esta cuenta, ignore este correo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Subject" xml:space="preserve">
+    <value>Restablezca su contraseña de formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Body" xml:space="preserve">
+    <value>Elija una nueva contraseña aquí:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Lifetime" xml:space="preserve">
+    <value>El enlace es válido durante {0} horas. Si no lo solicitó, ignore este correo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Subject" xml:space="preserve">
+    <value>Su cuenta de formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Body" xml:space="preserve">
+    <value>Alguien pidió crear una cuenta de formación con esta dirección, pero ya tiene una. Inicie sesión o restablezca su contraseña aquí:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Ignore" xml:space="preserve">
+    <value>Si no fue usted, puede ignorar este correo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.SignIn.Body" xml:space="preserve">
+    <value>Ya tiene una cuenta de formación con esta dirección. Inicie sesión o restablezca su contraseña aquí:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bulletin.Title" xml:space="preserve">
+    <value>Boletín prioritario</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bulletin.Message" xml:space="preserve">
+    <value>{0}: lea este boletín y confirme su lectura. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.Title" xml:space="preserve">
+    <value>Protocolo por confirmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.Message" xml:space="preserve">
+    <value>Lea el protocolo {0} {1} y confirme su lectura. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.MessageVersion" xml:space="preserve">
+    <value>Lea el protocolo {0} {1}, versión {2}, y confirme su lectura. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.Title" xml:space="preserve">
+    <value>Protocolos por confirmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.One" xml:space="preserve">
+    <value>Tiene un protocolo por leer y confirmar. {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.Many" xml:space="preserve">
+    <value>Tiene {0} protocolos por leer y confirmar. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.DueTitle" xml:space="preserve">
+    <value>Confirmación de protocolo pendiente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.OverdueTitle" xml:space="preserve">
+    <value>Confirmación de protocolo vencida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.Due" xml:space="preserve">
+    <value>Debe confirmar la lectura del protocolo {0} {1}. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.DueOn" xml:space="preserve">
+    <value>Debe confirmar la lectura del protocolo {0} {1} el {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.Overdue" xml:space="preserve">
+    <value>La lectura del protocolo {0} {1} debía confirmarse. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.OverdueOn" xml:space="preserve">
+    <value>La lectura del protocolo {0} {1} debía confirmarse el {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Escalation.Message" xml:space="preserve">
+    <value>{0} no ha confirmado la lectura del protocolo {1} {2}, que está vencida. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Review.Title" xml:space="preserve">
+    <value>Protocolo por revisar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Review.Message" xml:space="preserve">
+    <value>El protocolo {0} {1} espera su revisión (paso {2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewDue.Title" xml:space="preserve">
+    <value>Revisión de protocolo pendiente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewDue.Message" xml:space="preserve">
+    <value>El protocolo {0} {1} debe revisarse el {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewOverdue.Title" xml:space="preserve">
+    <value>Revisión de protocolo vencida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewOverdue.Message" xml:space="preserve">
+    <value>La revisión del protocolo {0} {1} vencía el {2}. Regístrela en la biblioteca de protocolos, con o sin una nueva versión.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.Title" xml:space="preserve">
+    <value>Requisito de formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.Message" xml:space="preserve">
+    <value>Nuevo requisito de formación: {0} ({1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.MessageDue" xml:space="preserve">
+    <value>Nuevo requisito de formación: {0} ({1}), vence el {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.Title" xml:space="preserve">
+    <value>Requisito de formación vencido</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.Message" xml:space="preserve">
+    <value>{0} ({1}) tenía vencimiento y está atrasado. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.MessageOn" xml:space="preserve">
+    <value>{0} ({1}) vencía el {2} y está atrasado. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.Title" xml:space="preserve">
+    <value>Requisito de formación próximo a vencer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.Message" xml:space="preserve">
+    <value>{0} ({1}) vence pronto. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.MessageOn" xml:space="preserve">
+    <value>{0} ({1}) vence el {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.CompletedTitle" xml:space="preserve">
+    <value>Requisito de formación completado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.Completed" xml:space="preserve">
+    <value>{0} completó {1} ({2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.Overdue" xml:space="preserve">
+    <value>{0} está atrasado en {1} ({2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.AMember" xml:space="preserve">
+    <value>Un miembro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Met.Title" xml:space="preserve">
+    <value>Requisito de formación cumplido</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Met.Message" xml:space="preserve">
+    <value>Al completar {0} se restablecieron la certificación y los roles afectados. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Title" xml:space="preserve">
+    <value>Certificación vencida por un requisito de formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Message" xml:space="preserve">
+    <value>{0} está atrasado, por lo que su {1} ha vencido. Complételo para restablecer la certificación. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Certification" xml:space="preserve">
+    <value>certificación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Title" xml:space="preserve">
+    <value>Aplicación por formación rechazada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Message" xml:space="preserve">
+    <value>La aplicación basada en la formación no se ejecutó hoy: habría retirado a más del {0} % de los miembros de un rol ({1}). Revise los requisitos y la vista previa de la aplicación. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Role" xml:space="preserve">
+    <value>rol {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Breach" xml:space="preserve">
+    <value>{0}: {1} de {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.Title" xml:space="preserve">
+    <value>Habilidades de formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.DigestTitle" xml:space="preserve">
+    <value>Resumen de habilidades de formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.Digest" xml:space="preserve">
+    <value>Resumen de habilidades de formación: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.DigestMore" xml:space="preserve">
+    <value>+{0} más</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationPassed" xml:space="preserve">
+    <value>Evaluación de habilidad {0}: aprobada. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationPassedScore" xml:space="preserve">
+    <value>Evaluación de habilidad {0}: aprobada (puntuación {1:0.#} %). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationNotPassed" xml:space="preserve">
+    <value>Evaluación de habilidad {0}: no aprobada. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationNotPassedScore" xml:space="preserve">
+    <value>Evaluación de habilidad {0}: no aprobada (puntuación {1:0.#} %). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookInitiated" xml:space="preserve">
+    <value>Libro de tareas {0} ({1}) iniciado, válido hasta el {2:d}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookCertificationRequested" xml:space="preserve">
+    <value>El libro de tareas {0} está completo y espera al evaluador final y a la persona que certifica. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookCertified" xml:space="preserve">
+    <value>Libro de tareas {0} ({1}) certificado. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookExpired" xml:space="preserve">
+    <value>El libro de tareas {0} ({1}) venció antes de certificarse. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskSigned" xml:space="preserve">
+    <value>Libro de tareas {0}: tarea {1} firmada ({2} de {3}); {4} de {5} tareas completas. {6}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskSignedReady" xml:space="preserve">
+    <value>Libro de tareas {0}: tarea {1} firmada ({2} de {3}); {4} de {5} tareas completas, listo para la certificación. {6}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Needed.Title" xml:space="preserve">
+    <value>Firma necesaria</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Reminder.Title" xml:space="preserve">
+    <value>Recordatorio de firma</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Needed.Message" xml:space="preserve">
+    <value>Se necesita su firma en {0} (código de contenido {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Reminder.Message" xml:space="preserve">
+    <value>Recordatorio: todavía se necesita su firma en {0} (código de contenido {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Title" xml:space="preserve">
+    <value>Solicitud de firma cerrada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Completed" xml:space="preserve">
+    <value>La solicitud de firma de {0} fue firmada por todos. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Declined" xml:space="preserve">
+    <value>La solicitud de firma de {0} fue rechazada. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Expired" xml:space="preserve">
+    <value>La solicitud de firma de {0} venció antes de que todos firmaran. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Voided" xml:space="preserve">
+    <value>La solicitud de firma de {0} fue retirada. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Other" xml:space="preserve">
+    <value>La solicitud de firma de {0} fue cerrada. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Needed.Title" xml:space="preserve">
+    <value>Aprobación necesaria</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Escalated.Title" xml:space="preserve">
+    <value>Aprobación escalada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Needed.Message" xml:space="preserve">
+    <value>Se necesita su aprobación en {0} (código de contenido {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Escalated.Message" xml:space="preserve">
+    <value>Escalada: se necesita su aprobación en {0} (código de contenido {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Title" xml:space="preserve">
+    <value>Aprobación resuelta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Approved" xml:space="preserve">
+    <value>Su solicitud de aprobación de {0} fue aprobada. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Rejected" xml:space="preserve">
+    <value>Su solicitud de aprobación de {0} fue rechazada: {1} {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Expired" xml:space="preserve">
+    <value>Su solicitud de aprobación de {0} venció antes de ser aprobada. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Other" xml:space="preserve">
+    <value>Su solicitud de aprobación de {0} fue cerrada. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Subject" xml:space="preserve">
+    <value>llamada {0}, protocolo {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Sent.Title" xml:space="preserve">
+    <value>Caso de despacho revisado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Sent.Message" xml:space="preserve">
+    <value>Su caso de despacho fue revisado ({0}). Lea los comentarios y confírmelos: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Reply.Title" xml:space="preserve">
+    <value>El despachador respondió a una revisión de caso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Reply.Message" xml:space="preserve">
+    <value>El despachador respondió a su revisión de caso ({0}): {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Suggestion.Title" xml:space="preserve">
+    <value>Revise su registro de exposiciones</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Suggestion.Message" xml:space="preserve">
+    <value>Se sugirió una entrada para la llamada {0} del {1} a partir de los registros de despacho. No se registra nada hasta que la revise en Mis exposiciones.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.Title" xml:space="preserve">
+    <value>Pensamos en usted</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.OneYear" xml:space="preserve">
+    <value>El {0:D} se cumple un año de una llamada difícil a la que usted asistió. Su equipo de apoyo entre pares y los recursos de bienestar están aquí cuando los necesite.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.Years" xml:space="preserve">
+    <value>El {0:D} se cumplen {1} años de una llamada difícil a la que usted asistió. Su equipo de apoyo entre pares y los recursos de bienestar están aquí cuando los necesite.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.Title" xml:space="preserve">
+    <value>Recordatorio de apoyo entre pares</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.OneYear" xml:space="preserve">
+    <value>{0} pidió que el equipo de apoyo entre pares supiera que el {1:D} se cumple un año de un incidente crítico al que asistió. Quizá agradezca que alguien se interese por cómo está.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.Years" xml:space="preserve">
+    <value>{0} pidió que el equipo de apoyo entre pares supiera que el {1:D} se cumplen {2} años de un incidente crítico al que asistió. Quizá agradezca que alguien se interese por cómo está.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.AMember" xml:space="preserve">
+    <value>Un miembro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.AMember" xml:space="preserve">
+    <value>Un miembro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ExposureReported.Title" xml:space="preserve">
+    <value>Exposición notificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ExposureReported.Message" xml:space="preserve">
+    <value>{0} notificó una posible exposición a patógenos de transmisión sanguínea o a una enfermedad infecciosa el {1:d}. Abra el caso de exposición: {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.InjuryReported.Title" xml:space="preserve">
+    <value>Lesión notificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.InjuryReported.Message" xml:space="preserve">
+    <value>{0} tiene un informe de lesión del {1:d} por revisar. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.Title" xml:space="preserve">
+    <value>Notificación de exposición vencida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.Message" xml:space="preserve">
+    <value>El centro médico no ha respondido a la solicitud de notificación de exposición de {0}. Ryan White exige una respuesta en 48 horas. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.MessageSent" xml:space="preserve">
+    <value>El centro médico no ha respondido a la solicitud de notificación de exposición de {0} enviada el {1:d}. Ryan White exige una respuesta en 48 horas. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ReturnReview.Title" xml:space="preserve">
+    <value>Revisión del regreso al servicio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ReturnReview.Message" xml:space="preserve">
+    <value>Se esperaba el regreso de {0} el {1:d}. Revise su estado de servicio. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.Title" xml:space="preserve">
+    <value>Aviso de nueva formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.Message" xml:space="preserve">
+    <value>Nueva formación ({0}) asignada a usted</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.MessageDue" xml:space="preserve">
+    <value>Nueva formación ({0}) con vencimiento el {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.Title" xml:space="preserve">
+    <value>Aviso de formación por vencer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.OneDay" xml:space="preserve">
+    <value>La formación ({0}) vence en un día</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.OneDayOn" xml:space="preserve">
+    <value>La formación ({0}) vence en un día ({1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.Days" xml:space="preserve">
+    <value>La formación ({0}) vence en {1} días</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.DaysOn" xml:space="preserve">
+    <value>La formación ({0}) vence en {1} días ({2})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.Title" xml:space="preserve">
+    <value>Aviso de formación vencida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.Message" xml:space="preserve">
+    <value>La formación ({0}) está vencida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.MessageDue" xml:space="preserve">
+    <value>La formación ({0}) está vencida (vencía el {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.CreatorOverdue" xml:space="preserve">
+    <value>{0} miembro(s) con la formación ({1}) vencida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.QuestionFlagged.Title" xml:space="preserve">
+    <value>Pregunta de formación marcada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.QuestionFlagged.Message" xml:space="preserve">
+    <value>Se marcó para revisión una pregunta de la formación ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Title" xml:space="preserve">
+    <value>Certificación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Expiring.Body" xml:space="preserve">
+    <value>Su certificación {0} vence en {1} días ({2}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Expiring.BodyOne" xml:space="preserve">
+    <value>Su certificación {0} vence en 1 día ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.RoleRemoved.Body" xml:space="preserve">
+    <value>Se le ha retirado del rol {0}: la certificación requerida {1} ya no es válida.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.RemovalPending.Body" xml:space="preserve">
+    <value>Su pertenencia al rol {0} termina el {1} a menos que se renueve su certificación {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Title" xml:space="preserve">
+    <value>Resumen de certificaciones</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Summary" xml:space="preserve">
+    <value>Resumen de certificaciones del {0}: {1} vencidas, {2} por vencer, {3} en período de gracia, {4} retirados de roles.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Expired" xml:space="preserve">
+    <value>Vencidas: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Expiring" xml:space="preserve">
+    <value>Por vencer: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.InGrace" xml:space="preserve">
+    <value>En período de gracia: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Removed" xml:space="preserve">
+    <value>Retirados: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.ExpiringEntry" xml:space="preserve">
+    <value>{0} – {1} ({2} días)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.InGraceEntry" xml:space="preserve">
+    <value>{0} – {1} ({2}, hasta el {3})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.UnknownUnit" xml:space="preserve">
+    <value>Unidad {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

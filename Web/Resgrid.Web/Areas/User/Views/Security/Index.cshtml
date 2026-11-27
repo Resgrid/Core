@@ -102,6 +102,10 @@
                 <a class="btn btn-default top-button" asp-controller="Security" asp-action="SecurityPolicy" asp-route-area="User">
                     Security Policy
                 </a>
+                <a class="btn btn-default top-button" asp-controller="StepUpSettings" asp-action="Index" asp-route-area="User" id="stepUpSettingsLink"
+                   title="@localizer["StepUpSecurityIndexLinkHelp"]">
+                    @localizer["StepUpPageTitle"]
+                </a>
                 <a class="btn btn-default top-button" asp-controller="Security" asp-action="ApiKeys" asp-route-area="User">
                     @localizer["ApiKeysButton"]
                 </a>
@@ -197,6 +201,106 @@
                                         <td>
                                             <span id="trainingCreateNoRolesSpan">@localizer["PermissionNoRoles"]</span>
                                             <div id="trainingCreateRolesDiv" style="display: none;"><select id="trainingCreateRoles" name="trainingCreateRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAssignTrainingLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAssignTrainingNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.AssignTraining, Model.AssignTrainingPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="trainingAssignNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="trainingAssignRolesDiv" style="display: none;"><select id="trainingAssignRoles" name="trainingAssignRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermDeleteTrainingLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermDeleteTrainingNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.DeleteTraining, Model.DeleteTrainingPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="trainingDeleteNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="trainingDeleteRolesDiv" style="display: none;"><select id="trainingDeleteRoles" name="trainingDeleteRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermAuthorProtocolsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermAuthorProtocolsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.AuthorProtocols, Model.AuthorProtocolsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="protocolAuthorNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="protocolAuthorRolesDiv" style="display: none;"><select id="protocolAuthorRoles" name="protocolAuthorRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermApproveProtocolsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermApproveProtocolsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ApproveProtocols, Model.ApproveProtocolsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="protocolApproveNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="protocolApproveRolesDiv" style="display: none;"><select id="protocolApproveRoles" name="protocolApproveRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermManageProtocolAcknowledgmentsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermManageProtocolAcknowledgmentsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ManageProtocolAcknowledgments, Model.ManageProtocolAcknowledgmentsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="protocolAcknowledgeNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="protocolAcknowledgeRolesDiv" style="display: none;"><select id="protocolAcknowledgeRoles" name="protocolAcknowledgeRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermManageCoursesLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermManageCoursesNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ManageCourses, Model.ManageCoursesPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="manageCoursesNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="manageCoursesRolesDiv" style="display: none;"><select id="manageCoursesRoles" name="manageCoursesRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermGradeAssessmentsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermGradeAssessmentsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.GradeAssessments, Model.GradeAssessmentsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="gradeAssessmentsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="gradeAssessmentsRolesDiv" style="display: none;"><select id="gradeAssessmentsRoles" name="gradeAssessmentsRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermReviewDispatchCasesLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermReviewDispatchCasesNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ReviewDispatchCases, Model.ReviewDispatchCasesPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="reviewDispatchCasesNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="reviewDispatchCasesRolesDiv" style="display: none;"><select id="reviewDispatchCasesRoles" name="reviewDispatchCasesRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermRecordTrainingCompletionsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermRecordTrainingCompletionsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.RecordTrainingCompletions, Model.RecordTrainingCompletionsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="recordTrainingCompletionsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="recordTrainingCompletionsRolesDiv" style="display: none;"><select id="recordTrainingCompletionsRoles" name="recordTrainingCompletionsRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermManageContentSetsLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermManageContentSetsNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.ManageContentSets, Model.ManageContentSetsPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="manageContentSetsNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="manageContentSetsRolesDiv" style="display: none;"><select id="manageContentSetsRoles" name="manageContentSetsRoles"></select></div>
                                         </td>
                                     </tr>
                                     <tr>

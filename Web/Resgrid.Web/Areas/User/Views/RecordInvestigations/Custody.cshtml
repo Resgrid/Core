@@ -54,10 +54,18 @@
 					<tbody>
 					@foreach (var t in Model.Chain.OrderBy(t => t.Sequence))
 					{
-						<tr><td>@t.Sequence</td><td>@departmentTime.Format(t.TransferredOn)</td><td>@(string.IsNullOrWhiteSpace(t.FromUserId) ? Text(t.FromExternal) : Model.UserName(t.FromUserId))</td><td>@(string.IsNullOrWhiteSpace(t.ToUserId) ? Text(t.ToExternal) : Model.UserName(t.ToUserId))</td><td>@(RmsEnumDisplay.Label<RmsEvidenceState>(t.ResultingState))</td><td>@Text(t.Reason)</td><td>@Model.UserName(t.RecordedByUserId)</td></tr>
+						<tr id="custody-@t.RmsInvestigationCustodyId"><td>@t.Sequence</td><td>@departmentTime.Format(t.TransferredOn)</td><td>@(string.IsNullOrWhiteSpace(t.FromUserId) ? Text(t.FromExternal) : Model.UserName(t.FromUserId))</td><td>@(string.IsNullOrWhiteSpace(t.ToUserId) ? Text(t.ToExternal) : Model.UserName(t.ToUserId))</td><td>@(RmsEnumDisplay.Label<RmsEvidenceState>(t.ResultingState))</td><td>@Text(t.Reason)</td><td>@Model.UserName(t.RecordedByUserId)</td></tr>
 					}
 					</tbody>
 				</table>
+				@* e-Signature S2: a transfer to an external party (lab, court, outside agency) can carry that party's signature, in person
+				   on this device (free; remote signing is not offered for Records, decision 19). *@
+				@foreach (var t in Model.Chain.Where(t => string.IsNullOrWhiteSpace(t.ToUserId) && !string.IsNullOrWhiteSpace(t.ToExternal)).OrderByDescending(t => t.Sequence).Take(3))
+				{
+					<h5 class="m-t-md">#@t.Sequence · @Text(t.ToExternal)</h5>
+					@await Component.InvokeAsync("SignatureRequests", new { kind = Resgrid.Model.SignatureSubjectKinds.CustodyTransfer, subjectId = t.RmsInvestigationCustodyId,
+						canRequest = true, returnUrl = Url.Action("Custody", new { id = Model.CaseId, evidenceId = e.RmsInvestigationEvidenceId }) })
+				}
 			</div></div>
 		</div>
 	</div>

@@ -1,0 +1,85 @@
+{
+  "format": "resgrid-protocols",
+  "version": 2,
+  "exportedOn": "2026-11-25T00:00:00Z",
+  "set": {
+    "key": "workplace-policies-starter",
+    "title": "Workplace policies starter set",
+    "description": "Three documents written by Resgrid for businesses and other employers: the employee handbook acknowledgment, workplace safety rules, and reporting an injury or a near miss. Employees read and acknowledge them; insert your own policy text and the rules that apply where you operate.",
+    "publisher": "Resgrid",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "setVersion": "1.0"
+  },
+  "protocols": [
+    {
+      "code": "WP-101",
+      "name": "Employee handbook acknowledgment",
+      "kind": "Policy",
+      "tags": "workplace,handbook,acknowledgment,onboarding",
+      "description": "Each employee confirms they have read the handbook and know where to find it.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "paragraph", "key": "intro", "html": "<p>[Insert your employee handbook, or link to it as an attachment.]</p>" },
+          { "type": "steps", "key": "confirm", "title": "By acknowledging, you confirm that you", "items": [
+            { "key": "c1", "html": "<p>Have read the handbook and know where to find it.</p>" },
+            { "key": "c2", "html": "<p>Know who to ask when something in it is not clear.</p>" },
+            { "key": "c3", "html": "<p>Will read and acknowledge it again when it changes.</p>" }
+          ] }
+        ]
+      }
+    },
+    {
+      "code": "WP-102",
+      "name": "Workplace safety rules",
+      "kind": "Policy",
+      "tags": "workplace,safety,rules",
+      "description": "The safety rules everyone on site follows.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "rules", "title": "Everyone", "items": [
+            { "key": "r1", "html": "<p>Wears the protective equipment their task and area require.</p>" },
+            { "key": "r2", "html": "<p>Uses only the equipment they have been trained and authorized to use.</p>" },
+            { "key": "r3", "html": "<p>Keeps exits, walkways and fire equipment clear.</p>" },
+            { "key": "r4", "html": "<p>Stops work and reports a hazard they cannot make safe themselves.</p>" },
+            { "key": "r5", "html": "<p>Knows the evacuation signal, the exits and the assembly point.</p>" }
+          ] },
+          { "type": "paragraph", "key": "site", "html": "<p>[Insert your site's own rules and the occupational safety rules that apply where you operate.]</p>" }
+        ]
+      }
+    },
+    {
+      "code": "WP-103",
+      "name": "Reporting an injury or near miss",
+      "kind": "Procedure",
+      "tags": "workplace,injury,near miss,reporting",
+      "description": "What to do after an injury, an illness at work or a near miss.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "now", "title": "Straight away", "items": [
+            { "key": "n1", "html": "<p>Get first aid or call the emergency services.</p>" },
+            { "key": "n2", "html": "<p>Make the area safe so that no one else is hurt.</p>" },
+            { "key": "n3", "html": "<p>Tell your supervisor before the end of the shift.</p>" }
+          ] },
+          { "type": "steps", "key": "report", "title": "Then", "items": [
+            { "key": "p1", "html": "<p>Complete the incident report: what happened, where, when, who was involved and who saw it.</p>" },
+            { "key": "p2", "html": "<p>Report near misses too: they show where the next injury could happen.</p>" }
+          ] },
+          { "type": "caution", "key": "authority", "title": "Reporting to the authorities", "html": "<p>Some injuries must be reported to a regulator within a set time. [Insert the reporting rules that apply where you operate and who files the report.]</p>" }
+        ]
+      }
+    }
+  ]
+}

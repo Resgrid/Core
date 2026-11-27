@@ -1,0 +1,308 @@
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model PlayerModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@{
+    var player = Model.Player;
+    var lesson = player.Lesson;
+    ViewBag.Title = "Resgrid | " + (Model.CourseTitle ?? localizer["PlayerTitle"].Value);
+    ViewData["Section"] = "Courses";
+    ViewData["Title"] = Model.CourseTitle ?? localizer["PlayerTitle"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var progress = player.LessonProgress;
+    var completed = progress?.Status == (int)LmsLessonProgressStatuses.Completed;
+    var kind = lesson == null ? LmsLessonKinds.Blocks : (LmsLessonKinds)lesson.Kind;
+    var seatLeft = lesson == null ? 0 : Math.Max(0, lesson.MinimumSeatSeconds - (progress?.SeatSeconds ?? 0));
+    var enrollmentId = player.Enrollment?.LmsEnrollmentId ?? 0;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (player.Outline == null || lesson == null)
+    {
+        <p class="text-muted">@localizer["NothingToPlay"]</p>
+    }
+    else
+    {
+        <div class="row">
+            <nav class="col-md-3" aria-label="@localizer["OutlineLabel"]">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5>@localizer["OutlineLabel"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="rgw-progress-honest">@string.Format(localizer["ProgressHonest"].Value, player.Enrollment.ProgressPercent)</p>
+                        @foreach (var module in player.Outline.Modules)
+                        {
+                            <h6 class="m-t-sm">@(string.IsNullOrWhiteSpace(module.Module.Title) ? string.Format(localizer["ModuleNumberFormat"].Value, player.Outline.Modules.IndexOf(module) + 1) : module.Module.Title)</h6>
+                            <ul class="rgw-journey">
+                                @foreach (var item in module.Lessons)
+                                {
+                                    var done = player.Progress.TryGetValue(item.LmsLessonId, out var p) && p.Status == (int)LmsLessonProgressStatuses.Completed;
+                                    var locked = player.LockedLessonIds.Contains(item.LmsLessonId);
+                                    <li class="@(item.LmsLessonId == lesson.LmsLessonId ? "active" : "")">
+                                        @if (locked)
+                                        {
+                                            <span class="text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @item.Title<span class="sr-only"> (@localizer["LockedBadge"])</span></span>
+                                        }
+                                        else
+                                        {
+                                            <a asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@enrollmentId" asp-route-lesson="@item.LmsLessonId"
+                                               aria-current="@(item.LmsLessonId == lesson.LmsLessonId ? "page" : "false")"><i class="fa @CourseLabels.LessonIcon(item.Kind)" aria-hidden="true"></i> @item.Title</a>
+                                        }
+                                        @if (done)
+                                        {
+                                            <span class="text-navy"><i class="fa fa-check" aria-hidden="true"></i><span class="sr-only">@localizer["CompletedBadge"]</span></span>
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </nav>
+
+            <section class="col-md-9" id="lms-player" aria-labelledby="lesson-title"
+                     data-enrollment="@enrollmentId" data-lesson="@lesson.LmsLessonId" data-progress-url="@Url.Action("Progress", "Courses", new { area = "User" })"
+                     data-position="@(progress?.VideoPositionSeconds ?? 0)" data-seat-left="@seatLeft" data-running="@(player.Error == LmsErrors.None ? "true" : "false")">
+                @Html.AntiForgeryToken()
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5 id="lesson-title"><i class="fa @CourseLabels.LessonIcon(lesson.Kind)" aria-hidden="true"></i> @lesson.Title</h5>
+                        <span class="label label-default pull-right">@localizer[CourseLabels.LessonKind(lesson.Kind)]</span>
+                    </div>
+                    <div class="ibox-content">
+                        @switch (kind)
+                        {
+                            case LmsLessonKinds.Video:
+                                <div class="row">
+                                    <div class="@(string.IsNullOrWhiteSpace(lesson.TranscriptText) ? "col-sm-12" : "col-lg-8")">
+                                        @if (lesson.VideoSource == (int)LmsVideoSources.Embed && !string.IsNullOrWhiteSpace(lesson.VideoUrl))
+                                        {
+                                            <div class="embed-responsive embed-responsive-16by9">
+                                                <iframe class="embed-responsive-item" src="@lesson.VideoUrl" title="@lesson.Title" allow="fullscreen; picture-in-picture" sandbox="allow-scripts allow-same-origin allow-presentation" loading="lazy"></iframe>
+                                            </div>
+                                        }
+                                        else if (lesson.VideoSource == (int)LmsVideoSources.Academy && !string.IsNullOrWhiteSpace(lesson.VideoUrl))
+                                        {
+                                            <video id="lms-video" class="img-responsive" controls preload="metadata" crossorigin="anonymous" style="width:100%" src="@lesson.VideoUrl">
+                                                @foreach (var track in player.Captions.Where(c => !string.IsNullOrWhiteSpace(c.Url)))
+                                                {
+                                                    <track kind="captions" src="@track.Url" srclang="@track.Locale" label="@track.Label" default="@(track == player.Captions.First())" />
+                                                }
+                                            </video>
+                                        }
+                                        else if (lesson.VideoSource == (int)LmsVideoSources.Hosted && Model.HlsUrl != null)
+                                        {
+                                            <video id="lms-video" class="img-responsive" controls preload="metadata" style="width:100%">
+                                                <source src="@Model.HlsUrl" type="application/vnd.apple.mpegurl" />
+                                                <source src="@Model.Mp4Url" type="video/mp4" />
+                                                @foreach (var track in player.Captions.Where(c => !string.IsNullOrWhiteSpace(c.ObjectKey)))
+                                                {
+                                                    <track kind="captions" src="@Url.Action("Captions", "Courses", new { area = "User", id = enrollmentId, lesson = lesson.LmsLessonId, locale = track.Locale })" srclang="@track.Locale" label="@track.Label" />
+                                                }
+                                            </video>
+                                        }
+                                        else
+                                        {
+                                            <div class="alert alert-warning"><i class="fa fa-film" aria-hidden="true"></i> @localizer["VideoUnavailable"]</div>
+                                        }
+                                        <div class="form-inline m-t-xs">
+                                            <label for="lms-speed">@localizer["PlaybackSpeedLabel"]</label>
+                                            <select id="lms-speed" class="form-control input-sm">
+                                                <option value="0.75">0.75×</option>
+                                                <option value="1" selected>1×</option>
+                                                <option value="1.25">1.25×</option>
+                                                <option value="1.5">1.5×</option>
+                                                <option value="2">2×</option>
+                                            </select>
+                                            @if (lesson.RequiredWatchPercent > 0)
+                                            {
+                                                <span class="rgw-progress-honest">@string.Format(localizer["WatchRequirement"].Value, lesson.RequiredWatchPercent, progress?.WatchedPercent ?? 0)</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(lesson.TranscriptText))
+                                    {
+                                        <aside class="col-lg-4" aria-label="@localizer["TranscriptHeader"]">
+                                            <h4>@localizer["TranscriptHeader"]</h4>
+                                            <div class="well well-sm" style="max-height:420px;overflow-y:auto;white-space:pre-wrap">@lesson.TranscriptText</div>
+                                        </aside>
+                                    }
+                                </div>
+                                break;
+
+                            case LmsLessonKinds.Document:
+                                <p><a class="btn btn-white" href="@lesson.DocumentUrl" target="_blank" rel="noopener noreferrer"><i class="fa fa-external-link" aria-hidden="true"></i> @(string.IsNullOrWhiteSpace(lesson.DocumentName) ? localizer["OpenDocumentButton"].Value : lesson.DocumentName)</a></p>
+                                break;
+
+                            case LmsLessonKinds.ProtocolVersion:
+                                if (player.Protocol != null)
+                                {
+                                    <p class="text-muted">@string.Format(localizer["ProtocolVersionFormat"].Value, player.Protocol.Label)</p>
+                                    <div class="protocol-content">@Html.ProtocolContent(player.Protocol.ContentHtml)</div>
+                                }
+                                else
+                                {
+                                    <p class="text-muted">@localizer["ProtocolUnavailable"]</p>
+                                }
+                                break;
+
+                            case LmsLessonKinds.Assessment:
+                                @await Html.PartialAsync("_PlayAssessment", Model)
+                                break;
+
+                            case LmsLessonKinds.Scorm:
+                            case LmsLessonKinds.Cmi5:
+                            case LmsLessonKinds.LtiLink:
+                                @* T5: the sandboxed SCORM / cmi5 runtime or the LTI launch; the runtime completes the lesson, never a button. *@
+                                if (player.Error == LmsErrors.None)
+                                {
+                                    @await Component.InvokeAsync("LmsStandardsPlayer", new { enrollmentId, lesson, completed, item = (string)Context.Request.Query["item"] })
+                                }
+                                break;
+
+                            case LmsLessonKinds.Survey:
+                                if (player.SurveyAnswered)
+                                {
+                                    <div class="alert alert-success"><i class="fa fa-check" aria-hidden="true"></i> @localizer["SurveyThanksMessage"]</div>
+                                }
+                                else
+                                {
+                                    <p class="text-muted"><i class="fa fa-user-secret" aria-hidden="true"></i> @localizer["SurveyAnonymous"]</p>
+                                    <form method="post" asp-controller="Courses" asp-action="Survey" asp-route-area="User">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@enrollmentId" />
+                                        <input type="hidden" name="lesson" value="@lesson.LmsLessonId" />
+                                        @foreach (var question in Model.SurveyQuestions)
+                                        {
+                                            <fieldset class="form-group">
+                                                <legend class="h5">@question.Text</legend>
+                                                @if (question.Kind == (int)LmsSurveyQuestionKinds.Rating)
+                                                {
+                                                    for (var r = 1; r <= 5; r++)
+                                                    {
+                                                        <label class="radio-inline"><input type="radio" name="q_@question.Key" value="@r" required /> @r</label>
+                                                    }
+                                                    <span class="help-block">@localizer["RatingHelp"]</span>
+                                                }
+                                                else if (question.Kind == (int)LmsSurveyQuestionKinds.Choice)
+                                                {
+                                                    for (var o = 0; o < question.Options.Count; o++)
+                                                    {
+                                                        <div class="radio"><label><input type="radio" name="q_@question.Key" value="@o" required /> @question.Options[o]</label></div>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <textarea name="q_@question.Key" class="form-control" rows="3" maxlength="2000" aria-label="@question.Text"></textarea>
+                                                }
+                                            </fieldset>
+                                        }
+                                        <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["SubmitSurveyButton"]</button>
+                                    </form>
+                                }
+                                break;
+
+                            default:
+                                @* K3: block anchors (b-{key}) and heading anchors, so a knowledge citation opens the exact section. *@
+                                <div class="lesson-content">@Html.ProtocolContent(lesson.ContentHtml)</div>
+                                break;
+                        }
+
+                        @if (kind != LmsLessonKinds.Assessment && kind != LmsLessonKinds.Survey && kind != LmsLessonKinds.Scorm && kind != LmsLessonKinds.Cmi5 && kind != LmsLessonKinds.LtiLink && player.Error == LmsErrors.None)
+                        {
+                            <hr />
+                            @if (completed)
+                            {
+                                <p class="text-navy"><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["LessonDoneLabel"]</p>
+                            }
+                            else
+                            {
+                                <form method="post" asp-controller="Courses" asp-action="Complete" asp-route-area="User" enctype="multipart/form-data">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@enrollmentId" />
+                                    <input type="hidden" name="lesson" value="@lesson.LmsLessonId" />
+                                    @if (!string.IsNullOrWhiteSpace(lesson.FreeResponsePrompt))
+                                    {
+                                        <div class="form-group">
+                                            <label for="responseText">@lesson.FreeResponsePrompt</label>
+                                            <textarea id="responseText" name="responseText" class="form-control" rows="5" maxlength="8000" required></textarea>
+                                        </div>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(lesson.FileRequestPrompt))
+                                    {
+                                        <div class="form-group">
+                                            <label for="file">@lesson.FileRequestPrompt</label>
+                                            <input id="file" name="file" type="file" class="form-control" required accept=".pdf,.jpg,.jpeg,.png,.gif,.webp,.txt,.doc,.docx,.xls,.xlsx" />
+                                            <span class="help-block">@localizer["FileRequestHelp"]</span>
+                                        </div>
+                                    }
+                                    @if (lesson.MinimumSeatSeconds > 0)
+                                    {
+                                        <p class="rgw-progress-honest" id="lms-seat-note">@string.Format(localizer["SeatTimeRequirement"].Value, Math.Ceiling(lesson.MinimumSeatSeconds / 60.0), Math.Floor((progress?.SeatSeconds ?? 0) / 60.0))</p>
+                                    }
+                                    <button type="submit" class="btn btn-primary" id="lms-complete"><i class="fa fa-check" aria-hidden="true"></i> @localizer["MarkCompleteButton"]</button>
+                                </form>
+                            }
+                        }
+
+                        <div class="rgw-toolbar m-t-md">
+                            @if (player.PreviousLessonId.HasValue && !player.LockedLessonIds.Contains(player.PreviousLessonId.Value))
+                            {
+                                <a class="btn btn-white" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@enrollmentId" asp-route-lesson="@player.PreviousLessonId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["PreviousButton"]</a>
+                            }
+                            <span class="rgw-toolbar-spacer"></span>
+                            @if (Model.CanStartCrewViewing)
+                            {
+                                <form method="post" asp-controller="Courses" asp-action="StartCrewViewing" asp-route-area="User" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="courseId" value="@player.Outline.Course.LmsCourseId" />
+                                    <input type="hidden" name="lesson" value="@lesson.LmsLessonId" />
+                                    <button type="submit" class="btn btn-white"><i class="fa fa-users" aria-hidden="true"></i> @localizer["StartCrewViewingButton"]</button>
+                                </form>
+                            }
+                            @if (player.NextLessonId.HasValue && !player.LockedLessonIds.Contains(player.NextLessonId.Value))
+                            {
+                                <a class="btn btn-white" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@enrollmentId" asp-route-lesson="@player.NextLessonId">@localizer["NextButton"] <i class="fa fa-arrow-right" aria-hidden="true"></i></a>
+                            }
+                        </div>
+                    </div>
+                </div>
+                @if (Model.CanAskCourse)
+                {
+                    @* K3 "Ask this course": answers only from the version of the course this learner takes, each part linked to its lesson. *@
+                    @await Html.PartialAsync("_KnowledgeAsk", new Resgrid.Web.Areas.User.Models.Knowledge.KnowledgeAskPanelModel
+                    {
+                        Surface = (int)KnowledgeAskSurfaces.Course,
+                        ScopeKind = (int)KnowledgeSourceKinds.Course,
+                        ScopeItemId = player.Outline.Course.LmsCourseId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        ScopeVersionId = player.Outline.Version.LmsCourseVersionId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                        PanelId = "kask-course"
+                    })
+                }
+                @if (Model.CanAskCourse)
+                {
+                    @* T5 practice cards (Enhanced AI and the LMS, like the tutor): the course's flashcards for spaced practice, never recorded; the
+                       panel stays hidden when the deck is empty. Never beside an assessment or a survey. *@
+                    @await Html.PartialAsync("_PracticeCards", new PracticeCardsPanelModel
+                    {
+                        EnrollmentId = enrollmentId,
+                        CourseId = player.Outline.Course.LmsCourseId,
+                        DeckUrl = Url.Action("Deck", "LmsStudio", new { area = "User", id = enrollmentId })
+                    })
+                }
+            </section>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/courses/resgrid.courses.player.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/courses/resgrid.courses.cards.js" asp-append-version="true"></script>
+}

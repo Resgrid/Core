@@ -72,13 +72,13 @@ namespace Resgrid.Services.AdminAssist
 					break;
 				case "search_capabilities":
 					if (string.IsNullOrWhiteSpace(tool.Query) || tool.Query.Length > 256) throw new ArgumentException("Invalid query.");
-					foreach (var capability in catalog.Capabilities.Where(c => (Text(c.LabelKey) + " " + Text(c.PurposeKey)).Contains(tool.Query, StringComparison.CurrentCultureIgnoreCase) || c.Id.Equals(tool.Query, StringComparison.Ordinal)).Take(5)) await AddCapability(capability);
+					foreach (var capability in catalog.ListedCapabilities().Where(c => (Text(c.LabelKey) + " " + Text(c.PurposeKey)).Contains(tool.Query, StringComparison.CurrentCultureIgnoreCase) || c.Id.Equals(tool.Query, StringComparison.Ordinal)).Take(5)) await AddCapability(capability);
 					break;
 				case "explain_capability_access":
-					await AddCapability(catalog.Capabilities.SingleOrDefault(c => c.Id == tool.Id) ?? throw new ArgumentException("Unknown capability.")); break;
+					await AddCapability(catalog.ListedCapabilities().SingleOrDefault(c => c.Id == tool.Id) ?? throw new ArgumentException("Unknown capability.")); break;
 				case "compare_addon_capabilities":
 					if (tool.Ids == null || tool.Ids.Count is < 1 or > 5) throw new ArgumentException("Invalid add-ons.");
-					foreach (var id in tool.Ids) await AddCapability(catalog.Capabilities.SingleOrDefault(c => c.Id == id && c.Id.StartsWith("addon-", StringComparison.Ordinal)) ?? throw new ArgumentException("Unknown add-on."));
+					foreach (var id in tool.Ids) await AddCapability(catalog.ListedCapabilities().SingleOrDefault(c => c.Id == id && c.Id.StartsWith("addon-", StringComparison.Ordinal)) ?? throw new ArgumentException("Unknown add-on."));
 					break;
 				case "get_setting": case "get_section": case "get_permissions":
 				{

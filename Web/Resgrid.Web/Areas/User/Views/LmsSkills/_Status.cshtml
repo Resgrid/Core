@@ -1,0 +1,14 @@
+@using Resgrid.Model.Lms
+@model LmsSkillEvaluation
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@* An evaluation's state as a status pill (icon and text, never colour alone). *@
+@{
+    var (css, icon, key) = Model.Status switch
+    {
+        (int)LmsSkillEvaluationStatuses.InProgress => ("label-warning", "fa-pencil", "Skl.Status.InProgress"),
+        (int)LmsSkillEvaluationStatuses.AwaitingSignature => ("label-info", "fa-pencil-square-o", "Skl.Status.AwaitingSignature"),
+        (int)LmsSkillEvaluationStatuses.Voided => ("label-default", "fa-ban", "Skl.Status.Voided"),
+        _ => Model.Result == (int)LmsSkillEvaluationResults.Passed ? ("label-primary", "fa-check", "Skl.Result.Passed") : ("label-danger", "fa-times", "Skl.Result.Failed")
+    };
+}
+<span class="label @css"><i class="fa @icon" aria-hidden="true"></i> @localizer[key]</span>

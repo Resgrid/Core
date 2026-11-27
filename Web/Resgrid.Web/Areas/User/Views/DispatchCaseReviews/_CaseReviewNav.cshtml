@@ -1,0 +1,15 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatchCaseReviews.DispatchCaseReviews> L
+@*
+    Protocols P5 QA: the reviewer pages' own links (queue, sample, reports, rubrics) under the module strip; ViewData["CaseReviewPage"] marks
+    the current one. Text with icons, keyboard reachable.
+*@
+@{
+    var page = ViewData["CaseReviewPage"] as string ?? "Queue";
+    string Css(string name) => name == page ? "btn btn-primary btn-sm" : "btn btn-default btn-sm";
+}
+<nav class="rgw-toolbar" aria-label="@L["CaseReviewsTab"]">
+    <a class="@Css("Queue")" asp-controller="DispatchCaseReviews" asp-action="Index" asp-route-area="User" aria-current="@(page == "Queue" ? "page" : null)"><i class="fa fa-list-ol" aria-hidden="true"></i> @L["QueueLink"]</a>
+    <a class="@Css("Sample")" asp-controller="DispatchCaseReviews" asp-action="Sample" asp-route-area="User" aria-current="@(page == "Sample" ? "page" : null)"><i class="fa fa-random" aria-hidden="true"></i> @L["SampleLink"]</a>
+    <a class="@Css("Reports")" asp-controller="DispatchCaseReviews" asp-action="Reports" asp-route-area="User" aria-current="@(page == "Reports" ? "page" : null)"><i class="fa fa-bar-chart" aria-hidden="true"></i> @L["ReportsLink"]</a>
+    <a class="@Css("Rubrics")" asp-controller="DispatchCaseReviews" asp-action="Rubrics" asp-route-area="User" aria-current="@(page == "Rubrics" ? "page" : null)"><i class="fa fa-check-square-o" aria-hidden="true"></i> @L["RubricsLink"]</a>
+</nav>

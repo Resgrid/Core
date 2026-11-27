@@ -30,6 +30,10 @@
 @await Html.PartialAsync("_CalOesMarsShell")
 
 <div class="wrapper wrapper-content rgw-page">
+    @if (w.RecordType is (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes.F42 or (int)Resgrid.Model.CostRecovery.CalOesMars.CalOesMarsRecordTypes.ExpenseClaim)
+    {
+        @await Component.InvokeAsync("ApprovalPanel", new { kind = Resgrid.Model.SignatureSubjectKinds.CalOesMarsPackageApproval, subjectId = w.CalOesMarsWorkItemId })
+    }
     @await Html.PartialAsync("_CalOesMarsMessage", (Resgrid.Web.Areas.User.Models.CostRecovery.CalOesMarsPageView)Model)
     <div class="row">
         <div class="col-md-8">

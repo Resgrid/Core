@@ -1,0 +1,68 @@
+{
+  "key": "hazwoper-refresher-outline",
+  "revision": 1,
+  "kind": "course",
+  "title": "Hazardous materials annual refresher (outline)",
+  "code": "RG-HMR",
+  "summary": "The structure of an annual refresher for people who work with hazardous materials or waste, or respond to releases: a review of the site's hazards, protective equipment, decontamination and the emergency plan, with room for your own content and a practical session. Structure only; set the hours your regulator requires.",
+  "tags": "hazmat, hazardous waste, refresher, industrial, starter",
+  "hours": 1,
+  "license": "resgrid-starter",
+  "overview": "<p>An outline written by Resgrid. It quotes no regulation or standard. Replace each placeholder with your own training content, add the practical session your rules require, and set the course hours to the refresher hours your regulator requires.</p>",
+  "modules": [
+    {
+      "title": "This year's review",
+      "lessons": [
+        {
+          "title": "Changes since last year",
+          "html": "<p>Start each refresher with what has changed: new products, new processes, incidents and near misses on your site, and lessons from them.</p><p><em>Add this year's changes and incident reviews.</em></p>"
+        },
+        {
+          "title": "Hazards and protective equipment",
+          "html": "<p>Review the hazards of the materials on site and the protective equipment each task needs, including its limits and inspection.</p><p><em>Add your site's hazard information and protective equipment rules.</em></p>"
+        }
+      ]
+    },
+    {
+      "title": "Response and decontamination",
+      "lessons": [
+        {
+          "title": "The emergency plan",
+          "html": "<p>Review the site's emergency plan: alarms, roles, isolation, evacuation, and how you call outside help.</p><p><em>Add your emergency plan and contact list.</em></p>"
+        },
+        {
+          "title": "Decontamination",
+          "html": "<p>Review how people and equipment are decontaminated, and how waste from it is handled.</p><p><em>Add your decontamination procedure, then hold the practical session.</em></p>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Refresher check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "What should each annual refresher start with?",
+        "kind": "single",
+        "options": [ "What has changed since last year", "The same slides as last year", "A written exam only" ],
+        "correct": 0,
+        "explanation": "Start each refresher with what has changed: new products, new processes, incidents and near misses."
+      },
+      {
+        "text": "Protective equipment has limits that should be reviewed in the refresher.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 0,
+        "explanation": "Review the protective equipment each task needs, including its limits and inspection."
+      },
+      {
+        "text": "Who sets the number of refresher hours?",
+        "kind": "single",
+        "options": [ "Your regulator and your own rules", "Resgrid", "Each learner" ],
+        "correct": 0,
+        "explanation": "Set the course hours to the refresher hours your regulator requires."
+      }
+    ]
+  }
+}

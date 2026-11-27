@@ -525,6 +525,122 @@ namespace Resgrid.Tests.Web.Services
 			result.Data.Protocols.Should().ContainSingle().Which.Id.Should().Be("5");
 		}
 
+		/// <summary>
+		/// Owner decision 2026-11-26: the call read the store apps use lists every protocol the call cited. One taken off the call
+		/// (removed with a reason) or deleted from the library since is still listed, marked by the optional RemovedOn / IsDeleted
+		/// fields; the department-ownership check (D13) still applies.
+		/// </summary>
+		[Test]
+		public async Task GetCall_StillListsRemovedAndDeletedProtocols_ButNeverAnotherDepartments()
+		{
+			var removedOn = new DateTime(2026, 11, 20, 14, 30, 0, DateTimeKind.Utc);
+			var call = new Call
+			{
+				CallId = 42,
+				DepartmentId = DepartmentId,
+				Name = "Structure Fire",
+				Address = "123 Main St",
+				LoggedOn = DateTime.UtcNow,
+				Protocols = new Collection<CallProtocol>
+				{
+					new CallProtocol { CallProtocolId = 1, CallId = 42, DispatchProtocolId = 5 },
+					new CallProtocol { CallProtocolId = 2, CallId = 42, DispatchProtocolId = 6, RemovedOn = removedOn, RemovedReason = "Wrong protocol" },
+					new CallProtocol { CallProtocolId = 3, CallId = 42, DispatchProtocolId = 7 },
+					new CallProtocol { CallProtocolId = 4, CallId = 42, DispatchProtocolId = 8, RemovedOn = removedOn }
+				}
+			};
+			ArrangeCallWithProtocols(call);
+
+			_protocolsService.Setup(service => service.GetProtocolByIdAsync(5)).ReturnsAsync(AttachedProtocol(5, DepartmentId));
+			_protocolsService.Setup(service => service.GetProtocolByIdAsync(6)).ReturnsAsync(AttachedProtocol(6, DepartmentId));
+			var deleted = AttachedProtocol(7, DepartmentId);
+			deleted.IsDeleted = true;
+			_protocolsService.Setup(service => service.GetProtocolByIdAsync(7)).ReturnsAsync(deleted);
+			// Removed or not, a row pointing at another department's protocol is never read out.
+			_protocolsService.Setup(service => service.GetProtocolByIdAsync(8)).ReturnsAsync(AttachedProtocol(8, 77));
+
+			var response = await _controller.GetCall("42");
+
+			var result = response.Result.Should().BeOfType<OkObjectResult>().Subject.Value
+				.Should().BeOfType<CallResult>().Subject;
+			result.Data.Protocols.Select(p => p.Id).Should().Equal("5", "6", "7");
+			result.Data.Protocols.Single(p => p.Id == "5").RemovedOn.Should().BeNull();
+			result.Data.Protocols.Single(p => p.Id == "6").RemovedOn.Should().Be(removedOn);
+			result.Data.Protocols.Single(p => p.Id == "7").IsDeleted.Should().BeTrue();
+			result.Data.Protocols.Single(p => p.Id == "7").RemovedOn.Should().BeNull();
+			result.Data.Protocols.Single(p => p.Id == "5").IsDeleted.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task GetCall_ListsAProtocolOnce_PreferringTheRowStillOnTheCall()
+		{
+			var call = new Call
+			{
+				CallId = 42,
+				DepartmentId = DepartmentId,
+				Name = "Structure Fire",
+				Address = "123 Main St",
+				LoggedOn = DateTime.UtcNow,
+				Protocols = new Collection<CallProtocol>
+				{
+					// Taken off, then attached again: one protocol, listed once, as on the call.
+					new CallProtocol { CallProtocolId = 1, CallId = 42, DispatchProtocolId = 5, RemovedOn = DateTime.UtcNow.AddHours(-1) },
+					new CallProtocol { CallProtocolId = 2, CallId = 42, DispatchProtocolId = 5 }
+				}
+			};
+			ArrangeCallWithProtocols(call);
+			_protocolsService.Setup(service => service.GetProtocolByIdAsync(5)).ReturnsAsync(AttachedProtocol(5, DepartmentId));
+
+			var response = await _controller.GetCall("42");
+
+			var result = response.Result.Should().BeOfType<OkObjectResult>().Subject.Value
+				.Should().BeOfType<CallResult>().Subject;
+			result.Data.Protocols.Should().ContainSingle().Which.RemovedOn.Should().BeNull();
+		}
+
+		[Test]
+		public void CallProtocolRowsForRead_KeepsOneRowPerProtocol_InTheCallsOrder()
+		{
+			var older = new CallProtocol { CallProtocolId = 1, DispatchProtocolId = 9, RemovedOn = new DateTime(2026, 11, 1, 0, 0, 0, DateTimeKind.Utc) };
+			var newer = new CallProtocol { CallProtocolId = 2, DispatchProtocolId = 9, RemovedOn = new DateTime(2026, 11, 2, 0, 0, 0, DateTimeKind.Utc) };
+			var active = new CallProtocol { CallProtocolId = 3, DispatchProtocolId = 4 };
+			var removedThenActive = new CallProtocol { CallProtocolId = 4, DispatchProtocolId = 4, RemovedOn = DateTime.UtcNow };
+
+			var rows = CallsController.CallProtocolRowsForRead(new[] { older, active, null, newer, removedThenActive,
+				new CallProtocol { CallProtocolId = 5, DispatchProtocolId = 0 } });
+
+			// Protocol 9 was only ever taken off: its latest removal. Protocol 4 is still on the call: that row.
+			rows.Should().Equal(active, newer);
+			CallsController.CallProtocolRowsForRead(null).Should().BeEmpty();
+		}
+
+		private void ArrangeCallWithProtocols(Call call)
+		{
+			_callsService
+				.Setup(service => service.GetCallByIdAsync(call.CallId, It.IsAny<bool>()))
+				.ReturnsAsync(call);
+			_callsService
+				.Setup(service => service.PopulateCallData(call, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync(call);
+			_authorizationService
+				.Setup(service => service.CanUserViewCallAsync(UserId, call.CallId))
+				.ReturnsAsync(true);
+		}
+
+		private static DispatchProtocol AttachedProtocol(int id, int departmentId) => new DispatchProtocol
+		{
+			DispatchProtocolId = id,
+			DepartmentId = departmentId,
+			Name = "Protocol " + id,
+			Code = "P" + id,
+			ProtocolText = "Text of protocol " + id,
+			Triggers = new Collection<DispatchProtocolTrigger>(),
+			Attachments = new Collection<DispatchProtocolAttachment>(),
+			Questions = new Collection<DispatchProtocolQuestion>()
+		};
+
 		[Test]
 		public async Task GetCall_ForASystemKeyNamingAnotherDepartment_TakesTheTypeIconFromThatDepartment()
 		{

@@ -122,7 +122,7 @@ namespace Resgrid.Services.AdminAssist
 				foreach (var setting in catalog.Settings.Select(s => new { Entry = s, Score = Score(Text(s.LabelKey)) }).Where(s => s.Score > 0).OrderByDescending(s => s.Score).ThenBy(s => s.Entry.Id).Take(request.SettingId == null ? 2 : 1)) reads.Add(new("get_setting", Id: setting.Entry.Id));
 			}
 			else if (request.Topic == "addons") {
-				var ids = catalog.Capabilities.Where(c => c.Id.StartsWith("addon-", StringComparison.Ordinal)).OrderByDescending(c => Score(Text(c.LabelKey) + " " + Text(c.PurposeKey))).ThenBy(c => c.Id).Take(5).Select(c => c.Id).ToArray();
+				var ids = catalog.ListedCapabilities().Where(c => c.Id.StartsWith("addon-", StringComparison.Ordinal)).OrderByDescending(c => Score(Text(c.LabelKey) + " " + Text(c.PurposeKey))).ThenBy(c => c.Id).Take(5).Select(c => c.Id).ToArray();
 				reads.Add(new("compare_addon_capabilities", Ids: ids));
 			}
 			if (reads.Count < 3) reads.Add(new("search_reference", Query: request.Question.Length > 256 ? request.Question.Substring(0, 256) : request.Question));

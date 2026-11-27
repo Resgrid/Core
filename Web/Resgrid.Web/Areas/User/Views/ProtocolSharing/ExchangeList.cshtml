@@ -1,0 +1,69 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ExchangeListModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@*
+    Two lists of exchange listings: the department's own submissions with their review status ("mine"), and the Resgrid review queue of
+    pending submissions for system operators ("review"), oldest first, each with the scrubber's findings count.
+*@
+@{
+    var review = Model.Mode == "review";
+    var title = review ? text["ReviewHeader"].Value : text["MySubmissionsHeader"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = review ? text["ReviewIntro"].Value : text["MySubmissionsIntro"].Value;
+    ViewData["Section"] = "Sharing";
+    ViewData["SharingSection"] = review ? "Review" : "Mine";
+    ViewData["IsManager"] = Model.IsManager;
+    ViewData["CanCreate"] = Model.CanAuthor;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_SharingTabs", Model)
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa @(review ? "fa-gavel" : "fa-list")" aria-hidden="true"></i> @title</h5></div>
+        <div class="ibox-content">
+            @if (Model.Items.Count == 0)
+            {
+                <p class="text-muted">@(review ? text["ReviewEmpty"] : text["MySubmissionsEmpty"])</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@text["ColumnTitle"]</th>
+                                <th scope="col">@text["ColumnKind"]</th>
+                                <th scope="col">@text["ColumnStatus"]</th>
+                                <th scope="col">@(review ? text["ColumnContributor"] : text["ColumnImports"])</th>
+                                <th scope="col">@text["ColumnFlags"]</th>
+                                <th scope="col">@text["ColumnSubmitted"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td><a asp-controller="ProtocolSharing" asp-action="Listing" asp-route-id="@item.ExchangeListingId" asp-route-area="User">@item.Title</a></td>
+                                    <td>@text["ItemKind" + (ExchangeItemKinds)item.ItemKind]</td>
+                                    <td>@text["ListingStatus" + (ExchangeListingStatuses)item.Status]</td>
+                                    <td>@(review ? item.AttributionName : item.ImportCount.ToString())</td>
+                                    <td>@item.ReviewFlags.Count</td>
+                                    <td>@item.SubmittedOn.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

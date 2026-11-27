@@ -230,4 +230,76 @@
   <data name="SelectMember" xml:space="preserve"><value>Select a member</value></data>
   <data name="SelectType" xml:space="preserve"><value>Select a certification type</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Enter a certification name.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Hours toward renewal</value></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>{0} h credited ({1} h from the transcript)</value></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} h in mapped categories not yet credited</value></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Apply history to credits</value></data>
+  <data name="FromTranscript" xml:space="preserve"><value>From transcript</value></data>
+  <data name="Validity.Rule" xml:space="preserve">
+    <value>How it expires</value>
+  </data>
+  <data name="Validity.Rule.RollingMonths" xml:space="preserve">
+    <value>A number of months after it is issued (the validity above)</value>
+  </data>
+  <data name="Validity.Rule.CalendarYearEnd" xml:space="preserve">
+    <value>At the end of each calendar year (31 December)</value>
+  </data>
+  <data name="Validity.Rule.FiscalYearEnd" xml:space="preserve">
+    <value>At the end of our own year (fiscal, training or license year)</value>
+  </data>
+  <data name="Validity.Rule.FixedDate" xml:space="preserve">
+    <value>On a fixed date</value>
+  </data>
+  <data name="Validity.Help" xml:space="preserve">
+    <value>Used when training issues or renews this certification (LMS courses, learning paths, requirement sets) and for automatic cycles. Dates follow the department's time zone.</value>
+  </data>
+  <data name="Validity.YearEnd" xml:space="preserve">
+    <value>Our year ends on</value>
+  </data>
+  <data name="Validity.YearEndMonth" xml:space="preserve">
+    <value>Month</value>
+  </data>
+  <data name="Validity.YearEndDay" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="Validity.FixedDate" xml:space="preserve">
+    <value>Expires on</value>
+  </data>
+  <data name="Validity.GraceDays" xml:space="preserve">
+    <value>Grace period (days)</value>
+  </data>
+  <data name="Validity.GraceHelp" xml:space="preserve">
+    <value>After the expiry, completing the requirements within this many days still renews the same cycle.</value>
+  </data>
+  <data name="Validity.WindowMonths" xml:space="preserve">
+    <value>Renewal window (months)</value>
+  </data>
+  <data name="Validity.WindowHelp" xml:space="preserve">
+    <value>Only completions in this many months before the expiry count toward a renewal. Empty: the whole cycle.</value>
+  </data>
+  <data name="Validity.RequirementSet" xml:space="preserve">
+    <value>Requirement set</value>
+  </data>
+  <data name="Validity.RequirementSetHelp" xml:space="preserve">
+    <value>Choose the LMS courses, trainings and supervised practicals a member must complete to be issued or to keep this certification.</value>
+  </data>
+  <data name="Validity.RequirementSetEdit" xml:space="preserve">
+    <value>Edit the requirement set</value>
+  </data>
+  <data name="certifications_type_validity_rule_invalid" xml:space="preserve">
+    <value>Choose how the certification expires.</value>
+  </data>
+  <data name="certifications_type_year_end_invalid" xml:space="preserve">
+    <value>Enter a valid year end (month and day).</value>
+  </data>
+  <data name="certifications_type_fixed_date_required" xml:space="preserve">
+    <value>Enter the fixed expiry date.</value>
+  </data>
+  <data name="certifications_type_grace_invalid" xml:space="preserve">
+    <value>The grace period must be between 0 and 365 days.</value>
+  </data>
+  <data name="certifications_type_window_invalid" xml:space="preserve">
+    <value>The renewal window must be between 1 and 60 months.</value>
+  </data>
+  <data name="CategoryLawEnforcement" xml:space="preserve"><value>Law enforcement</value></data>
 </root>

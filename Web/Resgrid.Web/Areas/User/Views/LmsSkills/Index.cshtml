@@ -1,0 +1,157 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsSkillsHomeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    Trainings → Skills home (T4, LMS): the evaluations the member is running, the evaluator signatures waiting for them, their own results
+    and task books, and a way to start an evaluation.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Skl.HomeTitle"];
+    ViewData["Title"] = localizer["Skl.HomeTitle"].Value;
+    ViewData["Subtitle"] = localizer["Skl.HomeIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-stat-tiles m-b-md">
+        <a class="rgw-stat-tile" href="#skills-open">
+            <span class="rgw-stat-value">@Model.MyOpenEvaluations.Count</span>
+            <span class="rgw-stat-label"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Skl.MyOpenEvaluations"]</span>
+        </a>
+        <a class="rgw-stat-tile" href="#skills-signatures">
+            <span class="rgw-stat-value">@Model.MySignatures.Count</span>
+            <span class="rgw-stat-label"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["Skl.MySignatures"]</span>
+        </a>
+        <a class="rgw-stat-tile" asp-controller="LmsSkills" asp-action="Sheets" asp-route-area="User">
+            <span class="rgw-stat-value">@Model.Sheets</span>
+            <span class="rgw-stat-label"><i class="fa fa-list-ol" aria-hidden="true"></i> @localizer["Skl.Tab.Sheets"]</span>
+        </a>
+        <a class="rgw-stat-tile" asp-controller="LmsSkills" asp-action="TaskBooks" asp-route-area="User">
+            <span class="rgw-stat-value">@(Model.IsManager ? Model.OpenTaskBooks : Model.MyTaskBooks.Count(b => b.IsOpen))</span>
+            <span class="rgw-stat-label"><i class="fa fa-book" aria-hidden="true"></i> @localizer["Skl.OpenTaskBooks"]</span>
+        </a>
+    </div>
+
+    @if (Model.CanAuthor)
+    {
+        <div class="rgw-next-action m-b-md">
+            <a class="btn btn-primary" asp-controller="LmsSkills" asp-action="Start" asp-route-area="User"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Skl.StartEvaluation"]</a>
+        </div>
+    }
+
+    <h3 id="skills-open"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Skl.MyOpenEvaluations"]</h3>
+    @if (Model.MyOpenEvaluations.Count == 0)
+    {
+        <p class="text-muted">@localizer["Skl.NoOpenEvaluations"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Skl.Col.Evaluation"]</th><th>@localizer["Skl.Col.Started"]</th><th>@localizer["Skl.Col.Status"]</th><th class="rgw-row-actions">@localizer["Skl.Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var evaluation in Model.MyOpenEvaluations)
+                    {
+                        <tr>
+                            <td>@evaluation.Title<span class="rgw-sub">@evaluation.Code</span></td>
+                            <td>@Model.When(evaluation.StartedOn)</td>
+                            <td>@await Html.PartialAsync("_Status", evaluation)</td>
+                            <td class="rgw-row-actions">
+                                @if (evaluation.Status == (int)LmsSkillEvaluationStatuses.InProgress)
+                                {
+                                    <a class="btn btn-primary btn-xs" asp-controller="LmsSkills" asp-action="Run" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Skl.Continue"]</a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="LmsSkills" asp-action="Evaluation" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Skl.Open"]</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <h3 id="skills-signatures"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["Skl.MySignatures"]</h3>
+    @if (Model.MySignatures.Count == 0)
+    {
+        <p class="text-muted">@localizer["Skl.NoSignatures"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Skl.Col.Evaluation"]</th><th>@localizer["Skl.Col.Step"]</th><th>@localizer["Skl.Col.Expires"]</th><th class="rgw-row-actions">@localizer["Skl.Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var item in Model.MySignatures)
+                    {
+                        <tr>
+                            <td>@item.Title<span class="rgw-sub">@item.ContentCode</span></td>
+                            <td>@item.StepLabel</td>
+                            <td>@Model.Date(item.ExpiresOn)</td>
+                            <td class="rgw-row-actions"><a class="btn btn-primary btn-xs" asp-controller="Signatures" asp-action="Step" asp-route-area="User" asp-route-id="@item.SignatureRequestId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Skl.Sign"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <h3><i class="fa fa-check-square-o" aria-hidden="true"></i> @localizer["Skl.MyResults"]</h3>
+    @if (Model.MyResults.Count == 0)
+    {
+        <p class="text-muted">@localizer["Skl.NoResults"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Skl.Col.Evaluation"]</th><th>@localizer["Skl.Col.Evaluator"]</th><th>@localizer["Skl.Col.Date"]</th><th>@localizer["Skl.Col.Score"]</th><th>@localizer["Skl.Col.Status"]</th><th class="rgw-row-actions">@localizer["Skl.Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var evaluation in Model.MyResults)
+                    {
+                        <tr>
+                            <td>@evaluation.Title<span class="rgw-sub">@evaluation.Code</span></td>
+                            <td>@(evaluation.ExternalEvaluatorName ?? Model.NameOf(evaluation.EvaluatorUserId))</td>
+                            <td>@Model.Date(evaluation.SubmittedOn ?? evaluation.StartedOn)</td>
+                            <td>@(evaluation.Score.HasValue ? evaluation.Score.Value.ToString("0.#") + "%" : string.Empty)</td>
+                            <td>@await Html.PartialAsync("_Status", evaluation)</td>
+                            <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsSkills" asp-action="Evaluation" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Skl.Open"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <h3><i class="fa fa-book" aria-hidden="true"></i> @localizer["Skl.MyTaskBooks"]</h3>
+    @if (Model.MyTaskBooks.Count == 0)
+    {
+        <p class="text-muted">@localizer["Skl.NoTaskBooks"]</p>
+    }
+    else
+    {
+        <div class="rgw-card-grid">
+            @foreach (var book in Model.MyTaskBooks)
+            {
+                <div class="rgw-card">
+                    <h4><i class="fa fa-book" aria-hidden="true"></i> @book.PositionCode - @book.Name</h4>
+                    <p class="rgw-card-meta">@localizer["Skl.TaskBookStatus." + (LmsTaskBookStatuses)book.Status] · @localizer["Skl.ValidUntil"] @Model.Date(book.ExpiresOn)</p>
+                    <a class="btn btn-white btn-sm" asp-controller="LmsSkills" asp-action="TaskBook" asp-route-area="User" asp-route-id="@book.LmsTaskBookId"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["Skl.Open"]</a>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

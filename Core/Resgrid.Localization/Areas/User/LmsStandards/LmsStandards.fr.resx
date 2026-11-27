@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Std.StripLabel" xml:space="preserve">
+    <value>Sections des normes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Packages" xml:space="preserve">
+    <value>Paquets de contenu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Tools" xml:space="preserve">
+    <value>Outils LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Xapi" xml:space="preserve">
+    <value>xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.LapsedNotice" xml:space="preserve">
+    <value>Le module LMS a expiré : tout reste visible et les leçons déjà attribuées continuent de fonctionner, mais les paquets, les outils et les paramètres xAPI ne peuvent pas être modifiés.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.AddonNotice" xml:space="preserve">
+    <value>Les normes de contenu font partie du module LMS. Activez-le pour importer des paquets, enregistrer des outils LTI et envoyer des déclarations xAPI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackagesTitle" xml:space="preserve">
+    <value>Paquets de contenu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackagesIntro" xml:space="preserve">
+    <value>Paquets SCORM 1.2, SCORM 2004 et cmi5 pour les leçons des cours, lus dans un lecteur isolé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.StoreNotConfigured" xml:space="preserve">
+    <value>Le stockage des médias LMS n'est pas configuré sur ce système : les paquets ne peuvent être ni importés ni lus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadLabel" xml:space="preserve">
+    <value>Paquet (.zip)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadButton" xml:space="preserve">
+    <value>Importer le paquet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadHelp" xml:space="preserve">
+    <value>Jusqu'à {0} Mo. Le zip doit contenir imsmanifest.xml (SCORM) ou cmi5.xml (cmi5) à sa racine ; il est vérifié avant d'être enregistré puis décompressé peu après.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NoPackages" xml:space="preserve">
+    <value>Aucun paquet de contenu pour le moment.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Title" xml:space="preserve">
+    <value>Titre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Standard" xml:space="preserve">
+    <value>Norme</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Items" xml:space="preserve">
+    <value>SCO / AU</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Status" xml:space="preserve">
+    <value>Statut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Uploaded" xml:space="preserve">
+    <value>Importé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Actions" xml:space="preserve">
+    <value>Actions</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Scorm12" xml:space="preserve">
+    <value>SCORM 1.2</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Scorm2004" xml:space="preserve">
+    <value>SCORM 2004</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Cmi5" xml:space="preserve">
+    <value>cmi5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.FilesFormat" xml:space="preserve">
+    <value>{0} fichiers, {1} Mo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Queued" xml:space="preserve">
+    <value>En attente de décompression</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Processing" xml:space="preserve">
+    <value>Décompression en cours</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Ready" xml:space="preserve">
+    <value>Prêt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Failed" xml:space="preserve">
+    <value>Échec</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Remove" xml:space="preserve">
+    <value>Retirer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.SandboxNote" xml:space="preserve">
+    <value>Les paquets s'exécutent dans un cadre isolé qui n'a accès ni aux pages ni aux connexions de Resgrid ; ils ne signalent que la progression de leur propre lancement.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageUploaded" xml:space="preserve">
+    <value>Paquet importé. Il sera prêt une fois décompressé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageRemoved" xml:space="preserve">
+    <value>Paquet retiré des nouvelles leçons.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolSaved" xml:space="preserve">
+    <value>Outil LTI enregistré.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolRemoved" xml:space="preserve">
+    <value>Outil LTI retiré.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.KeyRotated" xml:space="preserve">
+    <value>Une nouvelle clé de signature est active. L'ancienne clé reste publiée pendant une semaine.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiSaved" xml:space="preserve">
+    <value>Paramètres xAPI enregistrés.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiRequeued" xml:space="preserve">
+    <value>Les déclarations en échec ont été remises en file d'attente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolsTitle" xml:space="preserve">
+    <value>Outils LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolsIntro" xml:space="preserve">
+    <value>Cours de tiers (LTI 1.3) qui s'ouvrent depuis une leçon et renvoient la note.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NewTool" xml:space="preserve">
+    <value>Enregistrer un outil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NoTools" xml:space="preserve">
+    <value>Aucun outil LTI enregistré pour le moment.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Name" xml:space="preserve">
+    <value>Nom</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.ClientId" xml:space="preserve">
+    <value>ID client</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Passback" xml:space="preserve">
+    <value>Retour de note</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Yes" xml:space="preserve">
+    <value>Oui</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.No" xml:space="preserve">
+    <value>Non</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Active" xml:space="preserve">
+    <value>Actif</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Inactive" xml:space="preserve">
+    <value>Inactif</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Open" xml:space="preserve">
+    <value>Ouvrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.RotateKey" xml:space="preserve">
+    <value>Renouveler la clé de signature</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.RotateKeyHelp" xml:space="preserve">
+    <value>Les lancements sont signés avec la clé du service (RS256). Après le renouvellement, les outils qui lisent le jeu de clés récupèrent la nouvelle ; l'ancienne reste publiée une semaine.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PlatformTitle" xml:space="preserve">
+    <value>Informations de plateforme pour les fournisseurs d’outils</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PlatformIntro" xml:space="preserve">
+    <value>Communiquez ces informations au fournisseur lors de l'enregistrement de Resgrid dans son outil, avec l'ID client et l'ID de déploiement de l'outil.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Issuer" xml:space="preserve">
+    <value>Émetteur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Jwks" xml:space="preserve">
+    <value>URL du jeu de clés (JWKS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Auth" xml:space="preserve">
+    <value>URL d'autorisation (OIDC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Token" xml:space="preserve">
+    <value>URL du jeton d'accès</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Kid" xml:space="preserve">
+    <value>ID de la clé active</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.NoKey" xml:space="preserve">
+    <value>Créée avec le premier outil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolTitle" xml:space="preserve">
+    <value>Outil LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolIntro" xml:space="preserve">
+    <value>Les points d'accès et les clés du fournisseur. Les lancements ne partagent qu'un identifiant de membre pseudonyme, sauf si vous activez le nom ou l'e-mail ci-dessous.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.DeploymentId" xml:space="preserve">
+    <value>ID de déploiement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.OidcLoginUrl" xml:space="preserve">
+    <value>URL d'initiation de connexion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LaunchUrl" xml:space="preserve">
+    <value>URL de lancement (lien cible)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.JwksUrl" xml:space="preserve">
+    <value>URL du jeu de clés de l'outil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.RedirectUris" xml:space="preserve">
+    <value>URI de redirection</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.RedirectUrisHelp" xml:space="preserve">
+    <value>Une par ligne (https). Les lancements ne sont envoyés qu'à celles-ci ; vide, l'URL de lancement est utilisée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PublicJwks" xml:space="preserve">
+    <value>Clés publiques de l'outil (JWKS), au lieu d'une URL</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PublicJwksHelp" xml:space="preserve">
+    <value>Collez le jeu de clés de l'outil s'il n'a pas d'URL. Il sert à vérifier ses demandes de retour de note.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.Custom" xml:space="preserve">
+    <value>Paramètres personnalisés</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.CustomHelp" xml:space="preserve">
+    <value>Un key=value par ligne, envoyé à chaque lancement.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.Passback" xml:space="preserve">
+    <value>L'outil renvoie la note (Assignment and Grade Services)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareName" xml:space="preserve">
+    <value>Partager le nom du membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareEmail" xml:space="preserve">
+    <value>Partager l'adresse e-mail du membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PassbackHelp" xml:space="preserve">
+    <value>Avec le retour de note, la leçon est terminée quand l'outil la signale finie et notée au moins à la note de réussite ; sans lui, l'ouverture de l'outil termine la leçon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Save" xml:space="preserve">
+    <value>Enregistrer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Back" xml:space="preserve">
+    <value>Retour</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiTitle" xml:space="preserve">
+    <value>Déclarations xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiIntro" xml:space="preserve">
+    <value>Envoyez les résultats des cours et des leçons à votre Learning Record Store.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Pending" xml:space="preserve">
+    <value>En attente d'envoi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Delivered" xml:space="preserve">
+    <value>Livrées</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Failed" xml:space="preserve">
+    <value>En échec</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.XapiEnabled" xml:space="preserve">
+    <value>Envoyer les déclarations xAPI au LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsEndpoint" xml:space="preserve">
+    <value>Point d'accès du LRS (https)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsKey" xml:space="preserve">
+    <value>Clé du LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsSecret" xml:space="preserve">
+    <value>Secret du LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.SecretStored" xml:space="preserve">
+    <value>Enregistré (laissez vide pour le conserver)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ClearSecret" xml:space="preserve">
+    <value>Supprimer le secret enregistré</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareEmailInActor" xml:space="preserve">
+    <value>Identifier les membres par leur adresse e-mail (sinon un compte pseudonyme du service)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiHelp" xml:space="preserve">
+    <value>Les déclarations (attempted, completed, passed, failed) sont mises en file à leur survenue et envoyées par lots, avec de nouvelles tentatives si le LRS est indisponible. Le secret est stocké chiffré.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.RecentFailures" xml:space="preserve">
+    <value>Échecs récents</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Statement" xml:space="preserve">
+    <value>Déclaration</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Attempts" xml:space="preserve">
+    <value>Tentatives</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.LastError" xml:space="preserve">
+    <value>Dernière erreur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Queued" xml:space="preserve">
+    <value>Mise en file</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Retry" xml:space="preserve">
+    <value>Réessayer les déclarations en échec</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Tool" xml:space="preserve">
+    <value>Outil LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Choose" xml:space="preserve">
+    <value>Choisir…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoPassback" xml:space="preserve">
+    <value>sans retour de note</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Target" xml:space="preserve">
+    <value>URI du lien cible (facultatif)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.PassMark" xml:space="preserve">
+    <value>Note de réussite (%)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.LtiHelp" xml:space="preserve">
+    <value>Le membre ouvre l'outil dans une nouvelle fenêtre. Avec le retour de note, la leçon est terminée à la note de réussite (0 = quand l'outil la signale finie) ; sinon à l'ouverture de l'outil.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoTools" xml:space="preserve">
+    <value>Enregistrez d'abord un outil LTI (Formations → Normes → Outils LTI).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Package" xml:space="preserve">
+    <value>Paquet de contenu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.PackageHelp" xml:space="preserve">
+    <value>La leçon est terminée quand le paquet l'indique (statut SCORM ou règle moveOn de cmi5) ; le membre ne peut pas la marquer comme terminée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoPackages" xml:space="preserve">
+    <value>Importez d'abord un paquet (Formations → Normes → Paquets de contenu).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Completed" xml:space="preserve">
+    <value>Cette leçon est terminée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiIntro" xml:space="preserve">
+    <value>Cette leçon est fournie par {0} et s’ouvre dans une nouvelle fenêtre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LaunchTool" xml:space="preserve">
+    <value>Ouvrir le cours</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiScoreHelp" xml:space="preserve">
+    <value>Votre résultat revient du fournisseur une fois terminé ; actualisez cette page pour le voir.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiOpenHelp" xml:space="preserve">
+    <value>L'ouverture du cours termine cette leçon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Items" xml:space="preserve">
+    <value>Parties de cette leçon</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Done" xml:space="preserve">
+    <value>terminé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Sandboxed" xml:space="preserve">
+    <value>Le cours s’exécute dans un cadre protégé et ne signale que sa propre progression.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Status" xml:space="preserve">
+    <value>Résultat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Satisfied" xml:space="preserve">
+    <value>Règle de fin respectée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.NotSatisfied" xml:space="preserve">
+    <value>Pas encore terminé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Score" xml:space="preserve">
+    <value>Note</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Refresh" xml:space="preserve">
+    <value>Actualiser la progression</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotFound" xml:space="preserve">
+    <value>Cet élément est introuvable.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotAuthorized" xml:space="preserve">
+    <value>Vous n'avez pas l'autorisation de faire cela.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.AddonRequired" xml:space="preserve">
+    <value>Cela nécessite un module LMS actif.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.LapseWindowEnded" xml:space="preserve">
+    <value>Le module LMS a expiré : ce cours ne peut plus être suivi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotEntitled" xml:space="preserve">
+    <value>Ce contenu n'est pas disponible pour votre service.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.InvalidInput" xml:space="preserve">
+    <value>Des informations manquent ou ne sont pas valides (les adresses doivent être en https).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.LessonLocked" xml:space="preserve">
+    <value>Terminez d'abord les leçons précédentes.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.MediaUnavailable" xml:space="preserve">
+    <value>Ce contenu ne peut pas être ouvert pour l'instant (le paquet n'est pas prêt ou l'outil n'est pas actif).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.FileTooLarge" xml:space="preserve">
+    <value>Le paquet est trop volumineux.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.UnsupportedFile" xml:space="preserve">
+    <value>Ce fichier n'est pas un paquet lisible.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.RequirementNotMet" xml:space="preserve">
+    <value>Cette leçon est terminée quand son contenu l'indique.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.CodeExpired" xml:space="preserve">
+    <value>Ce lancement a expiré. Rouvrez la leçon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.AlreadySubmitted" xml:space="preserve">
+    <value>Cela a déjà été enregistré.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.Empty" xml:space="preserve">
+    <value>Le fichier est vide.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.TooLarge" xml:space="preserve">
+    <value>Le paquet dépasse la taille autorisée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.NotZip" xml:space="preserve">
+    <value>Le fichier n'est pas une archive zip.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.TooManyFiles" xml:space="preserve">
+    <value>Le paquet contient trop de fichiers.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UnsafePath" xml:space="preserve">
+    <value>Le paquet contient un chemin qui sort de son dossier : il a été refusé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UncompressedTooLarge" xml:space="preserve">
+    <value>Décompressé, le paquet dépasse la taille autorisée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.SuspiciousCompression" xml:space="preserve">
+    <value>Un fichier du paquet est anormalement compressé et a été refusé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.ManifestMissing" xml:space="preserve">
+    <value>Aucun imsmanifest.xml (SCORM) ni cmi5.xml (cmi5) à la racine du zip.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.ManifestInvalid" xml:space="preserve">
+    <value>Le manifeste n'est pas valide.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UnsupportedStandard" xml:space="preserve">
+    <value>Cette version de SCORM n'est pas prise en charge (SCORM 1.2 et 2004 le sont).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.NoLaunchableItem" xml:space="preserve">
+    <value>Le paquet ne contient aucun SCO ni AU à lancer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.LaunchFileMissing" xml:space="preserve">
+    <value>Un SCO ou un AU désigne un fichier absent du paquet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.RemoteAuNotSupported" xml:space="preserve">
+    <value>Un AU est hébergé ailleurs ; seul le contenu du paquet s'exécute dans Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ClientReportedNote" xml:space="preserve">
+    <value>Les résultats SCORM et cmi5 (achèvement, score, réussite ou échec) sont transmis par le module qui s'exécute dans le navigateur de l'apprenant ; un apprenant déterminé pourrait donc les modifier. Pour les cours qui donnent droit à des crédits de formation continue, ajoutez aussi une leçon d'évaluation Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotLicensed" xml:space="preserve">
+    <value>Il vous faut une place LMS pour cela. Demandez à votre administrateur de vous activer pour le LMS. L'Académie et vos dossiers de formation restent disponibles.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Busy" xml:space="preserve">
+    <value>Trop de tentatives. Patientez une minute et réessayez.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiFramed" xml:space="preserve">
+    <value>Le cours s'ouvre dans une nouvelle fenêtre. Revenez ici lorsque vous avez terminé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiOpening" xml:space="preserve">
+    <value>Ouverture du cours…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiScoreHelp" xml:space="preserve">
+    <value>Votre résultat est transmis par le fournisseur lorsque vous terminez. L'application se met à jour dès sa réception.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Returned" xml:space="preserve">
+    <value>Vous êtes revenu du cours. Vous pouvez fermer cette fenêtre et retourner à l'application.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Ended" xml:space="preserve">
+    <value>Cette leçon ne peut pas continuer ici. Fermez-la et rouvrez la leçon depuis l'application.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Close" xml:space="preserve">
+    <value>Fermer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Offline" xml:space="preserve">
+    <value>Vous êtes hors ligne. Cette leçon a besoin d'une connexion pour enregistrer votre progression.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

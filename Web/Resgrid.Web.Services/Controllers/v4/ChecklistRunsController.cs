@@ -17,7 +17,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		private readonly IReadinessAccessService _access;
 		private readonly IDepartmentDataProtectionService _protection;
-		public ChecklistRunsController(IChecklistsService checklists, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings, IReadinessAccessService access, IDepartmentDataProtectionService protection) : base(checklists, strings) { _access = access; _protection = protection; }
+		private readonly IChecklistWitnessSignatureService _witness;
+		private readonly IMfaEvidenceService _evidence;
+		private readonly IMfaPolicyService _mfaPolicy;
+		public ChecklistRunsController(IChecklistsService checklists, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings, IReadinessAccessService access, IDepartmentDataProtectionService protection,
+			IChecklistWitnessSignatureService witness, IMfaEvidenceService evidence, IMfaPolicyService mfaPolicy, IStepUpCapabilityService stepUp) : base(checklists, strings)
+		{ _access = access; _protection = protection; _witness = witness; _evidence = evidence; _mfaPolicy = mfaPolicy; _stepUp = stepUp; }
+		private readonly IStepUpCapabilityService _stepUp;
 		/// <summary>Fresh value-free scope and access state for secure local drafts. A mutation always repeats authorization and grant validation.</summary>
 		[HttpGet("GetChecklistAccess")]
 		public async Task<IActionResult> GetChecklistAccess()
@@ -60,6 +66,37 @@ namespace Resgrid.Web.Services.Controllers.v4
 			Required(input); Required(input.Input);
 			await Checklists.SaveRunAsync(Actor, input.Id, input.Input, submit);
 			return Reply(ChecklistRunData.From(await Checklists.GetRunAsync(Actor, input.Id), UserId));
+		}
+		/// <summary>
+		/// e-Signature S3 (free with Checklists): the witness of a form that requires a witness signature signs at L2 — a step-up recorded
+		/// for this session — bound to the completion's operational content hash; the run completes in the same transaction. A refused
+		/// signature (StepUpRequired...) leaves the run awaiting its witness. AttestChecklistRun answers 409 for such a form.
+		/// </summary>
+		[HttpPost("SignChecklistRunWitness")]
+		public async Task<IActionResult> SignChecklistRunWitness([FromBody] ChecklistWitnessInput input, System.Threading.CancellationToken cancellationToken)
+		{
+			Required(input);
+			var proof = await Resgrid.Web.Services.Helpers.ApiSignatureProof.BuildAsync(HttpContext, UserId, DepartmentId, _evidence, _mfaPolicy, cancellationToken);
+			var outcome = await _witness.SignAsync(Actor, input.Id, input.SubmissionHash, input.Attestation, proof, System.Globalization.CultureInfo.CurrentUICulture.Name, cancellationToken);
+			if (outcome == Resgrid.Model.SignatureOutcomes.StepUpRequired)
+				return await Resgrid.Web.Services.Helpers.ApiStepUp.RefuseAsync(HttpContext, _stepUp, DepartmentId, UserId, Resgrid.Model.Security.StepUpArea.Signatures,
+					cancellationToken);
+			if (outcome != Resgrid.Model.SignatureOutcomes.Signed)
+			{
+				// StepUpRequired tells the app to step up and retry; the run still awaits its witness.
+				var refused = new ChecklistApiResult<object> { Data = new { Signed = false, Outcome = outcome.ToString() }, Status = Resgrid.Web.Services.Helpers.ResponseHelper.Failure, PageSize = 1 };
+				Resgrid.Web.Services.Helpers.ResponseHelper.PopulateV4ResponseData(refused);
+				return StatusCode(StatusCodes.Status403Forbidden, refused);
+			}
+			return Reply(ChecklistRunData.From(await Checklists.GetRunAsync(Actor, input.Id), UserId));
+		}
+		/// <summary>S3: the witness signature panel of a run: whether the form requires it, the statement, the content hash and the signatures.</summary>
+		[HttpGet("GetChecklistRunWitnessSignature")]
+		public async Task<IActionResult> GetChecklistRunWitnessSignature(string id)
+		{
+			var view = await _witness.GetAsync(Actor, id, System.Globalization.CultureInfo.CurrentUICulture.Name);
+			return Reply(new { view.Required, view.AwaitingWitness, view.CanSign, view.SubmissionHash, view.ArtifactSha256, ContentCode = Resgrid.Model.SignaturePolicy.ShortCode(view.ArtifactSha256), view.Statement,
+				Signatures = view.Signatures.Select(s => new { s.Record.SignatureRecordId, s.Record.SignerNameSnapshot, s.Record.Level, s.Record.Method, s.Record.SignedOn, State = (int)s.State }).ToList() });
 		}
 		[HttpPost("AttestChecklistRun")]
 		public async Task<IActionResult> AttestChecklistRun([FromBody] ChecklistWitnessInput input)

@@ -191,7 +191,8 @@
     <value>Las notificaciones de texto, correo, push y voz envían contenido genérico de forma predeterminada («Hay un despacho protegido: inicie sesión en Resgrid»).</value>
   </data>
   <data name="Step1NotCompliance" xml:space="preserve">
-    <value>La protección de datos avanzada por sí sola no es cumplimiento de HIPAA ni ePCR. Es un control dentro de un programa de cumplimiento que sigue siendo responsabilidad de su organismo.</value>
+    <value>La protección de datos avanzada por sí sola no es cumplimiento de HIPAA ni de otras normas de datos de salud. Es un control dentro de un programa de cumplimiento que sigue siendo responsabilidad de su organismo.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step2Header" xml:space="preserve">
     <value>Paso 2 de 6: reconocimientos</value>
@@ -230,7 +231,8 @@
     <value>Entiendo que el soporte de Resgrid no puede leer valores protegidos sin una concesión de soporte explícita, auditada y aprobada por el departamento, y que la pérdida de claves solo se recupera mediante el proceso documentado.</value>
   </data>
   <data name="AckNotHipaaCompliance" xml:space="preserve">
-    <value>Entiendo que la protección de datos avanzada por sí sola no es cumplimiento de HIPAA/ePCR.</value>
+    <value>Entiendo que la protección de datos avanzada por sí sola no es cumplimiento de HIPAA ni de otras normas de datos de salud.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step3Header" xml:space="preserve">
     <value>Paso 3 de 6: comprobaciones previas</value>

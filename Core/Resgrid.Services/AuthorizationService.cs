@@ -37,6 +37,7 @@ namespace Resgrid.Services
 		private readonly IContactsService _contactsService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDispatchScopeService _dispatchScopeService;
+		private readonly Lazy<IProtocolAccessService> _protocolAccess;
 
 		private static string WhoCanViewUnitsCacheKey = "ViewUnitsSecurityMaxtix_{0}";
 		private static string WhoCanViewUnitLocationsCacheKey = "ViewUnitLocationsSecurityMaxtix_{0}";
@@ -56,7 +57,7 @@ namespace Resgrid.Services
 			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService,
 			IShiftsService shiftsService, ICustomStateService customStateService, ICertificationService certificationService,
 			IDocumentsService documentsService, INotesService notesService, ICacheProvider cacheProvider, IContactsService contactsService,
-			IEventAggregator eventAggregator, IDispatchScopeService dispatchScopeService)
+			IEventAggregator eventAggregator, IDispatchScopeService dispatchScopeService, Lazy<IProtocolAccessService> protocolAccess = null)
 		{
 			_departmentsService = departmentsService;
 			_invitesService = invitesService;
@@ -79,6 +80,7 @@ namespace Resgrid.Services
 			_contactsService = contactsService;
 			_eventAggregator = eventAggregator;
 			_dispatchScopeService = dispatchScopeService;
+			_protocolAccess = protocolAccess;
 		}
 
 		/// <summary>
@@ -589,7 +591,8 @@ namespace Resgrid.Services
 		public async Task<bool> CanUserModifyProtocolAsync(string userId, int protocolId)
 		{
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
-			var protocol = await _protocolsService.GetProtocolByIdAsync(protocolId);
+			// The row alone: a permission check never loads the protocol's children or its attachments (D20).
+			var protocol = await _protocolsService.GetProtocolHeaderByIdAsync(protocolId);
 
 			if (department == null || protocol == null)
 				return false;
@@ -604,13 +607,18 @@ namespace Resgrid.Services
 			if (department.IsUserAnAdmin(userId))
 				return true;
 
+			// P1: whoever holds Author Protocols (128) edits the department's protocols.
+			if (_protocolAccess?.Value != null)
+				return (await _protocolAccess.Value.GetReaderAsync(department.DepartmentId, userId)).MayAuthor;
+
 			return false;
 		}
 
 		public async Task<bool> CanUserViewProtocolAsync(string userId, int protocolId)
 		{
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
-			var protocol = await _protocolsService.GetProtocolByIdAsync(protocolId);
+			// The row alone (D20): this check also runs once per protocol hit in Unified Search.
+			var protocol = await _protocolsService.GetProtocolHeaderByIdAsync(protocolId);
 
 			if (department == null || protocol == null)
 				return false;
@@ -618,12 +626,19 @@ namespace Resgrid.Services
 			if (protocol.DepartmentId != department.DepartmentId)
 				return false;
 
+			// P1 (R-P4): the protocol read rule (published, in its audience, or a Dispatch protocol for dispatchers; drafts and
+			// reviews for authors and approvers). Unified Search checks every protocol hit through here.
+			if (_protocolAccess?.Value != null)
+				return await _protocolAccess.Value.CanReadAsync(await _protocolAccess.Value.GetReaderAsync(department.DepartmentId, userId), protocol);
+
 			return true;
 		}
 
 		public async Task<TrainingManagementScope> GetTrainingManagementScopeAsync(string userId, int departmentId)
 		{
 			var scope = TrainingManagementScope.None(userId, departmentId);
+			scope.Assign = new TrainingRightScope();
+			scope.Delete = new TrainingRightScope();
 
 			if (string.IsNullOrWhiteSpace(userId) || departmentId <= 0)
 				return scope;
@@ -635,46 +650,74 @@ namespace Resgrid.Services
 
 			if (department.IsUserAnAdmin(userId))
 			{
-				scope.ManagesAll = true;
-				scope.ManagesOwn = true;
+				scope.Author = new TrainingRightScope { ManagesAll = true, ManagesOwn = true };
+				scope.Assign = new TrainingRightScope { ManagesAll = true, ManagesOwn = true };
+				scope.Delete = new TrainingRightScope { ManagesAll = true, ManagesOwn = true };
+				scope.Record = new TrainingRightScope { ManagesAll = true, ManagesOwn = true };
 				return scope;
 			}
 
-			// No permission row means the default: department admins only (as the training claims are issued).
-			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateTraining);
+			// Three rights (T0 item 1b): Create Training authors, Assign Training (126) assigns and reports, Delete Training
+			// (127) archives and deletes. Assign and Delete with no row of their own follow the Create Training row; with no
+			// rows at all only department admins hold any of them (as the training claims are issued).
+			var create = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.CreateTraining);
+			var assign = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.AssignTraining) ?? create;
+			var delete = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.DeleteTraining) ?? create;
 
-			if (permission == null)
-				return scope;
+			List<PersonnelRole> roles = null;
+			DepartmentGroup group = null;
+			var groupRead = false;
 
-			switch ((PermissionActions)permission.Action)
+			async Task<TrainingRightScope> RightAsync(Permission permission)
 			{
-				case PermissionActions.DepartmentAdminsAndSelectRoles:
-					// The roles the department named to run its training: every training.
-					var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+				var right = new TrainingRightScope();
+				if (permission == null)
+					return right;
 
-					if (_permissionsService.IsUserAllowed(permission, false, false, roles ?? new List<PersonnelRole>()))
-					{
-						scope.ManagesAll = true;
-						scope.ManagesOwn = true;
-					}
-					break;
-				case PermissionActions.DepartmentAndGroupAdmins:
-					// A group admin: what they created, and trainings assigned only to members of their own group.
-					var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+				switch ((PermissionActions)permission.Action)
+				{
+					case PermissionActions.DepartmentAdminsAndSelectRoles:
+						// The roles the department named to run its training: every training.
+						roles ??= await _personnelRolesService.GetRolesForUserAsync(userId, departmentId) ?? new List<PersonnelRole>();
+						if (_permissionsService.IsUserAllowed(permission, false, false, roles))
+						{
+							right.ManagesAll = true;
+							right.ManagesOwn = true;
+						}
+						break;
+					case PermissionActions.DepartmentAndGroupAdmins:
+						// A group admin: what they created, and trainings assigned only to members of their own group.
+						if (!groupRead)
+						{
+							group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+							groupRead = true;
+						}
 
-					if (group != null && group.IsUserGroupAdmin(userId))
-					{
-						scope.ManagesOwn = true;
-						scope.AdministeredMemberUserIds = new HashSet<string>(
-							(group.Members ?? Enumerable.Empty<DepartmentGroupMember>()).Where(x => x != null && !string.IsNullOrWhiteSpace(x.UserId)).Select(x => x.UserId),
-							StringComparer.OrdinalIgnoreCase);
-					}
-					break;
-				case PermissionActions.Everyone:
-					// Every member may create a training; that does not make every member the manager of everyone else's.
-					scope.ManagesOwn = true;
-					break;
+						if (group != null && group.IsUserGroupAdmin(userId))
+						{
+							right.ManagesOwn = true;
+							right.AdministeredMemberUserIds = new HashSet<string>(
+								(group.Members ?? Enumerable.Empty<DepartmentGroupMember>()).Where(x => x != null && !string.IsNullOrWhiteSpace(x.UserId)).Select(x => x.UserId),
+								StringComparer.OrdinalIgnoreCase);
+						}
+						break;
+					case PermissionActions.Everyone:
+						// Every member holds the right for what they created; that does not make them the manager of everyone else's.
+						right.ManagesOwn = true;
+						break;
+				}
+
+				return right;
 			}
+
+			scope.Author = await RightAsync(create);
+			scope.Assign = await RightAsync(assign);
+			scope.Delete = await RightAsync(delete);
+
+			// Round 7B: Record Training Completions (135), its own row only. "Everyone" is not offered for it; a stray Everyone row records for
+			// nobody (a member never records a completion for the department at large).
+			var record = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.RecordTrainingCompletions);
+			scope.Record = record == null || record.Action == (int)PermissionActions.Everyone ? new TrainingRightScope() : await RightAsync(record);
 
 			return scope;
 		}

@@ -1,0 +1,88 @@
+{
+  "format": "resgrid-protocols",
+  "version": 2,
+  "exportedOn": "2026-11-25T00:00:00Z",
+  "set": {
+    "key": "security-post-orders-starter",
+    "title": "Security post orders starter set",
+    "description": "Three documents written by Resgrid for security teams and contract security companies: post orders for a site, incident reporting, and access control and visitors. Fill in each site's details; officers read and acknowledge the post orders before they work the post.",
+    "publisher": "Resgrid",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "setVersion": "1.0"
+  },
+  "protocols": [
+    {
+      "code": "SEC-101",
+      "name": "Post orders",
+      "kind": "Policy",
+      "tags": "security,post orders,site",
+      "description": "The instructions for one post: where it is, when it is staffed, the duties and who to call.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 180,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "table", "key": "post", "title": "The post", "headerRow": true, "rows": [
+            [ "Item", "Details" ],
+            [ "Site and post", "[Site name, post name or number]" ],
+            [ "Hours", "[When the post is staffed]" ],
+            [ "Uniform and equipment", "[What the officer wears and carries]" ],
+            [ "Client contact", "[Name and phone number]" ]
+          ] },
+          { "type": "steps", "key": "duties", "title": "Duties", "items": [
+            { "key": "d1", "html": "<p>Take over the post: read the log and the handover notes, and check the equipment.</p>" },
+            { "key": "d2", "html": "<p>Patrol on the route and at the times set for the site, and record each round.</p>" },
+            { "key": "d3", "html": "<p>Observe and report: record what you see in the log, and report incidents as the incident reporting procedure sets out.</p>" },
+            { "key": "d4", "html": "<p>Hand over the post: brief the next officer and sign the log.</p>" }
+          ] },
+          { "type": "warning", "key": "emergency", "title": "In an emergency", "html": "<p>Call the emergency services first, then your control room and the client contact. Do not put yourself at risk to protect property.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SEC-102",
+      "name": "Incident reporting",
+      "kind": "Procedure",
+      "tags": "security,incident,report",
+      "description": "What to record after an incident, and who to tell.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "record", "title": "Record", "items": [
+            { "key": "r1", "html": "<p>When and where it happened, and when you were told or arrived.</p>" },
+            { "key": "r2", "html": "<p>Who was involved and who saw it, with how to contact them.</p>" },
+            { "key": "r3", "html": "<p>What happened, in the order it happened: facts you saw or heard, not opinions.</p>" },
+            { "key": "r4", "html": "<p>What you did, who you called, and photographs or recordings you took.</p>" }
+          ] },
+          { "type": "caution", "key": "privacy", "title": "Personal information", "html": "<p>Share the report only with the people your procedure names, and keep it no longer than your retention rules allow.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "SEC-103",
+      "name": "Access control and visitors",
+      "kind": "Procedure",
+      "tags": "security,access control,visitors",
+      "description": "Checking people and vehicles in and out of a controlled site.",
+      "requiresAcknowledgment": false,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "visitors", "title": "Visitors", "items": [
+            { "key": "v1", "html": "<p>Check identification and that the visit is expected.</p>" },
+            { "key": "v2", "html": "<p>Record the visitor, the person they are visiting and the time in and out.</p>" },
+            { "key": "v3", "html": "<p>Issue a visitor pass and get it back when the visitor leaves.</p>" }
+          ] },
+          { "type": "paragraph", "key": "site-rules", "html": "<p>[Insert the site's rules for contractors, deliveries, vehicles and lost access cards.]</p>" }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CaseReviewsTab" xml:space="preserve">
+    <value>Case reviews</value>
+  </data>
+  <data name="MyCaseReviewsTab" xml:space="preserve">
+    <value>My case reviews</value>
+  </data>
+  <data name="QueueLink" xml:space="preserve">
+    <value>Queue</value>
+  </data>
+  <data name="SampleLink" xml:space="preserve">
+    <value>Sample</value>
+  </data>
+  <data name="ReportsLink" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="RubricsLink" xml:space="preserve">
+    <value>Rubrics</value>
+  </data>
+  <data name="QueueIntro" xml:space="preserve">
+    <value>Sampled dispatch cases waiting for review, oldest first.</value>
+  </data>
+  <data name="QueueCaption" xml:space="preserve">
+    <value>Dispatch cases waiting for review</value>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>The queue is empty. Draw a sample to start reviewing.</value>
+  </data>
+  <data name="TileQueued" xml:space="preserve">
+    <value>In the queue</value>
+  </data>
+  <data name="TileInReview" xml:space="preserve">
+    <value>Drafts</value>
+  </data>
+  <data name="TileAssignedToMe" xml:space="preserve">
+    <value>Assigned to me</value>
+  </data>
+  <data name="TileAwaitingAcknowledgment" xml:space="preserve">
+    <value>Waiting for the dispatcher</value>
+  </data>
+  <data name="TileAcknowledged" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
+  <data name="TileReviews" xml:space="preserve">
+    <value>Reviews</value>
+  </data>
+  <data name="TileAverageScore" xml:space="preserve">
+    <value>Average score</value>
+  </data>
+  <data name="TileOverrides" xml:space="preserve">
+    <value>Overrides</value>
+  </data>
+  <data name="TileToAcknowledge" xml:space="preserve">
+    <value>To acknowledge</value>
+  </data>
+  <data name="ShowWholeQueue" xml:space="preserve">
+    <value>Whole queue</value>
+  </data>
+  <data name="ShowMineOnly" xml:space="preserve">
+    <value>Assigned to me</value>
+  </data>
+  <data name="SampleCallsButton" xml:space="preserve">
+    <value>Sample calls</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="ProtocolColumn" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Dispatcher</value>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>Assigned to</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="OverriddenLabel" xml:space="preserve">
+    <value>Overridden</value>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Unassigned</value>
+  </data>
+  <data name="OwnCaseShort" xml:space="preserve">
+    <value>Your call</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="TakeButton" xml:space="preserve">
+    <value>Take</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveConfirm" xml:space="preserve">
+    <value>Take this case out of the queue? It can be sampled again later.</value>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>Queued</value>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Sent</value>
+  </data>
+  <data name="StatusAcknowledged" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
+  <data name="SampleTitle" xml:space="preserve">
+    <value>Sample calls for review</value>
+  </data>
+  <data name="SampleIntro" xml:space="preserve">
+    <value>Pick calls at random for review by protocol, version, determinant, dispatcher and dates.</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Sample preview</value>
+  </data>
+  <data name="PreviewCandidates" xml:space="preserve">
+    <value>Matching cases</value>
+  </data>
+  <data name="PreviewAlreadyReviewed" xml:space="preserve">
+    <value>Already reviewed</value>
+  </data>
+  <data name="PreviewExcluded" xml:space="preserve">
+    <value>Left out</value>
+  </data>
+  <data name="PreviewEligible" xml:space="preserve">
+    <value>Eligible</value>
+  </data>
+  <data name="PreviewSampleSize" xml:space="preserve">
+    <value>Would be sampled</value>
+  </data>
+  <data name="PreviewCapped" xml:space="preserve">
+    <value>Only the {0} most recent matching calls were counted. Narrow the dates for a full count.</value>
+  </data>
+  <data name="WhichCallsLegend" xml:space="preserve">
+    <value>Which calls</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="ProtocolLabel" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="DeterminantLabel" xml:space="preserve">
+    <value>Determinant</value>
+  </data>
+  <data name="DeterminantHelp" xml:space="preserve">
+    <value>A determinant or its beginning, for example 09-E.</value>
+  </data>
+  <data name="DispatcherLabel" xml:space="preserve">
+    <value>Dispatcher</value>
+  </data>
+  <data name="HowManyLegend" xml:space="preserve">
+    <value>How many</value>
+  </data>
+  <data name="ModeCount" xml:space="preserve">
+    <value>Number of cases</value>
+  </data>
+  <data name="ModePercent" xml:space="preserve">
+    <value>Percentage of eligible cases</value>
+  </data>
+  <data name="SampleSizeHelp" xml:space="preserve">
+    <value>At most {0} cases per sample. A percentage is rounded up. Calls already reviewed are never sampled again.</value>
+  </data>
+  <data name="RubricLabel" xml:space="preserve">
+    <value>Rubric</value>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Assign to</value>
+  </data>
+  <data name="AssignHelp" xml:space="preserve">
+    <value>Their own calls are left out of the sample.</value>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Count</value>
+  </data>
+  <data name="DrawSampleButton" xml:space="preserve">
+    <value>Draw sample</value>
+  </data>
+  <data name="AnyProtocol" xml:space="preserve">
+    <value>Any protocol</value>
+  </data>
+  <data name="AnyVersion" xml:space="preserve">
+    <value>Any version</value>
+  </data>
+  <data name="AnyDispatcher" xml:space="preserve">
+    <value>Any dispatcher</value>
+  </data>
+  <data name="TemplateRubricWillBeCreated" xml:space="preserve">
+    <value>Standard rubric (created with the first sample)</value>
+  </data>
+  <data name="SampledMessage" xml:space="preserve">
+    <value>{0} cases queued for review ({1} eligible, {2} already reviewed).</value>
+  </data>
+  <data name="ReviewTitle" xml:space="preserve">
+    <value>Case review: call {0}</value>
+  </data>
+  <data name="OwnCaseNotice" xml:space="preserve">
+    <value>This is your own call: another reviewer must score it.</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="QuestionComplianceLabel" xml:space="preserve">
+    <value>Question compliance</value>
+  </data>
+  <data name="InstructionComplianceLabel" xml:space="preserve">
+    <value>Instruction compliance</value>
+  </data>
+  <data name="NotApplicableShort" xml:space="preserve">
+    <value>n/a</value>
+  </data>
+  <data name="CaseHeader" xml:space="preserve">
+    <value>The case as recorded</value>
+  </data>
+  <data name="OverrideDetail" xml:space="preserve">
+    <value>Computed {0}; overridden by {1} on {2}.</value>
+  </data>
+  <data name="OverrideReasonLabel" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="PriorityLabel" xml:space="preserve">
+    <value>Suggested priority</value>
+  </data>
+  <data name="SourceLabel" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="SourceAi" xml:space="preserve">
+    <value>Enhanced AI suggestion, confirmed</value>
+  </data>
+  <data name="TimelineHeader" xml:space="preserve">
+    <value>Timeline</value>
+  </data>
+  <data name="TimelineCallLogged" xml:space="preserve">
+    <value>Call logged</value>
+  </data>
+  <data name="TimelineAttached" xml:space="preserve">
+    <value>Protocol attached</value>
+  </data>
+  <data name="TimelineCaseCompleted" xml:space="preserve">
+    <value>Case flow completed</value>
+  </data>
+  <data name="TimelineCaseNotCompleted" xml:space="preserve">
+    <value>The case flow was not completed</value>
+  </data>
+  <data name="TimelineOverridden" xml:space="preserve">
+    <value>Determinant overridden</value>
+  </data>
+  <data name="TimelineCallerText" xml:space="preserve">
+    <value>Text to the caller</value>
+  </data>
+  <data name="TimelineStepsStarted" xml:space="preserve">
+    <value>Step-through started</value>
+  </data>
+  <data name="TimelineStepsCompleted" xml:space="preserve">
+    <value>completed</value>
+  </data>
+  <data name="TimelineSampled" xml:space="preserve">
+    <value>Sampled for review</value>
+  </data>
+  <data name="TimelineSent" xml:space="preserve">
+    <value>Review sent</value>
+  </data>
+  <data name="TimelineAcknowledged" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>Questions and instructions</value>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>No questions or instructions were recorded on this case.</value>
+  </data>
+  <data name="KindEntryQuestion" xml:space="preserve">
+    <value>Entry question</value>
+  </data>
+  <data name="KindKeyQuestion" xml:space="preserve">
+    <value>Key question</value>
+  </data>
+  <data name="KindInstruction" xml:space="preserve">
+    <value>Instruction</value>
+  </data>
+  <data name="AnswerLabel" xml:space="preserve">
+    <value>Answer</value>
+  </data>
+  <data name="ComplianceLabel" xml:space="preserve">
+    <value>Compliance</value>
+  </data>
+  <data name="ComplianceNotScored" xml:space="preserve">
+    <value>Not scored</value>
+  </data>
+  <data name="ComplianceCompliant" xml:space="preserve">
+    <value>Compliant</value>
+  </data>
+  <data name="CompliancePartial" xml:space="preserve">
+    <value>Partly</value>
+  </data>
+  <data name="ComplianceNotCompliant" xml:space="preserve">
+    <value>Not compliant</value>
+  </data>
+  <data name="ComplianceNotApplicable" xml:space="preserve">
+    <value>Not applicable</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Note (optional)</value>
+  </data>
+  <data name="CriteriaHeader" xml:space="preserve">
+    <value>Rubric criteria</value>
+  </data>
+  <data name="WeightLabel" xml:space="preserve">
+    <value>weight {0}</value>
+  </data>
+  <data name="DerivedCriterionHelp" xml:space="preserve">
+    <value>Scored from the questions and instructions above.</value>
+  </data>
+  <data name="NotScoredOption" xml:space="preserve">
+    <value>Not scored</value>
+  </data>
+  <data name="Score100" xml:space="preserve">
+    <value>100 - fully met</value>
+  </data>
+  <data name="Score75" xml:space="preserve">
+    <value>75 - mostly met</value>
+  </data>
+  <data name="Score50" xml:space="preserve">
+    <value>50 - partly met</value>
+  </data>
+  <data name="Score25" xml:space="preserve">
+    <value>25 - barely met</value>
+  </data>
+  <data name="Score0" xml:space="preserve">
+    <value>0 - not met</value>
+  </data>
+  <data name="CommentsLabel" xml:space="preserve">
+    <value>Comments for the dispatcher</value>
+  </data>
+  <data name="CommentsHelp" xml:space="preserve">
+    <value>The dispatcher reads these comments with the scores.</value>
+  </data>
+  <data name="SaveDraftButton" xml:space="preserve">
+    <value>Save draft</value>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>Send to dispatcher</value>
+  </data>
+  <data name="CriterionColumn" xml:space="preserve">
+    <value>Criterion</value>
+  </data>
+  <data name="WeightColumn" xml:space="preserve">
+    <value>Weight</value>
+  </data>
+  <data name="FeedbackHeader" xml:space="preserve">
+    <value>Dispatcher feedback</value>
+  </data>
+  <data name="AcknowledgedOn" xml:space="preserve">
+    <value>Acknowledged on {0}.</value>
+  </data>
+  <data name="NotAcknowledgedYet" xml:space="preserve">
+    <value>Not acknowledged yet.</value>
+  </data>
+  <data name="DispatcherReplyHeader" xml:space="preserve">
+    <value>Dispatcher's reply</value>
+  </data>
+  <data name="ReplyOptionalLabel" xml:space="preserve">
+    <value>Reply (optional)</value>
+  </data>
+  <data name="ReplyOnceHelp" xml:space="preserve">
+    <value>You can reply once; the reviewer is notified.</value>
+  </data>
+  <data name="AcknowledgeButton" xml:space="preserve">
+    <value>Acknowledge</value>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>Your reply</value>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Send reply</value>
+  </data>
+  <data name="GraphHeader" xml:space="preserve">
+    <value>Protocol case flow</value>
+  </data>
+  <data name="NoGraph" xml:space="preserve">
+    <value>The cited version has no case flow to show.</value>
+  </data>
+  <data name="PathLegend" xml:space="preserve">
+    <value>Steps on the path this call took</value>
+  </data>
+  <data name="MineIntro" xml:space="preserve">
+    <value>Reviews of calls you dispatched. Read each one and acknowledge it; you can reply once.</value>
+  </data>
+  <data name="MineEmpty" xml:space="preserve">
+    <value>No case reviews for you yet.</value>
+  </data>
+  <data name="ReadAndAcknowledgeButton" xml:space="preserve">
+    <value>Read and acknowledge</value>
+  </data>
+  <data name="RepliedLabel" xml:space="preserve">
+    <value>You replied</value>
+  </data>
+  <data name="ReportsTitle" xml:space="preserve">
+    <value>Case review reports</value>
+  </data>
+  <data name="ReportsIntro" xml:space="preserve">
+    <value>Compliance of reviewed dispatch cases by protocol, version, dispatcher and month.</value>
+  </data>
+  <data name="ApplyButton" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Export CSV</value>
+  </data>
+  <data name="ReportEmpty" xml:space="preserve">
+    <value>No sent reviews for calls in this period.</value>
+  </data>
+  <data name="ByMonthHeader" xml:space="preserve">
+    <value>By month</value>
+  </data>
+  <data name="ByProtocolHeader" xml:space="preserve">
+    <value>By protocol</value>
+  </data>
+  <data name="ByVersionHeader" xml:space="preserve">
+    <value>By version</value>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>By dispatcher</value>
+  </data>
+  <data name="ByItemHeader" xml:space="preserve">
+    <value>By question and instruction</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="CsvCall" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="CsvCallDate" xml:space="preserve">
+    <value>Call date</value>
+  </data>
+  <data name="CsvProtocol" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="CsvVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="CsvDeterminant" xml:space="preserve">
+    <value>Determinant</value>
+  </data>
+  <data name="CsvOverridden" xml:space="preserve">
+    <value>Overridden</value>
+  </data>
+  <data name="CsvDispatcher" xml:space="preserve">
+    <value>Dispatcher</value>
+  </data>
+  <data name="CsvReviewer" xml:space="preserve">
+    <value>Reviewer</value>
+  </data>
+  <data name="CsvScore" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="CsvQuestionCompliance" xml:space="preserve">
+    <value>Question compliance %</value>
+  </data>
+  <data name="CsvInstructionCompliance" xml:space="preserve">
+    <value>Instruction compliance %</value>
+  </data>
+  <data name="CsvSent" xml:space="preserve">
+    <value>Sent</value>
+  </data>
+  <data name="CsvAcknowledged" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="RubricsTitle" xml:space="preserve">
+    <value>Dispatch case rubrics</value>
+  </data>
+  <data name="RubricsIntro" xml:space="preserve">
+    <value>Records QA rubrics used to score dispatch cases. Each review keeps the criteria it was sampled with.</value>
+  </data>
+  <data name="NoRubrics" xml:space="preserve">
+    <value>There is no dispatch case rubric yet.</value>
+  </data>
+  <data name="CreateTemplateButton" xml:space="preserve">
+    <value>Create the standard rubric</value>
+  </data>
+  <data name="InactiveLabel" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="DerivedLabel" xml:space="preserve">
+    <value>from the items</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="NewRubricHeader" xml:space="preserve">
+    <value>New rubric</value>
+  </data>
+  <data name="EditRubricHeader" xml:space="preserve">
+    <value>Edit rubric</value>
+  </data>
+  <data name="RubricNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="CriteriaHelp" xml:space="preserve">
+    <value>The keys "questions" and "instructions" take their score from the questions and instructions; the other criteria are scored by hand. Weights run from 1 to 10.</value>
+  </data>
+  <data name="CriterionKeyColumn" xml:space="preserve">
+    <value>Key</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SaveRubricButton" xml:space="preserve">
+    <value>Save rubric</value>
+  </data>
+  <data name="RubricSavedMessage" xml:space="preserve">
+    <value>Rubric saved.</value>
+  </data>
+  <data name="RubricNotSaved" xml:space="preserve">
+    <value>The rubric was not saved. It needs a name and at least one criterion, with unique keys.</value>
+  </data>
+  <data name="TemplateRubricName" xml:space="preserve">
+    <value>Dispatch case review</value>
+  </data>
+  <data name="TemplateCaseEntry" xml:space="preserve">
+    <value>Case entry: address, call-back number and chief complaint confirmed</value>
+  </data>
+  <data name="TemplateQuestions" xml:space="preserve">
+    <value>Questions asked as written, in order</value>
+  </data>
+  <data name="TemplateDeterminant" xml:space="preserve">
+    <value>The right determinant (an override has a sound reason)</value>
+  </data>
+  <data name="TemplateInstructions" xml:space="preserve">
+    <value>Instructions given as written</value>
+  </data>
+  <data name="TemplateCallerCare" xml:space="preserve">
+    <value>Calm, clear and courteous with the caller</value>
+  </data>
+  <data name="TakenMessage" xml:space="preserve">
+    <value>The case is in your queue.</value>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>The case was taken out of the queue.</value>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>The review was sent to the dispatcher.</value>
+  </data>
+  <data name="DraftSavedMessage" xml:space="preserve">
+    <value>Draft saved.</value>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Review acknowledged.</value>
+  </data>
+  <data name="RepliedMessage" xml:space="preserve">
+    <value>Your reply was sent.</value>
+  </data>
+  <data name="ResultDone" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="ResultNotFound" xml:space="preserve">
+    <value>That review was not found.</value>
+  </data>
+  <data name="ResultForbidden" xml:space="preserve">
+    <value>You do not have the right to do that.</value>
+  </data>
+  <data name="ResultOwnCase" xml:space="preserve">
+    <value>You cannot review your own call.</value>
+  </data>
+  <data name="ResultAlreadySent" xml:space="preserve">
+    <value>The review was already sent to the dispatcher and can no longer change.</value>
+  </data>
+  <data name="ResultIncomplete" xml:space="preserve">
+    <value>Score every question, instruction and criterion before sending.</value>
+  </data>
+  <data name="ResultAlreadyAcknowledged" xml:space="preserve">
+    <value>This review was already acknowledged.</value>
+  </data>
+  <data name="ResultAlreadyCommented" xml:space="preserve">
+    <value>You already replied to this review.</value>
+  </data>
+  <data name="ResultNotSent" xml:space="preserve">
+    <value>This review has not been sent yet.</value>
+  </data>
+  <data name="ResultConflict" xml:space="preserve">
+    <value>Someone else changed or took this review. Reload the page and try again.</value>
+  </data>
+  <data name="ResultCommentRequired" xml:space="preserve">
+    <value>Write a reply first.</value>
+  </data>
+  <data name="ResultNoRubric" xml:space="preserve">
+    <value>Choose an active dispatch case rubric.</value>
+  </data>
+  <data name="ResultInvalid" xml:space="preserve">
+    <value>Check the dates and the sample size.</value>
+  </data>
+</root>

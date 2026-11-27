@@ -195,6 +195,8 @@
             </div>
         </div>
     </div>
+    @* Training T4 (LMS): a class session's calendar item points to its class page (rendered by name; nothing when the LMS is dark). *@
+    @await Component.InvokeAsync("LmsClassSessionLink", new { calendarItemId = Model.CalendarItem.CalendarItemId })
     @* Details + Map *@
     <div class="row">
         <div class="col-lg-7">

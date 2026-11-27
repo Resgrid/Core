@@ -511,6 +511,10 @@ namespace Resgrid.Services.CostRecovery
 			var item = await GetWorkItemAsync(workItemId, departmentId) ?? throw new InvalidOperationException("calmars_work_item_not_found");
 			var validation = Deserialize<CalOesMarsValidationResult>(item.ValidationSummaryJson);
 			if (item.RecordType is (int)CalOesMarsRecordTypes.F42 or (int)CalOesMarsRecordTypes.ExpenseClaim && (validation == null || !validation.IsReadyForPortal) && !item.IsExternal) throw new InvalidOperationException("calmars_not_ready");
+			// e-Signature S4: where the department has a MARS package approval chain, the package is approved (as it is now) before the hand-off.
+			if (item.RecordType is (int)CalOesMarsRecordTypes.F42 or (int)CalOesMarsRecordTypes.ExpenseClaim && !item.IsExternal && _approvalGate != null
+				&& !(await _approvalGate.CheckAsync(departmentId, SignatureSubjectKinds.CalOesMarsPackageApproval, item.CalOesMarsWorkItemId)).Allows)
+				throw new InvalidOperationException("calmars_approval_required");
 			var manifest = await BuildManifestAsync(item, departmentId, userId);
 			manifest.Validation = validation;
 			// Opening the handoff is audited and never changes the mirror state (plan C4: "Prepared for MARS", not "Submitted").

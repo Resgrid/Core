@@ -1,0 +1,54 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ProtocolOpenFormatModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@*
+    The open format and set exports (P5): the library or one category as a documented JSON set (format resgrid-protocols, version 2: blocks,
+    versions, decision graph, translations, attachments manifest; docs/protocols/open-format.md), as one HTML file, or as the PDF book. An
+    agency that can leave easily trusts the platform enough to stay.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["ExportHeader"];
+    ViewData["Title"] = text["ExportHeader"].Value;
+    ViewData["Subtitle"] = text["ExportIntro"].Value;
+    ViewData["Section"] = "Sharing";
+    ViewData["SharingSection"] = "Export";
+    ViewData["IsManager"] = Model.IsManager;
+    ViewData["CanCreate"] = Model.CanAuthor;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_SharingTabs", Model)
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-download" aria-hidden="true"></i> @text["ExportHeader"]</h5></div>
+        <div class="ibox-content">
+            <p>@string.Format(text["ExportCount"].Value, Model.ReadableCount)</p>
+            <form method="get" class="rgw-toolbar" asp-controller="ProtocolSharing" asp-action="ExportJson" asp-route-area="User">
+                <label class="control-label" for="exportCategory">@text["ExportSetLabel"]</label>
+                <select id="exportCategory" name="categoryId" class="form-control" style="max-width: 320px;">
+                    <option value="">@text["ExportWholeLibrary"]</option>
+                    @foreach (var category in Model.Categories.OrderBy(c => c.SortOrder).ThenBy(c => c.Name))
+                    {
+                        <option value="@category.ProtocolCategoryId">@category.Name</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-file-code-o" aria-hidden="true"></i> @text["ExportJsonButton"]</button>
+                <button type="submit" class="btn btn-default" formaction="@Url.Action("ExportHtml", "ProtocolSharing", new { area = "User" })"><i class="fa fa-file-text-o" aria-hidden="true"></i> @text["ExportHtmlButton"]</button>
+                <button type="submit" class="btn btn-default" formaction="@Url.Action("BookPdf", "ProtocolTools", new { area = "User" })"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @text["ExportPdfButton"]</button>
+            </form>
+            <ul class="small text-muted">
+                <li>@text["ExportJsonHelp"]</li>
+                <li>@text["ExportHtmlHelp"]</li>
+                <li>@text["ExportPdfHelp"]</li>
+            </ul>
+            <p class="small">@text["ExportImportHint"] <a asp-controller="Protocols" asp-action="Import" asp-route-area="User">@text["ExportImportLink"]</a></p>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

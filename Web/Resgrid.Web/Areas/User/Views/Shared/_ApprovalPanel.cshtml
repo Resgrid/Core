@@ -1,0 +1,45 @@
+@using Resgrid.Model
+@using Resgrid.Model.Approvals
+@model Resgrid.Model.Approvals.ApprovalSubjectStatus
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    A subject's approvals (e-Signature S4) on its module page: the latest request and its state, the content code the approvals bind to,
+    a warning when the subject changed after it was submitted or approved (the approval no longer counts), and "Submit for approval".
+*@
+@{
+    var latest = Model.Latest;
+}
+<div class="ibox float-e-margins rg-approval-panel">
+    <div class="ibox-title"><h5><i class="fa fa-check-square-o" aria-hidden="true"></i> @approvalText["ApprovalsHeading"]</h5></div>
+    <div class="ibox-content">
+        @if (latest == null)
+        {
+            <p class="text-muted">@approvalText["NoApprovalYet"]</p>
+        }
+        else
+        {
+            <p>
+                <span class="label @(latest.Status == (int)ApprovalRequestStatuses.Approved ? "label-primary" : latest.Status == (int)ApprovalRequestStatuses.Rejected ? "label-danger" : "label-default")">@approvalText["Status" + (ApprovalRequestStatuses)latest.Status]</span>
+                <a asp-area="User" asp-controller="Approvals" asp-action="Detail" asp-route-id="@latest.ApprovalRequestId">@approvalText["OpenRequestLink"]</a>
+                <span class="text-muted small"><i class="fa fa-hashtag" aria-hidden="true"></i> @approvalText["ContentCodeLabel"] <span class="rgw-mono">@SignaturePolicy.ShortCode(latest.ContentSha256)</span></span>
+            </p>
+            @if (latest.Status == (int)ApprovalRequestStatuses.Rejected && !string.IsNullOrWhiteSpace(latest.RejectReason))
+            {
+                <p class="small"><strong>@approvalText["RejectReasonLabel"]</strong> @latest.RejectReason</p>
+            }
+            @if (Model.Changed)
+            {
+                <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @approvalText["ChangedSinceSubmission"]</div>
+            }
+        }
+        @if (Model.CanSubmit)
+        {
+            <form asp-area="User" asp-controller="Approvals" asp-action="Submit" method="post" class="m-t-xs">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="kind" value="@((int)Model.Kind)" />
+                <input type="hidden" name="subjectId" value="@Model.SubjectId" />
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-paper-plane" aria-hidden="true"></i> @approvalText["SubmitForApprovalButton"]</button>
+            </form>
+        }
+    </div>
+</div>

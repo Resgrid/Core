@@ -1,0 +1,55 @@
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolBookModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The PDF book (P3): the whole library or one category (with its sub-categories), each protocol's version in force with a table of
+    contents, version stamp, effective date and approver. Only what the member may read is included. Sealed (L3) when sealing is
+    configured; otherwise the PDF is the unsealed rendering and the export is recorded "sealing pending".
+*@
+@{
+    var title = localizer["BookHeader"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Section"] = "Book";
+}
+
+@await Html.PartialAsync("../Protocols/_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label">@localizer["BookReadableCount"]</div>
+            <div class="rgw-stat-value">@Model.ReadableCount</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label">@localizer["BookSealingLabel"]</div>
+            <div class="rgw-stat-value">@(Model.SealingReady ? localizer["BookSealingReady"] : localizer["BookSealingPending"])</div>
+        </div>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["BookHeader"]</h5></div>
+        <div class="ibox-content">
+            <p>@localizer["BookHelp"]</p>
+            @if (!Model.SealingReady)
+            {
+                <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["BookUnsealedNotice"]</div>
+            }
+            <form method="get" class="rgw-toolbar" asp-controller="ProtocolTools" asp-action="BookPdf" asp-route-area="User">
+                <label class="control-label" for="bookCategory">@localizer["CategoryLabel"]</label>
+                <select id="bookCategory" name="categoryId" class="form-control" style="max-width: 320px;">
+                    <option value="">@localizer["BookWholeLibrary"]</option>
+                    @foreach (var category in Model.Categories.OrderBy(c => c.SortOrder).ThenBy(c => c.Name))
+                    {
+                        <option value="@category.ProtocolCategoryId">@category.Name</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-download" aria-hidden="true"></i> @localizer["BookDownloadButton"]</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

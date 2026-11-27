@@ -168,7 +168,8 @@ namespace Resgrid.Tests.Services
 				_responsePackagesService.Object,
 				_runCardDecisionsRepository.Object,
 				_featureToggleService.Object,
-				_outstandingRequirementsService.Object);
+				_outstandingRequirementsService.Object,
+				Mock.Of<IDispatchTriggerFactsService>());
 		}
 
 		private RunCard BuildCard(int engineCount = 0, int roleCount = 0, int alarmLevel = 1)
@@ -198,7 +199,7 @@ namespace Resgrid.Tests.Services
 				AvailabilitySelections = new List<RunCardAvailabilitySelection>()
 			};
 
-			_runCardsService.Setup(x => x.GetMatchingRunCardAsync(DepartmentId, It.IsAny<int>(), It.IsAny<string>()))
+			_runCardsService.Setup(x => x.GetMatchingRunCardAsync(DepartmentId, It.IsAny<DispatchTriggerFacts>()))
 				.ReturnsAsync(card);
 
 			return card;
@@ -220,7 +221,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task returns_noop_result_when_no_card_matches()
 		{
-			_runCardsService.Setup(x => x.GetMatchingRunCardAsync(DepartmentId, It.IsAny<int>(), It.IsAny<string>()))
+			_runCardsService.Setup(x => x.GetMatchingRunCardAsync(DepartmentId, It.IsAny<DispatchTriggerFacts>()))
 				.ReturnsAsync((RunCard)null);
 
 			var result = await _service.GetRecommendationAsync(BuildRequest());

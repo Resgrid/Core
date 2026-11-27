@@ -359,7 +359,9 @@ namespace Resgrid.Workers.Framework.Logic
 						// already populated above, mirroring the webhook's own load.
 						var address = await Resgrid.Services.DispatchVoicePromptBuilder.ResolveDispatchAddressAsync(call, geoLocationProvider);
 						var ttsLanguage = await departmentSettingsService.GetTtsLanguageForDepartmentAsync(call.DepartmentId);
-						var dispatchText = Resgrid.Services.DispatchVoicePromptBuilder.BuildDispatchPrompt(call, address);
+						// Protocols P4: the determinant sentence (setting 134, off by default), resolved exactly as the voice webhook does.
+						var protocolSentence = await Resgrid.Services.DispatchVoicePromptBuilder.ResolveProtocolSentenceAsync(call, departmentSettingsService, scope.Resolve<ICallsService>());
+						var dispatchText = Resgrid.Services.DispatchVoicePromptBuilder.BuildDispatchPrompt(call, address, protocolSentence);
 
 						// Speed is part of the cache key too: the webhook reads the same DispatchSpeed.
 						var dispatchSpeed = Resgrid.Services.DispatchVoicePromptBuilder.DispatchSpeed;

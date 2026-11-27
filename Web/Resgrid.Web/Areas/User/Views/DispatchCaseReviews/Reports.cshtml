@@ -1,0 +1,130 @@
+@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Protocols.DispatchCaseReportModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatchCaseReviews.DispatchCaseReviews> L
+@*
+    Protocols P5 QA: dispatch case compliance over the sent reviews of calls logged in the window: by protocol, version, dispatcher and
+    month (department time), and for one protocol by question and instruction. Question and instruction compliance add points across
+    reviews before dividing. CSV of the reviews.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + L["ReportsTitle"];
+    ViewData["Title"] = L["ReportsTitle"].Value;
+    ViewData["Subtitle"] = L["ReportsIntro"].Value;
+    ViewData["CaseReviewPage"] = "Reports";
+    var form = Model.Form;
+    var report = Model.Report;
+    string Percent(double? value) => value.HasValue ? value.Value.ToString("0.#") + "%" : "–";
+    string Average(double? value) => value.HasValue ? value.Value.ToString("0.#") : "–";
+    var csv = Url.Action("ReportCsv", "DispatchCaseReviews", new { area = "User", from = form.From?.ToString("yyyy-MM-dd"), to = form.To?.ToString("yyyy-MM-dd"), protocolId = form.ProtocolId, versionId = form.VersionId, dispatcherUserId = form.DispatcherUserId });
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_CaseReviewNav")
+
+    <form method="get" asp-action="Reports" asp-route-area="User" class="rgw-toolbar">
+        <div class="rgw-filter">
+            <label class="control-label" for="From">@L["FromLabel"]</label>
+            <input type="date" class="form-control" id="From" name="From" value="@form.From?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="rgw-filter">
+            <label class="control-label" for="To">@L["ToLabel"]</label>
+            <input type="date" class="form-control" id="To" name="To" value="@form.To?.ToString("yyyy-MM-dd")" />
+        </div>
+        <div class="rgw-filter">
+            <label class="control-label" for="ProtocolId">@L["ProtocolLabel"]</label>
+            <select class="form-control" id="ProtocolId" name="ProtocolId" asp-items="Model.Protocols"></select>
+        </div>
+        @if (form.ProtocolId > 0)
+        {
+            <div class="rgw-filter">
+                <label class="control-label" for="VersionId">@L["VersionLabel"]</label>
+                <select class="form-control" id="VersionId" name="VersionId" asp-items="Model.Versions"></select>
+            </div>
+        }
+        <div class="rgw-filter">
+            <label class="control-label" for="DispatcherUserId">@L["DispatcherLabel"]</label>
+            <select class="form-control" id="DispatcherUserId" name="DispatcherUserId" asp-items="Model.Dispatchers"></select>
+        </div>
+        <div class="rgw-filter">
+            <button type="submit" class="btn btn-primary"><i class="fa fa-filter" aria-hidden="true"></i> @L["ApplyButton"]</button>
+            <a class="btn btn-default" href="@csv"><i class="fa fa-file-text-o" aria-hidden="true"></i> @L["ExportCsvButton"]</a>
+        </div>
+    </form>
+
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    @if (report != null)
+    {
+        <div class="rgw-stat-tiles" role="list">
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["TileReviews"]</div><div class="rgw-stat-value">@report.Total.Reviews</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["TileAverageScore"]</div><div class="rgw-stat-value">@Average(report.Total.AverageScore)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["QuestionComplianceLabel"]</div><div class="rgw-stat-value">@Percent(report.Total.QuestionCompliance)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["InstructionComplianceLabel"]</div><div class="rgw-stat-value">@Percent(report.Total.InstructionCompliance)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["TileOverrides"]</div><div class="rgw-stat-value">@report.Total.Overrides</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["TileAcknowledged"]</div><div class="rgw-stat-value">@report.Total.Acknowledged</div></div>
+        </div>
+
+        @if (report.Total.Reviews == 0)
+        {
+            <div class="rgw-next-action" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @L["ReportEmpty"]</div>
+        }
+        else
+        {
+            var sections = new List<(string Header, List<DispatchCaseComplianceRow> Rows)>
+            {
+                (L["ByMonthHeader"].Value, report.ByMonth),
+                (L["ByProtocolHeader"].Value, report.ByProtocol),
+                (L["ByVersionHeader"].Value, report.ByVersion),
+                (L["ByDispatcherHeader"].Value, report.ByDispatcher)
+            };
+            if (report.ByItem.Count > 0)
+            {
+                sections.Add((L["ByItemHeader"].Value, report.ByItem));
+            }
+            foreach (var block in sections)
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-table" aria-hidden="true"></i> @block.Header</h5></div>
+                    <div class="ibox-content table-responsive">
+                        <table class="table rgw-table">
+                            <caption class="sr-only">@block.Header</caption>
+                            <thead>
+                                <tr>
+                                    <th scope="col">@L["GroupColumn"]</th>
+                                    <th scope="col">@L["TileReviews"]</th>
+                                    <th scope="col">@L["TileAverageScore"]</th>
+                                    <th scope="col">@L["QuestionComplianceLabel"]</th>
+                                    <th scope="col">@L["InstructionComplianceLabel"]</th>
+                                    <th scope="col">@L["TileOverrides"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in block.Rows)
+                                {
+                                    <tr>
+                                        <td>@row.Label</td>
+                                        <td>@row.Reviews</td>
+                                        <td>@Average(row.AverageScore)</td>
+                                        <td>@Percent(row.QuestionCompliance)</td>
+                                        <td>@Percent(row.InstructionCompliance)</td>
+                                        <td>@row.Overrides</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -1,0 +1,215 @@
+{
+  "schema": 1,
+  "id": "00-start",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Orientation",
+  "minutes": 3.0,
+  "walkthrough": false,
+  "audience": [
+    "member",
+    "dispatcher",
+    "officer",
+    "administrator",
+    "training-officer",
+    "records",
+    "logistics",
+    "business"
+  ],
+  "visibility": [],
+  "pages": [
+    "Home",
+    "Dashboard"
+  ],
+  "adminAssist": {
+    "areas": [
+      "apps"
+    ],
+    "capabilities": [
+      "home-dashboard",
+      "dashboard",
+      "dashboard-templates",
+      "profile",
+      "departments",
+      "help-search",
+      "academy-guidance"
+    ]
+  },
+  "media": {
+    "video": "media/00-start.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/00-start.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Resgrid: from the first alert to the next shift",
+    "ar": "Resgrid: من أول إنذار إلى المناوبة التالية",
+    "de": "Resgrid: vom ersten Alarm bis zur nächsten Schicht",
+    "el": "Resgrid: από την πρώτη ειδοποίηση έως την επόμενη βάρδια",
+    "es": "Resgrid: de la primera alerta al siguiente turno",
+    "fr": "Resgrid : de la première alerte à la relève suivante",
+    "it": "Resgrid: dal primo allarme al turno successivo",
+    "pl": "Resgrid: od pierwszego alarmu do następnej zmiany",
+    "sv": "Resgrid: från första larmet till nästa pass",
+    "uk": "Resgrid: від першої тривоги до наступної зміни"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What does Resgrid help an emergency services department do?",
+        "ar": "بمَ يساعد Resgrid إدارة خدمات الطوارئ؟",
+        "de": "Wobei hilft Resgrid einer Einsatzorganisation?",
+        "el": "Σε τι βοηθά το Resgrid μια υπηρεσία έκτακτης ανάγκης;",
+        "es": "¿En qué ayuda Resgrid a un servicio de emergencias?",
+        "fr": "À quoi Resgrid aide-t-il un service d’urgence ?",
+        "it": "In che cosa Resgrid aiuta un servizio di emergenza?",
+        "pl": "W czym Resgrid pomaga służbie ratowniczej?",
+        "sv": "Vad hjälper Resgrid en räddningsorganisation med?",
+        "uk": "У чому Resgrid допомагає аварійно-рятувальній службі?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Replacing radios with social media posts",
+            "ar": "استبدال أجهزة اللاسلكي بمنشورات التواصل الاجتماعي",
+            "de": "Funkgeräte durch Social-Media-Beiträge ersetzen",
+            "el": "Αντικατάσταση των ασυρμάτων με αναρτήσεις στα μέσα κοινωνικής δικτύωσης",
+            "es": "Sustituir las radios por publicaciones en redes sociales",
+            "fr": "Remplacer les radios par des publications sur les réseaux sociaux",
+            "it": "Sostituire le radio con post sui social",
+            "pl": "Zastąpić radiotelefony wpisami w mediach społecznościowych",
+            "sv": "Ersätta radio med inlägg i sociala medier",
+            "uk": "Замінити рації дописами в соцмережах"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Coordinating people, units and calls from the alert to the next shift",
+            "ar": "تنسيق الأفراد والوحدات والبلاغات من الإنذار حتى المناوبة التالية",
+            "de": "Personen, Einheiten und Einsätze vom Alarm bis zur nächsten Schicht koordinieren",
+            "el": "Συντονισμό ατόμων, μονάδων και κλήσεων από την ειδοποίηση έως την επόμενη βάρδια",
+            "es": "Coordinar personas, unidades y llamadas desde la alerta hasta el siguiente turno",
+            "fr": "Coordonner personnes, unités et interventions de l’alerte à la relève",
+            "it": "Coordinare persone, mezzi e chiamate dall’allarme al turno successivo",
+            "pl": "Koordynować ludzi, jednostki i zgłoszenia od alarmu do następnej zmiany",
+            "sv": "Samordna personal, enheter och larm från larmet till nästa pass",
+            "uk": "Координувати людей, підрозділи та виклики від тривоги до наступної зміни"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Storing only payroll records",
+            "ar": "تخزين سجلات الرواتب فقط",
+            "de": "Nur Lohnabrechnungen speichern",
+            "el": "Αποθήκευση μόνο μισθοδοσίας",
+            "es": "Guardar solo nóminas",
+            "fr": "Stocker uniquement la paie",
+            "it": "Archiviare solo le buste paga",
+            "pl": "Przechowywać wyłącznie listy płac",
+            "sv": "Lagra enbart lönelistor",
+            "uk": "Зберігати лише відомості про зарплату"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Where do you find short videos that explain each part of Resgrid?",
+        "ar": "أين تجد مقاطع فيديو قصيرة تشرح كل جزء من Resgrid؟",
+        "de": "Wo finden Sie kurze Videos zu jedem Teil von Resgrid?",
+        "el": "Πού θα βρείτε σύντομα βίντεο για κάθε μέρος του Resgrid;",
+        "es": "¿Dónde encuentra vídeos cortos que explican cada parte de Resgrid?",
+        "fr": "Où trouver de courtes vidéos expliquant chaque partie de Resgrid ?",
+        "it": "Dove trovi brevi video che spiegano ogni parte di Resgrid?",
+        "pl": "Gdzie znajdziesz krótkie filmy o każdej części Resgrid?",
+        "sv": "Var hittar du korta videor om varje del av Resgrid?",
+        "uk": "Де знайти короткі відео про кожну частину Resgrid?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "In the Resgrid Academy",
+            "ar": "في أكاديمية Resgrid",
+            "de": "In der Resgrid Akademie",
+            "el": "Στην Ακαδημία Resgrid",
+            "es": "En la Academia Resgrid",
+            "fr": "Dans l’Académie Resgrid",
+            "it": "Nell’Accademia Resgrid",
+            "pl": "W Akademii Resgrid",
+            "sv": "I Resgrid Akademi",
+            "uk": "В Академії Resgrid"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "On the billing page",
+            "ar": "في صفحة الفوترة",
+            "de": "Auf der Abrechnungsseite",
+            "el": "Στη σελίδα χρεώσεων",
+            "es": "En la página de facturación",
+            "fr": "Sur la page de facturation",
+            "it": "Nella pagina di fatturazione",
+            "pl": "Na stronie rozliczeń",
+            "sv": "På faktureringssidan",
+            "uk": "На сторінці оплати"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "In the call log",
+            "ar": "في سجل البلاغات",
+            "de": "Im Einsatzprotokoll",
+            "el": "Στο αρχείο κλήσεων",
+            "es": "En el registro de llamadas",
+            "fr": "Dans le journal des interventions",
+            "it": "Nel registro delle chiamate",
+            "pl": "W rejestrze zgłoszeń",
+            "sv": "I larmloggen",
+            "uk": "У журналі викликів"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Members can see calls and respond from the Resgrid apps as well as from the website.",
+        "ar": "يرى الأعضاء البلاغات ويستجيبون من تطبيقات Resgrid ومن الموقع الإلكتروني.",
+        "de": "Mitglieder sehen Einsätze und können sowohl in den Resgrid-Apps als auch auf der Website reagieren.",
+        "el": "Τα μέλη βλέπουν κλήσεις και απαντούν τόσο από τις εφαρμογές Resgrid όσο και από τον ιστότοπο.",
+        "es": "Los miembros pueden ver las llamadas y responder desde las aplicaciones de Resgrid y desde el sitio web.",
+        "fr": "Les membres voient les interventions et répondent depuis les applications Resgrid comme depuis le site web.",
+        "it": "I membri vedono le chiamate e rispondono sia dalle app Resgrid sia dal sito web.",
+        "pl": "Członkowie widzą zgłoszenia i odpowiadają zarówno w aplikacjach Resgrid, jak i na stronie.",
+        "sv": "Medlemmar ser larm och svarar både i Resgrid-apparna och på webbplatsen.",
+        "uk": "Учасники бачать виклики й відповідають як у застосунках Resgrid, так і на сайті."
+      }
+    }
+  ]
+}

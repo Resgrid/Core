@@ -4714,4 +4714,8 @@
   <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
     <value>Записи не ввімкнено для вашого підрозділу, тож нумерацію записів тут змінити не можна. Скасуйте цю зміну.</value>
   </data>
+  <data name="TabProtocols" xml:space="preserve">
+    <value>Протоколи</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

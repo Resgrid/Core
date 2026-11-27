@@ -34,7 +34,7 @@ namespace Resgrid.Tests.Search
 			_protection.Setup(p => p.IsProtectionEnforcedAsync(It.IsAny<int>())).ReturnsAsync(() => _enforced);
 			_protection.Setup(p => p.GetPinnedCatalogVersionAsync(It.IsAny<int>())).ReturnsAsync(25);
 			_protection.Setup(p => p.GetPolicyByDepartmentIdAsync(It.IsAny<int>(), It.IsAny<bool>())).ReturnsAsync(new DepartmentDataProtectionPolicy { PolicyEpoch = 3 });
-			_service = new SearchProjectionService(_repo.Object, _protection.Object);
+			_service = new SearchProjectionService(_repo.Object, _protection.Object, Mock.Of<Resgrid.Model.Repositories.IProtocolVersionTranslationsRepository>());
 		}
 
 		private static Call Call() => new Call

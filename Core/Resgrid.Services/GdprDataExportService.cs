@@ -40,6 +40,10 @@ namespace Resgrid.Services
 		private readonly Lazy<IReadinessHistoryProtectionService> _checklistProtection;
 
 		private readonly IncidentLogistics.IIncidentBackOfficeGdprExport _incidentBackOffice;
+		private readonly IMemberWellnessService _wellness;
+		private readonly IMemberHealthService _memberHealth;
+		private readonly ILearningRecordService _learningRecords;
+		private readonly IReadOnlyList<IGdprExportSection> _sections;
 
 		public GdprDataExportService(
 			IGdprDataExportRequestRepository repository,
@@ -56,9 +60,16 @@ namespace Resgrid.Services
 			ITrainingService trainingService,
 			IShiftsService shiftsService,
 			IEmailService emailService, IChecklistRepository checklists, Lazy<IReadinessHistoryProtectionService> checklistProtection, IChecklistReminderRepository checklistReminders, IWorkOrderRepository workOrders, IInventoryStore inventoryStore, IWorkOrderMaintenanceRepository maintenance,
+			IMemberWellnessService wellness, ILearningRecordService learningRecords, IMemberHealthService memberHealth, IEnumerable<IGdprExportSection> sections,
 			IncidentLogistics.IIncidentBackOfficeGdprExport incidentBackOffice = null)
 		{
+			// Round 5F: sections other modules register (the LMS); one entry per name.
+			_sections = (sections ?? Enumerable.Empty<IGdprExportSection>()).Where(s => !string.IsNullOrWhiteSpace(s?.EntryName))
+				.GroupBy(s => s.EntryName, StringComparer.OrdinalIgnoreCase).Select(g => g.First()).ToList();
+			_learningRecords = learningRecords ?? throw new ArgumentNullException(nameof(learningRecords));
 			_incidentBackOffice = incidentBackOffice;
+			_wellness = wellness ?? throw new ArgumentNullException(nameof(wellness));
+			_memberHealth = memberHealth ?? throw new ArgumentNullException(nameof(memberHealth));
 			_repository = repository;
 			_workOrderMaintenance = maintenance ?? throw new ArgumentNullException(nameof(maintenance));
             _workOrders = workOrders ?? throw new ArgumentNullException(nameof(workOrders));
@@ -192,11 +203,23 @@ namespace Resgrid.Services
 				await AddJsonEntry(archive, "messages_sent.json", await BuildSentMessagesDataAsync(userId), ledger);
 				await AddJsonEntry(archive, "certifications.json", await BuildCertificationsDataAsync(userId), ledger);
 				await AddJsonEntry(archive, "trainings.json", await BuildTrainingsDataAsync(userId), ledger);
+				// Training T1: the member's transcript (learning records from every source), voided rows included so the archive shows what
+				// was struck and why.
+				await AddJsonEntry(archive, "learning_records.json", await BuildLearningRecordsDataAsync(userId, departmentId), ledger);
 				await AddJsonEntry(archive, "shifts.json", await BuildShiftsDataAsync(userId), ledger);
 				await AddJsonEntry(archive, "checklists.json", await BuildChecklistDataAsync(userId, departmentId), ledger);
 				await AddJsonEntry(archive, "workorders.json", await BuildWorkOrderDataAsync(userId, departmentId), ledger);
                 await AddJsonEntry(archive, "maintenance.json", await BuildMaintenanceDataAsync(userId, departmentId), ledger);
 				await AddJsonEntry(archive, "inventory.json", await BuildInventoryDataAsync(userId, departmentId), ledger);
+				// Member wellness WL0: the member's own exposure and critical-incident entries, nobody else's. Unattended, so a sealed
+				// value reaches the sanitizer as an envelope and is redacted like every other protected field.
+				await AddJsonEntry(archive, "exposures.json", await _wellness.BuildGdprExportAsync(userId, departmentId), ledger);
+				// Member wellness WL1: the member's own exposure cases, injuries (with duty periods) and medical clearances.
+				await AddJsonEntry(archive, "health_records.json", await _memberHealth.BuildGdprExportAsync(userId, departmentId), ledger);
+				// Round 5F: registered sections (the LMS: enrollments, attempts without keys, requirement status, training requests, protocol
+				// quiz attempts and micro-learning answers). Classes and skill evaluations add theirs the same way when they are merged.
+				foreach (var section in _sections)
+					await AddJsonEntry(archive, section.EntryName, await section.BuildAsync(userId, departmentId), ledger);
 				if (_incidentBackOffice != null)
 					await AddJsonEntry(archive, "incident_back_office.json", await _incidentBackOffice.BuildAsync(userId, departmentId), ledger);
 
@@ -534,10 +557,68 @@ namespace Resgrid.Services
 			return new List<object>();
 		}
 
+		private async Task<object> BuildLearningRecordsDataAsync(string userId, int departmentId)
+		{
+			var records = await _learningRecords.GetTranscriptAsync(departmentId, userId, null, null, null, null, true) ?? new List<LearningRecord>();
+			return records.Where(r => r != null && r.DepartmentId == departmentId && string.Equals(r.UserId, userId, StringComparison.OrdinalIgnoreCase))
+				.Select(r => new
+				{
+					r.LearningRecordId,
+					Source = ((LearningRecordSourceKinds)r.SourceKind).ToString(),
+					r.Title,
+					r.CourseCode,
+					r.CompletedOn,
+					r.StartedOn,
+					r.EndedOn,
+					r.Hours,
+					r.CategoryId,
+					r.MethodOfTraining,
+					r.Objectives,
+					r.Location,
+					r.CeProvider,
+					r.CeCourseNumber,
+					r.CeHours,
+					r.InstructorNames,
+					Status = ((LearningRecordStatuses)r.Status).ToString(),
+					r.VerifiedOn,
+					r.VoidedOn,
+					r.VoidReason,
+					r.IsBackfill,
+					r.Tags,
+					r.Notes,
+					r.VerificationCode,
+					r.CreatedOn,
+					// Round 7B: a completion an instructor recorded for the member (recorded_completions.json has the source, note and attestation)
+					CompletionMethod = ((LearningCompletionMethods)r.CompletionMethod).ToString(),
+					r.RecordedByUserId,
+					r.RecordedOn,
+					r.RecordedCompletionId
+				}).ToList();
+		}
+
 		private async Task<object> BuildTrainingsDataAsync(string userId)
 		{
-			var trainings = await _trainingService.GetTrainingUsersForUserAsync(userId);
-			return trainings;
+			// Each assignment names its training (T-D23), not just the raw row ids.
+			var trainings = await _trainingService.GetTrainingUsersForUserAsync(userId) ?? new List<TrainingUser>();
+			return trainings.Select(t => new
+			{
+				t.TrainingId,
+				TrainingName = t.Training?.Name,
+				t.AssignedOn,
+				t.DueOn,
+				t.Viewed,
+				t.ViewedOn,
+				t.Complete,
+				t.CompletedOn,
+				t.Score,
+				t.Passed,
+				t.AttemptCount,
+				t.RemovedOn,
+				t.ExemptOn,
+				t.ExemptReason,
+				t.ExtendedOn,
+				t.ExtensionReason
+			}).ToList();
 		}
 
 		private async Task<object> BuildShiftsDataAsync(string userId)

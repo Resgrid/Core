@@ -1,0 +1,236 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingImportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Training history import (R-C1, free): upload a CSV of completions, review the dry run (how each row found its member, with a
+    member pick for any row), then import. The file is carried between the steps; nothing is written before Import.
+    Former members are offered: imported history may belong to people who have left.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Rec.ImportTitle"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Rec.ImportTitle"].Value;
+    ViewData["Subtitle"] = localizer["Rec.ImportIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var result = Model.Result;
+    string MemberLabel(TrainingRecordMemberOption m) => m.Name + (m.IsFormer ? " (" + localizer["FormerMemberLabel"].Value + ")" : null);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @{
+        var stageIndex = Model.Stage == "result" ? 3 : Model.Stage == "preview" ? 2 : 1;
+        string StepClass(int step) => step < stageIndex ? "done" : step == stageIndex ? "current" : null;
+    }
+    <div class="rgw-wizard m-b-sm">
+        <ol class="rgw-steps" aria-label="@localizer["Rec.ImportTitle"]">
+            <li class="@StepClass(1)" aria-current="@(stageIndex == 1 ? "step" : null)"><span class="rgw-step-number">1</span> @localizer["Rec.ImportStepUpload"]</li>
+            <li class="@StepClass(2)" aria-current="@(stageIndex == 2 ? "step" : null)"><span class="rgw-step-number">2</span> @localizer["Rec.ImportStepReview"]</li>
+            <li class="@StepClass(3)" aria-current="@(stageIndex == 3 ? "step" : null)"><span class="rgw-step-number">3</span> @localizer["Rec.ImportStepDone"]</li>
+        </ol>
+    </div>
+
+    @if (Model.Stage == "preview" && result != null)
+    {
+        <div class="rgw-stat-tiles" role="list">
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-list" aria-hidden="true"></i> @localizer["Rec.ImportRows"]</div><div class="rgw-stat-value">@result.Rows.Count.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-user" aria-hidden="true"></i> @localizer["Rec.ImportMatched"]</div><div class="rgw-stat-value">@result.Matched.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-question-circle" aria-hidden="true"></i> @localizer["Rec.ImportUnmatched"]</div><div class="rgw-stat-value">@result.Unmatched.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.ImportImportable"]</div><div class="rgw-stat-value">@result.Importable.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+        </div>
+
+        @if (result.IgnoredColumns.Count > 0)
+        {
+            <div class="alert alert-info m-t-sm" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @string.Format(localizer["Rec.ImportIgnoredColumns"].Value, string.Join(", ", result.IgnoredColumns))</div>
+        }
+
+        <form method="post" asp-controller="TrainingRecords" asp-action="ImportCommit" asp-route-area="User" class="m-t-sm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="fileData" value="@Model.FileData" />
+            <input type="hidden" name="fileName" value="@Model.FileName" />
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-search" aria-hidden="true"></i> @localizer["Rec.ImportStepReview"]@(string.IsNullOrWhiteSpace(Model.FileName) ? null : " · " + Model.FileName)</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["Rec.ImportReviewHelp"]</p>
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["Rec.ImportRowColumn"]</th>
+                                    <th>@localizer["Doc.Member"]</th>
+                                    <th>@localizer["Doc.Course"]</th>
+                                    <th>@localizer["Doc.Date"]</th>
+                                    <th class="text-right">@localizer["Doc.Hours"]</th>
+                                    <th>@localizer["Doc.Category"]</th>
+                                    <th>@localizer["Rec.ImportNotesColumn"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in result.Rows)
+                                {
+                                    var rowKey = row.RowNumber.ToString(CultureInfo.InvariantCulture);
+                                    var matched = !string.IsNullOrWhiteSpace(row.MatchedUserId);
+                                    var manual = row.MatchMethod == TrainingImportMatchMethods.Manual;
+                                    var category = Model.CategoryOf(row.MatchedCategoryId);
+                                    var fromFile = string.Join(" · ", new[] { row.Email, row.MemberId, row.MemberExternalId, row.MemberName }.Where(x => !string.IsNullOrWhiteSpace(x)));
+                                    <tr class="@(row.Errors.Count > 0 ? "danger" : row.AlreadyImported ? "text-muted" : null)">
+                                        <td>@row.RowNumber</td>
+                                        <td class="import-member-cell">
+                                            @if (matched && !manual)
+                                            {
+                                                <span>@(row.MatchedName ?? Model.NameOf(row.MatchedUserId))</span>
+                                                <small class="rgw-sub text-muted">@localizer["MatchMethod." + row.MatchMethod]@(Model.IsFormer(row.MatchedUserId) ? " · " + localizer["FormerMemberLabel"].Value : null)</small>
+                                                <button type="button" class="btn btn-xs btn-default import-change-member" data-row="@rowKey"><i class="fa fa-exchange" aria-hidden="true"></i> @localizer["Rec.ImportChangeMember"]</button>
+                                            }
+                                            else
+                                            {
+                                                <label for="member_@rowKey" class="sr-only">@string.Format(localizer["Rec.ImportMemberForRow"].Value, row.RowNumber)</label>
+                                                <select id="member_@rowKey" name="member_@rowKey" class="form-control input-sm">
+                                                    <option value="">@localizer["Rec.ImportChooseMember"]</option>
+                                                    @foreach (var member in Model.Members)
+                                                    {
+                                                        <option value="@member.UserId" selected="@(manual && string.Equals(member.UserId, row.MatchedUserId, StringComparison.OrdinalIgnoreCase))">@MemberLabel(member)</option>
+                                                    }
+                                                </select>
+                                            }
+                                            @if (fromFile.Length > 0)
+                                            {
+                                                <small class="rgw-sub text-muted">@localizer["Rec.ImportFromFile"]: @fromFile</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            @row.Course
+                                            @if (!string.IsNullOrWhiteSpace(row.CourseCode))
+                                            {
+                                                <small class="rgw-sub text-muted">@localizer["Doc.Code"]: @row.CourseCode</small>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(row.CertificationType))
+                                            {
+                                                <small class="rgw-sub text-muted"><i class="fa fa-certificate" aria-hidden="true"></i> @row.CertificationType @row.CertificationNumber</small>
+                                            }
+                                        </td>
+                                        <td class="text-nowrap">@row.CompletedOn?.ToString("d", CultureInfo.CurrentCulture)</td>
+                                        <td class="text-right">@LearningRecordPresentation.Hours(row.Hours)</td>
+                                        <td>
+                                            @(category?.Name ?? (string.IsNullOrWhiteSpace(row.Category) ? localizer["Doc.Uncategorized"].Value : row.Category))
+                                        </td>
+                                        <td>
+                                            @if (row.AlreadyImported)
+                                            {
+                                                <span class="label label-default"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.ImportAlreadyImported"]</span>
+                                            }
+                                            @foreach (var problem in row.Errors)
+                                            {
+                                                <small class="rgw-sub text-danger"><i class="fa fa-times-circle" aria-hidden="true"></i> @localizer[problem]</small>
+                                            }
+                                            @foreach (var warning in row.Warnings)
+                                            {
+                                                <small class="rgw-sub text-warning"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer[warning]</small>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="rgw-toolbar">
+                <button type="submit" class="btn btn-default" formaction="@Url.Action("ImportPreview", "TrainingRecords", new { area = "User" })"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["Rec.ImportRecheckButton"]</button>
+                <button type="submit" class="btn btn-primary" data-confirm="@string.Format(localizer["Rec.ImportConfirm"].Value, result.Importable)"><i class="fa fa-upload" aria-hidden="true"></i> @string.Format(localizer["Rec.ImportCommitButton"].Value, result.Importable)</button>
+                <a class="btn btn-link" asp-controller="TrainingRecords" asp-action="Import" asp-route-area="User"><i class="fa fa-times" aria-hidden="true"></i> @localizer["CancelButton"]</a>
+            </div>
+        </form>
+
+        <select id="import-member-template" class="hidden" aria-hidden="true" disabled>
+            <option value="">@localizer["Rec.ImportChooseMember"]</option>
+            @foreach (var member in Model.Members)
+            {
+                <option value="@member.UserId">@MemberLabel(member)</option>
+            }
+        </select>
+    }
+    else if (Model.Stage == "result" && result != null)
+    {
+        <div class="rgw-stat-tiles" role="list">
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.RecordsWritten"]</div><div class="rgw-stat-value">@result.RecordsWritten.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-forward" aria-hidden="true"></i> @localizer["Rec.RecordsSkipped"]</div><div class="rgw-stat-value">@result.RecordsSkipped.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["Rec.ImportCertificationsCreated"]</div><div class="rgw-stat-value">@result.CertificationsCreated.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+            <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-plus-circle" aria-hidden="true"></i> @localizer["Rec.ImportCreditsCreated"]</div><div class="rgw-stat-value">@result.CreditsCreated.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+        </div>
+        <div class="rgw-toolbar m-t-sm">
+            <a class="btn btn-primary" asp-controller="TrainingRecords" asp-action="Hours" asp-route-area="User"><i class="fa fa-bar-chart" aria-hidden="true"></i> @localizer["Rec.HoursTitle"]</a>
+            <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="Categorize" asp-route-area="User"><i class="fa fa-folder-open-o" aria-hidden="true"></i> @localizer["Rec.CategorizeTitle"]</a>
+            <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="Import" asp-route-area="User"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Rec.ImportAnotherButton"]</a>
+        </div>
+    }
+    else
+    {
+        <div class="rgw-card-grid">
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>@localizer["Rec.ImportStepTemplate"]</strong></div>
+                <div class="panel-body">
+                    <p class="text-muted">@localizer["Rec.ImportTemplateHelp"]</p>
+                    <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="ImportTemplate" asp-route-area="User"><i class="fa fa-file-o" aria-hidden="true"></i> @localizer["Rec.ImportDownloadTemplate"]</a>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading"><strong>@localizer["Rec.ImportStepUpload"]</strong></div>
+                <div class="panel-body">
+                    <form method="post" asp-controller="TrainingRecords" asp-action="ImportPreview" asp-route-area="User" enctype="multipart/form-data">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label for="import-file">@localizer["Rec.ImportFileLabel"]</label>
+                            <input type="file" name="file" id="import-file" class="form-control" accept=".csv,.txt,text/csv" required aria-describedby="import-file-help" />
+                            <span class="help-block m-b-none" id="import-file-help">@string.Format(localizer["Rec.ImportFileHelp"].Value, Model.MaxMegabytes)</span>
+                        </div>
+                        <button class="btn btn-primary" type="submit"><i class="fa fa-search" aria-hidden="true"></i> @localizer["Rec.ImportPreviewButton"]</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="m-t-lg">@localizer["Rec.ImportHowItWorks"]</h4>
+        <ul>
+            <li>@localizer["Rec.ImportRuleMatching"]</li>
+            <li>@localizer["Rec.ImportRuleFormer"]</li>
+            <li>@localizer["Rec.ImportRuleCategories"]</li>
+            <li>@localizer["Rec.ImportRuleRepeat"]</li>
+            <li>@localizer["Rec.ImportRuleVerified"]</li>
+        </ul>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .import-member-cell select { min-width: 200px; max-width: 320px; }
+        .import-member-cell .import-change-member { margin-top: 4px; }
+    </style>
+}
+
+@section Scripts {
+    @if (Model.Stage == "preview")
+    {
+        <script>
+            $(function () {
+                $(document).on('click', '.import-change-member', function () {
+                    var button = $(this);
+                    var row = String(button.data('row'));
+                    if (!/^[0-9]+$/.test(row)) { return; }
+                    var select = $('#import-member-template').clone();
+                    select.attr({ id: 'member_' + row, name: 'member_' + row, 'aria-label': button.text().trim() })
+                        .removeAttr('aria-hidden').removeAttr('disabled').removeClass('hidden').addClass('form-control input-sm');
+                    button.replaceWith(select);
+                    select.trigger('focus');
+                });
+            });
+        </script>
+    }
+}

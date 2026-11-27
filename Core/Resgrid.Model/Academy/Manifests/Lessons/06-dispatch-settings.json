@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "id": "06-dispatch-settings",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Dispatch settings",
+  "minutes": 7.7,
+  "walkthrough": true,
+  "audience": [
+    "dispatcher"
+  ],
+  "visibility": [],
+  "pages": [],
+  "adminAssist": {
+    "areas": [
+      "calls"
+    ],
+    "capabilities": [
+      "dispatch-settings",
+      "call-settings",
+      "checkin-setup"
+    ]
+  },
+  "media": {
+    "video": "deep-dive/media/06-dispatch-settings.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "deep-dive/lessons/06-dispatch-settings/captions.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Control recipient selection and dispatch behavior",
+    "ar": "تحكم في اختيار المستلمين وسلوك الإرسال",
+    "de": "Empfängerauswahl und Alarmierungsverhalten steuern",
+    "el": "Ελέγξτε την επιλογή παραληπτών και τη συμπεριφορά διασποράς",
+    "es": "Controlar la selección de destinatarios y el despacho",
+    "fr": "Maîtriser le choix des destinataires et le comportement de l’engagement",
+    "it": "Controllare la scelta dei destinatari e il comportamento dell’invio",
+    "pl": "Steruj doborem odbiorców i działaniem dysponowania",
+    "sv": "Styr mottagarval och larmbeteende",
+    "uk": "Керуйте вибором адресатів і поведінкою диспетчеризації"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "What do dispatch settings control?",
+        "ar": "ماذا تتحكم إعدادات الإرسال؟",
+        "de": "Was steuern die Alarmierungseinstellungen?",
+        "el": "Τι ελέγχουν οι ρυθμίσεις διασποράς;",
+        "es": "¿Qué controlan los ajustes de despacho?",
+        "fr": "Que contrôlent les paramètres d’engagement ?",
+        "it": "Che cosa controllano le impostazioni di invio?",
+        "pl": "Co kontrolują ustawienia dysponowania?",
+        "sv": "Vad styr larminställningarna?",
+        "uk": "Чим керують налаштування диспетчеризації?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Who receives a dispatch and how calls behave",
+            "ar": "من يتلقى الإرسال وكيف تتصرف البلاغات",
+            "de": "Wer eine Alarmierung erhält und wie sich Einsätze verhalten",
+            "el": "Ποιος λαμβάνει διασπορά και πώς συμπεριφέρονται οι κλήσεις",
+            "es": "Quién recibe un despacho y cómo se comportan las llamadas",
+            "fr": "Qui reçoit un engagement et comment se comportent les interventions",
+            "it": "Chi riceve un invio e come si comportano le chiamate",
+            "pl": "Kto otrzymuje dysponowanie i jak zachowują się zgłoszenia",
+            "sv": "Vem som får ett larm och hur larm beter sig",
+            "uk": "Хто отримує диспетчеризацію та як поводяться виклики"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "The colour of the website",
+            "ar": "لون الموقع الإلكتروني",
+            "de": "Die Farbe der Website",
+            "el": "Το χρώμα του ιστότοπου",
+            "es": "El color del sitio web",
+            "fr": "La couleur du site web",
+            "it": "Il colore del sito web",
+            "pl": "Kolor strony",
+            "sv": "Webbplatsens färg",
+            "uk": "Колір сайту"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Member passwords",
+            "ar": "كلمات مرور الأعضاء",
+            "de": "Passwörter der Mitglieder",
+            "el": "Τους κωδικούς των μελών",
+            "es": "Las contraseñas de los miembros",
+            "fr": "Les mots de passe des membres",
+            "it": "Le password dei membri",
+            "pl": "Hasła członków",
+            "sv": "Medlemmarnas lösenord",
+            "uk": "Паролі учасників"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Why review dispatch settings after changes to groups or roles?",
+        "ar": "لماذا تُراجع إعدادات الإرسال بعد تغيير المجموعات أو الأدوار؟",
+        "de": "Warum die Alarmierungseinstellungen nach Änderungen an Gruppen oder Rollen prüfen?",
+        "el": "Γιατί να ελέγχονται οι ρυθμίσεις διασποράς μετά από αλλαγές σε ομάδες ή ρόλους;",
+        "es": "¿Por qué revisar los ajustes de despacho tras cambiar grupos o funciones?",
+        "fr": "Pourquoi revoir les paramètres d’engagement après un changement de groupes ou de rôles ?",
+        "it": "Perché rivedere le impostazioni di invio dopo modifiche a gruppi o ruoli?",
+        "pl": "Po co przeglądać ustawienia dysponowania po zmianach grup lub ról?",
+        "sv": "Varför se över larminställningarna efter ändringar i grupper eller roller?",
+        "uk": "Навіщо переглядати налаштування диспетчеризації після змін у групах чи ролях?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "So the right people keep receiving dispatches",
+            "ar": "ليظل الأشخاص المناسبون يتلقون الإرسال",
+            "de": "Damit weiterhin die richtigen Personen alarmiert werden",
+            "el": "Ώστε τα σωστά άτομα να συνεχίζουν να λαμβάνουν διασπορές",
+            "es": "Para que las personas adecuadas sigan recibiendo despachos",
+            "fr": "Pour que les bonnes personnes continuent de recevoir les engagements",
+            "it": "Perché le persone giuste continuino a ricevere gli invii",
+            "pl": "Aby właściwe osoby nadal otrzymywały dysponowania",
+            "sv": "Så att rätt personer fortsätter att få larm",
+            "uk": "Щоб потрібні люди й далі отримували диспетчеризацію"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "It is never needed",
+            "ar": "لا حاجة لذلك أبدًا",
+            "de": "Das ist nie nötig",
+            "el": "Δεν χρειάζεται ποτέ",
+            "es": "Nunca hace falta",
+            "fr": "Ce n’est jamais nécessaire",
+            "it": "Non serve mai",
+            "pl": "Nigdy nie jest to potrzebne",
+            "sv": "Det behövs aldrig",
+            "uk": "Це ніколи не потрібно"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To lower the call volume",
+            "ar": "لتقليل عدد البلاغات",
+            "de": "Um die Zahl der Einsätze zu senken",
+            "el": "Για να μειωθεί ο όγκος κλήσεων",
+            "es": "Para reducir el volumen de llamadas",
+            "fr": "Pour réduire le volume d’interventions",
+            "it": "Per ridurre il volume di chiamate",
+            "pl": "Aby zmniejszyć liczbę zgłoszeń",
+            "sv": "För att minska antalet larm",
+            "uk": "Щоб зменшити кількість викликів"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Dispatch settings cannot be changed after the department is created.",
+        "ar": "لا يمكن تغيير إعدادات الإرسال بعد إنشاء الإدارة.",
+        "de": "Alarmierungseinstellungen lassen sich nach dem Anlegen der Organisation nicht mehr ändern.",
+        "el": "Οι ρυθμίσεις διασποράς δεν μπορούν να αλλάξουν μετά τη δημιουργία της υπηρεσίας.",
+        "es": "Los ajustes de despacho no se pueden cambiar tras crear el departamento.",
+        "fr": "Les paramètres d’engagement ne peuvent plus être modifiés après la création du service.",
+        "it": "Le impostazioni di invio non si possono cambiare dopo la creazione del dipartimento.",
+        "pl": "Ustawień dysponowania nie można zmienić po utworzeniu jednostki.",
+        "sv": "Larminställningarna kan inte ändras när organisationen har skapats.",
+        "uk": "Налаштування диспетчеризації не можна змінити після створення підрозділу."
+      }
+    }
+  ]
+}

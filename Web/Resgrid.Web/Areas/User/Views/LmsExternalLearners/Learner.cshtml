@@ -1,0 +1,181 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@model Resgrid.Web.Areas.User.Models.LmsExternalLearners.LmsExternalLearnerModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@* One external learner: details and customers, status, enrolments, their learning, and GDPR export and erasure. *@
+@{
+    var learner = Model.Learner;
+    ViewBag.Title = "Resgrid | " + localizer["Title"];
+    ViewData["Title"] = learner.Name;
+    ViewData["Subtitle"] = learner.Email;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var culture = CultureInfo.CurrentCulture;
+    var status = (LmsExternalLearnerStatuses)learner.Status;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white btn-sm" asp-controller="LmsExternalLearners" asp-action="Index" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Title"]</a>
+        <span class="label label-default">@localizer["Status." + status]</span>
+        <span class="text-muted">@localizer["Source." + (LmsExternalLearnerSources)learner.Source]</span>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="ibox"><div class="ibox-content">
+                <h3>@localizer["LearnerHeader"]</h3>
+                <form method="post" asp-controller="LmsExternalLearners" asp-action="Update" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group"><label for="xl-first">@localizer["FirstName"]</label><input id="xl-first" name="firstName" class="form-control" value="@learner.FirstName" maxlength="100" required /></div>
+                    <div class="form-group"><label for="xl-last">@localizer["LastName"]</label><input id="xl-last" name="lastName" class="form-control" value="@learner.LastName" maxlength="100" required /></div>
+                    <div class="form-group"><label for="xl-org">@localizer["Organization"]</label><input id="xl-org" name="organization" class="form-control" value="@learner.Organization" maxlength="200" /></div>
+                    @if (Model.Customers.Count > 0)
+                    {
+                        <div class="form-group">
+                            <label for="xl-sponsor">@localizer["Sponsor"]</label>
+                            <select id="xl-sponsor" name="sponsorContactId" class="form-control">
+                                <option value="">@localizer["None"]</option>
+                                @foreach (var customer in Model.Customers)
+                                {
+                                    <option value="@customer.ContactId" selected="@(string.Equals(customer.ContactId, learner.SponsorContactId, StringComparison.OrdinalIgnoreCase))">@Model.CustomerNames[customer.ContactId]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="xl-billing">@localizer["BillingCustomer"]</label>
+                            <select id="xl-billing" name="billingContactId" class="form-control">
+                                <option value="">@localizer["None"]</option>
+                                @foreach (var customer in Model.Customers)
+                                {
+                                    <option value="@customer.ContactId" selected="@(string.Equals(customer.ContactId, learner.BillingContactId, StringComparison.OrdinalIgnoreCase))">@Model.CustomerNames[customer.ContactId]</option>
+                                }
+                            </select>
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="sponsorContactId" value="@learner.SponsorContactId" />
+                        <input type="hidden" name="billingContactId" value="@learner.BillingContactId" />
+                    }
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Save"]</button>
+                </form>
+            </div></div>
+
+            <div class="ibox"><div class="ibox-content">
+                <h3>@localizer["Status"]</h3>
+                <div class="rgw-toolbar">
+                    @if (status == LmsExternalLearnerStatuses.Invited)
+                    {
+                        <form method="post" asp-controller="LmsExternalLearners" asp-action="Resend" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["ResendInvite"]</button>
+                        </form>
+                    }
+                    @if (learner.IsCounted)
+                    {
+                        <form method="post" asp-controller="LmsExternalLearners" asp-action="SetStatus" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="status" value="@LmsExternalLearnerStatuses.Suspended" />
+                            <button type="submit" class="btn btn-warning btn-sm"><i class="fa fa-pause" aria-hidden="true"></i> @localizer["Suspend"]</button>
+                        </form>
+                    }
+                    else if (status == LmsExternalLearnerStatuses.Suspended || status == LmsExternalLearnerStatuses.Removed)
+                    {
+                        <form method="post" asp-controller="LmsExternalLearners" asp-action="SetStatus" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="status" value="@LmsExternalLearnerStatuses.Active" />
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Reactivate"]</button>
+                        </form>
+                    }
+                    @if (status != LmsExternalLearnerStatuses.Removed)
+                    {
+                        <form method="post" asp-controller="LmsExternalLearners" asp-action="SetStatus" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="status" value="@LmsExternalLearnerStatuses.Removed" />
+                            <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["Remove"]</button>
+                        </form>
+                    }
+                </div>
+            </div></div>
+
+            @if (learner.IsCounted && Model.CanAuthor)
+            {
+                <div class="ibox"><div class="ibox-content">
+                    <h3>@localizer["EnrollCourse"]</h3>
+                    <form method="post" asp-controller="LmsExternalLearners" asp-action="EnrollCourse" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId" class="form-inline">
+                        @Html.AntiForgeryToken()
+                        <label for="xl-course" class="sr-only">@localizer["Course"]</label>
+                        <select id="xl-course" name="courseId" class="form-control" required>
+                            @foreach (var course in Model.Courses)
+                            {
+                                <option value="@course.LmsCourseId">@course.Title</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-white"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["EnrollCourse"]</button>
+                    </form>
+                    <h3 class="m-t-md">@localizer["EnrollClass"]</h3>
+                    <form method="post" asp-controller="LmsExternalLearners" asp-action="EnrollClass" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId" class="form-inline">
+                        @Html.AntiForgeryToken()
+                        <label for="xl-class" class="sr-only">@localizer["Classes"]</label>
+                        <select id="xl-class" name="classId" class="form-control" required>
+                            @foreach (var session in Model.Sessions)
+                            {
+                                <option value="@session.LmsClassSessionId">@session.Title (@Model.Local(session.StartsOn).ToString("d", culture))</option>
+                            }
+                        </select>
+                        <button type="submit" class="btn btn-white"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["EnrollClass"]</button>
+                    </form>
+                </div></div>
+            }
+        </div>
+
+        <div class="col-md-6">
+            <div class="ibox"><div class="ibox-content">
+                <h3>@localizer["Courses"]</h3>
+                @if (Model.Learning.Courses.Count == 0) { <p class="text-muted">@localizer["None"]</p> }
+                <ul class="list-unstyled">
+                    @foreach (var course in Model.Learning.Courses)
+                    {
+                        <li>@(course.Version?.Title ?? course.Course.Title)<span class="rgw-sub">@course.Enrollment.ProgressPercent.ToString(culture)%</span></li>
+                    }
+                </ul>
+                <h3>@localizer["Classes"]</h3>
+                @if (Model.Learning.Classes.Count == 0) { <p class="text-muted">@localizer["None"]</p> }
+                <ul class="list-unstyled">
+                    @foreach (var item in Model.Learning.Classes)
+                    {
+                        <li><a asp-controller="LmsExternalLearners" asp-action="Class" asp-route-area="User" asp-route-id="@item.Session.LmsClassSessionId">@item.Session.Title</a>
+                            <span class="rgw-sub">@Model.Local(item.Session.StartsOn).ToString("d", culture) &middot; @localizer["Roster." + (LmsClassEnrollmentStatuses)item.Mine.Status]</span></li>
+                    }
+                </ul>
+                <h3>@localizer["Transcript"]</h3>
+                @if (Model.Learning.Records.Count == 0) { <p class="text-muted">@localizer["None"]</p> }
+                <ul class="list-unstyled">
+                    @foreach (var record in Model.Learning.Records)
+                    {
+                        <li>@record.Title<span class="rgw-sub">@Model.Local(record.CompletedOn).ToString("d", culture) &middot; @record.Hours.ToString("0.##", culture) h</span></li>
+                    }
+                </ul>
+            </div></div>
+
+            <div class="ibox"><div class="ibox-content">
+                <h3>@localizer["EraseHeader"]</h3>
+                <p><a class="btn btn-white btn-sm" asp-controller="LmsExternalLearners" asp-action="Export" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId"><i class="fa fa-download" aria-hidden="true"></i> @localizer["ExportData"]</a></p>
+                <p class="text-muted">@localizer["EraseHelp"]</p>
+                <form method="post" asp-controller="LmsExternalLearners" asp-action="Erase" asp-route-area="User" asp-route-id="@learner.LmsExternalLearnerId">
+                    @Html.AntiForgeryToken()
+                    <div class="checkbox"><label><input type="checkbox" name="confirm" value="true" required /> @localizer["EraseConfirm"]</label></div>
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Erase"]</button>
+                </form>
+            </div></div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

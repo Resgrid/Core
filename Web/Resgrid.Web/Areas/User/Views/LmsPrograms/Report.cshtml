@@ -1,0 +1,269 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsReportRunView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    One catalog report: its parameters, the result (HTML; CSV and PDF downloads), and saving it to a folder with a schedule and
+    recipients (records managers and admins, or the member a per-member report is about).
+*@
+@{
+    var d = Model.Descriptor;
+    var p = Model.Parameters;
+    var def = Model.Definition;
+    ViewBag.Title = "Resgrid | " + localizer[d.NameKey];
+    ViewData["Title"] = def?.Name ?? localizer[d.NameKey].Value;
+    ViewData["Subtitle"] = localizer[d.DescriptionKey].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var query = new Dictionary<string, string>
+    {
+        ["key"] = d.Key,
+        ["period"] = ((int)p.Period).ToString(CultureInfo.InvariantCulture),
+        ["from"] = p.From?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+        ["to"] = p.To?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture),
+        ["categoryId"] = p.CategoryId?.ToString(CultureInfo.InvariantCulture),
+        ["groupBy"] = p.GroupBy.ToString(CultureInfo.InvariantCulture),
+        ["userId"] = p.UserId,
+        ["planId"] = p.PlanId?.ToString(CultureInfo.InvariantCulture),
+        ["frameworkId"] = p.FrameworkId?.ToString(CultureInfo.InvariantCulture),
+        ["former"] = p.IncludeFormerMembers ? "true" : "false",
+        ["withinDays"] = p.WithinDays.ToString(CultureInfo.InvariantCulture)
+    };
+    if (def != null)
+    {
+        query = new Dictionary<string, string> { ["definitionId"] = def.LmsReportDefinitionId.ToString(CultureInfo.InvariantCulture) };
+    }
+    var csv = new Dictionary<string, string>(query) { ["format"] = "csv" };
+    var pdf = new Dictionary<string, string>(query) { ["format"] = "pdf" };
+    var recipients = new HashSet<string>(def?.Recipients() ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (def == null)
+    {
+        <form method="get" asp-controller="LmsPrograms" asp-action="Report" asp-route-area="User" class="rgw-toolbar m-b-sm">
+            <input type="hidden" name="key" value="@d.Key" />
+            <input type="hidden" name="run" value="true" />
+            @if (d.UsesPeriod)
+            {
+                <div class="rgw-filter">
+                    <label for="r-period">@localizer["Prg.Period"]</label>
+                    <select id="r-period" name="period" class="form-control">
+                        @foreach (LmsReportPeriods period in Enum.GetValues(typeof(LmsReportPeriods)))
+                        {
+                            <option value="@((int)period)" selected="@(p.Period == period)">@localizer["Prg.Period." + period]</option>
+                        }
+                    </select>
+                </div>
+                <div class="rgw-filter"><label for="r-from">@localizer["Prg.From"]</label><input id="r-from" name="from" type="date" class="form-control" value="@query["from"]" /></div>
+                <div class="rgw-filter"><label for="r-to">@localizer["Prg.To"]</label><input id="r-to" name="to" type="date" class="form-control" value="@query["to"]" /></div>
+            }
+            @if (d.UsesCategory)
+            {
+                <div class="rgw-filter">
+                    <label for="r-category">@localizer["Prg.Col.Category"]</label>
+                    <select id="r-category" name="categoryId" class="form-control">
+                        <option value="">@localizer["Prg.All"]</option>
+                        @foreach (var category in Model.Categories.Where(c => !c.IsDeleted))
+                        {
+                            <option value="@category.TrainingCategoryId" selected="@(p.CategoryId == category.TrainingCategoryId)">@category.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            @if (d.Groupings.Count > 0)
+            {
+                <div class="rgw-filter">
+                    <label for="r-group">@localizer["Prg.GroupBy"]</label>
+                    <select id="r-group" name="groupBy" class="form-control">
+                        @foreach (var grouping in d.Groupings)
+                        {
+                            <option value="@grouping.Key" selected="@(p.GroupBy == grouping.Key)">@localizer[grouping.Value]</option>
+                        }
+                    </select>
+                </div>
+            }
+            @if (d.NeedsPlan)
+            {
+                <div class="rgw-filter">
+                    <label for="r-plan">@localizer["Prg.Plan"]</label>
+                    <select id="r-plan" name="planId" class="form-control">
+                        @foreach (var plan in Model.Plans)
+                        {
+                            <option value="@plan.LmsTrainingPlanId" selected="@(p.PlanId == plan.LmsTrainingPlanId)">@plan.Name @plan.Year</option>
+                        }
+                    </select>
+                </div>
+            }
+            @if (d.NeedsFramework)
+            {
+                <div class="rgw-filter">
+                    <label for="r-framework">@localizer["Prg.Framework"]</label>
+                    <select id="r-framework" name="frameworkId" class="form-control">
+                        @foreach (var framework in Model.Frameworks)
+                        {
+                            <option value="@framework.LmsCompetencyFrameworkId" selected="@(p.FrameworkId == framework.LmsCompetencyFrameworkId)">@framework.Name</option>
+                        }
+                    </select>
+                </div>
+            }
+            @if (d.NeedsMember)
+            {
+                <div class="rgw-filter">
+                    <label for="r-member">@localizer["Prg.Col.Member"]</label>
+                    <select id="r-member" name="userId" class="form-control">
+                        @foreach (var member in Model.Members)
+                        {
+                            <option value="@member.Key" selected="@(string.Equals(member.Key, p.UserId, StringComparison.OrdinalIgnoreCase))">@member.Value</option>
+                        }
+                    </select>
+                </div>
+            }
+            @if (d.Key == "certification-exceptions")
+            {
+                <div class="rgw-filter"><label for="r-within">@localizer["Prg.WithinDays"]</label><input id="r-within" name="withinDays" type="number" min="1" max="365" class="form-control" value="@p.WithinDays" /></div>
+            }
+            <div class="rgw-filter">
+                <label class="checkbox-inline"><input type="checkbox" name="former" value="true" checked="@p.IncludeFormerMembers" /> @localizer["Prg.IncludeFormer"]</label>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Prg.RunReport"]</button>
+        </form>
+    }
+
+    @if (Model.Table != null)
+    {
+        <div class="rgw-toolbar m-b-sm">
+            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="ReportFile" asp-area="User" asp-all-route-data="csv"><i class="fa fa-file-text-o" aria-hidden="true"></i> CSV</a>
+            <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="ReportFile" asp-area="User" asp-all-route-data="pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF</a>
+        </div>
+        @if (!string.IsNullOrEmpty(Model.Table.Problem))
+        {
+            <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer[Model.Table.Problem]</div>
+        }
+        <h3>@Model.Table.Title</h3>
+        @if (!string.IsNullOrWhiteSpace(Model.Table.Subtitle)) {<p class="text-muted">@Model.Table.Subtitle</p>}
+        @if (Model.Table.Rows.Count == 0)
+        {
+            <p class="text-muted">@localizer["Prg.NoRows"]</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table rgw-table">
+                    <thead><tr>@foreach (var column in Model.Table.Columns) {<th>@column</th>}</tr></thead>
+                    <tbody>
+                        @foreach (var row in Model.Table.Rows)
+                        {
+                            <tr>@foreach (var cell in row) {<td>@cell</td>}</tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        @foreach (var line in Model.Table.Footer)
+        {
+            <p class="text-muted">@line</p>
+        }
+    }
+
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-save" aria-hidden="true"></i> @(def == null ? localizer["Prg.SaveReport"] : localizer["Prg.EditSchedule"])</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="LmsPrograms" asp-action="SaveReport" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" value="@(def?.LmsReportDefinitionId ?? 0)" />
+                    <input type="hidden" name="ReportKey" value="@d.Key" />
+                    <input type="hidden" name="Parameters.Period" value="@((int)p.Period)" />
+                    <input type="hidden" name="Parameters.From" value="@query.GetValueOrDefault("from")" />
+                    <input type="hidden" name="Parameters.To" value="@query.GetValueOrDefault("to")" />
+                    <input type="hidden" name="Parameters.CategoryId" value="@p.CategoryId" />
+                    <input type="hidden" name="Parameters.GroupBy" value="@p.GroupBy" />
+                    <input type="hidden" name="Parameters.UserId" value="@p.UserId" />
+                    <input type="hidden" name="Parameters.PlanId" value="@p.PlanId" />
+                    <input type="hidden" name="Parameters.FrameworkId" value="@p.FrameworkId" />
+                    <input type="hidden" name="Parameters.IncludeFormerMembers" value="@(p.IncludeFormerMembers ? "true" : "false")" />
+                    <input type="hidden" name="Parameters.WithinDays" value="@p.WithinDays" />
+                    <div class="rgw-grid">
+                        <div class="form-group"><label for="s-name">@localizer["Prg.Name"]</label><input id="s-name" name="Name" class="form-control" maxlength="150" value="@(def?.Name ?? localizer[d.NameKey].Value)" required /></div>
+                        <div class="form-group">
+                            <label for="s-folder">@localizer["Prg.Folder"]</label>
+                            <select id="s-folder" name="FolderId" class="form-control">
+                                <option value="">@localizer["Prg.NoFolder"]</option>
+                                @foreach (var folder in Model.Folders)
+                                {
+                                    <option value="@folder.LmsReportFolderId" selected="@(def?.LmsReportFolderId == folder.LmsReportFolderId)">@folder.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="s-format">@localizer["Prg.Format"]</label>
+                            <select id="s-format" name="Format" class="form-control">
+                                <option value="@((int)LmsReportFormats.Csv)" selected="@(def?.Format == (int)LmsReportFormats.Csv)">CSV</option>
+                                <option value="@((int)LmsReportFormats.Pdf)" selected="@(def?.Format == (int)LmsReportFormats.Pdf)">PDF</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="s-frequency">@localizer["Prg.Schedule"]</label>
+                            <select id="s-frequency" name="Frequency" class="form-control">
+                                @foreach (LmsReportFrequencies frequency in Enum.GetValues(typeof(LmsReportFrequencies)))
+                                {
+                                    <option value="@((int)frequency)" selected="@(def?.Frequency == (int)frequency)">@localizer["Prg.Frequency." + frequency]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="s-dow">@localizer["Prg.DayOfWeek"]</label>
+                            <select id="s-dow" name="DayOfWeek" class="form-control">
+                                @for (var day = 0; day < 7; day++)
+                                {
+                                    <option value="@day" selected="@(def?.DayOfWeek == day)">@CultureInfo.CurrentCulture.DateTimeFormat.GetDayName((DayOfWeek)day)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group"><label for="s-dom">@localizer["Prg.DayOfMonth"]</label><input id="s-dom" name="DayOfMonth" type="number" min="1" max="28" class="form-control" value="@(def?.DayOfMonth ?? 1)" /></div>
+                        <div class="form-group"><label for="s-hour">@localizer["Prg.HourLocal"]</label><input id="s-hour" name="HourLocal" type="number" min="0" max="23" class="form-control" value="@(def?.HourLocal ?? 6)" /></div>
+                    </div>
+                    <fieldset class="form-group">
+                        <legend class="h5">@localizer["Prg.Recipients"]</legend>
+                        <p class="help-block">@localizer["Prg.RecipientsHelp"]</p>
+                        @foreach (var recipient in Model.Recipients)
+                        {
+                            <label class="checkbox-inline"><input type="checkbox" name="Recipients" value="@recipient.Key" checked="@recipients.Contains(recipient.Key)" /> @recipient.Value</label>
+                        }
+                        @if (d.NeedsMember && !string.IsNullOrWhiteSpace(p.UserId) && !Model.Recipients.Any(r => string.Equals(r.Key, p.UserId, StringComparison.OrdinalIgnoreCase)))
+                        {
+                            <label class="checkbox-inline"><input type="checkbox" name="Recipients" value="@p.UserId" checked="@recipients.Contains(p.UserId)" /> @Model.NameOf(p.UserId)</label>
+                        }
+                    </fieldset>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Prg.Save"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (Model.Runs.Count > 0)
+    {
+        <h4>@localizer["Prg.RunHistory"]</h4>
+        <table class="table rgw-table">
+            <thead><tr><th>@localizer["Prg.Col.Date"]</th><th>@localizer["Prg.Col.Status"]</th><th>@localizer["Prg.Recipients"]</th><th>@localizer["Prg.Col.Records"]</th></tr></thead>
+            <tbody>
+                @foreach (var run in Model.Runs)
+                {
+                    <tr><td>@Model.Date(run.RanOn)</td><td>@localizer["Prg.RunStatus." + (LmsReportRunStatuses)run.Status]</td><td>@run.Recipients</td><td>@run.RowTotal</td></tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

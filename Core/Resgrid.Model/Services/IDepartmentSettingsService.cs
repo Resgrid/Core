@@ -475,6 +475,18 @@ namespace Resgrid.Model.Services
 		/// <summary>Stores the Labeled Fields email format's labels (normalised).</summary>
 		Task<DepartmentSetting> SetEmailLabeledFieldsConfigAsync(int departmentId, EmailLabeledFieldsConfig config, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Training record settings (<see cref="DepartmentSettingTypes.TrainingRecordSettings"/>, T1); defaults when unset. Cached.</summary>
+		Task<TrainingRecordSettings> GetTrainingRecordSettingsAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>Stores the training record settings (normalised).</summary>
+		Task<DepartmentSetting> SetTrainingRecordSettingsAsync(int departmentId, TrainingRecordSettings settings, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Wellness settings (<see cref="DepartmentSettingTypes.WellnessSettings"/>, §13b WL0); defaults when unset. Not cached.</summary>
+		Task<WellnessSettings> GetWellnessSettingsAsync(int departmentId);
+
+		/// <summary>Stores the wellness settings (normalised: retention never below 30 years).</summary>
+		Task<DepartmentSetting> SetWellnessSettingsAsync(int departmentId, WellnessSettings settings, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>Department-wide dispatch recommendation mode (Off / StationBased / ClosestUnit). Cached.</summary>
 		Task<DispatchRecommendationModes> GetDispatchRecommendationModeAsync(int departmentId, bool bypassCache = false);
 
@@ -490,6 +502,13 @@ namespace Resgrid.Model.Services
 
 		/// <summary>The department's optional response code catalog (conditional run cards). Missing = no codes.</summary>
 		Task<DispatchResponseCodesConfig> GetDispatchResponseCodesAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>
+		/// Setting 134 (Protocols → Settings), cached like the other dispatch settings and dropped on save: the dispatch paths (push, text,
+		/// voice prompt) read its P4 <see cref="ProtocolLibrarySettings.ShowDeterminantInDispatch"/> on every send. A missing or unreadable
+		/// blob is the defaults (everything off).
+		/// </summary>
+		Task<ProtocolLibrarySettings> GetProtocolLibrarySettingsAsync(int departmentId, bool bypassCache = false);
 
 		Task<DepartmentSetting> SetDispatchResponseCodesAsync(int departmentId, DispatchResponseCodesConfig config, CancellationToken cancellationToken = default(CancellationToken));
 

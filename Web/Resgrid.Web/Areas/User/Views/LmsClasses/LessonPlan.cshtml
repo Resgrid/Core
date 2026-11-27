@@ -1,0 +1,184 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsLessonPlanView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@*
+    One lesson plan (R-C6) on the content core: the draft editor (objectives, competency items covered, materials and props, the
+    instructor-to-student ratio, the safety plan, the pre-brief checklist, roles), submit with a change summary, approve or send back
+    (Manage Courses), publish as 1.0 / major / minor; every version that was ever submitted is kept. Plain text throughout.
+*@
+@{
+    var culture = CultureInfo.CurrentCulture;
+    var version = Model.Version;
+    var content = Model.Content;
+    ViewBag.Title = "Resgrid | " + Model.Plan.Title;
+    ViewData["Title"] = Model.Plan.Title;
+    ViewData["Subtitle"] = localizer["LessonPlanIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    string Join(IEnumerable<string> lines) => string.Join("\n", lines ?? Enumerable.Empty<string>());
+    var status = version == null ? null : localizer["VersionStatus." + (ProtocolVersionStatuses)version.Status].Value;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (version != null)
+    {
+        <p><span class="label label-primary">@status</span> @(version.Number == null ? string.Empty : localizer["VersionLabel"].Value + " " + version.Number)
+            @if (!string.IsNullOrWhiteSpace(version.ContentHash))
+            {
+                <span class="text-muted small">@localizer["Fingerprint"] @version.ContentHash.Substring(0, Math.Min(12, version.ContentHash.Length))</span>
+            }
+        </p>
+        @if (!string.IsNullOrWhiteSpace(version.DecisionNote))
+        {
+            <div class="alert alert-warning" role="status">@version.DecisionNote</div>
+        }
+
+        @if (Model.IsDraft)
+        {
+            <form method="post" asp-controller="LmsClasses" asp-action="SaveLessonPlan" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Plan.LmsLessonPlanId" />
+                <input type="hidden" name="versionId" value="@version.LmsLessonPlanVersionId" />
+                <div class="form-group"><label for="lp-title">@localizer["Col.Title"]</label><input id="lp-title" name="title" class="form-control" maxlength="250" value="@version.Title" required /></div>
+                <div class="rgw-grid">
+                    <div class="form-group"><label for="lp-ratio">@localizer["Field.Ratio"]</label><input id="lp-ratio" name="studentsPerInstructor" type="number" min="0" max="1000" class="form-control" value="@content.StudentsPerInstructor" /></div>
+                    <div class="form-group"><label for="lp-duration">@localizer["Field.Duration"]</label><input id="lp-duration" name="durationMinutes" type="number" min="0" max="10080" class="form-control" value="@content.DurationMinutes" /></div>
+                </div>
+                <div class="form-group"><label for="lp-objectives">@localizer["Field.Objectives"]</label><textarea id="lp-objectives" name="objectives" class="form-control" rows="5">@Join(content.Objectives)</textarea><span class="help-block">@localizer["OnePerLine"]</span></div>
+                @if (Model.CompetencyItems.Count > 0)
+                {
+                    <div class="form-group">
+                        <label for="lp-items">@localizer["Field.CompetencyItems"]</label>
+                        <select id="lp-items" name="competencyItemIds" class="form-control" multiple size="8">
+                            @foreach (var framework in Model.Frameworks)
+                            {
+                                <optgroup label="@framework.Name">
+                                    @foreach (var item in Model.CompetencyItems.Values.Where(i => i.LmsCompetencyFrameworkId == framework.LmsCompetencyFrameworkId).OrderBy(i => i.SortOrder))
+                                    {
+                                        <option value="@item.LmsCompetencyItemId" selected="@content.CompetencyItemIds.Contains(item.LmsCompetencyItemId)">@item.HumanCodingScheme @item.Label</option>
+                                    }
+                                </optgroup>
+                            }
+                        </select>
+                    </div>
+                }
+                <div class="rgw-grid">
+                    <div class="form-group"><label for="lp-materials">@localizer["Field.Materials"]</label><textarea id="lp-materials" name="materials" class="form-control" rows="5">@Join(content.Materials)</textarea></div>
+                    <div class="form-group"><label for="lp-props">@localizer["Field.Props"]</label><textarea id="lp-props" name="props" class="form-control" rows="5">@Join(content.Props)</textarea></div>
+                    <div class="form-group"><label for="lp-roles">@localizer["Field.Roles"]</label><textarea id="lp-roles" name="roles" class="form-control" rows="5">@Join(content.Roles)</textarea></div>
+                </div>
+                <div class="form-group"><label for="lp-safety">@localizer["Field.SafetyPlan"]</label><textarea id="lp-safety" name="safetyPlan" class="form-control" rows="5" maxlength="8000">@content.SafetyPlan</textarea></div>
+                <div class="form-group"><label for="lp-prebrief">@localizer["Field.PreBrief"]</label><textarea id="lp-prebrief" name="preBrief" class="form-control" rows="8">@Join(content.PreBriefChecklist)</textarea><span class="help-block">@localizer["OnePerLine"]</span></div>
+                <div class="form-group"><label for="lp-notes">@localizer["Field.Notes"]</label><textarea id="lp-notes" name="notes" class="form-control" rows="3" maxlength="8000">@content.Notes</textarea></div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveDraft"]</button>
+            </form>
+
+            <form method="post" asp-controller="LmsClasses" asp-action="SubmitLessonPlan" asp-route-area="User" class="m-t-md">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Plan.LmsLessonPlanId" />
+                <input type="hidden" name="versionId" value="@version.LmsLessonPlanVersionId" />
+                <div class="form-group"><label for="lp-summary">@localizer["Field.ChangeSummary"]</label><input id="lp-summary" name="changeSummary" class="form-control" maxlength="1000" required /></div>
+                <button type="submit" class="btn btn-white"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @localizer["SubmitForApproval"]</button>
+            </form>
+        }
+        else
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <h4>@localizer["Field.Objectives"]</h4>
+                    <ul>@foreach (var line in content.Objectives) { <li>@line</li> }</ul>
+                    @if (content.CompetencyItemIds.Count > 0)
+                    {
+                        <h4>@localizer["Field.CompetencyItems"]</h4>
+                        <ul>@foreach (var id in content.CompetencyItemIds) { <li>@(Model.CompetencyItems.TryGetValue(id, out var item) ? item.HumanCodingScheme + " " + item.Label : "#" + id)</li> }</ul>
+                    }
+                    <h4>@localizer["Field.Roles"]</h4>
+                    <ul>@foreach (var line in content.Roles) { <li>@line</li> }</ul>
+                    <p>@localizer["Field.Ratio"]: @content.StudentsPerInstructor · @localizer["Field.Duration"]: @content.DurationMinutes</p>
+                </div>
+                <div class="col-md-6">
+                    <h4>@localizer["Field.Materials"]</h4>
+                    <ul>@foreach (var line in content.Materials) { <li>@line</li> }</ul>
+                    <h4>@localizer["Field.Props"]</h4>
+                    <ul>@foreach (var line in content.Props) { <li>@line</li> }</ul>
+                </div>
+            </div>
+            <h4>@localizer["Field.SafetyPlan"]</h4>
+            <p style="white-space:pre-line">@content.SafetyPlan</p>
+            <h4>@localizer["Field.PreBrief"]</h4>
+            <ul class="list-unstyled">@foreach (var line in content.PreBriefChecklist) { <li><i class="fa fa-square-o" aria-hidden="true"></i> @line</li> }</ul>
+            @if (!string.IsNullOrWhiteSpace(content.Notes))
+            {
+                <h4>@localizer["Field.Notes"]</h4>
+                <p style="white-space:pre-line">@content.Notes</p>
+            }
+            @if (!string.IsNullOrWhiteSpace(version.ChangeSummary))
+            {
+                <p class="text-muted">@localizer["Field.ChangeSummary"]: @version.ChangeSummary</p>
+            }
+
+            <div class="rgw-toolbar m-t-sm">
+                @if (version.Status == (int)ProtocolVersionStatuses.InReview && Model.CanApprove)
+                {
+                    <form method="post" asp-controller="LmsClasses" asp-action="DecideLessonPlan" asp-route-area="User" class="form-inline d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Plan.LmsLessonPlanId" />
+                        <input type="hidden" name="versionId" value="@version.LmsLessonPlanVersionId" />
+                        <label class="sr-only" for="lp-note">@localizer["DecisionNote"]</label>
+                        <input id="lp-note" name="note" class="form-control input-sm" maxlength="1000" placeholder="@localizer["DecisionNote"]" />
+                        <button type="submit" name="approve" value="true" class="btn btn-primary btn-sm"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Approve"]</button>
+                        <button type="submit" name="approve" value="false" class="btn btn-white btn-sm"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["SendBack"]</button>
+                    </form>
+                }
+                @if (version.Status == (int)ProtocolVersionStatuses.Approved && Model.CanApprove && Model.CanAuthor)
+                {
+                    <form method="post" asp-controller="LmsClasses" asp-action="PublishLessonPlan" asp-route-area="User" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Plan.LmsLessonPlanId" />
+                        <input type="hidden" name="versionId" value="@version.LmsLessonPlanVersionId" />
+                        <label class="checkbox-inline"><input type="checkbox" name="major" value="true" /> @localizer["MajorChange"]</label>
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["Publish"]</button>
+                    </form>
+                }
+                @if (version.Status == (int)ProtocolVersionStatuses.Published || version.Status == (int)ProtocolVersionStatuses.Superseded)
+                {
+                    <form method="post" asp-controller="LmsClasses" asp-action="NewLessonPlanDraft" asp-route-area="User" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Plan.LmsLessonPlanId" />
+                        <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["NewDraft"]</button>
+                    </form>
+                }
+            </div>
+        }
+    }
+
+    @if (Model.Versions.Count > 1)
+    {
+        <h3>@localizer["VersionsHeader"]</h3>
+        <ul>
+            @foreach (var v in Model.Versions)
+            {
+                <li><a asp-controller="LmsClasses" asp-action="LessonPlan" asp-route-area="User" asp-route-id="@Model.Plan.LmsLessonPlanId" asp-route-version="@v.LmsLessonPlanVersionId">@(v.Number ?? localizer["VersionStatus." + (ProtocolVersionStatuses)v.Status].Value)</a>
+                    <span class="text-muted">@localizer["VersionStatus." + (ProtocolVersionStatuses)v.Status] · @Model.Local(v.CreatedOn).ToString("d", culture)</span></li>
+            }
+        </ul>
+    }
+
+    <form method="post" asp-controller="LmsClasses" asp-action="DeleteLessonPlan" asp-route-area="User" class="m-t-md">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@Model.Plan.LmsLessonPlanId" />
+        <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["DeleteLessonPlan"]</button>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

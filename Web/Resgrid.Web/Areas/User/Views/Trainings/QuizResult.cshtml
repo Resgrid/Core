@@ -1,0 +1,71 @@
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingQuizResultView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["QuizResultHeader"];
+    ViewData["Title"] = localizer["QuizResultHeader"].Value;
+    ViewData["Subtitle"] = Model.Name;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
+        <div class="ibox-content">
+            <div class="@(Model.Passed ? "rgw-next-action" : "alert alert-warning")" role="status">
+                <h3>
+                    @if (Model.Passed)
+                    {
+                        <i class="fa fa-check-circle text-navy" aria-hidden="true"></i> @localizer["QuizPassedHeader"]
+                    }
+                    else
+                    {
+                        <i class="fa fa-times-circle" aria-hidden="true"></i> @localizer["QuizFailedHeader"]
+                    }
+                </h3>
+                <p>@string.Format(localizer["QuizScoreValue"].Value, Model.Score.ToString("0.##"), Model.CorrectCount, Model.QuestionCount, Model.MinimumScore.ToString("0.##"))</p>
+                @if (Model.AttemptsLeft.HasValue && !Model.Passed)
+                {
+                    <p class="rgw-progress-honest">@string.Format(localizer["AttemptsLeftValue"].Value, Model.AttemptsLeft.Value)</p>
+                }
+            </div>
+
+            <div class="rgw-wizard-actions">
+                @if (Model.CanRetake)
+                {
+                    <a class="btn btn-primary" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" asp-route-trainingId="@Model.TrainingId"><i class="fa fa-repeat" aria-hidden="true"></i> @localizer["RetakeQuizButton"]</a>
+                }
+                <a class="btn btn-default" asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@Model.TrainingId"><i class="fa fa-book" aria-hidden="true"></i> @localizer["BackToTrainingButton"]</a>
+                <a class="btn btn-default" asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["MyTrainingTab"]</a>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.Questions.Count > 0)
+    {
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-flag" aria-hidden="true"></i> @localizer["FlagQuestionHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["FlagQuestionHelp"]</p>
+                @foreach (var question in Model.Questions)
+                {
+                    <details class="m-b-sm">
+                        <summary>@question.Text</summary>
+                        <form method="post" asp-controller="Trainings" asp-action="FlagQuestion" asp-route-area="User" asp-route-trainingId="@Model.TrainingId" class="m-t-xs">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="trainingQuestionId" value="@question.QuestionId" />
+                            <label for="@("comment_" + question.QuestionId)" class="sr-only">@localizer["FlagCommentLabel"]</label>
+                            <textarea id="@("comment_" + question.QuestionId)" name="comment" class="form-control" rows="2" maxlength="1000" placeholder="@localizer["FlagCommentLabel"]"></textarea>
+                            <button type="submit" class="btn btn-xs btn-warning m-t-xs"><i class="fa fa-flag" aria-hidden="true"></i> @localizer["FlagQuestionButton"]</button>
+                        </form>
+                    </details>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

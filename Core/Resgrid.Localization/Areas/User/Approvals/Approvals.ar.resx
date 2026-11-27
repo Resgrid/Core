@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboveAmountNote" xml:space="preserve">
+    <value>(أكثر من {0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>الإجراءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>نشطة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddDelegateHeading" xml:space="preserve">
+    <value>إضافة مفوَّض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementDeletedMessage" xml:space="preserve">
+    <value>حُذفت الاتفاقية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementInvalidMessage" xml:space="preserve">
+    <value>تعذّر حفظ الاتفاقية. تحقّق من العنوان والتواريخ؛ لا يمكن تغيير اتفاقية معتمدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementSavedMessage" xml:space="preserve">
+    <value>حُفظت الاتفاقية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementTitleLabel" xml:space="preserve">
+    <value>الاتفاقية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementsIntro" xml:space="preserve">
+    <value>اتفاقيات المساعدة المتبادلة التي يعتمدها قسمك ويختمها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementsTab" xml:space="preserve">
+    <value>اتفاقيات المساعدة المتبادلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllMyApprovalsLink" xml:space="preserve">
+    <value>كل اعتماداتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllowSelfApprovalLabel" xml:space="preserve">
+    <value>السماح لمقدّم الطلب بالاعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AmountColumn" xml:space="preserve">
+    <value>المبلغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyErrorNote" xml:space="preserve">
+    <value>يبقى الاعتماد قائمًا، لكن الوحدة لم تتمكن من تطبيقه (رفضته قواعدها الخاصة). أكمل الخطوة في الوحدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsHeading" xml:space="preserve">
+    <value>الاعتمادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsModuleTitle" xml:space="preserve">
+    <value>الاعتمادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>اعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovePanelTitle" xml:space="preserve">
+    <value>اعتمادك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedByColumn" xml:space="preserve">
+    <value>اعتمده</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>سُجّل اعتمادك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedStepsLabel" xml:space="preserve">
+    <value>الخطوات المعتمدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverColumn" xml:space="preserve">
+    <value>المعتمِد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>إلغاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CandidatesHeading" xml:space="preserve">
+    <value>جاهزة للتقديم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationTypeLabel" xml:space="preserve">
+    <value>نوع الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainDeactivatedMessage" xml:space="preserve">
+    <value>أُوقفت السلسلة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainEditorHelp" xml:space="preserve">
+    <value>الخطوات ذات الرقم نفسه تجري بالتوازي ويجب أن تعتمد جميعها. يقصر الحدّ الخطوة على المبالغ التي تتجاوزه. ينشئ الحفظ إصدارًا جديدًا؛ وتحتفظ الطلبات المقدَّمة مسبقًا بالخطوات التي بدأت بها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainNameLabel" xml:space="preserve">
+    <value>اسم السلسلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainSavedMessage" xml:space="preserve">
+    <value>حُفظت سلسلة الاعتماد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainsIntro" xml:space="preserve">
+    <value>من يعتمد ماذا، وبأي ترتيب، وفوق أي مبالغ، ومتى تُصعَّد خطوة متوقفة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainsTab" xml:space="preserve">
+    <value>السلاسل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangedSinceApproval" xml:space="preserve">
+    <value>تغيّر هذا بعد اعتماده. لم يعد الاعتماد معتدًّا به؛ قدّمه مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangedSinceSubmission" xml:space="preserve">
+    <value>تغيّر هذا بعد تقديمه. لا تنتقل الاعتمادات السابقة؛ قدّمه مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>رمز المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeactivateChainButton" xml:space="preserve">
+    <value>إيقاف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecidedColumn" xml:space="preserve">
+    <value>تاريخ القرار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DefineChainButton" xml:space="preserve">
+    <value>تحديد سلسلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateForLabel" xml:space="preserve">
+    <value>العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateHelp" xml:space="preserve">
+    <value>أثناء إجازة العضو، تذهب خطوات الاعتماد المسمّاة باسمه أيضًا إلى مفوَّضه. وعند تحديد تواريخ، ينوب المفوَّض عنه أيضًا خلال تلك الفترة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateInvalidMessage" xml:space="preserve">
+    <value>تعذّر حفظ المفوَّض. اختر عضوين نشطين مختلفين وتواريخ صالحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateLabel" xml:space="preserve">
+    <value>المفوَّض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateRemovedMessage" xml:space="preserve">
+    <value>أُزيل المفوَّض.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateSavedMessage" xml:space="preserve">
+    <value>حُفظ المفوَّض.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegatedNote" xml:space="preserve">
+    <value>مفوَّض: المعتمِد المسمّى غائب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegatesIntro" xml:space="preserve">
+    <value>من يعتمد نيابةً عن عضو أثناء إجازته.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegatesTab" xml:space="preserve">
+    <value>المفوَّضون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteAgreementButton" xml:space="preserve">
+    <value>حذف الاتفاقية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DepartmentLinkLabel" xml:space="preserve">
+    <value>رابط القسم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DownloadSealedLink" xml:space="preserve">
+    <value>تنزيل المستند المختوم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>مستحق بحلول {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>الاستحقاق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditChainButton" xml:space="preserve">
+    <value>تعديل السلسلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditChainTitle" xml:space="preserve">
+    <value>سلسلة الاعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>سارية من</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndsLabel" xml:space="preserve">
+    <value>تنتهي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalatedLabel" xml:space="preserve">
+    <value>صُعّد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalatesAfterNote" xml:space="preserve">
+    <value>(يُصعَّد بعد {0} ساعة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalationColumn" xml:space="preserve">
+    <value>التصعيد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresInDaysLabel" xml:space="preserve">
+    <value>تنتهي الصلاحية بعد (أيام)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>المجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>الرئيسية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursPlaceholder" xml:space="preserve">
+    <value>الساعات (فارغ: أبدًا)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyApprovalsIntro" xml:space="preserve">
+    <value>الطلبات التي تنتظر اعتمادك، والطلبات التي قدّمتها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyApprovalsTab" xml:space="preserve">
+    <value>اعتماداتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyApprovalsTitle" xml:space="preserve">
+    <value>اعتماداتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>طلباتي المعلّقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewAgreementButton" xml:space="preserve">
+    <value>اتفاقية جديدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextApprovalLabel" xml:space="preserve">
+    <value>التالي للاعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAgreements" xml:space="preserve">
+    <value>لا توجد اتفاقيات مساعدة متبادلة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoApprovalYet" xml:space="preserve">
+    <value>لم يُقدَّم للاعتماد بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCandidates" xml:space="preserve">
+    <value>لا شيء بانتظار التقديم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoChainDefined" xml:space="preserve">
+    <value>لا توجد سلسلة: لا تحتاج هذه إلى اعتماد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDelegates" xml:space="preserve">
+    <value>لا يوجد مفوَّضون.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPendingSubmissions" xml:space="preserve">
+    <value>لا شيء معلّق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRequests" xml:space="preserve">
+    <value>لا توجد طلبات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingToApprove" xml:space="preserve">
+    <value>لا شيء بانتظار اعتمادك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnLeaveOnly" xml:space="preserve">
+    <value>أثناء الإجازة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenInModuleLink" xml:space="preserve">
+    <value>فتح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenRequestLink" xml:space="preserve">
+    <value>فتح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerLabel" xml:space="preserve">
+    <value>القسم الشريك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerSignatureOwedNote" xml:space="preserve">
+    <value>تعتمد سلسلة قسمك هذه الاتفاقية وتختمها. أما التوقيع المقابل من القسم الشريك عبر رابط القسم فغير متاح بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PayrollRunsNote" xml:space="preserve">
+    <value>ستحصل دورات الرواتب على سلسلة اعتماد عندما تتوفر دورات الرواتب في Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingApprovalsHeader" xml:space="preserve">
+    <value>بانتظار اعتمادك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingInDepartmentHeader" xml:space="preserve">
+    <value>معلّقة في القسم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingSubmittedLabel" xml:space="preserve">
+    <value>معلّقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>رفض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectHeading" xml:space="preserve">
+    <value>رفض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>السبب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>رُفض الطلب وأُبلغ مقدّمه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>إزالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestsIntro" xml:space="preserve">
+    <value>كل طلبات الاعتماد في القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestsTab" xml:space="preserve">
+    <value>الطلبات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>مراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>الدور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveAgreementButton" xml:space="preserve">
+    <value>حفظ الاتفاقية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveChainButton" xml:space="preserve">
+    <value>حفظ السلسلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveDelegateButton" xml:space="preserve">
+    <value>حفظ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealedNote" xml:space="preserve">
+    <value>اعتُمد وخُتم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingPendingNote" xml:space="preserve">
+    <value>اعتُمد. الختم قيد الانتظار: يُنشأ المستند المختوم فور توفّر خدمة الختم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartsLabel" xml:space="preserve">
+    <value>تبدأ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>الحالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepApproved" xml:space="preserve">
+    <value>معتمَدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>الخطوة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepLabelPlaceholder" xml:space="preserve">
+    <value>اسم الخطوة (اختياري)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepNotYet" xml:space="preserve">
+    <value>ليس بعد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>#</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepRejected" xml:space="preserve">
+    <value>مرفوضة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepWaiting" xml:space="preserve">
+    <value>بالانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>الخطوات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>تجري الخطوات بالترتيب؛ وتجري الخطوات ذات الرقم نفسه بالتوازي. يُوقَّع كل اعتماد على المستوى 2 ويُربط برمز المحتوى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectColumn" xml:space="preserve">
+    <value>الموضوع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectGroupOption" xml:space="preserve">
+    <value>مجموعة الموضوع نفسه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectHeading" xml:space="preserve">
+    <value>ما يجري اعتماده</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>تقديم للاعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitHeading" xml:space="preserve">
+    <value>تقديم للاعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedByLine" xml:space="preserve">
+    <value>قدّمه {0} في {1} UTC</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>تاريخ التقديم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>قُدّم للاعتماد. أُبلغ المعتمِدون.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TermsLabel" xml:space="preserve">
+    <value>الشروط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ThresholdColumn" xml:space="preserve">
+    <value>فقط فوق مبلغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UseStepColumn" xml:space="preserve">
+    <value>استخدام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WaitingForMeLabel" xml:space="preserve">
+    <value>بانتظاري</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WindowColumn" xml:space="preserve">
+    <value>متى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>سحب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>سُحب الطلب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindPurchaseRequisitionApproval" xml:space="preserve">
+    <value>طلبات الشراء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindIncidentPlanApproval" xml:space="preserve">
+    <value>خطط عمل الحادث (IAP)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindInvoiceApproval" xml:space="preserve">
+    <value>الفواتير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindPayrollRunApproval" xml:space="preserve">
+    <value>دورات الرواتب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindCalOesMarsPackageApproval" xml:space="preserve">
+    <value>حزم Cal OES MARS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindMutualAidAgreementApproval" xml:space="preserve">
+    <value>اتفاقيات المساعدة المتبادلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusPending" xml:space="preserve">
+    <value>معلّق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>معتمَد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusRejected" xml:space="preserve">
+    <value>مرفوض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusWithdrawn" xml:space="preserve">
+    <value>مسحوب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSuperseded" xml:space="preserve">
+    <value>مُستبدل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>منتهي الصلاحية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverRole" xml:space="preserve">
+    <value>أي شخص في دور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverNamedMember" xml:space="preserve">
+    <value>عضو محدد بالاسم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverGroupAdmin" xml:space="preserve">
+    <value>مسؤولو المجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverCertifyingOfficial" xml:space="preserve">
+    <value>المسؤول المصادِق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverDepartmentAdmins" xml:space="preserve">
+    <value>مسؤولو القسم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalateToDepartmentAdmins" xml:space="preserve">
+    <value>التصعيد إلى مسؤولي القسم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalateToRole" xml:space="preserve">
+    <value>التصعيد إلى دور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalateToNamedMember" xml:space="preserve">
+    <value>التصعيد إلى عضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusDraft" xml:space="preserve">
+    <value>مسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusInApproval" xml:space="preserve">
+    <value>قيد الاعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusApproved" xml:space="preserve">
+    <value>معتمدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusWithdrawn" xml:space="preserve">
+    <value>مسحوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>تم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>تعذّرت معالجة الطلب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>العنصر لم يعد موجودًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalModuleUnavailable" xml:space="preserve">
+    <value>هذه الوحدة أو إضافتها غير مفعّلة لقسمك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNoChain" xml:space="preserve">
+    <value>ليس لدى قسمك سلسلة اعتماد لهذه العناصر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalAlreadyPending" xml:space="preserve">
+    <value>هذا بانتظار الاعتماد بالفعل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalUnchanged" xml:space="preserve">
+    <value>لم يتغير شيء منذ اعتماده أو رفضه. غيّره قبل تقديمه مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotSubmittable" xml:space="preserve">
+    <value>لا يمكن تقديم هذا في حالته الحالية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalClosed" xml:space="preserve">
+    <value>هذا الطلب لم يعد معلّقًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSubjectChanged" xml:space="preserve">
+    <value>تغيّر هذا بعد تقديمه. قدّمه مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotAnApprover" xml:space="preserve">
+    <value>لست معتمِدًا لهذه الخطوة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>يجب أن تعتمد خطوة سابقة أولًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>أكّد هويتك (التحقق بخطوتين أو مفتاح مرور) للاعتماد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>يشترط قسمك مفتاح مرور لهذا الاعتماد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalReasonRequired" xml:space="preserve">
+    <value>اذكر سببًا للرفض.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNoApprover" xml:space="preserve">
+    <value>إحدى الخطوات لا تسمّي أحدًا يمكنه اعتمادها. تحقّق من أدوار السلسلة وأعضائها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotAllowed" xml:space="preserve">
+    <value>لا يمكن القيام بهذا إلا لمقدّم الطلب أو أحد مسؤولي القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSignatureFailed" xml:space="preserve">
+    <value>تعذّر توقيع الاعتماد. حاول مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotRequired" xml:space="preserve">
+    <value>لا تنطبق أي خطوة من السلسلة على هذا المبلغ: لا يحتاج إلى اعتماد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindMutualAidAgreementCountersignature" xml:space="preserve">
+    <value>التوقيع المقابل على اتفاقية المساعدة المتبادلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerCountersignNote" xml:space="preserve">
+    <value>اختاروا ربط أقسام وحدّدوا المربع أدناه ليوقّع القسم الشريك توقيعًا مقابلًا بمجرد موافقة سلسلة الموافقات لديكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiresCountersignatureLabel" xml:space="preserve">
+    <value>يوقّع القسم الشريك توقيعًا مقابلًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiresCountersignatureHelp" xml:space="preserve">
+    <value>بعد موافقة سلسلتكم، تُرسل الاتفاقية عبر الرابط؛ ويوقّعها أي من مسؤولي القسم الشريك توقيعًا مقابلًا على المحتوى نفسه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignNone" xml:space="preserve">
+    <value>يُطلب التوقيع المقابل من الشريك بمجرد الموافقة على الاتفاقية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignRequested" xml:space="preserve">
+    <value>بانتظار التوقيع المقابل من القسم الشريك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignCountersigned" xml:space="preserve">
+    <value>وقّع القسم الشريك توقيعًا مقابلًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignDeclined" xml:space="preserve">
+    <value>رفض القسم الشريك الطلب أو تركه تنتهي صلاحيته. انسخوا الاتفاقية إلى مسودة جديدة للمحاولة مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignLapsed" xml:space="preserve">
+    <value>عُطّل ربط الأقسام أو أُزيل قبل أن يوقّع الشريك توقيعًا مقابلًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindRecordDeploymentPartnerAcceptance" xml:space="preserve">
+    <value>قبول شريك الانتشار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindDepartmentLinkAcceptance" xml:space="preserve">
+    <value>قبول الرابط</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

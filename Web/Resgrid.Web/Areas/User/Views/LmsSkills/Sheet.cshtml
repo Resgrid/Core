@@ -1,0 +1,227 @@
+@using Newtonsoft.Json
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsSkillSheetView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    One skill sheet: its catalog fields and who may evaluate and sign next (managers), the draft's steps in the step editor with the grading
+    settings, publishing with a change summary, and the versions. Members see the version in force read-only.
+*@
+@{
+    var sheet = Model.Sheet;
+    ViewBag.Title = "Resgrid | " + sheet.Title;
+    ViewData["Title"] = sheet.Title;
+    ViewData["Subtitle"] = localizer["Skl.SheetIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var editable = Model.IsManager && Model.CanAuthor && !sheet.IsDeleted;
+    var draft = Model.Draft;
+    var grading = draft ?? Model.Published;
+    var stepTypes = Enum.GetValues(typeof(LmsSkillStepTypes)).Cast<LmsSkillStepTypes>().ToList();
+}
+
+@functions {
+    private static bool Has(SignerEligibility rule, bool certification, int id) =>
+        rule != null && (certification ? rule.CertificationTypeIds.Contains(id) : rule.PersonnelRoleIds.Contains(id));
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-heading-actions m-b-md">
+        @if (Model.CanEvaluate && Model.CanAuthor)
+        {
+            <a class="btn btn-primary" asp-controller="LmsSkills" asp-action="Start" asp-route-area="User" asp-route-sheetId="@sheet.LmsSkillSheetId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Skl.Evaluate"]</a>
+        }
+        <a class="btn btn-white" asp-controller="LmsSkills" asp-action="Sheets" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Skl.Tab.Sheets"]</a>
+    </div>
+
+    @if (Model.IsManager)
+    {
+        <form asp-controller="LmsSkills" asp-action="SaveSheet" asp-route-area="User" method="post" class="ibox">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@sheet.LmsSkillSheetId" />
+            <input type="hidden" name="rowVersion" value="@sheet.RowVersion" />
+            <div class="ibox-title"><h5>@localizer["Skl.SheetDetails"]</h5></div>
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-6 form-group"><label for="title">@localizer["Skl.Field.Title"]</label><input id="title" name="title" class="form-control" maxlength="250" required value="@sheet.Title" disabled="@(!editable)" /></div>
+                    <div class="col-md-3 form-group"><label for="code">@localizer["Skl.Field.Code"]</label><input id="code" name="code" class="form-control" maxlength="100" value="@sheet.Code" disabled="@(!editable)" /><span class="help-block">@localizer["Skl.Field.CodeHelp"]</span></div>
+                    <div class="col-md-3 form-group">
+                        <label for="kind">@localizer["Skl.Field.Kind"]</label>
+                        <select id="kind" name="kind" class="form-control" disabled="@(!editable)">
+                            <option value="0" selected="@(sheet.Kind == 0)">@localizer["Skl.Kind.SkillSheet"]</option>
+                            <option value="1" selected="@(sheet.Kind == 1)">@localizer["Skl.Kind.ObservationReport"]</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group"><label for="description">@localizer["Skl.Field.Description"]</label><textarea id="description" name="description" class="form-control" rows="2" maxlength="4000" disabled="@(!editable)">@sheet.Description</textarea></div>
+                <div class="row">
+                    <div class="col-md-4 form-group">
+                        <label for="categoryId">@localizer["Skl.Field.Category"]</label>
+                        <select id="categoryId" name="categoryId" class="form-control" disabled="@(!editable)">
+                            <option value="">@localizer["Skl.None"]</option>
+                            @foreach (var category in Model.Categories.Where(c => !c.IsDeleted))
+                            {
+                                <option value="@category.TrainingCategoryId" selected="@(sheet.CategoryId == category.TrainingCategoryId)">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        <div class="checkbox"><label><input type="checkbox" name="allowCrewEvaluation" value="true" checked="@sheet.AllowCrewEvaluation" disabled="@(!editable)" /> @localizer["Skl.Field.AllowCrew"]</label></div>
+                        <div class="checkbox"><label><input type="checkbox" name="allowSelfEvaluation" value="true" checked="@sheet.AllowSelfEvaluation" disabled="@(!editable)" /> @localizer["Skl.Field.AllowSelf"]</label></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <fieldset class="col-md-6">
+                        <legend class="h5">@localizer["Skl.Field.Evaluators"]</legend>
+                        <p class="help-block">@localizer["Skl.Field.EvaluatorsHelp"]</p>
+                        <label for="evaluatorTypes">@localizer["Skl.Field.CertificationTypes"]</label>
+                        <select id="evaluatorTypes" name="evaluatorTypes" class="form-control" multiple size="4" disabled="@(!editable)">
+                            @foreach (var type in Model.CertificationTypes) { <option value="@type.Id" selected="@Has(Model.EvaluatorRule, true, type.Id)">@type.Name</option> }
+                        </select>
+                        <label for="evaluatorRoles">@localizer["Skl.Field.Roles"]</label>
+                        <select id="evaluatorRoles" name="evaluatorRoles" class="form-control" multiple size="4" disabled="@(!editable)">
+                            @foreach (var role in Model.Roles) { <option value="@role.Id" selected="@Has(Model.EvaluatorRule, false, role.Id)">@role.Name</option> }
+                        </select>
+                    </fieldset>
+                    <fieldset class="col-md-6">
+                        <legend class="h5">@localizer["Skl.Field.NextSigner"]</legend>
+                        <p class="help-block">@localizer["Skl.Field.NextSignerHelp"]</p>
+                        <label for="nextTypes">@localizer["Skl.Field.CertificationTypes"]</label>
+                        <select id="nextTypes" name="nextTypes" class="form-control" multiple size="4" disabled="@(!editable)">
+                            @foreach (var type in Model.CertificationTypes) { <option value="@type.Id" selected="@Has(Model.NextSignerRule, true, type.Id)">@type.Name</option> }
+                        </select>
+                        <label for="nextRoles">@localizer["Skl.Field.Roles"]</label>
+                        <select id="nextRoles" name="nextRoles" class="form-control" multiple size="4" disabled="@(!editable)">
+                            @foreach (var role in Model.Roles) { <option value="@role.Id" selected="@Has(Model.NextSignerRule, false, role.Id)">@role.Name</option> }
+                        </select>
+                    </fieldset>
+                </div>
+                @if (editable)
+                {
+                    <div class="m-t-sm">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Skl.Save"]</button>
+                    </div>
+                }
+            </div>
+        </form>
+    }
+
+    @if (editable)
+    {
+        <form asp-controller="LmsSkills" asp-action="SaveDraft" asp-route-area="User" method="post" class="ibox" id="skill-draft-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@sheet.LmsSkillSheetId" />
+            <input type="hidden" name="contentJson" id="skill-content-json" value="@JsonConvert.SerializeObject(Model.DraftContent ?? new LmsSkillSheetContent())" />
+            <div class="ibox-title"><h5>@localizer["Skl.DraftSteps"] @(draft == null ? string.Empty : "(" + localizer["Skl.Draft"].Value + ")")</h5></div>
+            <div class="ibox-content">
+                @if (Model.DraftErrors.Count > 0)
+                {
+                    <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["Skl.DraftNotReady"]
+                        <ul>@foreach (var error in Model.DraftErrors.Take(10)) { <li>@localizer[error.Split(':')[0]] @(error.Contains(':') ? "(" + error.Split(':')[1] + ")" : string.Empty)</li> }</ul>
+                    </div>
+                }
+                <div id="skill-step-editor" class="rgw-builder-list"
+                     data-l-up="@localizer["Skl.MoveUp"]" data-l-down="@localizer["Skl.MoveDown"]" data-l-remove="@localizer["Skl.Remove"]"
+                     data-l-type="@localizer["Skl.Step.Type"]" data-l-label="@localizer["Skl.Step.Label"]" data-l-help="@localizer["Skl.Step.Help"]"
+                     data-l-critical="@localizer["Skl.Step.Critical"]" data-l-required="@localizer["Skl.Step.Required"]" data-l-na="@localizer["Skl.Step.AllowNa"]"
+                     data-l-note="@localizer["Skl.Step.NoteOnFail"]" data-l-evidence="@localizer["Skl.Step.EvidenceOnFail"]" data-l-weight="@localizer["Skl.Step.Weight"]"
+                     data-l-options="@localizer["Skl.Step.Options"]" data-l-optionshelp="@localizer["Skl.Step.OptionsHelp"]" data-l-rating="@localizer["Skl.Step.Rating"]"
+                     data-l-passing="@localizer["Skl.Step.PassingRating"]" data-l-min="@localizer["Skl.Step.Min"]" data-l-max="@localizer["Skl.Step.Max"]"
+                     data-l-compute="@localizer["Skl.Step.Compute"]" data-l-computekeys="@localizer["Skl.Step.ComputeKeys"]" data-l-key="@localizer["Skl.Step.Key"]"
+                     data-types="@JsonConvert.SerializeObject(stepTypes.Select(t => new { v = (int)t, n = localizer["Skl.StepType." + t].Value }))"
+                     data-ops="@JsonConvert.SerializeObject(Enum.GetValues(typeof(LmsSkillComputeOps)).Cast<LmsSkillComputeOps>().Select(o => new { v = (int)o, n = localizer["Skl.Compute." + o].Value }))">
+                    <noscript><p class="text-muted">@localizer["Skl.EditorNeedsScript"]</p></noscript>
+                </div>
+                <button type="button" class="btn btn-white m-t-sm" id="skill-step-add"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Skl.AddStep"]</button>
+
+                <h4 class="m-t-md">@localizer["Skl.Grading"]</h4>
+                <div class="row">
+                    <div class="col-sm-4 col-md-2 form-group"><label for="passThreshold">@localizer["Skl.Field.PassThreshold"]</label><input id="passThreshold" name="passThreshold" type="number" min="0" max="100" step="0.01" class="form-control" value="@((grading?.PassThreshold ?? 100m).ToString(System.Globalization.CultureInfo.InvariantCulture))" /></div>
+                    <div class="col-sm-4 col-md-2 form-group"><label for="maxAttempts">@localizer["Skl.Field.MaxAttempts"]</label><input id="maxAttempts" name="maxAttempts" type="number" min="0" max="50" class="form-control" value="@(grading?.MaxAttempts ?? 0)" /></div>
+                    <div class="col-sm-4 col-md-2 form-group"><label for="attemptWindowDays">@localizer["Skl.Field.AttemptWindow"]</label><input id="attemptWindowDays" name="attemptWindowDays" type="number" min="0" max="3650" class="form-control" value="@(grading?.AttemptWindowDays ?? 0)" /></div>
+                    <div class="col-sm-4 col-md-3 form-group"><label for="timeLimitSeconds">@localizer["Skl.Field.TimeLimit"]</label><input id="timeLimitSeconds" name="timeLimitSeconds" type="number" min="0" max="86400" class="form-control" value="@(grading?.TimeLimitSeconds ?? 0)" /></div>
+                    <div class="col-sm-4 col-md-3 form-group"><label for="defaultMinutes">@localizer["Skl.Field.DefaultMinutes"]</label><input id="defaultMinutes" name="defaultMinutes" type="number" min="0" max="1440" class="form-control" value="@(grading?.DefaultMinutes ?? 30)" /></div>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Skl.SaveDraft"]</button>
+            </div>
+        </form>
+
+        @if (draft != null)
+        {
+            <form asp-controller="LmsSkills" asp-action="Publish" asp-route-area="User" method="post" class="ibox">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@sheet.LmsSkillSheetId" />
+                <div class="ibox-title"><h5>@localizer["Skl.PublishTitle"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Published != null)
+                    {
+                        <div class="checkbox"><label><input type="checkbox" name="major" value="true" /> @localizer["Skl.MajorVersion"]</label></div>
+                    }
+                    <div class="form-group"><label for="changeSummary">@localizer["Skl.ChangeSummary"]</label><textarea id="changeSummary" name="changeSummary" class="form-control" rows="2" maxlength="2000" required="@(Model.Published != null)"></textarea></div>
+                    <button type="submit" class="btn btn-primary" disabled="@(Model.DraftErrors.Count > 0)"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Skl.Publish"]</button>
+                </div>
+            </form>
+        }
+    }
+    else if (Model.Published != null)
+    {
+        <div class="ibox">
+            <div class="ibox-title"><h5>@localizer["Skl.Steps"] (v@(Model.Published.Label))</h5></div>
+            <div class="ibox-content">
+                <ol>
+                    @foreach (var step in LmsSkillSheetContent.Parse(Model.Published.ContentJson).Steps.Where(s => s != null))
+                    {
+                        if (step.StepType == LmsSkillStepTypes.Heading)
+                        {
+                            <li class="list-unstyled"><strong>@step.Label</strong></li>
+                        }
+                        else
+                        {
+                            <li>@step.Label @if (step.Critical) { <span class="label label-danger"><i class="fa fa-exclamation" aria-hidden="true"></i> @localizer["Skl.Step.Critical"]</span> } <span class="rgw-sub">@localizer["Skl.StepType." + step.StepType]</span></li>
+                        }
+                    }
+                </ol>
+            </div>
+        </div>
+    }
+
+    <h3>@localizer["Skl.Versions"]</h3>
+    <div class="table-responsive">
+        <table class="table rgw-table">
+            <thead><tr><th>@localizer["Skl.Col.Version"]</th><th>@localizer["Skl.Col.Status"]</th><th>@localizer["Skl.Col.Date"]</th><th>@localizer["Skl.ChangeSummary"]</th></tr></thead>
+            <tbody>
+                @foreach (var version in Model.Versions)
+                {
+                    <tr>
+                        <td>@(version.Label ?? localizer["Skl.Draft"].Value)<span class="rgw-sub">@(string.IsNullOrEmpty(version.ContentHash) ? string.Empty : version.ContentHash.Substring(0, 12))</span></td>
+                        <td>@localizer["Skl.VersionStatus." + (Resgrid.Model.ProtocolVersionStatuses)version.Status]</td>
+                        <td>@Model.Date(version.PublishedOn ?? version.UpdatedOn ?? version.CreatedOn)</td>
+                        <td>@version.ChangeSummary</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @if (editable)
+    {
+        <form asp-controller="LmsSkills" asp-action="DeleteSheet" asp-route-area="User" method="post" class="m-t-md">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@sheet.LmsSkillSheetId" />
+            <button type="submit" class="btn btn-danger btn-sm" data-confirm="@localizer["Skl.DeleteSheetConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Skl.DeleteSheet"]</button>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.skills.js" asp-append-version="true"></script>
+}

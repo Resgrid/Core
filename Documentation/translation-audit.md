@@ -90,3 +90,14 @@ The CommunicationTest and SystemMessages values were authored by an AI, not a na
 structure is correct and placeholder integrity is test-verified across all ten locales, but the
 wording should get a native review before it reaches members — particularly the SMS and voice text,
 which people act on under pressure.
+
+## Machine translations awaiting review (2026-11-25)
+
+The Protocols + Training/LMS work (rounds 1-9) was translated by machine as a first pass. Every non-English
+`<data>` value it added or changed carries the resx comment `machine-translated` (appended with `; ` when the entry
+already had a comment), so a reviewer can find them with a search for that word. Remove the comment once a native
+speaker has reviewed the value. Seeded content (protocol template sets, starter courses, lesson-plan, skill-sheet and
+task-book starters, training category templates, competency framework names, certification type templates) is
+translated in `Core/Resgrid.Model/SeedContent/Translations/seed-{language}.json`, keyed by the English text; all of it
+is machine translated. `SeedContentLocalizationTests` lists anything missing after the English changes (set
+`RESGRID_SEED_EXPORT` to a folder to export the English source).

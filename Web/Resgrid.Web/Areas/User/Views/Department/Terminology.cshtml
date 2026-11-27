@@ -5,7 +5,8 @@
     var termSections = new[]
     {
         new { Category = DepartmentTermCategories.Module, Title = localizer["TerminologyModules"].Value, Help = localizer["TerminologyModulesHelp"].Value },
-        new { Category = DepartmentTermCategories.RecordType, Title = localizer["TerminologyRecordTypes"].Value, Help = localizer["TerminologyRecordTypesHelp"].Value }
+        new { Category = DepartmentTermCategories.RecordType, Title = localizer["TerminologyRecordTypes"].Value, Help = localizer["TerminologyRecordTypesHelp"].Value },
+        new { Category = DepartmentTermCategories.Role, Title = localizer["TerminologyRoles"].Value, Help = localizer["TerminologyRolesHelp"].Value }
     };
 }
 
@@ -51,7 +52,8 @@
 
                         @foreach (var termSection in termSections)
                         {
-                            var isModules = termSection.Category == DepartmentTermCategories.Module;
+                            @* Modules and roles are carried through Resgrid's text (a name and a word for one); record types are names only. *@
+                            var isModules = termSection.Category != DepartmentTermCategories.RecordType;
                             <h3 class="m-t-lg">@termSection.Title</h3>
                             <p class="help-block">@termSection.Help</p>
                             <div class="table-responsive">

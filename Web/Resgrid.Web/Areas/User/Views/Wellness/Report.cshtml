@@ -1,0 +1,171 @@
+@using Microsoft.AspNetCore.Html
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model WellnessReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> localizer
+@*
+    The wellness officer's member exposure report (member wellness WL0, restricted): operational counts per member - confirmed entries,
+    critical incidents, each category, suggestions awaiting review, screening flags and open follow-ups - and the recent post-call
+    flags. No protected value is shown here; a member's details open on their own log.
+*@
+@{
+    var title = localizer["ReportTitle"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Report";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["ReportIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+
+    Func<dynamic, IHtmlContent> headerActions = @<text>
+        <a class="btn btn-primary" asp-controller="Wellness" asp-action="New" asp-route-area="User">@localizer["LogExposureButton"]</a>
+        <a class="btn btn-default" asp-controller="Wellness" asp-action="ReportCsv" asp-route-area="User" asp-route-from="@Model.From" asp-route-to="@Model.To">@localizer["ExportCsvButton"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="get" asp-controller="Wellness" asp-action="Report" asp-route-area="User" class="rgw-filter" role="search" aria-label="@localizer["FilterLabel"]">
+        <div class="rgw-grid">
+            <div class="form-group">
+                <label for="report-from">@localizer["FromLabel"]</label>
+                <input id="report-from" name="from" type="date" class="form-control" value="@Model.From" />
+            </div>
+            <div class="form-group">
+                <label for="report-to">@localizer["ToLabel"]</label>
+                <input id="report-to" name="to" type="date" class="form-control" value="@Model.To" />
+            </div>
+        </div>
+        <div class="rgw-filter-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["FilterButton"]</button>
+        </div>
+    </form>
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-title"><h5><i class="fa fa-users" aria-hidden="true"></i> @localizer["MembersHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Summaries.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoReportRows"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["MemberLabel"]</th>
+                                <th class="text-right">@localizer["ConfirmedEntriesLabel"]</th>
+                                <th class="text-right">@localizer["CriticalIncidentsLabel"]</th>
+                                <th class="text-right">@localizer["AwaitingReviewLabel"]</th>
+                                <th>@localizer["LastExposureLabel"]</th>
+                                <th>@localizer["ScreeningHeader"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var summary in Model.Summaries)
+                            {
+                                <tr>
+                                    <td>
+                                        @Model.NameOf(summary.UserId)
+                                        <small class="rgw-sub text-muted">
+                                            @foreach (var category in WellnessPresentation.Categories.Where(c => summary.ByCategory.ContainsKey(c) && c != (int)ResponderExposureCategories.CriticalIncident))
+                                            {
+                                                <span>@localizer[WellnessPresentation.CategoryKey(category)]: @summary.ByCategory[category]</span>
+                                            }
+                                        </small>
+                                    </td>
+                                    <td class="text-right">@summary.Total</td>
+                                    <td class="text-right">@summary.CriticalIncidents</td>
+                                    <td class="text-right">@summary.PendingSuggestions</td>
+                                    <td class="text-nowrap">@WellnessPresentation.LocalDate(summary.LastOccurredOn, Model.Department)</td>
+                                    <td>
+                                        @if (summary.ScreeningFlagged)
+                                        {
+                                            <span class="label label-warning"><i class="fa fa-stethoscope" aria-hidden="true"></i> @localizer["ScreeningFlaggedLabel"]</span>
+                                            @if (summary.OpenFollowUps > 0)
+                                            {
+                                                <small class="rgw-sub text-muted">@string.Format(localizer["OpenFollowUpsValue"].Value, summary.OpenFollowUps)</small>
+                                            }
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs btn-default" asp-controller="Wellness" asp-action="Member" asp-route-area="User" asp-route-userId="@summary.UserId"><i class="fa fa-folder-open-o" aria-hidden="true"></i> @localizer["OpenLogButton"]</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-title"><h5><i class="fa fa-flag" aria-hidden="true"></i> @localizer["RecentFlagsHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.RecentFlags.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoFlags"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["CallColumn"]</th>
+                                <th>@localizer["CategoryColumn"]</th>
+                                <th>@localizer["FlaggedOnLabel"]</th>
+                                <th>@localizer["SuggestionsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var flag in Model.RecentFlags)
+                            {
+                                <tr class="@(flag.IsActive ? null : "text-muted")">
+                                    <td><a asp-controller="Wellness" asp-action="FlagCall" asp-route-area="User" asp-route-callId="@flag.CallId">@Model.CallOf(flag.CallId)</a></td>
+                                    <td>@localizer[WellnessPresentation.CategoryKey(flag.Category)]</td>
+                                    <td class="text-nowrap">@WellnessPresentation.LocalDateTime(flag.FlaggedOn, Model.Department)</td>
+                                    <td>
+                                        @if (!flag.IsActive)
+                                        {
+                                            @localizer["FlagClearedLabel"]
+                                        }
+                                        else if (flag.SuggestionsGeneratedOn.HasValue)
+                                        {
+                                            @string.Format(localizer["SuggestionsBuiltValue"].Value, flag.SuggestionCount)
+                                        }
+                                        else
+                                        {
+                                            @localizer["SuggestionsPendingLabel"]
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* 2026-11-26: the wellness team - who holds each wellness role, their certification status and who acts. *@
+    @if (Model.Roster.Count > 0)
+    {
+        <div class="ibox float-e-margins m-t-sm">
+            <div class="ibox-title"><h5><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["RoleCertificationHeader"]</h5></div>
+            <div class="ibox-content">
+                @await Html.PartialAsync("_Roster", new WellnessRosterView { Roster = Model.Roster, Names = Model.Names, Department = Model.Department })
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -163,4 +163,156 @@
   <data name="ViewDepartmentLinkTitle" xml:space="preserve">
     <value>Переглянути Зв'язок Відділу</value>
   </data>
+  <data name="AgreementFrom" xml:space="preserve">
+    <value>Від</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementRequested" xml:space="preserve">
+    <value>Запитано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementTitle" xml:space="preserve">
+    <value>Угода</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Переглянути й поставити зустрічний підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsLink" xml:space="preserve">
+    <value>Набори курсів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditSharing" xml:space="preserve">
+    <value>Спільний доступ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolChange" xml:space="preserve">
+    <value>Що змінилося:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolReadOnly" xml:space="preserve">
+    <value>Лише для читання: це чинна версія пов'язаного підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolSubtitle" xml:space="preserve">
+    <value>{0}, версія {1}, чинна з {2}, код вмісту {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsHeader" xml:space="preserve">
+    <value>Пов'язані протоколи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsIntro" xml:space="preserve">
+    <value>Опубліковані протоколи, якими цей пов'язаний підрозділ ділиться з вашим підрозділом. Показано лише чинну версію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsTitle" xml:space="preserve">
+    <value>Протоколи: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLinkedProtocols" xml:space="preserve">
+    <value>Цей підрозділ не ділиться опублікованими протоколами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerAgreements" xml:space="preserve">
+    <value>Жодна угода не очікує на зустрічний підпис вашого підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsIntro" xml:space="preserve">
+    <value>Угоди про взаємодопомогу, на яких пов'язані підрозділи просять ваш підрозділ поставити зустрічний підпис. Це може зробити будь-який адміністратор підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsLink" xml:space="preserve">
+    <value>Угоди для зустрічного підпису</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolCategory" xml:space="preserve">
+    <value>Категорія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolEffective" xml:space="preserve">
+    <value>Чинний з</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolName" xml:space="preserve">
+    <value>Протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolNumber" xml:space="preserve">
+    <value>Номер</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsLink" xml:space="preserve">
+    <value>Набори протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersion" xml:space="preserve">
+    <value>Версія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocols" xml:space="preserve">
+    <value>Протоколи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetsIntro" xml:space="preserve">
+    <value>Діліться протоколами й курсами з пов'язаними підрозділами у вигляді наборів, спонсоруйте їхні місця LMS і ставте зустрічний підпис на їхніх угодах про взаємодопомогу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocols" xml:space="preserve">
+    <value>Ділитися протоколами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocolsHelp" xml:space="preserve">
+    <value>Інший підрозділ може читати ваші опубліковані протоколи й підписуватися на ваші набори протоколів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTraining" xml:space="preserve">
+    <value>Ділитися навчанням</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTrainingHelp" xml:space="preserve">
+    <value>Інший підрозділ може підписуватися на ваші набори курсів, а ви можете спонсорувати його місця LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBack" xml:space="preserve">
+    <value>Вони діляться:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingIntro" xml:space="preserve">
+    <value>Виберіть, чим ваш підрозділ ділиться з {0}. Ви ніколи не змінюєте того, чим вони діляться з вами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingRevokeHelp" xml:space="preserve">
+    <value>Вимкнення одразу припиняє доступ: читання зупиняється, підписки на ваші набори призупиняються, а спонсорство через цей зв'язок завершується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ViewProtocols" xml:space="preserve">
+    <value>Протоколи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentsTitle" xml:space="preserve">
+    <value>Призначення на розгортання до прийняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerDeployments" xml:space="preserve">
+    <value>Жодна пов'язана організація не просить вас прийняти призначення на розгортання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAssignment" xml:space="preserve">
+    <value>Призначення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAccept" xml:space="preserve">
+    <value>Переглянути та прийняти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkAcceptanceSignatureNote" xml:space="preserve">
+    <value>Прийняття цього зв'язку є підписаним рішенням: вас попросять повторно підтвердити особу, а ваш підпис фіксує обидві організації та те, чим кожна з них ділиться.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

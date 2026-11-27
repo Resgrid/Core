@@ -3243,6 +3243,26 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>إنشاء تدريب</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>تعيين التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>حذف التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.AuthorProtocols">
+    <value>تأليف البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveProtocols">
+    <value>اعتماد البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageProtocolAcknowledgments">
+    <value>إدارة إقرارات البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>إنشاء سير عمل</value>
   </data>
@@ -3487,7 +3507,44 @@
     <value>يسمح بإنشاء الورديات وورديات العمل وتعديلها وحذفها، وإدارة التسجيلات لكل مجموعة. يدير مدراء المجموعات دائمًا التسجيلات الخاصة بمجموعاتهم. ويجب على الأعضاء الذين يسجّلون — على الويب أو في التطبيقات أو عبر روبوت الدردشة — الالتزام بقواعد الوردية (لا أيام ماضية، والورديات المعيّنة تتطلب تعيينًا، وورديات المجموعات تتطلب مجموعة العضو). يظل بإمكان الجميع عرض الورديات. عند عدم وجود قاعدة محفوظة، يقتصر تغيير الورديات على مدراء القسم.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>يسمح بإنشاء التدريبات وتعديلها وحذفها وإعادة تعيين تقدّم الأعضاء في التدريب. يظل بإمكان الجميع عرض التدريبات وإكمالها. عند عدم وجود قاعدة محفوظة، يقتصر ذلك على مدراء القسم.</value>
+    <value>يتيح إنشاء التدريبات وتأليف محتواها واختبارها، بما في ذلك مفتاح الإجابات. التعيين والتقارير (تعيين التدريب) والأرشفة أو الحذف (حذف التدريب) قاعدتان منفصلتان تتبعان هذه القاعدة إلى أن تُحفظا. يظل بإمكان الجميع عرض التدريبات المعيّنة لهم أو المفتوحة لهم وإكمالها. وإذا لم تُحفظ قاعدة، فلا يُسمح بذلك إلا لمسؤولي القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>يتيح تعيين التدريبات للأعضاء، وتحديد مواعيد الاستحقاق والتمديدات والإعفاءات، وإعادة تعيين تقدم الأعضاء، وقراءة تقرير التدريب وسجل المحاولات. لا يتصرف مسؤولو المجموعات إلا في أعضاء مجموعتهم. وإلى أن يُحفظ، يتبع إنشاء التدريب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>يتيح أرشفة التدريبات واستعادتها وحذفها. التدريب الذي أكمله أحد الأعضاء يُؤرشف بدل حذفه، فتبقى إكمالاته في السجل. وإلى أن يُحفظ، يتبع إنشاء التدريب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AuthorProtocols">
+    <value>يتيح إنشاء البروتوكولات ونسخها واستيرادها، وتعديل حقول المكتبة والمشغّلات والأسئلة والجمهور الخاص بها، وكتابة المسودات وإرسالها للاعتماد، وتعطيل البروتوكولات وتصدير المكتبة. ويرى المؤلفون أيضًا المسودات وقائمة انتظار المراجعة وكل بروتوكول مهما كان جمهوره. يتطلب الاعتماد والنشر صلاحية اعتماد البروتوكولات. وإذا لم تُحفظ قاعدة، فلا يُسمح بذلك إلا لمسؤولي القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ApproveProtocols">
+    <value>يتيح اعتماد إصدارات البروتوكولات المُرسلة أو رفضها، ونشرها فورًا أو في تاريخ محدد، وتسجيل «تمت المراجعة، بلا تغيير»، وسحب البروتوكولات وحذفها، وفرض التعليق القانوني على بروتوكول، وإدارة الفئات وخطوات اعتمادها. يُوقَّع كل اعتماد بتحقق إضافي جديد أو بمفتاح مرور. وإذا لم تُحفظ قاعدة، فلا يُسمح بذلك إلا لمسؤولي القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageCourses">
+    <value>إدارة الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageCourses">
+    <value>يسمح بإنشاء الدورات وبنوك الأسئلة، ورفع مقاطع فيديو الدورات، وتقديم إصدارات الدورات واعتمادها ونشرها، وإسناد الدورات والاطلاع على نتائجها. يُوقَّع كل اعتماد بتحقق إضافي حديث. الدورات جزء من إضافة LMS غير المتاحة حتى الآن، ويمكن إسناد دروس أكاديمية Resgrid بهذا الإذن أو بإذن إسناد التدريب. من دون قاعدة محفوظة لا يمكن ذلك إلا لمديري الإدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.GradeAssessments">
+    <value>تصحيح التقييمات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.GradeAssessments">
+    <value>يسمح بتصحيح الإجابات النصية المنتظرة في قائمة التصحيح والاطلاع على تحليل الأسئلة. لا يصحح أحد محاولته. جزء من إضافة LMS غير المتاحة حتى الآن. من دون قاعدة محفوظة لا يمكن ذلك إلا لمديري الإدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageProtocolAcknowledgments">
+    <value>مخصص لإقرارات القراءة والتوقيع: من سيعيّن البروتوكولات للأعضاء لقراءتها وتوقيعها، ويعفي الأعضاء، ويقرأ تقرير الإقرارات. ميزة القراءة والتوقيع غير متاحة بعد، لذا لا يغيّر حفظ هذه القاعدة شيئًا حاليًا. وإذا لم تُحفظ قاعدة، فلا يُسمح بذلك إلا لمسؤولي القسم.</value>
+    <comment>machine-translated</comment>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>يسمح بإنشاء سير العمل وتعديله وحذفه، ومعاينة شروطه، وقراءة إعدادات الخطوات في التطبيقات وواجهة API، ورؤية المخرجات المُنشأة لعمليات تشغيل سير العمل. عند عدم وجود قاعدة محفوظة، لا يستطيع تغيير سير العمل إلا مدراء القسم، لكن يمكن لكل عضو فتح صفحة سير العمل وقراءة التعريفات؛ ويؤدي حفظ «مدراء القسم» أيضًا إلى إخفاء سير العمل عن جميع الآخرين. تتطلب الخطوات التي ترسل تصديرًا من السجلات أيضًا صلاحيتي «تصدير السجلات» و«إدارة تقارير السجلات». الخطط المجانية محدودة في عدد سير العمل المسموح به.</value>
@@ -8267,5 +8324,2201 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>تُستخدم عندما يكون تنسيق البريد لديك "Labeled fields". أدخل التسمية التي يكتبها نظام CAD لديك قبل كل قيمة. افصل بين البدائل بالرمز |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>تعديل البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>غيّر محتوى البروتوكول ومشغّلاته وأسئلته في مكانها، وتحتفظ البلاغات بالنص الذي أُرسلت به.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>تعطيل البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>أوقف اقتراح بروتوكول وإرفاقه دون حذفه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>إزالة بروتوكول من بلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>أزل بروتوكولًا أُرفق خطأً من بلاغ مع ذكر السبب، ويحتفظ به السجل موسومًا بالإزالة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ProtocolLibrarySettings" xml:space="preserve">
+    <value>إعدادات مكتبة البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ProtocolLibrarySettings" xml:space="preserve">
+    <value>قواعد على مستوى القسم في صفحة إعدادات البروتوكولات: هل تتطلب الاعتمادات مفتاح مرور، وهل تتطلب القراءة والتوقيع تحققًا إضافيًا، وفترة المراجعة التي تبدأ بها البروتوكولات الجديدة، ومدة الاحتفاظ بالإصدارات المستبدلة والمسحوبة، مع تعليق قانوني يوقف أي حذف. وعند غيابها تُطبَّق مستويات التوقيع القياسية، بلا فترة افتراضية، وتُحفظ كل الإصدارات. لا يمكن تغييرها إلا لمسؤولي القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>إعدادات مكتبة البروتوكولات / اشتراط مفتاح مرور للاعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>يجب توقيع الاعتمادات وأختام «تمت المراجعة، بلا تغيير» بمفتاح مرور، ولم يعد التحقق الإضافي برمز تطبيق المصادقة أو عبر مزوّد تسجيل الدخول كافيًا. لا يستطيع المعتمِدون الذين ليس لديهم مفتاح مرور مسجّل التوقيع حتى يضيفوا واحدًا. وعند إيقافه، يكفي أي تحقق إضافي جديد أو مفتاح مرور للتوقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>إعدادات مكتبة البروتوكولات / تتطلب القراءة والتوقيع تحققًا إضافيًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>ستتطلب إقرارات القراءة والتوقيع تحققًا إضافيًا جديدًا بدلًا من جلسة تسجيل الدخول وحدها. ميزة القراءة والتوقيع غير متاحة بعد، ويُحفظ الاختيار إلى حين توفرها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>إعدادات مكتبة البروتوكولات / أيام فترة المراجعة الافتراضية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>عدد الأيام بين المراجعات للبروتوكولات الجديدة والمستوردة التي لا تحدد فترتها الخاصة، من 0 إلى 3650، والقيمة 0 تعني بلا فترة. تحتفظ البروتوكولات الحالية بفترتها. يعيد نشر إصدار أو تسجيل «تمت المراجعة، بلا تغيير» بدء الفترة، ويتلقى مالك البروتوكول، أو مسؤولو القسم إن لم يكن له مالك، تذكيرًا قبل موعد المراجعة بـ30 و7 أيام ومرة أخرى عند تأخرها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>إعدادات مكتبة البروتوكولات / التعليق القانوني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>تعليق قانوني على مستوى القسم: ما دام مفعّلًا لا يُحذف أي إصدار بروتوكول مستبدل أو مسحوب، مهما كانت أيام الاحتفاظ. ويمكن للمعتمِد أيضًا تعليق بروتوكول واحد من صفحة تعديله.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>إعدادات مكتبة البروتوكولات / الاحتفاظ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>عدد الأيام التي يحتفظ فيها كل نوع من البروتوكولات (إرسال، SOG، إرشاد سريري، سياسة، إجراء، مرجع) بالإصدار بعد استبداله أو سحبه، حتى 36500، وبعدها تحذفه عملية في الخلفية. والقيمة 0 تحتفظ بإصدارات ذلك النوع. لا يُحذف أبدًا إصدار ما زال مرفقًا ببلاغ، ولا يُحذف شيء ما دام التعليق القانوني مفعّلًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>الاحتفاظ حسب نوع البروتوكول / النوع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>نوع البروتوكول الذي ينطبق عليه الإدخال: 0 إرسال، 1 SOG، 2 إرشاد سريري، 3 سياسة، 4 إجراء، 5 مرجع. إدخال واحد لكل نوع، والنوع الذي لا إدخال له يحتفظ بكل الإصدارات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>الاحتفاظ حسب نوع البروتوكول / أيام الاحتفاظ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>عدد الأيام بعد استبدال إصدار من ذلك النوع أو سحبه قبل أن يجوز حذفه، من 1 إلى 36500. يُسقط الإدخال الذي قيمته 0 عند الحفظ، فيحتفظ النوع بإصداراته.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-queue" xml:space="preserve">
+    <value>قائمة انتظار مراجعة البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-queue" xml:space="preserve">
+    <value>اعتمد إصدارات البروتوكولات المُرسلة بتوقيع أو ارفضها، ثم انشرها فورًا أو في تاريخ محدد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-stamp" xml:space="preserve">
+    <value>تسجيل مراجعة بروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-stamp" xml:space="preserve">
+    <value>ضع على بروتوكول منشور ختم «تمت المراجعة، بلا تغيير» موقّعًا، دون إصدار جديد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compare" xml:space="preserve">
+    <value>مقارنة إصدارات البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compare" xml:space="preserve">
+    <value>اطّلع على ما تغيّر بين إصدارين من بروتوكول مع تمييز التعديلات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-categories" xml:space="preserve">
+    <value>فئات البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-categories" xml:space="preserve">
+    <value>نظّم المكتبة في فئات وحدّد خطوات الاعتماد التي تحتاجها كل فئة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-settings" xml:space="preserve">
+    <value>إعدادات البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-settings" xml:space="preserve">
+    <value>حدّد متطلبات التوقيع وفترة المراجعة الافتراضية ومدة الاحتفاظ بالإصدارات والتعليق القانوني على مستوى القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-import" xml:space="preserve">
+    <value>استيراد البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-import" xml:space="preserve">
+    <value>أدخل البروتوكولات من ملف تبادل بروتوكولات Resgrid كمسودات للمراجعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.TrainingRecordSettings" xml:space="preserve">
+    <value>إعدادات سجلات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.TrainingRecordSettings" xml:space="preserve">
+    <value>كيفية حفظ سجلات التدريب: تقريب ساعات تسجيل الحضور من التقويم، وهل يمكن للأعضاء تقديم التدريب الخارجي بأنفسهم، والحد الأدنى لسنوات الاحتفاظ بالسجلات بعد مغادرة العضو.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>إعدادات سجلات التدريب / تقريب ساعات الحضور إلى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>تُقرَّب الساعات من تسجيل الوصول إلى تسجيل المغادرة في أحداث التقويم المحتسبة تدريبًا إلى هذه الخطوة: 5 أو 6 أو 10 أو 15 أو 30 أو 60 دقيقة، أو 0 لاحتسابها بالدقيقة بالضبط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>إعدادات سجلات التدريب / اتجاه التقريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>هل تُقرَّب ساعات الحضور إلى أقرب خطوة أم إلى الأدنى أم إلى الأعلى. لا أثر له ما دامت الساعات تُحتسب بالدقيقة بالضبط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>إعدادات سجلات التدريب / لا يمكن للأعضاء تقديم تدريب خارجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>عند تفعيله، لا يستطيع الأعضاء تقديم التدريب الخارجي بأنفسهم. ويظل بإمكان المسؤولين تسجيله عبر الاستيراد أو رصيد شهادة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>إعدادات سجلات التدريب / الاحتفاظ بالسجلات بعد مغادرة العضو (سنوات)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>الحد الأدنى لسنوات الاحتفاظ بسجلات تدريب العضو السابق عندما لا تحدد فئتها حدًا. القيمة 0 تعني عدم وجود حد أدنى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-transcript" xml:space="preserve">
+    <value>سجل التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-transcript" xml:space="preserve">
+    <value>الدورات المكتملة وسجلات التدريب وحضور أحداث التقويم والاستيرادات والشهادات الخارجية لكل عضو، مع ساعاتها وما إذا كانت محتسبة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-transcript" xml:space="preserve">
+    <value>سجل واحد لتدريب كل عضو وساعاته للتجديد والتدقيق، دون جمع أوراق الحضور يدويًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-transcript" xml:space="preserve">
+    <value>قبل تجديد إحدى الشهادات، ينزّل العضو سجل تدريبه بصيغة PDF مع الساعات حسب الفئة، ويفتح مسؤول التدريب السجل نفسه من اسم العضو.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-transcript" xml:space="preserve">
+    <value>افتح التدريبات واختر سجل تدريبي. يختار المسؤولون الذين يراجعون سجلات عضو ما ذلك العضو في السجل. لا تُحتسب ضمن الساعات إلا السجلات الموثَّقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-external-submissions" xml:space="preserve">
+    <value>تقديمات التدريب الخارجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-external-submissions" xml:space="preserve">
+    <value>يقدّم الأعضاء الدورات التي أتمّوها خارج الإدارة، مع الساعات وإثبات (شهادة أو صورة أو مستند أو إيصال)، ويعتمد المراجِع كل تقديم أو يرفضه في مراجعات التدريب، ما لم تقبلها الإدارة كتصريح ذاتي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-external-submissions" xml:space="preserve">
+    <value>تصل الدورات الخارجية والتعليم المستمر إلى السجل مع إثباتها المرفق، وتُراجَع حين تريد الإدارة ذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-external-submissions" xml:space="preserve">
+    <value>يُنهي أحد الأعضاء دورة سلامة عبر الإنترنت ويقدّمها مع الشهادة و4 ساعات؛ فيعتمدها مسؤول التدريب في مراجعات التدريب وتُحتسب الساعات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-external-submissions" xml:space="preserve">
+    <value>يختار الأعضاء تقديم تدريب خارجي من سجلهم. ويفتح المراجِعون مراجعات التدريب للاعتماد أو الرفض أو طلب مزيد من المعلومات، وتبقى التكرارات المحتملة في قائمة مراجعة السجلات. ويمكن إيقاف التقديمات من إعدادات سجلات التدريب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-categories" xml:space="preserve">
+    <value>فئات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-categories" xml:space="preserve">
+    <value>تجميع ساعات التدريب في فئات مع أهداف ساعات ومدد احتفاظ اختيارية، والبدء من قوالب للإطفاء (ISO) وخدمات الإسعاف (NCCP) والسلامة في مكان العمل (OSHA) والصناعة والبحث والإنقاذ وإنفاذ القانون والأمن والتطوير المهني المستمر (CPD) وكندا أو الاتحاد الأوروبي، وتصنيف السجلات الحالية دفعة واحدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-categories" xml:space="preserve">
+    <value>تُجمع الساعات بالطريقة التي تطلبها الجهة التنظيمية أو جهة الترخيص أو شركة التأمين أو جهة الاعتماد لديك، وتُظهر الأهداف من هو متأخر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-categories" xml:space="preserve">
+    <value>تطبّق إدارة قالب ISO، وتضع هدفًا سنويًا لتدريب الفرق، ثم تصنّف تمارين العام الماضي دفعة واحدة حسب اسم الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-categories" xml:space="preserve">
+    <value>من التدريبات، افتح سجلات التدريب ثم فئات التدريب. طبّق قالبًا أو أضف فئاتك، ثم استخدم تصنيف السجل السابق لإعطاء فئة للسجلات غير المصنفة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-credit-mappings" xml:space="preserve">
+    <value>ربط أرصدة الشهادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-credit-mappings" xml:space="preserve">
+    <value>احتساب الساعات الموثَّقة لفئة تدريب ضمن تجديد شهادة، للفئة كلها أو لجزء منها فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-credit-mappings" xml:space="preserve">
+    <value>تُملأ ساعات التجديد من التدريب الذي يؤديه الأعضاء أصلًا بدلًا من كتابتها في كل شهادة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-credit-mappings" xml:space="preserve">
+    <value>تُحتسب ساعات فئة التعليم المستمر للإسعاف ضمن شهادة فني الطوارئ الطبية، فيتقدم تجديد العضو بمجرد توثيق الجلسة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-credit-mappings" xml:space="preserve">
+    <value>من التدريبات، افتح سجلات التدريب ثم أرصدة الشهادات، واربط فئة بنوع شهادة. السجلات المكتملة قبل تفعيل الربط لا تصبح أرصدة إلا عند تطبيق السجل السابق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-backfill" xml:space="preserve">
+    <value>استكمال سجل التدريب السابق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-backfill" xml:space="preserve">
+    <value>نقل الدورات المكتملة وسجلات التدريب السابقة لسجل التدريب إلى سجلات الأعضاء، مع تشغيل تجريبي يحسب ما سيُكتب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-backfill" xml:space="preserve">
+    <value>تبدأ السجلات بالتاريخ الموجود لدى إدارتك في Resgrid بدلًا من أن تكون فارغة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-backfill" xml:space="preserve">
+    <value>يُجري مسؤول تشغيلًا تجريبيًا، ويرى عدد الإتمامات والسجلات السابقة التي عُثر عليها، ثم يبدأ الاستكمال الذي يستمر في الخلفية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-backfill" xml:space="preserve">
+    <value>من التدريبات، افتح سجلات التدريب ثم استكمال السجل السابق، وابدأ بتشغيل تجريبي. لا تصبح السجلات المستكملة أرصدة شهادات إلا عند تطبيق السجل السابق على نوع شهادة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-import" xml:space="preserve">
+    <value>استيراد سجل التدريب السابق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-import" xml:space="preserve">
+    <value>استيراد الإتمامات من نظام آخر بملف CSV: تحقّق من كيفية مطابقة كل صف مع عضو، وصحّح الصفوف غير المطابقة، ثم استورد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-import" xml:space="preserve">
+    <value>تصل سنوات من السجلات من جدول بيانات أو نظام تدريب سابق إلى سجلات الأعضاء دون إعادة كتابتها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-import" xml:space="preserve">
+    <value>تصدّر إدارة تترك نظام سجلاتها القديم إتماماتها وتستوردها، وتختار العضو الصحيح للصفوف القليلة المطابقة بالاسم فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-import" xml:space="preserve">
+    <value>من التدريبات، افتح سجلات التدريب ثم استيراد سجل التدريب السابق. نزّل القالب، واملأ صفًا لكل إتمام يتضمن العضو والدورة والتاريخ والساعات، ثم ارفعه وراجع نتيجة الفحص قبل الاستيراد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-hours-report" xml:space="preserve">
+    <value>تقرير ساعات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-hours-report" xml:space="preserve">
+    <value>ساعات التدريب الموثَّقة حسب الفئة أو العضو أو الشهر، مع التصدير إلى CSV وPDF، والأعضاء السابقين عند الطلب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-hours-report" xml:space="preserve">
+    <value>اعرف عدد ساعات تدريب الإدارة وفي أي مجال، للميزانيات والمنح والتقارير السنوية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-hours-report" xml:space="preserve">
+    <value>للتقرير السنوي، يصدّر القائد ساعات تدريب العام الماضي حسب الفئة بصيغة PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-hours-report" xml:space="preserve">
+    <value>من التدريبات، افتح سجلات التدريب ثم ساعات التدريب. اختر الفترة والتجميع، ثم صدّر إلى CSV أو PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.my-courses" xml:space="preserve">
+    <value>دوراتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.my-courses" xml:space="preserve">
+    <value>الدورات المسندة إلى العضو والدورات التي يمكنه الانضمام إليها ودروس أكاديمية Resgrid، مع التقدم والمواعيد النهائية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.my-courses" xml:space="preserve">
+    <value>يرى الأعضاء ما يجب إنهاؤه تاليًا ويستأنفون من حيث توقفوا، على الموقع أو في التطبيق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.my-courses" xml:space="preserve">
+    <value>يفتح عضو جديد دوراتي وينهي درس البدء وفحصه القصير، فيظهر الإكمال في سجله التدريبي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.my-courses" xml:space="preserve">
+    <value>افتح التدريبات واختر الدورات. تظهر الدورات المسندة أولًا، ودروس أكاديمية Resgrid متاحة دائمًا ما دامت وحدة التدريب مفعّلة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy" xml:space="preserve">
+    <value>أكاديمية Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy" xml:space="preserve">
+    <value>دروس فيديو قصيرة عن Resgrid، لكل منها فحص من ثلاثة أسئلة، تنشرها Resgrid مجانًا لكل إدارة، إضافة إلى مسارات أدوار للأعضاء والمرسلين والضباط والمديرين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy" xml:space="preserve">
+    <value>يتعلم الأعضاء والضباط الجدد النظام بالطريقة نفسها، ويُحتسب كل درس مكتمل في سجلهم ضمن التدريب على النظام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy" xml:space="preserve">
+    <value>يسند مسؤول التدريب مسار المرسِل إلى طاقم الإرسال الجديد ويتابع الدروس التي أنهاها كل شخص.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy" xml:space="preserve">
+    <value>افتح التدريبات واختر Academy. يسند من يملك صلاحية إسناد التدريب درسًا أو مسار دور إلى الأعضاء أو الأدوار أو المجموعات. تبقى دروس الوحدات أو الإضافات التي لا تستخدمها الإدارة مخفية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-builder" xml:space="preserve">
+    <value>منشئ الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-builder" xml:space="preserve">
+    <value>دورات من إعداد الإدارة تضم وحدات وفيديو ومستندات ودروس بروتوكولات وتقييمات من بنوك الأسئلة واستبيانات، تُعتمد وتُدار إصداراتها مثل البروتوكولات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-course-builder" xml:space="preserve">
+    <value>قدّم تدريب الإدارة عبر الإنترنت مع تقييمات مصححة ووقت دراسة وإكمالات تصدر الشهادات أو تجددها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-course-builder" xml:space="preserve">
+    <value>ينشئ منسق الإسعاف دورة تنشيطية سنوية بفيديو واختبار من 20 سؤالًا من بنك أسئلة بدرجة نجاح 80% ثم يسندها إلى كل مسعف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-course-builder" xml:space="preserve">
+    <value>لا شيء لإعداده بعد: منشئ الدورات جزء من إضافة LMS غير المتاحة حتى الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-grading" xml:space="preserve">
+    <value>تصحيح التقييمات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-grading" xml:space="preserve">
+    <value>قائمة بالإجابات النصية التي تنتظر التصحيح، وتحليل للأسئلة يبيّن صعوبة كل سؤال ومدى تمييزه بين النتائج القوية والضعيفة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-grading" xml:space="preserve">
+    <value>تحصل الإجابات المكتوبة على درجة عادلة ومسجلة، وتُكتشف الأسئلة الضعيفة وتُصلح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-grading" xml:space="preserve">
+    <value>يصحح مسؤول التدريب ثلاث إجابات قصيرة من اختبار المواد الخطرة في الأسبوع الماضي، ويُظهر التحليل سؤالًا يخطئ فيه الجميع تقريبًا فتُعاد صياغته.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-grading" xml:space="preserve">
+    <value>لا شيء لإعداده بعد: التصحيح جزء من إضافة LMS غير المتاحة حتى الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.lms" xml:space="preserve">
+    <value>إدارة التعلّم (LMS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.lms" xml:space="preserve">
+    <value>الدورات ومتطلبات التدريب والصفوف وتقارير التدريب الرسمية. غير متاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.lms" xml:space="preserve">
+    <value>دورات منظمة وتقارير رسمية إضافة إلى سجل التدريب المجاني، عند إطلاقها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.lms" xml:space="preserve">
+    <value>لا شيء للتجربة بعد: الإضافة الخاصة بإدارة التعلّم لا تزال قيد التطوير.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.lms" xml:space="preserve">
+    <value>لا شيء لإعداده بعد، فسجل التدريب المجاني يعمل من دونها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-lms" xml:space="preserve">
+    <value>إضافة LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-lms" xml:space="preserve">
+    <value>إضافة إدارة التعلم، بحزم من 25 عضوًا: دورات وتقارير تدريب رسمية وشهادات قابلة للتحقق. تُعرض عندما تفعّلها Resgrid لقسمك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-lms" xml:space="preserve">
+    <value>تضيف دورات وتقارير رسمية وشهادات قابلة للتحقق إلى سجل التدريب المجاني، للأعضاء الذين تفعّلهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-lms" xml:space="preserve">
+    <value>يشتري قسم حزمتين، ويفعّل LMS لأعضائه الأربعين المحترفين، ويُصدر تقرير ISO FSRS؛ ويحتفظ متطوعوه بالتدريب المجاني.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-lms" xml:space="preserve">
+    <value>في الاشتراك، افتح بطاقة LMS واختر عدد الحزم، ثم فعّل الأعضاء من صفحة الأفراد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-seats" xml:space="preserve">
+    <value>مقاعد LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-seats" xml:space="preserve">
+    <value>فعّل LMS لكل عضو على حدة من صفحة الأفراد الخاصة به، أو لمجموعة كاملة دفعة واحدة، ضمن المقاعد التي تشتريها حزمك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-seats" xml:space="preserve">
+    <value>تدفع فقط مقابل الأعضاء الذين تدرّبهم عبر LMS؛ ويحتفظ الآخرون بوحدة التدريب المجانية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-seats" xml:space="preserve">
+    <value>قسم مختلط يفعّل LMS لموظفيه الأربعين المحترفين ويترك متطوعيه على التدريب المجاني.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-seats" xml:space="preserve">
+    <value>في الأفراد، استخدم مقاعد LMS لتفعيل مجموعة، أو افتح عضوًا واختر تفعيل LMS. لا يشغل المقعد إلا عضو نشط؛ أضف حزمة عند نفاد المقاعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-packs" xml:space="preserve">
+    <value>حزم LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-packs" xml:space="preserve">
+    <value>اشترِ إضافة LMS بحزم من 25 عضوًا وغيّر عدد الحزم، مع عرض السعر قبل أي تغيير.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-packs" xml:space="preserve">
+    <value>تتبع الفاتورة المقاعد التي تحتاجها: الشرائح المتدرجة تجعل الأعداد الكبيرة أرخص لكل عضو، وتُحتسب الحزم المضافة تناسبيًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-packs" xml:space="preserve">
+    <value>قسم لديه 110 أعضاء مفعّل لهم LMS يملك 5 حزم؛ وعندما يتجاوز 125 يضيف حزمة سادسة ويدفع الفرق التناسبي فورًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-packs" xml:space="preserve">
+    <value>في الاشتراك، افتح بطاقة LMS واختر عدد الحزم وأكمل الشراء. تسري إزالة الحزم في تاريخ الفوترة التالي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.WellnessSettings" xml:space="preserve">
+    <value>إعدادات الرفاهية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.WellnessSettings" xml:space="preserve">
+    <value>من يقرأ سجلات التعرض والحوادث الحرجة للأعضاء (دور مسؤول الرفاهية)، ومن هم الضباط المعيّنون وفريق دعم الأقران، والشهادة التي يمكن أن يحملها كل دور من أدوار الرفاهية، وكم سنة تُحفظ الإدخالات. رفاهية الأعضاء جزء من إضافة Workforce Pro وليس إضافة LMS: بدونها تصبح السجلات الحالية للقراءة فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>إعدادات الرفاهية / دور مسؤول الرفاهية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>يقرأ أعضاء هذا الدور سجل تعرض كل عضو ويديرون إشارات الفحص والمتابعات. لا يرى مديرو الإدارة السجلات ما لم يحملوا هذا الدور. اختيار لا شيء يترك كل سجل لصاحبه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>إعدادات الرفاهية / شهادة فريق دعم الأقران</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>نوع شهادة فريق دعم الأقران. عند تحديد دور لفريق دعم الأقران يُعرض كحالة لكل عضو في الفريق؛ وبدون دور يكون الأعضاء الحاملون لشهادة سارية من هذا النوع هم الفريق ويتلقون تذكيرات ذكرى الحوادث الحرجة التي يختار العضو مشاركتها. وبدون أي منهما لا يوجد فريق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>إعدادات الرفاهية / الاحتفاظ بالإدخالات (سنوات)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>عدد السنوات التي يُحتفظ فيها بإدخال التعرض بعد حدوثه، من 30 (الحد الأدنى في OSHA 29 CFR 1910.1020) إلى 100. الحجز القانوني يُبقي الإدخالات مدة أطول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.member-wellness" xml:space="preserve">
+    <value>حالات تعرضي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.member-wellness" xml:space="preserve">
+    <value>سجل خاص بكل عضو لحالات التعرض للمواد المسرطنة والمُمرضات المنقولة بالدم والمواد الخطرة والحوادث الحرجة، مع إدخالات مقترحة من بيانات الإرسال بعد الإشارة إلى بلاغ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.member-wellness" xml:space="preserve">
+    <value>سجلات تعرض لدعم افتراض الإصابة بالسرطان وتعويضات العمال، تُحفظ 30 عامًا، ولا يقرؤها إلا العضو ومسؤولو الرفاهية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.member-wellness" xml:space="preserve">
+    <value>بعد حريق مبنى، يشير الضابط إلى البلاغ؛ فيؤكد كل عضو كان في الموقع إدخال تعرض لمادة مسرطنة مقترحًا ويضيف معدات الحماية المستخدمة وإزالة التلوث المنفذة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.member-wellness" xml:space="preserve">
+    <value>اختر دور مسؤول الرفاهية في الأفراد، حالات تعرضي، الإعدادات، واختر إن شئت نوع شهادة لكل دور من أدوار الرفاهية. يفتح الأعضاء حالات تعرضي من الأفراد؛ ويشير الضباط إلى البلاغ من زر متابعة الرفاهية فيه. رفاهية الأعضاء جزء من إضافة Workforce Pro (وليس إضافة LMS): تُحفظ السجلات للأعضاء المفعّل لهم Workforce Pro، وبدون الإضافة تصبح السجلات الحالية للقراءة فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-knowledge" xml:space="preserve">
+    <value>إجابات المعرفة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-knowledge" xml:space="preserve">
+    <value>يطرح الأعضاء سؤالًا ويحصلون على إجابة مأخوذة فقط من البروتوكولات والتدريبات المنشورة لإدارتك ومن أكاديمية Resgrid، وكل جزء مرتبط بمصدره.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-knowledge" xml:space="preserve">
+    <value>يجد الأعضاء ما تقوله بروتوكولاتك في ثوانٍ، ويرى كاتبوها الأسئلة التي لا يجيب عنها المحتوى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-knowledge" xml:space="preserve">
+    <value>يسأل عضو عن معدات الحماية التي تتطلبها إرشادات المواد الخطرة فيحصل على الإجابة مع رابط إلى ذلك القسم من الإصدار الساري.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-knowledge" xml:space="preserve">
+    <value>يتطلب إضافة Enhanced AI مع تفعيل إجابات المعرفة لإدارتك. انشر بروتوكولاتك وابدأ تدريباتك؛ ثم يستخدم الأعضاء «اسأل» في مكتبة البروتوكولات أو في بروتوكول أو تدريب أو بلاغ. يرى مسؤولو التدريب الأسئلة دون إجابة ضمن فجوات المعرفة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.KnowledgeSettings" xml:space="preserve">
+    <value>إعدادات المعرفة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.KnowledgeSettings" xml:space="preserve">
+    <value>قواعد على مستوى الإدارة لإجابات المعرفة في صفحة إعدادات المعرفة: هل تُستخدم وحدة المستندات، ورابط أداة الجرعات في الإدارة. الغياب يعني عدم استخدام المستندات وعدم وجود رابط للجرعات. لا يغيرها إلا مسؤولو الإدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>إعدادات المعرفة / تضمين المستندات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>تنضم المستندات إلى المصادر التي تستخدمها إجابات المعرفة. لا تُستخدم مستندات المسؤولين فقط إلا للمسؤولين، ولا يُستخدم أي مستند أثناء تفعيل الحماية المتقدمة للبيانات. يؤدي تغييره إلى إعادة بناء فهرس المعرفة للإدارة في الخلفية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>إعدادات المعرفة / رابط أداة الجرعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>رابط https لأداة الجرعات في الإدارة. تعرضه الإجابات التي تقتبس جرعة؛ تُقتبس الجرعات من المصدر فقط، ولا يحسبها النموذج ولا Resgrid. يُرفض أي رابط غير https.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.document-sealing" xml:space="preserve">
+    <value>المستندات المختومة والتحقق من المستندات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.document-sealing" xml:space="preserve">
+    <value>تُختم الشهادات والسجلات وملفات PDF للبروتوكولات والمستندات الموقعة بختم زمني ليتحقق أي شخص من عدم تغييرها؛ ويمكن للضباط التحقق من أي PDF عبر «التحقق من مستند».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.document-sealing" xml:space="preserve">
+    <value>سلّم مستندات تثق بها الجهات الخارجية والمحاكم، واكتشف النسخ المعدّلة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.document-sealing" xml:space="preserve">
+    <value>يتحقق مفتش من أن شهادة أحضرها عضو من إدارة أخرى صادرة عن Resgrid ولم تُعدَّل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.document-sealing" xml:space="preserve">
+    <value>افتح «التحقق من مستند» وارفع ملف PDF. يُعدّ الختمَ مشغّلُ التثبيت؛ وحتى ذلك الحين تُعلَّم المستندات بأن الختم قيد الانتظار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.external-signatures" xml:space="preserve">
+    <value>التوقيعات الخارجية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.external-signatures" xml:space="preserve">
+    <value>يوقّع العملاء والشاغلون والأطراف الخارجية تقارير الوقت والعروض والعقود والتفتيشات ونقل عهدة الأدلة حضوريًا على جهاز أحد الأعضاء أو عبر رابط من Resgrid برمز لمرة واحدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.external-signatures" xml:space="preserve">
+    <value>استبدل الأسماء المكتوبة بتوقيعات يستطيع الطرف الآخر التحقق منها، مختومة بصفحة تدقيق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.external-signatures" xml:space="preserve">
+    <value>يسلّم قائد الطاقم الجهاز اللوحي إلى ممثل العميل ليوقّع تقرير الوردية اليومي قبل مغادرة الحادث.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.external-signatures" xml:space="preserve">
+    <value>افتح المستند واستخدم «تسليم الجهاز إلى الموقّع» أو اطلب توقيعًا عبر رابط. للروابط، يضيف المسؤول رمز فريق Documenso في إعدادات التوقيع الإلكتروني؛ وتأتي الروابط مع الإضافة التي يتبعها المستند.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-acknowledgments" xml:space="preserve">
+    <value>إقراراتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-acknowledgments" xml:space="preserve">
+    <value>اقرأ البروتوكولات والنشرات المطلوب منك الإقرار بها ووقّعها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compliance" xml:space="preserve">
+    <value>الامتثال للإقرارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compliance" xml:space="preserve">
+    <value>اطّلع على من قرأ كل نسخة بروتوكول ووقّعها، حسب المجموعة، وصدّر ذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulletins" xml:space="preserve">
+    <value>نشرات الأولوية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulletins" xml:space="preserve">
+    <value>أصدر تنبيهاً قصيراً إلزامي القراءة يسري فوراً ويُعتمد لاحقاً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulk-upload" xml:space="preserve">
+    <value>رفع مستندات البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulk-upload" xml:space="preserve">
+    <value>أدخل بروتوكولات PDF وWord دفعة واحدة كمسودات، مع نص قابل للبحث.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>إعدادات مكتبة البروتوكولات / لغة المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>لغة كتابة البروتوكولات. يقرأ الأعضاء الذين لا توجد ترجمة معتمدة بلغتهم الإصدار بهذه اللغة، وتُكتب بها تسميات الكتل مثل تنبيه. الفراغ يعني الإنجليزية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-block-editor" xml:space="preserve">
+    <value>محتوى بروتوكول منظم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-block-editor" xml:space="preserve">
+    <value>اكتب البروتوكولات ككتل: خطوات وتنبيهات ونقاط اتصال بالإشراف الطبي وجداول وأدوية ونسخ للبالغين والأطفال.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-step-through" xml:space="preserve">
+    <value>تنفيذ البروتوكول خطوة بخطوة أثناء البلاغات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-step-through" xml:space="preserve">
+    <value>نفّذ بروتوكول إجراء أو إرسال على بلاغ كقائمة تحقق، مع توقيت كل خطوة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-book" xml:space="preserve">
+    <value>كتاب PDF للبروتوكولات ورمز QR وعرض الطباعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-book" xml:space="preserve">
+    <value>صدّر فئة أو المكتبة كاملة ككتاب PDF واحد، أو اطبع بروتوكولًا، أو انشر رمز QR الخاص به.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-translations" xml:space="preserve">
+    <value>ترجمات محتوى البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-translations" xml:space="preserve">
+    <value>ترجم إصدار البروتوكول إلى لغات الأعضاء، مع اعتماد كل ترجمة على حدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>إعدادات العافية / دور الضابط المعيّن</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>يتلقى أعضاء هذا الدور بلاغات التعرض لمسببات الأمراض المنقولة بالدم والأمراض المعدية (رايان وايت الجزء G) ويديرون حالات التعرض. ولا شيء يعني أن دور مسؤول العافية يتولى ذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>إعدادات العافية / شهادة التدريب على مسببات الأمراض المنقولة بالدم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>نوع شهادة التدريب السنوي على مسببات الأمراض المنقولة بالدم (OSHA 1910.1030). تعرض كل حالة تعرض الوضع الحالي للعضو فيها. ولا شيء يتركها دون متابعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>إعدادات العافية / شهادة الإجازة الطبية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>نوع الشهادة الذي يُسجَّل به أيضًا كل تقييم طبي وفق NFPA 1582 (من قالب Medical Clearance (NFPA 1582)). يؤدي "غير مُجاز" إلى تعليقها. ولا شيء يُبقي الإجازات في العافية فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>إعدادات العافية / الاحتفاظ بسجلات الإصابات (بالسنوات)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>عدد السنوات التي يُحتفظ فيها بسجل الإصابة بعد نهاية سنتها، من 5 (OSHA 29 CFR 1904.33) إلى 100. يُبقي الحجز القانوني السجلات مدة أطول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-authoring-aids" xml:space="preserve">
+    <value>أدوات المساعدة في الصياغة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-authoring-aids" xml:space="preserve">
+    <value>صياغة مسودات لأسئلة الاختبار ومخططات الدورات وملخصات التغييرات من محتوى القسم نفسه ليراجعها المؤلفون.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-authoring-aids" xml:space="preserve">
+    <value>يبدأ المؤلفون من مسودة مستندة إلى المحتوى بدل صفحة فارغة، ولا يُحفظ شيء حتى يقبلوه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-authoring-aids" xml:space="preserve">
+    <value>يصوغ مسؤول تدريب خمسة أسئلة اختبار من تدريب أجهزة التنفس الجديد ويحتفظ بثلاثة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-authoring-aids" xml:space="preserve">
+    <value>فعّل إجابات المعرفة مع الذكاء الاصطناعي المحسّن؛ ستظهر الأدوات بعدها في محرر التدريب ومنشئ الدورات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.help-search" xml:space="preserve">
+    <value>البحث في مركز المساعدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.help-search" xml:space="preserve">
+    <value>بحث مجاني بالكلمات المفتاحية في أكاديمية Resgrid ومرجع المنتج من قائمة المساعدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.help-search" xml:space="preserve">
+    <value>يجد الأعضاء الدرس أو الإعداد الذي يحتاجونه دون مغادرة Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.help-search" xml:space="preserve">
+    <value>يبحث عضو جديد عن "الحالة" ويفتح درس التعريف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.help-search" xml:space="preserve">
+    <value>لا يلزم أي إعداد: افتح المساعدة ثم البحث في المساعدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy-guidance" xml:space="preserve">
+    <value>الجولات الإرشادية وما الجديد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy-guidance" xml:space="preserve">
+    <value>مهام أولى لكل دور مبنية على شروحات الأكاديمية، ودرس قصير عن كل إصدار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy-guidance" xml:space="preserve">
+    <value>يعرف الأعضاء الجدد والمسؤولون ما عليهم فعله أولًا، ويرى الجميع ما الذي تغيّر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy-guidance" xml:space="preserve">
+    <value>يُنجز مرسل جديد فتح قائمة البلاغات والتحقق من الوحدات والخريطة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy-guidance" xml:space="preserve">
+    <value>لا يلزم أي إعداد: يرى كل عضو جولة دوره في لوحة المعلومات ويمكنه إخفاؤها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.multi-signer-signatures" xml:space="preserve">
+    <value>التوقيعات متعددة الموقّعين</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.multi-signer-signatures" xml:space="preserve">
+    <value>يوقّع عدة أشخاص مستندًا واحدًا بالترتيب: أعضاء بالمستوى 1 أو 2، وشهود، ومسؤولون مصادِقون، ومقيّمون، وأطراف خارجية، مع تذكيرات إلى أن يوقّع الجميع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.multi-signer-signatures" xml:space="preserve">
+    <value>تُسجَّل الموافقات التي تتطلب أكثر من شخص بالترتيب الصحيح، مرتبطةً بالمحتوى الدقيق، وتُختم بصفحة تدقيق عند اكتمالها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.multi-signer-signatures" xml:space="preserve">
+    <value>يقيّم مسؤول التدريب مهارةً بالمستوى 2، ثم يوقّع المسؤول المصادِق؛ ويتلقى كلٌّ منهما تذكيرًا عندما يحين دوره.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.multi-signer-signatures" xml:space="preserve">
+    <value>يجد الأعضاء ما ينتظرهم ضمن «توقيعاتي» وفي صفحتهم الرئيسية؛ وتبدأ الطلبات من المستند الذي يحتاج إلى توقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.checklist-witness-signature" xml:space="preserve">
+    <value>توقيع الشاهد على قائمة التحقق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.checklist-witness-signature" xml:space="preserve">
+    <value>يمكن أن تشترط قائمة التحقق أن يوقّع شاهدها المستقل بالمستوى 2 (إعادة تحقق جديدة من الهوية أو مفتاح مرور) بدلًا من الشهادة بالنص وحده.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.checklist-witness-signature" xml:space="preserve">
+    <value>تحصل فحوص المواد الخاضعة للرقابة وفحوص السلامة على توقيع شاهد مرتبط بالنتائج المسجلة، ضمن قوائم التحقق دون تكلفة إضافية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.checklist-witness-signature" xml:space="preserve">
+    <value>بعد فحص صندوق الأدوية، يوقّع مسعف ثانٍ بصفة شاهد بمفتاح المرور الخاص به قبل أن يُحتسب الفحص مكتملًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.checklist-witness-signature" xml:space="preserve">
+    <value>حرّر قائمة التحقق، وفعّل الشاهد المستقل وتوقيع الشاهد، ثم انشر الإصدار الجديد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.readiness-signatures" xml:space="preserve">
+    <value>قبول المورد وإيصالات الصرف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.readiness-signatures" xml:space="preserve">
+    <value>يقبل الموردون أوامر العمل المكتملة، ويوقّع الأعضاء أو المستلمون إيصالات المعدات المصروفة، حضوريًا أو عبر رابط من Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.readiness-signatures" xml:space="preserve">
+    <value>استبدل التسليم الشفهي بقبول وإيصالات موقّعة يستطيع الطرف الآخر التحقق منها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.readiness-signatures" xml:space="preserve">
+    <value>يوقّع فني ورشة إصلاح المضخات أمر العمل المكتمل على الجهاز اللوحي للمحطة قبل مغادرته.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.readiness-signatures" xml:space="preserve">
+    <value>افتح أمر عمل مكتملًا، أو «إيصال» عنصر مصروف، واطلب التوقيع. تتطلب الروابط عن بُعد Readiness Pro وإعدادات التوقيع الإلكتروني للقسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsProgramSettings" xml:space="preserve">
+    <value>إعدادات برامج التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsProgramSettings" xml:space="preserve">
+    <value>كيفية الموافقة على طلبات التدريب والعملة التي تُدخل بها تكاليفها، وما إذا كانت عمليات التفتيش ومراجعات الخطط المسبقة في السجلات تُحتسب رصيدًا للتعرّف على المباني.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>يوافق المشرف على طلبات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>يوافق مسؤولو مجموعة العضو (أو مسؤولو الإدارة) على طلب التدريب أولًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>يوافق مسؤول التدريب على طلبات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>يوافق على الطلب عضو يدير سجلات التدريب للإدارة بأكملها، بعد المشرف عند تفعيل الخيارين معًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>عملة التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>رمز العملة المكوّن من ثلاثة أحرف (EUR وCAD وUSD …) الذي تُدخل به تكاليف طلبات التدريب وتكاليف الدورات ورسومها وتُجمع. ويمكن للدورة أن تحدد عملتها الخاصة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>احتساب رصيد التعرّف على المباني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>تُضاف عمليات تفتيش المباني ومراجعات الخطط المسبقة المكتملة في السجلات إلى سجل التدريب الخاص بالشخص الذي أجراها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>فئة التعرّف على المباني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>فئة التدريب التي يُحتسب فيها رصيد التعرّف على المباني، مثل فئة التخطيط المسبق للحرائق وفق ISO.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>الدقائق لكل زيارة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>الدقائق المحتسبة لزيارة ليس لها وقت بدء وانتهاء. أما الزيارة التي لها أوقاتها الخاصة فتُحتسب بمدتها الفعلية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>الاحتساب من عمليات التفتيش</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>تُحتسب عمليات تفتيش المباني المكتملة رصيدًا للمفتش.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>الاحتساب من مراجعات الخطط المسبقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>تُحتسب مراجعات الخطط المسبقة للمباني وجهات الاتصال رصيدًا للمراجِع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-plan" xml:space="preserve">
+    <value>خطة التدريب السنوية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-plan" xml:space="preserve">
+    <value>سنة من الجلسات والساعات المخطط لها لكل فئة وشهر للإدارة أو مجموعة أو مناوبة، مقارنةً بالساعات المسجّلة فعليًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-plan" xml:space="preserve">
+    <value>الخطة المكتوبة التي يطلبها المدققون والجهات التنظيمية وجهات الاعتماد، والنقص مقارنة بالأهداف السنوية الذي يظهر في يونيو، لا عند التدقيق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-plan" xml:space="preserve">
+    <value>يخطط مسؤول التدريب لـ 16 ساعة من تدريب الطاقم كل شهر؛ وبحلول يونيو يُظهر التوقع أن الإدارة ستقصر عن هدف الـ 192 ساعة بمقدار 20 ساعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-plan" xml:space="preserve">
+    <value>لا يوجد ما يُعدّ بعد: الخطة السنوية جزء من إضافة LMS، وهي غير متاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-competency-frameworks" xml:space="preserve">
+    <value>أطر الكفاءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-competency-frameworks" xml:space="preserve">
+    <value>متطلبات الأداء الوظيفي والمناصب والمهارات، موسومة على الدورات والتدريبات والشهادات التي تُثبتها، مع تقرير فجوات لكل عضو.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-competency-frameworks" xml:space="preserve">
+    <value>يُظهر لكل عضو المتطلبات التي لها إثبات، ومدى قِدمه، والمتطلبات التي لا إثبات لها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-competency-frameworks" xml:space="preserve">
+    <value>تستورد إدارةٌ إطار الكفاءات الخاص بالجهة التنظيمية لديها، وتضع وسوماً على دوراتها، وترى أن مجنداً جديداً لا يزال يفتقر إلى أدلة لثلاثة متطلبات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-competency-frameworks" xml:space="preserve">
+    <value>لا يوجد ما يُعدّ بعد: أطر الكفاءات جزء من إضافة LMS، وهي غير متاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-requests" xml:space="preserve">
+    <value>طلبات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-requests" xml:space="preserve">
+    <value>يطلب الأعضاء حضور دورة خارجية مع تكلفتها؛ يوافق عليها المشرف ومسؤول تدريب، وتُضاف الدورة إلى سجل التدريب بعد حضورها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-requests" xml:space="preserve">
+    <value>سجل واحد موافق عليه ومحدد التكلفة لكل دورة خارجية، وإجماليات الإنفاق لكل عضو ودورة وسنة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-requests" xml:space="preserve">
+    <value>يطلب مسعف حضور دورة مدتها 16 ساعة بتكلفة 450 دولارًا؛ يوافق عليها النقيب ومسؤول التدريب، ويُتحقق من الشهادة بعد ذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-requests" xml:space="preserve">
+    <value>لا يوجد ما يُعدّ بعد: طلبات التدريب جزء من إضافة LMS، وهي غير متاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-report-catalog" xml:space="preserve">
+    <value>كتالوج تقارير التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-report-catalog" xml:space="preserve">
+    <value>كل تقارير التدريب في مكان واحد، محفوظة بإعداداتها في مجلدات، وتُرسل وفق جدول يومي أو أسبوعي أو شهري بصيغة CSV أو PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-report-catalog" xml:space="preserve">
+    <value>تصل التقارير التي يحتاجها التدقيق من تلقاء نفسها، مصفّاة بالطريقة نفسها في كل مرة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-report-catalog" xml:space="preserve">
+    <value>يُرسل تقرير تدريب ISO إلى القائد ومسؤول التدريب بصيغة PDF في أول كل شهر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-report-catalog" xml:space="preserve">
+    <value>لا يوجد ما يُعدّ بعد: التقارير المحفوظة والمجدولة جزء من إضافة LMS، وهي غير متاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-cycles" xml:space="preserve">
+    <value>دورات الشهادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-cycles" xml:space="preserve">
+    <value>تبدأ الدورة التالية للشهادة تلقائيًا بمجرد استيفاء ساعات التجديد، ويُنبَّه المشرفون أو المسؤولون أو أعضاء محددون عندما تكتمل دورة أو تبدأ أو يقترب انتهاؤها أو تنتهي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-cycles" xml:space="preserve">
+    <value>تواصل المؤهلات المتكررة تتبّع الساعات دون أن يعيد أحد إدخالها، ويعلم بها الأشخاص المعنيون في الوقت المناسب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-cycles" xml:space="preserve">
+    <value>عندما يستوفي EMT ساعات التجديد، تبدأ الدورة التالية ومدتها سنتان من تاريخ الانتهاء الحالي، ويتلقى نقيب الخدمات الإسعافية إشعارًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-cycles" xml:space="preserve">
+    <value>لا يوجد ما يُعدّ بعد: قواعد دورات الشهادات جزء من إضافة LMS، وهي غير متاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-credential-audiences" xml:space="preserve">
+    <value>الرسائل حسب حالة الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-credential-audiences" xml:space="preserve">
+    <value>أرسل رسالة إلى الأعضاء الذين انتهت شهاداتهم، أو تنتهي خلال عدد من الأيام، أو لم يحملوها قط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-credential-audiences" xml:space="preserve">
+    <value>تصل التذكيرات إلى الأشخاص الذين يحتاجونها تمامًا، دون إعداد قائمة يدويًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-credential-audiences" xml:space="preserve">
+    <value>يراسل مسؤول التدريب كل من تنتهي بطاقة CPR الخاصة به خلال 30 يومًا بموعد الدورة التالية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-credential-audiences" xml:space="preserve">
+    <value>لا يوجد ما يُعدّ بعد: فئات المستلمين حسب حالة الشهادة جزء من إضافة LMS، وهي غير متاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LearningRequirementSettings" xml:space="preserve">
+    <value>إعدادات متطلبات التعلّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LearningRequirementSettings" xml:space="preserve">
+    <value>الفرض المرتبط بالتدريب للقسم (متوقف افتراضيًا)، وأكبر نسبة من أعضاء الدور يمكن أن يزيلها تشغيل فرض واحد، والتحذير الافتراضي من الخطر للمتطلبات الجديدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>إعدادات متطلبات التعلّم / الفرض المرتبط بالتدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>عند تشغيله، يمكن للمتطلب المفعَّل فيه إنهاء صلاحية الشهادة التي يدعمها بمجرد أن يتأخر العضو بعد فترة السماح، ثم تزيل وحدة الشهادات الأدوار بعد فترة السماح الخاصة بها. متوقف افتراضيًا، ولا يعمل أبدًا ما دامت إضافة LMS غير نشطة، ويعرض تشغيله أولًا مَن سيفقد أي دور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>إعدادات متطلبات التعلّم / أكبر نسبة من الدور تُزال في تشغيل واحد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>يُرفض أي تشغيل قد يزيل أكثر من هذه النسبة المئوية من الأعضاء النشطين في الدور، ويُبلَّغ مسؤولو القسم. القيمة الافتراضية 20.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>إعدادات متطلبات التعلّم / التحذير الافتراضي من الخطر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>عدد الأيام قبل تاريخ الاستحقاق التي يبدأ فيها المتطلب الجديد بإظهار الأعضاء معرّضين للخطر. القيمة الافتراضية 14.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-requirements" xml:space="preserve">
+    <value>متطلبات التعلّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-requirements" xml:space="preserve">
+    <value>متطلبات تدريب متكررة ولمرة واحدة حسب الدور أو المجموعة أو الشهادة أو المناوبة: الدورات والتدريبات والساعات لكل فئة ومسارات التعلّم وتقييمات المهارات الناجحة، مع تواريخ استحقاق تبدأ من انضمام الأعضاء أو منحهم دورًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-requirements" xml:space="preserve">
+    <value>يعرف الجميع ما عليهم وموعده، ويرى الضباط مَن هو معرّض للخطر قبل أي تدقيق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-requirements" xml:space="preserve">
+    <value>يُكمل كل سائق مشغّل دورة تشغيل المضخات كل 12 شهرًا، ويسجّل كل عضو 24 ساعة من تدريب الفرقة في كل سنة تقويمية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-requirements" xml:space="preserve">
+    <value>افتح التدريبات، واختر البرامج، ثم أضف متطلبًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-compliance-matrix" xml:space="preserve">
+    <value>مصفوفة الامتثال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-compliance-matrix" xml:space="preserve">
+    <value>كل عضو مقابل كل متطلب: ممتثل أو مستحق لاحقًا أو معرّض للخطر أو متأخر أو معفى أو في إجازة أو غير مرخّص، مع التصدير إلى CSV وPDF، ويرى مسؤول المجموعة مجموعته الخاصة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-compliance-matrix" xml:space="preserve">
+    <value>صفحة واحدة تبيّن مَن هو غير ممتثل وما المستحق تاليًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-compliance-matrix" xml:space="preserve">
+    <value>يصفّي نقيب المصفوفة على محطته ويُعفي عضوًا في إجازة عسكرية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-compliance-matrix" xml:space="preserve">
+    <value>افتح التدريبات، واختر البرامج، ثم الامتثال.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learning-paths" xml:space="preserve">
+    <value>مسارات التعلّم والتهيئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learning-paths" xml:space="preserve">
+    <value>دورات ودروس Academy وتدريبات مرتبة مع شروط مسبقة وخطوات اختيارية، ويمكن أن يمنح إنهاء المسار شهادة. ويمكن إسناد مسار لكل دور تلقائيًا عند انضمام شخص ما أو منحه الدور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learning-paths" xml:space="preserve">
+    <value>يتبع الأعضاء الجدد التهيئة نفسها مع تاريخ استحقاق، دون أن يضطر أحد إلى تذكّر إسنادها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learning-paths" xml:space="preserve">
+    <value>يحصل المرسِلون الجدد على مسار المرسِل مع 30 يومًا لإنهائه، ويمنح إنهاؤه شهادة المرسِل الخاصة بالقسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learning-paths" xml:space="preserve">
+    <value>افتح التدريبات، واختر البرامج، ثم المسارات لإنشاء مسار، والتهيئة لإسناده حسب الدور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-call-answers" xml:space="preserve">
+    <value>السؤال عن بلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-call-answers" xml:space="preserve">
+    <value>يطرح الأعضاء سؤالًا في عرض البلاغ ويحصلون على إجابة مأخوذة فقط من إصدارات البروتوكولات التي يستند إليها البلاغ ومن نوعه وأولويته ومحدِّده ونوع موقعه، وكل جزء مرتبط بقسمه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-call-answers" xml:space="preserve">
+    <value>تعثر الطواقم والمرسِلون على ما تقوله بروتوكولات البلاغ لهذا البلاغ في ثوانٍ، ولا تُرسل أبدًا تفاصيل المريض أو المتصل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-call-answers" xml:space="preserve">
+    <value>في حريق مبنى في مدرسة، يسأل ملازم عن مكان تمركز الطواقم ويحصل على الإجابة من القسم المذكور في بروتوكول المدارس.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-call-answers" xml:space="preserve">
+    <value>فعّل إجابات المعرفة مع Enhanced AI وأرفق البروتوكولات بالبلاغات؛ يظهر بعدها «اسأل عن هذا البلاغ» في تبويب البروتوكولات في عرض البلاغ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-tutor" xml:space="preserve">
+    <value>المدرّس والتدرّب على السيناريوهات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-tutor" xml:space="preserve">
+    <value>يطرح المتعلمون أسئلة عن الدورة التي يأخذونها، ويتدرّب الأعضاء على سيناريو قصير مكتوب من بروتوكول، وتُقيَّم إجاباتهم مقارنةً بذلك البروتوكول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-tutor" xml:space="preserve">
+    <value>يتحقق الأعضاء من فهمهم بين التمارين، وكل إجابة ونتيجة تشير إلى القسم الدقيق، دون تسجيل أي شيء في سجل تدريبهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-tutor" xml:space="preserve">
+    <value>يتدرّب مسعف جديد على بروتوكول توقف القلب: سيناريو قصير وثلاثة أسئلة وملاحظات تقتبس الخطوات التي يذكرها البروتوكول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-tutor" xml:space="preserve">
+    <value>فعّل إجابات المعرفة مع Enhanced AI؛ ليظهر خيار التدرّب في كل بروتوكول. ويتطلب "اسأل هذه الدورة" في مشغّل الدورات أيضًا إضافة LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-recommendations" xml:space="preserve">
+    <value>توصيات التعلّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-recommendations" xml:space="preserve">
+    <value>يوصي كل عضو بمسارات تعلّم ودورات بناءً على متطلباته المفتوحة والمسارات التي يسلكها وفجوات كفاءته والدورات المعروضة لأدواره.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-recommendations" xml:space="preserve">
+    <value>يرى الأعضاء ما يأخذونه بعد ذلك ولماذا، ويرى الضباط الشيء نفسه للأعضاء الذين يشرفون عليهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-recommendations" xml:space="preserve">
+    <value>يرى رجل إطفاء لا يملك دليلًا على كفاءة السلالم دورة عمليات السلالم موصى بها في «تدريبي» مع السبب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-recommendations" xml:space="preserve">
+    <value>افتح التدريبات، واختر البرامج، ثم التوصيات؛ ويرى الأعضاء أيضًا «موصى به لك» في «تدريبي». يحتاج «اشرح بالذكاء الاصطناعي» إلى Enhanced AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.approval-chains" xml:space="preserve">
+    <value>سلاسل الاعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.approval-chains" xml:space="preserve">
+    <value>تعتمد سلسلةٌ من الأشخاص بالترتيب المشترياتِ وخططَ عمل الحادث والفواتيرَ وحزمَ Cal OES MARS واتفاقياتِ المساعدة المتبادلة، مع حدود للمبالغ وخطوات متوازية ومفوَّضين أثناء إجازة أحدهم وتصعيد عندما تتوقف خطوة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.approval-chains" xml:space="preserve">
+    <value>كل اعتماد توقيعٌ من المستوى 2 مرتبط بالمحتوى الدقيق: أي تغيير يُبطله، والرفض يحتاج إلى سبب، والسلسلة المكتملة تختم المستند.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.approval-chains" xml:space="preserve">
+    <value>تحتاج المشتريات التي تزيد على 5,000 إلى رئيس الشؤون المالية بعد رئيس فرع اللوجستيات؛ وإذا لم يتصرف رئيس الشؤون المالية خلال 24 ساعة، يُحال الطلب إلى مسؤولي القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.approval-chains" xml:space="preserve">
+    <value>يحدد أحد مسؤولي القسم سلسلة لكل نوع ضمن الاعتمادات، السلاسل؛ ويقدّم الأعضاء من صفحة العنصر أو من الاعتمادات، ويجد المعتمِدون الطلبات ضمن اعتماداتي وفي صفحتهم الرئيسية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-protocol-learning" xml:space="preserve">
+    <value>اختبارات البروتوكولات والتعلم المصغّر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-protocol-learning" xml:space="preserve">
+    <value>اجعل إقرار البروتوكول ينتظر اجتياز اختبار مسحوب من بنك أسئلة، وأرسل إلى الأعضاء سؤال سيناريو واحدًا كل أسبوع من بروتوكولات مختارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-protocol-learning" xml:space="preserve">
+    <value>يُظهر الأعضاء أنهم فهموا البروتوكول لا أنهم فتحوه فقط، ويحافظون على تذكّره بين المراجعات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-protocol-learning" xml:space="preserve">
+    <value>يتطلب إجراء الاستغاثة الجديد اجتياز خمسة أسئلة بنسبة 80% قبل احتساب الإقرار، وفي كل يوم اثنين يجيب كل إطفائي عن سيناريو واحد منه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-protocol-learning" xml:space="preserve">
+    <value>لا شيء لإعداده بعد: اختبارات البروتوكولات والتعلم المصغّر جزء من إضافة LMS غير المتاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-class-sessions" xml:space="preserve">
+    <value>جلسات الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-class-sessions" xml:space="preserve">
+    <value>دورات يقودها مدرّب على التقويم مع السعة وقائمة الانتظار وقواعد التسجيل وتسجيل الحضور برمز QR متغيّر وGPS، واعتماد المدرّب الذي يكتب سجل التدريب لكل حاضر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-class-sessions" xml:space="preserve">
+    <value>قائمة واحدة لكل دورة تُعدّ السجل: من درّس ومن حضر وما تم تناوله وكم استغرق، محفوظة طوال مدة احتفاظ الفئة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-class-sessions" xml:space="preserve">
+    <value>تمتلئ دورة تنشيطية عن مسببات الأمراض المنقولة بالدم بعشرين مقعدًا؛ ينتظر ثلاثة أعضاء، وعندما ينسحب أحدهم يُسجَّل التالي ويُبلَّغ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-class-sessions" xml:space="preserve">
+    <value>لا شيء لإعداده بعد: جلسات الدورات جزء من إضافة نظام إدارة التعلم غير المتاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-lesson-plans" xml:space="preserve">
+    <value>خطط الدروس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-lesson-plans" xml:space="preserve">
+    <value>خطط قابلة لإعادة الاستخدام للجلسات التي يقودها مدرّب: الأهداف والكفاءات المشمولة والمواد والمعدات ونسبة المدرّبين إلى الطلاب وخطة السلامة وقائمة الإيجاز المسبق، بإصدارات معتمدة قبل الاستخدام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-lesson-plans" xml:space="preserve">
+    <value>تُدرَّس جلسات الحريق الحي والقيادة وأجهزة التنفس وفق خطة معتمدة، وتُظهر القائمة النسخة المستخدمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-lesson-plans" xml:space="preserve">
+    <value>ينسخ ضابط التدريب خطة الحريق الحي الأولية ويضيف مبنى الحرق والنسب الخاصة بالقسم، ثم يعتمدها قائد قبل التمرين الأول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-lesson-plans" xml:space="preserve">
+    <value>لا شيء لإعداده بعد: خطط الدروس جزء من إضافة نظام إدارة التعلم غير المتاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-resources" xml:space="preserve">
+    <value>حجز المرافق والمعدات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-resources" xml:space="preserve">
+    <value>ساحات التدريب والفصول الدراسية والمجسمات والمركبات والمعدات الخاصة بالمؤسسة، تُحجز لأوقات الحصص حتى لا يُحجز شيء مرتين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-resources" xml:space="preserve">
+    <value>لا تخطّط دورتان أبدًا لاستخدام مبنى الحرق نفسه أو المضخة نفسها في العصر نفسه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-resources" xml:space="preserve">
+    <value>يحجز تمرين السلالم برج التدريب والمضخة 3 لصباح السبت؛ ويُرفض طلب دورة ثانية للبرج في ذلك الوقت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-resources" xml:space="preserve">
+    <value>لا شيء لإعداده بعد: حجز المرافق جزء من إضافة نظام إدارة التعلم غير المتاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>إعدادات مكتبة البروتوكولات / الرمز المحدِّد في نصوص الإرسال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>يضيف الرمز المحدِّد واسم البروتوكول من مسار حالة البلاغ إلى عنوان إشعار الإرسال ورسالة الإرسال النصية والرسالة الصوتية. معطّل افتراضيًا؛ وعند تعطيله تبقى كل نصوص الإرسال كما هي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-case-flow" xml:space="preserve">
+    <value>مسار حالة البروتوكول (محرك قرار الإرسال)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-case-flow" xml:space="preserve">
+    <value>يمكن أن يحمل بروتوكول الإرسال مسار حالة: أسئلة البدء والأسئلة الرئيسية وتعليمات تُقرأ بصوت عالٍ ونتائج لها رمز محدِّد وأولوية مقترحة. يتبعه المرسلون في نموذج البلاغ الجديد، ولا يتجاوزون الرمز إلا بسبب، ويرسلون التعليمات لمتصل عبر الرسائل، ومع الذكاء الاصطناعي المحسّن يحصلون على بروتوكول مقترح لتأكيده. يمكن لبطاقات الاستجابة التفاعل مع الرمز.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-sheets" xml:space="preserve">
+    <value>أوراق المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-sheets" xml:space="preserve">
+    <value>أوراق مهارات حسب متطلبات الأداء بخطوات مرتبة ومعايير حرجة تُرسب التقييم ومقاييس ومؤقت وأدلة، بإصدارات ومكتبة قوالب Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-sheets" xml:space="preserve">
+    <value>يقيّم كل المقيّمين المهارة نفسها بالطريقة نفسها، ويمكن للإدارة أن تُظهر بدقة ما الذي فُحص.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-sheets" xml:space="preserve">
+    <value>تُرسب ورقة ارتداء جهاز التنفس كل من يستغرق أكثر من 60 ثانية أو يغفل فحص إحكام القناع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-sheets" xml:space="preserve">
+    <value>افتح التدريب واختر المهارات ثم أوراق المهارات، وابدأ من قالب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-evaluations" xml:space="preserve">
+    <value>تقييمات المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-evaluations" xml:space="preserve">
+    <value>وضع المقيّم: قيّم عضوًا أو الطاقم كله بورقة، مع نجاح الكل والتعليقات والأدلة، ثم وقّع بالمستوى L2؛ تُسجَّل التقييمات الناجحة في السجل التدريبي ويُختم السجل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-evaluations" xml:space="preserve">
+    <value>تصبح المهارات المفحوصة في ساحة التدريب أدلة موقّعة ومختومة تُحتسب في المتطلبات والشهادات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-evaluations" xml:space="preserve">
+    <value>يقيّم قائد طاقم المركبة 2 على مدّ خط الخرطوم بنموذج واحد، ويفصل العضو الذي واجه صعوبة، ويوقّع من جهاز لوحي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-evaluations" xml:space="preserve">
+    <value>انشر ورقة وحدّد من يحق له التقييم بها، ثم اختر بدء تقييم ضمن التدريب، المهارات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-task-books" xml:space="preserve">
+    <value>كتب مهام المناصب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-task-books" xml:space="preserve">
+    <value>كتب مهام وفق نموذج NWCG: تبدأ برمز المنصب وتاريخ، ويوقّع المهامَّ مقيّمون مؤهلون في تواريخ وبلاغات مختلفة، ويوصي بها مقيّم نهائي ويصادق عليها المسؤول؛ وتفعّل المصادقة شهادة المتدرّب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-task-books" xml:space="preserve">
+    <value>ينتقل المتدرّبون إلى التأهيل بسجل كامل وموقّع بدلًا من كتاب ورقي في خزانة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-task-books" xml:space="preserve">
+    <value>يبدأ كتاب FFT2 لمتدرّب في مارس، وتُوقَّع مهمتان في حرائق الغابات ذلك الصيف، ويصادق عليه المسؤول في سبتمبر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-task-books" xml:space="preserve">
+    <value>افتح التدريب واختر المهارات ثم التعريفات، وابدأ من قالب كتاب، وحدّد من يوقّع ويصادق، ثم ابدأ الكتب ضمن كتب المهام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsSkillSettings" xml:space="preserve">
+    <value>إعدادات إشعارات المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsSkillSettings" xml:space="preserve">
+    <value>كيف تُرسل إشعارات التقييمات وكتب المهام، فورًا أو في ملخص يومي أو أسبوعي، وما إذا كان الأعضاء الخاضعون للتقييم والمسؤولون يتلقونها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>إرسال إشعارات المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>فورًا، أو ملخص يومي أو أسبوعي (رسالة واحدة لكل شخص بكل الإشعارات المستحقة)، أو متوقف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>وقت ملخص المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>الساعة بالتوقيت المحلي للإدارة التي تُرسل فيها الملخصات اليومية والأسبوعية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>يوم ملخص المهارات الأسبوعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>يوم الأسبوع الذي تُرسل فيه الملخصات الأسبوعية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>إشعار الأعضاء الخاضعين للتقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>يتلقى الأعضاء الخاضعون للتقييم والمتدربون إشعارات بتقييماتهم وكتبهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>إشعار المسؤولين</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>يتلقى مسؤولو الإدارة النشطون إشعارًا بكل تقييم وكتاب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewDispatchCases">
+    <value>مراجعة حالات الإرسال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ReviewDispatchCases">
+    <value>يسمح بسحب عينات من البلاغات لمراجعة الحالات، وتقييم الحالة المسجلة بمعيار تقييم، وإرسال المراجعة إلى المرسِل، وقراءة تقرير الالتزام. لا أحد يراجع بلاغاته. من دون قاعدة محفوظة يقتصر ذلك على مسؤولي الإدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.dispatch-case-review">
+    <value>مراجعة حالات الإرسال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dispatch-case-review">
+    <value>يسحب المسؤولون عينات من البلاغات حسب البروتوكول والإصدار والرمز المحدِّد والمرسِل والتواريخ، ويقيّمون كل حالة مسجلة سؤالاً بسؤال وتعليمة بتعليمة بمعيار ضبط الجودة في Records بجانب مسار البروتوكول، ثم يرسلون المراجعة إلى المرسِل. تعرض التقارير الالتزام حسب البروتوكول والإصدار والمرسِل والشهر، مع CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.my-case-reviews">
+    <value>مراجعات حالاتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.my-case-reviews">
+    <value>يقرأ المرسِلون مراجعات البلاغات التي تعاملوا معها، مع تقييم كل سؤال وتعليمة وملاحظات المراجع، ويؤكدون كل مراجعة مرة واحدة ويمكنهم الرد مرة واحدة؛ ويُبلَّغ المراجع بالرد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsCeReportingSettings" xml:space="preserve">
+    <value>إعدادات تقارير التعليم المستمر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsCeReportingSettings" xml:space="preserve">
+    <value>أرقام مزودي CAPCE وCE Broker، وأنواع الشهادات التي تحتوي على أرقام ترخيص الأعضاء وأرقام NREMT وNational EMS ID، وقوائم أعمدة ملف ساعات تدريب CE / CPD وملفات CAPCE وCE الخاصة بالولايات وقوائم الولايات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>رقم مزوّد CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>رقم مزوّد CAPCE الخاص بالقسم عندما يكون مزوّدًا معتمدًا لدى CAPCE. من دونه لا يُنشأ ملف إتمام CAPCE.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>اسم مزوّد CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>اسم المزوّد كما يُدخله القسم في الدورات والسجلات؛ تُحتسب حالات الإتمام التي تذكره ضمن التعليم المستمر الخاص بالقسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>نوع شهادة ترخيص الولاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>نوع الشهادة الذي تُبلغ الملفات رقمه ومنطقته ونوعه وتاريخ انتهائه بوصفها ترخيص الولاية للعضو.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>نوع شهادة NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>نوع الشهادة الذي تُبلغ الملفات رقمه وتاريخ انتهائه بوصفهما رقم NREMT وتاريخ إعادة التسجيل التالي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>نوع شهادة المعرّف الوطني لخدمات الإسعاف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>نوع الشهادة الذي تُبلغ الملفات رقمه بوصفه المعرّف الوطني لخدمات الإسعاف (NEMSID) للعضو.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>رقم مزوّد CE Broker</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>رقم تتبّع المزوّد في CE Broker (فلوريدا) الذي يُكتب في العمود A من ملف CE Broker دون البادئة 50-.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>قوائم أعمدة ملفات التعليم المستمر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>قوائم الأعمدة الخاصة بالقسم، واحدة لكل نوع ملف؛ يستخدم نوع الملف الذي لا قائمة له أعمدته الافتراضية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>نوع ملف التعليم المستمر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>الملف الذي تنتمي إليه قائمة الأعمدة: training-hours أو capce أو fl-ems أو va-ems أو nj-ems أو fl-fire أو state-ce أو state-roster.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>أعمدة ملف التعليم المستمر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>أعمدة الملف بالترتيب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Header" xml:space="preserve">
+    <value>عنوان عمود التعليم المستمر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Header" xml:space="preserve">
+    <value>العنوان المكتوب في صف العناوين بالملف؛ الملفات التي بلا صف عناوين تتجاهله.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Source" xml:space="preserve">
+    <value>قيمة عمود التعليم المستمر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Source" xml:space="preserve">
+    <value>القيمة التي يحملها العمود: حقل عضو أو سجل أو شهادة أو مزوّد، أو نص ثابت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Argument" xml:space="preserve">
+    <value>تنسيق عمود التعليم المستمر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Argument" xml:space="preserve">
+    <value>تنسيق تاريخ أو رقم للقيمة، أو نص عمود النص الثابت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-data-export" xml:space="preserve">
+    <value>تصدير بيانات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-data-export" xml:space="preserve">
+    <value>يصدّر مالكو القسم ومسؤولوه كل ما أدخله القسم في التدريب: الدورات بإصداراتها ودروسها ووسائطها، وبنوك الأسئلة مع مفاتيح الإجابات، وكل سجل تعلّم ومحاولة وشهادة بصيغة CSV وعبارات xAPI، مع حزمة SCORM 1.2 لكل دورة تسمح دروسها بذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-data-export" xml:space="preserve">
+    <value>يستطيع القسم دائمًا أخذ محتواه التدريبي وأدلته معه، حتى بعد انتهاء إضافة نظام إدارة التعلّم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-data-export" xml:space="preserve">
+    <value>قبل الانتقال إلى نظام أكاديمية إقليمية، يصدّر مسؤول التدريب كل شيء، ويحمّل عبارات xAPI في مخزن السجلات الجديد، ويحتفظ بسجلات CSV للتدقيق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-data-export" xml:space="preserve">
+    <value>افتح التدريب، واختر البرامج ثم تصدير البيانات، واختر «كل شيء» أو «السجلات فقط» وابدأ التصدير؛ نزّل ملف zip عندما يصبح جاهزًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-ce-reporting" xml:space="preserve">
+    <value>ملفات تقارير التعليم المستمر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-ce-reporting" xml:space="preserve">
+    <value>ينشئ ملف ساعات تدريب CE / CPD بالأعمدة التي تطلبها الجهة التنظيمية أو الهيئة المهنية لديك، وللإدارات الأمريكية ملف الإكمال الخاص بـ CAPCE، وملفات CE الخاصة بالولايات (تنسيق CE Broker في فلوريدا وملف CSV قابل للتهيئة للولايات الأخرى)، وقائمة جاهزة للولاية لأنظمة مثل Acadis، مع معاينة وأعمدة خاصة بكل إدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-ce-reporting" xml:space="preserve">
+    <value>تصل حالات الإكمال إلى الجهة التنظيمية أو الهيئة المهنية أو CAPCE أو مكتب الولاية دون إعادة كتابة القوائم، ولا يُقدَّم أي شيء قبل أن يتحقق شخص ما من الملف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-ce-reporting" xml:space="preserve">
+    <value>كل شهر يعاين منسق خدمات الإسعاف ملف CAPCE للشهر الماضي، ويصحّح عضوين ينقصهما رقم ترخيص الولاية، ثم يرفع ملف CSV إلى CAPCE.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-ce-reporting" xml:space="preserve">
+    <value>افتح التدريب، واختر البرامج ثم تقارير التعليم المستمر، وأدخل أرقام المزوّد وأنواع الشهادات التي تحمل أرقام التراخيص، ثم أنشئ ملفًا لنطاق تاريخ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-public-pages" xml:space="preserve">
+    <value>صفحات البروتوكولات العامة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-public-pages" xml:space="preserve">
+    <value>انشر الإصدار النافذ من بروتوكول، أو فئة كمجموعة، على عنوان عام اختياري مع رمز تضمين. لا تُعرض أبدًا المسودات أو المحتوى المقصور على جمهور محدد أو المحتوى المرخّص، ويمكن إلغاء الصفحة في أي وقت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-template-library" xml:space="preserve">
+    <value>مكتبة قوالب البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-template-library" xml:space="preserve">
+    <value>استنساخ المجموعات الأولية التي كتبتها Resgrid (إرشادات التشغيل القياسية للإطفاء، والبحث والإنقاذ، والمخاطر الصناعية، واستمرارية الأعمال، وسياسات إنفاذ القانون، وتعليمات نقاط الحراسة الأمنية، وسياسات مكان العمل، ومخطط EMS دون نص سريري) إلى المكتبة كمسودات بلغتك، مع الاحتفاظ بالمصدر والترخيص والإصدار في كل نسخة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.community-exchange" xml:space="preserve">
+    <value>تبادل المجتمع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.community-exchange" xml:space="preserve">
+    <value>شارك البروتوكولات والتدريبات مع الأقسام الأخرى مجانًا. تُزال بيانات القسم، ويُرفض المحتوى المرخّص، وتراجع Resgrid كل مساهمة قبل إدراجها، ويمكن للأقسام الأخرى تقييمها والتعليق عليها واستيراد نسخة منها مع الاحتفاظ بالنسب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-open-format" xml:space="preserve">
+    <value>التنسيق المفتوح للبروتوكولات والتصدير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-open-format" xml:space="preserve">
+    <value>صدّر المكتبة أو فئة بتنسيق JSON المفتوح الموثّق (الكتل، وسجل الإصدارات، ومخطط القرارات، والترجمات، وقائمة المرفقات)، أو كملف HTML واحد، أو ككتاب PDF. لا تزال الملفات بالتنسيق الأقدم قابلة للاستيراد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-analytics" xml:space="preserve">
+    <value>تحليلات البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-analytics" xml:space="preserve">
+    <value>اطّلع على كيفية استخدام البروتوكولات في البلاغات حسب الإصدار، وتوزيع المحدِّدات ومعدل التجاوز، والوقت على البروتوكول، والالتزام بالإقرار بالاطلاع، وعمليات البحث التي لم تعثر على شيء، مع تصدير إلى CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-external-learners" xml:space="preserve">
+    <value>المتعلمون الخارجيون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-external-learners" xml:space="preserve">
+    <value>درّب أشخاصًا ليسوا أعضاء: شركاء المساعدة المتبادلة والمقاولين والمتطوعين والجمهور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-external-learners" xml:space="preserve">
+    <value>يأخذ الشركاء والجمهور دوراتك وفصولك دون حسابات أعضاء أو وصول إلى أي شيء آخر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-external-learners" xml:space="preserve">
+    <value>يجتاز المقاولون التعريف بالسلامة في موقعك، وتلتحق شركة متطوعين مجاورة بدورة مشغل المضخة لديك، ويسجّل متطوعو CERT في حصة دراسية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-external-learners" xml:space="preserve">
+    <value>فعّل بوابة المتعلمين وافتح الدورات للمتعلمين الخارجيين ثم ادعهم بالبريد الإلكتروني. يُشمل حتى 25% من مقاعدك (25 على الأقل).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learner-portal" xml:space="preserve">
+    <value>بوابة متعلمين بعلامتك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learner-portal" xml:space="preserve">
+    <value>صفحة دخول وكتالوج للمتعلمين الخارجيين بشعار قسمك ولونه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learner-portal" xml:space="preserve">
+    <value>يرى المتعلمون قسمك لا Resgrid، ولا شيء سوى تدريبهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learner-portal" xml:space="preserve">
+    <value>يجد الجمهور فصول الإنعاش القلبي في بوابتك ويسجّل بعد تأكيد بريده.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learner-portal" xml:space="preserve">
+    <value>ارفع شعارًا في ملف القسم واختر لون تمييز وحدد ما إذا كان التسجيل الذاتي والعرض العام مسموحين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-public-class-fees" xml:space="preserve">
+    <value>فصول عامة مدفوعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-public-class-fees" xml:space="preserve">
+    <value>رسوم اختيارية لكل متعلم خارجي في الفصل، مع تصدير القائمة والفواتير.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-public-class-fees" xml:space="preserve">
+    <value>افوتر فصول الإنعاش والإسعافات الأولية وCERT: صدّر القائمة لفوترتك أو أصدر فواتير عبر Business Ops.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-public-class-fees" xml:space="preserve">
+    <value>يتقاضى فصل الإنعاش 45 للشخص؛ وتذهب فاتورة واحدة إلى صاحب العمل الذي أرسل ستة موظفين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-public-class-fees" xml:space="preserve">
+    <value>افتح صفحة الفصل العام والرسوم، وأدرج الفصل وحدد الرسوم، ثم صدّر القائمة أو أصدر فواتير لكل متعلم أو لكل مؤسسة راعية. لا يتلقى Resgrid أي دفعات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-course-drafts" xml:space="preserve">
+    <value>مسودات الدورات من البروتوكولات والإجراءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-course-drafts" xml:space="preserve">
+    <value>صِغ دورة إلكترونية من بروتوكول منشور أو مستند إجراءات مرفوع: وحدات، ودروس يستشهد كل منها بالأقسام التي يعلّمها، وبنك أسئلة للمراجعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-course-drafts" xml:space="preserve">
+    <value>يبدأ مسؤولو التدريب من مسودة كاملة تتبع إجراءات الإدارة نفسها بدلًا من صفحة فارغة، ويعرض كل درس النص المصدري الذي يستند إليه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-course-drafts" xml:space="preserve">
+    <value>يحوّل مسؤول تدريب إجراء النداء الاستغاثي الجديد إلى مسودة دورة من أربع وحدات وخمسة أسئلة، ويراجع كل درس مقابل قسمه المستشهد به، ثم يرسلها للاعتماد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-course-drafts" xml:space="preserve">
+    <value>يتطلب Enhanced AI مع إجابات المعرفة وإضافة LMS؛ افتح التدريب، ثم مكتبة الدورات، ثم مسودة بالذكاء الاصطناعي. لا تُنشر المسودات من تلقاء نفسها أبدًا، ويجب أن يظهر كل رقم في الأقسام المستشهد بها، ولا يُرسل المحتوى المعلَّم بدون ذكاء اصطناعي أبدًا، ولا تحصل الإدارات التي تستخدم Advanced Data Protection على مسودات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-flashcards" xml:space="preserve">
+    <value>البطاقات التعليمية للدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-flashcards" xml:space="preserve">
+    <value>بطاقات تدريب تُصاغ من دورة أو من البروتوكول الذي بُنيت عليه؛ يحتفظ المؤلفون بما يريدون ويتدرب المتعلمون عليها في مشغّل الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-flashcards" xml:space="preserve">
+    <value>يراجع الأعضاء بين التمارين الخطوات والمعايير التي يجب أن يتذكروها، وتُخفى البطاقة وتُعلَّم للمراجعة بمجرد صدور إصدار جديد لمصدرها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-flashcards" xml:space="preserve">
+    <value>عندما ينتقل بروتوكول توقف القلب إلى إصدار جديد، تختفي بطاقاته من المشغّل حتى يراجعها مسؤول التدريب مقابل الإصدار الجديد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-flashcards" xml:space="preserve">
+    <value>يتطلب Enhanced AI مع إجابات المعرفة وإضافة LMS؛ افتح دورة واختر البطاقات التعليمية. لا يُقيَّم التدريب ولا يُسجَّل في السجل التدريبي أبدًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-starter-courses" xml:space="preserve">
+    <value>الدورات التمهيدية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-starter-courses" xml:space="preserve">
+    <value>دورات كتبتها Resgrid (البدء مع Resgrid، وأساسيات السلامة، ومخطط التوعية بالمواد الخطرة، وأساسيات القيادة) لنسخها إلى الإدارة كمسودة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-starter-courses" xml:space="preserve">
+    <value>تحصل الإدارة خلال دقائق على دورة أولى منظمة وتكيّفها مع إجراءاتها؛ تحتفظ النسخة بإسناد المصدر، وتُظهر مواضع الشركاء أين سيُربط المحتوى المعتمد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-starter-courses" xml:space="preserve">
+    <value>تنسخ إدارة تطوعية دورة البدء مع Resgrid، وتضيف قنوات اللاسلكي وأسماء المراكز، ثم تسندها إلى كل عضو جديد بعد الاعتماد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-starter-courses" xml:space="preserve">
+    <value>يتطلب إضافة LMS وصلاحية إدارة الدورات؛ افتح التدريب، ثم مكتبة الدورات، ثم الدورات التمهيدية. لا تتضمن الدورات التمهيدية نصوص معايير ولا اعتمادًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsStandardsSettings" xml:space="preserve">
+    <value>إعدادات xAPI (LRS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsStandardsSettings" xml:space="preserve">
+    <value>ما إذا كانت نتائج دورات ودروس نظام إدارة التعلم تُرسل كبيانات xAPI إلى مستودع سجلات التعلم الخاص بالقسم، وبأي مفتاح وسر، وما إذا كان الأعضاء يُعرَّفون بعنوان البريد الإلكتروني.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>إرسال بيانات xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>تُوضع نتائج الدورات والدروس (attempted وcompleted وpassed وfailed) في قائمة الانتظار ويرسلها عامل المعايير إلى LRS مع إعادة المحاولة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>نقطة نهاية LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>عنوان https لنقطة نهاية xAPI في مستودع سجلات التعلم؛ تُرسل البيانات إلى مورد statements فيه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>مفتاح LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>مفتاح المصادقة الأساسية (اسم المستخدم) الذي أصدره LRS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>سر LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>سر المصادقة الأساسية، مخزّن مشفّرًا للقسم ولا يُعرض مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>تعريف الأعضاء بالبريد الإلكتروني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>إيقاف: كل عضو حساب مستعار خاص بالقسم. تشغيل: يُرسل عنوان البريد الإلكتروني للعضو بصفته منفّذ البيان.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-content-standards" xml:space="preserve">
+    <value>SCORM وcmi5 وxAPI وLTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-content-standards" xml:space="preserve">
+    <value>استيراد حزم SCORM 1.2/2004 وcmi5 وتشغيلها في مشغّل معزول، وتشغيل دورات التعليم المستمر من جهات خارجية عبر LTI 1.3 مع إرجاع الدرجة، وإرسال النتائج إلى LRS خارجي كبيانات xAPI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-content-standards" xml:space="preserve">
+    <value>يعمل التعلم الإلكتروني من الشركاء والمشترى داخل Resgrid ويُسجَّل في السجل الأكاديمي، ويمكن أن تنتقل النتائج إلى LRS الخاص بالقسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-content-standards" xml:space="preserve">
+    <value>تنطلق دورة قلبية من مزوّد معتمد من CAPCE من درس في دورة عبر LTI؛ تعود الدرجة ويكتمل الدرس وتُضاف الساعات إلى سجل العضو.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-content-standards" xml:space="preserve">
+    <value>افتح التدريبات، واختر المعايير، وارفع حزمة أو سجّل أداة LTI، ثم أضف درس SCORM أو cmi5 أو LTI إلى دورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-protocol-tools" xml:space="preserve">
+    <value>بطاقات التدريب ومسودات التدريب والترجمة للبروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-protocol-tools" xml:space="preserve">
+    <value>صُغ بطاقات تدريب وتدريبًا مع اختبار وترجمات من نسخة منشورة من البروتوكول ليراجعها المؤلفون؛ ويتدرّب الأعضاء على البطاقات في صفحة البروتوكول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-protocol-tools" xml:space="preserve">
+    <value>يحصل مؤلفو البروتوكولات، باستخدام Enhanced AI وحده، على مسودات مبنية على بروتوكولات الإدارة نفسها، ويستشهد كل عنصر مصاغ بالقسم الذي جاء منه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-protocol-tools" xml:space="preserve">
+    <value>بعد نشر بروتوكول السكتة الدماغية، يصوغ منسّق الإسعاف عشر بطاقات تدريب وتدريبًا بخمسة أسئلة للإقرار وترجمة إسبانية للمراجعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-protocol-tools" xml:space="preserve">
+    <value>فعّل إجابات المعرفة مع Enhanced AI؛ ثم افتح بروتوكولًا منشورًا واختر بطاقات التدريب أو صياغة تدريب، أو افتح مسودة ترجمة واختر صياغة الترجمة بالذكاء الاصطناعي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.RecordTrainingCompletions" xml:space="preserve">
+    <value>تسجيل إتمام التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.RecordTrainingCompletions" xml:space="preserve">
+    <value>يسمح بتسجيل أن الأعضاء أتموا تدريبًا أو دورة في نظام إدارة التعلم معًا (من قائمة صف، أو من قائمة المسجلين في دورة أو قائمة المكلفين بتدريب مع ملاحظة). يُظهر كل سجل أن مدرّبًا قام بتسجيله، ويمكن لمن سجّله إلغاؤه مع ذكر السبب. يسجّل مسؤولو المجموعات لأعضاء مجموعتهم فقط. إذا لم تُحفظ قاعدة فيُسمح لمسؤولي الإدارة فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-record-completions" xml:space="preserve">
+    <value>تسجيل إتمام التدريب للأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-record-completions" xml:space="preserve">
+    <value>يسجّل مدرّب أو مسؤول تدريب أن الأعضاء أتموا تدريبًا أو دورة أخذوها معًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-record-completions" xml:space="preserve">
+    <value>يظهر التدريب الجماعي (صف إنعاش قلبي رئوي، أو طاقم يشاهد المقاطع معًا) في سجل كل عضو مع تجديد الشهادة، ويذكر السجل من قام بتسجيله.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-record-completions" xml:space="preserve">
+    <value>بعد صف الإنعاش القلبي الرئوي، يحدد قائد التدريب الحاضرين في قائمة الصف ويسجّل دورة الإنعاش على أنها مكتملة لهم جميعًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-record-completions" xml:space="preserve">
+    <value>امنح الأدوار المناسبة صلاحية تسجيل إتمام التدريب في صفحة الأمان، واربط الصف بدورته أو تدريبه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.law-enforcement" xml:space="preserve">
+    <value>إنفاذ القانون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.law-enforcement" xml:space="preserve">
+    <value>مراجعة تغطية المناوبات والمؤهلات والتدريب أثناء الخدمة والإقرار بالسياسات ومراجعة السجلات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.law-enforcement" xml:space="preserve">
+    <value>يمكن للحزمة مراجعة إعدادات تغطية المناوبات والاعتمادات والتدريب ومراجعة السجلات. لا يتم تقييم المتطلبات القانونية وقواعد جهات الترخيص ومراجعة استخدام القوة وأنظمة الأدلة. يجب على ضابط القيادة أو ضابط التدريب المسؤول التحقق من هذه المصادر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.business" xml:space="preserve">
+    <value>الأعمال ومكان العمل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.business" xml:space="preserve">
+    <value>مراجعة مجموعات الموظفين والمؤهلات والتدريب وقوائم التحقق والإقرار بالسياسات في مكان العمل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.business" xml:space="preserve">
+    <value>يمكن للحزمة مراجعة المجموعات والاعتمادات والتدريب وقوائم التحقق وحالات تعليق المعدات. لا يتم تقييم قانون العمل وقواعد السلامة المهنية والتأمين ومتطلبات المقاولين. يجب على المدير المسؤول التحقق من هذه المصادر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-requirements" xml:space="preserve">
+    <value>مجموعات متطلبات الشهادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-requirements" xml:space="preserve">
+    <value>تمنح الشهادة أو تجدد تلقائيا عندما يكمل العضو كل عناصر مجموعتها داخل الدورة: دورات نظام إدارة التعلم أو مجموعة دورات أو تدريبات أو تطبيق عملي تحت الإشراف يسجله مدرب أو تقييمات مهارات أو ساعات التعليم المستمر. وإلغاء إكمال تستند إليه يعيد الشهادة إلى حالتها السابقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-requirements" xml:space="preserve">
+    <value>يرى الأعضاء والمسؤولون بدقة ما تبقى ("تم 3 من 4")، ولا يعيد أحد إدخال التجديد يدويا، ولا يترك إكمال خاطئ شهادة دون أساس.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-requirements" xml:space="preserve">
+    <value>تتطلب شهادة المشغل دورة القيادة السنوية ودورة فحص المركبة ودورة القيادة بسرعة منخفضة يعتمدها مدرب؛ وعند تسجيل الأخيرة تتجدد الشهادة حتى 31 ديسمبر التالي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-requirements" xml:space="preserve">
+    <value>لا شيء لإعداده بعد: مجموعات متطلبات الشهادات جزء من إضافة نظام إدارة التعلم غير المتاحة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.certification-validity-rules" xml:space="preserve">
+    <value>قواعد صلاحية الشهادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.certification-validity-rules" xml:space="preserve">
+    <value>تنتهي صلاحية نوع الشهادة بعد عدد من الأشهر من المنح، أو في نهاية كل سنة ميلادية، أو في نهاية سنة المؤسسة الخاصة، أو في تاريخ محدد، مع فترة سماح ونافذة تجديد اختياريتين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.certification-validity-rules" xml:space="preserve">
+    <value>تنتهي التفويضات السنوية وتفويضات السنة المالية في اليوم نفسه للجميع، وتقع التجديدات في السنة الصحيحة، وتتبع التواريخ المنطقة الزمنية للمؤسسة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.certification-validity-rules" xml:space="preserve">
+    <value>تفويض تشغيل الرافعة الشوكية المضبوط على الانتهاء في 31 مارس من كل عام يتجدد حتى 31 مارس التالي عند إكمال الدورة التنشيطية في فبراير.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.certification-validity-rules" xml:space="preserve">
+    <value>افتح الشهادات ثم نوع شهادة واختر كيفية انتهاء صلاحيتها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-read-and-confirm" xml:space="preserve">
+    <value>تدريبات القراءة والتأكيد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-read-and-confirm" xml:space="preserve">
+    <value>يمكن للتدريب الذي لا يتضمن اختبارا أن يطلب من كل عضو تأكيد أنه قرأه وراجعه قبل تاريخ استحقاقه، وأن يتكرر كل عام: دليل الموظفين أو قواعد السلوك أو قواعد الموقع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-read-and-confirm" xml:space="preserve">
+    <value>لم يعد فتح المستند يعد قراءة له: يبين السجل من أكد ومتى، جاهزا للتدقيق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-read-and-confirm" xml:space="preserve">
+    <value>يكلف دليل الموظفين كل يناير بتاريخ استحقاق 31 يناير؛ ويضع كل عضو علامة على "لقد قرأت هذا التدريب وراجعته" ويعرض السجل التاريخ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-read-and-confirm" xml:space="preserve">
+    <value>أنشئ تدريبا وأرفق المستند أو اكتبه وضع علامة على "يؤكد الأعضاء أنهم قرأوه وراجعوه" وعين تاريخ استحقاق وكرر كل 12 شهرا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>إعدادات سجلات التدريب / مراجعة طلبات الأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>ما إذا كانت ساعات التدريب التي يقدّمها الأعضاء تنتظر مراجعاً قبل احتسابها: كل الطلبات (الافتراضي)، أو لا شيء (تُقبل عند التقديم وتظهر كمُبلّغ عنها ذاتياً)، أو فئات محددة فقط أو ما يتجاوز حداً من الساعات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>إعدادات سجلات التدريب / الفئات التي تحتاج إلى مراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>عند مراجعة طلبات محددة، تنتظر الطلبات في فئات التدريب هذه مراجعاً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>إعدادات سجلات التدريب / مراجعة الطلبات التي تتجاوز (ساعة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>عند مراجعة طلبات محددة، تنتظر الطلبات ذات الساعات الأكثر من هذه القيمة مراجعاً. 0 يعني بلا حد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>إعدادات سجلات التدريب / مراجعو الأدوار لمجموعتهم فقط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>عند التفعيل، يراجع المراجعون المعيّنون حسب الدور (تسجيل إكمال التدريب أو إسناد التدريب) أعضاء مجموعتهم فقط. ويظل مسؤولو الإدارة يراجعون الجميع، ومسؤولو المجموعات مجموعتهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>إعدادات سجلات التدريب / إشعارات المراجعين</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>كيف يعلم المراجعون بالطلبات الجديدة: إشعار لكل طلب (الافتراضي)، أو ملخص واحد يومياً، أو بلا إشعارات (صندوق مراجعات التدريب وعنصر الصفحة الرئيسية فقط).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-submission-reviews" xml:space="preserve">
+    <value>مراجعات التدريب (ساعات تدريب الأعضاء مع الإثباتات)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-submission-reviews" xml:space="preserve">
+    <value>يسجّل الأعضاء ساعات التعليم المستمر أو التدريب التي أُنجزت في مكان آخر مع شهادة أو صورة أو مستند أو إيصال؛ ويعتمدها المراجعون أو يرفضونها أو يطلبون مزيداً من المعلومات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-submission-reviews" xml:space="preserve">
+    <value>يصل التدريب الخارجي إلى السجل مع إثباته، ويُراجع عندما تريد المؤسسة ذلك، ويُبلّغ الأعضاء في كل خطوة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-submission-reviews" xml:space="preserve">
+    <value>يرفع أحد الأعضاء صورة شهادة دورة تنشيطية في المواد الخطرة مدتها 8 ساعات؛ فيراها مسؤول التدريب في مراجعات التدريب، ويفتح الصورة ويعتمدها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-submission-reviews" xml:space="preserve">
+    <value>اختر المراجعة في إعدادات سجلات التدريب، وامنح مسؤولي التدريب والمدرّبين صلاحية تسجيل إكمال التدريب في صفحة الأمان.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>إعدادات الرفاهية / شهادة مسؤول الرفاهية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>نوع شهادة خاص بالمنظمة، مثل نوع مضاف من قالب مسؤول الرفاهية، تحدد المنظمة متطلباته ومدة صلاحيته. تظهر حالة كل مسؤول رفاهية (سارية، قاربت على الانتهاء، منتهية، غير موجودة) في صفحة الإعدادات وفي تقرير تعرض الأعضاء. ولا يحدد من يعمل إلا عند تشغيل مفتاح الشهادات. اختيار لا شيء لا يعرض أي حالة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>إعدادات الرفاهية / شهادة الضابط المعيّن</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>نوع شهادة خاص بالمنظمة، مثل نوع مضاف من قالب الضابط المعيّن لمكافحة التعرض، يُعرض كحالة لكل ضابط معيّن. لا شيء: ما دام لم يُحدَّد دور للضابط المعيّن، تُعتمد شهادة مسؤول الرفاهية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>إعدادات الرفاهية / دور فريق دعم الأقران</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>أعضاء دور الموظفين هذا هم فريق دعم الأقران، ويتلقون تذكيرات ذكرى الحوادث الحرجة التي يختار العضو مشاركتها. لا شيء: الأعضاء الحاملون لشهادة سارية لفريق دعم الأقران هم الفريق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>إعدادات الرفاهية / لا يعمل إلا الأعضاء الحاملون لشهادة سارية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>إيقاف (الافتراضي): تحدد أدوار مسؤول الرفاهية والضابط المعيّن ودعم الأقران وحدها من يعمل، وتُعرض كل شهادة مرتبطة كحالة. تشغيل: يحتاج عضو الدور أيضاً إلى شهادة سارية من النوع المرتبط بالدور، ولا يتأثر الدور الذي لا يرتبط به نوع. لا يمكن تشغيله ما دام لا يحمل أحد في دور مسؤول الرفاهية أو الضابط المعيّن شهادة سارية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.ManageContentSets" xml:space="preserve">
+    <value>إدارة مجموعات المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.ManageContentSets" xml:space="preserve">
+    <value>تتيح نشر مجموعات البروتوكولات والدورات للأقسام المرتبطة، والاشتراك في مجموعاتها، واتخاذ القرارات في صندوق التحديثات، وتخصيص الكتل التي تركها الناشر مفتوحة، والرد على الاقتراحات، ورعاية مقاعد LMS لقسم مرتبط. يمكن لأي عضو اقتراح تغيير على الناشر. في حال عدم وجود قاعدة محفوظة، يقتصر ذلك على مسؤولي القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ContentSetSettings" xml:space="preserve">
+    <value>وقت تحديث المجموعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ContentSetSettings" xml:space="preserve">
+    <value>الوقت المحلي الذي تدخل فيه التحديثات المقبولة لمجموعات البروتوكولات والدورات حيز التنفيذ في تاريخ سريانها أو بعده (الافتراضي 07:00، حتى لا يتغير شيء على نحو مفاجئ في منتصف المناوبة)، ومَن يُبلَّغ عند وصول تحديث أو الرد على اقتراح أو تغيّر رعاية أو حاجة أداة LTI إلى التسجيل: المسؤولون (ما لم يُعطَّل ذلك) وأعضاء الأدوار المختارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-sets" xml:space="preserve">
+    <value>مجموعات البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-sets" xml:space="preserve">
+    <value>انشروا البروتوكولات للأقسام المرتبطة كمجموعة إقليمية، أو اشتركوا في مجموعة مقاطعة أو مدير طبي أو شركة. يتبع المحتوى المقفل الناشر، وتحتفظ الكتل القابلة للتخصيص بأرقام الهواتف والموارد المحلية، ويصل كل إصدار جديد مع التغييرات المميّزة إلى صندوق التحديثات ويدخل حيز التنفيذ في وقت التحديث لديكم، ويقترح الأعضاء التغييرات على الناشر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.linked-department-protocols" xml:space="preserve">
+    <value>بروتوكولات الأقسام المرتبطة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.linked-department-protocols" xml:space="preserve">
+    <value>اقرؤوا البروتوكولات المنشورة لشريك في المساعدة المتبادلة عبر ربط أقسام يشارك البروتوكولات، للقراءة فقط وللإصدار الساري فقط. لا تُشارك أبدًا البروتوكولات المقيّدة أو المرخّصة أو المرفوعة كمستندات، ويؤدي إيقاف المشاركة إلى قطع الوصول فورًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.course-sets" xml:space="preserve">
+    <value>مجموعات الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.course-sets" xml:space="preserve">
+    <value>انشروا التدريبات (ومع LMS، الدورات ومسارات التعلم) للمؤسسات المرتبطة كمجموعة؛ ويتلقى المشتركون نسخهم الخاصة، مقفلة أو مفتوحة حسب اختيار الناشر، ويصل كل تحديث إلى صندوق الوارد لديهم ليدخل حيز التنفيذ في وقت التحديث الخاص بهم. لا تحتاج التدريبات إلى أي إضافة، وتنتقل تغييرات الاختبارات مع كل تحديث.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-sponsorship" xml:space="preserve">
+    <value>مقاعد LMS برعاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-sponsorship" xml:space="preserve">
+    <value>ادفعوا تكلفة أعضاء قسم مرتبط المفعّل لديهم LMS من حزمكم الخاصة، مع حد اختياري للمقاعد. لا يحتاج القسم المستفيد من الرعاية إلى أي إضافة، ويمكن أن يكون على الخطة المجانية، ولا يتابع إلا مجموعات دوراتكم، ويرى من يدفع؛ ويؤدي إنهاء الرعاية أو الرابط إلى انتهاء الوصول وفق قواعد الانتهاء المعتادة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.StepUpPolicy" xml:space="preserve">
+    <value>سياسة التحقق الإضافي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.StepUpPolicy" xml:space="preserve">
+    <value>المواضع التي يجب أن يؤكد فيها الأعضاء هويتهم مرة أخرى (التوقيعات وإقرارات القراءة والموافقات والبيانات المحمية)، وهل ذلك اختياري، وهل يمكن استخدام كلمة المرور أو تسجيل الدخول عبر موفر الهوية إلى جانب المصادقة الثنائية. راجع الأعضاء الذين ليست لديهم مصادقة ثنائية والمدرجين في الصفحة قبل اشتراطها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>سياسة التحقق الإضافي / المجالات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>إدخال واحد لكل مجال يختلف عن الإعداد الافتراضي. المجال الذي لا إدخال له يشترط التحقق الثنائي حيث كان يشترطه من قبل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>مجال التحقق / المجال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>الإجراءات التي يخصها الإدخال: 1 التوقيعات، 2 إقرارات القراءة والتوقيع، 3 قرارات الموافقة، 4 البيانات المحمية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>مجال التحقق / اختياري</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>لا يُشترط التحقق الإضافي للتوقيعات أو قرارات الموافقة: تُوقَّع بالجلسة المسجّل الدخول بها ما لم يكن العضو قد تحقق مؤخرًا. تتبع إقرارات القراءة مفتاح مكتبة البروتوكولات، وتتبع البيانات المحمية استثناءات ADP.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>مجال التحقق / طرق بديلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>طرق التحقق المقبولة إلى جانب المصادقة الثنائية: 2 تسجيل دخول جديد عبر موفر الهوية، 4 إدخال كلمة مرور الحساب مرة أخرى. لا يُعد أي منهما عاملًا ثانيًا؛ وللبيانات المحمية لا يمكن تغيير ذلك إلا للعضو المسؤول، ويُنهي التغيير التصاريح الصادرة سابقًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-sets" xml:space="preserve">
+    <value>دورات ومسارات LMS في المجموعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-sets" xml:space="preserve">
+    <value>تنتقل دورات LMS ومسارات التعلم ضمن مجموعات الدورات: يُشارَك الفيديو المستضاف وحزم SCORM أو cmi5 مع المشترك، ويستخدم درس LTI تسجيل المشترك الخاص لدى الأداة (ويُبلَّغ مديروه بإكماله)، ويشير المسار إلى نسخ المشترك من دوراته. يتطلب إضافة LMS لدى المشترك أو رعاية الناشر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.deployment-partner-acceptance" xml:space="preserve">
+    <value>قبول الشركاء للانتشارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.deployment-partner-acceptance" xml:space="preserve">
+    <value>عندما يُلبّى طلب انتشار لمؤسسة مرتبطة على Resgrid، حدّدوها شريكًا: تطلب كل تلبية تقبلونها من مسؤوليها قبول المهمة بتوقيع مع إعادة التحقق من الهوية (step-up) عبر الرابط، ويُظهر الانتشار مَن قبلها ومتى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.department-link-acceptance" xml:space="preserve">
+    <value>قبول الروابط الموقَّع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.department-link-acceptance" xml:space="preserve">
+    <value>قبول رابط من مؤسسة أخرى هو توقيع مع إعادة التحقق من الهوية (step-up) يقوم به أحد مسؤوليكم، مرتبط بالمؤسستين وبما تشاركه كل منهما في تلك اللحظة؛ ومن دون إعادة التحقق يبقى الرابط غير مقبول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.workforce-pro" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.workforce-pro" xml:space="preserve">
+    <value>الإضافة المدفوعة لكل عضو لسجلات صحة الأعضاء والتعرّض في مكان العمل: سجل التعرّض وحالات التعرّض والإصابات والتصاريح الطبية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.workforce-pro" xml:space="preserve">
+    <value>سجلات طويلة الأمد للتعرّض والإصابات للأعضاء الذين يحتاجونها، تُدفع لكل حزمة من 25 عضوًا، وتبقى قابلة للعرض حتى لو انتهت الإضافة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.workforce-pro" xml:space="preserve">
+    <value>قسم مختلط يشتري حزمتين لموظفيه الأربعين المحترفين، ويفعّل Workforce Pro لهم ويترك المتطوعين دون تفعيل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.workforce-pro" xml:space="preserve">
+    <value>اشترِ الحزم من صفحة إضافة Workforce Pro، وفعّل Workforce Pro للأعضاء الذين تحتفظ بسجلاتهم، ثم اختر أدوار الصحة في إعدادات الصحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-workforce-pro" xml:space="preserve">
+    <value>إضافة Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-workforce-pro" xml:space="preserve">
+    <value>اشترِ Workforce Pro بحزم من 25 عضوًا وغيّر عدد الحزم، مع عرض السعر قبل أي تغيير.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-workforce-pro" xml:space="preserve">
+    <value>تجعل الشرائح المتدرّجة القوائم الكبيرة أرخص لكل عضو، ولا توجد رسوم إعداد، وتُحتسب الحزم المضافة بشكل تناسبي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-workforce-pro" xml:space="preserve">
+    <value>قسم لديه 60 عضوًا مفعّلًا يملك 3 حزم؛ وعندما يصل إلى 76 يضيف حزمة رابعة ويدفع الفرق التناسبي فورًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-workforce-pro" xml:space="preserve">
+    <value>من الاشتراك، افتح بطاقة Workforce Pro واختر عدد الحزم وأكمل الدفع. تسري إزالة الحزم في تاريخ الفوترة التالي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.workforce-pro-seats" xml:space="preserve">
+    <value>مقاعد Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.workforce-pro-seats" xml:space="preserve">
+    <value>فعّل Workforce Pro للأعضاء الذين تحتفظ بسجلات صحتهم وتعرّضهم في مكان العمل، ضمن المقاعد التي تشتريها حزمك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.workforce-pro-seats" xml:space="preserve">
+    <value>تدفع فقط مقابل هؤلاء الأعضاء؛ ويحتاج المسؤولون والمديرون الذين يتصرفون نيابةً عن الآخرين إلى صلاحيتهم، لا إلى مقعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.workforce-pro-seats" xml:space="preserve">
+    <value>قسم مختلط يفعّل Workforce Pro لموظفيه الأربعين المحترفين ويترك المتطوعين دون تفعيل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.workforce-pro-seats" xml:space="preserve">
+    <value>افتح مقاعد Workforce Pro من صفحة إضافة Workforce Pro وفعّل الأعضاء. إيقاف عضو لا يحذف أي سجل أبدًا: تصبح سجلاته للقراءة فقط.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

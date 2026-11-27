@@ -88,6 +88,8 @@
             const definitionToggles = el('div', null, settings); definitionToggles.className = 'form-group rgw-wide rgw-builder-toggles';
             field(definitionToggles, 'Require reported location', model, 'RequireLocation', 'checkbox');
             field(definitionToggles, 'Require a different authenticated member to witness the submission', model, 'RequiresIndependentWitness', 'checkbox');
+            // e-Signature S3 (free): the witness signs at L2 (a fresh step-up or a passkey) bound to the content of the completion.
+            field(definitionToggles, 'The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion', model, 'RequireWitnessSignature', 'checkbox');
 
             const earlier = [];
             model.Sections.forEach((section, si) => {

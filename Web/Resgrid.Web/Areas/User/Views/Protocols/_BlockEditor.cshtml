@@ -1,0 +1,68 @@
+@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@inject Resgrid.Model.Services.IProtocolsService protocolsService
+@inject Resgrid.Model.Services.ITrainingService trainingService
+@*
+    The block editor (P3) inside the full-page editor: the draft's block document as cards (rgw-builder chrome), each with its own
+    fields, Move up / Move down / Remove, scope-of-practice tags (certification types), and an "Add a block" bar. Posted as ContentJson
+    on save and autosave; "Preview" asks the server to render the document exactly as the reading view shows it. Medication blocks
+    show doses exactly as written; nothing is calculated (decision 3).
+*@
+@{
+    var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
+    var protocolChoices = (await protocolsService.GetProtocolSummariesForDepartmentAsync(departmentId) ?? new List<DispatchProtocol>())
+        .Where(p => !p.IsDeleted && p.DispatchProtocolId != Model.ProtocolId)
+        .OrderBy(p => p.Name)
+        .Select(p => new { id = p.DispatchProtocolId, name = (string.IsNullOrWhiteSpace(p.Code) ? "" : p.Code + " · ") + p.Name })
+        .ToList();
+    var trainingChoices = (await trainingService.GetAllTrainingsForDepartmentAsync(departmentId) ?? new List<Training>())
+        .OrderBy(x => x.Name)
+        .Select(x => new { id = x.TrainingId, name = x.Name })
+        .ToList();
+    Newtonsoft.Json.Linq.JToken document = null;
+    try { document = string.IsNullOrWhiteSpace(Model.ContentJson) ? null : Newtonsoft.Json.Linq.JToken.Parse(Model.ContentJson); } catch (Newtonsoft.Json.JsonException) { document = null; }
+    var keys = new[]
+    {
+        "BlockTypeHeading", "BlockTypeParagraph", "BlockTypeSteps", "BlockTypeCaution", "BlockTypeWarning", "BlockTypeGate", "BlockTypeTable", "BlockTypeImage",
+        "BlockTypeVideo", "BlockTypeAttachment", "BlockTypeLink", "BlockTypeMedication", "BlockTypeVariants", "BlockTypeHtml",
+        "BlockMoveUp", "BlockMoveDown", "BlockRemove", "BlockAddStep", "BlockRemoveStep", "BlockAddRow", "BlockAddColumn", "BlockRemoveRow", "BlockRemoveColumn",
+        "BlockAddVariant", "BlockRemoveVariant", "BlockAddBlock", "BlockEditorEmpty", "BlockSelectNone", "BlockPreviewFailed",
+        "BlockFieldText", "BlockFieldLevel", "BlockFieldTitle", "BlockFieldBody", "BlockFieldStep", "BlockFieldContact", "BlockFieldCaption", "BlockFieldHeaderRow",
+        "BlockFieldCell", "BlockFieldUrl", "BlockFieldAttachment", "BlockFieldAlt", "BlockFieldLabel", "BlockFieldLinkKind", "BlockFieldLinkTarget", "BlockFieldLinkId",
+        "BlockFieldScopes", "BlockFieldVariantLabel", "BlockFieldDrug", "BlockFieldInventoryItemId", "BlockFieldInventoryItemName", "BlockFieldNotes",
+        "BlockLevel2", "BlockLevel3", "BlockLevel4", "BlockAdultLabel", "BlockPediatricLabel", "BlockDoseNoticeEditor",
+        "BlockLabelIndication", "BlockLabelConcentration", "BlockLabelDosePerKg", "BlockLabelMaxSingleDose", "BlockLabelMaxTotalDose", "BlockLabelRoute",
+        "BlockLabelRepeatInterval", "BlockLabelLinkProtocol", "BlockLabelLinkPoi", "BlockLabelLinkInventory", "BlockLabelLinkChecklist", "BlockLabelLinkTraining",
+        "BlockLabelLinkUrl", "RichBold", "RichItalic", "RichBullets", "RichNumbers", "AutosaveSaving", "AutosaveSaved", "AutosaveFailed"
+    };
+    var text = keys.ToDictionary(k => k, k => localizer[k].Value);
+    var data = new
+    {
+        document,
+        certificationTypes = Model.Lists.CertificationTypes.OrderBy(c => c.Value).Select(c => new { id = c.Key, name = c.Value }),
+        attachments = Model.ExistingAttachments.Select(a => new { id = a.DispatchProtocolAttachmentId, name = a.FileName }),
+        protocols = protocolChoices,
+        trainings = trainingChoices,
+        text
+    };
+}
+<input type="hidden" id="ContentJson" name="ContentJson" value="@Model.ContentJson" />
+<div id="blockEditor" class="rgp-editor" data-preview-url="@Url.Action("PreviewBlocks", "ProtocolTools", new { area = "User", id = Model.ProtocolId })">
+    <p class="help-block">@localizer["BlockEditorHelp"]</p>
+    <div id="blockList" class="rgp-editor-list" aria-live="polite"></div>
+    <noscript><div class="alert alert-warning">@localizer["BlockEditorNeedsScript"]</div></noscript>
+    <div class="ibox m-t-md">
+        <div class="ibox-title rgw-builder-heading">
+            <h5 class="rgw-builder-title"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["BlockPreviewHeader"]</h5>
+            <span class="rgw-builder-actions">
+                <button type="button" id="blockPreviewButton" class="btn btn-xs btn-default" disabled><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["BlockPreviewButton"]</button>
+            </span>
+        </div>
+        <div class="ibox-content">
+            <div id="blockPreview" class="protocol-content rgp-reader" aria-live="polite"><p class="text-muted">@localizer["BlockPreviewHelp"]</p></div>
+        </div>
+    </div>
+</div>
+<script type="application/json" id="protocolBlocksData">@Html.ScriptJson(data)</script>

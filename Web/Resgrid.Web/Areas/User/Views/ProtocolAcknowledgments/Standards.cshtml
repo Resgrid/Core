@@ -1,0 +1,95 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolStandardsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The proof-of-compliance report by standards tag (LMS add-on, §17.2): per standard, the protocols mapped to it, their acknowledgment
+    progress and the approvals that still verify against the content as stored. Without the add-on the page says so (fails closed).
+    Round 5F: question-bank acknowledgment quizzes (set per protocol on its acknowledgment settings) and the weekly micro-learning
+    selection below.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["StandardsReportButton"];
+    ViewData["Title"] = localizer["StandardsReportButton"].Value;
+    ViewData["Subtitle"] = localizer["StandardsReportIntro"].Value;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    @if (!Model.LmsActive)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["StandardsReportLmsOnly"]</div>
+    }
+    else
+    {
+        if (Model.Report.Sections.Count == 0)
+        {
+            <div class="rgw-next-action" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["StandardsReportEmpty"]</div>
+        }
+        foreach (var standard in Model.Report.Sections)
+        {
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-certificate" aria-hidden="true"></i> @standard.Standard</h5>
+                    <div class="ibox-tools"><span class="label label-primary">@string.Format(localizer["VerifiedApprovalsLabel"].Value, standard.VerifiedApprovals)</span></div>
+                </div>
+                <div class="ibox-content">
+                    <table class="table rgw-table">
+                        <thead><tr><th scope="col">@localizer["ProtocolsLabel"]</th><th scope="col">@localizer["VersionLabel"]</th><th scope="col">@localizer["AcknowledgedLabel"]</th><th scope="col">@localizer["OverdueLabel"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var s in standard.Protocols)
+                            {
+                                <tr>
+                                    <td>@s.Code · @s.Name</td>
+                                    <td>v@(s.VersionLabel)</td>
+                                    <td>@s.Acknowledged / @s.Assigned (@s.Percent%)</td>
+                                    <td class="@(s.Overdue > 0 ? "text-danger" : "")">@s.Overdue</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["LmsAcknowledgmentExtrasHeader"]</h5></div>
+        <div class="ibox-content">
+            <ul class="list-unstyled">
+                <li><i class="fa @(Model.MicroLearningAvailable ? "fa-check text-success" : "fa-lock text-muted")" aria-hidden="true"></i> @localizer["MicroLearningLabel"] · <span class="text-muted">@(Model.MicroLearningAvailable ? localizer["AvailableLabel"] : localizer["LearningLmsOnly"])</span></li>
+                <li><i class="fa @(Model.BankQuizzesAvailable ? "fa-check text-success" : "fa-lock text-muted")" aria-hidden="true"></i> @localizer["BankQuizzesLabel"] · <span class="text-muted">@(Model.BankQuizzesAvailable ? localizer["AvailableLabel"] : localizer["LearningLmsOnly"])</span></li>
+            </ul>
+            @if (Model.MicroLearningAvailable)
+            {
+                <h4 class="m-t-md">@localizer["MicroLearningSelectionHeader"]</h4>
+                <p class="text-muted">@localizer["MicroLearningSelectionHelp"]</p>
+                <form method="post" asp-controller="ProtocolAcknowledgments" asp-action="MicroLearning" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <fieldset>
+                        <legend class="sr-only">@localizer["MicroLearningSelectionHeader"]</legend>
+                        @foreach (var protocol in Model.Protocols)
+                        {
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="protocolIds" value="@protocol.DispatchProtocolId" checked="@Model.MicroLearningIds.Contains(protocol.DispatchProtocolId)" /> @((protocol.Code + " " + protocol.Name).Trim())</label>
+                            </div>
+                        }
+                    </fieldset>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save" aria-hidden="true"></i> @localizer["MicroLearningSaveButton"]</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

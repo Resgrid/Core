@@ -230,4 +230,98 @@
   <data name="SelectMember" xml:space="preserve"><value>Seleccione un miembro</value></data>
   <data name="SelectType" xml:space="preserve"><value>Seleccione un tipo de certificación</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Introduzca un nombre para la certificación.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Horas para la renovación</value><comment>machine-translated</comment></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>{0} h acreditadas ({1} h del expediente de formación)</value><comment>machine-translated</comment></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} h en categorías asignadas aún sin acreditar</value><comment>machine-translated</comment></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Aplicar el historial a créditos</value><comment>machine-translated</comment></data>
+  <data name="FromTranscript" xml:space="preserve"><value>Del expediente</value><comment>machine-translated</comment></data>
+  <data name="Validity.Rule" xml:space="preserve">
+    <value>Cómo vence</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Rule.RollingMonths" xml:space="preserve">
+    <value>Un número de meses después de emitirse (la validez anterior)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Rule.CalendarYearEnd" xml:space="preserve">
+    <value>Al final de cada año natural (31 de diciembre)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Rule.FiscalYearEnd" xml:space="preserve">
+    <value>Al final de nuestro propio año (fiscal, de formación o de licencia)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Rule.FixedDate" xml:space="preserve">
+    <value>En una fecha fija</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Help" xml:space="preserve">
+    <value>Se usa cuando la formación emite o renueva esta certificación (cursos LMS, rutas de aprendizaje, conjuntos de requisitos) y para los ciclos automáticos. Las fechas siguen la zona horaria de la organización.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.YearEnd" xml:space="preserve">
+    <value>Nuestro año termina el</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.YearEndMonth" xml:space="preserve">
+    <value>Mes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.YearEndDay" xml:space="preserve">
+    <value>Día</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.FixedDate" xml:space="preserve">
+    <value>Vence el</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.GraceDays" xml:space="preserve">
+    <value>Período de gracia (días)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.GraceHelp" xml:space="preserve">
+    <value>Tras el vencimiento, completar los requisitos dentro de estos días sigue renovando el mismo ciclo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.WindowMonths" xml:space="preserve">
+    <value>Ventana de renovación (meses)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.WindowHelp" xml:space="preserve">
+    <value>Solo cuentan para la renovación las finalizaciones de estos meses antes del vencimiento. Vacío: todo el ciclo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.RequirementSet" xml:space="preserve">
+    <value>Conjunto de requisitos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.RequirementSetHelp" xml:space="preserve">
+    <value>Elija los cursos LMS, capacitaciones y prácticas supervisadas que un miembro debe completar para obtener o conservar esta certificación.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.RequirementSetEdit" xml:space="preserve">
+    <value>Editar el conjunto de requisitos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_validity_rule_invalid" xml:space="preserve">
+    <value>Elija cómo vence la certificación.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_year_end_invalid" xml:space="preserve">
+    <value>Introduzca un fin de año válido (mes y día).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_fixed_date_required" xml:space="preserve">
+    <value>Introduzca la fecha fija de vencimiento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_grace_invalid" xml:space="preserve">
+    <value>El período de gracia debe estar entre 0 y 365 días.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_window_invalid" xml:space="preserve">
+    <value>La ventana de renovación debe estar entre 1 y 60 meses.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoryLawEnforcement" xml:space="preserve"><value>Fuerzas del orden</value><comment>machine-translated</comment></data>
 </root>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Production TSP source for resgrid-sealing. The DSS demo build ships a mock timestamp service; this file replaces it.
+  Mount it into the container and point DSS at it with a system property (a system property outranks the classpath
+  dss.properties), e.g. CATALINA_OPTS="-Dtsp-source=file:/etc/resgrid-sealing/tsp-config.xml".
+  In int-Fleet it is the key tsp-config.xml of the hand-made Secret resgrid-tsa (never committed with real values).
+
+  Replace the URL with the cluster's commercial RFC 3161 TSA (decision 18; a qualified EU TSA for eucentral). A TSA that
+  needs credentials or a client certificate needs them configured on the data loader; check the TSA's instructions.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="tspSource" class="eu.europa.esig.dss.service.tsp.OnlineTSPSource">
+        <property name="tspServer" value="https://tsa.example.invalid/tsr" />
+        <property name="dataLoader">
+            <bean class="eu.europa.esig.dss.service.http.commons.TimestampDataLoader" />
+        </property>
+    </bean>
+
+</beans>

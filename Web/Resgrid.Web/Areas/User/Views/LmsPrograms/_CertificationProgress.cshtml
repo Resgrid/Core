@@ -1,0 +1,88 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsCertificationProgressPanel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Round 9A: certification progress cards (My Training and the certification record page): each certification backed by a requirement
+    set with "3 of 4 done", the state, the expiry, and every item with a tick, the progress of hours or evaluations, and whether an
+    instructor recorded it. Rendered by name from baseline pages (LmsCertificationProgress view component).
+*@
+@{
+    var culture = CultureInfo.CurrentCulture;
+}
+
+<section class="ibox float-e-margins lms-certification-progress" aria-labelledby="lms-cert-progress-title">
+    <div class="ibox-title">
+        <h5 id="lms-cert-progress-title"><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["CertReq.PanelTitle"]</h5>
+        @if (Model.CanSeeOfficerList)
+        {
+            <div class="ibox-tools">
+                <a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="CertificationRequirements" asp-route-area="User"><i class="fa fa-list-ol" aria-hidden="true"></i> @localizer["CertReq.Tab"]</a>
+            </div>
+        }
+    </div>
+    <div class="ibox-content">
+        @if (Model.IsLapsed)
+        {
+            <p class="text-muted"><i class="fa fa-pause-circle" aria-hidden="true"></i> @localizer["CertReq.Paused"]</p>
+        }
+        @foreach (var progress in Model.Items)
+        {
+            var percent = progress.Total == 0 ? 0 : progress.Done * 100 / progress.Total;
+            <div class="m-b-md">
+                <h4 class="m-b-xs">
+                    @progress.CertificationTypeName
+                    <span class="label @(progress.State == LmsCertificationProgressStates.DueSoon ? "label-warning" : progress.State == LmsCertificationProgressStates.InGrace || progress.State == LmsCertificationProgressStates.Lapsed ? "label-danger" : progress.State == LmsCertificationProgressStates.Complete || progress.State == LmsCertificationProgressStates.Current ? "label-primary" : "label-default")">@localizer["CertReq.State." + progress.State]</span>
+                </h4>
+                <p class="m-b-xs">
+                    <strong>@string.Format(localizer["CertReq.DoneOf"].Value, progress.Done, progress.Total)</strong>
+                    @if (progress.ExpiresOn.HasValue)
+                    {
+                        <span class="rgw-sub">@string.Format(localizer["CertReq.ExpiresOn"].Value, progress.ExpiresOn.Value.ToString("d", culture))</span>
+                    }
+                    <span class="rgw-sub">@string.Format(localizer["CertReq.WindowFrom"].Value, progress.WindowStart.ToString("d", culture), progress.WindowEnd.ToString("d", culture))</span>
+                </p>
+                <div class="progress progress-small" role="progressbar" aria-valuemin="0" aria-valuemax="@progress.Total" aria-valuenow="@progress.Done" aria-label="@string.Format(localizer["CertReq.DoneOf"].Value, progress.Done, progress.Total)">
+                    <div class="progress-bar @(percent >= 100 ? "progress-bar-success" : null)" style="width: @(percent)%"></div>
+                </div>
+                <ul class="list-unstyled m-b-none">
+                    @foreach (var item in progress.Items)
+                    {
+                        <li>
+                            @if (item.Done)
+                            {
+                                <i class="fa fa-check-square-o text-navy" aria-hidden="true"></i><span class="sr-only">@localizer["CertReq.ItemDone"]</span>
+                            }
+                            else
+                            {
+                                <i class="fa fa-square-o" aria-hidden="true"></i><span class="sr-only">@localizer["CertReq.ItemOpen"]</span>
+                            }
+                            @item.Label
+                            @if (item.Kind == (int)LmsRequirementKinds.CategoryHours || item.Kind == (int)LmsRequirementKinds.Evaluations)
+                            {
+                                <span class="rgw-sub">@item.Progress.ToString("0.##", culture) / @item.Required.ToString("0.##", culture)</span>
+                            }
+                            @if (item.RequireRecordedByInstructor)
+                            {
+                                <span class="rgw-sub">@localizer["CertReq.Practical"]</span>
+                            }
+                            @if (item.Done && item.LastRecordedByOther)
+                            {
+                                <span class="label label-default">@localizer["CertReq.RecordedByInstructor"]</span>
+                            }
+                            @if (item.Done && item.LastCompletedUtc.HasValue)
+                            {
+                                <span class="rgw-sub">@Resgrid.Model.Helpers.TrainingDueDates.LocalDate(item.LastCompletedUtc.Value, Model.Department).ToString("d", culture)</span>
+                            }
+                        </li>
+                    }
+                </ul>
+                @if (progress.State == LmsCertificationProgressStates.Complete && progress.NextExpiresOn.HasValue)
+                {
+                    <p class="text-navy m-t-xs m-b-none"><i class="fa fa-check-circle" aria-hidden="true"></i> @string.Format(localizer["CertReq.WillRenew"].Value, progress.NextExpiresOn.Value.ToString("d", culture))</p>
+                }
+            </div>
+        }
+    </div>
+</section>

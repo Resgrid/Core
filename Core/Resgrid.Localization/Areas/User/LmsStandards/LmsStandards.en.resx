@@ -1,0 +1,523 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Std.StripLabel" xml:space="preserve">
+    <value>Standards sections</value>
+  </data>
+  <data name="Std.Tab.Packages" xml:space="preserve">
+    <value>Content packages</value>
+  </data>
+  <data name="Std.Tab.Tools" xml:space="preserve">
+    <value>LTI tools</value>
+  </data>
+  <data name="Std.Tab.Xapi" xml:space="preserve">
+    <value>xAPI</value>
+  </data>
+  <data name="Std.LapsedNotice" xml:space="preserve">
+    <value>The LMS add-on has lapsed: everything stays visible and lessons already assigned keep playing, but packages, tools and xAPI settings cannot be changed.</value>
+  </data>
+  <data name="Std.AddonNotice" xml:space="preserve">
+    <value>Content standards are part of the LMS add-on. Activate it to upload packages, register LTI tools and send xAPI statements.</value>
+  </data>
+  <data name="Std.PackagesTitle" xml:space="preserve">
+    <value>Content packages</value>
+  </data>
+  <data name="Std.PackagesIntro" xml:space="preserve">
+    <value>SCORM 1.2, SCORM 2004 and cmi5 packages for course lessons, played in a sandboxed player.</value>
+  </data>
+  <data name="Std.StoreNotConfigured" xml:space="preserve">
+    <value>LMS media storage is not configured on this system, so packages cannot be uploaded or played.</value>
+  </data>
+  <data name="Std.UploadLabel" xml:space="preserve">
+    <value>Package (.zip)</value>
+  </data>
+  <data name="Std.UploadButton" xml:space="preserve">
+    <value>Upload package</value>
+  </data>
+  <data name="Std.UploadHelp" xml:space="preserve">
+    <value>Up to {0} MB. The zip must have imsmanifest.xml (SCORM) or cmi5.xml (cmi5) at its root; it is checked before it is stored and unpacked shortly after.</value>
+  </data>
+  <data name="Std.NoPackages" xml:space="preserve">
+    <value>No content packages yet.</value>
+  </data>
+  <data name="Std.Col.Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="Std.Col.Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Std.Col.Items" xml:space="preserve">
+    <value>SCOs / AUs</value>
+  </data>
+  <data name="Std.Col.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Std.Col.Uploaded" xml:space="preserve">
+    <value>Uploaded</value>
+  </data>
+  <data name="Std.Col.Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Std.Standard.Scorm12" xml:space="preserve">
+    <value>SCORM 1.2</value>
+  </data>
+  <data name="Std.Standard.Scorm2004" xml:space="preserve">
+    <value>SCORM 2004</value>
+  </data>
+  <data name="Std.Standard.Cmi5" xml:space="preserve">
+    <value>cmi5</value>
+  </data>
+  <data name="Std.FilesFormat" xml:space="preserve">
+    <value>{0} files, {1} MB</value>
+  </data>
+  <data name="Std.PackageStatus.Queued" xml:space="preserve">
+    <value>Waiting to unpack</value>
+  </data>
+  <data name="Std.PackageStatus.Processing" xml:space="preserve">
+    <value>Unpacking</value>
+  </data>
+  <data name="Std.PackageStatus.Ready" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Std.PackageStatus.Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="Std.Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Std.SandboxNote" xml:space="preserve">
+    <value>Packages run in a sandboxed frame that cannot reach Resgrid pages or sign-ins; they only report progress for the launch they belong to.</value>
+  </data>
+  <data name="Std.PackageUploaded" xml:space="preserve">
+    <value>Package uploaded. It will be ready once it is unpacked.</value>
+  </data>
+  <data name="Std.PackageRemoved" xml:space="preserve">
+    <value>Package removed from new lessons.</value>
+  </data>
+  <data name="Std.ToolSaved" xml:space="preserve">
+    <value>LTI tool saved.</value>
+  </data>
+  <data name="Std.ToolRemoved" xml:space="preserve">
+    <value>LTI tool removed.</value>
+  </data>
+  <data name="Std.KeyRotated" xml:space="preserve">
+    <value>A new signing key is active. The previous key stays published for a week.</value>
+  </data>
+  <data name="Std.XapiSaved" xml:space="preserve">
+    <value>xAPI settings saved.</value>
+  </data>
+  <data name="Std.XapiRequeued" xml:space="preserve">
+    <value>Failed statements were queued again.</value>
+  </data>
+  <data name="Std.ToolsTitle" xml:space="preserve">
+    <value>LTI tools</value>
+  </data>
+  <data name="Std.ToolsIntro" xml:space="preserve">
+    <value>Third-party courses (LTI 1.3) that open from a lesson and report the score back.</value>
+  </data>
+  <data name="Std.NewTool" xml:space="preserve">
+    <value>Register a tool</value>
+  </data>
+  <data name="Std.NoTools" xml:space="preserve">
+    <value>No LTI tools registered yet.</value>
+  </data>
+  <data name="Std.Col.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Std.Col.ClientId" xml:space="preserve">
+    <value>Client ID</value>
+  </data>
+  <data name="Std.Col.Passback" xml:space="preserve">
+    <value>Score passback</value>
+  </data>
+  <data name="Std.Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="Std.No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Std.Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Std.Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="Std.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="Std.RotateKey" xml:space="preserve">
+    <value>Rotate signing key</value>
+  </data>
+  <data name="Std.RotateKeyHelp" xml:space="preserve">
+    <value>Launches are signed with the department key (RS256). After rotating, tools reading the key set pick up the new key; the old one stays published for a week.</value>
+  </data>
+  <data name="Std.PlatformTitle" xml:space="preserve">
+    <value>Platform details for tool providers</value>
+  </data>
+  <data name="Std.PlatformIntro" xml:space="preserve">
+    <value>Give these to the provider when registering Resgrid with their tool, together with the tool’s client ID and deployment ID.</value>
+  </data>
+  <data name="Std.Platform.Issuer" xml:space="preserve">
+    <value>Issuer</value>
+  </data>
+  <data name="Std.Platform.Jwks" xml:space="preserve">
+    <value>Key set URL (JWKS)</value>
+  </data>
+  <data name="Std.Platform.Auth" xml:space="preserve">
+    <value>Authorization (OIDC) URL</value>
+  </data>
+  <data name="Std.Platform.Token" xml:space="preserve">
+    <value>Access token URL</value>
+  </data>
+  <data name="Std.Platform.Kid" xml:space="preserve">
+    <value>Active key ID</value>
+  </data>
+  <data name="Std.Platform.NoKey" xml:space="preserve">
+    <value>Created with the first tool</value>
+  </data>
+  <data name="Std.ToolTitle" xml:space="preserve">
+    <value>LTI tool</value>
+  </data>
+  <data name="Std.ToolIntro" xml:space="preserve">
+    <value>The provider’s endpoints and keys. Launches share only a pseudonymous member ID unless you switch on name or e-mail below.</value>
+  </data>
+  <data name="Std.DeploymentId" xml:space="preserve">
+    <value>Deployment ID</value>
+  </data>
+  <data name="Std.Field.OidcLoginUrl" xml:space="preserve">
+    <value>Login initiation URL</value>
+  </data>
+  <data name="Std.Field.LaunchUrl" xml:space="preserve">
+    <value>Launch (target link) URL</value>
+  </data>
+  <data name="Std.Field.JwksUrl" xml:space="preserve">
+    <value>Tool key set URL</value>
+  </data>
+  <data name="Std.Field.RedirectUris" xml:space="preserve">
+    <value>Redirect URIs</value>
+  </data>
+  <data name="Std.Field.RedirectUrisHelp" xml:space="preserve">
+    <value>One per line (https). Launches are only ever posted to these; the launch URL is used when empty.</value>
+  </data>
+  <data name="Std.Field.PublicJwks" xml:space="preserve">
+    <value>Tool public keys (JWKS), instead of a URL</value>
+  </data>
+  <data name="Std.Field.PublicJwksHelp" xml:space="preserve">
+    <value>Paste the tool’s key set if it has no key set URL. Used to verify the tool’s requests for score passback.</value>
+  </data>
+  <data name="Std.Field.Custom" xml:space="preserve">
+    <value>Custom parameters</value>
+  </data>
+  <data name="Std.Field.CustomHelp" xml:space="preserve">
+    <value>One key=value per line, sent with every launch.</value>
+  </data>
+  <data name="Std.Field.Passback" xml:space="preserve">
+    <value>The tool reports the score back (Assignment and Grade Services)</value>
+  </data>
+  <data name="Std.Field.ShareName" xml:space="preserve">
+    <value>Share the member’s name</value>
+  </data>
+  <data name="Std.Field.ShareEmail" xml:space="preserve">
+    <value>Share the member’s e-mail address</value>
+  </data>
+  <data name="Std.Field.PassbackHelp" xml:space="preserve">
+    <value>With score passback the lesson completes when the tool reports it finished and graded at or above the lesson’s pass mark; without it, opening the tool completes the lesson.</value>
+  </data>
+  <data name="Std.Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Std.Back" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="Std.XapiTitle" xml:space="preserve">
+    <value>xAPI statements</value>
+  </data>
+  <data name="Std.XapiIntro" xml:space="preserve">
+    <value>Send course and lesson results to your Learning Record Store.</value>
+  </data>
+  <data name="Std.Outbox.Pending" xml:space="preserve">
+    <value>Waiting to send</value>
+  </data>
+  <data name="Std.Outbox.Delivered" xml:space="preserve">
+    <value>Delivered</value>
+  </data>
+  <data name="Std.Outbox.Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="Std.Field.XapiEnabled" xml:space="preserve">
+    <value>Send xAPI statements to the LRS</value>
+  </data>
+  <data name="Std.Field.LrsEndpoint" xml:space="preserve">
+    <value>LRS endpoint (https)</value>
+  </data>
+  <data name="Std.Field.LrsKey" xml:space="preserve">
+    <value>LRS key</value>
+  </data>
+  <data name="Std.Field.LrsSecret" xml:space="preserve">
+    <value>LRS secret</value>
+  </data>
+  <data name="Std.SecretStored" xml:space="preserve">
+    <value>Stored (leave empty to keep it)</value>
+  </data>
+  <data name="Std.Field.ClearSecret" xml:space="preserve">
+    <value>Remove the stored secret</value>
+  </data>
+  <data name="Std.Field.ShareEmailInActor" xml:space="preserve">
+    <value>Identify members by e-mail address (otherwise a pseudonymous department account)</value>
+  </data>
+  <data name="Std.XapiHelp" xml:space="preserve">
+    <value>Statements (attempted, completed, passed, failed) are queued when they happen and sent in batches, with retries when the LRS is unavailable. The secret is stored encrypted.</value>
+  </data>
+  <data name="Std.Outbox.RecentFailures" xml:space="preserve">
+    <value>Recent failures</value>
+  </data>
+  <data name="Std.Col.Statement" xml:space="preserve">
+    <value>Statement</value>
+  </data>
+  <data name="Std.Col.Attempts" xml:space="preserve">
+    <value>Attempts</value>
+  </data>
+  <data name="Std.Col.LastError" xml:space="preserve">
+    <value>Last error</value>
+  </data>
+  <data name="Std.Col.Queued" xml:space="preserve">
+    <value>Queued</value>
+  </data>
+  <data name="Std.Outbox.Retry" xml:space="preserve">
+    <value>Retry failed statements</value>
+  </data>
+  <data name="Std.Lesson.Tool" xml:space="preserve">
+    <value>LTI tool</value>
+  </data>
+  <data name="Std.Choose" xml:space="preserve">
+    <value>Choose…</value>
+  </data>
+  <data name="Std.Lesson.NoPassback" xml:space="preserve">
+    <value>no score passback</value>
+  </data>
+  <data name="Std.Lesson.Target" xml:space="preserve">
+    <value>Target link URI (optional)</value>
+  </data>
+  <data name="Std.Lesson.PassMark" xml:space="preserve">
+    <value>Pass mark (%)</value>
+  </data>
+  <data name="Std.Lesson.LtiHelp" xml:space="preserve">
+    <value>The member opens the tool in a new window. With score passback the lesson completes at the pass mark (0 = when the tool reports it finished); otherwise when the tool is opened.</value>
+  </data>
+  <data name="Std.Lesson.NoTools" xml:space="preserve">
+    <value>Register an LTI tool first (Trainings → Standards → LTI tools).</value>
+  </data>
+  <data name="Std.Lesson.Package" xml:space="preserve">
+    <value>Content package</value>
+  </data>
+  <data name="Std.Lesson.PackageHelp" xml:space="preserve">
+    <value>The lesson completes when the package reports it (SCORM status or the cmi5 moveOn rule); the member cannot mark it complete.</value>
+  </data>
+  <data name="Std.Lesson.NoPackages" xml:space="preserve">
+    <value>Upload a package first (Trainings → Standards → Content packages).</value>
+  </data>
+  <data name="Std.Player.Completed" xml:space="preserve">
+    <value>This lesson is complete.</value>
+  </data>
+  <data name="Std.Player.LtiIntro" xml:space="preserve">
+    <value>This lesson is provided by {0} and opens in a new window.</value>
+  </data>
+  <data name="Std.Player.LaunchTool" xml:space="preserve">
+    <value>Open the course</value>
+  </data>
+  <data name="Std.Player.LtiScoreHelp" xml:space="preserve">
+    <value>Your result comes back from the provider when you finish; refresh this page to see it.</value>
+  </data>
+  <data name="Std.Player.LtiOpenHelp" xml:space="preserve">
+    <value>Opening the course completes this lesson.</value>
+  </data>
+  <data name="Std.Player.Items" xml:space="preserve">
+    <value>Parts of this lesson</value>
+  </data>
+  <data name="Std.Player.Done" xml:space="preserve">
+    <value>done</value>
+  </data>
+  <data name="Std.Player.Sandboxed" xml:space="preserve">
+    <value>The course runs in a protected frame and reports only its own progress.</value>
+  </data>
+  <data name="Std.Player.Status" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="Std.Player.Satisfied" xml:space="preserve">
+    <value>Completion rule met</value>
+  </data>
+  <data name="Std.Player.NotSatisfied" xml:space="preserve">
+    <value>Not finished yet</value>
+  </data>
+  <data name="Std.Player.Score" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="Std.Player.Refresh" xml:space="preserve">
+    <value>Refresh progress</value>
+  </data>
+  <data name="Std.Error.NotFound" xml:space="preserve">
+    <value>This item was not found.</value>
+  </data>
+  <data name="Std.Error.NotAuthorized" xml:space="preserve">
+    <value>You do not have permission to do this.</value>
+  </data>
+  <data name="Std.Error.AddonRequired" xml:space="preserve">
+    <value>This needs an active LMS add-on.</value>
+  </data>
+  <data name="Std.Error.LapseWindowEnded" xml:space="preserve">
+    <value>The LMS add-on lapsed and this course can no longer be taken.</value>
+  </data>
+  <data name="Std.Error.NotEntitled" xml:space="preserve">
+    <value>This content is not available to your department.</value>
+  </data>
+  <data name="Std.Error.InvalidInput" xml:space="preserve">
+    <value>Some details are missing or not valid (addresses must be https).</value>
+  </data>
+  <data name="Std.Error.LessonLocked" xml:space="preserve">
+    <value>Finish the earlier lessons first.</value>
+  </data>
+  <data name="Std.Error.MediaUnavailable" xml:space="preserve">
+    <value>This content cannot be opened right now (the package is not ready or the tool is not active).</value>
+  </data>
+  <data name="Std.Error.FileTooLarge" xml:space="preserve">
+    <value>The package is too large.</value>
+  </data>
+  <data name="Std.Error.UnsupportedFile" xml:space="preserve">
+    <value>This file is not a package that can be played.</value>
+  </data>
+  <data name="Std.Error.RequirementNotMet" xml:space="preserve">
+    <value>This lesson completes when its content reports it.</value>
+  </data>
+  <data name="Std.Error.CodeExpired" xml:space="preserve">
+    <value>This launch has expired. Open the lesson again.</value>
+  </data>
+  <data name="Std.Error.AlreadySubmitted" xml:space="preserve">
+    <value>This has already been recorded.</value>
+  </data>
+  <data name="Std.PackageError.Empty" xml:space="preserve">
+    <value>The file is empty.</value>
+  </data>
+  <data name="Std.PackageError.TooLarge" xml:space="preserve">
+    <value>The package is larger than allowed.</value>
+  </data>
+  <data name="Std.PackageError.NotZip" xml:space="preserve">
+    <value>The file is not a zip archive.</value>
+  </data>
+  <data name="Std.PackageError.TooManyFiles" xml:space="preserve">
+    <value>The package holds too many files.</value>
+  </data>
+  <data name="Std.PackageError.UnsafePath" xml:space="preserve">
+    <value>The package contains a file path that leaves the package folder, so it was refused.</value>
+  </data>
+  <data name="Std.PackageError.UncompressedTooLarge" xml:space="preserve">
+    <value>The package unpacks to more than allowed.</value>
+  </data>
+  <data name="Std.PackageError.SuspiciousCompression" xml:space="preserve">
+    <value>A file in the package compresses far beyond real content and was refused.</value>
+  </data>
+  <data name="Std.PackageError.ManifestMissing" xml:space="preserve">
+    <value>No imsmanifest.xml (SCORM) or cmi5.xml (cmi5) at the root of the zip.</value>
+  </data>
+  <data name="Std.PackageError.ManifestInvalid" xml:space="preserve">
+    <value>The manifest is not valid.</value>
+  </data>
+  <data name="Std.PackageError.UnsupportedStandard" xml:space="preserve">
+    <value>This SCORM version is not supported (SCORM 1.2 and 2004 are).</value>
+  </data>
+  <data name="Std.PackageError.NoLaunchableItem" xml:space="preserve">
+    <value>The package has no SCO or AU to launch.</value>
+  </data>
+  <data name="Std.PackageError.LaunchFileMissing" xml:space="preserve">
+    <value>A SCO or AU names a file that is not in the package.</value>
+  </data>
+  <data name="Std.PackageError.RemoteAuNotSupported" xml:space="preserve">
+    <value>An AU is hosted elsewhere; only packaged content runs inside Resgrid.</value>
+  </data>
+  <data name="Std.ClientReportedNote" xml:space="preserve">
+    <value>SCORM and cmi5 results (completion, score, pass or fail) are reported by the package running in the learner's browser, so a determined learner could alter them. For courses that carry continuing-education credit, add a Resgrid assessment lesson as well.</value>
+  </data>
+  <data name="Std.Error.NotLicensed" xml:space="preserve">
+    <value>You need an LMS seat for this. Ask your administrator to enable LMS access for you. The Academy and your training records stay available.</value>
+  </data>
+  <data name="Std.App.Busy" xml:space="preserve">
+    <value>Too many attempts. Wait a minute and try again.</value>
+  </data>
+  <data name="Std.App.LtiFramed" xml:space="preserve">
+    <value>The course opens in a new window. Come back here when you finish.</value>
+  </data>
+  <data name="Std.App.LtiOpening" xml:space="preserve">
+    <value>Opening the course…</value>
+  </data>
+  <data name="Std.App.LtiScoreHelp" xml:space="preserve">
+    <value>Your result comes back from the provider when you finish. The app updates when it arrives.</value>
+  </data>
+  <data name="Std.App.Returned" xml:space="preserve">
+    <value>You are back from the course. You can close this window and return to the app.</value>
+  </data>
+  <data name="Std.App.Ended" xml:space="preserve">
+    <value>This lesson cannot continue here. Close it and open the lesson again from the app.</value>
+  </data>
+  <data name="Std.App.Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Std.App.Offline" xml:space="preserve">
+    <value>You are offline. This lesson needs a connection to save your progress.</value>
+  </data>
+</root>

@@ -98,6 +98,63 @@ namespace Resgrid.Tests.Services
 			(await _service.BuildSafeWorkflowPayloadAsync(DeptId, null)).Should().BeNull();
 		}
 
+		private static Resgrid.Model.Call CallWithCase() => new Resgrid.Model.Call
+		{
+			CallId = 1001, DepartmentId = DeptId, Name = "Sick person", Number = "26-1001",
+			Protocols = new System.Collections.Generic.List<Resgrid.Model.CallProtocol>
+			{
+				new Resgrid.Model.CallProtocol
+				{
+					CallProtocolId = 70, CallId = 1001, DispatchProtocolId = 42, ProtocolVersionId = 118, Data = "EMD-26", Determinant = "26-C-1", ContentHash = "abc",
+					CaseJson = "{\"answers\":{\"breathing\":\"CASE-ANSWER-NOT-BREATHING\"}}", AnswersJson = "{\"KEY-ANSWER-DIABETIC\":1}",
+					OverrideReason = "OVERRIDE-CALLER-SAID-CHEST-PAIN", StepLogJson = "{\"note\":\"STEP-NOTE-PATIENT-NAME\"}", RemovedReason = "REMOVED-FREE-TEXT"
+				}
+			}
+		};
+
+		private static readonly string[] CallerContent =
+			{ "CASE-ANSWER-NOT-BREATHING", "KEY-ANSWER-DIABETIC", "OVERRIDE-CALLER-SAID-CHEST-PAIN", "STEP-NOTE-PATIENT-NAME", "REMOVED-FREE-TEXT" };
+
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task Call_events_never_carry_a_protocol_case_answers_step_log_or_reasons_into_a_workflow_payload(bool enforced)
+		{
+			// Round 7C: CallAdded / CallUpdated / CallClosed serialize call.Protocols; the caller content goes, the ids and determinant stay.
+			_protection.Setup(x => x.IsProtectionEnforcedAsync(DeptId)).ReturnsAsync(enforced);
+
+			foreach (var payload in new object[]
+			{
+				new Resgrid.Model.Events.CallAddedEvent { DepartmentId = DeptId, Call = CallWithCase() },
+				new Resgrid.Model.Events.CallUpdatedEvent { DepartmentId = DeptId, Call = CallWithCase() },
+				new Resgrid.Model.Events.CallClosedEvent { DepartmentId = DeptId, Call = CallWithCase() }
+			})
+			{
+				var json = await _service.BuildSafeWorkflowPayloadAsync(DeptId, payload);
+
+				foreach (var content in CallerContent)
+					json.Should().NotContain(content, payload.GetType().Name);
+				var row = (JObject)JObject.Parse(json)["Call"]["Protocols"][0];
+				foreach (var field in Resgrid.Model.Events.CallWorkflowPayload.StrippedProtocolFields)
+					row.Property(field).Should().BeNull(field);
+				row["Determinant"].Value<string>().Should().Be("26-C-1");
+				row["DispatchProtocolId"].Value<int>().Should().Be(42);
+				if (!enforced)
+					row["Data"].Value<string>().Should().Be("EMD-26", "the protocol's code stays (a protected department's projection treats Data by the catalog)");
+			}
+		}
+
+		[Test]
+		public void Every_text_field_of_a_call_protocol_is_either_stripped_from_workflow_payloads_or_known_safe()
+		{
+			// A new free-text field on CallProtocol fails here until it is classified (stripped, or kept because it is an id or a code).
+			var classified = new System.Collections.Generic.HashSet<string>(Resgrid.Model.Events.CallWorkflowPayload.StrippedProtocolFields);
+			classified.UnionWith(Resgrid.Model.Events.CallWorkflowPayload.KeptProtocolTextFields);
+
+			foreach (var property in typeof(Resgrid.Model.CallProtocol).GetProperties())
+				if (property.PropertyType == typeof(string) && property.CanWrite) // stored text (TableName/IdName are constants)
+					classified.Should().Contain(property.Name, $"CallProtocol.{property.Name} must be classified for workflow payloads");
+		}
+
 		#region Notification-safe call
 
 		private static Resgrid.Model.Call ProtectedCall() => new Resgrid.Model.Call

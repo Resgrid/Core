@@ -1,0 +1,1353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers &amp; schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment; machine-translated</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+        <comment>machine-translated</comment>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment; machine-translated</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Access" xml:space="preserve">
+    <value>Alumnos externos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Access.Assigned" xml:space="preserve">
+    <value>El departamento inscribe alumnos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Access.Catalog" xml:space="preserve">
+    <value>Publicado en el portal</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Access.None" xml:space="preserve">
+    <value>Solo miembros</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>No ha funcionado. Inténtelo de nuevo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Acciones</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddonInactive" xml:space="preserve">
+    <value>El complemento LMS no está activo: los alumnos externos no pueden iniciar sesión y no se pueden añadir.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance" xml:space="preserve">
+    <value>Asistencia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Absent" xml:space="preserve">
+    <value>Ausente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Attended" xml:space="preserve">
+    <value>Asistió</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Excused" xml:space="preserve">
+    <value>Justificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Unmarked" xml:space="preserve">
+    <value>Sin marcar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BillingCustomer" xml:space="preserve">
+    <value>Cliente propio del alumno</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Currency" xml:space="preserve">
+    <value>Moneda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Due" xml:space="preserve">
+    <value>Tarifas pendientes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Export" xml:space="preserve">
+    <value>Exportar lista (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Fee" xml:space="preserve">
+    <value>Tarifa por alumno externo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.FeeHelp" xml:space="preserve">
+    <value>Déjelo vacío para una clase gratuita. Resgrid no cobra pagos: exporte la lista o emita facturas con Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Header" xml:space="preserve">
+    <value>Clase pública y tarifas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Invoiced" xml:space="preserve">
+    <value>Facturado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.InvoicesRaised" xml:space="preserve">
+    <value>{0} borradores de factura emitidos para {1} alumnos. Revíselos y envíelos en Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Mode.PerLearner" xml:space="preserve">
+    <value>Una factura por alumno</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Mode.PerOrganization" xml:space="preserve">
+    <value>Una factura por organización patrocinadora</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.NoInvoicing" xml:space="preserve">
+    <value>La facturación de Business Operations no está activa en este departamento: exporte la lista para su propia facturación.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Public" xml:space="preserve">
+    <value>Publicar esta clase en el portal de alumnos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.RaiseInvoices" xml:space="preserve">
+    <value>Emitir facturas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.RateItem" xml:space="preserve">
+    <value>Concepto de tarifa de Business Operations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Roster" xml:space="preserve">
+    <value>Lista y tarifas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Skipped" xml:space="preserve">
+    <value>Sin facturar:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Classes" xml:space="preserve">
+    <value>Clases</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Course" xml:space="preserve">
+    <value>Curso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseAccess" xml:space="preserve">
+    <value>Cursos para alumnos externos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Courses" xml:space="preserve">
+    <value>Cursos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Attendance" xml:space="preserve">
+    <value>Asistencia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Currency" xml:space="preserve">
+    <value>Moneda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Email" xml:space="preserve">
+    <value>Correo electrónico</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Fee" xml:space="preserve">
+    <value>Tarifa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.FeeStatus" xml:space="preserve">
+    <value>Estado de la tarifa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Hours" xml:space="preserve">
+    <value>Horas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Invoice" xml:space="preserve">
+    <value>Factura</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Kind" xml:space="preserve">
+    <value>Tipo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Learner" xml:space="preserve">
+    <value>Alumno</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Organization" xml:space="preserve">
+    <value>Organización</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Roster" xml:space="preserve">
+    <value>Lista</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Correo electrónico</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollClass" xml:space="preserve">
+    <value>Inscribir en una clase</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollCourse" xml:space="preserve">
+    <value>Inscribir en un curso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrolled" xml:space="preserve">
+    <value>Inscrito.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Erase" xml:space="preserve">
+    <value>Borrar alumno</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseConfirm" xml:space="preserve">
+    <value>Entiendo que no se puede deshacer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseConfirmRequired" xml:space="preserve">
+    <value>Marque la confirmación para borrar al alumno.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Erased" xml:space="preserve">
+    <value>El alumno se ha borrado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseHeader" xml:space="preserve">
+    <value>Datos y supresión (RGPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseHelp" xml:space="preserve">
+    <value>La supresión elimina la cuenta, el progreso en los cursos, los intentos, los registros de formación y los certificados, y quita su nombre de las listas de clase. Las facturas ya emitidas permanecen en Business Operations. No se puede deshacer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportData" xml:space="preserve">
+    <value>Exportar datos (RGPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FairUseNote" xml:space="preserve">
+    <value>Los alumnos externos están incluidos hasta el 25 % de las plazas compradas (mínimo 25). A partir de ahí, cada uno ocupa una plaza, como un miembro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Fee" xml:space="preserve">
+    <value>Tarifa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus" xml:space="preserve">
+    <value>Estado de la tarifa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.Due" xml:space="preserve">
+    <value>Pendiente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.Invoiced" xml:space="preserve">
+    <value>Facturado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.NotDue" xml:space="preserve">
+    <value>No pendiente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.Waived" xml:space="preserve">
+    <value>Exento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>Nombre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>Personas ajenas al departamento (socios de ayuda mutua, contratistas, voluntarios y el público) realizan sus cursos y clases públicas en un portal de alumnos sin convertirse en miembros.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Enviar invitación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>Invitación enviada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InviteHeader" xml:space="preserve">
+    <value>Invitar a un alumno externo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Tipo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.External" xml:space="preserve">
+    <value>Alumno externo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Member" xml:space="preserve">
+    <value>Miembro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Apellido</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LastSignIn" xml:space="preserve">
+    <value>Último inicio de sesión</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearnerHeader" xml:space="preserve">
+    <value>Alumno</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_closed" xml:space="preserve">
+    <value>La inscripción a esta clase está cerrada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_cutoff" xml:space="preserve">
+    <value>La inscripción se cerró poco antes de la clase.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_full" xml:space="preserve">
+    <value>Esta clase está completa.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_enrolled" xml:space="preserve">
+    <value>No figura en la lista de esta clase.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_found" xml:space="preserve">
+    <value>No se encontró la clase.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_member" xml:space="preserve">
+    <value>Solo se pueden inscribir así alumnos externos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_open" xml:space="preserve">
+    <value>Esta clase no admite inscripciones.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_signed_off" xml:space="preserve">
+    <value>Esta clase está cerrada; su lista no puede cambiar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_unenroll_closed" xml:space="preserve">
+    <value>Esta clase no permite retirarse; contacte con el departamento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_accent_invalid" xml:space="preserve">
+    <value>Introduzca el color como #rrggbb.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_addon_inactive" xml:space="preserve">
+    <value>El complemento LMS no está activo: ahora no se pueden añadir alumnos externos ni formarlos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_closed" xml:space="preserve">
+    <value>Este curso no está abierto a alumnos externos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_not_found" xml:space="preserve">
+    <value>No se encontró el curso o no está publicado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_refused" xml:space="preserve">
+    <value>No fue posible la inscripción.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_customer_invalid" xml:space="preserve">
+    <value>Elija un cliente de Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_email_invalid" xml:space="preserve">
+    <value>Introduzca una dirección de correo válida.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_exists" xml:space="preserve">
+    <value>Ya existe un alumno externo con este correo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_fee_invalid" xml:space="preserve">
+    <value>Introduzca una tarifa entre 0 y 100.000.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_fee_invoiced" xml:space="preserve">
+    <value>Esta tarifa ya está facturada; cámbiela en Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_fee_not_found" xml:space="preserve">
+    <value>No se encontró la tarifa.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_invoice_failed" xml:space="preserve">
+    <value>no se pudo crear la factura</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_invoicing_unavailable" xml:space="preserve">
+    <value>La facturación de Business Operations no está activa en este departamento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_locked" xml:space="preserve">
+    <value>Demasiadas contraseñas incorrectas. Inténtelo en 15 minutos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_name_required" xml:space="preserve">
+    <value>Introduzca nombre y apellido.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_no_customer" xml:space="preserve">
+    <value>sin cliente de Business Operations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_no_sponsor" xml:space="preserve">
+    <value>sin organización patrocinadora</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_not_found" xml:space="preserve">
+    <value>No se encontró a ese alumno.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_not_invited" xml:space="preserve">
+    <value>Solo se puede reenviar una invitación no aceptada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_not_verified" xml:space="preserve">
+    <value>Confirme primero su correo con el enlace que le enviamos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_password_length" xml:space="preserve">
+    <value>La contraseña debe tener entre 8 y 128 caracteres.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_password_weak" xml:space="preserve">
+    <value>La contraseña necesita una mayúscula, una minúscula y un número.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_portal_full" xml:space="preserve">
+    <value>El registro no está disponible ahora. Póngase en contacto con el departamento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_portal_off" xml:space="preserve">
+    <value>Active primero el portal de alumnos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_rate_item_invalid" xml:space="preserve">
+    <value>Elija un concepto de tarifa de Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_registration_closed" xml:space="preserve">
+    <value>El registro no está abierto en este portal.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_seats_full" xml:space="preserve">
+    <value>Más allá del cupo gratuito cada alumno externo ocupa una plaza y no queda ninguna. Añada {0} paquete(s) para invitar a más.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_signin_failed" xml:space="preserve">
+    <value>El correo o la contraseña no son correctos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_status_invalid" xml:space="preserve">
+    <value>Ese cambio no es posible.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_suspended" xml:space="preserve">
+    <value>Su acceso está en pausa. Póngase en contacto con el departamento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_token_invalid" xml:space="preserve">
+    <value>Este enlace ya no es válido. Solicite uno nuevo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nombre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Nunca</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Aún no hay cursos publicados.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLearners" xml:space="preserve">
+    <value>Aún no hay alumnos externos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Ninguno</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Abrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Organization" xml:space="preserve">
+    <value>Organización</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Attest" xml:space="preserve">
+    <value>Confirmo que hago esta prueba yo mismo, sin ayuda.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Back" xml:space="preserve">
+    <value>Volver</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Catalog" xml:space="preserve">
+    <value>Clases y cursos abiertos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.CatalogCourses" xml:space="preserve">
+    <value>Cursos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Certificate" xml:space="preserve">
+    <value>Certificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ChoosePassword" xml:space="preserve">
+    <value>Elija su contraseña</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Completed" xml:space="preserve">
+    <value>Completado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.CompletedOn" xml:space="preserve">
+    <value>Completado el</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ConfirmPassword" xml:space="preserve">
+    <value>Confirmar contraseña</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Continue" xml:space="preserve">
+    <value>Continuar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.CourseDone" xml:space="preserve">
+    <value>Curso completado. Figura en su expediente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Enroll" xml:space="preserve">
+    <value>Inscribirse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EnrolledMessage" xml:space="preserve">
+    <value>Está inscrito.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EraseMine" xml:space="preserve">
+    <value>Eliminar mi cuenta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EraseMineDone" xml:space="preserve">
+    <value>Su cuenta se ha eliminado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EraseMineHelp" xml:space="preserve">
+    <value>Elimina su cuenta, progreso, registros de formación y certificados con este departamento. Confirme con su contraseña. No se puede deshacer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.FileTooLarge" xml:space="preserve">
+    <value>El archivo es demasiado grande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Lesson" xml:space="preserve">
+    <value>Esta lección no se puede completar ahora.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Locked" xml:space="preserve">
+    <value>Termine primero las lecciones anteriores.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Requirement" xml:space="preserve">
+    <value>Apruebe primero la prueba o responda la encuesta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Response" xml:space="preserve">
+    <value>Escriba primero su respuesta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.SeatTime" xml:space="preserve">
+    <value>Dedique primero algo más de tiempo a esta lección.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ExportMine" xml:space="preserve">
+    <value>Descargar mis datos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.FeeLabel" xml:space="preserve">
+    <value>Tarifa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Forgot" xml:space="preserve">
+    <value>¿Ha olvidado la contraseña?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ForgotSent" xml:space="preserve">
+    <value>Si esa dirección tiene cuenta, recibirá un enlace para restablecerla.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Free" xml:space="preserve">
+    <value>Gratis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Full" xml:space="preserve">
+    <value>Completo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Hours" xml:space="preserve">
+    <value>Horas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.LessonDone" xml:space="preserve">
+    <value>Lección completada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Lessons" xml:space="preserve">
+    <value>Lecciones</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Locked" xml:space="preserve">
+    <value>bloqueada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MarkComplete" xml:space="preserve">
+    <value>Marcar como completado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyClasses" xml:space="preserve">
+    <value>Mis clases</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyCourses" xml:space="preserve">
+    <value>Mis cursos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyData" xml:space="preserve">
+    <value>Mis datos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyLearning" xml:space="preserve">
+    <value>Mi formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Next" xml:space="preserve">
+    <value>Siguiente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NoClasses" xml:space="preserve">
+    <value>No hay clases públicas abiertas ahora.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NoCourses" xml:space="preserve">
+    <value>No hay cursos abiertos ahora.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NoLearning" xml:space="preserve">
+    <value>Aún no hay nada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NotPassed" xml:space="preserve">
+    <value>No aprobado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Open" xml:space="preserve">
+    <value>Abrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.OpenDocument" xml:space="preserve">
+    <value>Abrir documento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Order" xml:space="preserve">
+    <value>Ordénelos (escriba las letras separadas por comas)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Organization" xml:space="preserve">
+    <value>Organización (opcional)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Passed" xml:space="preserve">
+    <value>Aprobado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Password" xml:space="preserve">
+    <value>Contraseña</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PasswordHelp" xml:space="preserve">
+    <value>Al menos 8 caracteres con mayúscula, minúscula y número.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PasswordMismatch" xml:space="preserve">
+    <value>Las contraseñas no coinciden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PasswordSet" xml:space="preserve">
+    <value>Contraseña establecida. Inicie sesión para continuar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PoweredBy" xml:space="preserve">
+    <value>Con la tecnología de Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Previous" xml:space="preserve">
+    <value>Anterior</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PrivacyNote" xml:space="preserve">
+    <value>Sus datos solo los usa {0} para sus registros de formación.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PublicClasses" xml:space="preserve">
+    <value>Clases públicas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Register" xml:space="preserve">
+    <value>Crear una cuenta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RegisteredMessage" xml:space="preserve">
+    <value>Su plaza está registrada. Consulte su estado abajo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RegisterForClass" xml:space="preserve">
+    <value>Inscribirse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RegisterSent" xml:space="preserve">
+    <value>Revise su correo: le enviamos un enlace para confirmar la dirección.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Score" xml:space="preserve">
+    <value>Puntuación: {0} %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SeatsLeft" xml:space="preserve">
+    <value>Quedan {0} plazas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SeatTime" xml:space="preserve">
+    <value>Mantenga esta página abierta; el tiempo cuenta para la lección.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SendResetLink" xml:space="preserve">
+    <value>Enviar enlace</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SetPassword" xml:space="preserve">
+    <value>Establecer contraseña</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SignIn" xml:space="preserve">
+    <value>Iniciar sesión</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SignInToRegister" xml:space="preserve">
+    <value>Inicie sesión o cree una cuenta para inscribirse.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SignOut" xml:space="preserve">
+    <value>Cerrar sesión</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Skip" xml:space="preserve">
+    <value>Ir al contenido</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.StartTest" xml:space="preserve">
+    <value>Empezar la prueba</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SubmitSurvey" xml:space="preserve">
+    <value>Enviar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SubmitTest" xml:space="preserve">
+    <value>Enviar respuestas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Throttled" xml:space="preserve">
+    <value>Demasiados intentos desde su red. Espere un poco y vuelva a intentarlo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Title" xml:space="preserve">
+    <value>Formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Transcript" xml:space="preserve">
+    <value>Expediente y certificados</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Unavailable" xml:space="preserve">
+    <value>Este portal de formación no está disponible ahora.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Verified" xml:space="preserve">
+    <value>Su correo está confirmado. Inicie sesión para continuar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Waitlist" xml:space="preserve">
+    <value>Unirse a la lista de espera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.WatchVideo" xml:space="preserve">
+    <value>Ver vídeo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.When" xml:space="preserve">
+    <value>Cuándo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Where" xml:space="preserve">
+    <value>Dónde</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Withdraw" xml:space="preserve">
+    <value>Retirarse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.WithdrawnMessage" xml:space="preserve">
+    <value>Se ha retirado de la clase.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalHeader" xml:space="preserve">
+    <value>Portal de alumnos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalLink" xml:space="preserve">
+    <value>Dirección del portal</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalOff" xml:space="preserve">
+    <value>El portal de alumnos está desactivado. Actívelo en la configuración del portal para invitar alumnos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalSettings" xml:space="preserve">
+    <value>Configuración del portal</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicFeesLink" xml:space="preserve">
+    <value>Clase pública y tarifas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Reactivar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Eliminar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResendInvite" xml:space="preserve">
+    <value>Reenviar invitación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster" xml:space="preserve">
+    <value>Lista</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Declined" xml:space="preserve">
+    <value>Rechazado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Enrolled" xml:space="preserve">
+    <value>Inscrito</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.PendingApproval" xml:space="preserve">
+    <value>Pendiente de aprobación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Removed" xml:space="preserve">
+    <value>Eliminado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Waitlisted" xml:space="preserve">
+    <value>En lista de espera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Withdrawn" xml:space="preserve">
+    <value>Retirado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Guardado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Accent" xml:space="preserve">
+    <value>Color de acento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.AccentHelp" xml:space="preserve">
+    <value>Un color como #1ab394. Déjelo vacío para el color de Resgrid. El logotipo procede del perfil del departamento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Enabled" xml:space="preserve">
+    <value>Activar el portal de alumnos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.HideLogo" xml:space="preserve">
+    <value>Ocultar el logotipo del departamento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Preview" xml:space="preserve">
+    <value>Vista previa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.PublicListing" xml:space="preserve">
+    <value>Mostrar clases públicas abiertas y cursos del catálogo a visitantes sin sesión</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Regenerate" xml:space="preserve">
+    <value>Cambiar la dirección del portal</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.RegenerateHelp" xml:space="preserve">
+    <value>Los enlaces antiguos dejan de funcionar y se cierra la sesión de los alumnos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.SelfRegistration" xml:space="preserve">
+    <value>Permitir que las personas creen su propia cuenta (para clases públicas y cursos del catálogo)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Welcome" xml:space="preserve">
+    <value>Texto de bienvenida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Source.Invited" xml:space="preserve">
+    <value>Invitado por el departamento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Source.SelfRegistered" xml:space="preserve">
+    <value>Registrado en el portal</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Sponsor" xml:space="preserve">
+    <value>Organización patrocinadora (cliente de Business Operations)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Allowance" xml:space="preserve">
+    <value>Incluidos gratis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.FreeSeats" xml:space="preserve">
+    <value>Plazas libres</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.InPacks" xml:space="preserve">
+    <value>Cuentan en paquetes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Learners" xml:space="preserve">
+    <value>Alumnos externos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Estado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Active" xml:space="preserve">
+    <value>Activo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Erased" xml:space="preserve">
+    <value>Borrado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Invited" xml:space="preserve">
+    <value>Invitado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Pending" xml:space="preserve">
+    <value>Sin verificar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Removed" xml:space="preserve">
+    <value>Eliminado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Suspended" xml:space="preserve">
+    <value>Suspendido</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Suspender</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Alumnos externos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Transcript" xml:space="preserve">
+    <value>Expediente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Waive" xml:space="preserve">
+    <value>Exento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Greeting" xml:space="preserve">
+    <value>Hola, {0}:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Enrolled.Subject" xml:space="preserve">
+    <value>Su plaza está confirmada: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Enrolled.Body" xml:space="preserve">
+    <value>Su plaza en {0} el {1} está confirmada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Waitlisted.Subject" xml:space="preserve">
+    <value>Está en la lista de espera: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Waitlisted.Body" xml:space="preserve">
+    <value>{0} el {1} está completo. Es el número {2} en la lista de espera. Le escribiremos si se libera una plaza para usted.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Promoted.Subject" xml:space="preserve">
+    <value>Se liberó una plaza para usted: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Promoted.Body" xml:space="preserve">
+    <value>Se liberó una plaza en {0} el {1} y es suya: su plaza está confirmada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Reminder.Subject" xml:space="preserve">
+    <value>Recordatorio: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Reminder.Body" xml:space="preserve">
+    <value>Le recordamos que {0} comienza el {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Changed.Subject" xml:space="preserve">
+    <value>Cambio en la clase: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Changed.Body" xml:space="preserve">
+    <value>{0} ha cambiado. Ahora tendrá lugar el {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Cancelled.Subject" xml:space="preserve">
+    <value>Clase cancelada: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Cancelled.Body" xml:space="preserve">
+    <value>{0} del {1} ha sido cancelada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.CancelReason" xml:space="preserve">
+    <value>Motivo: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.SignedOff.Subject" xml:space="preserve">
+    <value>Su registro de formación: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.SignedOff.Body" xml:space="preserve">
+    <value>Se registró su asistencia a {0}. Su registro de formación, y cualquier certificado, está en Mi aprendizaje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.CompletionRecorded.Subject" xml:space="preserve">
+    <value>Curso completado: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.CompletionRecorded.Body" xml:space="preserve">
+    <value>Su instructor registró que completó {0}. Figura en su registro de formación, en Mi aprendizaje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Where" xml:space="preserve">
+    <value>Dónde: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Online" xml:space="preserve">
+    <value>Unirse en línea: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.OpenPortal" xml:space="preserve">
+    <value>Abrir Mi aprendizaje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Footer" xml:space="preserve">
+    <value>Enviado por {0} a través de Resgrid porque tiene una plaza en esta clase.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Unsubscribe" xml:space="preserve">
+    <value>Dejar de recibir recordatorios de clases</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Resend" xml:space="preserve">
+    <value>Reenviar mi correo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendHelp" xml:space="preserve">
+    <value>¿No recibió el correo para confirmar su dirección o su invitación? Escriba su dirección y se lo enviaremos de nuevo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendSend" xml:space="preserve">
+    <value>Enviar de nuevo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendSent" xml:space="preserve">
+    <value>Si hay una cuenta pendiente para esta dirección, hemos reenviado el correo. Revise su bandeja de entrada y la carpeta de spam.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendLink" xml:space="preserve">
+    <value>¿No recibió el correo?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Unsubscribe" xml:space="preserve">
+    <value>Recordatorios de clases</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.UnsubscribeHelp" xml:space="preserve">
+    <value>¿Dejar de recibir recordatorios de clases? Seguirá recibiendo correos sobre sus propias plazas (confirmadas, en espera, modificadas o canceladas).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.UnsubscribeConfirm" xml:space="preserve">
+    <value>Dejar de recibir recordatorios</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.UnsubscribeDone" xml:space="preserve">
+    <value>Ya no recibirá recordatorios de clases. Puede volver a activarlos en Mi aprendizaje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Preferences" xml:space="preserve">
+    <value>Preferencias de correo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EmailLanguage" xml:space="preserve">
+    <value>Idioma de los correos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EmailLanguageDefault" xml:space="preserve">
+    <value>El idioma del departamento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RemindersOff" xml:space="preserve">
+    <value>No enviarme recordatorios de clases</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RemindersOffHelp" xml:space="preserve">
+    <value>Los correos sobre sus propias plazas (confirmadas, en espera, modificadas o canceladas) se envían siempre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SavePreferences" xml:space="preserve">
+    <value>Guardar preferencias</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PreferencesSaved" xml:space="preserve">
+    <value>Se guardaron sus preferencias.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.WaitlistPosition" xml:space="preserve">
+    <value>Número {0} en la lista de espera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Title" xml:space="preserve">
+    <value>Cómo se usan sus datos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Link" xml:space="preserve">
+    <value>Privacidad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Short" xml:space="preserve">
+    <value>{0} es responsable de los datos que indique aquí y solo los usa para su formación.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Controller" xml:space="preserve">
+    <value>{0} gestiona este portal de formación, decide cómo se usan sus datos y es responsable de ellos. Resgrid ofrece el portal en nombre de {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.WhatKept" xml:space="preserve">
+    <value>Qué se guarda: su nombre, su dirección de correo electrónico y su organización (si la indicó); el idioma de sus correos y sus preferencias de recordatorios; sus inscripciones, asistencia, progreso en los cursos, respuestas y puntuaciones de las pruebas; y los registros de aprendizaje y certificados que obtenga.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Why" xml:space="preserve">
+    <value>Para qué: para gestionar su formación y llevar los registros de formación que necesita {0}. Sus datos no se usan para publicidad ni marketing.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Rights" xml:space="preserve">
+    <value>Sus opciones: en Mi formación puede descargar una copia de sus datos o eliminar su cuenta en cualquier momento, y dejar de recibir recordatorios de clases por correo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Retention" xml:space="preserve">
+    <value>Algunos registros pueden conservarse después de eliminar su cuenta, como las facturas ya emitidas, cuando {0} deba guardarlos por ley o por su propia política.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Contact" xml:space="preserve">
+    <value>Para cualquier otra pregunta o solicitud sobre sus datos, como corregirlos, póngase en contacto con {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.WelcomeHelp" xml:space="preserve">
+    <value>Se muestra en la parte superior del portal. Aquí puede añadir su contacto de privacidad o un enlace a su política de privacidad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.PrivacyHelp" xml:space="preserve">
+    <value>Su departamento u organización es responsable de los datos de los alumnos. El portal muestra a los alumnos una página de privacidad que le nombra, explica qué se guarda y por qué, y les permite descargar sus datos o eliminar su cuenta. Añada un contacto de privacidad al texto de bienvenida si sus normas lo exigen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyTitle" xml:space="preserve">
+    <value>Confirme su dirección de correo electrónico</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyHelp" xml:space="preserve">
+    <value>Confirme la cuenta de formación registrada el {0} a nombre de {1}. Si no creó esta cuenta, cierre esta página: no cambiará nada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyConfirm" xml:space="preserve">
+    <value>Confirmar mi dirección de correo electrónico</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.ProtocolWithheld" xml:space="preserve">
+    <value>Este protocolo no se puede mostrar en el portal de alumnos. Consulte al departamento que imparte este curso.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_licensed" xml:space="preserve">
+    <value>Este curso incluye un protocolo con contenido bajo licencia, que no se puede mostrar a alumnos externos. Quite esa lección antes de abrirles el curso.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_audience" xml:space="preserve">
+    <value>Este curso incluye un protocolo limitado a un público del que los alumnos externos nunca forman parte. Quite esa lección o la restricción de público del protocolo antes de abrirles el curso.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_document" xml:space="preserve">
+    <value>Este curso incluye un protocolo basado en un documento, que no se puede mostrar a alumnos externos. Use una versión redactada del protocolo o quite esa lección antes de abrirles el curso.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_unavailable" xml:space="preserve">
+    <value>Este curso incluye un protocolo desactivado o que ya no está en vigor, por lo que no se puede mostrar a alumnos externos. Actualice la lección a la versión en vigor o quítela antes de abrirles el curso.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyPasswordHelp" xml:space="preserve">
+    <value>Elija la contraseña con la que iniciará sesión. Solo vale la contraseña elegida aquí: no se conserva la que se escribió al registrar la cuenta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_busy" xml:space="preserve">
+    <value>La cuenta se modificó en ese mismo momento. Vuelva a intentarlo.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

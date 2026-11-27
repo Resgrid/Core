@@ -1,0 +1,1353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers &amp; schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment; machine-translated</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+        <comment>machine-translated</comment>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment; machine-translated</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Access" xml:space="preserve">
+    <value>Externa deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Access.Assigned" xml:space="preserve">
+    <value>Avdelningen registrerar deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Access.Catalog" xml:space="preserve">
+    <value>Visas i portalen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Access.None" xml:space="preserve">
+    <value>Endast medlemmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>Det fungerade inte. Försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddonInactive" xml:space="preserve">
+    <value>LMS-tillägget är inte aktivt: externa deltagare kan inte logga in och inga kan läggas till.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance" xml:space="preserve">
+    <value>Närvaro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Absent" xml:space="preserve">
+    <value>Frånvarande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Attended" xml:space="preserve">
+    <value>Närvarande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Excused" xml:space="preserve">
+    <value>Ursäktad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Unmarked" xml:space="preserve">
+    <value>Inte markerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BillingCustomer" xml:space="preserve">
+    <value>Deltagarens egen kund</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Currency" xml:space="preserve">
+    <value>Valuta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Due" xml:space="preserve">
+    <value>Avgifter att fakturera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Export" xml:space="preserve">
+    <value>Exportera listan (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Fee" xml:space="preserve">
+    <value>Avgift per extern deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.FeeHelp" xml:space="preserve">
+    <value>Lämna tomt för en gratis klass. Resgrid tar aldrig emot betalning: exportera listan eller skapa fakturor via Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Header" xml:space="preserve">
+    <value>Öppen klass och avgifter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Invoiced" xml:space="preserve">
+    <value>Fakturerat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.InvoicesRaised" xml:space="preserve">
+    <value>{0} fakturautkast skapade för {1} deltagare. Granska och skicka dem i Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Mode.PerLearner" xml:space="preserve">
+    <value>En faktura per deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Mode.PerOrganization" xml:space="preserve">
+    <value>En faktura per sponsrande organisation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.NoInvoicing" xml:space="preserve">
+    <value>Fakturering i Business Operations är inte aktiv för avdelningen: exportera listan för er egen fakturering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Public" xml:space="preserve">
+    <value>Visa klassen i deltagarportalen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.RaiseInvoices" xml:space="preserve">
+    <value>Skapa fakturor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.RateItem" xml:space="preserve">
+    <value>Prispost i Business Operations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Roster" xml:space="preserve">
+    <value>Lista och avgifter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Class.Skipped" xml:space="preserve">
+    <value>Inte fakturerade:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Classes" xml:space="preserve">
+    <value>Klasser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Course" xml:space="preserve">
+    <value>Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseAccess" xml:space="preserve">
+    <value>Kurser för externa deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Courses" xml:space="preserve">
+    <value>Kurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Attendance" xml:space="preserve">
+    <value>Närvaro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Currency" xml:space="preserve">
+    <value>Valuta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Email" xml:space="preserve">
+    <value>E-post</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Fee" xml:space="preserve">
+    <value>Avgift</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.FeeStatus" xml:space="preserve">
+    <value>Avgiftsstatus</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Hours" xml:space="preserve">
+    <value>Timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Invoice" xml:space="preserve">
+    <value>Faktura</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Kind" xml:space="preserve">
+    <value>Typ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Learner" xml:space="preserve">
+    <value>Deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Organization" xml:space="preserve">
+    <value>Organisation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Csv.Roster" xml:space="preserve">
+    <value>Lista</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>E-post</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollClass" xml:space="preserve">
+    <value>Anmäl till en klass</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollCourse" xml:space="preserve">
+    <value>Registrera på en kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrolled" xml:space="preserve">
+    <value>Registrerad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Erase" xml:space="preserve">
+    <value>Radera deltagaren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseConfirm" xml:space="preserve">
+    <value>Jag förstår att det inte kan ångras</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseConfirmRequired" xml:space="preserve">
+    <value>Kryssa i bekräftelsen för att radera deltagaren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Erased" xml:space="preserve">
+    <value>Deltagaren raderades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseHeader" xml:space="preserve">
+    <value>Data och radering (GDPR)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EraseHelp" xml:space="preserve">
+    <value>Radering tar bort kontot, kursframsteg, försök, utbildningsposter och intyg samt namnet från klasslistor. Redan skapade fakturor finns kvar i Business Operations. Det går inte att ångra.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportData" xml:space="preserve">
+    <value>Exportera data (GDPR)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FairUseNote" xml:space="preserve">
+    <value>Externa deltagare ingår upp till 25 % av era köpta platser (minst 25). Därutöver använder var och en en plats, som en medlem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Fee" xml:space="preserve">
+    <value>Avgift</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus" xml:space="preserve">
+    <value>Avgiftsstatus</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.Due" xml:space="preserve">
+    <value>Att fakturera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.Invoiced" xml:space="preserve">
+    <value>Fakturerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.NotDue" xml:space="preserve">
+    <value>Inte aktuell</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeeStatus.Waived" xml:space="preserve">
+    <value>Efterskänkt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>Förnamn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Intro" xml:space="preserve">
+    <value>Personer utanför avdelningen (partner i ömsesidig hjälp, entreprenörer, frivilliga och allmänheten) går era kurser och öppna klasser i en deltagarportal utan att bli medlemmar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Invite" xml:space="preserve">
+    <value>Skicka inbjudan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Invited" xml:space="preserve">
+    <value>Inbjudan skickad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InviteHeader" xml:space="preserve">
+    <value>Bjud in en extern deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind" xml:space="preserve">
+    <value>Typ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.External" xml:space="preserve">
+    <value>Extern deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Member" xml:space="preserve">
+    <value>Medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>Efternamn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LastSignIn" xml:space="preserve">
+    <value>Senaste inloggning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearnerHeader" xml:space="preserve">
+    <value>Deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_closed" xml:space="preserve">
+    <value>Anmälan till klassen är stängd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_cutoff" xml:space="preserve">
+    <value>Anmälan stängde strax före klassen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_full" xml:space="preserve">
+    <value>Klassen är fullbokad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_enrolled" xml:space="preserve">
+    <value>Du finns inte på klasslistan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_found" xml:space="preserve">
+    <value>Klassen hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_member" xml:space="preserve">
+    <value>Bara externa deltagare kan placeras så.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_open" xml:space="preserve">
+    <value>Klassen är inte öppen för anmälan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_signed_off" xml:space="preserve">
+    <value>Klassen är avslutad; listan kan inte ändras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_unenroll_closed" xml:space="preserve">
+    <value>Klassen tillåter inte avanmälan; kontakta avdelningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_accent_invalid" xml:space="preserve">
+    <value>Ange färgen som #rrggbb.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_addon_inactive" xml:space="preserve">
+    <value>LMS-tillägget är inte aktivt, så externa deltagare kan inte läggas till eller utbildas just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_closed" xml:space="preserve">
+    <value>Kursen är inte öppen för externa deltagare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_not_found" xml:space="preserve">
+    <value>Kursen hittades inte eller är inte publicerad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_refused" xml:space="preserve">
+    <value>Registreringen gick inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_customer_invalid" xml:space="preserve">
+    <value>Välj en kund från Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_email_invalid" xml:space="preserve">
+    <value>Ange en giltig e-postadress.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_exists" xml:space="preserve">
+    <value>Det finns redan en extern deltagare med den adressen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_fee_invalid" xml:space="preserve">
+    <value>Ange en avgift mellan 0 och 100 000.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_fee_invoiced" xml:space="preserve">
+    <value>Avgiften är redan fakturerad; ändra den i Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_fee_not_found" xml:space="preserve">
+    <value>Avgiften hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_invoice_failed" xml:space="preserve">
+    <value>fakturan kunde inte skapas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_invoicing_unavailable" xml:space="preserve">
+    <value>Fakturering i Business Operations är inte aktiv för avdelningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_locked" xml:space="preserve">
+    <value>För många felaktiga lösenord. Försök igen om 15 minuter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_name_required" xml:space="preserve">
+    <value>Ange för- och efternamn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_no_customer" xml:space="preserve">
+    <value>ingen kund i Business Operations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_no_sponsor" xml:space="preserve">
+    <value>ingen sponsrande organisation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_not_found" xml:space="preserve">
+    <value>Deltagaren hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_not_invited" xml:space="preserve">
+    <value>Bara en inbjudan som inte har accepterats kan skickas igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_not_verified" xml:space="preserve">
+    <value>Bekräfta först din e-postadress via länken vi skickade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_password_length" xml:space="preserve">
+    <value>Lösenordet måste vara 8–128 tecken långt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_password_weak" xml:space="preserve">
+    <value>Lösenordet behöver en versal, en gemen och en siffra.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_portal_full" xml:space="preserve">
+    <value>Registrering är inte möjlig just nu. Kontakta avdelningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_portal_off" xml:space="preserve">
+    <value>Slå på deltagarportalen först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_rate_item_invalid" xml:space="preserve">
+    <value>Välj en prispost från Business Operations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_registration_closed" xml:space="preserve">
+    <value>Registreringen är inte öppen i portalen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_seats_full" xml:space="preserve">
+    <value>Utöver den fria kvoten använder varje extern deltagare en plats, och ingen plats finns kvar. Lägg till {0} paket för att bjuda in fler.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_signin_failed" xml:space="preserve">
+    <value>E-postadressen eller lösenordet är fel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_status_invalid" xml:space="preserve">
+    <value>Den ändringen går inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_suspended" xml:space="preserve">
+    <value>Din åtkomst är pausad. Kontakta avdelningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_token_invalid" xml:space="preserve">
+    <value>Länken gäller inte längre. Be om en ny.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Namn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Aldrig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Inga publicerade kurser ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLearners" xml:space="preserve">
+    <value>Inga externa deltagare ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Ingen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Öppna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Organization" xml:space="preserve">
+    <value>Organisation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Attest" xml:space="preserve">
+    <value>Jag bekräftar att jag gör provet själv, utan hjälp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Back" xml:space="preserve">
+    <value>Tillbaka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Catalog" xml:space="preserve">
+    <value>Öppna klasser och kurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.CatalogCourses" xml:space="preserve">
+    <value>Kurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Certificate" xml:space="preserve">
+    <value>Certifikat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ChoosePassword" xml:space="preserve">
+    <value>Välj ditt lösenord</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Completed" xml:space="preserve">
+    <value>Slutförd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.CompletedOn" xml:space="preserve">
+    <value>Slutförd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ConfirmPassword" xml:space="preserve">
+    <value>Bekräfta lösenord</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Continue" xml:space="preserve">
+    <value>Fortsätt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.CourseDone" xml:space="preserve">
+    <value>Kursen är klar och finns i ditt intyg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Enroll" xml:space="preserve">
+    <value>Registrera dig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EnrolledMessage" xml:space="preserve">
+    <value>Du är registrerad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EraseMine" xml:space="preserve">
+    <value>Radera mitt konto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EraseMineDone" xml:space="preserve">
+    <value>Ditt konto raderades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EraseMineHelp" xml:space="preserve">
+    <value>Raderar ditt konto, kursframsteg, utbildningsposter och intyg hos avdelningen. Bekräfta med lösenordet. Det går inte att ångra.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.FileTooLarge" xml:space="preserve">
+    <value>Filen är för stor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Lesson" xml:space="preserve">
+    <value>Lektionen kan inte slutföras just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Locked" xml:space="preserve">
+    <value>Slutför de tidigare lektionerna först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Requirement" xml:space="preserve">
+    <value>Klara provet eller svara på enkäten först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.Response" xml:space="preserve">
+    <value>Skriv ditt svar först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.SeatTime" xml:space="preserve">
+    <value>Lägg först lite mer tid på lektionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ExportMine" xml:space="preserve">
+    <value>Ladda ner mina uppgifter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.FeeLabel" xml:space="preserve">
+    <value>Avgift</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Forgot" xml:space="preserve">
+    <value>Glömt lösenordet?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ForgotSent" xml:space="preserve">
+    <value>Om adressen har ett konto är en återställningslänk på väg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Free" xml:space="preserve">
+    <value>Gratis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Full" xml:space="preserve">
+    <value>Fullbokad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Hours" xml:space="preserve">
+    <value>Timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.LessonDone" xml:space="preserve">
+    <value>Lektionen är klar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Lessons" xml:space="preserve">
+    <value>Lektioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Locked" xml:space="preserve">
+    <value>låst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MarkComplete" xml:space="preserve">
+    <value>Markera som klar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyClasses" xml:space="preserve">
+    <value>Mina klasser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyCourses" xml:space="preserve">
+    <value>Mina kurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyData" xml:space="preserve">
+    <value>Mina uppgifter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.MyLearning" xml:space="preserve">
+    <value>Mitt lärande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Next" xml:space="preserve">
+    <value>Nästa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NoClasses" xml:space="preserve">
+    <value>Inga öppna klasser just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NoCourses" xml:space="preserve">
+    <value>Inga kurser är öppna just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NoLearning" xml:space="preserve">
+    <value>Inget här ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.NotPassed" xml:space="preserve">
+    <value>Inte godkänd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Open" xml:space="preserve">
+    <value>Öppna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.OpenDocument" xml:space="preserve">
+    <value>Öppna dokumentet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Order" xml:space="preserve">
+    <value>Sätt dem i ordning (bokstäver separerade med komma)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Organization" xml:space="preserve">
+    <value>Organisation (valfritt)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Passed" xml:space="preserve">
+    <value>Godkänd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Password" xml:space="preserve">
+    <value>Lösenord</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PasswordHelp" xml:space="preserve">
+    <value>Minst 8 tecken med versal, gemen och siffra.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PasswordMismatch" xml:space="preserve">
+    <value>Lösenorden stämmer inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PasswordSet" xml:space="preserve">
+    <value>Ditt lösenord är satt. Logga in för att fortsätta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PoweredBy" xml:space="preserve">
+    <value>Drivs av Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Previous" xml:space="preserve">
+    <value>Föregående</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PrivacyNote" xml:space="preserve">
+    <value>Dina uppgifter används bara av {0} för utbildningsregister.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PublicClasses" xml:space="preserve">
+    <value>Öppna klasser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Register" xml:space="preserve">
+    <value>Skapa ett konto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RegisteredMessage" xml:space="preserve">
+    <value>Din plats är registrerad. Se statusen nedan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RegisterForClass" xml:space="preserve">
+    <value>Anmäl dig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RegisterSent" xml:space="preserve">
+    <value>Kolla din e-post: vi skickade en länk för att bekräfta adressen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Score" xml:space="preserve">
+    <value>Resultat: {0} %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SeatsLeft" xml:space="preserve">
+    <value>{0} platser kvar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SeatTime" xml:space="preserve">
+    <value>Håll sidan öppen; tiden räknas för lektionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SendResetLink" xml:space="preserve">
+    <value>Skicka återställningslänk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SetPassword" xml:space="preserve">
+    <value>Ange lösenord</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SignIn" xml:space="preserve">
+    <value>Logga in</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SignInToRegister" xml:space="preserve">
+    <value>Logga in eller skapa ett konto för att anmäla dig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SignOut" xml:space="preserve">
+    <value>Logga ut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Skip" xml:space="preserve">
+    <value>Hoppa till innehållet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.StartTest" xml:space="preserve">
+    <value>Starta provet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SubmitSurvey" xml:space="preserve">
+    <value>Skicka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SubmitTest" xml:space="preserve">
+    <value>Skicka svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Throttled" xml:space="preserve">
+    <value>För många försök från ditt nätverk. Vänta en stund och försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Title" xml:space="preserve">
+    <value>Utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Transcript" xml:space="preserve">
+    <value>Intyg och certifikat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Unavailable" xml:space="preserve">
+    <value>Utbildningsportalen är inte tillgänglig just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Verified" xml:space="preserve">
+    <value>Din e-postadress är bekräftad. Logga in för att fortsätta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Waitlist" xml:space="preserve">
+    <value>Ställ dig på väntelistan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.WatchVideo" xml:space="preserve">
+    <value>Se videon</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.When" xml:space="preserve">
+    <value>När</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Where" xml:space="preserve">
+    <value>Var</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Withdraw" xml:space="preserve">
+    <value>Avanmäl</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.WithdrawnMessage" xml:space="preserve">
+    <value>Du avanmälde dig från klassen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalHeader" xml:space="preserve">
+    <value>Deltagarportal</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalLink" xml:space="preserve">
+    <value>Portaladress</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalOff" xml:space="preserve">
+    <value>Deltagarportalen är avstängd. Slå på den i portalinställningarna för att bjuda in deltagare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PortalSettings" xml:space="preserve">
+    <value>Portalinställningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicFeesLink" xml:space="preserve">
+    <value>Öppen klass och avgifter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Reactivate" xml:space="preserve">
+    <value>Återaktivera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Ta bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResendInvite" xml:space="preserve">
+    <value>Skicka inbjudan igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster" xml:space="preserve">
+    <value>Lista</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Declined" xml:space="preserve">
+    <value>Avböjd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Enrolled" xml:space="preserve">
+    <value>Anmäld</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.PendingApproval" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Removed" xml:space="preserve">
+    <value>Borttagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Waitlisted" xml:space="preserve">
+    <value>På väntelistan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Roster.Withdrawn" xml:space="preserve">
+    <value>Avanmäld</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Sparat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Accent" xml:space="preserve">
+    <value>Accentfärg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.AccentHelp" xml:space="preserve">
+    <value>En färg som #1ab394. Lämna tomt för Resgrids färg. Logotypen kommer från avdelningsprofilen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Enabled" xml:space="preserve">
+    <value>Slå på deltagarportalen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.HideLogo" xml:space="preserve">
+    <value>Dölj avdelningens logotyp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Preview" xml:space="preserve">
+    <value>Förhandsvisning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.PublicListing" xml:space="preserve">
+    <value>Visa öppna klasser och katalogkurser för besökare som inte är inloggade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Regenerate" xml:space="preserve">
+    <value>Ändra portaladressen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.RegenerateHelp" xml:space="preserve">
+    <value>Gamla länkar slutar fungera och inloggade deltagare loggas ut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.SelfRegistration" xml:space="preserve">
+    <value>Låt personer skapa eget deltagarkonto (för öppna klasser och katalogkurser)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Welcome" xml:space="preserve">
+    <value>Välkomsttext</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Source.Invited" xml:space="preserve">
+    <value>Inbjuden av avdelningen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Source.SelfRegistered" xml:space="preserve">
+    <value>Registrerad i portalen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Sponsor" xml:space="preserve">
+    <value>Sponsrande organisation (Business Operations-kund)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Allowance" xml:space="preserve">
+    <value>Ingår gratis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.FreeSeats" xml:space="preserve">
+    <value>Lediga platser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.InPacks" xml:space="preserve">
+    <value>Räknas i paket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Learners" xml:space="preserve">
+    <value>Externa deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Active" xml:space="preserve">
+    <value>Aktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Erased" xml:space="preserve">
+    <value>Raderad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Invited" xml:space="preserve">
+    <value>Inbjuden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Pending" xml:space="preserve">
+    <value>Inte verifierad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Removed" xml:space="preserve">
+    <value>Borttagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Suspended" xml:space="preserve">
+    <value>Avstängd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Suspend" xml:space="preserve">
+    <value>Stäng av</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Externa deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Transcript" xml:space="preserve">
+    <value>Utbildningsintyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Waive" xml:space="preserve">
+    <value>Efterskänkt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Greeting" xml:space="preserve">
+    <value>Hej {0},</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Enrolled.Subject" xml:space="preserve">
+    <value>Din plats är bekräftad: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Enrolled.Body" xml:space="preserve">
+    <value>Din plats på {0} den {1} är bekräftad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Waitlisted.Subject" xml:space="preserve">
+    <value>Du står på väntelistan: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Waitlisted.Body" xml:space="preserve">
+    <value>{0} den {1} är fullbokat. Du är nummer {2} på väntelistan. Vi mejlar dig om en plats blir ledig för dig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Promoted.Subject" xml:space="preserve">
+    <value>En plats blev ledig för dig: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Promoted.Body" xml:space="preserve">
+    <value>En plats blev ledig på {0} den {1}, och den är din: din plats är bekräftad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Reminder.Subject" xml:space="preserve">
+    <value>Påminnelse: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Reminder.Body" xml:space="preserve">
+    <value>Påminnelse: {0} börjar den {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Changed.Subject" xml:space="preserve">
+    <value>Passet har ändrats: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Changed.Body" xml:space="preserve">
+    <value>{0} har ändrats. Det äger nu rum den {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Cancelled.Subject" xml:space="preserve">
+    <value>Passet är inställt: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Cancelled.Body" xml:space="preserve">
+    <value>{0} den {1} har ställts in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.CancelReason" xml:space="preserve">
+    <value>Anledning: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.SignedOff.Subject" xml:space="preserve">
+    <value>Ditt utbildningsregister: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.SignedOff.Body" xml:space="preserve">
+    <value>Din närvaro på {0} har registrerats. Ditt utbildningsregister och eventuella intyg finns under Mitt lärande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.CompletionRecorded.Subject" xml:space="preserve">
+    <value>Kursen är slutförd: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.CompletionRecorded.Body" xml:space="preserve">
+    <value>Din instruktör har registrerat att du slutförde {0}. Det finns i ditt utbildningsregister under Mitt lärande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Where" xml:space="preserve">
+    <value>Plats: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Online" xml:space="preserve">
+    <value>Delta online: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.OpenPortal" xml:space="preserve">
+    <value>Öppna Mitt lärande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Footer" xml:space="preserve">
+    <value>Skickat av {0} via Resgrid eftersom du har en plats på det här passet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mail.Unsubscribe" xml:space="preserve">
+    <value>Sluta skicka påminnelser om pass</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Resend" xml:space="preserve">
+    <value>Skicka mitt mejl igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendHelp" xml:space="preserve">
+    <value>Fick du inte mejlet för att bekräfta din adress eller din inbjudan? Ange din adress så skickar vi det igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendSend" xml:space="preserve">
+    <value>Skicka igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendSent" xml:space="preserve">
+    <value>Om ett konto väntar på den här adressen har vi skickat mejlet igen. Kontrollera inkorgen och skräppostmappen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.ResendLink" xml:space="preserve">
+    <value>Fick du inget mejl?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Unsubscribe" xml:space="preserve">
+    <value>Påminnelser om pass</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.UnsubscribeHelp" xml:space="preserve">
+    <value>Sluta få påminnelser om pass? Du får fortfarande mejl om dina egna platser (bekräftade, på väntelista, ändrade eller inställda).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.UnsubscribeConfirm" xml:space="preserve">
+    <value>Sluta med påminnelser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.UnsubscribeDone" xml:space="preserve">
+    <value>Du får inga fler påminnelser om pass. Du kan slå på dem igen under Mitt lärande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Preferences" xml:space="preserve">
+    <value>E-postinställningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EmailLanguage" xml:space="preserve">
+    <value>E-postspråk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.EmailLanguageDefault" xml:space="preserve">
+    <value>Organisationens språk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RemindersOff" xml:space="preserve">
+    <value>Skicka inga påminnelser om pass till mig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.RemindersOffHelp" xml:space="preserve">
+    <value>Mejl om dina egna platser (bekräftade, på väntelista, ändrade eller inställda) skickas alltid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.SavePreferences" xml:space="preserve">
+    <value>Spara inställningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.PreferencesSaved" xml:space="preserve">
+    <value>Dina inställningar har sparats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.WaitlistPosition" xml:space="preserve">
+    <value>Nummer {0} på väntelistan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Title" xml:space="preserve">
+    <value>Hur dina uppgifter används</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Link" xml:space="preserve">
+    <value>Integritet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Short" xml:space="preserve">
+    <value>{0} ansvarar för uppgifterna du lämnar här och använder dem bara för din utbildning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Controller" xml:space="preserve">
+    <value>{0} driver den här utbildningsportalen, bestämmer hur dina uppgifter används och ansvarar för dem. Resgrid tillhandahåller portalen på uppdrag av {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.WhatKept" xml:space="preserve">
+    <value>Vad som sparas: ditt namn, din e-postadress och din organisation (om du angav en); språket för dina e-postmeddelanden och dina val för påminnelser; dina anmälningar, din närvaro, dina kursframsteg, testsvar och resultat; samt de utbildningsposter och intyg du får.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Why" xml:space="preserve">
+    <value>Varför: för att genomföra din utbildning och föra de utbildningsregister som {0} behöver. Dina uppgifter används inte för reklam eller marknadsföring.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Rights" xml:space="preserve">
+    <value>Dina val: under Mitt lärande kan du när som helst ladda ner en kopia av dina uppgifter eller radera ditt konto, och stänga av påminnelser om kurstillfällen via e-post.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Retention" xml:space="preserve">
+    <value>Vissa uppgifter kan finnas kvar efter att du raderat ditt konto, till exempel redan utfärdade fakturor, när {0} måste spara dem enligt lag eller egna regler.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Privacy.Contact" xml:space="preserve">
+    <value>Kontakta {0} vid andra frågor eller önskemål om dina uppgifter, till exempel rättelser.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.WelcomeHelp" xml:space="preserve">
+    <value>Visas överst i portalen. Här kan du lägga till er kontakt för dataskydd eller en länk till er integritetspolicy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.PrivacyHelp" xml:space="preserve">
+    <value>Er avdelning eller organisation ansvarar för deltagarnas uppgifter. Portalen visar deltagarna en integritetssida som namnger er, berättar vad som sparas och varför och låter dem ladda ner sina uppgifter eller radera sitt konto. Lägg till en kontakt för dataskydd i välkomsttexten om era regler kräver det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyTitle" xml:space="preserve">
+    <value>Bekräfta din e-postadress</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyHelp" xml:space="preserve">
+    <value>Bekräfta utbildningskontot som registrerades {0} för {1}. Om du inte skapade kontot kan du stänga sidan: ingenting ändras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyConfirm" xml:space="preserve">
+    <value>Bekräfta min e-postadress</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.Err.ProtocolWithheld" xml:space="preserve">
+    <value>Protokollet kan inte visas i deltagarportalen. Kontakta organisationen som håller kursen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_licensed" xml:space="preserve">
+    <value>Kursen innehåller ett protokoll med licensierat innehåll som inte får visas för externa deltagare. Ta bort lektionen innan du öppnar kursen för dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_audience" xml:space="preserve">
+    <value>Kursen innehåller ett protokoll som är begränsat till en målgrupp som externa deltagare aldrig ingår i. Ta bort lektionen eller protokollets målgruppsbegränsning innan du öppnar kursen för dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_document" xml:space="preserve">
+    <value>Kursen innehåller ett dokumentbaserat protokoll som inte kan visas för externa deltagare. Använd en författad protokollversion eller ta bort lektionen innan du öppnar kursen för dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_course_protocol_unavailable" xml:space="preserve">
+    <value>Kursen innehåller ett protokoll som är inaktiverat eller inte längre gäller och därför inte kan visas för externa deltagare. Uppdatera lektionen till den gällande versionen eller ta bort den innan du öppnar kursen för dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Portal.VerifyPasswordHelp" xml:space="preserve">
+    <value>Välj det lösenord du ska logga in med. Bara lösenordet du väljer här gäller: ett lösenord som angavs när kontot registrerades sparas inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_xl_busy" xml:space="preserve">
+    <value>Kontot ändrades i samma stund. Försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

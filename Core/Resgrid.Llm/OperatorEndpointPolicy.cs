@@ -11,13 +11,15 @@ public static class OperatorEndpointPolicy
     public const string ChatCompletionsPath = "/v1/chat/completions";
     /// <summary>The decision-model route (SGLang serving Clef / Clef-Flash).</summary>
     public const string DecisionPath = "/v1/systemone";
+    /// <summary>The text-embeddings-inference (TEI) embed route the department knowledge index uses (K1).</summary>
+    public const string EmbedPath = "/embed";
 
     public static Uri ValidateUri(string endpoint, bool operatorPrivateEndpoint) => ValidateUri(endpoint, operatorPrivateEndpoint, ChatCompletionsPath);
 
     public static Uri ValidateUri(string endpoint, bool operatorPrivateEndpoint, string requiredPath)
     {
         if (!Uri.TryCreate(endpoint, UriKind.Absolute, out var uri) || uri.UserInfo.Length != 0 || uri.Fragment.Length != 0 || uri.Query.Length != 0 ||
-            requiredPath is not (ChatCompletionsPath or DecisionPath) || uri.AbsolutePath != requiredPath || !(uri.Scheme == "https" || operatorPrivateEndpoint && uri.Scheme == "http"))
+            requiredPath is not (ChatCompletionsPath or DecisionPath or EmbedPath) || uri.AbsolutePath != requiredPath || !(uri.Scheme == "https" || operatorPrivateEndpoint && uri.Scheme == "http"))
             throw new LlmUnavailableException();
         return uri;
     }

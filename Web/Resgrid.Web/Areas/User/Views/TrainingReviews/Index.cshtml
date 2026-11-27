@@ -1,0 +1,179 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingReviewInboxView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> text
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Training reviews (round 9B): members' training hours submissions waiting for this reviewer, oldest first, with their evidence count;
+    filters, the "waiting for the member" list, and bulk approve. Each row opens the submission with its evidence shown inline.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["Inbox.Title"];
+    ViewData["Section"] = "Reviews";
+    ViewData["Title"] = text["Inbox.Title"].Value;
+    ViewData["Subtitle"] = text["Inbox.Intro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var inbox = Model.Inbox;
+
+    var lists = new ModuleTabsView { Label = text["Inbox.Title"].Value };
+    lists.Tabs.Add(new ModuleTab(text["Inbox.AwaitingTab"].Value + " (" + inbox.AwaitingCount + ")", "fa-hourglass-half", "TrainingReviews", "Index", !Model.InfoRequested));
+    var infoTab = new ModuleTab(text["Inbox.InfoTab"].Value + " (" + inbox.InfoRequestedCount + ")", "fa-question-circle", "TrainingReviews", "Index", Model.InfoRequested);
+    infoTab.RouteValues["info"] = "true";
+    lists.Tabs.Add(infoTab);
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="TrainingReviews" asp-action="Mine" asp-route-area="User"><i class="fa fa-list" aria-hidden="true"></i> @text["Inbox.MySubmissionsLink"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @text["Inbox.AwaitingTile"]</div><div class="rgw-stat-value">@inbox.AwaitingCount</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-question-circle" aria-hidden="true"></i> @text["Inbox.InfoTile"]</div><div class="rgw-stat-value">@inbox.InfoRequestedCount</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-clock-o" aria-hidden="true"></i> @text["Inbox.OldestTile"]</div><div class="rgw-stat-value">@(inbox.OldestWaitingSince.HasValue ? TrainingStatePresentation.LocalDate(inbox.OldestWaitingSince, Model.Department) : "-")</div></div>
+    </div>
+
+    <div class="m-t-sm">
+        @await Html.PartialAsync("_ModuleTabs", lists)
+    </div>
+
+    <form method="get" asp-controller="TrainingReviews" asp-action="Index" asp-route-area="User" class="rgw-toolbar m-t-sm" role="search">
+        @if (Model.InfoRequested)
+        {
+            <input type="hidden" name="info" value="true" />
+        }
+        <label class="sr-only" for="categoryId">@text["Filter.Category"]</label>
+        <select id="categoryId" name="categoryId" class="form-control input-sm">
+            <option value="">@text["Filter.AllCategories"]</option>
+            <option value="0" selected="@(Model.CategoryId == 0)">@text["Filter.Uncategorized"]</option>
+            @foreach (var category in Model.LiveCategories)
+            {
+                <option value="@category.TrainingCategoryId" selected="@(Model.CategoryId == category.TrainingCategoryId)">@category.Name</option>
+            }
+        </select>
+        <label class="sr-only" for="memberId">@text["Filter.Member"]</label>
+        <select id="memberId" name="memberId" class="form-control input-sm">
+            <option value="">@text["Filter.AllMembers"]</option>
+            @foreach (var member in Model.Members)
+            {
+                <option value="@member.UserId" selected="@(string.Equals(member.UserId, Model.MemberUserId, StringComparison.OrdinalIgnoreCase))">@member.Name</option>
+            }
+        </select>
+        <label class="sr-only" for="q">@text["Filter.Search"]</label>
+        <input id="q" name="q" type="search" class="form-control input-sm" maxlength="100" value="@Model.Search" placeholder="@text["Filter.Search"]" />
+        <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-filter" aria-hidden="true"></i> @text["Filter.Apply"]</button>
+        <a class="btn btn-sm btn-link" asp-controller="TrainingReviews" asp-action="Index" asp-route-area="User" asp-route-info="@(Model.InfoRequested ? "true" : null)"><i class="fa fa-times" aria-hidden="true"></i> @text["Filter.Clear"]</a>
+    </form>
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-content">
+            @if (inbox.Items.Count == 0)
+            {
+                <p class="text-muted m-b-none">@(Model.InfoRequested ? text["Inbox.EmptyInfo"] : text["Inbox.Empty"])</p>
+            }
+            else
+            {
+                <form method="post" asp-controller="TrainingReviews" asp-action="BulkApprove" asp-route-area="User" id="training-review-bulk">
+                    @Html.AntiForgeryToken()
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    @if (!Model.InfoRequested)
+                                    {
+                                        <th scope="col"><input type="checkbox" class="training-review-all" aria-label="@text["Inbox.SelectAll"]" /></th>
+                                    }
+                                    <th scope="col">@text["Col.Member"]</th>
+                                    <th scope="col">@text["Col.Training"]</th>
+                                    <th scope="col" class="text-right">@text["Col.Hours"]</th>
+                                    <th scope="col">@text["Col.Evidence"]</th>
+                                    <th scope="col">@text["Col.Waiting"]</th>
+                                    <th scope="col" class="rgw-row-actions">@text["Col.Actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var record in inbox.Items)
+                                {
+                                    var category = Model.CategoryOf(record.CategoryId);
+                                    var files = inbox.FileCounts.TryGetValue(record.LearningRecordId, out var count) ? count : 0;
+                                    <tr>
+                                        @if (!Model.InfoRequested)
+                                        {
+                                            <td><input type="checkbox" name="ids" value="@record.LearningRecordId" class="training-review-row" aria-label="@string.Format(text["Inbox.SelectRow"].Value, record.Title)" /></td>
+                                        }
+                                        <td>
+                                            @Model.NameOf(record.UserId)
+                                            @if (Model.IsFormer(record.UserId))
+                                            {
+                                                <small class="rgw-sub text-muted"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["FormerMemberLabel"]</small>
+                                            }
+                                        </td>
+                                        <td>
+                                            <a asp-controller="TrainingReviews" asp-action="Review" asp-route-area="User" asp-route-id="@record.LearningRecordId">@record.Title</a>
+                                            <small class="rgw-sub text-muted">
+                                                <span>@TrainingStatePresentation.LocalDate(record.CompletedOn, Model.Department)</span>
+                                                <span>@text["Col.Category"]: @(category?.Name ?? text["Filter.Uncategorized"].Value)</span>
+                                                @if (!string.IsNullOrWhiteSpace(record.CeProvider) || !string.IsNullOrWhiteSpace(record.CeCourseNumber))
+                                                {
+                                                    <span>@record.CeProvider @record.CeCourseNumber</span>
+                                                }
+                                            </small>
+                                        </td>
+                                        <td class="text-right">@LearningRecordPresentation.Hours(record.Hours)</td>
+                                        <td>
+                                            @if (files > 0)
+                                            {
+                                                <span><i class="fa fa-paperclip" aria-hidden="true"></i> @string.Format(text["Inbox.FilesCount"].Value, files)</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">@text["Evidence.None"]</span>
+                                            }
+                                        </td>
+                                        <td>@TrainingStatePresentation.LocalDateTime(TrainingSubmissionRules.WaitingSince(record), Model.Department)</td>
+                                        <td class="rgw-row-actions">
+                                            <a class="btn btn-xs btn-primary" asp-controller="TrainingReviews" asp-action="Review" asp-route-area="User" asp-route-id="@record.LearningRecordId"><i class="fa fa-search" aria-hidden="true"></i> @text["Inbox.ReviewButton"]</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    @if (!Model.InfoRequested)
+                    {
+                        <div class="rgw-toolbar m-t-xs">
+                            <label for="bulk-note" class="sr-only">@text["Inbox.BulkNoteLabel"]</label>
+                            <input id="bulk-note" name="note" type="text" class="form-control input-sm" maxlength="1000" placeholder="@text["Inbox.BulkNoteLabel"]" />
+                            <button type="submit" class="btn btn-sm btn-primary" data-confirm="@text["Inbox.BulkConfirm"]"><i class="fa fa-check" aria-hidden="true"></i> @text["Inbox.BulkApproveButton"]</button>
+                        </div>
+                    }
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script>
+        $(function () {
+            $(document).on('change', '.training-review-all', function () {
+                $('.training-review-row').prop('checked', $(this).is(':checked'));
+            });
+            $('#training-review-bulk').on('submit', function (e) {
+                if ($('.training-review-row:checked').length === 0) { e.preventDefault(); return; }
+                var message = $(this).find('[data-confirm]').data('confirm');
+                if (message && !window.confirm(message)) { e.preventDefault(); }
+            });
+        });
+    </script>
+}

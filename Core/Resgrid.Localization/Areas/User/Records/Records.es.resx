@@ -2298,4 +2298,72 @@
   <data name="RatedFlowHelp" xml:space="preserve">
     <value>Caudal nominal NFPA 291: caudal observado × ((estática − 20) / (estática − residual))^0.54. La clase de caudal se obtiene de él cuando se introducen la presión estática y la residual.</value>
   </data>
+  <data name="DeploymentPartner" xml:space="preserve">
+    <value>Socio vinculado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerNone" xml:space="preserve">
+    <value>Sin socio vinculado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSave" xml:space="preserve">
+    <value>Guardar socio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerHelp" xml:space="preserve">
+    <value>Cuando la agencia para la que se cubre esta orden sea una organización vinculada en Resgrid, elíjala aquí. Cada asignación aceptada pedirá entonces a sus administradores que acepten la misión con una firma con verificación reforzada (step-up).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSaved" xml:space="preserve">
+    <value>Se guardó el socio vinculado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerRequested" xml:space="preserve">
+    <value>Se pidió al socio vinculado que acepte la misión.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerAsk" xml:space="preserve">
+    <value>Pedir al socio que acepte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotLinked" xml:space="preserve">
+    <value>El vínculo con esa organización no está habilitado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorClosedOut" xml:space="preserve">
+    <value>El despliegue está cerrado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorConflict" xml:space="preserve">
+    <value>Otra persona modificó este despliegue al mismo tiempo. Inténtelo de nuevo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotFound" xml:space="preserve">
+    <value>No se encontró el despliegue.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotAuthorized" xml:space="preserve">
+    <value>No puede modificar este despliegue.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateRequested" xml:space="preserve">
+    <value>Socio consultado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateSigned" xml:space="preserve">
+    <value>Aceptado por el socio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateDeclined" xml:space="preserve">
+    <value>Rechazado por el socio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateLapsed" xml:space="preserve">
+    <value>Solicitud al socio caducada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateNone" xml:space="preserve">
+    <value>Sin firma del socio</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

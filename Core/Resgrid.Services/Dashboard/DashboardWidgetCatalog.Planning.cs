@@ -110,6 +110,24 @@ namespace Resgrid.Services.Dashboard
 				Settings = new[] { Number("maxItems", 5, 1, 20) }
 			};
 
+			// Training T0 item 6: the training bulletin (new assignments, newly started and newly published open trainings).
+			yield return new DashboardWidgetDefinition
+			{
+				Key = "trainings.bulletin",
+				Category = DashboardWidgetCategories.Planning,
+				Icon = "fa-bullhorn",
+				ModuleUrl = "/User/Trainings",
+				AllowedSizes = Sizes(DashboardWidgetSizes.S, DashboardWidgetSizes.M, DashboardWidgetSizes.L),
+				DefaultSize = DashboardWidgetSizes.M,
+				DefaultRefreshSeconds = 900,
+				Gates = new DashboardWidgetGates
+				{
+					Policies = new[] { "Training_View" },
+					Access = new[] { DashboardAccessChecks.TrainingEnabled }
+				},
+				Settings = new[] { Number("days", 14, 1, 90), Number("maxItems", 5, 1, 20) }
+			};
+
 			yield return new DashboardWidgetDefinition
 			{
 				Key = "documents.recent",

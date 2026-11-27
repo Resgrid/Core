@@ -1,0 +1,71 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Signatures.MySignaturesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    My signatures (e-Signature S3): the member's steps in multi-signer requests whose turn it is — an evaluation, a certifying
+    official's sign-off, an equipment receipt, a witness step. Each opens its signing page.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + signatureText["MySignaturesTitle"];
+    ViewData["Title"] = signatureText["MySignaturesTitle"].Value;
+    ViewData["Subtitle"] = signatureText["MySignaturesIntro"].Value;
+    ViewData["Section"] = "Mine";
+    ViewData["Message"] = Model.Message;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Signatures/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Items.Count == 0)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-check-circle text-success" aria-hidden="true"></i> @signatureText["NothingToSign"]</div>
+    }
+    else
+    {
+        <div class="rgw-next-action" role="region" aria-label="@signatureText["PendingSignaturesHeader"]">
+            <strong><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> @signatureText["PendingSignaturesHeader"]</strong>
+            <div class="m-t-xs">
+                <a asp-area="User" asp-controller="Signatures" asp-action="Step" asp-route-id="@Model.Items[0].SignatureRequestId">@Model.Items[0].Title</a>
+                <span class="rgw-progress-honest">@string.Format(signatureText["DueByLabel"].Value, Model.Items[0].ExpiresOn.ToString("yyyy-MM-dd"))</span>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @signatureText["PendingSignaturesHeader"] (@Model.Items.Count)</h5></div>
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@signatureText["DocumentColumn"]</th>
+                                <th scope="col">@signatureText["YourStepColumn"]</th>
+                                <th scope="col">@signatureText["LevelColumn"]</th>
+                                <th scope="col">@signatureText["ExpiresLabel"]</th>
+                                <th scope="col"><span class="sr-only">@signatureText["ActionsColumn"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@item.Title <small class="rgw-sub text-muted rgw-mono">@item.ContentCode</small></td>
+                                    <td>@(string.IsNullOrWhiteSpace(item.StepLabel) ? signatureText["Role" + (SignatureSignerRoles)item.Role].Value : item.StepLabel)</td>
+                                    <td><span class="label label-info">L@(item.RequiredLevel)</span></td>
+                                    <td>@item.ExpiresOn.ToString("yyyy-MM-dd HH:mm") UTC</td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-primary btn-xs" asp-area="User" asp-controller="Signatures" asp-action="Step" asp-route-id="@item.SignatureRequestId"><i class="fa fa-pencil" aria-hidden="true"></i> @signatureText["OpenStepButton"]</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

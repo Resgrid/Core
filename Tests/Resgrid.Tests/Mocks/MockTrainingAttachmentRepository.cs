@@ -87,6 +87,25 @@ namespace Resgrid.Tests.Mocks
 			return Task.FromResult<IEnumerable<TrainingAttachment>>(result);
 		}
 
+		public Task<List<TrainingAttachment>> GetAttachmentMetadataByTrainingIdAsync(int trainingId)
+			=> Task.FromResult(_attachments.Where(a => a.TrainingId == trainingId)
+				.Select(a => new TrainingAttachment { TrainingAttachmentId = a.TrainingAttachmentId, TrainingId = a.TrainingId, FileName = a.FileName, FileType = a.FileType, FileSize = a.Data?.LongLength }).ToList());
+
+		public Task<TrainingAttachment> GetAttachmentMetadataByIdAsync(int trainingAttachmentId)
+			=> Task.FromResult(_attachments.Where(a => a.TrainingAttachmentId == trainingAttachmentId)
+				.Select(a => new TrainingAttachment { TrainingAttachmentId = a.TrainingAttachmentId, TrainingId = a.TrainingId, FileName = a.FileName, FileType = a.FileType, FileSize = a.Data?.LongLength }).FirstOrDefault());
+
+		public Task<TrainingAttachment> GetAttachmentWithDataAsync(int trainingAttachmentId)
+			=> Task.FromResult(_attachments.FirstOrDefault(a => a.TrainingAttachmentId == trainingAttachmentId));
+
+		public Task<int> CopyAttachmentsAsync(int fromTrainingId, int toTrainingId, CancellationToken cancellationToken = default)
+		{
+			var copies = _attachments.Where(a => a.TrainingId == fromTrainingId).ToList();
+			foreach (var a in copies)
+				SeedAttachment(new TrainingAttachment { TrainingId = toTrainingId, FileName = a.FileName, FileType = a.FileType, Data = a.Data });
+			return Task.FromResult(copies.Count);
+		}
+
 		public void SeedAttachment(TrainingAttachment attachment)
 		{
 			if (attachment.TrainingAttachmentId == 0)

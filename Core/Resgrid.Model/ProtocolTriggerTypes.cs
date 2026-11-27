@@ -25,6 +25,14 @@ namespace Resgrid.Model
 		/// </summary>
 		[Display(Name = "Call Priority & Type")]
 		[Description("Call Priority & Type")]
-		CallPriortyAndType = 2
+		CallPriortyAndType = 2,
+
+		/// <summary>
+		/// Protocols P4: any call, narrowed only by the trigger's conditions (zone, schedule, keywords, POI type, intake source);
+		/// <see cref="DispatchTriggerBases.Conditions"/>.
+		/// </summary>
+		[Display(Name = "Any call (conditions)")]
+		[Description("Any call (conditions)")]
+		Conditions = 3
 	}
 }

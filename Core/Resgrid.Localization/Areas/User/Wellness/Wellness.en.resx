@@ -1,0 +1,841 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PersonnelLink" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="WellnessModuleLabel" xml:space="preserve">
+    <value>Wellness</value>
+  </data>
+  <data name="MyExposuresTab" xml:space="preserve">
+    <value>My exposures</value>
+  </data>
+  <data name="ReportTab" xml:space="preserve">
+    <value>Member report</value>
+  </data>
+  <data name="FlagCallTab" xml:space="preserve">
+    <value>Post-call flags</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="MyExposuresTitle" xml:space="preserve">
+    <value>My exposures</value>
+  </data>
+  <data name="MemberExposuresTitle" xml:space="preserve">
+    <value>Exposure log: {0}</value>
+  </data>
+  <data name="MyExposuresIntro" xml:space="preserve">
+    <value>Your own record of exposures and difficult calls. Only you and your department's wellness officers can see it.</value>
+  </data>
+  <data name="MemberExposuresIntro" xml:space="preserve">
+    <value>This member's exposure and critical-incident log. Treat it with care: only the member and the wellness officers can see it.</value>
+  </data>
+  <data name="LogExposureButton" xml:space="preserve">
+    <value>Log an exposure</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Export PDF</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Export CSV</value>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>Some details are protected by your department's Advanced Data Protection and are not shown here.</value>
+  </data>
+  <data name="ConfirmedEntriesLabel" xml:space="preserve">
+    <value>Confirmed entries</value>
+  </data>
+  <data name="CriticalIncidentsLabel" xml:space="preserve">
+    <value>Critical incidents</value>
+  </data>
+  <data name="AwaitingReviewLabel" xml:space="preserve">
+    <value>Awaiting review</value>
+  </data>
+  <data name="SuggestionsHeader" xml:space="preserve">
+    <value>Suggested from recent calls</value>
+  </data>
+  <data name="SuggestionsHelp" xml:space="preserve">
+    <value>These were suggested from dispatch records after a call was flagged. Nothing is recorded until you review and confirm it. If it doesn't apply to you, dismiss it.</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="CategoryColumn" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="DurationColumn" xml:space="preserve">
+    <value>Duration (h:mm)</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="SuggestedFromLabel" xml:space="preserve">
+    <value>Suggested from</value>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
+  <data name="ScreeningHeader" xml:space="preserve">
+    <value>Increased screening</value>
+  </data>
+  <data name="ScreeningSelfText" xml:space="preserve">
+    <value>Your department's wellness officer has suggested some extra health screening for you. The follow-ups below are here to help you keep track.</value>
+  </data>
+  <data name="ScreeningOfficerText" xml:space="preserve">
+    <value>This member is flagged for increased screening.</value>
+  </data>
+  <data name="ReviewOnLabel" xml:space="preserve">
+    <value>Next review</value>
+  </data>
+  <data name="PlanNotesLabel" xml:space="preserve">
+    <value>Follow-up plan</value>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>Protected</value>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>Follow-up</value>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>Assigned to</value>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Due</value>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>Mark done</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ScreeningManageHeader" xml:space="preserve">
+    <value>Screening and follow-up</value>
+  </data>
+  <data name="ScreeningManageHelp" xml:space="preserve">
+    <value>Flag this member for increased screening and keep a follow-up plan. The plan is protected and visible only to the member and the wellness officers.</value>
+  </data>
+  <data name="ScreeningCategoryLabel" xml:space="preserve">
+    <value>Prompted by</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>Not specified</value>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>Protected: visible only to the member and the wellness officers.</value>
+  </data>
+  <data name="FlagForScreeningButton" xml:space="preserve">
+    <value>Flag for increased screening</value>
+  </data>
+  <data name="SaveScreeningButton" xml:space="preserve">
+    <value>Save screening</value>
+  </data>
+  <data name="ClearScreeningButton" xml:space="preserve">
+    <value>End increased screening</value>
+  </data>
+  <data name="AddFollowUpHeader" xml:space="preserve">
+    <value>Add a follow-up</value>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>Follow-ups record only what kind of step it is and whether it was done. Keep any health details in the protected plan.</value>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>Add follow-up</value>
+  </data>
+  <data name="EntriesHeader" xml:space="preserve">
+    <value>Entries</value>
+  </data>
+  <data name="NoEntriesSelf" xml:space="preserve">
+    <value>You have no entries yet. You can log an exposure at any time.</value>
+  </data>
+  <data name="NoEntriesMember" xml:space="preserve">
+    <value>This member has no entries.</value>
+  </data>
+  <data name="RetentionNotice" xml:space="preserve">
+    <value>Entries are kept for at least 30 years. An entry recorded in error can be marked as such; it is kept but no longer counted.</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="AnniversaryReminderOnLabel" xml:space="preserve">
+    <value>Anniversary reminder on</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Recorded in error</value>
+  </data>
+  <data name="VoidHelp" xml:space="preserve">
+    <value>The entry stays in the log for its retention period but no longer counts.</value>
+  </data>
+  <data name="VoidConfirmButton" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
+  <data name="SupportNote" xml:space="preserve">
+    <value>If something on a call is staying with you, you don't have to handle it alone. Your peer support team and your department's wellness resources are there for you.</value>
+  </data>
+  <data name="LogExposureTitle" xml:space="preserve">
+    <value>Log an exposure</value>
+  </data>
+  <data name="ReviewSuggestionTitle" xml:space="preserve">
+    <value>Review a suggested entry</value>
+  </data>
+  <data name="EntryTitle" xml:space="preserve">
+    <value>Exposure entry</value>
+  </data>
+  <data name="EntryIntro" xml:space="preserve">
+    <value>Record what happened in your own words. Only the category, date, call and duration are used for counts; everything else is protected.</value>
+  </data>
+  <data name="SuggestionReviewNotice" xml:space="preserve">
+    <value>This entry was suggested from dispatch records. Check the details, add anything you'd like, and confirm it - or dismiss it if it doesn't apply.</value>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>When and what</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="OccurredOnLabel" xml:space="preserve">
+    <value>Date and time</value>
+  </data>
+  <data name="DurationMinutesLabel" xml:space="preserve">
+    <value>Duration (minutes)</value>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>No call</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Details (protected)</value>
+  </data>
+  <data name="DetailsHelp" xml:space="preserve">
+    <value>These details are protected: only you and your department's wellness officers can read them, and they are never used for search or by any AI feature.</value>
+  </data>
+  <data name="SubstanceLabel" xml:space="preserve">
+    <value>Substance or agent</value>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>Protective equipment worn</value>
+  </data>
+  <data name="DecontaminationLabel" xml:space="preserve">
+    <value>Decontamination afterwards</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>What happened</value>
+  </data>
+  <data name="HealthDetailsLabel" xml:space="preserve">
+    <value>Health details</value>
+  </data>
+  <data name="HealthDetailsHelp" xml:space="preserve">
+    <value>Optional. Symptoms, treatment or anything you want on record. This is not a medical assessment.</value>
+  </data>
+  <data name="RemindersHeader" xml:space="preserve">
+    <value>Anniversary reminders</value>
+  </data>
+  <data name="RemindersHelp" xml:space="preserve">
+    <value>For critical incidents, you can choose a gentle reminder before each anniversary - for yourself, and/or to let the peer support team know. You can change this at any time.</value>
+  </data>
+  <data name="RemindMemberLabel" xml:space="preserve">
+    <value>Remind me before the anniversary</value>
+  </data>
+  <data name="RemindPeerTeamLabel" xml:space="preserve">
+    <value>Let the peer support team know before the anniversary</value>
+  </data>
+  <data name="NoPeerTeamHelp" xml:space="preserve">
+    <value>Your department has not set up a peer support team yet.</value>
+  </data>
+  <data name="ConfirmButton" xml:space="preserve">
+    <value>Confirm entry</value>
+  </data>
+  <data name="SaveForLaterButton" xml:space="preserve">
+    <value>Save without confirming</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="DismissLongButton" xml:space="preserve">
+    <value>This doesn't apply to me - dismiss</value>
+  </data>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Member exposure report</value>
+  </data>
+  <data name="ReportIntro" xml:space="preserve">
+    <value>Counts per member for the wellness officers. Details stay on each member's own log.</value>
+  </data>
+  <data name="FilterLabel" xml:space="preserve">
+    <value>Filter the report</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="MembersHeader" xml:space="preserve">
+    <value>Members</value>
+  </data>
+  <data name="NoReportRows" xml:space="preserve">
+    <value>No entries in this period.</value>
+  </data>
+  <data name="LastExposureLabel" xml:space="preserve">
+    <value>Most recent</value>
+  </data>
+  <data name="ScreeningFlaggedLabel" xml:space="preserve">
+    <value>Increased screening</value>
+  </data>
+  <data name="OpenFollowUpsValue" xml:space="preserve">
+    <value>{0} open follow-ups</value>
+  </data>
+  <data name="OpenLogButton" xml:space="preserve">
+    <value>Open log</value>
+  </data>
+  <data name="RecentFlagsHeader" xml:space="preserve">
+    <value>Recent post-call flags</value>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>No calls have been flagged.</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Flagged</value>
+  </data>
+  <data name="SuggestionsColumn" xml:space="preserve">
+    <value>Suggestions</value>
+  </data>
+  <data name="FlagClearedLabel" xml:space="preserve">
+    <value>Cleared</value>
+  </data>
+  <data name="SuggestionsBuiltValue" xml:space="preserve">
+    <value>{0} suggested</value>
+  </data>
+  <data name="SuggestionsPendingLabel" xml:space="preserve">
+    <value>Waiting for the call to end</value>
+  </data>
+  <data name="FlagCallTitle" xml:space="preserve">
+    <value>Wellness follow-up: call {0}</value>
+  </data>
+  <data name="FlagCallPickerTitle" xml:space="preserve">
+    <value>Post-call flags</value>
+  </data>
+  <data name="FlagCallIntro" xml:space="preserve">
+    <value>Flag a call as a critical incident or an exposure. Once the call has ended, everyone the dispatch records place on it is offered a suggested entry to review. Nobody is recorded without confirming.</value>
+  </data>
+  <data name="RecentCallsHeader" xml:space="preserve">
+    <value>Recent calls</value>
+  </data>
+  <data name="NoRecentCalls" xml:space="preserve">
+    <value>No calls in the last 30 days.</value>
+  </data>
+  <data name="CallActiveNotice" xml:space="preserve">
+    <value>This call is still active. Suggestions are built once it ends.</value>
+  </data>
+  <data name="CriticalIncidentHelp" xml:space="preserve">
+    <value>A potentially traumatic call. This is separate from the call's dispatch priority.</value>
+  </data>
+  <data name="NotFlaggedLabel" xml:space="preserve">
+    <value>Not flagged</value>
+  </data>
+  <data name="FlagButton" xml:space="preserve">
+    <value>Flag</value>
+  </data>
+  <data name="ClearFlagButton" xml:space="preserve">
+    <value>Clear flag</value>
+  </data>
+  <data name="FlagPrivacyHelp" xml:space="preserve">
+    <value>Flagging a call records only the call and the category. Members decide what to add to their own log.</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Back to the call</value>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Wellness settings</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Who reads members' exposure logs, who the peer support team is, and how long entries are kept.</value>
+  </data>
+  <data name="WellnessOfficerRoleLabel" xml:space="preserve">
+    <value>Wellness officer role</value>
+  </data>
+  <data name="WellnessOfficerRoleHelp" xml:space="preserve">
+    <value>Members of this role can read every member's exposure log and keep screening flags. Department administrators cannot read the logs unless they hold this role.</value>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="PeerTeamLabel" xml:space="preserve">
+    <value>Peer support team certification</value>
+  </data>
+  <data name="PeerTeamHelp" xml:space="preserve">
+    <value>The peer support team's certification type, for example from the Peer Support Team Member template. With a role above, each team member's status shows below; with no role, its current holders are the team and receive the anniversary reminders members choose to share.</value>
+  </data>
+  <data name="RetentionYearsLabel" xml:space="preserve">
+    <value>Keep entries for (years)</value>
+  </data>
+  <data name="RetentionYearsHelp" xml:space="preserve">
+    <value>At least 30 years (OSHA 29 CFR 1910.1020). Entries under a legal hold are kept longer.</value>
+  </data>
+  <data name="WellnessFollowUpButton" xml:space="preserve">
+    <value>Wellness follow-up</value>
+  </data>
+  <data name="WellnessFollowUpHelp" xml:space="preserve">
+    <value>Flag this call as a critical incident or an exposure so members can add it to their own log</value>
+  </data>
+  <data name="Msg.Recorded" xml:space="preserve">
+    <value>The entry was recorded.</value>
+  </data>
+  <data name="Msg.Confirmed" xml:space="preserve">
+    <value>The entry was confirmed.</value>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="Msg.Dismissed" xml:space="preserve">
+    <value>The suggestion was dismissed.</value>
+  </data>
+  <data name="Msg.Voided" xml:space="preserve">
+    <value>The entry was marked as recorded in error.</value>
+  </data>
+  <data name="Msg.RemindersSaved" xml:space="preserve">
+    <value>Your reminder choices were saved.</value>
+  </data>
+  <data name="Msg.ScreeningSaved" xml:space="preserve">
+    <value>The screening flag was saved.</value>
+  </data>
+  <data name="Msg.ScreeningCleared" xml:space="preserve">
+    <value>Increased screening has ended.</value>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>The follow-up was added.</value>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>The follow-up was marked as done.</value>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>The follow-up was cancelled.</value>
+  </data>
+  <data name="Msg.CallFlagged" xml:space="preserve">
+    <value>The call was flagged. Suggestions will be offered once it ends.</value>
+  </data>
+  <data name="Msg.CallFlagCleared" xml:space="preserve">
+    <value>The flag was cleared. Suggestions nobody confirmed were removed.</value>
+  </data>
+  <data name="Msg.SettingsSaved" xml:space="preserve">
+    <value>The wellness settings were saved.</value>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>That could not be saved. Please check the entry and try again.</value>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>You do not have access to that.</value>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>The export could not be created. Please try again.</value>
+  </data>
+  <data name="Error.role_not_found" xml:space="preserve">
+    <value>That role was not found.</value>
+  </data>
+  <data name="Error.certification_type_not_found" xml:space="preserve">
+    <value>That certification type was not found.</value>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>That member was not found in this department.</value>
+  </data>
+  <data name="Error.entry_not_found" xml:space="preserve">
+    <value>That entry was not found.</value>
+  </data>
+  <data name="Error.entry_closed" xml:space="preserve">
+    <value>This entry is closed and can no longer be changed.</value>
+  </data>
+  <data name="Error.entry_changed" xml:space="preserve">
+    <value>Someone else changed this entry. Please reopen it and try again.</value>
+  </data>
+  <data name="Error.not_a_suggestion" xml:space="preserve">
+    <value>Only a suggested entry can be confirmed or dismissed.</value>
+  </data>
+  <data name="Error.not_confirmed" xml:space="preserve">
+    <value>Only a confirmed entry can be changed this way.</value>
+  </data>
+  <data name="Error.reminders_critical_incident_only" xml:space="preserve">
+    <value>Anniversary reminders are offered for critical incidents only.</value>
+  </data>
+  <data name="Error.category_required" xml:space="preserve">
+    <value>Please choose a category.</value>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>Please enter a valid date.</value>
+  </data>
+  <data name="Error.duration_invalid" xml:space="preserve">
+    <value>Please enter a duration between 0 and 10,080 minutes.</value>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>That call was not found in this department.</value>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>The protected details could not be saved. Please try again.</value>
+  </data>
+  <data name="Error.flag_not_found" xml:space="preserve">
+    <value>That flag was not found.</value>
+  </data>
+  <data name="Error.follow_up_kind_required" xml:space="preserve">
+    <value>Please choose the kind of follow-up.</value>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>A follow-up can be assigned to the member or a wellness officer.</value>
+  </data>
+  <data name="Error.follow_up_closed" xml:space="preserve">
+    <value>This follow-up is already closed.</value>
+  </data>
+  <data name="Error.follow_up_not_found" xml:space="preserve">
+    <value>That follow-up was not found.</value>
+  </data>
+  <data name="Category.Carcinogen" xml:space="preserve">
+    <value>Carcinogen</value>
+  </data>
+  <data name="Category.BloodbornePathogen" xml:space="preserve">
+    <value>Bloodborne pathogen</value>
+  </data>
+  <data name="Category.HazardousSubstance" xml:space="preserve">
+    <value>Hazardous substance</value>
+  </data>
+  <data name="Category.CriticalIncident" xml:space="preserve">
+    <value>Critical incident</value>
+  </data>
+  <data name="Category.Other" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="Status.Suggested" xml:space="preserve">
+    <value>Awaiting review</value>
+  </data>
+  <data name="Status.Confirmed" xml:space="preserve">
+    <value>Confirmed</value>
+  </data>
+  <data name="Status.Dismissed" xml:space="preserve">
+    <value>Dismissed</value>
+  </data>
+  <data name="Status.Voided" xml:space="preserve">
+    <value>Recorded in error</value>
+  </data>
+  <data name="FollowUpKind.screening_appointment" xml:space="preserve">
+    <value>Screening appointment</value>
+  </data>
+  <data name="FollowUpKind.baseline_test" xml:space="preserve">
+    <value>Baseline test</value>
+  </data>
+  <data name="FollowUpKind.medical_review" xml:space="preserve">
+    <value>Medical review</value>
+  </data>
+  <data name="FollowUpKind.wellness_check_in" xml:space="preserve">
+    <value>Wellness check-in</value>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>Other follow-up</value>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="Basis.status" xml:space="preserve">
+    <value>personnel status</value>
+  </data>
+  <data name="Basis.unit_crew" xml:space="preserve">
+    <value>unit crew</value>
+  </data>
+  <data name="Basis.check_in" xml:space="preserve">
+    <value>check-in</value>
+  </data>
+  <data name="Basis.unit_response" xml:space="preserve">
+    <value>unit response times</value>
+  </data>
+  <data name="Doc.Title" xml:space="preserve">
+    <value>Exposure and critical-incident log</value>
+  </data>
+  <data name="Doc.Member" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="Doc.Date" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="Doc.Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Doc.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Doc.Call" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="Doc.Duration" xml:space="preserve">
+    <value>Duration (h:mm)</value>
+  </data>
+  <data name="Doc.Substance" xml:space="preserve">
+    <value>Substance or agent</value>
+  </data>
+  <data name="Doc.PpeWorn" xml:space="preserve">
+    <value>PPE worn</value>
+  </data>
+  <data name="Doc.Decontamination" xml:space="preserve">
+    <value>Decontamination</value>
+  </data>
+  <data name="Doc.Narrative" xml:space="preserve">
+    <value>What happened</value>
+  </data>
+  <data name="Doc.HealthDetails" xml:space="preserve">
+    <value>Health details</value>
+  </data>
+  <data name="Doc.Withheld" xml:space="preserve">
+    <value>Withheld (protected)</value>
+  </data>
+  <data name="Doc.GeneratedOn" xml:space="preserve">
+    <value>Generated {0}</value>
+  </data>
+  <data name="Doc.Retention" xml:space="preserve">
+    <value>Your department keeps these records for at least 30 years.</value>
+  </data>
+  <data name="Doc.CriticalIncidents" xml:space="preserve">
+    <value>Critical incidents</value>
+  </data>
+  <data name="Doc.ReportTitle" xml:space="preserve">
+    <value>Member exposure report</value>
+  </data>
+  <data name="Doc.Total" xml:space="preserve">
+    <value>Confirmed entries</value>
+  </data>
+  <data name="Doc.PendingSuggestions" xml:space="preserve">
+    <value>Awaiting review</value>
+  </data>
+  <data name="Doc.LastExposure" xml:space="preserve">
+    <value>Most recent</value>
+  </data>
+  <data name="Doc.ScreeningFlagged" xml:space="preserve">
+    <value>Increased screening</value>
+  </data>
+  <data name="Doc.OpenFollowUps" xml:space="preserve">
+    <value>Open follow-ups</value>
+  </data>
+  <data name="Doc.Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="WellnessOfficerCertificationLabel" xml:space="preserve">
+    <value>Wellness officer certification</value>
+  </data>
+  <data name="WellnessOfficerCertificationHelp" xml:space="preserve">
+    <value>Optional. One of your certification types, for example from the Wellness Officer template, with the courses, continuing-education hours or training sessions and the validity your organization decides. Each officer's status shows below.</value>
+  </data>
+  <data name="PeerTeamRoleLabel" xml:space="preserve">
+    <value>Peer support team role</value>
+  </data>
+  <data name="PeerTeamRoleHelp" xml:space="preserve">
+    <value>The members of this role are the peer support team. With no role, the members holding a current certification of the type below are the team.</value>
+  </data>
+  <data name="PeerTeamByCertificationOption" xml:space="preserve">
+    <value>No role: the certification holders</value>
+  </data>
+  <data name="RoleCertificationHeader" xml:space="preserve">
+    <value>Certification of the wellness roles</value>
+  </data>
+  <data name="RequireCertificationLabel" xml:space="preserve">
+    <value>Only members with a current certification act in these roles</value>
+  </data>
+  <data name="RequireCertificationHelp" xml:space="preserve">
+    <value>Off: the role decides who reads the logs and receives reports and reminders; the certification is shown as status. On: a role member also needs a current certification of the role's linked type. A role with no linked type is not affected.</value>
+  </data>
+  <data name="EditCertificationTypeLink" xml:space="preserve">
+    <value>Edit the type and its validity</value>
+  </data>
+  <data name="CertificationRequirementsLink" xml:space="preserve">
+    <value>Set its requirements</value>
+  </data>
+  <data name="CertificationTemplatesHint" xml:space="preserve">
+    <value>Add the Wellness Officer, Peer Support Team Member or Designated Exposure Control Officer type from the certification templates, then link it above.</value>
+  </data>
+  <data name="CertificationTypesLink" xml:space="preserve">
+    <value>Certification types</value>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Who acts in each role</value>
+  </data>
+  <data name="RosterIntro" xml:space="preserve">
+    <value>Role membership decides who acts. Each member's certification of the role's linked type shows as current, expiring, expired or missing.</value>
+  </data>
+  <data name="RosterMemberColumn" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="RosterCertificationColumn" xml:space="preserve">
+    <value>Certification status</value>
+  </data>
+  <data name="RosterActsColumn" xml:space="preserve">
+    <value>Acts in the role</value>
+  </data>
+  <data name="RosterKind.WellnessOfficer" xml:space="preserve">
+    <value>Wellness officers</value>
+  </data>
+  <data name="RosterKind.DesignatedOfficer" xml:space="preserve">
+    <value>Designated officers</value>
+  </data>
+  <data name="RosterKind.PeerSupportTeam" xml:space="preserve">
+    <value>Peer support team</value>
+  </data>
+  <data name="RosterNoRole" xml:space="preserve">
+    <value>No role named.</value>
+  </data>
+  <data name="RosterNoMembers" xml:space="preserve">
+    <value>Nobody holds this role.</value>
+  </data>
+  <data name="RosterFallsBack" xml:space="preserve">
+    <value>No designated officer role is named, so the wellness officer role serves.</value>
+  </data>
+  <data name="RosterByCertification" xml:space="preserve">
+    <value>No role is named: the current holders of the certification are the team.</value>
+  </data>
+  <data name="RosterNoType" xml:space="preserve">
+    <value>No certification linked.</value>
+  </data>
+  <data name="RosterTypeMissing" xml:space="preserve">
+    <value>The linked certification type no longer exists, so the role alone decides.</value>
+  </data>
+  <data name="RosterNobodyActs" xml:space="preserve">
+    <value>Nobody acts in this role right now.</value>
+  </data>
+  <data name="RosterRequiresCertification" xml:space="preserve">
+    <value>Only members with a current certification act.</value>
+  </data>
+  <data name="CertState.Current" xml:space="preserve">
+    <value>Current</value>
+  </data>
+  <data name="CertState.CurrentUntil" xml:space="preserve">
+    <value>Current until {0}</value>
+  </data>
+  <data name="CertState.Expiring" xml:space="preserve">
+    <value>Expires {0}</value>
+  </data>
+  <data name="CertState.Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="CertState.ExpiredOn" xml:space="preserve">
+    <value>Expired {0}</value>
+  </data>
+  <data name="CertState.Missing" xml:space="preserve">
+    <value>Missing</value>
+  </data>
+  <data name="ActsYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="ActsNo" xml:space="preserve">
+    <value>No: no current certification</value>
+  </data>
+  <data name="Error.certification_switch_leaves_no_officer" xml:space="preserve">
+    <value>Nobody in the wellness officer or designated officer role holds a current certification of its linked type yet, so nobody would act. Record the certifications first, then turn this on.</value>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>Adding or changing wellness records needs the Workforce Pro add-on. Existing records stay readable.</value>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>Workforce Pro is not switched on for this member, so their records are read-only.</value>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>Member wellness is not available for this organization.</value>
+  </data>
+  <data name="WorkforcePro.RequiredTitle" xml:space="preserve">
+    <value>Workforce Pro required.</value>
+  </data>
+  <data name="WorkforcePro.ReadOnly" xml:space="preserve">
+    <value>Member wellness and workplace exposure are part of the Workforce Pro add-on, which this organization does not hold right now. Existing records are read-only: every member can still view and export their own, and officers can view what their role opens. Nothing can be added or changed.</value>
+  </data>
+  <data name="WorkforcePro.ViewAddon" xml:space="preserve">
+    <value>See the Workforce Pro add-on</value>
+  </data>
+  <data name="WorkforcePro.Grace" xml:space="preserve">
+    <value>A Workforce Pro payment failed. Everything keeps working until {0} while the payment is retried; after that, records become read-only until the add-on is paid.</value>
+  </data>
+  <data name="WorkforcePro.ManageSeats" xml:space="preserve">
+    <value>Manage Workforce Pro seats</value>
+  </data>
+  <data name="WorkforcePro.SeatMissingSelf" xml:space="preserve">
+    <value>Workforce Pro is not switched on for you, so your records here are read-only. Ask an administrator to switch it on.</value>
+  </data>
+  <data name="WorkforcePro.SeatMissing" xml:space="preserve">
+    <value>Workforce Pro is not switched on for {0}, so their records are read-only.</value>
+  </data>
+</root>

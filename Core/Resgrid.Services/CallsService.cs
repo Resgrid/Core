@@ -275,6 +275,11 @@ namespace Resgrid.Services
 							await _callNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
 					}
 				}
+
+				// ADP catalog 39: protocols attached with the call rode the same cascade, and their case record, questionnaire in words
+				// and reasons are caller content.
+				if (savedCall.Protocols != null && savedCall.Protocols.Any())
+					await ProtectCallProtocolsAsync(savedCall, cancellationToken);
 			}
 
 			if (call.References != null && call.References.Any())
@@ -304,6 +309,26 @@ namespace Resgrid.Services
 			if (_callLocationHistory != null) await _callLocationHistory.Value.IndexCallAsync(savedCall, cancellationToken);
 			await RollOpenCallCountsAsync(savedCall.DepartmentId);
 			return savedCall;
+		}
+
+		/// <summary>ADP catalog 39 write net for the protocols that rode the call's save cascade (<see cref="CallProtocolProtection"/>).</summary>
+		private async Task ProtectCallProtocolsAsync(Call savedCall, CancellationToken cancellationToken)
+		{
+			List<CallProtocol> stored = null;
+			foreach (var row in savedCall.Protocols.Where(p => p != null && p.CallProtocolId > 0))
+			{
+				if (!CallProtocolProtection.HasPlaintext(row))
+					continue;
+
+				CallProtocol existing = null;
+				if (CallProtocolProtection.HasPlaceholder(row))
+				{
+					stored ??= (await _callProtocolsRepository.GetCallProtocolsByCallIdAsync(savedCall.CallId))?.ToList() ?? new List<CallProtocol>();
+					existing = stored.FirstOrDefault(s => s.CallProtocolId == row.CallProtocolId);
+				}
+
+				await CallProtocolProtection.ProtectAsync(_protectedWriteService.Value, _callProtocolsRepository, savedCall.DepartmentId, row, existing, cancellationToken);
+			}
 		}
 
 		/// <summary>

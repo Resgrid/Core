@@ -1,0 +1,133 @@
+{
+  "format": "resgrid-protocols",
+  "version": 2,
+  "exportedOn": "2026-11-25T00:00:00Z",
+  "set": {
+    "key": "ems-clinical-structure",
+    "title": "EMS clinical guideline structure (no clinical text)",
+    "description": "The section structure of five EMS clinical guidelines, with no clinical text, doses or treatment steps. Openly licensed model guidelines are only added to the library after their redistribution licence has been checked (plan decision 5), so this set gives you the outline only: your medical director writes and approves every clinical word.",
+    "publisher": "Resgrid",
+    "license": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "setVersion": "1.0"
+  },
+  "protocols": [
+    {
+      "code": "EMS-100",
+      "name": "Universal patient care",
+      "kind": "ClinicalGuideline",
+      "tags": "ems,clinical,structure",
+      "description": "Outline only. Your medical director writes and approves the clinical content.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "warning", "key": "outline", "title": "Outline only", "html": "<p>This template has no clinical content. Replace every placeholder with text approved by your medical director before you submit it for review.</p>" },
+          { "type": "heading", "key": "scene", "text": "Scene safety and standard precautions", "level": 2 },
+          { "type": "paragraph", "key": "scenep", "html": "<p>[Medical director approved text]</p>" },
+          { "type": "heading", "key": "assess", "text": "Primary and secondary assessment", "level": 2 },
+          { "type": "paragraph", "key": "assessp", "html": "<p>[Medical director approved text]</p>" },
+          { "type": "heading", "key": "treat", "text": "Treatment", "level": 2 },
+          { "type": "paragraph", "key": "treatp", "html": "<p>[Medical director approved text]</p>" },
+          { "type": "heading", "key": "transport", "text": "Transport and destination", "level": 2 },
+          { "type": "paragraph", "key": "transportp", "html": "<p>[Medical director approved text]</p>" },
+          { "type": "heading", "key": "document", "text": "Documentation", "level": 2 },
+          { "type": "paragraph", "key": "documentp", "html": "<p>[Medical director approved text]</p>" }
+        ]
+      }
+    },
+    {
+      "code": "EMS-201",
+      "name": "Cardiac arrest",
+      "kind": "ClinicalGuideline",
+      "tags": "ems,clinical,structure,cardiac",
+      "description": "Outline only. Your medical director writes and approves the clinical content.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "warning", "key": "outline", "title": "Outline only", "html": "<p>This template has no clinical content. Replace every placeholder with text approved by your medical director before you submit it for review.</p>" },
+          { "type": "heading", "key": "recognize", "text": "Recognition", "level": 2 },
+          { "type": "paragraph", "key": "recognizep", "html": "<p>[Medical director approved text]</p>" },
+          { "type": "heading", "key": "adult", "text": "Treatment", "level": 2 },
+          { "type": "variants", "key": "ages", "variants": [
+            { "key": "adultv", "label": "Adult", "blocks": [ { "type": "paragraph", "key": "adultp", "html": "<p>[Medical director approved text]</p>" } ] },
+            { "key": "pedsv", "label": "Pediatric", "blocks": [ { "type": "paragraph", "key": "pedsp", "html": "<p>[Medical director approved text]</p>" } ] }
+          ] },
+          { "type": "heading", "key": "special", "text": "Special circumstances", "level": 2 },
+          { "type": "paragraph", "key": "specialp", "html": "<p>[Medical director approved text]</p>" },
+          { "type": "gate", "key": "termination", "html": "<p>Termination of resuscitation: [medical director approved criteria and the contact required].</p>" }
+        ]
+      }
+    },
+    {
+      "code": "EMS-202",
+      "name": "Respiratory distress",
+      "kind": "ClinicalGuideline",
+      "tags": "ems,clinical,structure,respiratory",
+      "description": "Outline only. Your medical director writes and approves the clinical content.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "warning", "key": "outline", "title": "Outline only", "html": "<p>This template has no clinical content. Replace every placeholder with text approved by your medical director before you submit it for review.</p>" },
+          { "type": "heading", "key": "assess", "text": "Assessment", "level": 2 },
+          { "type": "paragraph", "key": "assessp", "html": "<p>[Medical director approved text]</p>" },
+          { "type": "heading", "key": "treat", "text": "Treatment by presentation", "level": 2 },
+          { "type": "paragraph", "key": "treatp", "html": "<p>[Medical director approved text]</p>" },
+          { "type": "gate", "key": "contact", "html": "<p>[Medical director approved criteria for contacting medical control].</p>" }
+        ]
+      }
+    },
+    {
+      "code": "EMS-203",
+      "name": "Suspected stroke",
+      "kind": "ClinicalGuideline",
+      "tags": "ems,clinical,structure,stroke",
+      "description": "Outline only. Your medical director writes and approves the clinical content.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "warning", "key": "outline", "title": "Outline only", "html": "<p>This template has no clinical content. Replace every placeholder with text approved by your medical director before you submit it for review.</p>" },
+          { "type": "heading", "key": "screen", "text": "Stroke screening", "level": 2 },
+          { "type": "paragraph", "key": "screenp", "html": "<p>[Medical director approved screening tool and text]</p>" },
+          { "type": "heading", "key": "time", "text": "Time last known well", "level": 2 },
+          { "type": "paragraph", "key": "timep", "html": "<p>[Medical director approved text]</p>" },
+          { "type": "heading", "key": "dest", "text": "Destination and pre-arrival notification", "level": 2 },
+          { "type": "paragraph", "key": "destp", "html": "<p>[Medical director approved text and your regional destination rules]</p>" }
+        ]
+      }
+    },
+    {
+      "code": "EMS-301",
+      "name": "Trauma triage and destination",
+      "kind": "ClinicalGuideline",
+      "tags": "ems,clinical,structure,trauma",
+      "description": "Outline only. Your medical director writes and approves the clinical content.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "warning", "key": "outline", "title": "Outline only", "html": "<p>This template has no clinical content. Replace every placeholder with text approved by your medical director before you submit it for review.</p>" },
+          { "type": "heading", "key": "criteria", "text": "Field triage criteria", "level": 2 },
+          { "type": "paragraph", "key": "criteriap", "html": "<p>[Medical director approved criteria]</p>" },
+          { "type": "heading", "key": "dest", "text": "Destination", "level": 2 },
+          { "type": "paragraph", "key": "destp", "html": "<p>[Your regional trauma system's destination rules]</p>" },
+          { "type": "heading", "key": "air", "text": "Air medical request", "level": 2 },
+          { "type": "paragraph", "key": "airp", "html": "<p>[Medical director approved text]</p>" }
+        ]
+      }
+    }
+  ]
+}

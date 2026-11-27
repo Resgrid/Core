@@ -34,6 +34,10 @@ namespace Resgrid.Providers.Claims
 			public const string Commit = "Commit";
 			/// <summary>Incident Back Office (registry §4C): supervisor certification of time.</summary>
 			public const string Certify = "Certify";
+			/// <summary>Protocols P1/P2 (permission 130): assign and manage read-and-sign acknowledgments.</summary>
+			public const string Assign = "Assign";
+			/// <summary>Round 7B (permission 135, Training resource): record that members completed a training they took together.</summary>
+			public const string RecordCompletions = "RecordCompletions";
 		}
 
 		public static class Memberships

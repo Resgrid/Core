@@ -1,0 +1,29 @@
+@model Resgrid.Web.Areas.User.Models.Calendar.NewTypeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Calendar.Calendar> localizer
+@*
+    Training T1 (R-T9): an event type can count as training; check-in/out on its events becomes training hours on the attendees'
+    transcripts, in the type's training category.
+*@
+<div class="form-group">
+    <div class="col-sm-offset-2 col-sm-8">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" asp-for="Type.CountsAsTraining" aria-describedby="counts-as-training-help" />
+                @localizer["CountsAsTrainingLabel"]
+            </label>
+        </div>
+        <span class="help-block" id="counts-as-training-help">@localizer["CountsAsTrainingHelp"]</span>
+    </div>
+</div>
+<div class="form-group">
+    <label class="col-sm-2 control-label" for="Type_DefaultCategoryId">@localizer["TrainingCategoryLabel"]</label>
+    <div class="col-sm-6">
+        <select id="Type_DefaultCategoryId" name="Type.DefaultCategoryId" class="form-control">
+            <option value="">@localizer["TrainingCategoryNone"]</option>
+            @foreach (var category in Model.TrainingCategories)
+            {
+                <option value="@category.TrainingCategoryId" selected="@(Model.Type?.DefaultCategoryId == category.TrainingCategoryId)">@category.Name</option>
+            }
+        </select>
+    </div>
+</div>

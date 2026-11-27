@@ -105,6 +105,45 @@ namespace Resgrid.Tests.Mocks
 		/// <summary>
 		/// Helper method to seed test data
 		/// </summary>
+		/// <summary>Question counts per training, as the list read returns them (tests seed it).</summary>
+		public Dictionary<int, int> QuestionCounts { get; } = new Dictionary<int, int>();
+
+		/// <summary>Completions per training for CountCompletionsAsync (tests seed it).</summary>
+		public Dictionary<int, int> Completions { get; } = new Dictionary<int, int>();
+
+		public List<int> NoticeWorkTrainingIds { get; } = new List<int>();
+
+		public Task<Dictionary<int, int>> GetQuestionCountsForDepartmentAsync(int departmentId)
+			=> Task.FromResult(new Dictionary<int, int>(QuestionCounts));
+
+		public Task<List<int>> GetTrainingIdsWithNoticeWorkAsync(System.DateTime utcNow, int maxLeadDays)
+			=> Task.FromResult(NoticeWorkTrainingIds.ToList());
+
+		public Task<List<Training>> GetTrainingsDueForRepeatAsync(System.DateTime utcNow, int take)
+			=> Task.FromResult(_trainings.Where(t => !t.ArchivedOn.HasValue && t.RepeatMonths > 0 && t.NextRepeatOn.HasValue && t.NextRepeatOn.Value <= utcNow).Take(take).ToList());
+
+		public Task<bool> SetArchivedAsync(int departmentId, int trainingId, System.DateTime? archivedOn, string userId, CancellationToken cancellationToken = default)
+		{
+			var training = _trainings.FirstOrDefault(t => t.TrainingId == trainingId && t.DepartmentId == departmentId);
+			if (training == null)
+				return Task.FromResult(false);
+			training.ArchivedOn = archivedOn;
+			training.ArchivedByUserId = archivedOn.HasValue ? userId : null;
+			return Task.FromResult(true);
+		}
+
+		public Task<bool> SetNextRepeatOnAsync(int trainingId, System.DateTime? nextRepeatOn, CancellationToken cancellationToken = default)
+		{
+			var training = _trainings.FirstOrDefault(t => t.TrainingId == trainingId);
+			if (training == null)
+				return Task.FromResult(false);
+			training.NextRepeatOn = nextRepeatOn;
+			return Task.FromResult(true);
+		}
+
+		public Task<int> CountCompletionsAsync(int trainingId)
+			=> Task.FromResult(Completions.TryGetValue(trainingId, out var count) ? count : 0);
+
 		public void SeedTraining(Training training)
 		{
 			if (training.TrainingId == 0)

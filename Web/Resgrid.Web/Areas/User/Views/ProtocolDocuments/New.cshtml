@@ -1,0 +1,70 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolDocumentUploadModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* A new document-backed protocol (P1 R-P5): one PDF or DOCX becomes the content of its first draft version. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["NewDocumentProtocolHeader"];
+    ViewData["Title"] = localizer["NewDocumentProtocolHeader"].Value;
+    ViewData["Subtitle"] = localizer["NewDocumentProtocolIntro"].Value;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    <div class="ibox">
+        <div class="ibox-content">
+            <form method="post" enctype="multipart/form-data" asp-controller="ProtocolDocuments" asp-action="New" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="control-label required" for="documentFile">@localizer["DocumentFileLabel"]</label>
+                    <input id="documentFile" name="file" type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
+                    <span class="help-block">@localizer["DocumentFileHelp"]</span>
+                </div>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label class="control-label" for="Title">@localizer["DocumentTitleLabel"]</label>
+                        <input id="Title" name="Title" class="form-control" maxlength="100" value="@Model.Title" />
+                        <span class="help-block">@localizer["DocumentTitleHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="Kind">@localizer["KindLabel"]</label>
+                        <select id="Kind" name="Kind" class="form-control">
+                            @foreach (ProtocolKinds kind in ProtocolKindRules.AuthorableKinds)
+                            {
+                                <option value="@((int)kind)" selected="@(Model.Kind == (int)kind)">@ProtocolDisplay.KindName((int)kind, localizer)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="CategoryId">@localizer["CategoryLabel"]</label>
+                        <select id="CategoryId" name="CategoryId" class="form-control">
+                            <option value="">@localizer["NoCategoryOption"]</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.ProtocolCategoryId" selected="@(Model.CategoryId == category.ProtocolCategoryId)">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="RequiresAcknowledgment" value="true" checked="@Model.RequiresAcknowledgment" /> @localizer["RequiresAcknowledgmentLabel"]</label>
+                    <input type="hidden" name="RequiresAcknowledgment" value="false" />
+                </div>
+                <div class="rgw-wizard-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["UploadDocumentButton"]</button>
+                    <a class="btn btn-default" asp-controller="ProtocolDocuments" asp-action="BulkUpload" asp-route-area="User"><i class="fa fa-files-o" aria-hidden="true"></i> @localizer["BulkUploadTab"]</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

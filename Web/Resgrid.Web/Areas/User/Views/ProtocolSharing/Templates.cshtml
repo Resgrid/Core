@@ -1,0 +1,83 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ProtocolTemplatesModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolText
+@*
+    The Resgrid template library (P5, decision 5): curated starter sets written by Resgrid. Authors clone a whole set or chosen items; each lands
+    as a draft for the department's own review and publish, with the set's attribution (source, licence, set version) kept on the version. The
+    EMS set is structure only: no clinical text until an openly licensed source has passed a licence check.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["TemplatesHeader"];
+    ViewData["Title"] = text["TemplatesHeader"].Value;
+    ViewData["Subtitle"] = text["TemplatesIntro"].Value;
+    ViewData["Section"] = "Sharing";
+    ViewData["SharingSection"] = "Templates";
+    ViewData["IsManager"] = Model.IsManager;
+    ViewData["CanCreate"] = Model.CanAuthor;
+    string Kind(string name) { var value = protocolText["Kind" + name].Value; return string.IsNullOrEmpty(value) || value == "Kind" + name ? name : value; }
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_SharingTabs", Model)
+
+    <div class="rgw-card-grid">
+        @foreach (var set in Model.Sets)
+        {
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-clone" aria-hidden="true"></i> @set.Set.Title</h5>@if (Model.Suggested.Contains(set.Set.Key)) { <span class="label label-primary pull-right"><i class="fa fa-star" aria-hidden="true"></i> @text["TemplateSuggested"]</span> }</div>
+                <div class="ibox-content">
+                    <p>@set.Set.Description</p>
+                    <p class="small text-muted">
+                        @string.Format(text["TemplateMeta"].Value, set.Set.Publisher, set.Set.SetVersion, set.Protocols.Count)
+                        · @text["AttributionLicense"]
+                        @if (!string.IsNullOrWhiteSpace(set.Set.LicenseUrl))
+                        {
+                            <a href="@set.Set.LicenseUrl" target="_blank" rel="license noopener noreferrer">@set.Set.License</a>
+                        }
+                        else
+                        {
+                            @set.Set.License
+                        }
+                    </p>
+                    <form method="post" asp-controller="ProtocolSharing" asp-action="CloneTemplate" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="key" value="@set.Set.Key" />
+                        <fieldset>
+                            <legend class="small">@text["TemplateChooseItems"]</legend>
+                            @foreach (var item in set.Protocols)
+                            {
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" name="codes" value="@item.Code" checked="checked" disabled="@(!Model.CanAuthor)" />
+                                        <strong>@item.Code</strong> @item.Name <span class="text-muted small">· @Kind(item.Kind)</span>
+                                        @if (!string.IsNullOrWhiteSpace(item.Description))
+                                        {
+                                            <span class="rgw-sub">@item.Description</span>
+                                        }
+                                    </label>
+                                </div>
+                            }
+                        </fieldset>
+                        @if (Model.CanAuthor)
+                        {
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-clone" aria-hidden="true"></i> @text["TemplateCloneButton"]</button>
+                        }
+                        else
+                        {
+                            <p class="small text-muted">@text["TemplateAuthorsOnly"]</p>
+                        }
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+    <p class="text-muted small">@text["TemplatesDisclaimer"]</p>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

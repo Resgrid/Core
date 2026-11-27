@@ -1,0 +1,167 @@
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsSkillEvaluationDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    One evaluation: the result for every member, the steps with their answers and annotations, the evidence, the evaluator request's
+    signers, and the sealed PDF (only once sealed; while sealing is pending the page says so and hands nothing out).
+*@
+@{
+    var view = Model.Evaluation;
+    var evaluation = view.Evaluation;
+    ViewBag.Title = "Resgrid | " + evaluation.Title;
+    ViewData["Title"] = evaluation.Title;
+    ViewData["Subtitle"] = localizer["Skl.EvaluationIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-heading-actions m-b-md">
+        @if (Model.IsEvaluator && evaluation.Status == (int)LmsSkillEvaluationStatuses.InProgress)
+        {
+            <a class="btn btn-primary" asp-controller="LmsSkills" asp-action="Run" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Skl.Continue"]</a>
+        }
+        @if (Model.Request != null && evaluation.Status == (int)LmsSkillEvaluationStatuses.AwaitingSignature)
+        {
+            <a class="btn btn-primary" asp-controller="Signatures" asp-action="Step" asp-route-area="User" asp-route-id="@Model.Request.SignatureRequestId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Skl.OpenSignature"]</a>
+        }
+        @if (view.SealState == "sealed")
+        {
+            <a class="btn btn-white" asp-controller="LmsSkills" asp-action="Pdf" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Skl.SealedPdf"]</a>
+        }
+        @if (view.TaskBook != null)
+        {
+            <a class="btn btn-white" asp-controller="LmsSkills" asp-action="TaskBook" asp-route-area="User" asp-route-id="@view.TaskBook.LmsTaskBookId"><i class="fa fa-book" aria-hidden="true"></i> @view.TaskBook.PositionCode</a>
+        }
+    </div>
+
+    @if (evaluation.Status == (int)LmsSkillEvaluationStatuses.Completed && view.SealState != "sealed")
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @localizer[view.SealState == "failed" ? "Skl.SealFailed" : "Skl.SealPending"]</div>
+    }
+    @if (evaluation.Status == (int)LmsSkillEvaluationStatuses.Voided)
+    {
+        <div class="alert alert-danger" role="status"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["Skl.Status.Voided"]: @evaluation.VoidReason</div>
+    }
+
+    <div class="rgw-stat-tiles m-b-md">
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@await Html.PartialAsync("_Status", evaluation)</span><span class="rgw-stat-label">@localizer["Skl.Col.Status"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@(evaluation.Score.HasValue ? evaluation.Score.Value.ToString("0.#") + "%" : "-")</span><span class="rgw-stat-label"><i class="fa fa-percent" aria-hidden="true"></i> @localizer["Skl.Col.Score"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@TimeSpan.FromSeconds(evaluation.DurationSeconds).ToString(@"hh\:mm\:ss")</span><span class="rgw-stat-label"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["Skl.Elapsed"]</span></div>
+        <div class="rgw-stat-tile"><span class="rgw-stat-value">@(evaluation.ExternalEvaluatorName ?? Model.NameOf(evaluation.EvaluatorUserId))</span><span class="rgw-stat-label"><i class="fa fa-user" aria-hidden="true"></i> @localizer["Skl.Col.Evaluator"]</span></div>
+    </div>
+    @if (evaluation.CriticalFailed)
+    {
+        <div class="alert alert-danger" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["Skl.CriticalFailedNotice"]</div>
+    }
+    @if (evaluation.TimeExceeded)
+    {
+        <div class="alert alert-danger" role="status"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["Skl.TimeExceededNotice"]</div>
+    }
+
+    <h3>@localizer["Skl.MembersToEvaluate"]</h3>
+    <ul>
+        @foreach (var member in view.Members)
+        {
+            <li>
+                @Model.NameOf(member.UserId) <span class="rgw-sub">@localizer["Skl.Attempt"] @member.AttemptNumber</span>
+                @if (member.State == (int)LmsSkillEvaluationMemberStates.SplitOut && member.SplitToEvaluationId.HasValue)
+                {
+                    <a asp-controller="LmsSkills" asp-action="Evaluation" asp-route-area="User" asp-route-id="@member.SplitToEvaluationId"><i class="fa fa-code-fork" aria-hidden="true"></i> @localizer["Skl.SplitTo"]</a>
+                }
+            </li>
+        }
+    </ul>
+
+    <h3>@localizer["Skl.Steps"]</h3>
+    <div class="table-responsive">
+        <table class="table rgw-table">
+            <thead><tr><th>@localizer["Skl.Step.Label"]</th><th>@localizer["Skl.Answer"]</th><th>@localizer["Skl.Annotation"]</th></tr></thead>
+            <tbody>
+                @foreach (var step in view.Content.Steps.Where(s => s != null && s.StepType != LmsSkillStepTypes.Instructions))
+                {
+                    if (step.StepType == LmsSkillStepTypes.Heading)
+                    {
+                        <tr><th colspan="3">@step.Label</th></tr>
+                        continue;
+                    }
+                    var answer = view.Answers.Get(step.Key);
+                    string shown;
+                    if (answer == null) { shown = "-"; }
+                    else if (answer.Status == (int)LmsSkillAnswerStatuses.NotApplicable) { shown = localizer["Skl.NotApplicable"].Value + ": " + answer.NotApplicableReason; }
+                    else if (step.StepType == LmsSkillStepTypes.PassFail) { shown = answer.Value == "pass" ? localizer["Skl.Pass"].Value : answer.Value == "fail" ? localizer["Skl.Fail"].Value : answer.Value; }
+                    else if (step.StepType == LmsSkillStepTypes.ChooseOne) { shown = step.Options?.FirstOrDefault(o => string.Equals(o.Key, answer.Value, StringComparison.OrdinalIgnoreCase))?.Label ?? answer.Value; }
+                    else if (step.StepType == LmsSkillStepTypes.ChooseAny) { shown = string.Join(", ", (answer.Values ?? new List<string>()).Select(v => step.Options?.FirstOrDefault(o => string.Equals(o.Key, v, StringComparison.OrdinalIgnoreCase))?.Label ?? v)); }
+                    else if (step.StepType == LmsSkillStepTypes.TimestampedNotes) { shown = string.Join(" · ", (answer.Notes ?? new List<LmsSkillTimedNote>()).Select(n => Model.When(n.At) + " " + n.Text)); }
+                    else { shown = answer.Value; }
+                    <tr class="@((view.Outcome?.FailedStepKeys.Contains(step.Key) ?? false) ? "danger" : string.Empty)">
+                        <td>@step.Label @if (step.Critical) { <span class="label label-danger"><i class="fa fa-exclamation" aria-hidden="true"></i> @localizer["Skl.Step.Critical"]</span> }</td>
+                        <td>@shown</td>
+                        <td>@answer?.Note</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(evaluation.Notes))
+    {
+        <h4>@localizer["Skl.EvaluatorComments"]</h4>
+        <p>@evaluation.Notes</p>
+    }
+
+    @if (view.Files.Count > 0)
+    {
+        <h3>@localizer["Skl.Evidence"]</h3>
+        <ul>
+            @foreach (var file in view.Files)
+            {
+                <li><a asp-controller="LmsSkills" asp-action="EvidenceFile" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId" asp-route-fileId="@file.LmsSkillEvaluationFileId"><i class="fa fa-paperclip" aria-hidden="true"></i> @file.FileName</a> <span class="rgw-sub">SHA-256 @file.Sha256</span></li>
+            }
+        </ul>
+    }
+
+    @if (Model.Signers.Count > 0)
+    {
+        <h3>@localizer["Skl.Signatures"]</h3>
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Skl.Col.Step"]</th><th>@localizer["Skl.Col.Signer"]</th><th>@localizer["Skl.Col.Status"]</th><th>@localizer["Skl.Col.Date"]</th></tr></thead>
+                <tbody>
+                    @foreach (var signer in Model.Signers.OrderBy(s => s.SignerOrder))
+                    {
+                        <tr>
+                            <td>@localizer[signer.Role == (int)SignatureSignerRoles.CertifyingOfficial ? "Skl.Role.NextSigner" : "Skl.Role.Evaluator"]</td>
+                            <td>@(signer.IsMember ? (string.IsNullOrWhiteSpace(signer.UserId) ? localizer["Skl.AnyEligible"].Value : Model.NameOf(signer.UserId)) : signer.ExternalName)</td>
+                            <td>@(signer.Status == (int)SignatureSignerStatuses.Signed ? localizer["Skl.Signed"].Value : signer.Status == (int)SignatureSignerStatuses.Declined ? localizer["Skl.Declined"].Value : localizer["Skl.Waiting"].Value)</td>
+                            <td>@Model.When(signer.SignedOn ?? signer.DeclinedOn)</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.CanVoid)
+    {
+        <form asp-controller="LmsSkills" asp-action="Void" asp-route-area="User" method="post" class="rgw-toolbar m-t-md">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@evaluation.LmsSkillEvaluationId" />
+            <label class="sr-only" for="void-reason">@localizer["Skl.VoidReason"]</label>
+            <input id="void-reason" name="reason" class="form-control" maxlength="1000" required placeholder="@localizer["Skl.VoidReason"]" />
+            <button type="submit" class="btn btn-danger" data-confirm="@localizer["Skl.VoidConfirm"]"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["Skl.Void"]</button>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.skills.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,207 @@
+{
+  "schema": 1,
+  "id": "12-maintenance",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Maintenance",
+  "minutes": 4.1,
+  "walkthrough": false,
+  "audience": [
+    "logistics"
+  ],
+  "visibility": [
+    "module:Maintenance"
+  ],
+  "pages": [
+    "WorkOrders"
+  ],
+  "adminAssist": {
+    "areas": [
+      "maintenance"
+    ],
+    "capabilities": [
+      "work-orders",
+      "preventive-maintenance",
+      "maintenance-policy",
+      "new-work-order",
+      "maintenance-reports"
+    ]
+  },
+  "media": {
+    "video": "media/12-maintenance.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/12-maintenance.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Turn defects into accountable repairs",
+    "ar": "حوّل الأعطال إلى إصلاحات قابلة للمساءلة",
+    "de": "Mängel in nachvollziehbare Reparaturen verwandeln",
+    "el": "Μετατρέψτε τις βλάβες σε επισκευές με λογοδοσία",
+    "es": "Convertir los defectos en reparaciones controladas",
+    "fr": "Transformer les défauts en réparations suivies",
+    "it": "Trasformare i difetti in riparazioni tracciabili",
+    "pl": "Zamieniaj usterki w rozliczalne naprawy",
+    "sv": "Gör fel till spårbara reparationer",
+    "uk": "Перетворюйте несправності на підзвітні ремонти"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "What should happen when someone finds a defect on an apparatus?",
+        "ar": "ماذا يجب أن يحدث عند اكتشاف عطل في مركبة؟",
+        "de": "Was sollte passieren, wenn jemand einen Mangel an einem Fahrzeug findet?",
+        "el": "Τι πρέπει να γίνει όταν κάποιος βρει βλάβη σε όχημα;",
+        "es": "¿Qué debe ocurrir cuando alguien encuentra un defecto en un vehículo?",
+        "fr": "Que faire quand quelqu’un trouve un défaut sur un engin ?",
+        "it": "Che cosa fare quando qualcuno trova un difetto su un mezzo?",
+        "pl": "Co zrobić, gdy ktoś znajdzie usterkę w pojeździe?",
+        "sv": "Vad ska hända när någon hittar ett fel på ett fordon?",
+        "uk": "Що робити, коли хтось виявив несправність техніки?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Report it so a work order can track the repair",
+            "ar": "الإبلاغ عنه لتتبع أمر عمل الإصلاح",
+            "de": "Ihn melden, damit ein Arbeitsauftrag die Reparatur verfolgt",
+            "el": "Αναφορά ώστε μια εντολή εργασίας να παρακολουθεί την επισκευή",
+            "es": "Informar de él para que una orden de trabajo siga la reparación",
+            "fr": "Le signaler pour qu’un bon de travail suive la réparation",
+            "it": "Segnalarlo perché un ordine di lavoro segua la riparazione",
+            "pl": "Zgłosić ją, aby zlecenie śledziło naprawę",
+            "sv": "Rapportera det så att en arbetsorder följer reparationen",
+            "uk": "Повідомити, щоб наряд відстежував ремонт"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Ignore it",
+            "ar": "تجاهله",
+            "de": "Ihn ignorieren",
+            "el": "Αγνόηση",
+            "es": "Ignorarlo",
+            "fr": "L’ignorer",
+            "it": "Ignorarlo",
+            "pl": "Zignorować ją",
+            "sv": "Ignorera det",
+            "uk": "Ігнорувати"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Mention it at the next holiday party",
+            "ar": "ذكره في الحفلة القادمة",
+            "de": "Ihn bei der nächsten Feier erwähnen",
+            "el": "Αναφορά στο επόμενο πάρτι",
+            "es": "Mencionarlo en la próxima fiesta",
+            "fr": "En parler à la prochaine fête",
+            "it": "Parlarne alla prossima festa",
+            "pl": "Wspomnieć o niej na następnej imprezie",
+            "sv": "Nämna det på nästa fest",
+            "uk": "Згадати на наступному святі"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What does a work order record?",
+        "ar": "ماذا يسجل أمر العمل؟",
+        "de": "Was hält ein Arbeitsauftrag fest?",
+        "el": "Τι καταγράφει μια εντολή εργασίας;",
+        "es": "¿Qué registra una orden de trabajo?",
+        "fr": "Que consigne un bon de travail ?",
+        "it": "Che cosa registra un ordine di lavoro?",
+        "pl": "Co rejestruje zlecenie pracy?",
+        "sv": "Vad registrerar en arbetsorder?",
+        "uk": "Що фіксує наряд на роботу?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Member birthdays",
+            "ar": "أعياد ميلاد الأعضاء",
+            "de": "Geburtstage der Mitglieder",
+            "el": "Γενέθλια μελών",
+            "es": "Cumpleaños de los miembros",
+            "fr": "Les anniversaires des membres",
+            "it": "I compleanni dei membri",
+            "pl": "Urodziny członków",
+            "sv": "Medlemmarnas födelsedagar",
+            "uk": "Дні народження учасників"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Call priorities",
+            "ar": "أولويات البلاغات",
+            "de": "Einsatzprioritäten",
+            "el": "Προτεραιότητες κλήσεων",
+            "es": "Prioridades de llamadas",
+            "fr": "Les priorités d’intervention",
+            "it": "Priorità delle chiamate",
+            "pl": "Priorytety zgłoszeń",
+            "sv": "Larmprioriteter",
+            "uk": "Пріоритети викликів"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "What needs repair, who does it and when it is done",
+            "ar": "ما يحتاج إلى إصلاح ومن يقوم به ومتى يكتمل",
+            "de": "Was repariert werden muss, wer es macht und wann es erledigt ist",
+            "el": "Τι χρειάζεται επισκευή, ποιος την κάνει και πότε ολοκληρώνεται",
+            "es": "Qué hay que reparar, quién lo hace y cuándo se termina",
+            "fr": "Ce qu’il faut réparer, qui s’en charge et quand c’est fait",
+            "it": "Che cosa riparare, chi lo fa e quando è finito",
+            "pl": "Co wymaga naprawy, kto ją wykona i kiedy jest gotowe",
+            "sv": "Vad som ska repareras, vem som gör det och när det är klart",
+            "uk": "Що потребує ремонту, хто його виконує і коли завершено"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Work orders keep the history of repairs for each unit.",
+        "ar": "تحتفظ أوامر العمل بسجل الإصلاحات لكل وحدة.",
+        "de": "Arbeitsaufträge bewahren die Reparaturhistorie jeder Einheit auf.",
+        "el": "Οι εντολές εργασίας κρατούν το ιστορικό επισκευών κάθε μονάδας.",
+        "es": "Las órdenes de trabajo guardan el historial de reparaciones de cada unidad.",
+        "fr": "Les bons de travail conservent l’historique des réparations de chaque unité.",
+        "it": "Gli ordini di lavoro conservano lo storico delle riparazioni di ogni mezzo.",
+        "pl": "Zlecenia pracy przechowują historię napraw każdej jednostki.",
+        "sv": "Arbetsordrar sparar reparationshistoriken för varje enhet.",
+        "uk": "Наряди зберігають історію ремонтів кожного підрозділу."
+      }
+    }
+  ]
+}

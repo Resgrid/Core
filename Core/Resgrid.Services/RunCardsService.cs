@@ -784,21 +784,46 @@ namespace Resgrid.Services
 
 		public async Task<RunCard> GetMatchingRunCardAsync(int departmentId, int priority, string callTypeName, int? linkedCallTypeId)
 		{
+			return await GetMatchingRunCardAsync(departmentId, new DispatchTriggerFacts
+			{
+				Priority = priority,
+				CallTypeName = callTypeName,
+				CallTypeId = linkedCallTypeId,
+				AtUtc = DateTime.UtcNow
+			});
+		}
+
+		public async Task<RunCard> GetMatchingRunCardAsync(int departmentId, DispatchTriggerFacts call)
+		{
+			if (call == null)
+				return null;
+
 			var cards = await GetAllRunCardsForDepartmentAsync(departmentId);
 
 			if (cards == null || !cards.Any())
 				return null;
 
 			// The name wins when it matches a type; the call's link covers a type renamed after the call was logged.
-			var callTypeId = await ResolveCallTypeIdAsync(departmentId, callTypeName) ?? linkedCallTypeId;
-			var now = DateTime.UtcNow;
+			var facts = new DispatchTriggerFacts
+			{
+				Priority = call.Priority,
+				CallTypeName = call.CallTypeName,
+				CallTypeId = await ResolveCallTypeIdAsync(departmentId, call.CallTypeName) ?? call.CallTypeId,
+				AtUtc = call.AtUtc == default(DateTime) ? DateTime.UtcNow : call.AtUtc,
+				LocalTime = call.LocalTime,
+				Nature = call.Nature,
+				Notes = call.Notes,
+				GeofenceGroupIds = call.GeofenceGroupIds,
+				LocationPoiTypeId = call.LocationPoiTypeId,
+				CallSource = call.CallSource
+			};
 
 			RunCard bestCard = null;
 			int bestSpecificity = 0;
 
 			foreach (var card in cards.Where(c => !c.IsDisabled))
 			{
-				var specificity = GetTriggerMatchSpecificity(card, priority, callTypeId, now);
+				var specificity = GetTriggerMatchSpecificity(card, facts);
 
 				if (!specificity.HasValue)
 					continue;
@@ -823,37 +848,24 @@ namespace Resgrid.Services
 		/// </summary>
 		public static int? GetTriggerMatchSpecificity(RunCard card, int priority, int? callTypeId, DateTime utcNow)
 		{
-			if (card?.Triggers == null || !card.Triggers.Any())
+			return GetTriggerMatchSpecificity(card, new DispatchTriggerFacts { Priority = priority, CallTypeId = callTypeId, AtUtc = utcNow });
+		}
+
+		/// <summary>
+		/// The strongest matching trigger's specificity through the shared trigger engine (Protocols P4, <see cref="DispatchTriggerEngine"/>):
+		/// 1 priority, 2 type, 3 priority and type, plus 3 for every zone, schedule, keyword, POI type or intake-source condition the
+		/// trigger also needs; null when no trigger matches.
+		/// </summary>
+		public static int? GetTriggerMatchSpecificity(RunCard card, DispatchTriggerFacts call)
+		{
+			if (card?.Triggers == null || !card.Triggers.Any() || call == null)
 				return null;
 
 			int? best = null;
 
-			foreach (var trigger in card.Triggers)
+			foreach (var trigger in card.Triggers.Where(t => t != null))
 			{
-				if (trigger.StartsOn.HasValue && trigger.StartsOn.Value > utcNow)
-					continue;
-
-				if (trigger.EndsOn.HasValue && trigger.EndsOn.Value < utcNow)
-					continue;
-
-				int? specificity = null;
-
-				switch ((RunCardTriggerTypes)trigger.TriggerType)
-				{
-					case RunCardTriggerTypes.CallPriority:
-						if (trigger.Priority.HasValue && trigger.Priority.Value == priority)
-							specificity = 1;
-						break;
-					case RunCardTriggerTypes.CallType:
-						if (trigger.CallTypeId.HasValue && callTypeId.HasValue && trigger.CallTypeId.Value == callTypeId.Value)
-							specificity = 2;
-						break;
-					case RunCardTriggerTypes.CallPriorityAndType:
-						if (trigger.Priority.HasValue && trigger.Priority.Value == priority
-							&& trigger.CallTypeId.HasValue && callTypeId.HasValue && trigger.CallTypeId.Value == callTypeId.Value)
-							specificity = 3;
-						break;
-				}
+				var specificity = DispatchTriggerEngine.Specificity(DispatchTriggerEngine.ForRunCard(trigger), call);
 
 				if (specificity.HasValue && (!best.HasValue || specificity.Value > best.Value))
 					best = specificity;

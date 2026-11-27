@@ -1,0 +1,106 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model WellnessRosterView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> localizer
+@*
+    The wellness roles (2026-11-26) on the settings page and the officers' report: who holds each role, their certification of the
+    role's linked type (current, expiring, expired, missing) and whether they act. Role membership decides; with the certification
+    switch on, only members with a current certification act. Certification status is operational; nothing here is health data.
+*@
+@{
+    string Date(DateTime? value) => value.HasValue ? value.Value.ToString("d", CultureInfo.CurrentCulture) : null;
+}
+<div class="wellness-roster">
+    <h3>@localizer["RosterHeader"]</h3>
+    <p class="text-muted">@localizer["RosterIntro"]</p>
+    @foreach (var role in Model.Roster)
+    {
+        <div class="m-b-md" data-wellness-role="@role.Kind">
+            @* The department's own word for the role (Department -> Terminology), else Resgrid's. *@
+            <h4>@(await departmentTerms.NameAsync(WellnessRoleRules.TermKeyFor(role.Kind), localizer["RosterKind." + role.Kind].Value))</h4>
+            <p class="small text-muted">
+                @if (role.CertificationTypeMissing)
+                {
+                    <span class="text-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["RosterTypeMissing"]</span>
+                }
+                else if (!string.IsNullOrEmpty(role.CertificationTypeName))
+                {
+                    <span><i class="fa fa-certificate" aria-hidden="true"></i> @role.CertificationTypeName</span>
+                    @if (role.RequiresCertification)
+                    {
+                        <span> &middot; @localizer["RosterRequiresCertification"]</span>
+                    }
+                }
+                else
+                {
+                    <span>@localizer["RosterNoType"]</span>
+                }
+                @if (role.RoleFallsBack)
+                {
+                    <span> &middot; @localizer["RosterFallsBack"]</span>
+                }
+                @if (role.ByCertificationOnly)
+                {
+                    <span> &middot; @localizer["RosterByCertification"]</span>
+                }
+            </p>
+            @if (role.RoleId <= 0 && !role.ByCertificationOnly)
+            {
+                <p class="text-muted">@localizer["RosterNoRole"]</p>
+            }
+            else if (role.Members.Count == 0)
+            {
+                <p class="text-muted">@localizer["RosterNoMembers"]</p>
+            }
+            else
+            {
+                if (role.NobodyActs)
+                {
+                    <div class="alert alert-warning" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["RosterNobodyActs"]</div>
+                }
+                <div class="table-responsive">
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th>@localizer["RosterMemberColumn"]</th>
+                                <th>@localizer["RosterCertificationColumn"]</th>
+                                <th>@localizer["RosterActsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var member in role.Members.OrderBy(m => Model.NameOf(m.UserId), StringComparer.CurrentCultureIgnoreCase))
+                            {
+                                var status = member.Certification ?? new WellnessCertificationStatus();
+                                <tr>
+                                    <td>@Model.NameOf(member.UserId)</td>
+                                    <td>
+                                        @switch (status.State)
+                                        {
+                                            case WellnessCertificationStates.Current:
+                                                <span class="label label-primary">@(status.ExpiresOn.HasValue ? localizer["CertState.CurrentUntil", Date(status.ExpiresOn)].Value : localizer["CertState.Current"].Value)</span>
+                                                break;
+                                            case WellnessCertificationStates.Expiring:
+                                                <span class="label label-warning">@localizer["CertState.Expiring", Date(status.ExpiresOn)]</span>
+                                                break;
+                                            case WellnessCertificationStates.Expired:
+                                                <span class="label label-danger">@(status.ExpiresOn.HasValue ? localizer["CertState.ExpiredOn", Date(status.ExpiresOn)].Value : localizer["CertState.Expired"].Value)</span>
+                                                break;
+                                            case WellnessCertificationStates.Missing:
+                                                <span class="label label-danger">@localizer["CertState.Missing"]</span>
+                                                break;
+                                            default:
+                                                <span class="text-muted">&mdash;</span>
+                                                break;
+                                        }
+                                    </td>
+                                    <td>@(member.Acts ? localizer["ActsYes"].Value : localizer["ActsNo"].Value)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    }
+</div>

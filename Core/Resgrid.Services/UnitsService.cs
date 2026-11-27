@@ -50,6 +50,7 @@ namespace Resgrid.Services
 		private readonly INovuProvider _novuProvider;
 		private readonly Lazy<IDepartmentsService> _departmentsService;
 		private readonly ITypeIconsRepository _typeIconsRepository;
+		private readonly IContentAudienceChangeQueue _audienceChanges;
 
 		// Lazy: the awaiting-resources check needs the calls and dispatch graph, which itself depends on this service.
 		private readonly Lazy<IOutstandingRequirementsService> _outstandingRequirementsService;
@@ -74,8 +75,9 @@ namespace Resgrid.Services
 			Lazy<IDepartmentsService> departmentsService = null, ITypeIconsRepository typeIconsRepository = null,
 			Lazy<IOutstandingRequirementsService> outstandingRequirementsService = null,
 			IUnitNavigationStateService unitNavigationStateService = null, IUnitOfWork unitOfWork = null,
-			Lazy<ITransportDestinationCheckService> transportDestinationCheckService = null)
+			Lazy<ITransportDestinationCheckService> transportDestinationCheckService = null, IContentAudienceChangeQueue audienceChanges = null)
 		{
+			_audienceChanges = audienceChanges;
 			_transportDestinationCheckService = transportDestinationCheckService;
 			_unitOfWork = unitOfWork;
 			_unitNavigationStateService = unitNavigationStateService;
@@ -1266,12 +1268,25 @@ namespace Resgrid.Services
 
 		public async Task<UnitActiveRole> SaveActiveRoleAsync(UnitActiveRole role, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _unitActiveRolesRepository.SaveOrUpdateAsync(role, cancellationToken, true);
+			var saved = await _unitActiveRolesRepository.SaveOrUpdateAsync(role, cancellationToken, true);
+
+			// A member now rides a unit: worker 83 re-evaluates their unit-type training (and protocol) audiences.
+			if (_audienceChanges != null && saved != null && !string.IsNullOrWhiteSpace(saved.UserId))
+				await _audienceChanges.EnqueueAsync(saved.DepartmentId, saved.UserId, ContentAudienceChangeSources.Unit, cancellationToken);
+
+			return saved;
 		}
 
 		public async Task<bool> DeleteActiveRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unitId, cancellationToken);
+			// Read the crew first: members who leave a unit are re-evaluated too (T0 left removals out of the audience queue).
+			var crew = _audienceChanges == null ? null : await _unitActiveRolesRepository.GetActiveRolesByUnitIdAsync(unitId);
+			var deleted = await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unitId, cancellationToken);
+
+			foreach (var department in (crew ?? Enumerable.Empty<UnitActiveRole>()).Where(r => r != null && !string.IsNullOrWhiteSpace(r.UserId)).GroupBy(r => r.DepartmentId))
+				await _audienceChanges.EnqueueManyAsync(department.Key, department.Select(r => r.UserId).Distinct(StringComparer.OrdinalIgnoreCase), ContentAudienceChangeSources.Unit, cancellationToken);
+
+			return deleted;
 		}
 
 		public async Task NotifyActiveRolesUpdatedAsync(int departmentId, int unitId)

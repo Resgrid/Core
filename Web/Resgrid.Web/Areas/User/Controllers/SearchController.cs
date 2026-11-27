@@ -50,12 +50,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUnifiedSearchService _unifiedSearch;
 		private readonly ISystemActionsService _systemActions;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IProtocolAnalyticsService _protocolAnalytics;
 
-		public SearchController(IUnifiedSearchService unifiedSearch, ISystemActionsService systemActions, IDepartmentsService departmentsService)
+		public SearchController(IUnifiedSearchService unifiedSearch, ISystemActionsService systemActions, IDepartmentsService departmentsService,
+			IProtocolAnalyticsService protocolAnalytics)
 		{
 			_unifiedSearch = unifiedSearch;
 			_systemActions = systemActions;
 			_departmentsService = departmentsService;
+			_protocolAnalytics = protocolAnalytics;
 		}
 
 		[HttpGet]
@@ -117,6 +120,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Total = result.Total;
 			model.HasMore = result.Hits.Count > PageSize;
 			model.Results = result.Hits.Take(PageSize).Select(h => Row(h, department)).ToList();
+
+			// Protocols P5 analytics ("protocol gaps"): a search over protocols that found nothing is counted by query and day, never by who asked.
+			if (model.Page == 1 && result.Hits.Count == 0 && !result.Degraded && model.Families.Contains(SearchEntityTypes.Protocol) &&
+				(model.Type == null || string.Equals(model.Type, SearchEntityTypes.Protocol, StringComparison.OrdinalIgnoreCase)))
+				await _protocolAnalytics.RecordSearchMissAsync(DepartmentId, Resgrid.Model.ProtocolSearchSurfaces.UnifiedSearch, model.Query);
+
 			return View(model);
 		}
 

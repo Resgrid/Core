@@ -87,7 +87,7 @@ namespace Resgrid.Tests.Services
 
 		private InvoicingService Build() => new InvoicingService(_profiles.Object, _rateCards.Object, _rateCardItems.Object, _invoices.Object,
 			_lineItems.Object, _payments.Object, _sequence.Object, _identities.Object, _contacts.Object, _calls.Object, _units.Object, _outbox.Object, _events.Object,
-			_pdf.Object, _email.Object, _departments.Object, _addresses.Object, _unitOfWork);
+			_pdf.Object, _email.Object, _departments.Object, _addresses.Object, _unitOfWork, Mock.Of<IApprovalGateService>(g => g.CheckAsync(It.IsAny<int>(), It.IsAny<SignatureSubjectKinds>(), It.IsAny<string>()) == Task.FromResult(new Resgrid.Model.Approvals.ApprovalGateResult())));
 
 		/// <summary>Counts the transaction lifecycle the service drives; a nested call must join the open transaction rather than open its own.</summary>
 		private sealed class FakeUnitOfWork : IUnitOfWork
@@ -265,7 +265,7 @@ namespace Resgrid.Tests.Services
 			numbering.Setup(n => n.TakeCustomNumberAsync(7, DocumentNumberKinds.Invoice, It.IsAny<DateTime>(), It.IsAny<CancellationToken>())).ReturnsAsync("INV-2027-0001");
 			var service = new InvoicingService(_profiles.Object, _rateCards.Object, _rateCardItems.Object, _invoices.Object,
 				_lineItems.Object, _payments.Object, _sequence.Object, _identities.Object, _contacts.Object, _calls.Object, _units.Object, _outbox.Object, _events.Object,
-				_pdf.Object, _email.Object, _departments.Object, _addresses.Object, _unitOfWork, documentNumbering: numbering.Object);
+				_pdf.Object, _email.Object, _departments.Object, _addresses.Object, _unitOfWork, Mock.Of<IApprovalGateService>(g => g.CheckAsync(It.IsAny<int>(), It.IsAny<SignatureSubjectKinds>(), It.IsAny<string>()) == Task.FromResult(new Resgrid.Model.Approvals.ApprovalGateResult())), documentNumbering: numbering.Object);
 
 			var invoice = await service.CreateDraftInvoiceAsync(7, "contact-1", "user-1", "127.0.0.1", "test", "cad");
 
@@ -730,7 +730,7 @@ namespace Resgrid.Tests.Services
 				.Callback((RateCard c, CancellationToken _) => projected.Add((c.RateCardId, c.IsDefault))).Returns(Task.CompletedTask);
 			var service = new InvoicingService(_profiles.Object, _rateCards.Object, _rateCardItems.Object, _invoices.Object,
 				_lineItems.Object, _payments.Object, _sequence.Object, _identities.Object, _contacts.Object, _calls.Object, _units.Object, _outbox.Object, _events.Object,
-				_pdf.Object, _email.Object, _departments.Object, _addresses.Object, _unitOfWork, searchProjections: new Lazy<ISearchProjectionService>(() => projections.Object));
+				_pdf.Object, _email.Object, _departments.Object, _addresses.Object, _unitOfWork, Mock.Of<IApprovalGateService>(g => g.CheckAsync(It.IsAny<int>(), It.IsAny<SignatureSubjectKinds>(), It.IsAny<string>()) == Task.FromResult(new Resgrid.Model.Approvals.ApprovalGateResult())), searchProjections: new Lazy<ISearchProjectionService>(() => projections.Object));
 
 			await service.SaveRateCardAsync(new RateCard { DepartmentId = 7, Name = "2026", IsDefault = true, Active = true }, "u1", null, null);
 

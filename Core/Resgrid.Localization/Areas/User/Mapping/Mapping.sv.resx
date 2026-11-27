@@ -240,16 +240,28 @@
   <data name="PoiImportPending" xml:space="preserve">
     <value>{0} poster att importera.</value>
   </data>
+  <data name="PoiImportPendingOne" xml:space="preserve">
+    <value>{0} post att importera.</value>
+  </data>
   <data name="PoiImportSummary" xml:space="preserve">
     <value>{0} av {1} poster importerade.</value>
   </data>
   <data name="PoiImportGeocoded" xml:space="preserve">
     <value>{0} lokaliserades utifrån sin adress; kontrollera deras position på kartan.</value>
   </data>
+  <data name="PoiImportGeocodedOne" xml:space="preserve">
+    <value>{0} lokaliserades utifrån sin adress; kontrollera dess position på kartan.</value>
+  </data>
   <data name="PoiImportSkipped" xml:space="preserve">
     <value>{0} hoppades över eftersom de saknar både koordinater och adress.</value>
   </data>
+  <data name="PoiImportSkippedOne" xml:space="preserve">
+    <value>{0} hoppades över eftersom den saknar både koordinater och adress.</value>
+  </data>
   <data name="PoiImportUnlocated" xml:space="preserve">
+    <value>{0} importerades inte eftersom adressen inte kunde lokaliseras:</value>
+  </data>
+  <data name="PoiImportUnlocatedOne" xml:space="preserve">
     <value>{0} importerades inte eftersom adressen inte kunde lokaliseras:</value>
   </data>
   <data name="PoiImportUnlocatedMore" xml:space="preserve">
@@ -264,7 +276,13 @@
   <data name="PoiImportRetrying" xml:space="preserve">
     <value>Adresstjänsten svarade inte för {0} poster; de försöks igen efter {1}.</value>
   </data>
+  <data name="PoiImportRetryingOne" xml:space="preserve">
+    <value>Adresstjänsten svarade inte för {0} post; den försöks igen efter {1}.</value>
+  </data>
   <data name="PoiImportLookupFailed" xml:space="preserve">
+    <value>{0} importerades inte eftersom adresstjänsten inte svarade, inte ens efter nya försök:</value>
+  </data>
+  <data name="PoiImportLookupFailedOne" xml:space="preserve">
     <value>{0} importerades inte eftersom adresstjänsten inte svarade, inte ens efter nya försök:</value>
   </data>
   <data name="PoiImportLookupFailedHint" xml:space="preserve">
@@ -273,10 +291,16 @@
   <data name="PoiImportLookupNotConfigured" xml:space="preserve">
     <value>{0} importerades inte eftersom adressökning inte är konfigurerad på den här servern:</value>
   </data>
+  <data name="PoiImportLookupNotConfiguredOne" xml:space="preserve">
+    <value>{0} importerades inte eftersom adressökning inte är konfigurerad på den här servern:</value>
+  </data>
   <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
     <value>Lägg till kolumner för latitud och longitud för de posterna och importera dem igen.</value>
   </data>
   <data name="PoiImportNotTried" xml:space="preserve">
+    <value>{0} importerades inte eftersom filen har fler adresser än en import slår upp:</value>
+  </data>
+  <data name="PoiImportNotTriedOne" xml:space="preserve">
     <value>{0} importerades inte eftersom filen har fler adresser än en import slår upp:</value>
   </data>
   <!-- Layers -->

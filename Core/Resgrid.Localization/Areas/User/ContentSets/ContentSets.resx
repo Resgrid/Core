@@ -1,0 +1,802 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetsHeader" xml:space="preserve">
+    <value>Shared sets</value>
+  </data>
+  <data name="LinksCrumb" xml:space="preserve">
+    <value>Department links</value>
+  </data>
+  <data name="ProtocolSetsTab" xml:space="preserve">
+    <value>Protocol sets</value>
+  </data>
+  <data name="CourseSetsTab" xml:space="preserve">
+    <value>Course sets</value>
+  </data>
+  <data name="InboxTab" xml:space="preserve">
+    <value>Update inbox</value>
+  </data>
+  <data name="ProposalsTab" xml:space="preserve">
+    <value>Proposals</value>
+  </data>
+  <data name="SponsorshipsTab" xml:space="preserve">
+    <value>Sponsorships</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Set settings</value>
+  </data>
+  <data name="ProtocolSetsIntro" xml:space="preserve">
+    <value>Publish protocols to linked departments as a set, or subscribe to the sets linked departments publish. Locked content follows the publisher; customizable blocks keep your changes.</value>
+  </data>
+  <data name="CourseSetsIntro" xml:space="preserve">
+    <value>Publish courses and trainings to linked departments as a set, or subscribe to theirs. Completions stay in each member's own record.</value>
+  </data>
+  <data name="PublishedHeader" xml:space="preserve">
+    <value>Sets your department publishes</value>
+  </data>
+  <data name="PublishedIntro" xml:space="preserve">
+    <value>Linked departments you share this kind of content with can subscribe. Each new version you publish reaches their update inbox.</value>
+  </data>
+  <data name="ColumnSet" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="ColumnItems" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="ColumnSubscribers" xml:space="preserve">
+    <value>Subscribers</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColumnPublisher" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
+  <data name="ColumnItem" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="ColumnVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="ColumnEffective" xml:space="preserve">
+    <value>Effective</value>
+  </data>
+  <data name="ColumnDeadline" xml:space="preserve">
+    <value>Deadline</value>
+  </data>
+  <data name="ColumnSponsor" xml:space="preserve">
+    <value>Sponsor</value>
+  </data>
+  <data name="ColumnSponsored" xml:space="preserve">
+    <value>Sponsored department</value>
+  </data>
+  <data name="ColumnSeats" xml:space="preserve">
+    <value>Seats</value>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="StatusLive" xml:space="preserve">
+    <value>Live</value>
+  </data>
+  <data name="StatusSubscribed" xml:space="preserve">
+    <value>Subscribed</value>
+  </data>
+  <data name="StatusSuspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>Not subscribed</value>
+  </data>
+  <data name="SetNameLabel" xml:space="preserve">
+    <value>Set name</value>
+  </data>
+  <data name="SetDescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="NewSetButton" xml:space="preserve">
+    <value>New set</value>
+  </data>
+  <data name="AvailableHeader" xml:space="preserve">
+    <value>Sets shared with your department</value>
+  </data>
+  <data name="AvailableIntroProtocols" xml:space="preserve">
+    <value>Sets of linked departments that share protocols with your department over a Department Link.</value>
+  </data>
+  <data name="AvailableIntroTraining" xml:space="preserve">
+    <value>Sets of linked departments that share training with your department over a Department Link. Courses need your own LMS add-on or the publisher's sponsorship; trainings do not.</value>
+  </data>
+  <data name="NoAvailable" xml:space="preserve">
+    <value>No linked department shares a set of this kind with your department yet.</value>
+  </data>
+  <data name="SponsoredLabel" xml:space="preserve">
+    <value>Sponsored</value>
+  </data>
+  <data name="SubscriptionsHeader" xml:space="preserve">
+    <value>Your subscriptions</value>
+  </data>
+  <data name="NoSubscriptions" xml:space="preserve">
+    <value>Your department has not subscribed to a set of this kind.</value>
+  </data>
+  <data name="SubscribedOn" xml:space="preserve">
+    <value>Subscribed</value>
+  </data>
+  <data name="OpenUpdatesCount" xml:space="preserve">
+    <value>{0} update(s) waiting</value>
+  </data>
+  <data name="SuspendedHelp" xml:space="preserve">
+    <value>The link no longer shares this content, so nothing new arrives. Your copies stay as they are.</value>
+  </data>
+  <data name="LocalChangesLabel" xml:space="preserve">
+    <value>Local changes</value>
+  </data>
+  <data name="CustomizeButton" xml:space="preserve">
+    <value>Customize</value>
+  </data>
+  <data name="ProposeButton" xml:space="preserve">
+    <value>Propose a change</value>
+  </data>
+  <data name="AutoAcceptOn" xml:space="preserve">
+    <value>Accept updates automatically</value>
+  </data>
+  <data name="AutoAcceptOff" xml:space="preserve">
+    <value>Stop accepting automatically</value>
+  </data>
+  <data name="SyncButton" xml:space="preserve">
+    <value>Fetch missing items</value>
+  </data>
+  <data name="UnsubscribeButton" xml:space="preserve">
+    <value>Unsubscribe</value>
+  </data>
+  <data name="UnsubscribeConfirm" xml:space="preserve">
+    <value>Unsubscribe? The copies stay in your department as your own content and no more updates arrive.</value>
+  </data>
+  <data name="SubscriptionStatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="SubscriptionStatusSuspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="SubscriptionStatusEnded" xml:space="preserve">
+    <value>Ended</value>
+  </data>
+  <data name="LockModeLocked" xml:space="preserve">
+    <value>Locked</value>
+  </data>
+  <data name="LockModeCustomizableBlocks" xml:space="preserve">
+    <value>Customizable blocks</value>
+  </data>
+  <data name="LockModeOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="SetIntro" xml:space="preserve">
+    <value>What linked departments receive, how much they may change each item, and who subscribes.</value>
+  </data>
+  <data name="ArchivedHelp" xml:space="preserve">
+    <value>This set is archived: it takes no new subscribers and sends no more updates.</value>
+  </data>
+  <data name="SetDetailsHeader" xml:space="preserve">
+    <value>Set details</value>
+  </data>
+  <data name="DeferDaysLabel" xml:space="preserve">
+    <value>Days a locked update can be deferred</value>
+  </data>
+  <data name="DeferDaysHelp" xml:space="preserve">
+    <value>Subscribers can defer an update to locked content up to this many days after its effective date; after that it goes into force at their next update time.</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>Archive set</value>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>Archive this set? Subscriptions end and subscribers keep their copies as their own content.</value>
+  </data>
+  <data name="SubscribersHeader" xml:space="preserve">
+    <value>Subscribing departments</value>
+  </data>
+  <data name="NoSubscribers" xml:space="preserve">
+    <value>No department subscribes to this set yet.</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveSubscriberConfirm" xml:space="preserve">
+    <value>End this department's subscription? It keeps its copies as its own content.</value>
+  </data>
+  <data name="OpenProposalsCount" xml:space="preserve">
+    <value>{0} open proposal(s)</value>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>Items</value>
+  </data>
+  <data name="LockModesHelp" xml:space="preserve">
+    <value>Locked: subscribers can only defer updates to the deadline. Customizable blocks: subscribers may replace the blocks you tick (local phone numbers, destinations, resources) and add their own blocks at the end. Open: subscribers may change anything and decline updates.</value>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>This set has no items yet.</value>
+  </data>
+  <data name="LmsItemLabel" xml:space="preserve">
+    <value>LMS item</value>
+  </data>
+  <data name="LockModeLabel" xml:space="preserve">
+    <value>Lock</value>
+  </data>
+  <data name="CustomizableBlocksLabel" xml:space="preserve">
+    <value>Blocks subscribers may replace</value>
+  </data>
+  <data name="RemoveItemConfirm" xml:space="preserve">
+    <value>Remove this item from the set? Subscribers keep their copies as their own content.</value>
+  </data>
+  <data name="AddItemHeader" xml:space="preserve">
+    <value>Add an item</value>
+  </data>
+  <data name="ItemLabel" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="ChooseItem" xml:space="preserve">
+    <value>Choose…</value>
+  </data>
+  <data name="AddItemHelp" xml:space="preserve">
+    <value>Departments already subscribed receive the item in their update inbox.</value>
+  </data>
+  <data name="AddItemButton" xml:space="preserve">
+    <value>Add to set</value>
+  </data>
+  <data name="AvailableSubtitle" xml:space="preserve">
+    <value>Published by {0}</value>
+  </data>
+  <data name="DeferDaysSummary" xml:space="preserve">
+    <value>Updates to locked content can be deferred up to {0} days after their effective date.</value>
+  </data>
+  <data name="SponsoredBy" xml:space="preserve">
+    <value>{0} sponsors your department's LMS seats.</value>
+  </data>
+  <data name="LmsReady" xml:space="preserve">
+    <value>Your department can receive this set's courses.</value>
+  </data>
+  <data name="LmsNeeded" xml:space="preserve">
+    <value>This set's courses need the LMS add-on or the publisher's sponsorship. Trainings are received without it.</value>
+  </data>
+  <data name="YouCanChange" xml:space="preserve">
+    <value>You can change:</value>
+  </data>
+  <data name="AutoAcceptLabel" xml:space="preserve">
+    <value>Accept updates automatically</value>
+  </data>
+  <data name="AutoAcceptHelp" xml:space="preserve">
+    <value>Updates go into force at your department's update time on or after their effective date, without a decision in the inbox.</value>
+  </data>
+  <data name="SubscribeConfirm" xml:space="preserve">
+    <value>Subscribe? Each item is copied into your department now.</value>
+  </data>
+  <data name="SubscribeButton" xml:space="preserve">
+    <value>Subscribe</value>
+  </data>
+  <data name="ManagersSubscribe" xml:space="preserve">
+    <value>Members with the Manage Content Sets permission can subscribe.</value>
+  </data>
+  <data name="InboxIntro" xml:space="preserve">
+    <value>New versions from the sets your department subscribes to. Accepted updates go into force at your update time, never mid-shift by surprise.</value>
+  </data>
+  <data name="ShowOpen" xml:space="preserve">
+    <value>Show open updates</value>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Show all updates</value>
+  </data>
+  <data name="InboxEmpty" xml:space="preserve">
+    <value>No updates are waiting.</value>
+  </data>
+  <data name="NewItemLabel" xml:space="preserve">
+    <value>New item</value>
+  </data>
+  <data name="NoDeadline" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="UpdateStatusPending" xml:space="preserve">
+    <value>Waiting for a decision</value>
+  </data>
+  <data name="UpdateStatusScheduled" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="UpdateStatusApplied" xml:space="preserve">
+    <value>In force</value>
+  </data>
+  <data name="UpdateStatusDeferred" xml:space="preserve">
+    <value>Deferred</value>
+  </data>
+  <data name="UpdateStatusDeclined" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="UpdateStatusSuperseded" xml:space="preserve">
+    <value>Superseded</value>
+  </data>
+  <data name="UpdateStatusFailed" xml:space="preserve">
+    <value>Could not be applied</value>
+  </data>
+  <data name="UpdateSubtitle" xml:space="preserve">
+    <value>{0}, {1}, version {2}</value>
+  </data>
+  <data name="ApplyOnLabel" xml:space="preserve">
+    <value>Goes into force</value>
+  </data>
+  <data name="AppliedOnLabel" xml:space="preserve">
+    <value>Went into force</value>
+  </data>
+  <data name="FailureLabel" xml:space="preserve">
+    <value>Problem</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>What changed</value>
+  </data>
+  <data name="DroppedChangesHelp" xml:space="preserve">
+    <value>The publisher removed or locked blocks you had changed; these local changes are no longer used:</value>
+  </data>
+  <data name="DecideHeader" xml:space="preserve">
+    <value>Decide</value>
+  </data>
+  <data name="ApplyOnHelp" xml:space="preserve">
+    <value>Suggested: your department's next update time on or after the publisher's effective date. Never earlier than the effective date.</value>
+  </data>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Accept</value>
+  </data>
+  <data name="DeferUntilLabel" xml:space="preserve">
+    <value>Defer until</value>
+  </data>
+  <data name="DeferLockedHelp" xml:space="preserve">
+    <value>Locked content cannot be deferred past its deadline.</value>
+  </data>
+  <data name="DeferButton" xml:space="preserve">
+    <value>Defer</value>
+  </data>
+  <data name="DeclineConfirm" xml:space="preserve">
+    <value>Decline this update? Your department stays on its current version.</value>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="LockedCannotDeclineHelp" xml:space="preserve">
+    <value>Locked content cannot be declined, only deferred to its deadline.</value>
+  </data>
+  <data name="RedlineHeader" xml:space="preserve">
+    <value>Changes against your version</value>
+  </data>
+  <data name="NewItemHelp" xml:space="preserve">
+    <value>This item is new to your department: accepting copies it in.</value>
+  </data>
+  <data name="CustomizeIntro" xml:space="preserve">
+    <value>Replace the blocks the publisher left customizable and add your own blocks at the end. Your changes go into force now and are kept on every later update.</value>
+  </data>
+  <data name="BlockCustomizable" xml:space="preserve">
+    <value>Customizable</value>
+  </data>
+  <data name="BlockLocked" xml:space="preserve">
+    <value>Locked</value>
+  </data>
+  <data name="LocalVersionLabel" xml:space="preserve">
+    <value>Your version of this block</value>
+  </data>
+  <data name="LocalVersionHelp" xml:space="preserve">
+    <value>Leave empty to use the publisher's text.</value>
+  </data>
+  <data name="AdditionsHeader" xml:space="preserve">
+    <value>Your additions</value>
+  </data>
+  <data name="AdditionsHelp" xml:space="preserve">
+    <value>Blocks of your own, shown after the publisher's content.</value>
+  </data>
+  <data name="CustomizeConfirm" xml:space="preserve">
+    <value>Save and put your changes into force now?</value>
+  </data>
+  <data name="CustomizeSaveButton" xml:space="preserve">
+    <value>Save changes</value>
+  </data>
+  <data name="ProposeHeader" xml:space="preserve">
+    <value>Propose a change</value>
+  </data>
+  <data name="ProposeSubtitle" xml:space="preserve">
+    <value>To {1}, about {0}</value>
+  </data>
+  <data name="ProposalSectionLabel" xml:space="preserve">
+    <value>Section</value>
+  </data>
+  <data name="ProposalSectionHelp" xml:space="preserve">
+    <value>Optional: the heading or block your proposal is about.</value>
+  </data>
+  <data name="ProposalBodyLabel" xml:space="preserve">
+    <value>Your proposal</value>
+  </data>
+  <data name="ProposalBodyHelp" xml:space="preserve">
+    <value>The publisher sees your name, your department and this text on its next draft.</value>
+  </data>
+  <data name="ProposeSendButton" xml:space="preserve">
+    <value>Send proposal</value>
+  </data>
+  <data name="ProposalsIntro" xml:space="preserve">
+    <value>Changes linked departments proposed to your sets, and the proposals your members sent upstream.</value>
+  </data>
+  <data name="ReceivedHeader" xml:space="preserve">
+    <value>Proposals to your department</value>
+  </data>
+  <data name="SentHeader" xml:space="preserve">
+    <value>Proposals from your department</value>
+  </data>
+  <data name="NoProposals" xml:space="preserve">
+    <value>No proposals.</value>
+  </data>
+  <data name="ResponseLabel" xml:space="preserve">
+    <value>Answer (required to decline)</value>
+  </data>
+  <data name="AcceptProposalButton" xml:space="preserve">
+    <value>Take into the next draft</value>
+  </data>
+  <data name="DeclineProposalButton" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="ProposalStatusOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="ProposalStatusAccepted" xml:space="preserve">
+    <value>Taken into the next draft</value>
+  </data>
+  <data name="ProposalStatusDeclined" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="ProposalStatusWithdrawn" xml:space="preserve">
+    <value>Withdrawn</value>
+  </data>
+  <data name="SponsorshipsIntro" xml:space="preserve">
+    <value>A department with the LMS add-on can pay for a linked department's LMS-enabled members. They count in the sponsor's packs and run the sponsor's course sets only.</value>
+  </data>
+  <data name="SponsoredCapacity" xml:space="preserve">
+    <value>Seats available to your department: {0}</value>
+  </data>
+  <data name="NoSponsorships" xml:space="preserve">
+    <value>Your department neither gives nor receives a sponsorship.</value>
+  </data>
+  <data name="SponsorshipActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="SponsorshipLinkLapsed" xml:space="preserve">
+    <value>The link no longer shares training</value>
+  </data>
+  <data name="SponsorshipEndNone" xml:space="preserve">
+    <value>Ended</value>
+  </data>
+  <data name="SponsorshipEndEndedBySponsor" xml:space="preserve">
+    <value>Ended by the sponsor</value>
+  </data>
+  <data name="SponsorshipEndDeclinedBySponsored" xml:space="preserve">
+    <value>Declined by the sponsored department</value>
+  </data>
+  <data name="SponsorshipEndLinkRevoked" xml:space="preserve">
+    <value>Ended: the link stopped sharing training</value>
+  </data>
+  <data name="SeatLimitLabel" xml:space="preserve">
+    <value>Seat limit</value>
+  </data>
+  <data name="EndSponsorshipConfirm" xml:space="preserve">
+    <value>End this sponsorship? Courses already assigned stay available under the usual lapse rules, then stop.</value>
+  </data>
+  <data name="EndSponsorshipButton" xml:space="preserve">
+    <value>End sponsorship</value>
+  </data>
+  <data name="DeclineSponsorshipButton" xml:space="preserve">
+    <value>Decline sponsorship</value>
+  </data>
+  <data name="SponsorHeader" xml:space="preserve">
+    <value>Sponsor a linked department</value>
+  </data>
+  <data name="SponsorHelp" xml:space="preserve">
+    <value>Its LMS-enabled members count in your packs (your own members come first). It needs no add-on of its own and may be on the free plan.</value>
+  </data>
+  <data name="NoSponsorable" xml:space="preserve">
+    <value>Share training with a linked department over its Department Link to sponsor it.</value>
+  </data>
+  <data name="SeatLimitHelp" xml:space="preserve">
+    <value>Optional: the most seats the department may use. Empty: whatever your packs have free.</value>
+  </data>
+  <data name="SponsorConfirm" xml:space="preserve">
+    <value>Start paying for this department's LMS seats?</value>
+  </data>
+  <data name="SponsorButton" xml:space="preserve">
+    <value>Sponsor</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>When accepted updates go into force, and who hears about new ones.</value>
+  </data>
+  <data name="UpdateTimeLabel" xml:space="preserve">
+    <value>Update time</value>
+  </data>
+  <data name="UpdateTimeHelp" xml:space="preserve">
+    <value>Accepted updates go into force at this local time on or after their effective date (for example your shift change).</value>
+  </data>
+  <data name="NotifyManagersLabel" xml:space="preserve">
+    <value>Tell department admins when an update arrives or a proposal is answered</value>
+  </data>
+  <data name="CopyBanner" xml:space="preserve">
+    <value>From {0}, set {1}, version {2}. Changes come through the set.</value>
+  </data>
+  <data name="Customized" xml:space="preserve">
+    <value>Your changes are in force.</value>
+  </data>
+  <data name="ItemAdded" xml:space="preserve">
+    <value>The item was added to the set.</value>
+  </data>
+  <data name="ItemRemoved" xml:space="preserve">
+    <value>The item was removed from the set.</value>
+  </data>
+  <data name="ItemSaved" xml:space="preserve">
+    <value>The item was saved.</value>
+  </data>
+  <data name="ProposalAnswered" xml:space="preserve">
+    <value>The proposal was answered.</value>
+  </data>
+  <data name="Proposed" xml:space="preserve">
+    <value>Your proposal was sent to the publisher.</value>
+  </data>
+  <data name="SetArchived" xml:space="preserve">
+    <value>The set was archived.</value>
+  </data>
+  <data name="SetSaved" xml:space="preserve">
+    <value>The set was saved.</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>The settings were saved.</value>
+  </data>
+  <data name="SponsorshipEnded" xml:space="preserve">
+    <value>The sponsorship ended.</value>
+  </data>
+  <data name="SponsorshipSaved" xml:space="preserve">
+    <value>The sponsorship was saved.</value>
+  </data>
+  <data name="SponsorshipStarted" xml:space="preserve">
+    <value>The sponsorship started.</value>
+  </data>
+  <data name="Subscribed" xml:space="preserve">
+    <value>Subscribed. The items were copied into your department.</value>
+  </data>
+  <data name="SubscribedWithSkipped" xml:space="preserve">
+    <value>Some items were not copied:</value>
+  </data>
+  <data name="SubscriberRemoved" xml:space="preserve">
+    <value>The subscription was ended.</value>
+  </data>
+  <data name="SubscriptionSaved" xml:space="preserve">
+    <value>The subscription was saved.</value>
+  </data>
+  <data name="Synced" xml:space="preserve">
+    <value>Missing items were copied.</value>
+  </data>
+  <data name="Unsubscribed" xml:space="preserve">
+    <value>Unsubscribed. The copies are now your department's own content.</value>
+  </data>
+  <data name="UpdateApplied" xml:space="preserve">
+    <value>The update is in force.</value>
+  </data>
+  <data name="UpdateScheduled" xml:space="preserve">
+    <value>The update is scheduled.</value>
+  </data>
+  <data name="UpdateDeclined" xml:space="preserve">
+    <value>The update was declined.</value>
+  </data>
+  <data name="UpdateDeferred" xml:space="preserve">
+    <value>The update was deferred.</value>
+  </data>
+  <data name="ErrorNone" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="ErrorNotFound" xml:space="preserve">
+    <value>That set, item or update was not found.</value>
+  </data>
+  <data name="ErrorNotAuthorized" xml:space="preserve">
+    <value>You need the Manage Content Sets permission.</value>
+  </data>
+  <data name="ErrorInvalidInput" xml:space="preserve">
+    <value>Please check what you entered.</value>
+  </data>
+  <data name="ErrorNotShared" xml:space="preserve">
+    <value>No enabled Department Link shares this content with your department.</value>
+  </data>
+  <data name="ErrorAlreadySubscribed" xml:space="preserve">
+    <value>Your department already subscribes to this set.</value>
+  </data>
+  <data name="ErrorItemNotShareable" xml:space="preserve">
+    <value>This item cannot be shared in a set.</value>
+  </data>
+  <data name="ErrorDuplicateItem" xml:space="preserve">
+    <value>The item is already in the set.</value>
+  </data>
+  <data name="ErrorNotPending" xml:space="preserve">
+    <value>This update is no longer waiting for a decision.</value>
+  </data>
+  <data name="ErrorLockedCannotDecline" xml:space="preserve">
+    <value>Locked content cannot be declined, only deferred to its deadline.</value>
+  </data>
+  <data name="ErrorDateOutOfRange" xml:space="preserve">
+    <value>That date is outside what the publisher allows.</value>
+  </data>
+  <data name="ErrorBlockLocked" xml:space="preserve">
+    <value>The publisher locked that block.</value>
+  </data>
+  <data name="ErrorNeedsLms" xml:space="preserve">
+    <value>Your department needs the LMS add-on or the publisher's sponsorship for this item.</value>
+  </data>
+  <data name="ErrorOwnSet" xml:space="preserve">
+    <value>A department cannot subscribe to its own set.</value>
+  </data>
+  <data name="Problem_not_published" xml:space="preserve">
+    <value>not published</value>
+  </data>
+  <data name="Problem_licensed" xml:space="preserve">
+    <value>licensed content</value>
+  </data>
+  <data name="Problem_disabled" xml:space="preserve">
+    <value>disabled</value>
+  </data>
+  <data name="Problem_document" xml:space="preserve">
+    <value>uploaded document</value>
+  </data>
+  <data name="Problem_lesson_kinds" xml:space="preserve">
+    <value>live session lessons</value>
+  </data>
+  <data name="Problem_archived" xml:space="preserve">
+    <value>archived</value>
+  </data>
+  <data name="Problem_not_found" xml:space="preserve">
+    <value>not found</value>
+  </data>
+  <data name="Problem_lms" xml:space="preserve">
+    <value>needs the LMS add-on or sponsorship</value>
+  </data>
+  <data name="Problem_not_shared" xml:space="preserve">
+    <value>the link no longer shares it</value>
+  </data>
+  <data name="Problem_error" xml:space="preserve">
+    <value>an error occurred</value>
+  </data>
+  <data name="Problem_save" xml:space="preserve">
+    <value>could not be saved</value>
+  </data>
+  <data name="SponsorErrorNone" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="SponsorErrorNotAuthorized" xml:space="preserve">
+    <value>You need the Manage Content Sets permission.</value>
+  </data>
+  <data name="SponsorErrorNotFound" xml:space="preserve">
+    <value>That sponsorship was not found.</value>
+  </data>
+  <data name="SponsorErrorNotShared" xml:space="preserve">
+    <value>Share training with that department over an enabled Department Link first.</value>
+  </data>
+  <data name="SponsorErrorSponsorNeedsLms" xml:space="preserve">
+    <value>Your department needs an active LMS add-on to sponsor seats.</value>
+  </data>
+  <data name="SponsorErrorAlreadySponsored" xml:space="preserve">
+    <value>Your department already sponsors that department.</value>
+  </data>
+  <data name="SponsorErrorInvalidInput" xml:space="preserve">
+    <value>Please check what you entered.</value>
+  </data>
+  <data name="Notice.UpdateArrived.Title" xml:space="preserve">
+    <value>Set update waiting</value>
+  </data>
+  <data name="Notice.UpdateArrived.Body" xml:space="preserve">
+    <value>{2} published a new version of {1} in the set {0}. Review it in the update inbox.</value>
+  </data>
+  <data name="Notice.ProposalReceived.Title" xml:space="preserve">
+    <value>Change proposed</value>
+  </data>
+  <data name="Notice.ProposalReceived.Body" xml:space="preserve">
+    <value>{2} proposed a change to {1} in your set {0}.</value>
+  </data>
+  <data name="Notice.ProposalAnswered.Title" xml:space="preserve">
+    <value>Proposal answered</value>
+  </data>
+  <data name="Notice.ProposalAnswered.Body" xml:space="preserve">
+    <value>{2} answered your proposal about {1} in the set {0}.</value>
+  </data>
+  <data name="Notice.SponsorshipStarted.Title" xml:space="preserve">
+    <value>LMS seats sponsored</value>
+  </data>
+  <data name="Notice.SponsorshipStarted.Body" xml:space="preserve">
+    <value>{2} now sponsors your department's LMS seats for its course sets.</value>
+  </data>
+  <data name="Notice.SponsorshipEnded.Title" xml:space="preserve">
+    <value>LMS sponsorship ended</value>
+  </data>
+  <data name="Notice.SponsorshipEnded.Body" xml:space="preserve">
+    <value>{2} no longer sponsors your department's LMS seats. Courses already assigned stay available under the usual lapse rules.</value>
+  </data>
+  <data name="NotifyAdminsLabel" xml:space="preserve">
+    <value>Tell the department's admins</value>
+  </data>
+  <data name="NotifyRolesLabel" xml:space="preserve">
+    <value>Also tell members of these roles</value>
+  </data>
+  <data name="NotifyRolesHelp" xml:space="preserve">
+    <value>Members of the chosen roles get the same notices as the admins: updates arriving, proposals answered, sponsorship changes and LTI tools to register. Sponsorship and LTI notices always reach someone: if nobody is chosen, the admins get them.</value>
+  </data>
+  <data name="Notice.ToolRegistration.Title" xml:space="preserve">
+    <value>An LTI tool needs registering</value>
+  </data>
+  <data name="Notice.ToolRegistration.Body" xml:space="preserve">
+    <value>A course in the set {0} from {2} uses the LTI tool {1}. Register your organization with the tool's vendor and turn the tool on; until then its lessons will not open.</value>
+  </data>
+  <data name="Problem_media_not_ready" xml:space="preserve">
+    <value>a hosted video is not ready</value>
+  </data>
+  <data name="Problem_package_not_ready" xml:space="preserve">
+    <value>a SCORM or cmi5 package is not ready</value>
+  </data>
+  <data name="Problem_lti_tool_missing" xml:space="preserve">
+    <value>an LTI tool was removed</value>
+  </data>
+  <data name="Problem_path_steps" xml:space="preserve">
+    <value>a step's course or training is not in the set</value>
+  </data>
+  <data name="Problem_path_step_missing" xml:space="preserve">
+    <value>a step's course or training has not been copied yet</value>
+  </data>
+</root>

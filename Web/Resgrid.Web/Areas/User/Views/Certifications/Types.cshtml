@@ -5,7 +5,7 @@
     ViewData["Tab"] = "Types";
     ViewData["Title"] = localizer["CertificationTypes"].Value;
     ViewData["Subtitle"] = localizer["TypesIntro"].Value;
-    var templates = Resgrid.Model.Certifications.CertificationTypeTemplateCatalog.All;
+    var templates = Resgrid.Model.Certifications.CertificationTypeTemplateCatalog.AllFor(System.Globalization.CultureInfo.CurrentUICulture.Name);
 
     Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
         <a asp-controller="Certifications" asp-action="Types" asp-route-area="User" asp-route-showInactive="@(!Model.ShowInactive)" class="btn btn-default">@(Model.ShowInactive ? localizer["HideInactive"] : localizer["ShowInactive"])</a>

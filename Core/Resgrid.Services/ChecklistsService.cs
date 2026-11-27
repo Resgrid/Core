@@ -410,7 +410,8 @@ namespace Resgrid.Services
 			});
 			events.Add(entry.DomainEventOutboxId);
 		}
-		public async Task WitnessAsync(ChecklistActor actor, string id, string submissionHash, string attestation)
+		public Task WitnessAsync(ChecklistActor actor, string id, string submissionHash, string attestation) => WitnessCoreAsync(actor, id, submissionHash, attestation, null);
+		private async Task WitnessCoreAsync(ChecklistActor actor, string id, string submissionHash, string attestation, Func<ChecklistRunView, string, Task<bool>> sign)
 		{
 			Id(id); await RequireWriteAsync(actor);
 			if (string.IsNullOrWhiteSpace(attestation) || attestation.Length > 2000) throw new ChecklistException(400, "An independent witness attestation is required (at most 2000 characters).");
@@ -423,6 +424,9 @@ namespace Resgrid.Services
 				if (row.SubmissionHash != submissionHash) throw new ChecklistException(409, "The submitted evidence changed. Reload before attesting.");
 				if (row.State == (int)ChecklistRunState.Submitted && row.WitnessUserId == actor.UserId && (string)JObject.Parse(row.Content)["WitnessAttestation"] == attestation) return true;
 				if (row.State != (int)ChecklistRunState.AwaitingWitness || !view.Form.RequiresIndependentWitness) throw new ChecklistException(409, "This run is not awaiting a witness.");
+				// S3: a form that requires a witness signature cannot be witnessed with text alone (web, API or an older client).
+				if (view.Form.RequireWitnessSignature && sign == null) throw new ChecklistException(409, "WitnessSignatureRequired");
+				if (sign != null && !await sign(view, await WitnessArtifactHashCoreAsync(actor, view))) throw new ChecklistException(403, "WitnessSignatureRefused");
 				var content = JObject.Parse(row.Content); content["WitnessAttestation"] = attestation; row.Content = content.ToString(Formatting.None);
 				row.WitnessUserId = actor.UserId; row.WitnessedOn = DateTime.UtcNow; row.State = (int)ChecklistRunState.Submitted; row.Revision++;
 				await AdvanceOccurrenceAsync(actor, row);

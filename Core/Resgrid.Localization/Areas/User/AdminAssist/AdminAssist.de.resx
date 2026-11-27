@@ -3243,6 +3243,26 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Schulung erstellen</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Schulung zuweisen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Schulung löschen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.AuthorProtocols">
+    <value>Protokolle verfassen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveProtocols">
+    <value>Protokolle genehmigen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageProtocolAcknowledgments">
+    <value>Protokollbestätigungen verwalten</value>
+    <comment>machine-translated</comment>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Workflow erstellen</value>
   </data>
@@ -3487,7 +3507,44 @@
     <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Schichten und Arbeitsschichten sowie das Verwalten der Eintragungen für alle Gruppen. Gruppenadministratoren verwalten die Eintragungen ihrer eigenen Gruppen immer. Mitglieder, die sich eintragen – im Web, in den Apps oder über den Chatbot –, müssen die Regeln der Schicht einhalten (keine vergangenen Tage, zugewiesene Schichten erfordern eine Zuweisung, Gruppenschichten erfordern die Gruppe des Mitglieds). Alle können Schichten weiterhin anzeigen. Ohne gespeicherte Regel dürfen nur Abteilungsadministratoren Schichten ändern.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Schulungen sowie das Zurücksetzen des Schulungsfortschritts von Mitgliedern. Alle können Schulungen weiterhin anzeigen und absolvieren. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
+    <value>Ermöglicht das Erstellen von Schulungen und das Verfassen ihrer Inhalte und ihres Quiz einschließlich des Lösungsschlüssels. Zuweisen und Berichte (Schulung zuweisen) sowie Archivieren oder Löschen (Schulung löschen) sind eigene Regeln, die bis zum Speichern dieser folgen. Alle können die ihnen zugewiesenen oder für sie offenen Schulungen weiterhin anzeigen und absolvieren. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Ermöglicht das Zuweisen von Schulungen an Mitglieder, das Festlegen von Fälligkeiten, Verlängerungen und Befreiungen, das Zurücksetzen von Mitgliedern sowie das Lesen des Schulungsberichts und des Versuchsverlaufs. Gruppenadministratoren handeln nur für Mitglieder ihrer eigenen Gruppe. Bis zum Speichern gilt die Regel für Schulung erstellen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Ermöglicht das Archivieren, Wiederherstellen und Löschen von Schulungen. Eine Schulung, die jemand abgeschlossen hat, wird archiviert statt gelöscht, damit ihre Abschlüsse erhalten bleiben. Bis zum Speichern gilt die Regel für Schulung erstellen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AuthorProtocols">
+    <value>Ermöglicht das Erstellen, Kopieren und Importieren von Protokollen, das Bearbeiten ihrer Bibliotheksfelder, Auslöser, Fragen und Zielgruppe, das Schreiben von Entwürfen und deren Einreichen zur Genehmigung, das Deaktivieren von Protokollen und den Export der Bibliothek. Verfasser sehen außerdem Entwürfe, die Prüfwarteschlange und jedes Protokoll unabhängig von seiner Zielgruppe. Genehmigen und Veröffentlichen erfordern Protokolle genehmigen. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ApproveProtocols">
+    <value>Ermöglicht das Genehmigen oder Ablehnen eingereichter Protokollversionen, deren Veröffentlichung sofort oder zu einem festgelegten Datum, das Erfassen von „geprüft, keine Änderung“, das Zurückziehen und Löschen von Protokollen, das Setzen der rechtlichen Sperre eines Protokolls sowie die Verwaltung von Kategorien und ihren Genehmigungsschritten. Jede Genehmigung wird mit einer aktuellen Step-up-Bestätigung oder einem Passkey signiert. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageCourses">
+    <value>Kurse verwalten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageCourses">
+    <value>Erlaubt das Erstellen von Kursen und Fragenpools, das Hochladen von Kursvideos, das Einreichen, Genehmigen und Veröffentlichen von Kursversionen, das Zuweisen von Kursen und das Einsehen der Kursergebnisse. Jede Genehmigung wird mit einer frischen Zusatzbestätigung unterschrieben. Kurse gehören zum LMS-Add-on, das noch nicht verfügbar ist; Lektionen der Resgrid Academy lassen sich mit dieser Berechtigung oder mit Ausbildungen zuweisen zuweisen. Ohne gespeicherte Regel dürfen das nur Abteilungsadministratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.GradeAssessments">
+    <value>Prüfungen bewerten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.GradeAssessments">
+    <value>Erlaubt das Bewerten von Freitextantworten in der Bewertungswarteschlange und das Einsehen der Aufgabenanalyse. Niemand bewertet den eigenen Versuch. Gehört zum LMS-Add-on, das noch nicht verfügbar ist. Ohne gespeicherte Regel dürfen das nur Abteilungsadministratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageProtocolAcknowledgments">
+    <value>Vorgesehen für Lese- und Unterschriftsbestätigungen: wer Protokolle Mitgliedern zum Lesen und Unterschreiben zuweist, Mitglieder befreit und den Bestätigungsbericht liest. Lesen und Unterschreiben ist noch nicht verfügbar, daher ändert das Speichern dieser Regel derzeit nichts. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
+    <comment>machine-translated</comment>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Ermöglicht das Erstellen, Bearbeiten und Löschen von Workflows, die Vorschau ihrer Bedingungen, das Lesen der Schrittkonfiguration in den Apps und der API sowie das Anzeigen der gerenderten Ausgabe von Workflow-Ausführungen. Ohne gespeicherte Regel können nur Abteilungsadministratoren Workflows ändern, aber jedes Mitglied kann die Seite „Workflows“ öffnen und Definitionen lesen; wird „Abteilungsadministratoren“ gespeichert, werden die Workflows zusätzlich für alle anderen ausgeblendet. Schritte, die einen Berichtsexport senden, erfordern außerdem „Datensätze exportieren“ und „Berichtsauswertungen verwalten“. Kostenlose Abonnements sind in der Anzahl ihrer Workflows begrenzt.</value>
@@ -8267,5 +8324,2201 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Wird verwendet, wenn Ihr E-Mail-Format "Labeled fields" ist. Geben Sie die Bezeichnung ein, die Ihr CAD vor jeden Wert schreibt. Trennen Sie Alternativen mit |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Protokolle bearbeiten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Inhalt, Auslöser und Fragen eines Protokolls direkt ändern; Einsätze behalten den Text, mit dem sie alarmiert wurden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Protokolle deaktivieren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Ein Protokoll nicht mehr vorschlagen oder anhängen, ohne es zu löschen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Protokoll von einem Einsatz entfernen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Ein falsch angehängtes Protokoll mit Begründung vom Einsatz entfernen; der Verlauf behält es, als entfernt markiert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Einstellungen der Protokollbibliothek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Abteilungsweite Regeln auf der Einstellungsseite der Protokolle: ob Genehmigungen einen Passkey und Lesen und Unterschreiben eine Step-up-Bestätigung erfordern, mit welchem Prüfintervall neue Protokolle beginnen und wie lange ersetzte und zurückgezogene Versionen aufbewahrt werden, mit einer rechtlichen Sperre, die jedes Löschen verhindert. Fehlt die Einstellung, gelten die Standard-Signaturstufen, es gibt kein Standardintervall und alle Versionen bleiben erhalten. Nur Abteilungsadministratoren können sie ändern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Einstellungen der Protokollbibliothek / Passkey für Genehmigungen verlangen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Genehmigungen und Vermerke „geprüft, keine Änderung“ müssen mit einem Passkey signiert werden; eine Step-up-Bestätigung per Authenticator-Code oder Anmeldeanbieter reicht dann nicht mehr. Genehmigende ohne registrierten Passkey können erst signieren, wenn sie einen hinzufügen. Ist die Option aus, signiert jede aktuelle Step-up-Bestätigung oder jeder Passkey.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Einstellungen der Protokollbibliothek / Lesen und Unterschreiben erfordert Step-up</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Lese- und Unterschriftsbestätigungen erfordern dann eine aktuelle Step-up-Bestätigung statt nur der angemeldeten Sitzung. Lesen und Unterschreiben ist noch nicht verfügbar; die Auswahl wird bis dahin gespeichert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Einstellungen der Protokollbibliothek / Standard-Prüfintervall in Tagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Tage zwischen Prüfungen für neue und importierte Protokolle ohne eigenes Intervall, 0 bis 3650; 0 legt keines fest. Bestehende Protokolle behalten ihr Intervall. Das Veröffentlichen einer Version oder das Erfassen von „geprüft, keine Änderung“ startet das Intervall neu, und der Verantwortliche des Protokolls, oder ohne ihn die Abteilungsadministratoren, wird 30 und 7 Tage vor der fälligen Prüfung und erneut bei Überfälligkeit erinnert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>Einstellungen der Protokollbibliothek / Rechtliche Sperre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>Eine abteilungsweite rechtliche Sperre: Solange sie aktiv ist, wird keine ersetzte oder zurückgezogene Protokollversion gelöscht, unabhängig von den Aufbewahrungstagen. Genehmigende können auch ein einzelnes Protokoll auf seiner Bearbeitungsseite sperren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Einstellungen der Protokollbibliothek / Aufbewahrung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Tage, die jede Protokollart (Disposition, SOG, klinische Leitlinie, Richtlinie, Verfahren, Referenz) eine Version nach ihrer Ersetzung oder Zurückziehung aufbewahrt, bis 36500; danach löscht ein Hintergrundprozess sie. 0 behält die Versionen dieser Art. Eine Version, die noch an einem Einsatz hängt, wird nie gelöscht, und solange eine rechtliche Sperre aktiv ist, wird nichts gelöscht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Aufbewahrung je Protokollart / Art</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Die Protokollart, für die der Eintrag gilt: 0 Disposition, 1 SOG, 2 klinische Leitlinie, 3 Richtlinie, 4 Verfahren, 5 Referenz. Ein Eintrag je Art; eine Art ohne Eintrag behält alle Versionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Aufbewahrung je Protokollart / Aufbewahrungstage</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Tage nach der Ersetzung oder Zurückziehung einer Version dieser Art, bevor sie gelöscht werden darf, 1 bis 36500. Ein Eintrag mit 0 wird beim Speichern verworfen, die Art behält dann ihre Versionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-queue" xml:space="preserve">
+    <value>Prüfwarteschlange für Protokolle</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-queue" xml:space="preserve">
+    <value>Eingereichte Protokollversionen mit signierter Genehmigung freigeben oder ablehnen und dann sofort oder zu einem festgelegten Datum veröffentlichen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-stamp" xml:space="preserve">
+    <value>Protokollprüfung erfassen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-stamp" xml:space="preserve">
+    <value>Ein veröffentlichtes Protokoll mit einem signierten Vermerk als „geprüft, keine Änderung“ kennzeichnen, ohne neue Version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compare" xml:space="preserve">
+    <value>Protokollversionen vergleichen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compare" xml:space="preserve">
+    <value>Als Änderungsmarkierung sehen, was sich zwischen zwei Versionen eines Protokolls geändert hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-categories" xml:space="preserve">
+    <value>Protokollkategorien</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-categories" xml:space="preserve">
+    <value>Die Bibliothek in Kategorien gliedern und die Genehmigungsschritte jeder Kategorie festlegen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-settings" xml:space="preserve">
+    <value>Protokolleinstellungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-settings" xml:space="preserve">
+    <value>Signaturanforderungen, das Standard-Prüfintervall, die Aufbewahrung von Versionen und die abteilungsweite rechtliche Sperre festlegen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-import" xml:space="preserve">
+    <value>Protokolle importieren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-import" xml:space="preserve">
+    <value>Protokolle aus einer Resgrid-Protokollaustauschdatei als Entwürfe zur Prüfung übernehmen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.TrainingRecordSettings" xml:space="preserve">
+    <value>Einstellungen für Ausbildungseinträge</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.TrainingRecordSettings" xml:space="preserve">
+    <value>Wie Ausbildungseinträge geführt werden: Rundung der Stunden aus Kalender-Check-ins, ob Mitglieder externe Ausbildung selbst einreichen dürfen und wie viele Jahre Einträge nach dem Austritt eines Mitglieds mindestens aufbewahrt werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Einstellungen für Ausbildungseinträge / Check-in-Stunden runden auf</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Die Stunden von Check-in bis Check-out bei Kalenderterminen, die als Ausbildung zählen, werden auf diesen Schritt gerundet: 5, 6, 10, 15, 30 oder 60 Minuten, oder 0 für die genaue Minute.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Einstellungen für Ausbildungseinträge / Rundungsrichtung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Ob Check-in-Stunden auf den nächsten Schritt, ab- oder aufgerundet werden. Ohne Wirkung, solange Stunden minutengenau erfasst werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>Einstellungen für Ausbildungseinträge / Mitglieder dürfen keine externe Ausbildung einreichen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>Wenn aktiviert, können Mitglieder externe Ausbildung nicht selbst einreichen. Führungskräfte können sie weiterhin per Import oder Zertifizierungsgutschrift erfassen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Einstellungen für Ausbildungseinträge / Einträge nach dem Austritt aufbewahren (Jahre)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Mindestanzahl Jahre, die Ausbildungseinträge ehemaliger Mitglieder aufbewahrt werden, wenn ihre Kategorie keine festlegt. 0 bedeutet kein Minimum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-transcript" xml:space="preserve">
+    <value>Ausbildungsnachweis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-transcript" xml:space="preserve">
+    <value>Kursabschlüsse, Ausbildungseinträge, Kalenderteilnahmen, Importe und externe Zertifikate jedes Mitglieds mit ihren Stunden und ob sie zählen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-transcript" xml:space="preserve">
+    <value>Ein Nachweis über Ausbildung und Stunden jedes Mitglieds für Verlängerungen und Prüfungen, ohne Anwesenheitslisten von Hand zusammenzuzählen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-transcript" xml:space="preserve">
+    <value>Vor der Verlängerung einer Zertifizierung lädt ein Mitglied seinen Nachweis als PDF mit Stunden je Kategorie herunter, und die Ausbildungsleitung öffnet denselben Nachweis über den Namen des Mitglieds.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-transcript" xml:space="preserve">
+    <value>Öffnen Sie Ausbildungen und wählen Sie Mein Ausbildungsnachweis. Führungskräfte, die Einträge eines Mitglieds prüfen, wählen das Mitglied im Nachweis aus. Nur bestätigte Einträge zählen zu den Stunden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-external-submissions" xml:space="preserve">
+    <value>Einreichung externer Ausbildung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-external-submissions" xml:space="preserve">
+    <value>Mitglieder reichen außerhalb der Organisation abgeschlossene Kurse mit Stunden und Nachweisen (Zertifikat, Foto, Dokument oder Quittung) ein; eine prüfende Person genehmigt oder lehnt jede Einreichung unter Ausbildungsprüfungen ab, sofern die Organisation sie nicht als Selbstauskunft übernimmt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-external-submissions" xml:space="preserve">
+    <value>Externe Kurse und Fortbildungen gelangen mit angehängtem Nachweis in den Ausbildungsnachweis und werden geprüft, wenn die Organisation das wünscht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-external-submissions" xml:space="preserve">
+    <value>Ein Mitglied schließt einen Online-Sicherheitskurs ab und reicht ihn mit dem Zertifikat und 4 Stunden ein; die Ausbildungsleitung genehmigt ihn unter Ausbildungsprüfungen und die Stunden zählen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-external-submissions" xml:space="preserve">
+    <value>Mitglieder wählen in ihrem Nachweis Externe Ausbildung einreichen. Prüfende öffnen Ausbildungsprüfungen, um zu genehmigen, abzulehnen oder weitere Informationen anzufordern; mögliche Duplikate bleiben in der Prüfliste der Einträge. Einreichungen lassen sich in den Einstellungen für Ausbildungseinträge abschalten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-categories" xml:space="preserve">
+    <value>Ausbildungskategorien</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-categories" xml:space="preserve">
+    <value>Gruppieren Sie Ausbildungsstunden in Kategorien mit optionalen Stundenzielen und Aufbewahrungsfristen, starten Sie mit Vorlagen für Feuerwehr (ISO), Rettungsdienst (NCCP), Arbeitssicherheit (OSHA), Industrie, Suche und Rettung, Polizei und Strafverfolgung, Sicherheitsdienste, CPD, Kanada oder die EU und ordnen Sie vorhandene Einträge in großer Zahl Kategorien zu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-categories" xml:space="preserve">
+    <value>Die Stunden summieren sich so, wie Ihre Aufsichtsbehörde, Zulassungsstelle, Versicherung oder Akkreditierungsstelle sie verlangt, und Ziele zeigen, wer im Rückstand ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-categories" xml:space="preserve">
+    <value>Eine Organisation übernimmt die ISO-Vorlage, setzt ein Jahresziel für die Ausbildung der Einheiten und ordnet die Übungseinträge des Vorjahres gesammelt nach Kursnamen zu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-categories" xml:space="preserve">
+    <value>Öffnen Sie unter Ausbildungen die Ausbildungseinträge und dann Ausbildungskategorien. Übernehmen Sie eine Vorlage oder legen Sie eigene an, und weisen Sie mit Historie zuordnen Einträgen ohne Kategorie eine zu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-credit-mappings" xml:space="preserve">
+    <value>Zuordnung von Zertifizierungsgutschriften</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-credit-mappings" xml:space="preserve">
+    <value>Die bestätigten Stunden einer Ausbildungskategorie auf die Verlängerung einer Zertifizierung anrechnen, für die ganze Kategorie oder nur einen Teil davon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-credit-mappings" xml:space="preserve">
+    <value>Verlängerungsstunden ergeben sich aus der Ausbildung, die Mitglieder ohnehin absolvieren, statt bei jeder Zertifizierung eingetippt zu werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-credit-mappings" xml:space="preserve">
+    <value>Stunden der Kategorie Rettungsdienst-Fortbildung zählen für die Zertifizierung als Rettungssanitäter, sodass der Verlängerungsstand eines Mitglieds steigt, sobald eine Einheit bestätigt ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-credit-mappings" xml:space="preserve">
+    <value>Öffnen Sie unter Ausbildungen die Ausbildungseinträge und dann Zertifizierungsgutschriften, und ordnen Sie einer Zertifizierungsart eine Kategorie zu. Einträge, die vor dem Einschalten der Zuordnung abgeschlossen wurden, werden erst zu Gutschriften, wenn Sie die Historie anwenden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-backfill" xml:space="preserve">
+    <value>Ausbildungshistorie nachtragen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-backfill" xml:space="preserve">
+    <value>Kursabschlüsse und Ausbildungseinträge aus der Zeit vor dem Ausbildungsnachweis in die Nachweise der Mitglieder übernehmen, mit einem Probelauf, der zählt, was geschrieben würde.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-backfill" xml:space="preserve">
+    <value>Nachweise beginnen mit der Historie, die Ihre Organisation bereits in Resgrid hat, statt leer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-backfill" xml:space="preserve">
+    <value>Eine Führungskraft startet einen Probelauf, sieht, wie viele frühere Abschlüsse und Ausbildungseinträge gefunden wurden, und startet dann das Nachtragen, das im Hintergrund weiterläuft.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-backfill" xml:space="preserve">
+    <value>Öffnen Sie unter Ausbildungen die Ausbildungseinträge und dann Historie nachtragen, und starten Sie zuerst einen Probelauf. Nachgetragene Einträge werden erst zu Zertifizierungsgutschriften, wenn Sie die Historie auf eine Zertifizierungsart anwenden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-import" xml:space="preserve">
+    <value>Import der Ausbildungshistorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-import" xml:space="preserve">
+    <value>Abschlüsse aus einem anderen System per CSV-Datei importieren: prüfen, wie jede Zeile einem Mitglied zugeordnet wurde, nicht zugeordnete Zeilen korrigieren und dann importieren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-import" xml:space="preserve">
+    <value>Jahrelange Einträge aus einer Tabelle oder einem früheren Ausbildungssystem landen ohne Abtippen in den Nachweisen der Mitglieder.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-import" xml:space="preserve">
+    <value>Eine Organisation, die ihr altes Dokumentationssystem ablöst, exportiert ihre Abschlüsse, importiert sie und wählt für die wenigen nur über den Namen zugeordneten Zeilen das richtige Mitglied.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-import" xml:space="preserve">
+    <value>Öffnen Sie unter Ausbildungen die Ausbildungseinträge und dann Ausbildungshistorie importieren. Laden Sie die Vorlage herunter, füllen Sie je Abschluss eine Zeile mit Mitglied, Kurs, Datum und Stunden aus, laden Sie sie hoch und prüfen Sie das Ergebnis vor dem Import.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-hours-report" xml:space="preserve">
+    <value>Bericht Ausbildungsstunden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-hours-report" xml:space="preserve">
+    <value>Bestätigte Ausbildungsstunden nach Kategorie, Mitglied oder Monat, mit CSV- und PDF-Export und auf Wunsch mit ehemaligen Mitgliedern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-hours-report" xml:space="preserve">
+    <value>Beantworten Sie, wie viele Stunden die Organisation worin ausgebildet hat, für Haushalt, Fördermittel und Jahresberichte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-hours-report" xml:space="preserve">
+    <value>Für den Jahresbericht exportiert die Leitung die Ausbildungsstunden des Vorjahres nach Kategorie als PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-hours-report" xml:space="preserve">
+    <value>Öffnen Sie unter Ausbildungen die Ausbildungseinträge und dann Ausbildungsstunden. Wählen Sie Zeitraum und Gruppierung und exportieren Sie als CSV oder PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.my-courses" xml:space="preserve">
+    <value>Meine Kurse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.my-courses" xml:space="preserve">
+    <value>Die einem Mitglied zugewiesenen Kurse, die Kurse, denen es beitreten kann, und die Lektionen der Resgrid Academy, mit Fortschritt und Fälligkeitsdaten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.my-courses" xml:space="preserve">
+    <value>Mitglieder sehen, was als Nächstes zu erledigen ist, und machen dort weiter, wo sie aufgehört haben, auf der Website oder in der App.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.my-courses" xml:space="preserve">
+    <value>Ein neues Mitglied öffnet Meine Kurse, schließt die Lektion zum Einstieg mit der kurzen Wissensprüfung ab, und der Abschluss erscheint im Ausbildungsnachweis.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.my-courses" xml:space="preserve">
+    <value>Öffnen Sie Ausbildungen und wählen Sie Kurse. Zugewiesene Kurse stehen oben; die Lektionen der Resgrid Academy sind immer verfügbar, solange das Ausbildungsmodul aktiv ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy" xml:space="preserve">
+    <value>Kurze Videolektionen zu Resgrid mit jeweils drei Kontrollfragen, von Resgrid kostenlos für jede Organisation bereitgestellt, dazu Rollenpfade für Mitglieder, Disponenten, Führungskräfte und Administratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy" xml:space="preserve">
+    <value>Neue Mitglieder und Führungskräfte lernen das System auf dieselbe Weise, und jede abgeschlossene Lektion zählt im Ausbildungsnachweis unter Systemschulung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy" xml:space="preserve">
+    <value>Die Ausbildungsleitung weist neuem Leitstellenpersonal den Disponenten-Pfad zu und verfolgt, welche Lektionen jede Person abgeschlossen hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy" xml:space="preserve">
+    <value>Öffnen Sie Ausbildungen und wählen Sie Academy. Wer Ausbildungen zuweisen darf, weist Mitgliedern, Rollen oder Gruppen eine Lektion oder einen Rollenpfad zu. Lektionen zu Modulen oder Add-ons, die die Organisation nicht nutzt, bleiben ausgeblendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-builder" xml:space="preserve">
+    <value>Kurseditor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-builder" xml:space="preserve">
+    <value>Eigene Kurse der Organisation mit Modulen, Videos, Dokumenten, Protokoll-Lektionen, Prüfungen aus Fragenpools und Umfragen, genehmigt und versioniert wie Protokolle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-course-builder" xml:space="preserve">
+    <value>Die eigene Ausbildung online durchführen, mit bewerteten Prüfungen, Lernzeit und Abschlüssen, die Zertifizierungen ausstellen oder verlängern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-course-builder" xml:space="preserve">
+    <value>Die Rettungsdienstkoordination erstellt eine jährliche Auffrischung mit einem Video und einer Prüfung mit 20 Fragen aus einem Fragenpool und einer Bestehensgrenze von 80 % und weist sie allen Rettungssanitätern zu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-course-builder" xml:space="preserve">
+    <value>Noch nichts einzurichten: Der Kurseditor gehört zum LMS-Add-on, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-grading" xml:space="preserve">
+    <value>Prüfungsbewertung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-grading" xml:space="preserve">
+    <value>Eine Warteschlange mit Freitextantworten, die auf eine Bewertung warten, und eine Aufgabenanalyse, die zeigt, wie schwer jede Frage ist und wie gut sie starke von schwachen Ergebnissen trennt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-grading" xml:space="preserve">
+    <value>Schriftliche Antworten erhalten eine faire, dokumentierte Bewertung, und schwache Fragen werden gefunden und verbessert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-grading" xml:space="preserve">
+    <value>Die Ausbildungsleitung bewertet drei Kurzantworten aus dem Gefahrgut-Test der letzten Woche; die Analyse zeigt eine Frage, die fast alle falsch beantworten, also wird sie neu formuliert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-grading" xml:space="preserve">
+    <value>Noch nichts einzurichten: Die Bewertung gehört zum LMS-Add-on, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.lms" xml:space="preserve">
+    <value>Lernmanagement (LMS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.lms" xml:space="preserve">
+    <value>Kurse, Ausbildungsanforderungen, Lehrgänge und formale Ausbildungsberichte. Noch nicht verfügbar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.lms" xml:space="preserve">
+    <value>Strukturierte Kurse und formale Berichte zusätzlich zum kostenlosen Ausbildungsnachweis, sobald veröffentlicht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.lms" xml:space="preserve">
+    <value>Noch nichts auszuprobieren: Das Lernmanagement-Add-on ist noch in Entwicklung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.lms" xml:space="preserve">
+    <value>Noch nichts einzurichten; der kostenlose Ausbildungsnachweis funktioniert ohne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-lms" xml:space="preserve">
+    <value>LMS-Add-on</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-lms" xml:space="preserve">
+    <value>Das Lernmanagement-Add-on in Paketen zu 25 Mitgliedern: Kurse, formelle Ausbildungsberichte und überprüfbare Zertifikate. Verfügbar, sobald Resgrid es für Ihre Abteilung freischaltet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-lms" xml:space="preserve">
+    <value>Ergänzt den kostenlosen Ausbildungsnachweis um Kurse, formelle Berichte und überprüfbare Zertifikate für die freigeschalteten Mitglieder.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-lms" xml:space="preserve">
+    <value>Eine Abteilung kauft 2 Pakete, schaltet ihre 40 hauptamtlichen Mitglieder frei und erstellt den ISO-FSRS-Bericht; die Ehrenamtlichen behalten das kostenlose Training.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-lms" xml:space="preserve">
+    <value>Öffnen Sie unter Abonnement die LMS-Karte, wählen Sie die Paketanzahl und schalten Sie dann Mitglieder auf der Personalseite frei.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-seats" xml:space="preserve">
+    <value>LMS-Plätze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-seats" xml:space="preserve">
+    <value>Schalten Sie das LMS für einzelne Mitglieder auf ihrer Personalseite oder für eine ganze Gruppe auf einmal frei, im Rahmen der Plätze, die Ihre Pakete umfassen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-seats" xml:space="preserve">
+    <value>Sie zahlen nur für die Mitglieder, die Sie über das LMS schulen; alle anderen behalten das kostenlose Trainingsmodul.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-seats" xml:space="preserve">
+    <value>Eine gemischte Wehr schaltet ihre 40 hauptamtlichen Kräfte für LMS-Kurse frei und lässt die Ehrenamtlichen beim kostenlosen Training.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-seats" xml:space="preserve">
+    <value>Nutzen Sie unter Personal die LMS-Plätze, um eine Gruppe freizuschalten, oder öffnen Sie ein Mitglied und wählen Sie „LMS freischalten“. Nur aktive Mitglieder können einen Platz erhalten; fügen Sie ein Paket hinzu, wenn die Plätze aufgebraucht sind.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-packs" xml:space="preserve">
+    <value>LMS-Pakete</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-packs" xml:space="preserve">
+    <value>Kaufen Sie das LMS-Add-on in Paketen zu 25 Mitgliedern und ändern Sie die Paketanzahl; der Preis wird vor jeder Änderung angezeigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-packs" xml:space="preserve">
+    <value>Die Rechnung folgt den benötigten Plätzen: gestaffelte Preise machen große Mannschaften pro Mitglied günstiger, und zusätzliche Pakete werden anteilig berechnet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-packs" xml:space="preserve">
+    <value>Eine Abteilung mit 110 freigeschalteten Mitgliedern hat 5 Pakete; wächst sie über 125, fügt sie ein sechstes Paket hinzu und zahlt die anteilige Differenz sofort.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-packs" xml:space="preserve">
+    <value>Öffnen Sie unter Abonnement die LMS-Karte, wählen Sie die Paketanzahl und schließen Sie den Kauf ab. Entfernte Pakete gelten ab dem nächsten Abrechnungsdatum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.WellnessSettings" xml:space="preserve">
+    <value>Wellness-Einstellungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.WellnessSettings" xml:space="preserve">
+    <value>Wer die Expositions- und Belastungsprotokolle der Mitglieder liest (die Rolle der Wellness-Beauftragten), wer die benannten Beauftragten und das Peer-Support-Team sind, welche Zertifizierung jede Wellness-Rolle haben kann und wie viele Jahre Einträge aufbewahrt werden. Das Wohlbefinden der Mitglieder gehört zum Add-on Workforce Pro, nicht zum LMS-Add-on: Ohne dieses sind vorhandene Aufzeichnungen nur lesbar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Wellness-Einstellungen / Rolle der Wellness-Beauftragten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Mitglieder dieser Rolle lesen jedes Expositionsprotokoll und führen Vorsorgevermerke und Nachsorgeschritte. Administratoren sehen die Protokolle nur mit dieser Rolle. Keine lässt jedes Protokoll allein beim Mitglied.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Wellness-Einstellungen / Zertifizierung des Peer-Support-Teams</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Der Zertifizierungstyp des Peer-Support-Teams. Mit einer Rolle für das Peer-Support-Team wird er als Status jedes Teammitglieds angezeigt; ohne Rolle bilden die Mitglieder mit einer gültigen Zertifizierung dieses Typs das Team und erhalten die Jahrestags-Erinnerungen, die ein Mitglied teilen möchte. Ohne beides gibt es kein Team.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Wellness-Einstellungen / Einträge aufbewahren (Jahre)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Jahre, die ein Expositionseintrag nach dem Ereignis aufbewahrt wird, von 30 (Minimum nach OSHA 29 CFR 1910.1020) bis 100. Eine rechtliche Aufbewahrungspflicht hält Einträge länger.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.member-wellness" xml:space="preserve">
+    <value>Meine Expositionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.member-wellness" xml:space="preserve">
+    <value>Das eigene Protokoll jedes Mitglieds über krebserregende Stoffe, blutübertragbare Erreger, Gefahrstoffe und belastende Ereignisse, mit Vorschlägen aus den Einsatzdaten, sobald ein Einsatz markiert wurde.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.member-wellness" xml:space="preserve">
+    <value>Expositionsnachweise für Krebsvermutung und Unfallversicherung, 30 Jahre aufbewahrt, und nur für das Mitglied und die Wellness-Beauftragten lesbar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.member-wellness" xml:space="preserve">
+    <value>Nach einem Gebäudebrand markiert der Einsatzleiter den Einsatz; jedes Mitglied vor Ort bestätigt den vorgeschlagenen Eintrag zu krebserregenden Stoffen und ergänzt getragene PSA und Dekontamination.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.member-wellness" xml:space="preserve">
+    <value>Wählen Sie die Rolle der Wellness-Beauftragten unter Personal, Meine Expositionen, Einstellungen und optional einen Zertifizierungstyp für jede Wellness-Rolle. Mitglieder öffnen Meine Expositionen über Personal; Einsatzleiter markieren einen Einsatz über dessen Schaltfläche Wellness-Nachsorge. Das Wohlbefinden der Mitglieder gehört zum Add-on Workforce Pro (nicht zum LMS-Add-on): Aufzeichnungen werden für die Mitglieder geführt, für die Workforce Pro freigeschaltet ist, und ohne das Add-on sind vorhandene Aufzeichnungen nur lesbar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-knowledge" xml:space="preserve">
+    <value>Wissensantworten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-knowledge" xml:space="preserve">
+    <value>Mitglieder stellen eine Frage und erhalten eine Antwort nur aus den veröffentlichten Protokollen und Schulungen Ihrer Abteilung und der Resgrid Academy, jeder Teil mit Link zur Quelle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-knowledge" xml:space="preserve">
+    <value>Mitglieder finden in Sekunden, was Ihre Protokolle sagen, und die Verfasser sehen die Fragen, die der Inhalt nicht beantwortet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-knowledge" xml:space="preserve">
+    <value>Ein Mitglied fragt, welche Schutzausrüstung die Gefahrgut-Richtlinie verlangt, und erhält die Antwort mit Link auf diesen Abschnitt der gültigen Version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-knowledge" xml:space="preserve">
+    <value>Erfordert die Erweiterung Enhanced AI mit für Ihre Abteilung aktivierten Wissensantworten. Veröffentlichen Sie Ihre Protokolle und starten Sie Ihre Schulungen; Mitglieder nutzen dann „Fragen“ in der Protokollbibliothek, in einem Protokoll, einer Schulung oder einem Einsatz. Ausbildungsverantwortliche sehen unbeantwortete Fragen unter Wissenslücken.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.KnowledgeSettings" xml:space="preserve">
+    <value>Wissenseinstellungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.KnowledgeSettings" xml:space="preserve">
+    <value>Abteilungsweite Regeln für Wissensantworten auf der Seite Wissenseinstellungen: ob das Dokumente-Modul verwendet wird und der Link zum Dosierungswerkzeug der Abteilung. Fehlt die Einstellung, werden keine Dokumente verwendet und es gibt keinen Dosierungslink. Nur Abteilungsadministratoren können sie ändern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Wissenseinstellungen / Dokumente einbeziehen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Dokumente werden zu Quellen der Wissensantworten. Nur-Admin-Dokumente werden nur für Administratoren verwendet, und solange Advanced Data Protection aktiv ist, wird kein Dokument verwendet. Eine Änderung erstellt den Wissensindex der Abteilung im Hintergrund neu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>Wissenseinstellungen / Link zum Dosierungswerkzeug</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>Ein https-Link zum Dosierungswerkzeug der Abteilung. Antworten, die eine Dosierung zitieren, zeigen ihn; Dosierungen werden nur aus einer Quelle zitiert, und weder das Modell noch Resgrid berechnet eine. Alles außer einem https-Link wird abgelehnt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.document-sealing" xml:space="preserve">
+    <value>Versiegelte Dokumente und Dokumentprüfung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.document-sealing" xml:space="preserve">
+    <value>Zertifikate, Nachweise, Protokoll-PDFs und unterschriebene Dokumente werden mit Zeitstempel versiegelt, damit jeder prüfen kann, dass sie unverändert sind; Führungskräfte prüfen jedes PDF unter „Dokument prüfen“.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.document-sealing" xml:space="preserve">
+    <value>Geben Sie Dokumente heraus, denen externe Stellen und Gerichte vertrauen können, und erkennen Sie veränderte Kopien.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.document-sealing" xml:space="preserve">
+    <value>Ein Prüfer kontrolliert, dass ein Zertifikat, das ein Mitglied von einer anderen Abteilung mitbringt, von Resgrid ausgestellt und nicht bearbeitet wurde.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.document-sealing" xml:space="preserve">
+    <value>Öffnen Sie „Dokument prüfen“ und laden Sie ein PDF hoch. Die Versiegelung richtet der Betreiber der Installation ein; bis dahin sind Dokumente als „Versiegelung ausstehend“ markiert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.external-signatures" xml:space="preserve">
+    <value>Externe Unterschriften</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.external-signatures" xml:space="preserve">
+    <value>Kunden, Bewohner und Dritte unterschreiben Zeitberichte, Angebote, Verträge, Inspektionen und Beweismittelübergaben persönlich auf dem Gerät eines Mitglieds oder per Resgrid-Link mit Einmalcode.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.external-signatures" xml:space="preserve">
+    <value>Ersetzen Sie getippte Namen durch Unterschriften, die die Gegenseite prüfen kann, versiegelt mit Prüfseite.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.external-signatures" xml:space="preserve">
+    <value>Ein Truppführer gibt das Tablet dem Vertreter des Kunden, der den Tagesbericht unterschreibt, bevor die Mannschaft den Einsatz verlässt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.external-signatures" xml:space="preserve">
+    <value>Öffnen Sie das Dokument und wählen Sie „Gerät an Unterzeichner übergeben“ oder fordern Sie eine Unterschrift per Link an. Für Links hinterlegt ein Admin das Documenso-Team-Token der Abteilung unter E-Signatur-Einstellungen; Links gehören zum Add-on des Dokuments.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-acknowledgments" xml:space="preserve">
+    <value>Meine Bestätigungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-acknowledgments" xml:space="preserve">
+    <value>Die Protokolle und Mitteilungen lesen und unterschreiben, die Sie bestätigen sollen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compliance" xml:space="preserve">
+    <value>Einhaltung der Bestätigungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compliance" xml:space="preserve">
+    <value>Sehen, wer jede Protokollversion gelesen und unterschrieben hat, nach Gruppen, und exportieren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulletins" xml:space="preserve">
+    <value>Prioritätsmitteilungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulletins" xml:space="preserve">
+    <value>Eine kurze Pflichtmitteilung herausgeben, die sofort gilt und danach freigegeben wird.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulk-upload" xml:space="preserve">
+    <value>Protokolldokumente hochladen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulk-upload" xml:space="preserve">
+    <value>PDF- und Word-Protokolle auf einmal als Entwürfe übernehmen, mit durchsuchbarem Text.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Protokollbibliothek-Einstellungen / Inhaltssprache</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Die Sprache, in der Protokolle verfasst sind. Mitglieder ohne freigegebene Übersetzung in ihrer Sprache lesen eine Version in dieser Sprache, und Blockbeschriftungen wie „Vorsicht“ werden in ihr geschrieben. Leer bedeutet Englisch.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-block-editor" xml:space="preserve">
+    <value>Strukturierte Protokollinhalte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-block-editor" xml:space="preserve">
+    <value>Protokolle als Blöcke schreiben: Schritte, Vorsichtshinweise, Kontakt zur ärztlichen Leitung, Tabellen, Medikamente und Varianten für Erwachsene und Kinder.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-step-through" xml:space="preserve">
+    <value>Protokolle Schritt für Schritt im Einsatz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-step-through" xml:space="preserve">
+    <value>Ein Verfahrens- oder Einsatzprotokoll im Einsatz wie eine Checkliste abarbeiten, jeder Schritt mit Zeitstempel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-book" xml:space="preserve">
+    <value>Protokoll-PDF-Buch, QR-Code und Druckansicht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-book" xml:space="preserve">
+    <value>Eine Kategorie oder die ganze Bibliothek als ein PDF-Buch exportieren, ein Protokoll drucken oder seinen QR-Code aushängen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-translations" xml:space="preserve">
+    <value>Übersetzungen von Protokollinhalten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-translations" xml:space="preserve">
+    <value>Eine Protokollversion in die Sprachen der Mitglieder übersetzen, jede Übersetzung einzeln freigegeben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Wellness-Einstellungen / Rolle der benannten Beauftragten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Mitglieder dieser Rolle erhalten Meldungen zu Expositionen gegenüber blutübertragbaren Erregern und Infektionskrankheiten (Ryan White Part G) und führen die Expositionsfälle. Keine bedeutet, dass die Rolle der Wellness-Beauftragten das übernimmt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Wellness-Einstellungen / Zertifizierung der Schulung zu blutübertragbaren Erregern</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Die Zertifizierungsart der jährlichen Schulung zu blutübertragbaren Erregern (OSHA 1910.1030). Jeder Expositionsfall zeigt den aktuellen Stand des Mitglieds. Keine lässt sie unerfasst.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Wellness-Einstellungen / Zertifizierung der medizinischen Freigabe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Die Zertifizierungsart, als die eine medizinische Untersuchung nach NFPA 1582 zusätzlich erfasst wird (aus der Vorlage Medical Clearance (NFPA 1582)). Nicht freigegeben setzt sie aus. Keine belässt Freigaben nur im Wellness-Bereich.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Wellness-Einstellungen / Verletzungsakten aufbewahren (Jahre)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Jahre, die eine Verletzungsakte nach Ende ihres Jahres aufbewahrt wird, von 5 (OSHA 29 CFR 1904.33) bis 100. Eine rechtliche Sperre bewahrt Akten länger auf.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-authoring-aids" xml:space="preserve">
+    <value>Entwurfshilfen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-authoring-aids" xml:space="preserve">
+    <value>Entwürfe von Quizfragen, Kursgliederungen und Änderungszusammenfassungen aus den eigenen Inhalten der Abteilung, die Autoren prüfen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-authoring-aids" xml:space="preserve">
+    <value>Autoren beginnen mit einem belegten Entwurf statt mit einer leeren Seite, und nichts wird gespeichert, bevor sie es übernehmen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-authoring-aids" xml:space="preserve">
+    <value>Ein Ausbildungsleiter entwirft fünf Quizfragen aus der neuen Atemschutzausbildung und behält drei.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-authoring-aids" xml:space="preserve">
+    <value>Aktivieren Sie Wissensantworten mit Enhanced AI; die Hilfen erscheinen dann im Ausbildungseditor und im Kurseditor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.help-search" xml:space="preserve">
+    <value>Hilfecenter-Suche</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.help-search" xml:space="preserve">
+    <value>Kostenlose Stichwortsuche in der Resgrid Academy und der Produktreferenz über das Hilfemenü.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.help-search" xml:space="preserve">
+    <value>Mitglieder finden die benötigte Lektion oder Einstellung, ohne Resgrid zu verlassen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.help-search" xml:space="preserve">
+    <value>Ein neues Mitglied sucht nach "Status" und öffnet die Einführungslektion.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.help-search" xml:space="preserve">
+    <value>Keine Einrichtung nötig: Hilfe öffnen, dann Hilfe durchsuchen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy-guidance" xml:space="preserve">
+    <value>Geführte Touren und Neuigkeiten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy-guidance" xml:space="preserve">
+    <value>Erste Aufgaben je Rolle auf Basis der Academy-Anleitungen und eine kurze Lektion zu jeder Version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy-guidance" xml:space="preserve">
+    <value>Neue Mitglieder und Administratoren wissen, was zuerst zu tun ist, und alle sehen, was sich geändert hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy-guidance" xml:space="preserve">
+    <value>Ein neuer Disponent hakt ab: Einsatzliste öffnen, Einheiten prüfen, Karte öffnen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy-guidance" xml:space="preserve">
+    <value>Keine Einrichtung nötig: Jedes Mitglied sieht die Tour seiner Rolle auf dem Dashboard und kann sie ausblenden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.multi-signer-signatures" xml:space="preserve">
+    <value>Unterschriften mehrerer Unterzeichner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.multi-signer-signatures" xml:space="preserve">
+    <value>Mehrere Personen unterschreiben ein Dokument in festgelegter Reihenfolge: Mitglieder auf Stufe 1 oder 2, Zeugen, zertifizierende Personen, Bewerter und externe Beteiligte, mit Erinnerungen, bis alle unterschrieben haben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.multi-signer-signatures" xml:space="preserve">
+    <value>Freigaben, die mehr als eine Person erfordern, werden in der richtigen Reihenfolge erfasst, an den genauen Inhalt gebunden und nach Abschluss mit einer Prüfseite versiegelt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.multi-signer-signatures" xml:space="preserve">
+    <value>Die Ausbildungsleitung bewertet eine Fertigkeit auf Stufe 2, danach unterschreibt die zertifizierende Person; beide werden erinnert, sobald sie an der Reihe sind.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.multi-signer-signatures" xml:space="preserve">
+    <value>Mitglieder finden, was auf sie wartet, unter „Meine Unterschriften“ und auf ihrer Startseite; Anfragen beginnen bei dem Dokument, das unterschrieben werden muss.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.checklist-witness-signature" xml:space="preserve">
+    <value>Zeugenunterschrift für Checklisten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.checklist-witness-signature" xml:space="preserve">
+    <value>Eine Checkliste kann verlangen, dass ihr unabhängiger Zeuge auf Stufe 2 (erneute Identitätsprüfung oder Passkey) unterschreibt, statt nur per Text zu bestätigen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.checklist-witness-signature" xml:space="preserve">
+    <value>Betäubungsmittel- und Sicherheitsprüfungen erhalten eine Zeugenunterschrift, die an die erfassten Ergebnisse gebunden ist – ohne Aufpreis in Checklisten enthalten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.checklist-witness-signature" xml:space="preserve">
+    <value>Nach der Prüfung eines Betäubungsmittelbehälters unterschreibt ein zweiter Notfallsanitäter mit seinem Passkey als Zeuge, bevor die Prüfung als abgeschlossen gilt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.checklist-witness-signature" xml:space="preserve">
+    <value>Bearbeiten Sie die Checkliste, aktivieren Sie den unabhängigen Zeugen und die Zeugenunterschrift und veröffentlichen Sie die neue Version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.readiness-signatures" xml:space="preserve">
+    <value>Lieferantenabnahme und Ausgabequittungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.readiness-signatures" xml:space="preserve">
+    <value>Lieferanten nehmen abgeschlossene Arbeitsaufträge ab, und Mitglieder oder Empfänger quittieren ausgegebene Ausrüstung – persönlich oder per Resgrid-Link.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.readiness-signatures" xml:space="preserve">
+    <value>Ersetzen Sie mündliche Übergaben durch unterschriebene Abnahmen und Quittungen, die die Gegenseite prüfen kann.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.readiness-signatures" xml:space="preserve">
+    <value>Der Techniker der Pumpenwerkstatt unterschreibt den abgeschlossenen Arbeitsauftrag auf dem Tablet der Wache, bevor er abfährt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.readiness-signatures" xml:space="preserve">
+    <value>Öffnen Sie einen abgeschlossenen Arbeitsauftrag oder die „Quittung“ eines ausgegebenen Artikels und fordern Sie die Unterschrift an. Links für die Fernunterschrift erfordern Readiness Pro und die E-Signatur-Einstellungen der Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsProgramSettings" xml:space="preserve">
+    <value>Einstellungen der Ausbildungsprogramme</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsProgramSettings" xml:space="preserve">
+    <value>Wie Ausbildungsanträge genehmigt werden und in welcher Währung ihre Kosten erfasst werden, und ob Inspektionen und Überprüfungen von Einsatzplänen in Records als Objektbegehung angerechnet werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Vorgesetzte genehmigen Ausbildungsanträge</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Die Administratoren der Gruppe des Mitglieds (oder die Administratoren der Organisation) genehmigen einen Ausbildungsantrag zuerst.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Ausbildungsleitung genehmigt Ausbildungsanträge</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Ein Mitglied, das die Ausbildungseinträge der gesamten Organisation verwaltet, genehmigt den Antrag, nach den Vorgesetzten, wenn beide Optionen aktiviert sind.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Ausbildungswährung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Der dreistellige Währungscode (EUR, CAD, USD …), in dem Kosten von Ausbildungsanträgen, Lehrgangskosten und Lehrgangsgebühren der Organisation erfasst und summiert werden. Ein Lehrgang kann eine eigene Währung angeben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Objektbegehungen anrechnen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Abgeschlossene Objektinspektionen und Überprüfungen von Einsatzplänen in Records werden in den Ausbildungsnachweis der Person eingetragen, die sie durchgeführt hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Kategorie für Objektbegehungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Die Ausbildungskategorie, in der Objektbegehungen angerechnet werden, zum Beispiel die ISO-Kategorie für Einsatzvorplanung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>Minuten je Besuch</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>Die Minuten, die für einen Besuch ohne Beginn- und Endzeit angerechnet werden. Ein Besuch mit eigenen Zeiten wird mit seiner tatsächlichen Dauer angerechnet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Anrechnung aus Inspektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Abgeschlossene Objektinspektionen werden der prüfenden Person angerechnet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Anrechnung aus Einsatzplanüberprüfungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Überprüfungen von Objekt- und Kontakt-Einsatzplänen werden der überprüfenden Person angerechnet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-plan" xml:space="preserve">
+    <value>Jährlicher Ausbildungsplan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-plan" xml:space="preserve">
+    <value>Ein Jahr geplanter Einheiten und Stunden je Kategorie und Monat für die Organisation, eine Gruppe oder eine Schicht, verglichen mit den tatsächlich erfassten Stunden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-plan" xml:space="preserve">
+    <value>Der schriftliche Plan, den Prüfende, Aufsichtsbehörden und Akkreditierungsstellen verlangen, und ein Rückstand gegenüber den Jahreszielen, der sich im Juni zeigt und nicht erst bei der Prüfung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-plan" xml:space="preserve">
+    <value>Die Ausbildungsleitung plant jeden Monat 16 Stunden Wachausbildung; im Juni zeigt die Prognose, dass die Organisation das Ziel von 192 Stunden um 20 Stunden verfehlen wird.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-plan" xml:space="preserve">
+    <value>Noch nichts einzurichten: Der Jahresplan ist Teil des LMS-Add-ons, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-competency-frameworks" xml:space="preserve">
+    <value>Kompetenzrahmen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-competency-frameworks" xml:space="preserve">
+    <value>Leistungsanforderungen, Funktionen und Fertigkeiten, zugeordnet zu den Kursen, Ausbildungen und Zertifizierungen, die sie nachweisen, mit einem Lückenbericht je Mitglied.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-competency-frameworks" xml:space="preserve">
+    <value>Zeigt für jedes Mitglied, für welche Anforderungen Nachweise vorliegen, wie alt diese sind und für welche keine vorliegen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-competency-frameworks" xml:space="preserve">
+    <value>Eine Organisation importiert das Kompetenzmodell ihrer Aufsichtsbehörde, verschlagwortet ihre Kurse und sieht, dass für eine neue Einsatzkraft noch zu drei Anforderungen keine Nachweise vorliegen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-competency-frameworks" xml:space="preserve">
+    <value>Noch nichts einzurichten: Kompetenzrahmen sind Teil des LMS-Add-ons, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-requests" xml:space="preserve">
+    <value>Ausbildungsanträge</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-requests" xml:space="preserve">
+    <value>Mitglieder beantragen die Teilnahme an einem externen Lehrgang mit seinen Kosten; die Vorgesetzten und eine Ausbildungsleitung genehmigen ihn, und nach der Teilnahme wird der Lehrgang in den Ausbildungsnachweis eingetragen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-requests" xml:space="preserve">
+    <value>Ein genehmigter Eintrag mit Kosten je externem Lehrgang sowie Ausgabensummen je Mitglied, Kurs und Jahr.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-requests" xml:space="preserve">
+    <value>Ein Notfallsanitäter beantragt die Teilnahme an einem 16-stündigen Kurs für 450 Dollar; der Wachabteilungsleiter und die Ausbildungsleitung genehmigen ihn, und das Zertifikat wird danach bestätigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-requests" xml:space="preserve">
+    <value>Noch nichts einzurichten: Ausbildungsanträge sind Teil des LMS-Add-ons, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-report-catalog" xml:space="preserve">
+    <value>Katalog der Ausbildungsberichte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-report-catalog" xml:space="preserve">
+    <value>Alle Ausbildungsberichte an einem Ort, mit ihren Einstellungen in Ordnern gespeichert und täglich, wöchentlich oder monatlich als CSV oder PDF versendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-report-catalog" xml:space="preserve">
+    <value>Die Berichte, die eine Prüfung braucht, kommen von selbst und sind jedes Mal gleich gefiltert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-report-catalog" xml:space="preserve">
+    <value>Der ISO-Ausbildungsbericht geht am Ersten jedes Monats als PDF an die Feuerwehrleitung und die Ausbildungsleitung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-report-catalog" xml:space="preserve">
+    <value>Noch nichts einzurichten: Gespeicherte und geplante Berichte sind Teil des LMS-Add-ons, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-cycles" xml:space="preserve">
+    <value>Zertifizierungszyklen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-cycles" xml:space="preserve">
+    <value>Der nächste Zyklus einer Zertifizierung beginnt automatisch, sobald ihre Verlängerungsstunden erreicht sind, und Vorgesetzte, Administratoren oder benannte Mitglieder werden benachrichtigt, wenn ein Zyklus erfüllt ist, beginnt, bald abläuft oder abläuft.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-cycles" xml:space="preserve">
+    <value>Wiederkehrende Qualifikationen erfassen weiter Stunden, ohne dass jemand sie neu eingeben muss, und die richtigen Personen erfahren rechtzeitig davon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-cycles" xml:space="preserve">
+    <value>Wenn ein EMT die Verlängerungsstunden erreicht, beginnt der nächste zweijährige Zyklus mit dem aktuellen Ablaufdatum, und die Rettungsdienstleitung erhält eine Nachricht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-cycles" xml:space="preserve">
+    <value>Noch nichts einzurichten: Regeln für Zertifizierungszyklen sind Teil des LMS-Add-ons, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-credential-audiences" xml:space="preserve">
+    <value>Nachrichten nach Zertifizierungsstatus</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-credential-audiences" xml:space="preserve">
+    <value>Senden Sie eine Nachricht an die Mitglieder, deren Zertifizierung abgelaufen ist, innerhalb einer bestimmten Anzahl von Tagen abläuft oder die sie nie besessen haben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-credential-audiences" xml:space="preserve">
+    <value>Erinnerungen erreichen genau die Personen, die sie brauchen, ohne dass eine Liste von Hand erstellt werden muss.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-credential-audiences" xml:space="preserve">
+    <value>Die Ausbildungsleitung schreibt allen, deren CPR-Karte innerhalb von 30 Tagen abläuft, und nennt das Datum des nächsten Lehrgangs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-credential-audiences" xml:space="preserve">
+    <value>Noch nichts einzurichten: Empfängergruppen nach Zertifizierungsstatus sind Teil des LMS-Add-ons, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LearningRequirementSettings" xml:space="preserve">
+    <value>Einstellungen für Lernanforderungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LearningRequirementSettings" xml:space="preserve">
+    <value>Schulungsgestützte Durchsetzung für die Organisation (standardmäßig aus), der größte Anteil der Mitglieder einer Rolle, den ein Durchsetzungslauf entfernen darf, und die Standardwarnung für gefährdete Mitglieder bei neuen Anforderungen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>Einstellungen für Lernanforderungen / Schulungsgestützte Durchsetzung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>Wenn eingeschaltet, kann eine Anforderung, die sich dafür entscheidet, die von ihr gestützte Zertifizierung ablaufen lassen, sobald ein Mitglied über die Karenzzeit hinaus überfällig ist; das Zertifizierungsmodul entfernt dann Rollen nach seiner eigenen Karenzzeit. Standardmäßig aus, nie während das LMS-Add-on inaktiv ist, und beim Einschalten wird zuerst angezeigt, wer welche Rolle verlieren würde.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>Einstellungen für Lernanforderungen / Größter Anteil einer Rolle, der in einem Lauf entfernt wird</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>Ein Lauf, der mehr als diesen Prozentsatz der aktiven Mitglieder einer Rolle entfernen würde, wird abgelehnt, und die Administratoren der Organisation werden benachrichtigt. Standard: 20.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Einstellungen für Lernanforderungen / Standardwarnung bei Gefährdung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Tage vor dem Fälligkeitsdatum, ab denen eine neue Anforderung Mitglieder als gefährdet anzeigt. Standard: 14.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-requirements" xml:space="preserve">
+    <value>Lernanforderungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-requirements" xml:space="preserve">
+    <value>Wiederkehrende und einmalige Schulungsanforderungen nach Rolle, Gruppe, Zertifizierung oder Schicht: Kurse, Schulungen, Stunden pro Kategorie, Lernpfade und bestandene Fertigkeitsprüfungen, mit Fälligkeiten ab Beitritt oder Erhalt einer Rolle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-requirements" xml:space="preserve">
+    <value>Alle wissen, was sie bis wann erledigen müssen, und Führungskräfte sehen vor einem Audit, wer gefährdet ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-requirements" xml:space="preserve">
+    <value>Jeder Maschinist schließt alle 12 Monate den Kurs Pumpenbedienung ab, und jedes Mitglied erfasst pro Kalenderjahr 24 Stunden Standortausbildung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-requirements" xml:space="preserve">
+    <value>Öffnen Sie Schulungen, wählen Sie Programme und fügen Sie eine Anforderung hinzu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-compliance-matrix" xml:space="preserve">
+    <value>Erfüllungsmatrix</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-compliance-matrix" xml:space="preserve">
+    <value>Jedes Mitglied gegenüber jeder Anforderung: erfüllt, später fällig, gefährdet, überfällig, befreit, beurlaubt oder nicht freigeschaltet, mit CSV- und PDF-Export und, für Gruppenadministratoren, der eigenen Gruppe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-compliance-matrix" xml:space="preserve">
+    <value>Eine Seite zeigt, wer die Anforderungen nicht erfüllt und was als Nächstes fällig ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-compliance-matrix" xml:space="preserve">
+    <value>Ein Zugführer filtert die Matrix auf seine Wache und befreit ein Mitglied, das Wehrdienst leistet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-compliance-matrix" xml:space="preserve">
+    <value>Öffnen Sie Schulungen, wählen Sie Programme und dann Erfüllungsstand.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learning-paths" xml:space="preserve">
+    <value>Lernpfade und Einarbeitung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learning-paths" xml:space="preserve">
+    <value>Kurse, Academy-Lektionen und Schulungen in fester Reihenfolge mit Voraussetzungen und Wahlschritten; der Abschluss eines Pfads kann eine Zertifizierung ausstellen. Ein Pfad pro Rolle kann automatisch zugewiesen werden, wenn jemand beitritt oder die Rolle erhält.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learning-paths" xml:space="preserve">
+    <value>Neue Mitglieder durchlaufen dieselbe Einarbeitung mit Fälligkeitsdatum, ohne dass jemand an die Zuweisung denken muss.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learning-paths" xml:space="preserve">
+    <value>Neue Disponenten erhalten den Pfad Disponent mit 30 Tagen Bearbeitungszeit, und sein Abschluss stellt die Disponentenzertifizierung der Organisation aus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learning-paths" xml:space="preserve">
+    <value>Öffnen Sie Schulungen, wählen Sie Programme, dann Pfade, um einen Pfad zu erstellen, und Einarbeitung, um ihn nach Rolle zuzuweisen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-call-answers" xml:space="preserve">
+    <value>Fragen zu einem Einsatz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-call-answers" xml:space="preserve">
+    <value>Mitglieder stellen in der Einsatzansicht eine Frage und erhalten eine Antwort nur aus den Protokollversionen des Einsatzes sowie Einsatzart, Priorität, Determinante und Ortsart, jeder Teil mit seinem Abschnitt verlinkt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-call-answers" xml:space="preserve">
+    <value>Besatzungen und Disponenten finden in Sekunden, was die Protokolle des Einsatzes für diesen Einsatz sagen, und Patienten- oder Anruferdaten werden nie gesendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-call-answers" xml:space="preserve">
+    <value>Bei einem Gebäudebrand in einer Schule fragt ein Zugführer, wo sich die Trupps bereitstellen, und erhält die Antwort aus dem zitierten Abschnitt des Schulprotokolls.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-call-answers" xml:space="preserve">
+    <value>Aktivieren Sie Wissensantworten mit Enhanced AI und hängen Sie Protokolle an Einsätze an; „Frage zu diesem Einsatz“ erscheint dann im Protokoll-Tab der Einsatzansicht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-tutor" xml:space="preserve">
+    <value>Tutor und Szenario-Training</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-tutor" xml:space="preserve">
+    <value>Lernende stellen Fragen zum Kurs, den sie belegen, und Mitglieder üben an einem kurzen Szenario aus einem Protokoll, wobei ihre eigenen Antworten an diesem Protokoll bewertet werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-tutor" xml:space="preserve">
+    <value>Mitglieder prüfen ihr Verständnis zwischen Übungen, und jede Antwort und Bewertung verweist auf den genauen Abschnitt, ohne dass etwas im Ausbildungsnachweis erfasst wird.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-tutor" xml:space="preserve">
+    <value>Ein neuer Rettungssanitäter übt das Protokoll zum Herz-Kreislauf-Stillstand: ein kurzes Szenario, drei Fragen und Rückmeldungen, die die Schritte des Protokolls zitieren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-tutor" xml:space="preserve">
+    <value>Aktivieren Sie Wissensantworten mit Enhanced AI; „Üben“ erscheint dann bei jedem Protokoll. „Diesen Kurs fragen“ im Kursplayer benötigt zusätzlich das LMS-Add-on.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-recommendations" xml:space="preserve">
+    <value>Lernempfehlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-recommendations" xml:space="preserve">
+    <value>Empfiehlt jedem Mitglied Lernpfade und Kurse aus seinen offenen Anforderungen, begonnenen Pfaden, Kompetenzlücken und den Kursen für seine Rollen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-recommendations" xml:space="preserve">
+    <value>Mitglieder sehen, was als Nächstes ansteht und warum, und Führungskräfte sehen dasselbe für die Mitglieder, die sie betreuen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-recommendations" xml:space="preserve">
+    <value>Eine Feuerwehrfrau ohne Nachweis für die Leiterkompetenz sieht unter „Meine Ausbildung“ den Kurs Leitereinsatz mit Begründung empfohlen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-recommendations" xml:space="preserve">
+    <value>Öffnen Sie Schulungen, wählen Sie Programme und dann Empfehlungen; Mitglieder sehen „Für Sie empfohlen“ auch unter „Meine Ausbildung“. „Mit KI erklären“ benötigt Enhanced AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.approval-chains" xml:space="preserve">
+    <value>Genehmigungsketten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.approval-chains" xml:space="preserve">
+    <value>Einkäufe, Einsatzaktionspläne (IAP), Rechnungen, Cal OES MARS-Pakete und Vereinbarungen zur Nachbarschaftshilfe werden von einer Kette von Personen der Reihe nach genehmigt, mit Betragsschwellen, parallelen Schritten, Vertretungen während einer Abwesenheit und Eskalation, wenn ein Schritt stockt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.approval-chains" xml:space="preserve">
+    <value>Jede Genehmigung ist eine Unterschrift der Stufe 2, gebunden an den exakten Inhalt: Eine Änderung macht sie ungültig, eine Ablehnung braucht eine Begründung, und die abgeschlossene Kette versiegelt das Dokument.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.approval-chains" xml:space="preserve">
+    <value>Einkäufe über 5.000 brauchen nach der Leitung des Sachgebiets Logistik die Leitung Finanzen; handelt die Leitung Finanzen nicht innerhalb von 24 Stunden, werden die Abteilungsadministratoren gefragt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.approval-chains" xml:space="preserve">
+    <value>Ein Abteilungsadministrator legt unter Genehmigungen, Ketten eine Kette je Art fest; Mitglieder reichen auf der Seite des Eintrags oder unter Genehmigungen ein, und genehmigende Personen finden Anträge unter Meine Genehmigungen und auf ihrer Startseite.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-protocol-learning" xml:space="preserve">
+    <value>Protokollquizze und Micro-Learning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-protocol-learning" xml:space="preserve">
+    <value>Lassen Sie die Bestätigung eines Protokolls auf ein Quiz aus einem Fragenpool warten, und senden Sie Mitgliedern jede Woche eine Szenariofrage aus ausgewählten Protokollen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-protocol-learning" xml:space="preserve">
+    <value>Mitglieder zeigen, dass sie ein Protokoll verstanden und nicht nur geöffnet haben, und halten es zwischen den Überprüfungen frisch.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-protocol-learning" xml:space="preserve">
+    <value>Ein neues Mayday-Verfahren verlangt fünf Fragen mit 80 % bestanden, bevor die Bestätigung zählt, und jeden Montag beantwortet jede Einsatzkraft ein Szenario daraus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-protocol-learning" xml:space="preserve">
+    <value>Noch nichts einzurichten: Protokollquizze und Micro-Learning gehören zum LMS-Add-on, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-class-sessions" xml:space="preserve">
+    <value>Kurstermine</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-class-sessions" xml:space="preserve">
+    <value>Kurse mit Ausbilder im Kalender mit Kapazität, Warteliste, Anmelderegeln, Anmeldung per wechselndem QR-Code und GPS sowie dem Abzeichnen durch den Ausbilder, das für jeden Teilnehmenden einen Schulungsnachweis schreibt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-class-sessions" xml:space="preserve">
+    <value>Eine Teilnehmerliste je Kurs als Nachweis: wer unterrichtet hat, wer teilnahm, was behandelt wurde und wie lange, aufbewahrt für die Frist der Kategorie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-class-sessions" xml:space="preserve">
+    <value>Eine Auffrischung zu blutübertragbaren Erregern mit 20 Plätzen ist voll; drei Mitglieder stehen auf der Warteliste, und wenn sich jemand abmeldet, rückt der Nächste nach und wird benachrichtigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-class-sessions" xml:space="preserve">
+    <value>Noch nichts einzurichten: Kurstermine gehören zum LMS-Zusatzmodul, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-lesson-plans" xml:space="preserve">
+    <value>Unterrichtspläne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-lesson-plans" xml:space="preserve">
+    <value>Wiederverwendbare Pläne für Kurse mit Ausbilder: Lernziele, abgedeckte Kompetenzen, Material und Übungsmittel, Betreuungsschlüssel, Sicherheitsplan und Vorbesprechungs-Checkliste, versioniert und vor dem Einsatz genehmigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-lesson-plans" xml:space="preserve">
+    <value>Heißausbildung, Fahrschulung und Atemschutz werden nach einem genehmigten Plan unterrichtet, und die Teilnehmerliste zeigt die verwendete Version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-lesson-plans" xml:space="preserve">
+    <value>Der Ausbildungsleiter kopiert die Vorlage für Heißausbildung, ergänzt das Brandhaus und die Betreuungsschlüssel der Abteilung, und ein Kommandant genehmigt sie vor der ersten Übung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-lesson-plans" xml:space="preserve">
+    <value>Noch nichts einzurichten: Unterrichtspläne gehören zum LMS-Zusatzmodul, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-resources" xml:space="preserve">
+    <value>Buchung von Einrichtungen und Übungsmitteln</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-resources" xml:space="preserve">
+    <value>Ausbildungsgelände, Unterrichtsräume, Übungsanlagen, Fahrzeuge und Ausrüstung der Organisation, für Unterrichtszeiten gebucht, damit nichts doppelt belegt wird.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-resources" xml:space="preserve">
+    <value>Zwei Kurse planen nie dasselbe Brandhaus oder dasselbe Fahrzeug für denselben Nachmittag.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-resources" xml:space="preserve">
+    <value>Die Leiterübung bucht den Übungsturm und Löschfahrzeug 3 für Samstagvormittag; ein zweiter Kurs, der den Turm dann möchte, wird abgelehnt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-resources" xml:space="preserve">
+    <value>Noch nichts einzurichten: Die Buchung gehört zum LMS-Zusatzmodul, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Protokollbibliothek-Einstellungen / Determinante in Alarmierungstexten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Fügt Determinante und Protokollname aus dem Fallablauf eines Einsatzes dem Titel der Push-Alarmierung, der Alarmierungs-SMS und der Sprachalarmierung hinzu. Standardmäßig aus; dann bleiben alle Alarmierungstexte wie bisher.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-case-flow" xml:space="preserve">
+    <value>Protokoll-Fallablauf (Entscheidungslogik für die Alarmierung)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-case-flow" xml:space="preserve">
+    <value>Ein Alarmierungsprotokoll kann einen Fallablauf haben: Einstiegs- und Schlüsselfragen, vorzulesende Anweisungen und Ergebnisse mit Determinante und vorgeschlagener Priorität. Disponenten gehen ihn im Formular „Neuer Einsatz“ durch, überschreiben die Determinante nur mit Begründung, senden SMS-Anrufern Anweisungen und erhalten mit Enhanced AI ein vorgeschlagenes Protokoll zur Bestätigung. Einsatzkarten können auf die Determinante reagieren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-sheets" xml:space="preserve">
+    <value>Fertigkeitsbögen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-sheets" xml:space="preserve">
+    <value>Fertigkeitsbögen nach Leistungsanforderungen mit geordneten Schritten, kritischen Kriterien, die die Bewertung scheitern lassen, Bewertungsskalen, Zeitmessung und Nachweisen, versioniert, mit einer Bibliothek von Resgrid-Vorlagen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-sheets" xml:space="preserve">
+    <value>Alle Prüfer bewerten dieselbe Fertigkeit gleich, und die Abteilung kann genau zeigen, was geprüft wurde.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-sheets" xml:space="preserve">
+    <value>Der Bogen zum Anlegen des Atemschutzgeräts lässt jeden scheitern, der länger als 60 Sekunden braucht oder die Dichtprüfung der Maske auslässt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-sheets" xml:space="preserve">
+    <value>Öffnen Sie Ausbildung, wählen Sie Fertigkeiten, dann Fertigkeitsbögen, und beginnen Sie mit einer Vorlage.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-evaluations" xml:space="preserve">
+    <value>Fertigkeitsbewertungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-evaluations" xml:space="preserve">
+    <value>Prüfermodus: ein Mitglied oder eine ganze Mannschaft auf einem Fertigkeitsbogen bewerten, mit „Alle bestanden“, Anmerkungen und Nachweisen, dann auf Stufe L2 unterschreiben; bestandene Bewertungen landen im Ausbildungsnachweis und der Nachweis wird versiegelt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-evaluations" xml:space="preserve">
+    <value>Auf dem Übungsplatz geprüfte Fertigkeiten werden zu unterschriebenen, versiegelten Nachweisen, die Anforderungen und Qualifikationen zählen können.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-evaluations" xml:space="preserve">
+    <value>Ein Gruppenführer bewertet die Besatzung von Löschfahrzeug 2 beim Vorgehen mit dem Schlauch auf einem Formular, trennt das Mitglied mit Schwierigkeiten ab und unterschreibt am Tablet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-evaluations" xml:space="preserve">
+    <value>Veröffentlichen Sie einen Fertigkeitsbogen, legen Sie fest, wer damit bewerten darf, und wählen Sie unter Ausbildung, Fertigkeiten „Bewertung beginnen“.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-task-books" xml:space="preserve">
+    <value>Ausbildungsnachweise für Positionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-task-books" xml:space="preserve">
+    <value>Ausbildungsnachweise nach NWCG-Modell: mit Positionscode und Datum angelegt, Aufgaben von qualifizierten Prüfern über mehrere Tage und Einsätze abgezeichnet, vom abschließenden Prüfer empfohlen und von der zertifizierenden Stelle zertifiziert; die Zertifizierung aktiviert die Qualifikation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-task-books" xml:space="preserve">
+    <value>Auszubildende erreichen ihre Position mit einer vollständigen, unterschriebenen Spur statt mit einem Papierheft im Spind.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-task-books" xml:space="preserve">
+    <value>Der FFT2-Nachweis eines Auszubildenden wird im März angelegt, zwei Einsatzaufgaben werden im Sommer bei Waldbränden abgezeichnet, und die zertifizierende Stelle zertifiziert ihn im September.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-task-books" xml:space="preserve">
+    <value>Öffnen Sie Ausbildung, wählen Sie Fertigkeiten, dann Vorlagen, beginnen Sie mit einer Resgrid-Vorlage, legen Sie fest, wer abzeichnet und zertifiziert, und legen Sie Nachweise unter Ausbildungsnachweise an.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsSkillSettings" xml:space="preserve">
+    <value>Einstellungen für Fertigkeitshinweise</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsSkillSettings" xml:space="preserve">
+    <value>Wie Hinweise zu Fertigkeitsbewertungen und Ausbildungsnachweisen zugestellt werden, sofort oder als tägliche oder wöchentliche Zusammenfassung, und ob bewertete Mitglieder und Abteilungsadministratoren sie erhalten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Zustellung der Fertigkeitshinweise</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Sofort, als tägliche oder wöchentliche Zusammenfassung (eine Nachricht pro Person mit allen fälligen Hinweisen) oder aus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Uhrzeit der Fertigkeitszusammenfassung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Die Ortszeit der Abteilung, zu der tägliche und wöchentliche Zusammenfassungen gesendet werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>Tag der wöchentlichen Fertigkeitszusammenfassung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>Der Wochentag, an dem wöchentliche Zusammenfassungen gesendet werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Bewertete Mitglieder informieren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Bewertete Mitglieder und Auszubildende erhalten Hinweise zu ihren eigenen Bewertungen und Nachweisen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Abteilungsadministratoren informieren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Die aktiven Abteilungsadministratoren erhalten zu jeder Bewertung und jedem Nachweis einen Hinweis.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewDispatchCases">
+    <value>Einsatzfälle prüfen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ReviewDispatchCases">
+    <value>Erlaubt, Einsätze für die Fallprüfung zu ziehen, den aufgezeichneten Fall mit einem Bewertungsraster zu bewerten, die Prüfung an den Disponenten zu senden und den Einhaltungsbericht zu lesen. Niemand prüft eigene Einsätze. Ohne gespeicherte Regel dürfen es nur Abteilungsadministratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.dispatch-case-review">
+    <value>Prüfung von Einsatzfällen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dispatch-case-review">
+    <value>Verantwortliche ziehen Einsätze nach Protokoll, Fassung, Determinante, Disponent und Datum, bewerten jeden aufgezeichneten Fall Frage für Frage und Anweisung für Anweisung mit einem Bewertungsraster der Records-Qualitätsprüfung neben dem Fallablauf des Protokolls und senden die Prüfung an den Disponenten. Berichte zeigen die Einhaltung nach Protokoll, Fassung, Disponent und Monat, mit CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.my-case-reviews">
+    <value>Meine Fallprüfungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.my-case-reviews">
+    <value>Disponenten lesen die Prüfungen ihrer Einsätze mit jeder bewerteten Frage und Anweisung und den Kommentaren, bestätigen jede einmal und können einmal antworten; die prüfende Person wird über die Antwort benachrichtigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsCeReportingSettings" xml:space="preserve">
+    <value>Einstellungen für Fortbildungsmeldungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsCeReportingSettings" xml:space="preserve">
+    <value>Die CAPCE- und CE-Broker-Anbieternummern, die Zertifizierungstypen, in denen die Lizenz-, NREMT- und National-EMS-ID-Nummern der Mitglieder geführt werden, sowie die Spaltenlisten der CE-/CPD-Datei mit Ausbildungsstunden und der CAPCE-, staatlichen CE- und staatlichen Teilnehmerlisten-Dateien.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>CAPCE-Anbieternummer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>Die CAPCE-Anbieternummer der Abteilung, wenn sie ein CAPCE-akkreditierter Anbieter ist. Ohne sie wird keine CAPCE-Abschlussdatei erstellt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>CAPCE-Anbietername</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>Der Anbietername, wie die Abteilung ihn bei Kursen und Nachweisen einträgt; Abschlüsse mit diesem Namen zählen als eigene Fortbildung der Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>Zertifizierungsart der staatlichen Lizenz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>Die Zertifizierungsart, deren Nummer, Bereich, Art und Ablaufdatum die Dateien als staatliche Lizenz des Mitglieds melden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>NREMT-Zertifizierungsart</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>Die Zertifizierungsart, deren Nummer und Ablaufdatum die Dateien als NREMT-Nummer und nächstes Neuregistrierungsdatum melden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>Zertifizierungsart der nationalen EMS-ID</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>Die Zertifizierungsart, deren Nummer die Dateien als nationale EMS-ID (NEMSID) des Mitglieds melden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>CE-Broker-Anbieternummer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>Die CE-Broker-Anbieter-Trackingnummer (Florida), die ohne das Präfix 50- in Spalte A der CE-Broker-Datei steht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>Spaltenlisten der Fortbildungsdateien</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>Die eigenen Spaltenlisten der Abteilung, eine je Dateityp; ein Dateityp ohne eigene Liste verwendet seine Standardspalten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>Fortbildungs-Dateityp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>Zu welcher Datei eine Spaltenliste gehört: training-hours, capce, fl-ems, va-ems, nj-ems, fl-fire, state-ce oder state-roster.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>Spalten der Fortbildungsdatei</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>Die Spalten der Datei in ihrer Reihenfolge.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Header" xml:space="preserve">
+    <value>Spaltenüberschrift der Fortbildungsdatei</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Header" xml:space="preserve">
+    <value>Die Überschrift in der Kopfzeile der Datei; Dateien ohne Kopfzeile lassen sie weg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Source" xml:space="preserve">
+    <value>Spaltenwert der Fortbildungsdatei</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Source" xml:space="preserve">
+    <value>Welchen Wert die Spalte trägt: ein Feld des Mitglieds, des Nachweises, der Zertifizierung oder des Anbieters oder einen festen Text.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Argument" xml:space="preserve">
+    <value>Spaltenformat der Fortbildungsdatei</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Argument" xml:space="preserve">
+    <value>Ein Datums- oder Zahlenformat für den Wert oder der Text einer Spalte mit festem Text.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-data-export" xml:space="preserve">
+    <value>Export der Ausbildungsdaten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-data-export" xml:space="preserve">
+    <value>Inhaber und Administratoren exportieren alles, was die Abteilung in die Ausbildung eingebracht hat: Kurse mit Versionen, Lektionen und Medien, Fragenpools mit Lösungsschlüsseln sowie jeden Lernnachweis, Versuch und jedes Zertifikat als CSV und xAPI-Statements, mit einem SCORM-1.2-Paket je Kurs, wo die Lektionen es erlauben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-data-export" xml:space="preserve">
+    <value>Eine Abteilung kann ihre Ausbildungsinhalte und Nachweise jederzeit mitnehmen, auch nach dem Ende des LMS-Zusatzpakets.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-data-export" xml:space="preserve">
+    <value>Vor dem Wechsel in das System einer regionalen Akademie exportiert der Ausbildungsleiter alles, lädt die xAPI-Statements in den neuen Nachweisspeicher und behält die CSV-Nachweise für die Prüfung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-data-export" xml:space="preserve">
+    <value>Öffnen Sie Ausbildung, wählen Sie Programme und dann Datenexport, wählen Sie „Alles“ oder „Nur Nachweise“ und starten Sie den Export; laden Sie die ZIP-Datei herunter, wenn sie fertig ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-ce-reporting" xml:space="preserve">
+    <value>Fortbildungsmeldedateien</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-ce-reporting" xml:space="preserve">
+    <value>Erstellt eine CE-/CPD-Datei mit Ausbildungsstunden in den Spalten, die Ihre Aufsichtsbehörde oder Berufsorganisation verlangt, und für Organisationen in den USA die CAPCE-Abschlussdatei, staatliche CE-Dateien (das CE-Broker-Layout für Florida und eine konfigurierbare CSV für andere Bundesstaaten) und eine staatlich verwendbare Teilnehmerliste für Systeme wie Acadis, mit Vorschau und Spalten je Organisation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-ce-reporting" xml:space="preserve">
+    <value>Abschlüsse erreichen Ihre Aufsichtsbehörde, Berufsorganisation, CAPCE oder die staatliche Stelle, ohne dass eine Teilnehmerliste abgetippt werden muss, und nichts wird übermittelt, bevor jemand die Datei geprüft hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-ce-reporting" xml:space="preserve">
+    <value>Jeden Monat prüft der Rettungsdienstkoordinator in der Vorschau die CAPCE-Datei des Vormonats, ergänzt bei zwei Mitgliedern die fehlende Lizenznummer und lädt die CSV bei CAPCE hoch.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-ce-reporting" xml:space="preserve">
+    <value>Öffnen Sie Ausbildung, wählen Sie Programme und dann Fortbildungsmeldungen, tragen Sie die Anbieternummern und die Zertifizierungsarten mit den Lizenznummern ein und erstellen Sie dann eine Datei für einen Zeitraum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-public-pages" xml:space="preserve">
+    <value>Öffentliche Protokollseiten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-public-pages" xml:space="preserve">
+    <value>Veröffentlichen Sie die gültige Version eines Protokolls oder eine Kategorie als Sammlung unter einer optional freigeschalteten öffentlichen Adresse mit Einbettungscode. Entwürfe, auf Zielgruppen beschränkte und lizenzierte Inhalte werden nie angezeigt, und eine Seite kann jederzeit widerrufen werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-template-library" xml:space="preserve">
+    <value>Protokoll-Vorlagenbibliothek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-template-library" xml:space="preserve">
+    <value>Übernehmen Sie von Resgrid verfasste Startpakete (Einsatzrichtlinien der Feuerwehr, Suche und Rettung, Industriegefahren, Betriebskontinuität, Richtlinien für Polizei und Strafverfolgung, Postenanweisungen für Sicherheitsdienste, Richtlinien für den Arbeitsplatz und eine Gliederung für den Rettungsdienst ohne medizinischen Text) als Entwürfe in Ihrer Sprache in die Bibliothek, wobei Quelle, Lizenz und Version bei jeder Fassung erhalten bleiben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.community-exchange" xml:space="preserve">
+    <value>Community-Austausch</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.community-exchange" xml:space="preserve">
+    <value>Teilen Sie Protokolle und Schulungen kostenlos mit anderen Abteilungen. Abteilungsdaten werden entfernt, lizenzierte Inhalte abgelehnt, Resgrid prüft jeden Beitrag vor der Aufnahme, und andere Abteilungen können bewerten, kommentieren und eine Kopie mit erhaltener Namensnennung importieren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-open-format" xml:space="preserve">
+    <value>Offenes Protokollformat und Export</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-open-format" xml:space="preserve">
+    <value>Exportieren Sie die Bibliothek oder eine Kategorie im dokumentierten offenen JSON-Format (Blöcke, Versionsverlauf, Entscheidungsbaum, Übersetzungen und eine Anhangsliste), als eine HTML-Datei oder als PDF-Buch. Dateien im älteren Format lassen sich weiterhin importieren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-analytics" xml:space="preserve">
+    <value>Protokollanalysen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-analytics" xml:space="preserve">
+    <value>Sehen Sie, wie Protokolle bei Einsätzen nach Version genutzt werden, die Verteilung der Determinanten und die Überschreibungsquote, die Zeit im Protokoll, die Bestätigungsquote und Suchen ohne Ergebnis, mit CSV-Export.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-external-learners" xml:space="preserve">
+    <value>Externe Lernende</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-external-learners" xml:space="preserve">
+    <value>Personen schulen, die keine Mitglieder sind: Partner der gegenseitigen Hilfe, Auftragnehmer, Freiwillige und die Öffentlichkeit.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-external-learners" xml:space="preserve">
+    <value>Partner und Öffentlichkeit belegen Ihre Kurse und Lehrgänge ohne Mitgliedskonto und ohne Zugriff auf anderes.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-external-learners" xml:space="preserve">
+    <value>Fremdfirmen absolvieren Ihre Sicherheitsunterweisung für den Standort, eine benachbarte freiwillige Feuerwehr besucht Ihren Maschinistenlehrgang, und CERT-Freiwillige melden sich für einen Kurs an.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-external-learners" xml:space="preserve">
+    <value>Lernportal einschalten, Kurse für externe Lernende öffnen und Lernende per E-Mail einladen. Bis zu 25 % Ihrer Plätze (mindestens 25) sind enthalten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learner-portal" xml:space="preserve">
+    <value>Lernportal im eigenen Design</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learner-portal" xml:space="preserve">
+    <value>Anmeldeseite und Katalog für externe Lernende mit Logo und Farbe Ihrer Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learner-portal" xml:space="preserve">
+    <value>Lernende sehen Ihre Abteilung statt Resgrid und nur ihre eigene Ausbildung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learner-portal" xml:space="preserve">
+    <value>Die Öffentlichkeit findet Ihre Erste-Hilfe-Kurse im Portal und meldet sich nach E-Mail-Bestätigung an.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learner-portal" xml:space="preserve">
+    <value>Logo im Abteilungsprofil hochladen, Akzentfarbe wählen und festlegen, ob Selbstregistrierung und öffentliche Liste erlaubt sind.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-public-class-fees" xml:space="preserve">
+    <value>Kostenpflichtige öffentliche Lehrgänge</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-public-class-fees" xml:space="preserve">
+    <value>Optionale Gebühr pro externem Lernenden mit Listenexport und Rechnungen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-public-class-fees" xml:space="preserve">
+    <value>Erste-Hilfe-, HLW- und CERT-Lehrgänge abrechnen: Liste exportieren oder Rechnungen mit Business Ops erstellen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-public-class-fees" xml:space="preserve">
+    <value>Ein HLW-Kurs kostet 45 pro Person; eine Rechnung geht an den Arbeitgeber, der sechs Beschäftigte schickte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-public-class-fees" xml:space="preserve">
+    <value>Seite „Öffentlicher Lehrgang und Gebühren“ öffnen, Lehrgang listen, Gebühr setzen, dann Liste exportieren oder Rechnungen pro Lernendem oder Organisation erstellen. Resgrid nimmt keine Zahlungen an.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-course-drafts" xml:space="preserve">
+    <value>Kursentwürfe aus Protokollen und SOPs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-course-drafts" xml:space="preserve">
+    <value>Entwerfen Sie einen Onlinekurs aus einem veröffentlichten Protokoll oder einem hochgeladenen SOP-Dokument: Module, Lektionen, die jeweils ihre Abschnitte zitieren, und eine Fragensammlung zur Prüfung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-course-drafts" xml:space="preserve">
+    <value>Ausbildungsverantwortliche beginnen mit einem vollständigen Entwurf nach dem eigenen Verfahren der Abteilung statt mit einer leeren Seite, und jede Lektion zeigt den Quelltext, auf dem sie beruht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-course-drafts" xml:space="preserve">
+    <value>Ein Ausbildungsverantwortlicher macht aus der neuen Mayday-SOP einen Kursentwurf mit vier Modulen und fünf Quizfragen, prüft jede Lektion anhand ihres Abschnitts und reicht ihn zur Freigabe ein.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-course-drafts" xml:space="preserve">
+    <value>Erfordert Enhanced AI mit Wissensantworten und das LMS-Add-on; öffnen Sie Ausbildung, Kursbibliothek, Mit KI entwerfen. Entwürfe werden nie von selbst veröffentlicht, jede Zahl muss in den zitierten Abschnitten stehen, als keine KI markierte Inhalte werden nie gesendet, und Abteilungen mit Advanced Data Protection erhalten keine Entwürfe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-flashcards" xml:space="preserve">
+    <value>Lernkarten für Kurse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-flashcards" xml:space="preserve">
+    <value>Übungskarten, entworfen aus einem Kurs oder dem Protokoll, auf dem er beruht; Autoren behalten die gewünschten, und Lernende üben sie im Kursplayer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-flashcards" xml:space="preserve">
+    <value>Mitglieder wiederholen zwischen Übungen die Schritte und Kriterien, die sie kennen müssen, und eine Karte wird ausgeblendet und zur Prüfung markiert, sobald ihre Quelle eine neue Version erhält.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-flashcards" xml:space="preserve">
+    <value>Nachdem das Protokoll zum Herzstillstand eine neue Version erhalten hat, verschwinden seine Lernkarten aus dem Player, bis der Ausbildungsverantwortliche sie anhand der neuen Version geprüft hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-flashcards" xml:space="preserve">
+    <value>Erfordert Enhanced AI mit Wissensantworten und das LMS-Add-on; öffnen Sie einen Kurs und wählen Sie Lernkarten. Übungen werden nie bewertet oder im Ausbildungsnachweis erfasst.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-starter-courses" xml:space="preserve">
+    <value>Startkurse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-starter-courses" xml:space="preserve">
+    <value>Von Resgrid verfasste Kurse (Erste Schritte mit Resgrid, Grundlagen der Einsatzsicherheit, eine Gliederung zum Gefahrstoff-Grundwissen, Fahrergrundlagen) zum Kopieren als Entwurf in die Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-starter-courses" xml:space="preserve">
+    <value>Eine Abteilung erhält in Minuten einen strukturierten ersten Kurs und passt ihn an ihre Verfahren an; die Kopie behält die Quellenangabe, und Partnerplätze zeigen, wo akkreditierte Inhalte andocken.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-starter-courses" xml:space="preserve">
+    <value>Eine freiwillige Feuerwehr kopiert Erste Schritte mit Resgrid, ergänzt ihre Funkkanäle und Wachennamen und weist den Kurs nach der Freigabe jedem neuen Mitglied zu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-starter-courses" xml:space="preserve">
+    <value>Erfordert das LMS-Add-on und „Kurse verwalten“; öffnen Sie Ausbildung, Kursbibliothek, Startkurse. Startkurse enthalten keinen Normtext und keine Akkreditierung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsStandardsSettings" xml:space="preserve">
+    <value>xAPI-Einstellungen (LRS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsStandardsSettings" xml:space="preserve">
+    <value>Ob LMS-Kurs- und Lektionsergebnisse als xAPI-Statements an den Learning Record Store der Abteilung gesendet werden, mit welchem Schlüssel und Geheimnis und ob Mitglieder per E-Mail-Adresse gekennzeichnet werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>xAPI-Statements senden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>Kurs- und Lektionsergebnisse (attempted, completed, passed, failed) werden eingereiht und vom Standards-Worker mit Wiederholungen an den LRS gesendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>LRS-Endpunkt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>Die https-Adresse des xAPI-Endpunkts des Learning Record Store; Statements werden an dessen statements-Ressource gesendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>LRS-Schlüssel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>Der Basic-Auth-Schlüssel (Benutzername), den der LRS ausgegeben hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>LRS-Geheimnis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>Das Basic-Auth-Geheimnis, verschlüsselt für die Abteilung gespeichert und nie wieder angezeigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Mitglieder per E-Mail kennzeichnen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Aus: Jedes Mitglied ist ein pseudonymes Abteilungskonto. Ein: Die E-Mail-Adresse des Mitglieds wird als Akteur des Statements gesendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-content-standards" xml:space="preserve">
+    <value>SCORM, cmi5, xAPI und LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-content-standards" xml:space="preserve">
+    <value>SCORM-1.2/2004- und cmi5-Pakete importieren und in einem abgeschotteten Player abspielen, CE-Kurse von Drittanbietern über LTI 1.3 mit Punkterückmeldung starten und Ergebnisse als xAPI-Statements an einen externen LRS senden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-content-standards" xml:space="preserve">
+    <value>E-Learning von Partnern und Zukäufe laufen in Resgrid und landen im Bildungsnachweis; Ergebnisse können in den eigenen LRS der Abteilung fließen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-content-standards" xml:space="preserve">
+    <value>Ein Herz-Kurs eines CAPCE-Anbieters startet über LTI aus einer Kurslektion; die Punktzahl kommt zurück, die Lektion ist abgeschlossen und die Stunden landen im Nachweis des Mitglieds.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-content-standards" xml:space="preserve">
+    <value>Öffnen Sie Schulungen, wählen Sie Standards, laden Sie ein Paket hoch oder registrieren Sie ein LTI-Tool und fügen Sie dann einem Kurs eine SCORM-, cmi5- oder LTI-Lektion hinzu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-protocol-tools" xml:space="preserve">
+    <value>Protokoll-Übungskarten, Schulungs- und Übersetzungsentwürfe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-protocol-tools" xml:space="preserve">
+    <value>Entwerfen Sie aus einer veröffentlichten Protokollversion Übungskarten, eine Schulung mit Quiz und Übersetzungen zur Prüfung durch die Autoren; Mitglieder üben die Karten am Protokoll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-protocol-tools" xml:space="preserve">
+    <value>Protokollautoren erhalten mit Enhanced AI allein Entwürfe auf Grundlage der eigenen Protokolle der Abteilung, und jeder entworfene Eintrag nennt den Abschnitt, aus dem er stammt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-protocol-tools" xml:space="preserve">
+    <value>Nach der Veröffentlichung des Schlaganfallprotokolls entwirft der Rettungsdienstkoordinator zehn Übungskarten, eine Schulung mit fünf Quizfragen für die Bestätigung und eine spanische Übersetzung zur Prüfung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-protocol-tools" xml:space="preserve">
+    <value>Aktivieren Sie Wissensantworten mit Enhanced AI; öffnen Sie ein veröffentlichtes Protokoll und wählen Sie Übungskarten oder Schulung entwerfen, oder öffnen Sie eine Übersetzung im Entwurf und wählen Sie Übersetzung mit KI entwerfen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.RecordTrainingCompletions" xml:space="preserve">
+    <value>Schulungsabschlüsse erfassen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.RecordTrainingCompletions" xml:space="preserve">
+    <value>Erlaubt zu erfassen, dass Mitglieder eine Schulung oder einen LMS-Lehrgang gemeinsam absolviert haben (aus einer Kursliste oder mit einer Notiz aus der Teilnehmerliste eines Lehrgangs bzw. der Zuweisungsliste einer Schulung). Jeder Nachweis zeigt, dass ein Ausbilder ihn erfasst hat, und die erfassende Person kann ihn mit Begründung stornieren. Gruppenadministratoren erfassen nur für Mitglieder ihrer eigenen Gruppe. Ohne gespeicherte Regel dürfen es nur Abteilungsadministratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-record-completions" xml:space="preserve">
+    <value>Schulungsabschlüsse für Mitglieder erfassen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-record-completions" xml:space="preserve">
+    <value>Ein Ausbilder oder Schulungsbeauftragter erfasst, dass Mitglieder eine gemeinsam absolvierte Schulung oder einen Lehrgang abgeschlossen haben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-record-completions" xml:space="preserve">
+    <value>Gemeinsame Ausbildung (ein HLW-Kurs, eine Wache, die die Videos zusammen ansieht) landet im Nachweis jedes Mitglieds, die Zertifizierung wird erneuert, und der Nachweis nennt, wer ihn erfasst hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-record-completions" xml:space="preserve">
+    <value>Nach einem HLW-Kurs hakt der Ausbildungsleiter die Teilnehmenden auf der Kursliste ab und erfasst den HLW-Lehrgang für alle als abgeschlossen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-record-completions" xml:space="preserve">
+    <value>Geben Sie den passenden Rollen auf der Sicherheitsseite das Recht Schulungsabschlüsse erfassen und verknüpfen Sie den Kurs mit seinem Lehrgang oder seiner Schulung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.law-enforcement" xml:space="preserve">
+    <value>Polizei und Strafverfolgung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.law-enforcement" xml:space="preserve">
+    <value>Prüfen Sie Schichtabdeckung, Qualifikationen, Fortbildung, Kenntnisnahme von Richtlinien und Überprüfung von Berichten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.law-enforcement" xml:space="preserve">
+    <value>Das Paket kann Einstellungen zu Schichtabdeckung, Nachweisen, Ausbildung und Überprüfung von Berichten prüfen. Gesetzliche Anforderungen, Regeln von Zulassungsstellen, die Überprüfung von Zwangsanwendungen und Beweismittelsysteme werden nicht bewertet. Die verantwortliche Führungs- oder Ausbildungskraft muss diese Quellen prüfen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.business" xml:space="preserve">
+    <value>Unternehmen und Arbeitsplatz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.business" xml:space="preserve">
+    <value>Prüfen Sie Mitarbeitergruppen, Qualifikationen, Ausbildung, Checklisten und Kenntnisnahme von Richtlinien für einen Arbeitsplatz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.business" xml:space="preserve">
+    <value>Das Paket kann Gruppen, Nachweise, Ausbildung, Checklisten und Ausrüstungssperren prüfen. Arbeitsrecht, Arbeitsschutzvorschriften, Versicherungen und Anforderungen an Fremdfirmen werden nicht bewertet. Die verantwortliche Führungskraft muss diese Quellen prüfen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-requirements" xml:space="preserve">
+    <value>Anforderungssätze für Zertifikate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-requirements" xml:space="preserve">
+    <value>Ein Zertifikat wird automatisch ausgestellt oder verlängert, wenn ein Mitglied alle Elemente seines Satzes im Zyklus abschließt: LMS-Kurse, eine Kursreihe, Schulungen, eine von einem Ausbilder erfasste praktische Übung unter Aufsicht, Fertigkeitsbewertungen oder Fortbildungsstunden. Wird ein zugrunde liegender Abschluss storniert, wird das Zertifikat zurückgenommen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-requirements" xml:space="preserve">
+    <value>Mitglieder und Verantwortliche sehen genau, was noch fehlt („3 von 4 erledigt“), niemand trägt Verlängerungen von Hand nach, und ein irrtümlicher Abschluss lässt kein Zertifikat ohne Grundlage zurück.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-requirements" xml:space="preserve">
+    <value>Ein Fahrer- oder Bedienerzertifikat erfordert den jährlichen Fahrkurs, den Fahrzeugcheck-Kurs und einen Langsamfahrkurs, den ein Ausbilder abzeichnet; sobald der letzte erfasst ist, verlängert sich das Zertifikat bis zum nächsten 31. Dezember.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-requirements" xml:space="preserve">
+    <value>Noch nichts einzurichten: Anforderungssätze für Zertifikate gehören zum LMS-Add-on, das noch nicht verfügbar ist.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.certification-validity-rules" xml:space="preserve">
+    <value>Gültigkeitsregeln für Zertifikate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.certification-validity-rules" xml:space="preserve">
+    <value>Ein Zertifikatstyp läuft eine Anzahl Monate nach der Ausstellung ab, am Ende jedes Kalenderjahres, am Ende des eigenen Jahres der Organisation oder an einem festen Datum, mit optionaler Kulanzfrist und optionalem Verlängerungsfenster.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.certification-validity-rules" xml:space="preserve">
+    <value>Jährliche und geschäftsjährliche Berechtigungen laufen für alle am selben Tag ab, Verlängerungen landen im richtigen Jahr, und Datumsangaben folgen der Zeitzone der Organisation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.certification-validity-rules" xml:space="preserve">
+    <value>Eine Staplerberechtigung, die jedes Jahr am 31. März abläuft, verlängert sich bis zum folgenden 31. März, wenn die Auffrischung im Februar abgeschlossen wird.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.certification-validity-rules" xml:space="preserve">
+    <value>Öffnen Sie Zertifikate, dann einen Zertifikatstyp, und wählen Sie, wie er abläuft.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-read-and-confirm" xml:space="preserve">
+    <value>Schulungen zum Lesen und Bestätigen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-read-and-confirm" xml:space="preserve">
+    <value>Eine Schulung ohne Quiz kann jedes Mitglied bitten, vor dem Fälligkeitsdatum zu bestätigen, dass es sie gelesen und geprüft hat, und sich jährlich wiederholen: ein Mitarbeiterhandbuch, ein Verhaltenskodex oder eine Standortregel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-read-and-confirm" xml:space="preserve">
+    <value>Das Öffnen eines Dokuments zählt nicht mehr als Lesen: Der Nachweis zeigt, wer wann bestätigt hat, bereit für ein Audit.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-read-and-confirm" xml:space="preserve">
+    <value>Das Mitarbeiterhandbuch wird jeden Januar mit Fälligkeit 31. Januar zugewiesen; jedes Mitglied kreuzt „Ich habe diese Schulung gelesen und geprüft“ an, und der Nachweis zeigt das Datum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-read-and-confirm" xml:space="preserve">
+    <value>Erstellen Sie eine Schulung, hängen Sie das Dokument an oder schreiben Sie es, kreuzen Sie „Mitglieder bestätigen, dass sie es gelesen und geprüft haben“ an, legen Sie ein Fälligkeitsdatum fest und wiederholen Sie alle 12 Monate.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Einstellungen der Ausbildungsnachweise / Prüfung der Einreichungen von Mitgliedern</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Ob von Mitgliedern eingereichte Ausbildungsstunden vor der Anrechnung auf eine Prüfung warten: jede Einreichung (Standard), keine (beim Einreichen angenommen und als selbst gemeldet angezeigt) oder nur gewählte Kategorien bzw. oberhalb einer Stundengrenze.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>Einstellungen der Ausbildungsnachweise / Kategorien mit Prüfung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>Bei Prüfung ausgewählter Einreichungen warten Einreichungen in diesen Ausbildungskategorien auf eine Prüfung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>Einstellungen der Ausbildungsnachweise / Einreichungen prüfen ab (Stunden)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>Bei Prüfung ausgewählter Einreichungen warten Einreichungen mit mehr Stunden als diesem Wert auf eine Prüfung. 0 bedeutet keine Grenze.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>Einstellungen der Ausbildungsnachweise / Prüfende per Rolle nur für die eigene Gruppe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>Wenn aktiviert, prüfen per Rolle benannte Prüfende (Ausbildungsabschlüsse erfassen oder Ausbildung zuweisen) nur die Mitglieder ihrer Gruppe. Abteilungsadministratoren prüfen weiterhin alle, Gruppenadministratoren ihre eigene Gruppe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>Einstellungen der Ausbildungsnachweise / Benachrichtigungen für Prüfende</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>Wie Prüfende von neuen Einreichungen erfahren: eine Benachrichtigung je Einreichung (Standard), eine Zusammenfassung pro Tag oder keine (nur der Posteingang der Ausbildungsprüfungen und der Hinweis auf der Startseite).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-submission-reviews" xml:space="preserve">
+    <value>Ausbildungsprüfungen (Ausbildungsstunden der Mitglieder mit Nachweisen)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-submission-reviews" xml:space="preserve">
+    <value>Mitglieder erfassen extern absolvierte Fortbildungs- oder Ausbildungsstunden mit Zertifikat, Foto, Dokument oder Quittung; Prüfende genehmigen, lehnen ab oder fordern weitere Angaben an.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-submission-reviews" xml:space="preserve">
+    <value>Externe Ausbildung gelangt mit Nachweis in den Ausbildungsnachweis, geprüft wenn die Organisation es wünscht, und Mitglieder werden bei jedem Schritt informiert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-submission-reviews" xml:space="preserve">
+    <value>Ein Mitglied lädt ein Foto des Zertifikats einer Gefahrstoff-Auffrischung mit 8 Stunden hoch; die Ausbildungsleitung sieht es unter Ausbildungsprüfungen, öffnet das Foto und genehmigt es.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-submission-reviews" xml:space="preserve">
+    <value>Wählen Sie die Prüfung in den Einstellungen der Ausbildungsnachweise und geben Sie Ausbildungsleitung und Lehrkräften auf der Sicherheitsseite das Recht Ausbildungsabschlüsse erfassen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>Wellness-Einstellungen / Zertifizierung der Wellness-Beauftragten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>Ein Zertifizierungstyp der Organisation, etwa aus der Vorlage „Wellness-Beauftragte“, dessen Anforderungen und Gültigkeit die Organisation festlegt. Der Status jeder beauftragten Person (gültig, läuft ab, abgelaufen, fehlt) erscheint auf der Einstellungsseite und im Expositionsbericht der Mitglieder. Er entscheidet nur bei eingeschaltetem Zertifizierungsschalter, wer handelt. Keine zeigt keinen Status.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>Wellness-Einstellungen / Zertifizierung der benannten Beauftragten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>Ein Zertifizierungstyp der Organisation, etwa aus der Vorlage „Benannte Beauftragte für Expositionsschutz“, der als Status jeder benannten beauftragten Person angezeigt wird. Keine: Solange keine Rolle für benannte Beauftragte gewählt ist, gilt die Zertifizierung der Wellness-Beauftragten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Wellness-Einstellungen / Rolle des Peer-Support-Teams</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Mitglieder dieser Personalrolle bilden das Peer-Support-Team und erhalten die Jahrestags-Erinnerungen, die ein Mitglied teilen möchte. Keine: Die Mitglieder mit einer gültigen Zertifizierung des Peer-Support-Teams bilden das Team.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Wellness-Einstellungen / Nur Mitglieder mit gültiger Zertifizierung handeln</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Aus (Standard): Allein die Rollen der Wellness-Beauftragten, der benannten Beauftragten und des Peer-Supports entscheiden, wer handelt, und jede verknüpfte Zertifizierung wird als Status angezeigt. Ein: Ein Rollenmitglied braucht zusätzlich eine gültige Zertifizierung des mit der Rolle verknüpften Typs; eine Rolle ohne verknüpften Typ ist nicht betroffen. Es lässt sich nicht einschalten, solange niemand in der Rolle der Wellness-Beauftragten oder der benannten Beauftragten eine gültige Zertifizierung hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.ManageContentSets" xml:space="preserve">
+    <value>Inhaltssammlungen verwalten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.ManageContentSets" xml:space="preserve">
+    <value>Erlaubt, Protokoll- und Kurssammlungen für verknüpfte Abteilungen zu veröffentlichen, deren Sammlungen zu abonnieren, über den Aktualisierungseingang zu entscheiden, die vom Herausgeber offen gelassenen Blöcke anzupassen, Vorschläge zu beantworten und die LMS-Plätze einer verknüpften Abteilung zu sponsern. Jedes Mitglied kann dem Herausgeber eine Änderung vorschlagen. Ohne gespeicherte Regel dürfen dies nur Abteilungsadministratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ContentSetSettings" xml:space="preserve">
+    <value>Aktualisierungszeit der Sammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ContentSetSettings" xml:space="preserve">
+    <value>Die Ortszeit, zu der angenommene Aktualisierungen von Protokoll- und Kurssammlungen an oder nach ihrem Gültigkeitsdatum in Kraft treten (Standard 07:00, damit sich nichts überraschend mitten in einer Schicht ändert), und wer benachrichtigt wird, wenn eine Aktualisierung eintrifft, ein Vorschlag beantwortet wird, sich ein Sponsoring ändert oder ein LTI-Tool registriert werden muss: die Administratoren (sofern nicht deaktiviert) und Mitglieder der gewählten Rollen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-sets" xml:space="preserve">
+    <value>Protokollsammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-sets" xml:space="preserve">
+    <value>Veröffentlichen Sie Protokolle als regionale Sammlung für verknüpfte Abteilungen oder abonnieren Sie die Sammlung eines Landkreises, eines ärztlichen Leiters oder eines Unternehmens. Gesperrte Inhalte folgen dem Herausgeber, anpassbare Blöcke behalten lokale Telefonnummern und Ressourcen, jede neue Version kommt mit markierten Änderungen in den Aktualisierungseingang und tritt zu Ihrer Aktualisierungszeit in Kraft, und Mitglieder schlagen dem Herausgeber Änderungen vor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.linked-department-protocols" xml:space="preserve">
+    <value>Protokolle verknüpfter Abteilungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.linked-department-protocols" xml:space="preserve">
+    <value>Lesen Sie die veröffentlichten Protokolle eines Partners für gegenseitige Hilfe über eine Abteilungsverknüpfung, die Protokolle teilt – schreibgeschützt und nur die gültige Version. Eingeschränkte, lizenzierte und als Dokument hochgeladene Protokolle werden nie geteilt, und das Ausschalten der Freigabe sperrt den Zugriff sofort.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.course-sets" xml:space="preserve">
+    <value>Kurssammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.course-sets" xml:space="preserve">
+    <value>Veröffentlichen Sie Schulungen (und mit dem LMS auch Kurse und Lernpfade) als Sammlung für verknüpfte Organisationen; Abonnenten erhalten eigene Kopien, gesperrt oder offen nach Wahl des Herausgebers, und jede Aktualisierung landet in ihrem Eingang und tritt zu ihrer Aktualisierungszeit in Kraft. Schulungen benötigen kein Add-on, und Quiz-Änderungen werden mit jeder Aktualisierung übernommen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-sponsorship" xml:space="preserve">
+    <value>Gesponserte LMS-Plätze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-sponsorship" xml:space="preserve">
+    <value>Bezahlen Sie die LMS-aktivierten Mitglieder einer verknüpften Abteilung aus Ihren eigenen Paketen, optional bis zu einem Platzlimit. Die gesponserte Abteilung benötigt kein Add-on, kann den kostenlosen Tarif nutzen, nutzt ausschließlich Ihre Kurssammlungen und sieht, wer bezahlt; das Beenden des Sponsorings oder der Verknüpfung lässt den Zugriff nach den üblichen Ablaufregeln auslaufen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.StepUpPolicy" xml:space="preserve">
+    <value>Richtlinie zur erneuten Bestätigung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.StepUpPolicy" xml:space="preserve">
+    <value>Wo Mitglieder erneut bestätigen müssen, dass sie es sind (Unterschriften, Lese- und Unterschriftsbestätigungen, Freigaben, geschützte Daten), ob dies optional ist und ob neben der Zwei-Faktor-Authentifizierung ein Passwort oder eine Anmeldung beim Identitätsanbieter genügt. Prüfen Sie die auf der Seite aufgeführten Mitglieder ohne Zwei-Faktor-Authentifizierung, bevor Sie es verlangen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>Richtlinie zur erneuten Bestätigung / Bereiche</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>Ein Eintrag je Bereich, der vom Standard abweicht. Ein Bereich ohne Eintrag verlangt die Zwei-Faktor-Bestätigung dort, wo er sie bisher verlangt hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Bestätigungsbereich / Bereich</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Für welche Aktionen der Eintrag gilt: 1 Unterschriften, 2 Lese- und Unterschriftsbestätigungen, 3 Freigabeentscheidungen, 4 geschützte Daten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Bestätigungsbereich / Optional</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Für Unterschriften oder Freigabeentscheidungen ist keine erneute Bestätigung nötig: Sie werden mit der angemeldeten Sitzung unterschrieben, sofern sich das Mitglied nicht kürzlich bestätigt hat. Lese- und Unterschriftsbestätigungen folgen stattdessen dem Schalter der Protokollbibliothek, geschützte Daten den ADP-Ausnahmen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Bestätigungsbereich / Weitere Methoden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Neben der Zwei-Faktor-Authentifizierung akzeptierte Bestätigungen: 2 eine neue Anmeldung beim Identitätsanbieter, 4 die erneute Eingabe des Kontopassworts. Keine davon ist ein zweiter Faktor; für geschützte Daten kann nur das verwaltende Mitglied dies ändern, und eine Änderung beendet bereits erteilte Freigaben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-sets" xml:space="preserve">
+    <value>LMS-Kurse und -Pfade in Sammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-sets" xml:space="preserve">
+    <value>LMS-Kurse und Lernpfade werden in Kurssammlungen weitergegeben: Gehostete Videos und SCORM- oder cmi5-Pakete werden mit dem Abonnenten geteilt, eine LTI-Lektion nutzt die eigene Registrierung des Abonnenten beim Tool (dessen Verantwortliche werden aufgefordert, sie abzuschließen), und ein Pfad verweist auf die Kopien seiner Kurse beim Abonnenten. Erfordert das LMS-Add-on des Abonnenten oder das Sponsoring des Herausgebers.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.deployment-partner-acceptance" xml:space="preserve">
+    <value>Annahme von Einsätzen durch Partner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.deployment-partner-acceptance" xml:space="preserve">
+    <value>Wenn eine Einsatzanforderung für eine verknüpfte Organisation auf Resgrid besetzt wird, benennen Sie sie als Partner: Jede Besetzung, die Sie annehmen, fordert deren Administratoren auf, die Zuweisung über die Verknüpfung mit einer Signatur mit erneuter Bestätigung (Step-up) anzunehmen, und der Einsatz zeigt, wer ihn wann angenommen hat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.department-link-acceptance" xml:space="preserve">
+    <value>Signierte Annahme von Verknüpfungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.department-link-acceptance" xml:space="preserve">
+    <value>Die Annahme einer Verknüpfung von einer anderen Organisation erfolgt durch eine Signatur mit erneuter Bestätigung (Step-up) eines Ihrer Administratoren, gebunden an die beiden Organisationen und an das, was jede in diesem Moment freigibt; ohne die Step-up-Bestätigung bleibt die Verknüpfung nicht angenommen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.workforce-pro" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.workforce-pro" xml:space="preserve">
+    <value>Das kostenpflichtige Add-on pro Mitglied für Aufzeichnungen zu Mitgliedergesundheit und Expositionen am Arbeitsplatz: Expositionsprotokoll, Expositionsfälle, Verletzungen und medizinische Freigaben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.workforce-pro" xml:space="preserve">
+    <value>Langfristige Expositions- und Verletzungsaufzeichnungen für die Mitglieder, die sie brauchen, bezahlt pro Paket mit 25 Mitgliedern und auch nach dem Ende des Add-ons lesbar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.workforce-pro" xml:space="preserve">
+    <value>Eine gemischte Abteilung kauft zwei Pakete für ihre 40 hauptamtlichen Kräfte, schaltet Workforce Pro für sie frei und lässt die Ehrenamtlichen aus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.workforce-pro" xml:space="preserve">
+    <value>Kaufen Sie Pakete auf der Seite des Workforce-Pro-Add-ons, schalten Sie Workforce Pro für die Mitglieder frei, deren Aufzeichnungen Sie führen, und wählen Sie dann die Gesundheitsrollen in den Gesundheitseinstellungen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-workforce-pro" xml:space="preserve">
+    <value>Workforce-Pro-Add-on</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-workforce-pro" xml:space="preserve">
+    <value>Kaufen Sie Workforce Pro in Paketen mit 25 Mitgliedern und ändern Sie die Paketanzahl; der Preis wird vor jeder Änderung angezeigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-workforce-pro" xml:space="preserve">
+    <value>Gestaffelte Stufen machen große Mitgliederlisten pro Mitglied günstiger, es gibt keine Einrichtungsgebühr, und zusätzliche Pakete werden anteilig berechnet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-workforce-pro" xml:space="preserve">
+    <value>Eine Abteilung mit 60 freigeschalteten Mitgliedern hat 3 Pakete; bei 76 fügt sie ein viertes hinzu und zahlt die anteilige Differenz sofort.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-workforce-pro" xml:space="preserve">
+    <value>Öffnen Sie unter Abonnement die Workforce-Pro-Karte, wählen Sie die Paketanzahl und schließen Sie den Kauf ab. Entfernte Pakete gelten ab dem nächsten Abrechnungsdatum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.workforce-pro-seats" xml:space="preserve">
+    <value>Workforce-Pro-Plätze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.workforce-pro-seats" xml:space="preserve">
+    <value>Schalten Sie Workforce Pro für die Mitglieder frei, deren Aufzeichnungen zu Gesundheit und Expositionen am Arbeitsplatz Sie führen, im Rahmen der Plätze Ihrer Pakete.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.workforce-pro-seats" xml:space="preserve">
+    <value>Sie zahlen nur für diese Mitglieder; Verantwortliche und Führungskräfte, die für andere handeln, brauchen ihre Berechtigung, keinen Platz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.workforce-pro-seats" xml:space="preserve">
+    <value>Eine gemischte Abteilung schaltet Workforce Pro für ihre 40 hauptamtlichen Kräfte frei und lässt die Ehrenamtlichen aus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.workforce-pro-seats" xml:space="preserve">
+    <value>Öffnen Sie die Workforce-Pro-Plätze auf der Seite des Workforce-Pro-Add-ons und schalten Sie Mitglieder frei. Das Abschalten löscht nie eine Aufzeichnung: Die Aufzeichnungen sind dann nur noch lesbar.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

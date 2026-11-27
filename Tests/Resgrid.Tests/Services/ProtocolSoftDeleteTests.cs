@@ -8,6 +8,8 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Services;
+using System;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Tests.Services
 {
@@ -37,13 +39,14 @@ namespace Resgrid.Tests.Services
 			triggers.Setup(x => x.GetDispatchProtocolTriggersByProtocolIdAsync(It.IsAny<int>())).ReturnsAsync(new List<DispatchProtocolTrigger>());
 
 			_service = new ProtocolsService(_protocols.Object, attachments.Object, questions.Object, triggers.Object,
-				Mock.Of<IDispatchProtocolQuestionAnswersRepository>());
+				Mock.Of<IDispatchProtocolQuestionAnswersRepository>(), new Lazy<IDispatchTriggerFactsService>(() => Mock.Of<IDispatchTriggerFactsService>()),
+				new Lazy<IProtocolAiSuggestionService>(() => Mock.Of<IProtocolAiSuggestionService>()), new Lazy<IProtectedWriteService>(() => Mock.Of<IProtectedWriteService>()));
 		}
 
 		[Test]
 		public async Task Deleting_marks_the_protocol_deleted_and_never_removes_the_row()
 		{
-			var protocol = new DispatchProtocol { DispatchProtocolId = 4, DepartmentId = DepartmentId, Name = "Mayday" };
+			var protocol = new DispatchProtocol { DispatchProtocolId = 4, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 4000, DepartmentId = DepartmentId, Name = "Mayday" };
 			_protocols.Setup(x => x.GetDispatchProtocolByIdAsync(4)).ReturnsAsync(protocol);
 			_protocols.Setup(x => x.SaveOrUpdateAsync(protocol, It.IsAny<CancellationToken>(), true)).ReturnsAsync(protocol);
 
@@ -69,8 +72,8 @@ namespace Resgrid.Tests.Services
 		{
 			_protocols.Setup(x => x.GetAllByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<DispatchProtocol>
 			{
-				new DispatchProtocol { DispatchProtocolId = 1, DepartmentId = DepartmentId },
-				new DispatchProtocol { DispatchProtocolId = 2, DepartmentId = DepartmentId, IsDeleted = true }
+				new DispatchProtocol { DispatchProtocolId = 1, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 1000, DepartmentId = DepartmentId },
+				new DispatchProtocol { DispatchProtocolId = 2, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 2000, DepartmentId = DepartmentId, IsDeleted = true }
 			});
 
 			var current = await _service.GetAllProtocolsForDepartmentAsync(DepartmentId);
@@ -83,8 +86,8 @@ namespace Resgrid.Tests.Services
 		{
 			_protocols.Setup(x => x.GetAllByDepartmentIdAsync(DepartmentId)).ReturnsAsync(new List<DispatchProtocol>
 			{
-				new DispatchProtocol { DispatchProtocolId = 1, DepartmentId = DepartmentId },
-				new DispatchProtocol { DispatchProtocolId = 2, DepartmentId = DepartmentId, IsDeleted = true }
+				new DispatchProtocol { DispatchProtocolId = 1, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 1000, DepartmentId = DepartmentId },
+				new DispatchProtocol { DispatchProtocolId = 2, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 2000, DepartmentId = DepartmentId, IsDeleted = true }
 			});
 
 			(await _service.GetProtocolIdsOwnedByDepartmentAsync(DepartmentId, new[] { 1, 2 })).Should().Equal(1);
@@ -94,7 +97,7 @@ namespace Resgrid.Tests.Services
 		public async Task A_deleted_protocol_is_still_read_by_id_for_the_calls_that_cite_it()
 		{
 			_protocols.Setup(x => x.GetDispatchProtocolByIdAsync(2))
-				.ReturnsAsync(new DispatchProtocol { DispatchProtocolId = 2, DepartmentId = DepartmentId, IsDeleted = true, Name = "Retired" });
+				.ReturnsAsync(new DispatchProtocol { DispatchProtocolId = 2, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 2000, DepartmentId = DepartmentId, IsDeleted = true, Name = "Retired" });
 
 			var protocol = await _service.GetProtocolByIdAsync(2);
 

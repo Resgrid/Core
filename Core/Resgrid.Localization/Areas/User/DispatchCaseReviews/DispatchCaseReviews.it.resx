@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CaseReviewsTab" xml:space="preserve">
+    <value>Revisioni dei casi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCaseReviewsTab" xml:space="preserve">
+    <value>Le mie revisioni dei casi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueLink" xml:space="preserve">
+    <value>Coda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleLink" xml:space="preserve">
+    <value>Campione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsLink" xml:space="preserve">
+    <value>Rapporti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsLink" xml:space="preserve">
+    <value>Griglie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueIntro" xml:space="preserve">
+    <value>Casi di dispatch campionati in attesa di revisione, i più vecchi per primi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueCaption" xml:space="preserve">
+    <value>Casi di dispatch in attesa di revisione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>La coda è vuota. Estrai un campione per iniziare le revisioni.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileQueued" xml:space="preserve">
+    <value>In coda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileInReview" xml:space="preserve">
+    <value>Bozze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAssignedToMe" xml:space="preserve">
+    <value>Assegnati a me</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAwaitingAcknowledgment" xml:space="preserve">
+    <value>In attesa dell'operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAcknowledged" xml:space="preserve">
+    <value>Confermate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileReviews" xml:space="preserve">
+    <value>Revisioni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAverageScore" xml:space="preserve">
+    <value>Punteggio medio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrides" xml:space="preserve">
+    <value>Modifiche manuali</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileToAcknowledge" xml:space="preserve">
+    <value>Da confermare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowWholeQueue" xml:space="preserve">
+    <value>Tutta la coda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowMineOnly" xml:space="preserve">
+    <value>Assegnati a me</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleCallsButton" xml:space="preserve">
+    <value>Campiona chiamate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Chiamata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolColumn" xml:space="preserve">
+    <value>Protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>Assegnato a</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Stato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Azioni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverriddenLabel" xml:space="preserve">
+    <value>Modificato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Non assegnato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnCaseShort" xml:space="preserve">
+    <value>La tua chiamata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Rivedi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakeButton" xml:space="preserve">
+    <value>Prendi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Rimuovi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveConfirm" xml:space="preserve">
+    <value>Togliere questo caso dalla coda? Potrà essere campionato di nuovo in seguito.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>In coda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>Bozza</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Inviata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusAcknowledged" xml:space="preserve">
+    <value>Confermata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleTitle" xml:space="preserve">
+    <value>Campiona chiamate da rivedere</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleIntro" xml:space="preserve">
+    <value>Scegli a caso le chiamate da rivedere per protocollo, versione, determinante, operatore e date.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Anteprima del campione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewCandidates" xml:space="preserve">
+    <value>Casi corrispondenti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewAlreadyReviewed" xml:space="preserve">
+    <value>Già rivisti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewExcluded" xml:space="preserve">
+    <value>Esclusi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewEligible" xml:space="preserve">
+    <value>Idonei</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewSampleSize" xml:space="preserve">
+    <value>Verrebbero estratti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewCapped" xml:space="preserve">
+    <value>Sono state contate solo le {0} chiamate corrispondenti più recenti. Restringi le date per un conteggio completo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WhichCallsLegend" xml:space="preserve">
+    <value>Quali chiamate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Dal</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Al</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolLabel" xml:space="preserve">
+    <value>Protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Versione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantLabel" xml:space="preserve">
+    <value>Determinante</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantHelp" xml:space="preserve">
+    <value>Un determinante o il suo inizio, per esempio 09-E.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherLabel" xml:space="preserve">
+    <value>Operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HowManyLegend" xml:space="preserve">
+    <value>Quanti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModeCount" xml:space="preserve">
+    <value>Numero di casi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModePercent" xml:space="preserve">
+    <value>Percentuale dei casi idonei</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleSizeHelp" xml:space="preserve">
+    <value>Al massimo {0} casi per campione. Una percentuale viene arrotondata per eccesso. Le chiamate già riviste non vengono mai ricampionate.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricLabel" xml:space="preserve">
+    <value>Griglia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Assegna a</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignHelp" xml:space="preserve">
+    <value>Le sue chiamate sono escluse dal campione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Conta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSampleButton" xml:space="preserve">
+    <value>Estrai il campione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyProtocol" xml:space="preserve">
+    <value>Qualsiasi protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyVersion" xml:space="preserve">
+    <value>Qualsiasi versione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyDispatcher" xml:space="preserve">
+    <value>Qualsiasi operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRubricWillBeCreated" xml:space="preserve">
+    <value>Griglia standard (creata con il primo campione)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampledMessage" xml:space="preserve">
+    <value>{0} casi messi in coda per la revisione ({1} idonei, {2} già rivisti).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewTitle" xml:space="preserve">
+    <value>Revisione del caso: chiamata {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnCaseNotice" xml:space="preserve">
+    <value>È la tua chiamata: deve valutarla un altro revisore.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Punteggio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionComplianceLabel" xml:space="preserve">
+    <value>Conformità delle domande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InstructionComplianceLabel" xml:space="preserve">
+    <value>Conformità delle istruzioni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotApplicableShort" xml:space="preserve">
+    <value>n.d.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseHeader" xml:space="preserve">
+    <value>Il caso come registrato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverrideDetail" xml:space="preserve">
+    <value>Calcolato {0}; modificato da {1} il {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverrideReasonLabel" xml:space="preserve">
+    <value>Motivo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PriorityLabel" xml:space="preserve">
+    <value>Priorità suggerita</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceLabel" xml:space="preserve">
+    <value>Origine</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceAi" xml:space="preserve">
+    <value>Suggerimento di Enhanced AI, confermato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineHeader" xml:space="preserve">
+    <value>Cronologia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCallLogged" xml:space="preserve">
+    <value>Chiamata registrata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineAttached" xml:space="preserve">
+    <value>Protocollo allegato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCaseCompleted" xml:space="preserve">
+    <value>Flusso del caso completato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCaseNotCompleted" xml:space="preserve">
+    <value>Il flusso del caso non è stato completato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineOverridden" xml:space="preserve">
+    <value>Determinante modificato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCallerText" xml:space="preserve">
+    <value>Messaggio al chiamante</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineStepsStarted" xml:space="preserve">
+    <value>Procedura passo passo avviata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineStepsCompleted" xml:space="preserve">
+    <value>completata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineSampled" xml:space="preserve">
+    <value>Campionato per la revisione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineSent" xml:space="preserve">
+    <value>Revisione inviata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineAcknowledged" xml:space="preserve">
+    <value>Confermata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>Domande e istruzioni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>Per questo caso non sono state registrate domande né istruzioni.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindEntryQuestion" xml:space="preserve">
+    <value>Domanda iniziale</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindKeyQuestion" xml:space="preserve">
+    <value>Domanda chiave</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindInstruction" xml:space="preserve">
+    <value>Istruzione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnswerLabel" xml:space="preserve">
+    <value>Risposta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceLabel" xml:space="preserve">
+    <value>Conformità</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotScored" xml:space="preserve">
+    <value>Non valutato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceCompliant" xml:space="preserve">
+    <value>Conforme</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompliancePartial" xml:space="preserve">
+    <value>In parte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotCompliant" xml:space="preserve">
+    <value>Non conforme</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotApplicable" xml:space="preserve">
+    <value>Non pertinente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Nota (facoltativa)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriteriaHeader" xml:space="preserve">
+    <value>Criteri della griglia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeightLabel" xml:space="preserve">
+    <value>peso {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DerivedCriterionHelp" xml:space="preserve">
+    <value>Valutato in base alle domande e istruzioni sopra.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotScoredOption" xml:space="preserve">
+    <value>Non valutato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score100" xml:space="preserve">
+    <value>100 - pienamente soddisfatto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score75" xml:space="preserve">
+    <value>75 - in gran parte soddisfatto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score50" xml:space="preserve">
+    <value>50 - in parte soddisfatto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score25" xml:space="preserve">
+    <value>25 - appena soddisfatto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score0" xml:space="preserve">
+    <value>0 - non soddisfatto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsLabel" xml:space="preserve">
+    <value>Commenti per l'operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsHelp" xml:space="preserve">
+    <value>L'operatore legge questi commenti insieme ai punteggi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveDraftButton" xml:space="preserve">
+    <value>Salva bozza</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>Invia all'operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriterionColumn" xml:space="preserve">
+    <value>Criterio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeightColumn" xml:space="preserve">
+    <value>Peso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeedbackHeader" xml:space="preserve">
+    <value>Riscontro dell'operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedOn" xml:space="preserve">
+    <value>Confermata il {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotAcknowledgedYet" xml:space="preserve">
+    <value>Non ancora confermata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherReplyHeader" xml:space="preserve">
+    <value>Risposta dell'operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyOptionalLabel" xml:space="preserve">
+    <value>Risposta (facoltativa)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyOnceHelp" xml:space="preserve">
+    <value>Puoi rispondere una volta; il revisore viene avvisato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeButton" xml:space="preserve">
+    <value>Conferma</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>La tua risposta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Invia risposta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphHeader" xml:space="preserve">
+    <value>Flusso del caso del protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoGraph" xml:space="preserve">
+    <value>La versione citata non ha un flusso del caso da mostrare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathLegend" xml:space="preserve">
+    <value>Passi del percorso seguito da questa chiamata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MineIntro" xml:space="preserve">
+    <value>Revisioni delle chiamate che hai gestito. Leggile e conferma ciascuna; puoi rispondere una volta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MineEmpty" xml:space="preserve">
+    <value>Ancora nessuna revisione dei casi per te.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadAndAcknowledgeButton" xml:space="preserve">
+    <value>Leggi e conferma</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RepliedLabel" xml:space="preserve">
+    <value>Hai risposto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsTitle" xml:space="preserve">
+    <value>Rapporti delle revisioni dei casi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsIntro" xml:space="preserve">
+    <value>Conformità dei casi di dispatch rivisti per protocollo, versione, operatore e mese.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyButton" xml:space="preserve">
+    <value>Applica</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Esporta in CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportEmpty" xml:space="preserve">
+    <value>Nessuna revisione inviata per chiamate di questo periodo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByMonthHeader" xml:space="preserve">
+    <value>Per mese</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByProtocolHeader" xml:space="preserve">
+    <value>Per protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByVersionHeader" xml:space="preserve">
+    <value>Per versione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>Per operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByItemHeader" xml:space="preserve">
+    <value>Per domanda e istruzione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Gruppo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCall" xml:space="preserve">
+    <value>Chiamata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCallDate" xml:space="preserve">
+    <value>Data della chiamata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvProtocol" xml:space="preserve">
+    <value>Protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvVersion" xml:space="preserve">
+    <value>Versione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDeterminant" xml:space="preserve">
+    <value>Determinante</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverridden" xml:space="preserve">
+    <value>Modificato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDispatcher" xml:space="preserve">
+    <value>Operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvReviewer" xml:space="preserve">
+    <value>Revisore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvScore" xml:space="preserve">
+    <value>Punteggio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvQuestionCompliance" xml:space="preserve">
+    <value>Conformità delle domande %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvInstructionCompliance" xml:space="preserve">
+    <value>Conformità delle istruzioni %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvSent" xml:space="preserve">
+    <value>Inviata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAcknowledged" xml:space="preserve">
+    <value>Confermata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Sì</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsTitle" xml:space="preserve">
+    <value>Griglie dei casi di dispatch</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsIntro" xml:space="preserve">
+    <value>Griglie di controllo qualità di Records usate per valutare i casi di dispatch. Ogni revisione conserva i criteri con cui è stata campionata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRubrics" xml:space="preserve">
+    <value>Non c'è ancora una griglia per i casi di dispatch.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateTemplateButton" xml:space="preserve">
+    <value>Crea la griglia standard</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InactiveLabel" xml:space="preserve">
+    <value>Inattiva</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DerivedLabel" xml:space="preserve">
+    <value>dagli elementi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Modifica</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewRubricHeader" xml:space="preserve">
+    <value>Nuova griglia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditRubricHeader" xml:space="preserve">
+    <value>Modifica griglia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricNameLabel" xml:space="preserve">
+    <value>Nome</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Attiva</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriteriaHelp" xml:space="preserve">
+    <value>Le chiavi "questions" e "instructions" prendono il punteggio dalle domande e istruzioni; gli altri criteri si valutano a mano. I pesi vanno da 1 a 10.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriterionKeyColumn" xml:space="preserve">
+    <value>Chiave</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Annulla</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveRubricButton" xml:space="preserve">
+    <value>Salva griglia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricSavedMessage" xml:space="preserve">
+    <value>Griglia salvata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricNotSaved" xml:space="preserve">
+    <value>La griglia non è stata salvata. Servono un nome e almeno un criterio, con chiavi univoche.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRubricName" xml:space="preserve">
+    <value>Revisione dei casi di dispatch</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCaseEntry" xml:space="preserve">
+    <value>Presa in carico: indirizzo, numero di richiamata e problema principale confermati</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateQuestions" xml:space="preserve">
+    <value>Domande poste come scritte, nell'ordine</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateDeterminant" xml:space="preserve">
+    <value>Il determinante corretto (una modifica ha un motivo valido)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateInstructions" xml:space="preserve">
+    <value>Istruzioni date come scritte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCallerCare" xml:space="preserve">
+    <value>Calmo, chiaro e cortese con il chiamante</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakenMessage" xml:space="preserve">
+    <value>Il caso è nella tua coda.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>Il caso è stato tolto dalla coda.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>La revisione è stata inviata all'operatore.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftSavedMessage" xml:space="preserve">
+    <value>Bozza salvata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Revisione confermata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RepliedMessage" xml:space="preserve">
+    <value>La tua risposta è stata inviata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultDone" xml:space="preserve">
+    <value>Fatto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNotFound" xml:space="preserve">
+    <value>Revisione non trovata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultForbidden" xml:space="preserve">
+    <value>Non hai il permesso di farlo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultOwnCase" xml:space="preserve">
+    <value>Non puoi rivedere la tua chiamata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadySent" xml:space="preserve">
+    <value>La revisione è già stata inviata all'operatore e non può più cambiare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultIncomplete" xml:space="preserve">
+    <value>Valuta ogni domanda, istruzione e criterio prima di inviare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadyAcknowledged" xml:space="preserve">
+    <value>Questa revisione è già stata confermata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadyCommented" xml:space="preserve">
+    <value>Hai già risposto a questa revisione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNotSent" xml:space="preserve">
+    <value>Questa revisione non è ancora stata inviata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultConflict" xml:space="preserve">
+    <value>Qualcun altro ha modificato o preso questa revisione. Ricarica la pagina e riprova.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultCommentRequired" xml:space="preserve">
+    <value>Scrivi prima una risposta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNoRubric" xml:space="preserve">
+    <value>Scegli una griglia attiva per i casi di dispatch.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultInvalid" xml:space="preserve">
+    <value>Controlla le date e la dimensione del campione.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

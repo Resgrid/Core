@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Std.StripLabel" xml:space="preserve">
+    <value>Ενότητες προτύπων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Packages" xml:space="preserve">
+    <value>Πακέτα περιεχομένου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Tools" xml:space="preserve">
+    <value>Εργαλεία LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Xapi" xml:space="preserve">
+    <value>xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.LapsedNotice" xml:space="preserve">
+    <value>Το πρόσθετο LMS έχει λήξει: όλα παραμένουν ορατά και τα μαθήματα που έχουν ήδη ανατεθεί συνεχίζουν να παίζουν, αλλά τα πακέτα, τα εργαλεία και οι ρυθμίσεις xAPI δεν μπορούν να αλλάξουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.AddonNotice" xml:space="preserve">
+    <value>Τα πρότυπα περιεχομένου είναι μέρος του πρόσθετου LMS. Ενεργοποιήστε το για να ανεβάσετε πακέτα, να καταχωρίσετε εργαλεία LTI και να στέλνετε δηλώσεις xAPI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackagesTitle" xml:space="preserve">
+    <value>Πακέτα περιεχομένου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackagesIntro" xml:space="preserve">
+    <value>Πακέτα SCORM 1.2, SCORM 2004 και cmi5 για μαθήματα εκπαίδευσης, που αναπαράγονται σε απομονωμένο πρόγραμμα αναπαραγωγής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.StoreNotConfigured" xml:space="preserve">
+    <value>Ο χώρος αποθήκευσης πολυμέσων LMS δεν έχει ρυθμιστεί σε αυτό το σύστημα, επομένως τα πακέτα δεν μπορούν να ανέβουν ή να αναπαραχθούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadLabel" xml:space="preserve">
+    <value>Πακέτο (.zip)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadButton" xml:space="preserve">
+    <value>Ανέβασμα πακέτου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadHelp" xml:space="preserve">
+    <value>Έως {0} MB. Το zip πρέπει να έχει το imsmanifest.xml (SCORM) ή το cmi5.xml (cmi5) στη ρίζα του· ελέγχεται πριν αποθηκευτεί και αποσυμπιέζεται λίγο αργότερα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NoPackages" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη πακέτα περιεχομένου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Title" xml:space="preserve">
+    <value>Τίτλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Standard" xml:space="preserve">
+    <value>Πρότυπο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Items" xml:space="preserve">
+    <value>SCO / AU</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Uploaded" xml:space="preserve">
+    <value>Ανέβηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Scorm12" xml:space="preserve">
+    <value>SCORM 1.2</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Scorm2004" xml:space="preserve">
+    <value>SCORM 2004</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Cmi5" xml:space="preserve">
+    <value>cmi5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.FilesFormat" xml:space="preserve">
+    <value>{0} αρχεία, {1} MB</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Queued" xml:space="preserve">
+    <value>Σε αναμονή αποσυμπίεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Processing" xml:space="preserve">
+    <value>Αποσυμπιέζεται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Ready" xml:space="preserve">
+    <value>Έτοιμο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Failed" xml:space="preserve">
+    <value>Απέτυχε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Remove" xml:space="preserve">
+    <value>Κατάργηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.SandboxNote" xml:space="preserve">
+    <value>Τα πακέτα εκτελούνται σε απομονωμένο πλαίσιο που δεν έχει πρόσβαση σε σελίδες ή συνδέσεις του Resgrid· αναφέρουν μόνο την πρόοδο της δικής τους εκκίνησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageUploaded" xml:space="preserve">
+    <value>Το πακέτο ανέβηκε. Θα είναι έτοιμο μόλις αποσυμπιεστεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageRemoved" xml:space="preserve">
+    <value>Το πακέτο αφαιρέθηκε από νέα μαθήματα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolSaved" xml:space="preserve">
+    <value>Το εργαλείο LTI αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolRemoved" xml:space="preserve">
+    <value>Το εργαλείο LTI αφαιρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.KeyRotated" xml:space="preserve">
+    <value>Ένα νέο κλειδί υπογραφής είναι ενεργό. Το προηγούμενο κλειδί παραμένει δημοσιευμένο για μία εβδομάδα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις xAPI αποθηκεύτηκαν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiRequeued" xml:space="preserve">
+    <value>Οι δηλώσεις που απέτυχαν μπήκαν ξανά στην ουρά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolsTitle" xml:space="preserve">
+    <value>Εργαλεία LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolsIntro" xml:space="preserve">
+    <value>Μαθήματα τρίτων (LTI 1.3) που ανοίγουν από ένα μάθημα και επιστρέφουν τη βαθμολογία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NewTool" xml:space="preserve">
+    <value>Καταχώριση εργαλείου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NoTools" xml:space="preserve">
+    <value>Δεν έχουν καταχωριστεί ακόμη εργαλεία LTI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Name" xml:space="preserve">
+    <value>Όνομα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.ClientId" xml:space="preserve">
+    <value>Αναγνωριστικό πελάτη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Passback" xml:space="preserve">
+    <value>Επιστροφή βαθμολογίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Yes" xml:space="preserve">
+    <value>Ναι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.No" xml:space="preserve">
+    <value>Όχι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Active" xml:space="preserve">
+    <value>Ενεργό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Inactive" xml:space="preserve">
+    <value>Ανενεργό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Open" xml:space="preserve">
+    <value>Άνοιγμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.RotateKey" xml:space="preserve">
+    <value>Εναλλαγή κλειδιού υπογραφής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.RotateKeyHelp" xml:space="preserve">
+    <value>Οι εκκινήσεις υπογράφονται με το κλειδί του τμήματος (RS256). Μετά την εναλλαγή, τα εργαλεία που διαβάζουν το σύνολο κλειδιών παίρνουν το νέο κλειδί· το παλιό παραμένει δημοσιευμένο για μία εβδομάδα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PlatformTitle" xml:space="preserve">
+    <value>Στοιχεία πλατφόρμας για παρόχους εργαλείων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PlatformIntro" xml:space="preserve">
+    <value>Δώστε αυτά στον πάροχο κατά την καταχώριση του Resgrid στο εργαλείο του, μαζί με το αναγνωριστικό πελάτη και το αναγνωριστικό ανάπτυξης του εργαλείου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Issuer" xml:space="preserve">
+    <value>Εκδότης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Jwks" xml:space="preserve">
+    <value>URL συνόλου κλειδιών (JWKS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Auth" xml:space="preserve">
+    <value>URL εξουσιοδότησης (OIDC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Token" xml:space="preserve">
+    <value>URL διακριτικού πρόσβασης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Kid" xml:space="preserve">
+    <value>Αναγνωριστικό ενεργού κλειδιού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.NoKey" xml:space="preserve">
+    <value>Δημιουργείται με το πρώτο εργαλείο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolTitle" xml:space="preserve">
+    <value>Εργαλείο LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolIntro" xml:space="preserve">
+    <value>Τα τελικά σημεία και τα κλειδιά του παρόχου. Οι εκκινήσεις μοιράζονται μόνο ένα ψευδώνυμο αναγνωριστικό μέλους, εκτός αν ενεργοποιήσετε το όνομα ή το email παρακάτω.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.DeploymentId" xml:space="preserve">
+    <value>Αναγνωριστικό ανάπτυξης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.OidcLoginUrl" xml:space="preserve">
+    <value>URL έναρξης σύνδεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LaunchUrl" xml:space="preserve">
+    <value>URL εκκίνησης (σύνδεσμος προορισμού)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.JwksUrl" xml:space="preserve">
+    <value>URL συνόλου κλειδιών εργαλείου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.RedirectUris" xml:space="preserve">
+    <value>URI ανακατεύθυνσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.RedirectUrisHelp" xml:space="preserve">
+    <value>Ένα ανά γραμμή (https). Οι εκκινήσεις αποστέλλονται μόνο σε αυτά· αν είναι κενό, χρησιμοποιείται το URL εκκίνησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PublicJwks" xml:space="preserve">
+    <value>Δημόσια κλειδιά εργαλείου (JWKS), αντί για URL</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PublicJwksHelp" xml:space="preserve">
+    <value>Επικολλήστε το σύνολο κλειδιών του εργαλείου αν δεν έχει URL συνόλου κλειδιών. Χρησιμοποιείται για την επαλήθευση των αιτημάτων επιστροφής βαθμολογίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.Custom" xml:space="preserve">
+    <value>Προσαρμοσμένες παράμετροι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.CustomHelp" xml:space="preserve">
+    <value>Ένα key=value ανά γραμμή, αποστέλλεται σε κάθε εκκίνηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.Passback" xml:space="preserve">
+    <value>Το εργαλείο επιστρέφει τη βαθμολογία (Assignment and Grade Services)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareName" xml:space="preserve">
+    <value>Κοινοποίηση ονόματος μέλους</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareEmail" xml:space="preserve">
+    <value>Κοινοποίηση email μέλους</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PassbackHelp" xml:space="preserve">
+    <value>Με επιστροφή βαθμολογίας το μάθημα ολοκληρώνεται όταν το εργαλείο αναφέρει ότι τελείωσε και βαθμολογήθηκε τουλάχιστον με τη βάση· χωρίς αυτήν, το άνοιγμα του εργαλείου ολοκληρώνει το μάθημα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Back" xml:space="preserve">
+    <value>Πίσω</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiTitle" xml:space="preserve">
+    <value>Δηλώσεις xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiIntro" xml:space="preserve">
+    <value>Αποστολή αποτελεσμάτων μαθημάτων και ενοτήτων στο Learning Record Store σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Pending" xml:space="preserve">
+    <value>Σε αναμονή αποστολής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Delivered" xml:space="preserve">
+    <value>Παραδόθηκαν</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Failed" xml:space="preserve">
+    <value>Απέτυχαν</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.XapiEnabled" xml:space="preserve">
+    <value>Αποστολή δηλώσεων xAPI στο LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsEndpoint" xml:space="preserve">
+    <value>Τελικό σημείο LRS (https)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsKey" xml:space="preserve">
+    <value>Κλειδί LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsSecret" xml:space="preserve">
+    <value>Μυστικό LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.SecretStored" xml:space="preserve">
+    <value>Αποθηκευμένο (αφήστε κενό για να διατηρηθεί)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ClearSecret" xml:space="preserve">
+    <value>Αφαίρεση αποθηκευμένου μυστικού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareEmailInActor" xml:space="preserve">
+    <value>Ταυτοποίηση μελών με διεύθυνση email (αλλιώς ψευδώνυμος λογαριασμός τμήματος)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiHelp" xml:space="preserve">
+    <value>Οι δηλώσεις (attempted, completed, passed, failed) μπαίνουν σε ουρά όταν συμβαίνουν και αποστέλλονται σε δέσμες, με επαναλήψεις όταν το LRS δεν είναι διαθέσιμο. Το μυστικό αποθηκεύεται κρυπτογραφημένο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.RecentFailures" xml:space="preserve">
+    <value>Πρόσφατες αποτυχίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Statement" xml:space="preserve">
+    <value>Δήλωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Attempts" xml:space="preserve">
+    <value>Προσπάθειες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.LastError" xml:space="preserve">
+    <value>Τελευταίο σφάλμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Queued" xml:space="preserve">
+    <value>Σε ουρά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Retry" xml:space="preserve">
+    <value>Επανάληψη αποτυχημένων δηλώσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Tool" xml:space="preserve">
+    <value>Εργαλείο LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Choose" xml:space="preserve">
+    <value>Επιλογή…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoPassback" xml:space="preserve">
+    <value>χωρίς επιστροφή βαθμολογίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Target" xml:space="preserve">
+    <value>URI συνδέσμου προορισμού (προαιρετικό)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.PassMark" xml:space="preserve">
+    <value>Βάση (%)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.LtiHelp" xml:space="preserve">
+    <value>Το μέλος ανοίγει το εργαλείο σε νέο παράθυρο. Με επιστροφή βαθμολογίας το μάθημα ολοκληρώνεται με τη βάση (0 = όταν το εργαλείο αναφέρει ολοκλήρωση)· αλλιώς όταν ανοίγει το εργαλείο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoTools" xml:space="preserve">
+    <value>Καταχωρίστε πρώτα ένα εργαλείο LTI (Εκπαιδεύσεις → Πρότυπα → Εργαλεία LTI).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Package" xml:space="preserve">
+    <value>Πακέτο περιεχομένου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.PackageHelp" xml:space="preserve">
+    <value>Το μάθημα ολοκληρώνεται όταν το αναφέρει το πακέτο (κατάσταση SCORM ή ο κανόνας moveOn του cmi5)· το μέλος δεν μπορεί να το σημειώσει ως ολοκληρωμένο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoPackages" xml:space="preserve">
+    <value>Ανεβάστε πρώτα ένα πακέτο (Εκπαιδεύσεις → Πρότυπα → Πακέτα περιεχομένου).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Completed" xml:space="preserve">
+    <value>Αυτό το μάθημα ολοκληρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiIntro" xml:space="preserve">
+    <value>Αυτό το μάθημα παρέχεται από {0} και ανοίγει σε νέο παράθυρο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LaunchTool" xml:space="preserve">
+    <value>Άνοιγμα μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiScoreHelp" xml:space="preserve">
+    <value>Το αποτέλεσμά σας επιστρέφει από τον πάροχο όταν τελειώσετε· ανανεώστε αυτή τη σελίδα για να το δείτε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiOpenHelp" xml:space="preserve">
+    <value>Το άνοιγμα του μαθήματος ολοκληρώνει αυτή την ενότητα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Items" xml:space="preserve">
+    <value>Μέρη αυτού του μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Done" xml:space="preserve">
+    <value>ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Sandboxed" xml:space="preserve">
+    <value>Το μάθημα εκτελείται σε προστατευμένο πλαίσιο και αναφέρει μόνο τη δική του πρόοδο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Status" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Satisfied" xml:space="preserve">
+    <value>Ο κανόνας ολοκλήρωσης πληρείται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.NotSatisfied" xml:space="preserve">
+    <value>Δεν ολοκληρώθηκε ακόμη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Score" xml:space="preserve">
+    <value>Βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Refresh" xml:space="preserve">
+    <value>Ανανέωση προόδου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotFound" xml:space="preserve">
+    <value>Αυτό το στοιχείο δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotAuthorized" xml:space="preserve">
+    <value>Δεν έχετε δικαίωμα να το κάνετε αυτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.AddonRequired" xml:space="preserve">
+    <value>Απαιτείται ενεργό πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.LapseWindowEnded" xml:space="preserve">
+    <value>Το πρόσθετο LMS έληξε και αυτό το μάθημα δεν μπορεί πλέον να παρακολουθηθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotEntitled" xml:space="preserve">
+    <value>Αυτό το περιεχόμενο δεν είναι διαθέσιμο στο τμήμα σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.InvalidInput" xml:space="preserve">
+    <value>Ορισμένα στοιχεία λείπουν ή δεν είναι έγκυρα (οι διευθύνσεις πρέπει να είναι https).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.LessonLocked" xml:space="preserve">
+    <value>Ολοκληρώστε πρώτα τα προηγούμενα μαθήματα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.MediaUnavailable" xml:space="preserve">
+    <value>Αυτό το περιεχόμενο δεν μπορεί να ανοίξει τώρα (το πακέτο δεν είναι έτοιμο ή το εργαλείο δεν είναι ενεργό).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.FileTooLarge" xml:space="preserve">
+    <value>Το πακέτο είναι πολύ μεγάλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.UnsupportedFile" xml:space="preserve">
+    <value>Αυτό το αρχείο δεν είναι πακέτο που μπορεί να αναπαραχθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.RequirementNotMet" xml:space="preserve">
+    <value>Αυτό το μάθημα ολοκληρώνεται όταν το αναφέρει το περιεχόμενό του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.CodeExpired" xml:space="preserve">
+    <value>Αυτή η εκκίνηση έληξε. Ανοίξτε ξανά το μάθημα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.AlreadySubmitted" xml:space="preserve">
+    <value>Αυτό έχει ήδη καταγραφεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.Empty" xml:space="preserve">
+    <value>Το αρχείο είναι κενό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.TooLarge" xml:space="preserve">
+    <value>Το πακέτο είναι μεγαλύτερο από το επιτρεπόμενο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.NotZip" xml:space="preserve">
+    <value>Το αρχείο δεν είναι αρχείο zip.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.TooManyFiles" xml:space="preserve">
+    <value>Το πακέτο περιέχει πάρα πολλά αρχεία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UnsafePath" xml:space="preserve">
+    <value>Το πακέτο περιέχει διαδρομή αρχείου εκτός του φακέλου του, γι’ αυτό απορρίφθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UncompressedTooLarge" xml:space="preserve">
+    <value>Το πακέτο μετά την αποσυμπίεση ξεπερνά το επιτρεπόμενο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.SuspiciousCompression" xml:space="preserve">
+    <value>Ένα αρχείο του πακέτου συμπιέζεται υπερβολικά πέρα από πραγματικό περιεχόμενο και απορρίφθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.ManifestMissing" xml:space="preserve">
+    <value>Δεν υπάρχει imsmanifest.xml (SCORM) ή cmi5.xml (cmi5) στη ρίζα του zip.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.ManifestInvalid" xml:space="preserve">
+    <value>Το manifest δεν είναι έγκυρο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UnsupportedStandard" xml:space="preserve">
+    <value>Αυτή η έκδοση SCORM δεν υποστηρίζεται (υποστηρίζονται SCORM 1.2 και 2004).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.NoLaunchableItem" xml:space="preserve">
+    <value>Το πακέτο δεν έχει SCO ή AU για εκκίνηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.LaunchFileMissing" xml:space="preserve">
+    <value>Ένα SCO ή AU αναφέρει αρχείο που δεν υπάρχει στο πακέτο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.RemoteAuNotSupported" xml:space="preserve">
+    <value>Ένα AU φιλοξενείται αλλού· μέσα στο Resgrid εκτελείται μόνο περιεχόμενο του πακέτου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ClientReportedNote" xml:space="preserve">
+    <value>Τα αποτελέσματα SCORM και cmi5 (ολοκλήρωση, βαθμολογία, επιτυχία ή αποτυχία) αναφέρονται από το πακέτο που εκτελείται στον browser του εκπαιδευόμενου, οπότε ένας αποφασισμένος εκπαιδευόμενος θα μπορούσε να τα αλλοιώσει. Για μαθήματα με μονάδες συνεχιζόμενης εκπαίδευσης, προσθέστε επίσης μια ενότητα αξιολόγησης Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotLicensed" xml:space="preserve">
+    <value>Χρειάζεστε θέση LMS για αυτό. Ζητήστε από τον διαχειριστή σας να σας ενεργοποιήσει στο LMS. Η Ακαδημία και τα αρχεία εκπαίδευσής σας παραμένουν διαθέσιμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Busy" xml:space="preserve">
+    <value>Πάρα πολλές προσπάθειες. Περιμένετε ένα λεπτό και δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiFramed" xml:space="preserve">
+    <value>Το μάθημα ανοίγει σε νέο παράθυρο. Επιστρέψτε εδώ όταν τελειώσετε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiOpening" xml:space="preserve">
+    <value>Άνοιγμα του μαθήματος…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiScoreHelp" xml:space="preserve">
+    <value>Το αποτέλεσμά σας επιστρέφει από τον πάροχο όταν τελειώσετε. Η εφαρμογή ενημερώνεται μόλις φτάσει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Returned" xml:space="preserve">
+    <value>Επιστρέψατε από το μάθημα. Μπορείτε να κλείσετε αυτό το παράθυρο και να επιστρέψετε στην εφαρμογή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Ended" xml:space="preserve">
+    <value>Αυτό το μάθημα δεν μπορεί να συνεχιστεί εδώ. Κλείστε το και ανοίξτε ξανά το μάθημα από την εφαρμογή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Close" xml:space="preserve">
+    <value>Κλείσιμο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Offline" xml:space="preserve">
+    <value>Είστε εκτός σύνδεσης. Αυτό το μάθημα χρειάζεται σύνδεση για να αποθηκεύσει την πρόοδό σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

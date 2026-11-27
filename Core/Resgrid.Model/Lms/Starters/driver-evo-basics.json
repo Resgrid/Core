@@ -1,0 +1,81 @@
+{
+  "key": "driver-evo-basics",
+  "revision": 1,
+  "kind": "course",
+  "title": "Driver and emergency vehicle operation basics",
+  "code": "RG-EVO",
+  "summary": "The habits of a safe apparatus driver: inspecting the vehicle, driving in emergency mode, backing with a spotter, and clearing intersections. Pair it with your department's driving policy and a practical session.",
+  "tags": "driver, evo, apparatus, starter",
+  "hours": 1,
+  "license": "resgrid-starter",
+  "overview": "<p>A starter course written by Resgrid in plain language. Your department's driving policy and the law where you drive always come first: add them to each lesson, and pair the course with a practical session on a closed course before anyone drives on the road.</p>",
+  "modules": [
+    {
+      "title": "Before you drive",
+      "lessons": [
+        {
+          "title": "The vehicle inspection",
+          "html": "<p>Inspect the vehicle at the start of every shift and record what you found. A problem found in the bay is far easier to deal with than one found on the way to a call.</p><ul><li>Walk around the vehicle: tyres, lights, mirrors, compartments and anything leaking.</li><li>Check the cab: gauges, warning lights, brakes, horn and siren.</li><li>Take the vehicle out of service and report it when something is not right.</li></ul><p><em>Add your department's inspection checklist.</em></p>"
+        },
+        {
+          "title": "Know the vehicle",
+          "html": "<p>Every vehicle handles differently. Learn its height, width, weight and how it brakes and turns before you drive it under emergency conditions.</p><p>Your department decides who may drive which vehicle and what training and hours they need first.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Driving under emergency conditions",
+      "lessons": [
+        {
+          "title": "Arriving safely is the job",
+          "html": "<p>Lights and siren ask other drivers to yield; they do not make them see or hear you. Drive so that you arrive.</p><ul><li>Everyone on board wears a seatbelt before the vehicle moves.</li><li>Keep a speed at which you can stop for what you cannot yet see.</li><li>Expect other drivers to do the unexpected.</li></ul><p><em>Add your department's emergency driving policy here.</em></p>"
+        },
+        {
+          "title": "Intersections",
+          "html": "<p>Intersections are where emergency vehicles are most often hit. Slow down and be ready to stop on approach.</p><ul><li>Clear each lane one at a time and make eye contact with other drivers.</li><li>Come to a complete stop when your department's policy or the law requires it.</li><li>Never assume that a green light or a siren has cleared the way.</li></ul>"
+        }
+      ]
+    },
+    {
+      "title": "Backing and parking",
+      "lessons": [
+        {
+          "title": "Backing with a spotter",
+          "html": "<p>Use a spotter whenever you back up. Agree on the signals before you start.</p><ul><li>The spotter stands where the driver can see them in the mirror.</li><li>If the driver loses sight of the spotter, the driver stops.</li></ul>"
+        },
+        {
+          "title": "Positioning on scene",
+          "html": "<p>Where you park protects the crew. Follow your department's positioning policy for roadway incidents and leave room for the vehicles still coming.</p>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Driver basics check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "What should the driver do when they lose sight of the spotter while backing?",
+        "kind": "single",
+        "options": [ "Stop", "Keep backing slowly", "Sound the horn and continue" ],
+        "correct": 0,
+        "explanation": "If the driver loses sight of the spotter, the driver stops."
+      },
+      {
+        "text": "Lights and siren guarantee that other drivers will yield.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 1,
+        "explanation": "Lights and siren ask other drivers to yield; they do not make them see or hear you."
+      },
+      {
+        "text": "When should everyone on board wear a seatbelt?",
+        "kind": "single",
+        "options": [ "Before the vehicle moves", "Only on the highway", "Only when responding to a call" ],
+        "correct": 0,
+        "explanation": "Everyone on board wears a seatbelt before the vehicle moves."
+      }
+    ]
+  }
+}

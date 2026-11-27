@@ -58,6 +58,8 @@
     <PackageReference Include="OpenIddict.Validation.AspNetCore" Version="6.1.1" />
     <PackageReference Include="OpenIddict.Validation.ServerIntegration" Version="6.1.1" />
     <PackageReference Include="protobuf-net" Version="3.2.46" />
+    <!-- Round 10: the certificate's verification QR, drawn exactly as the web draws it (Resgrid.Web uses the same version). -->
+    <PackageReference Include="QRCoder" Version="1.6.0" />
     <PackageReference Include="Sentry" Version="5.4.0" />
     <PackageReference Include="Sentry.AspNetCore" Version="5.4.0" />
     <PackageReference Include="Sentry.Profiling" Version="5.4.0" />

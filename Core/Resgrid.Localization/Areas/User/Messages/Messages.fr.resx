@@ -179,4 +179,76 @@
   <data name="NotAttending" xml:space="preserve">
     <value>Absent</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>Par certification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>Personne par certification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>Statut de la certification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>a expiré</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>expire dans les jours indiqués</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>jamais détenue</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>Jours</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>Ajoute les membres actifs dont la certification correspond, en plus des destinataires choisis ci-dessus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>Aucun membre ne correspond au statut de certification choisi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>Inscrits à une session</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>Aucune session</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>Statut d'inscription</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>Inscrits</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>Présents</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>Absents</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>En liste d'attente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>Ajoute aux destinataires les membres actifs de la session ayant ce statut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>Personne sur cette session n'a ce statut.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

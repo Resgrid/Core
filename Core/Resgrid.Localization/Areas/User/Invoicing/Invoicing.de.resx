@@ -373,4 +373,5 @@
   <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>Die Einheit hat bei diesem Einsatz nie „Am Einsatzort“ gemeldet, daher berechnet die Position die Zeit von der Erfassung des Einsatzes bis zu seinem Abschluss. Prüfen Sie die Menge vor dem Versand.</value></data>
   <data name="TimeSourceUnitStatus" xml:space="preserve"><value>Einsatzortzeit aus Einheitenstatus</value></data>
   <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>Die Einheit hat ihren Status „Am Einsatzort“ und den Status, der ihn beendete, selbst mit diesem Einsatz verknüpft.</value></data>
+  <data name="invoicing_approval_required" xml:space="preserve"><value>Diese Rechnung muss genehmigt sein, bevor sie versendet wird. Reichen Sie sie zur Genehmigung ein oder versenden Sie sie nach der Genehmigung.</value><comment>machine-translated</comment></data>
 </root>

@@ -1,0 +1,91 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    The branded learner portal's own layout (Training T5): the department's logo, name and accent, falling back to Resgrid's; no member
+    navigation, no member scripts. Every form posts once (resgrid.submit-once.js) with an antiforgery token.
+*@
+@{
+    var branding = ViewData["Branding"] as LmsLearnerPortalBranding ?? LmsExternalLearnerRules.Branding(null, null, null);
+    var key = ViewData["PortalKey"] as string;
+    var learner = ViewData["Learner"] as LmsExternalLearner;
+    var title = ViewData["Title"] as string ?? localizer["Portal.Title"].Value;
+    var message = TempData["LearnMessage"] as string;
+    var error = TempData["LearnError"] as string;
+    var culture = CultureInfo.CurrentUICulture;
+}
+<!DOCTYPE html>
+<html lang="@culture.TwoLetterISOLanguageName" dir="@(culture.TextInfo.IsRightToLeft ? "rtl" : "ltr")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>@title | @branding.DisplayName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="~/css/learner-portal.css" asp-append-version="true" />
+    <style>:root { --rg-accent: @branding.Accent; --rg-accent-text: @branding.AccentText; }</style>
+</head>
+<body class="rgl-body">
+    <a class="rgl-skip" href="#main">@localizer["Portal.Skip"]</a>
+    <header class="rgl-header">
+        <div class="container">
+            @if (!string.IsNullOrEmpty(key))
+            {
+                <a class="rgl-brand" href="~/Learn/@key">
+                    @if (!string.IsNullOrEmpty(branding.LogoUrl))
+                    {
+                        <img src="@branding.LogoUrl" alt="" />
+                    }
+                    <span>@branding.DisplayName</span>
+                </a>
+                <ul class="rgl-nav">
+                    @if (learner != null)
+                    {
+                        <li><a href="~/Learn/@key"><i class="fa fa-th-large" aria-hidden="true"></i> @localizer["Portal.Catalog"]</a></li>
+                        <li><a href="~/Learn/@key/My"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["Portal.MyLearning"]</a></li>
+                        <li>
+                            <form method="post" action="~/Learn/@key/SignOut" data-submit-once>
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="rgl-link"><i class="fa fa-sign-out" aria-hidden="true"></i> @localizer["Portal.SignOut"]</button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li><a href="~/Learn/@key/SignIn"><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["Portal.SignIn"]</a></li>
+                        @if (ViewData["SelfRegistration"] as bool? == true)
+                        {
+                            <li><a href="~/Learn/@key/Register"><i class="fa fa-user-plus" aria-hidden="true"></i> @localizer["Portal.Register"]</a></li>
+                        }
+                    }
+                </ul>
+            }
+            else
+            {
+                <span class="rgl-brand">@branding.DisplayName</span>
+            }
+        </div>
+    </header>
+    <main class="container rgl-main" id="main" tabindex="-1">
+        @if (!string.IsNullOrEmpty(message))
+        {
+            <div class="alert alert-success" role="status">@message</div>
+        }
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert alert-danger" role="alert">@error</div>
+        }
+        @RenderBody()
+    </main>
+    <footer class="rgl-footer">
+        <div>@string.Format(culture, localizer["Portal.PrivacyNote"].Value, branding.DisplayName)@if (!string.IsNullOrEmpty(key))
+            {
+                <text> &middot; </text><a href="~/Learn/@key/Privacy">@localizer["Portal.Privacy.Link"]</a>
+            }</div>
+        <div>@localizer["Portal.PoweredBy"]</div>
+    </footer>
+    <script src="~/js/app/public/resgrid.submit-once.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

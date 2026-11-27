@@ -1,0 +1,8 @@
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsProgramPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@* The LMS add-on state for the Programs pages: lapsed (everything readable, nothing new) or not active. *@
+@if (!Model.CanAuthor)
+{
+    <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @(Model.IsLapsed ? localizer["Prg.LapsedNotice"] : localizer["Prg.AddonNotice"])</div>
+}

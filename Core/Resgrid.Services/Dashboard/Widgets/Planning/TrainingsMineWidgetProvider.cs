@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Dashboard;
 using Resgrid.Model.Dashboard.Widgets.Planning;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services.Dashboard.Widgets.Planning
@@ -27,20 +28,22 @@ namespace Resgrid.Services.Dashboard.Widgets.Planning
 				.Where(x => x?.Training != null && x.Training.DepartmentId == context.DepartmentId)
 				.ToList();
 
-			bool IsOverdue(Training training) => training.ToBeCompletedBy.HasValue && training.ToBeCompletedBy.Value < context.NowUtc;
+			// Due moments and overdue come from TrainingDueDates (the end of the department-local day, leave applied), the
+			// same helper as My Training, the search projection and the notifier (T-D19).
+			bool IsOverdue(TrainingAssignmentStatus status) => status.State == TrainingAssignmentStates.Overdue || TrainingDueDates.IsOverdue(status.DueUtc, context.NowUtc);
 
 			return new TrainingsMineWidgetData
 			{
 				OutstandingCount = outstanding.Count,
-				OverdueCount = outstanding.Count(x => IsOverdue(x.Training)),
+				OverdueCount = outstanding.Count(IsOverdue),
 				Items = outstanding
 					.Take(context.GetInt("maxItems", 5))
 					.Select(x => new TrainingsMineItem
 					{
 						TrainingId = x.Training.TrainingId,
 						Name = x.Training.Name,
-						DueUtc = x.Training.ToBeCompletedBy,
-						IsOverdue = IsOverdue(x.Training),
+						DueUtc = x.DueUtc,
+						IsOverdue = IsOverdue(x),
 						Viewed = x.Assignment?.Viewed ?? false,
 						QuizFailed = x.QuizFailed,
 						Url = "/User/Trainings/View?trainingId=" + x.Training.TrainingId.ToString(CultureInfo.InvariantCulture)

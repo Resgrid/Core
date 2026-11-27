@@ -486,4 +486,12 @@
   <data name="ResumeGoBack" xml:space="preserve">
     <value>رجوع</value>
   </data>
+  <data name="StepUpUseReauthenticationLink" xml:space="preserve">
+    <value>استخدم كلمة المرور أو تسجيل الدخول الخاص بمؤسستك بدلًا من ذلك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpReauthenticateIntro" xml:space="preserve">
+    <value>حرصًا على أمانك، أكّد هويتك للمتابعة: أدخل كلمة المرور أو سجّل الدخول مرة أخرى عبر موفر الهوية لدى مؤسستك. لا يؤدي ذلك إلى تسجيل خروجك ولا إلى تمديد جلستك.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

@@ -30,9 +30,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly ICommandAccessService _commandAccessService;
 
+		private readonly IProtocolAccessService _protocolAccessService;
+
 		public SyncController(IIncidentCommandService incidentCommandService, IIncidentResourcesService incidentResourcesService, ISyncService syncService,
-			Model.Services.IAuthorizationService authorizationService, ICommandAccessService commandAccessService)
+			Model.Services.IAuthorizationService authorizationService, ICommandAccessService commandAccessService, IProtocolAccessService protocolAccessService = null)
 		{
+			_protocolAccessService = protocolAccessService;
 			_incidentCommandService = incidentCommandService;
 			_incidentResourcesService = incidentResourcesService;
 			_syncService = syncService;
@@ -168,9 +171,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("Reference")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_View)]
-		public async Task<ActionResult<SyncReferenceResult>> Reference(bool bypassCache = false)
+		public async Task<ActionResult<SyncReferenceResult>> Reference()
 		{
-			var data = await _syncService.GetReferenceDataAsync(DepartmentId, bypassCache);
+			// No bypassCache from the client (D21): any member with Command View could force the full rebuild on demand. The
+			// cache is dropped by the changes that matter (protocol save, disable, delete) and otherwise lives five minutes.
+			var data = await _syncService.GetReferenceDataAsync(DepartmentId);
 
 			// PII gate: the reference snapshot is cached department-scoped and caller-agnostic, so mobile numbers are
 			// redacted here per-caller (NOT inside the cached build, which would let the first caller's permission
@@ -194,6 +199,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 
 				data.Personnel = visiblePersonnel;
+			}
+
+			// Protocols per caller too (P1, R-P4): the cached build holds only published, enabled protocols; which of them the
+			// caller may read (audience, or Dispatch kind for dispatchers) is decided here, never in the shared build.
+			if (data.Protocols != null)
+			{
+				data.Protocols = _protocolAccessService == null
+					? new List<DispatchProtocol>()
+					: await _protocolAccessService.FilterReadableAsync(await _protocolAccessService.GetReaderAsync(DepartmentId, UserId),
+						data.Protocols.Where(p => p != null && p.IsPublished && !p.IsDisabled && !p.IsDeleted))
+						?? new List<DispatchProtocol>();
 			}
 
 			var result = new SyncReferenceResult { Data = data };

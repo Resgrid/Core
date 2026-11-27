@@ -1,0 +1,119 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingApplyHistoryView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    "Apply history to credits" (R-T3) for one certification type: each certification cycle with the credits the transcript would
+    add beside the manual and derived credits already in it. Nothing is written until the officer confirms the ticked rows.
+*@
+@{
+    var typeName = string.IsNullOrWhiteSpace(Model.Type.Code) ? Model.Type.Type : Model.Type.Type + " (" + Model.Type.Code + ")";
+    ViewBag.Title = "Resgrid | " + localizer["Rec.ApplyHistoryHeader"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Rec.ApplyHistoryHeader"].Value;
+    ViewData["Subtitle"] = typeName;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var preview = Model.Preview;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-next-action">
+        <p class="m-b-none"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Rec.ApplyHistoryPreviewHelp"]</p>
+    </div>
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-list" aria-hidden="true"></i> @localizer["Rec.ProposedCredits"]</div><div class="rgw-stat-value">@preview.ProposedCount</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["Rec.ProposedHours"]</div><div class="rgw-stat-value">@LearningRecordPresentation.Hours(preview.ProposedHours)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-calendar-o" aria-hidden="true"></i> @localizer["Rec.OutsideEveryCycle"]</div><div class="rgw-stat-value">@preview.OutsideEveryCycle</div></div>
+    </div>
+
+    @if (preview.Cycles.Count == 0 || preview.ProposedCount == 0)
+    {
+        <div class="ibox float-e-margins m-t-sm">
+            <div class="ibox-content">
+                <p class="text-muted m-b-none">@localizer["Rec.NothingToApply"]</p>
+            </div>
+        </div>
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="Credits" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Rec.BackToCreditsButton"]</a>
+    }
+    else
+    {
+        <form method="post" asp-controller="TrainingRecords" asp-action="ApplyHistory" asp-route-area="User" asp-route-typeId="@Model.Type.DepartmentCertificationTypeId" class="m-t-sm">
+            @Html.AntiForgeryToken()
+            @foreach (var cycle in preview.Cycles.Where(c => c.Proposed.Count > 0))
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-user" aria-hidden="true"></i> @Model.NameOf(cycle.UserId)@(Model.IsFormer(cycle.UserId) ? " (" + localizer["FormerMemberLabel"].Value + ")" : null)</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <p class="m-b-xs">
+                            <strong>@localizer["Doc.Cycle"]:</strong> @(cycle.CycleStart?.ToString("d", System.Globalization.CultureInfo.CurrentCulture) ?? "—") – @(cycle.CycleEnd?.ToString("d", System.Globalization.CultureInfo.CurrentCulture) ?? "—")
+                            @if (cycle.RequiredHours.HasValue)
+                            {
+                                <span> · @string.Format(localizer["Rec.RequiredHoursValue"].Value, LearningRecordPresentation.Hours(cycle.RequiredHours))</span>
+                            }
+                        </p>
+                        <p class="text-muted small">@string.Format(localizer["Rec.CycleCreditsSummary"].Value, LearningRecordPresentation.Hours(cycle.ManualHours), LearningRecordPresentation.Hours(cycle.DerivedHours), LearningRecordPresentation.Hours(cycle.ProposedHours))</p>
+                        <div class="table-responsive">
+                            <table class="table table-condensed rgw-table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col"><span class="sr-only">@localizer["Rec.ApplyColumn"]</span><i class="fa fa-check-square-o" aria-hidden="true"></i></th>
+                                        <th>@localizer["Doc.Date"]</th>
+                                        <th>@localizer["Doc.Course"]</th>
+                                        <th class="text-right">@localizer["Doc.Hours"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var proposal in cycle.Proposed)
+                                    {
+                                        var boxId = "apply-" + proposal.LearningRecordId;
+                                        <tr>
+                                            <td><input type="checkbox" id="@boxId" name="recordIds" value="@proposal.LearningRecordId" checked /></td>
+                                            <td class="text-nowrap"><label for="@boxId" class="m-b-none">@TrainingStatePresentation.LocalDate(proposal.CompletedOn, Model.Department)</label></td>
+                                            <td>
+                                                @proposal.Title
+                                                @if (proposal.IsBackfill)
+                                                {
+                                                    <small class="rgw-sub text-muted"><i class="fa fa-history" aria-hidden="true"></i> @localizer["Rec.BackfilledLabel"]</small>
+                                                }
+                                            </td>
+                                            <td class="text-right">@LearningRecordPresentation.Hours(proposal.Hours)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        @if (cycle.ExistingCredits.Count > 0)
+                        {
+                            <details>
+                                <summary class="text-muted"><i class="fa fa-list" aria-hidden="true"></i> @string.Format(localizer["Rec.ExistingCreditsSummary"].Value, cycle.ExistingCredits.Count)</summary>
+                                <ul class="rgw-journey">
+                                    @foreach (var credit in cycle.ExistingCredits.OrderBy(c => c.CreditDate))
+                                    {
+                                        <li>
+                                            <span>@credit.CreditDate.ToString("d", System.Globalization.CultureInfo.CurrentCulture) · @string.Format(localizer["HoursValue"].Value, LearningRecordPresentation.Hours(credit.Hours))</span>
+                                            <span class="label @(credit.IsDerived ? "label-info" : "label-default")">@localizer[credit.IsDerived ? "Rec.DerivedCreditLabel" : "Rec.ManualCreditLabel"]</span>
+                                        </li>
+                                    }
+                                </ul>
+                            </details>
+                        }
+                    </div>
+                </div>
+            }
+            <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.ApplySelectedButton"]</button>
+            <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="Credits" asp-route-area="User"><i class="fa fa-times" aria-hidden="true"></i> @localizer["CancelButton"]</a>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

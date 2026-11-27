@@ -159,6 +159,9 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 
 		/// <summary>Unit names by unit id, deleted units included, so a run shows the unit that drove it.</summary>
 		public Dictionary<int, string> UnitNames { get; set; } = new Dictionary<int, string>();
+		/// <summary>The department, so run times (stored in UTC) show in its time zone.</summary>
+		public Department Department { get; set; }
+
 		public RouteInstancesView()
 		{
 			Plan = new RoutePlan();
@@ -176,6 +179,9 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 
 		/// <summary>Unit names by unit id, deleted units included, so a run shows the unit that drives it.</summary>
 		public Dictionary<int, string> UnitNames { get; set; } = new Dictionary<int, string>();
+		/// <summary>The department, so run times (stored in UTC) show in its time zone.</summary>
+		public Department Department { get; set; }
+
 		public ActiveRoutesView()
 		{
 			Instances = new List<RouteInstance>();
@@ -200,6 +206,9 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 
 		/// <summary>The name of the unit that drove the run (deleted units included); null when the unit is gone entirely.</summary>
 		public string UnitName { get; set; }
+		/// <summary>The department, so run times (stored in UTC) show in its time zone.</summary>
+		public Department Department { get; set; }
+
 		public RouteInstanceDetailView()
 		{
 			Instance = new RouteInstance();

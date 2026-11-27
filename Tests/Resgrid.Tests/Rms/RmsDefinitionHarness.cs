@@ -49,6 +49,7 @@ namespace Resgrid.Tests.Rms
 		public RecordsService Records { get; }
 		public RecordSavedReportsService Reports { get; }
 		public RecordDeploymentsService Deployments { get; }
+		public Mock<IRecordDeploymentPartnerService> DeploymentPartners { get; }
 		public FakeOrderFeedProvider Feed { get; } = new FakeOrderFeedProvider();
 		public Resgrid.Services.Records.Connectors.RecordDeploymentConnectorsService Connectors { get; }
 
@@ -103,7 +104,9 @@ namespace Resgrid.Tests.Rms
 				Store.AuditsRepo.Object, Outbox, Cutover.Object, Settings.Object, Groups.Object, Profiles.Object, Units.Object, Calls.Object, Adp.Object,
 				Store.UnitOfWork.Object, OutboundQueue.Object, new NullRecordAttachmentScanner(), Authorization.Object, Mock.Of<IRecordsUdfService>(), Protection, Definitions, TypedValues, Roles.Object, Departments.Object);
 			Reports = new RecordSavedReportsService(Defs.ReportsRepo.Object, Definitions, Records, Store.RecordsRepo.Object, Defs.ValuesRepo.Object, Defs.GroupsRepo.Object, Authorization.Object, Store.AuditsRepo.Object, Departments.Object);
-			Deployments = new RecordDeploymentsService(Defs.OrdersRepo.Object, Defs.FillsRepo.Object, Defs.ReferencesRepo.Object, Records, Store.RecordsRepo.Object, Definitions, Templates, Authorization.Object, Store.AuditsRepo.Object, Store.UnitOfWork.Object);
+			DeploymentPartners = new Mock<IRecordDeploymentPartnerService>();
+			Deployments = new RecordDeploymentsService(Defs.OrdersRepo.Object, Defs.FillsRepo.Object, Defs.ReferencesRepo.Object, Records, Store.RecordsRepo.Object, Definitions, Templates, Authorization.Object, Store.AuditsRepo.Object, Store.UnitOfWork.Object,
+				new Lazy<IRecordDeploymentPartnerService>(() => DeploymentPartners.Object));
 			Connectors = new Resgrid.Services.Records.Connectors.RecordDeploymentConnectorsService(Defs.ConnectorsRepo.Object, Defs.ConnectorRunsRepo.Object, Defs.OrdersRepo.Object, Defs.FillsRepo.Object,
 				Deployments, Authorization.Object, Store.AuditsRepo.Object, new IExternalOrderFeedProvider[] { Feed, new FakeOrderFeedProvider(RmsExternalOrderConnectorProviders.Iroc, "iroc", RmsDeploymentProfiles.UsWildland, new Resgrid.Services.Records.Connectors.IrocOrderFeedProvider().ValidateOrder, Feed) });
 		}

@@ -1,0 +1,321 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model InjuryView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> localizer
+@*
+    Report or keep one injury (member wellness WL1): what happened (protected), the OSHA 300/301 facts (officers), duty status with dates
+    and restrictions, and the return-to-duty clearance. Supervisors see the duty status only, on the duty board, never this page.
+*@
+@{
+    var i = Model.Injury;
+    var title = Model.IsNew ? localizer["ReportInjuryTitle"].Value : localizer["InjuryTitle"].Value + " " + OshaRules.CaseNumber(i.OshaYear, i.OshaCaseNumber);
+    if (!Model.IsSelf && !string.IsNullOrWhiteSpace(Model.MemberName))
+    {
+        title = title + " · " + Model.MemberName;
+    }
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Health";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["InjuryIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var officer = Model.IsHealthOfficer;
+    var closed = !Model.IsNew && i.State == (int)MemberInjuryStates.Voided;
+    var canEdit = (Model.IsNew || officer) && !closed;
+    string Shown(string value) => WellnessPresentation.IsWithheld(value) ? localizer["WithheldValue"].Value : value;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Wellness/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.ProtectedWithheld)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ProtectedWithheldNotice"]</div>
+    }
+
+    @if (!Model.IsNew)
+    {
+        <div class="rgw-stat-tiles" role="list">
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label">@localizer["StateColumn"]</div>
+                <div class="rgw-stat-value">@localizer[MemberHealthPresentation.InjuryStateKey(i.State)]</div>
+            </div>
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label">@localizer["DutyStatusLabel"]</div>
+                <div class="rgw-stat-value"><span class="@MemberHealthPresentation.DutyBadge(i.DutyStatus)">@localizer[MemberHealthPresentation.DutyKey(i.DutyStatus)]</span></div>
+                @if (i.DutyStatusSince.HasValue)
+                {
+                    <div class="rgw-sub text-muted">@localizer["SinceLabel"]: @MemberHealthPresentation.CalendarDate(i.DutyStatusSince)</div>
+                }
+            </div>
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label">@localizer["ExpectedReturnLabel"]</div>
+                <div class="rgw-stat-value">@(i.ExpectedReturnOn.HasValue ? MemberHealthPresentation.CalendarDate(i.ExpectedReturnOn) : "—")</div>
+            </div>
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label">@localizer["ReturnedOnLabel"]</div>
+                <div class="rgw-stat-value">@(i.ReturnedToDutyOn.HasValue ? MemberHealthPresentation.CalendarDate(i.ReturnedToDutyOn) : "—")</div>
+            </div>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(i.ExposureIncidentId))
+        {
+            <p class="m-t-sm"><a asp-controller="MemberHealth" asp-action="Case" asp-route-area="User" asp-route-id="@i.ExposureIncidentId"><i class="fa fa-tint" aria-hidden="true"></i> @localizer["LinkedCaseLabel"]</a></p>
+        }
+    }
+
+    <form method="post" asp-controller="MemberHealth" asp-action="SaveInjury" asp-route-area="User" class="ibox float-e-margins m-t-sm">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="InjuryId" value="@(i?.RmsMemberInjuryId)" />
+        <input type="hidden" asp-for="RowVersion" />
+        <input type="hidden" asp-for="ExposureIncidentId" />
+        <div class="ibox-title"><h5><i class="fa fa-medkit" aria-hidden="true"></i> @localizer["WhatHappenedHeader"]</h5></div>
+        <div class="ibox-content">
+            <fieldset disabled="@(!canEdit)">
+                @if (Model.IsNew && Model.Members.Count > 0)
+                {
+                    <div class="form-group">
+                        <label for="injury-member">@localizer["MemberLabel"]</label>
+                        <select id="injury-member" name="MemberUserId" class="form-control">
+                            @foreach (var member in Model.Members)
+                            {
+                                <option value="@member.UserId" selected="@(string.Equals(member.UserId, Model.MemberUserId, StringComparison.OrdinalIgnoreCase))">@member.Name</option>
+                            }
+                        </select>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="MemberUserId" />
+                }
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="injury-occurred">@localizer["OccurredLabel"]</label>
+                        <input id="injury-occurred" asp-for="OccurredOnLocal" type="datetime-local" class="form-control" readonly="@(!Model.IsNew)" />
+                    </div>
+                    <div class="form-group">
+                        <label for="injury-call">@localizer["CallLabel"]</label>
+                        <select id="injury-call" asp-for="CallId" class="form-control">
+                            <option value="">@localizer["NoCallOption"]</option>
+                            @if (Model.CallId.HasValue && !Model.Calls.Any(c => c.CallId == Model.CallId))
+                            {
+                                <option value="@Model.CallId" selected>@(Model.CallName ?? "#" + Model.CallId)</option>
+                            }
+                            @foreach (var call in Model.Calls)
+                            {
+                                <option value="@call.CallId" selected="@(Model.CallId == call.CallId)">@call.Label</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="injury-location">@localizer["LocationLabel"]</label>
+                        <input id="injury-location" asp-for="Location" type="text" class="form-control" maxlength="200" />
+                    </div>
+                    <div class="form-group">
+                        <label for="injury-job">@localizer["JobTitleLabel"]</label>
+                        <input id="injury-job" asp-for="JobTitle" type="text" class="form-control" maxlength="100" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="injury-description">@localizer["DescriptionLabel"]</label>
+                    @if (WellnessPresentation.IsWithheld(Model.Description))
+                    {
+                        <input type="hidden" name="Description" value="@Model.Description" />
+                        <p class="form-control-static text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["WithheldValue"]</p>
+                    }
+                    else
+                    {
+                        <textarea id="injury-description" asp-for="Description" class="form-control" rows="3" maxlength="4000"></textarea>
+                    }
+                </div>
+                <div class="form-group">
+                    <label for="injury-details">@localizer["InjuryDetailsLabel"]</label>
+                    @if (WellnessPresentation.IsWithheld(Model.InjuryDetails))
+                    {
+                        <input type="hidden" name="InjuryDetails" value="@Model.InjuryDetails" />
+                        <p class="form-control-static text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["WithheldValue"]</p>
+                    }
+                    else
+                    {
+                        <textarea id="injury-details" asp-for="InjuryDetails" class="form-control" rows="2" maxlength="4000"></textarea>
+                    }
+                </div>
+                <div class="form-group">
+                    <label for="injury-treatment">@localizer["TreatmentLabel"]</label>
+                    @if (WellnessPresentation.IsWithheld(Model.TreatmentDetails))
+                    {
+                        <input type="hidden" name="TreatmentDetails" value="@Model.TreatmentDetails" />
+                        <p class="form-control-static text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["WithheldValue"]</p>
+                    }
+                    else
+                    {
+                        <textarea id="injury-treatment" asp-for="TreatmentDetails" class="form-control" rows="2" maxlength="4000"></textarea>
+                    }
+                    <small class="text-muted">@localizer["ProtectedFieldHelp"]</small>
+                </div>
+
+                @if (officer)
+                {
+                    <h4 class="m-t-md">@localizer["OshaHeader"]</h4>
+                    <p class="text-muted small">@localizer["OshaHelp"]</p>
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="injury-type">@localizer["OshaTypeLabel"]</label>
+                            <select id="injury-type" asp-for="OshaInjuryType" class="form-control">
+                                @foreach (OshaInjuryTypes type in Enum.GetValues(typeof(OshaInjuryTypes)))
+                                {
+                                    <option value="@((int)type)" selected="@(Model.OshaInjuryType == (int)type)">@localizer[MemberHealthPresentation.OshaTypeKey((int)type)]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="injury-died">@localizer["DiedOnLabel"]</label>
+                            <input id="injury-died" asp-for="DiedOn" type="date" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="checkbox"><label><input type="checkbox" asp-for="IsRecordable" /> @localizer["RecordableLabel"]</label></div>
+                    <div class="checkbox"><label><input type="checkbox" asp-for="IsPrivacyCase" /> @localizer["PrivacyCaseLabel"]</label> <small class="text-muted">@localizer["PrivacyCaseHelp"]</small></div>
+                    <div class="checkbox"><label><input type="checkbox" asp-for="TreatedInEmergencyRoom" /> @localizer["EmergencyRoomLabel"]</label></div>
+                    <div class="checkbox"><label><input type="checkbox" asp-for="HospitalizedOvernight" /> @localizer["HospitalizedLabel"]</label></div>
+                }
+                else if (Model.IsNew)
+                {
+                    <p class="text-muted small"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["OshaOfficerOnlyNote"]</p>
+                }
+            </fieldset>
+        </div>
+        @if (canEdit)
+        {
+            <div class="ibox-content rgw-toolbar">
+                <button type="submit" class="btn btn-primary"><i class="fa @(Model.IsNew ? "fa-paper-plane" : "fa-save")" aria-hidden="true"></i> @localizer[Model.IsNew ? "SubmitReportButton" : "SaveButton"]</button>
+                <a class="btn btn-default" asp-controller="MemberHealth" asp-action="Index" asp-route-area="User">@localizer["CancelButton"]</a>
+            </div>
+        }
+    </form>
+
+    @if (!Model.IsNew)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-calendar" aria-hidden="true"></i> @localizer["DutyHistoryHeader"]</h5></div>
+            <div class="ibox-content">
+                @if (!string.IsNullOrWhiteSpace(i.Restrictions))
+                {
+                    <p><strong>@localizer["RestrictionsLabel"]:</strong> @Shown(i.Restrictions)</p>
+                }
+                @if (Model.Periods.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoPeriods"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["DutyStatusLabel"]</th>
+                                    <th>@localizer["FromColumn"]</th>
+                                    <th>@localizer["ToColumn"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var period in Model.Periods)
+                                {
+                                    <tr>
+                                        <td><span class="@MemberHealthPresentation.DutyBadge(period.DutyStatus)">@localizer[MemberHealthPresentation.DutyKey(period.DutyStatus)]</span></td>
+                                        <td class="text-nowrap">@MemberHealthPresentation.CalendarDate(period.StartsOn)</td>
+                                        <td class="text-nowrap">@(period.EndsOn.HasValue ? MemberHealthPresentation.CalendarDate(period.EndsOn) : localizer["OngoingLabel"].Value)</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                @if (!string.IsNullOrWhiteSpace(i.ClearanceNotes))
+                {
+                    <p><strong>@localizer["ClearanceNotesLabel"]:</strong> @Shown(i.ClearanceNotes)</p>
+                }
+            </div>
+        </div>
+
+        @if (officer && !closed)
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <form method="post" asp-controller="MemberHealth" asp-action="SetDutyStatus" asp-route-area="User" class="ibox float-e-margins">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@i.RmsMemberInjuryId" />
+                        <div class="ibox-title"><h5><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["SetDutyStatusHeader"]</h5></div>
+                        <div class="ibox-content">
+                            <div class="rgw-grid">
+                                <div class="form-group">
+                                    <label for="duty-status">@localizer["DutyStatusLabel"]</label>
+                                    <select id="duty-status" name="dutyStatus" class="form-control">
+                                        <option value="@((int)MemberDutyStatuses.RestrictedDuty)">@localizer["Duty.RestrictedDuty"]</option>
+                                        <option value="@((int)MemberDutyStatuses.OffDuty)">@localizer["Duty.OffDuty"]</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="duty-start">@localizer["FromColumn"]</label>
+                                    <input id="duty-start" name="startsOn" type="date" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="duty-return">@localizer["ExpectedReturnLabel"]</label>
+                                    <input id="duty-return" name="expectedReturnOn" type="date" class="form-control" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="duty-restrictions">@localizer["RestrictionsLabel"]</label>
+                                @if (WellnessPresentation.IsWithheld(i.Restrictions))
+                                {
+                                    <input type="hidden" name="restrictions" value="@i.Restrictions" />
+                                    <p class="form-control-static text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["WithheldValue"]</p>
+                                }
+                                else
+                                {
+                                    <textarea id="duty-restrictions" name="restrictions" class="form-control" rows="2" maxlength="4000">@i.Restrictions</textarea>
+                                }
+                                <small class="text-muted">@localizer["RestrictionsHelp"]</small>
+                            </div>
+                            <button type="submit" class="btn btn-warning btn-sm"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SetDutyStatusButton"]</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    @if (i.State == (int)MemberInjuryStates.Open)
+                    {
+                        <form method="post" asp-controller="MemberHealth" asp-action="ClearReturnToDuty" asp-route-area="User" class="ibox float-e-margins">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@i.RmsMemberInjuryId" />
+                            <div class="ibox-title"><h5><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["ReturnHeader"]</h5></div>
+                            <div class="ibox-content">
+                                <p class="text-muted small">@localizer["ReturnHelp"]</p>
+                                <div class="form-group">
+                                    <label for="return-on">@localizer["ReturnedOnLabel"]</label>
+                                    <input id="return-on" name="returnedOn" type="date" class="form-control" required />
+                                </div>
+                                <div class="form-group">
+                                    <label for="return-notes">@localizer["ClearanceNotesLabel"]</label>
+                                    <textarea id="return-notes" name="clearanceNotes" class="form-control" rows="2" maxlength="4000"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ClearReturnButton"]</button>
+                            </div>
+                        </form>
+                    }
+                    <details class="m-t-sm">
+                        <summary class="btn btn-xs btn-default"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["VoidInjuryButton"]</summary>
+                        <form method="post" asp-controller="MemberHealth" asp-action="VoidInjury" asp-route-area="User" class="m-t-xs">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@i.RmsMemberInjuryId" />
+                            <p class="small">@localizer["VoidInjuryHelp"]</p>
+                            <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-check" aria-hidden="true"></i> @localizer["VoidInjuryButton"]</button>
+                        </form>
+                    </details>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

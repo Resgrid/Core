@@ -1,0 +1,39 @@
+@using Resgrid.Web.Areas.User.Models
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@*
+    The Programs pages' heading (T3): the Trainings module heading (Trainings/_Shell) with the Programs section highlighted and the
+    Programs sub-sections in a strip underneath. ViewData["Sub"] names the current sub-section; ViewData["CanManage"] (LMS managers)
+    and ViewData["CanPaths"] (path assigners) decide which show; ViewData["Paused"] shows the lapse notice (rule 5).
+*@
+@{
+    var sub = ViewData["Sub"] as string;
+    var canManage = ViewData["CanManage"] as bool? == true;
+    var canPaths = canManage || ViewData["CanPaths"] as bool? == true;
+    var tabs = new ModuleTabsView { Label = localizer["ProgramsTitle"].Value };
+    if (canManage)
+    {
+        tabs.Tabs.Add(new ModuleTab(localizer["SubRequirements"].Value, "fa-list-ul", "LmsRequirements", "Index", sub == "Requirements"));
+    }
+    tabs.Tabs.Add(new ModuleTab(localizer["SubCompliance"].Value, "fa-th", "LmsRequirements", "Compliance", sub == "Compliance"));
+    if (ViewData["CanRecommend"] as bool? == true)
+    {
+        // K3: learning recommendations (the member's own, or their scope's for officers); needs the LMS add-on.
+        tabs.Tabs.Add(new ModuleTab(localizer["SubRecommendations"].Value, "fa-lightbulb-o", "LmsRequirements", "Recommendations", sub == "Recommendations"));
+    }
+    if (canPaths)
+    {
+        tabs.Tabs.Add(new ModuleTab(localizer["SubPaths"].Value, "fa-road", "LmsRequirements", "Paths", sub == "Paths"));
+    }
+    if (canManage)
+    {
+        tabs.Tabs.Add(new ModuleTab(localizer["SubOnboarding"].Value, "fa-user-plus", "LmsRequirements", "Onboarding", sub == "Onboarding"));
+        tabs.Tabs.Add(new ModuleTab(localizer["SubEnforcement"].Value, "fa-shield", "LmsRequirements", "Enforcement", sub == "Enforcement"));
+    }
+    ViewData["SubTabs"] = tabs;
+    ViewData["Section"] = "Requirements";
+}
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+@if (ViewData["Paused"] as bool? == true)
+{
+    <div class="alert alert-warning m-t-sm" role="status"><i class="fa fa-pause-circle" aria-hidden="true"></i> @localizer["PausedNotice"]</div>
+}

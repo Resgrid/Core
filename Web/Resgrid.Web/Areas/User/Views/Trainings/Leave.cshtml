@@ -1,0 +1,112 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingLeaveView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Leave of absence (R-C2): while a period runs the member's training due dates and reminders pause; afterwards every
+    due date is moved on by the length of the leave. Entered by whoever assigns training (a group admin for their group).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["LeaveTab"];
+    ViewData["Section"] = "Leave";
+    ViewData["Title"] = localizer["LeaveTab"].Value;
+    ViewData["Subtitle"] = localizer["LeaveIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var now = DateTime.UtcNow;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddLeaveHeader"]</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-controller="Trainings" asp-action="SaveLeave" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="UserId" class="required">@localizer["MemberLabel"]</label>
+                        <select id="UserId" name="UserId" class="form-control" required>
+                            <option value="">@localizer["SelectPlaceholder"]</option>
+                            @foreach (var member in Model.Members)
+                            {
+                                <option value="@member.Value" selected="@(string.Equals(member.Value, Model.UserId, StringComparison.OrdinalIgnoreCase))">@member.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="StartDate" class="required">@localizer["LeaveStartLabel"]</label>
+                        <input id="StartDate" name="StartDate" type="date" class="form-control" value="@Model.StartDate" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="EndDate" class="required">@localizer["LeaveEndLabel"]</label>
+                        <input id="EndDate" name="EndDate" type="date" class="form-control" value="@Model.EndDate" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="Kind">@localizer["LeaveKindLabel"]</label>
+                        <select id="Kind" name="Kind" class="form-control">
+                            @foreach (var kind in Enum.GetValues<MemberLeaveKinds>())
+                            {
+                                <option value="@((int)kind)" selected="@(Model.Kind == (int)kind)">@localizer["LeaveKind" + kind]</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Note">@localizer["LeaveNoteLabel"]</label>
+                        <input id="Note" name="Note" class="form-control" maxlength="500" value="@Model.Note" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["SaveLeaveButton"]</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-calendar-times-o" aria-hidden="true"></i> @localizer["LeavePeriodsHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Periods.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoLeavePeriods"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead><tr><th>@localizer["MemberLabel"]</th><th>@localizer["LeaveStartLabel"]</th><th>@localizer["LeaveEndLabel"]</th><th>@localizer["LeaveKindLabel"]</th><th class="rgw-row-actions">@localizer["ActionColumn"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var period in Model.Periods)
+                            {
+                                var kindName = Enum.IsDefined(typeof(MemberLeaveKinds), period.Kind) ? (MemberLeaveKinds)period.Kind : MemberLeaveKinds.Other;
+                                <tr>
+                                    <td>
+                                        @Model.NameOf(period.UserId)
+                                        @if (period.StartsOn <= now && period.EndsOn > now)
+                                        {
+                                            <small class="rgw-sub"><i class="fa fa-pause-circle" aria-hidden="true"></i> @localizer["StateOnLeave"]</small>
+                                        }
+                                    </td>
+                                    <td>@TrainingStatePresentation.LocalDate(period.StartsOn, Model.Department)</td>
+                                    <td>@TrainingStatePresentation.LocalDate(period.EndsOn, Model.Department)</td>
+                                    <td>@localizer["LeaveKind" + kindName] <small class="rgw-sub text-muted">@period.Note</small></td>
+                                    <td class="rgw-row-actions">
+                                        <form method="post" asp-controller="Trainings" asp-action="DeleteLeave" asp-route-area="User" asp-route-memberLeavePeriodId="@period.MemberLeavePeriodId">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DeleteLeaveConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["DeleteButton"]</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

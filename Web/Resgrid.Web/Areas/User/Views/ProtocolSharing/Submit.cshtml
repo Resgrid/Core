@@ -1,0 +1,126 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ExchangeSubmitModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@*
+    Contributing to the community exchange (P5, decision 7c): pick an item, see exactly what would be shared (department configuration,
+    references, e-mail addresses and the department's name taken out; phone numbers flagged), choose a licence, confirm the attestation (no
+    licensed content, the right to share) and submit. Resgrid reviews every submission before it is listed. Licensed content is refused.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["SubmitHeader"];
+    ViewData["Title"] = text["SubmitHeader"].Value;
+    ViewData["Subtitle"] = text["SubmitIntro"].Value;
+    ViewData["Section"] = "Sharing";
+    ViewData["SharingSection"] = "Submit";
+    ViewData["IsManager"] = Model.IsManager;
+    ViewData["CanCreate"] = Model.CanAuthor;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_SharingTabs", Model)
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-list-ol" aria-hidden="true"></i> @text["SubmitStepChoose"]</h5></div>
+        <div class="ibox-content">
+            <form method="get" class="rgw-toolbar" asp-controller="ProtocolSharing" asp-action="Submit" asp-route-area="User">
+                <label class="control-label" for="submitKind">@text["KindLabel"]</label>
+                <select id="submitKind" name="kind" class="form-control">
+                    @foreach (var kind in Model.Kinds)
+                    {
+                        <option value="@((int)kind)" selected="@(Model.Kind == (int)kind)">@text["ItemKind" + kind]</option>
+                    }
+                </select>
+                <label class="control-label" for="submitItem">@text["ItemLabel"]</label>
+                <select id="submitItem" name="item" class="form-control" style="max-width: 420px;">
+                    <option value="">@text["ChooseItem"]</option>
+                    @foreach (var item in Model.Items)
+                    {
+                        <option value="@item.SourceRef" selected="@(item.SourceRef == Model.SourceRef)" disabled="@(item.Blocked != ExchangeErrors.None)">
+                            @item.Title@(string.IsNullOrWhiteSpace(item.VersionLabel) ? null : " (" + item.VersionLabel + ")")@(item.Blocked != ExchangeErrors.None ? " — " + text["ExchangeError" + item.Blocked].Value : null)
+                        </option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-default"><i class="fa fa-eye" aria-hidden="true"></i> @text["PreviewButton"]</button>
+            </form>
+            <p class="help-block small">@text["SubmitChooseHelp"]</p>
+        </div>
+    </div>
+
+    @if (Model.Prepared != null)
+    {
+        <div class="row">
+            <div class="col-md-7">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-eye" aria-hidden="true"></i> @text["SubmitStepPreview"]</h5></div>
+                    <div class="ibox-content">
+                        <h3>@Model.Prepared.Title</h3>
+                        <div class="rgp-content rgx-preview">@Html.ProtocolContent(Model.PreviewHtml)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-flag" aria-hidden="true"></i> @text["FlagsHeader"]</h5></div>
+                    <div class="ibox-content">
+                        @if (Model.Prepared.Flags.Count == 0)
+                        {
+                            <p class="small text-muted">@text["NoFlags"]</p>
+                        }
+                        else
+                        {
+                            <ul class="small">
+                                @foreach (var flag in Model.Prepared.Flags)
+                                {
+                                    <li>@text["Flag" + flag.Kind]@(string.IsNullOrWhiteSpace(flag.Text) ? null : ": " + flag.Text)</li>
+                                }
+                            </ul>
+                            <p class="small text-muted">@text["FlagsHelp"]</p>
+                        }
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-paper-plane" aria-hidden="true"></i> @text["SubmitStepSend"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="ProtocolSharing" asp-action="Submit" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="kind" value="@Model.Kind" />
+                            <input type="hidden" name="item" value="@Model.SourceRef" />
+                            <div class="form-group">
+                                <label class="control-label" for="summary">@text["SummaryLabel"]</label>
+                                <textarea id="summary" name="summary" class="form-control" rows="3" maxlength="@ExchangeListing.SummaryMaxLength">@Model.Summary</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required" for="license">@text["LicenseLabel"]</label>
+                                <select id="license" name="license" class="form-control" required>
+                                    @foreach (var license in ContentLicenses.Contributable.Keys)
+                                    {
+                                        <option value="@license" selected="@(license == Model.License)">@text["License_" + license.Replace("-", "").Replace(".", "")]</option>
+                                    }
+                                </select>
+                                <span class="help-block small">@text["LicenseHelp"]</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="attributionName">@text["AttributionNameLabel"]</label>
+                                <input id="attributionName" name="attributionName" class="form-control" maxlength="@ExchangeListing.AttributionMaxLength" value="@Model.AttributionName" />
+                                <span class="help-block small">@text["AttributionNameHelp"]</span>
+                            </div>
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="attest" value="true" required /> @text["AttestationText"]</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @text["SubmitButton"]</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/protocol-content.css" asp-append-version="true" />
+}

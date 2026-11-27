@@ -2247,4 +2247,13 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>Members can sign up for a group even when all its role slots (required and optional) are taken. They still need one of the group's roles.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>Protocols</value>
+  </data>
+  <data name="TerminologyRoles" xml:space="preserve">
+    <value>Roles and teams</value>
+  </data>
+  <data name="TerminologyRolesHelp" xml:space="preserve">
+    <value>The wellness roles. Give the plural and the word for one person, such as Safety officers and Safety officer, so the wellness pages, Admin Assist's help and the notices use your words. The personnel roles you assign keep the names you gave them.</value>
+  </data>
 </root>

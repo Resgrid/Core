@@ -52,10 +52,10 @@ namespace Resgrid.Tests.Dashboard.Widgets
 
 		/// <summary>The visibility rule only reads the viewer, so the entitlement service is built without its department services.</summary>
 		internal static bool Visible(string key, DashboardViewer viewer) =>
-			new DashboardEntitlementService(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null).IsVisible(DashboardWidgetCatalog.Find(key), viewer);
+			new DashboardEntitlementService(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null).IsVisible(DashboardWidgetCatalog.Find(key), viewer);
 
 		internal static bool LockedForAdmin(string key, DashboardViewer viewer) =>
-			new DashboardEntitlementService(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null).IsLockedForAdmin(DashboardWidgetCatalog.Find(key), viewer);
+			new DashboardEntitlementService(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null).IsLockedForAdmin(DashboardWidgetCatalog.Find(key), viewer);
 
 		/// <summary>Awaits a provider call that must end in a widget state, never a raw module message.</summary>
 		internal static async Task<DashboardWidgetStateException> StateAsync(Func<Task> call)

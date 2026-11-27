@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account.Greeting" xml:space="preserve">
+    <value>Hello {0},</value>
+  </data>
+  <data name="Account.Invite.Subject" xml:space="preserve">
+    <value>{0} invited you to training</value>
+  </data>
+  <data name="Account.Invite.Body" xml:space="preserve">
+    <value>{0} invited you to take training on its learner portal. Choose your password here:</value>
+  </data>
+  <data name="Account.Invite.Lifetime" xml:space="preserve">
+    <value>The link works for {0} days.</value>
+  </data>
+  <data name="Account.Verify.Subject" xml:space="preserve">
+    <value>Confirm your e-mail address</value>
+  </data>
+  <data name="Account.Verify.Body" xml:space="preserve">
+    <value>Confirm your e-mail address to finish creating your training account:</value>
+  </data>
+  <data name="Account.Verify.Lifetime" xml:space="preserve">
+    <value>The link works for {0} hours. If you did not ask for this account, ignore this e-mail.</value>
+  </data>
+  <data name="Account.Reset.Subject" xml:space="preserve">
+    <value>Reset your training password</value>
+  </data>
+  <data name="Account.Reset.Body" xml:space="preserve">
+    <value>Choose a new password here:</value>
+  </data>
+  <data name="Account.Reset.Lifetime" xml:space="preserve">
+    <value>The link works for {0} hours. If you did not ask for it, ignore this e-mail.</value>
+  </data>
+  <data name="Account.Exists.Subject" xml:space="preserve">
+    <value>Your training account</value>
+  </data>
+  <data name="Account.Exists.Body" xml:space="preserve">
+    <value>Someone asked to create a training account with this address, but it already has one. Sign in or reset your password here:</value>
+  </data>
+  <data name="Account.Exists.Ignore" xml:space="preserve">
+    <value>If this was not you, you can ignore this e-mail.</value>
+  </data>
+  <data name="Account.SignIn.Body" xml:space="preserve">
+    <value>You already have a training account with this address. Sign in or reset your password here:</value>
+  </data>
+  <data name="Protocol.Bulletin.Title" xml:space="preserve">
+    <value>Priority bulletin</value>
+  </data>
+  <data name="Protocol.Bulletin.Message" xml:space="preserve">
+    <value>{0}: read and acknowledge this bulletin. {1}</value>
+  </data>
+  <data name="Protocol.Assigned.Title" xml:space="preserve">
+    <value>Protocol to acknowledge</value>
+  </data>
+  <data name="Protocol.Assigned.Message" xml:space="preserve">
+    <value>Please read and acknowledge protocol {0} {1}. {2}</value>
+  </data>
+  <data name="Protocol.Assigned.MessageVersion" xml:space="preserve">
+    <value>Please read and acknowledge protocol {0} {1} version {2}. {3}</value>
+  </data>
+  <data name="Protocol.Bundle.Title" xml:space="preserve">
+    <value>Protocols to acknowledge</value>
+  </data>
+  <data name="Protocol.Bundle.One" xml:space="preserve">
+    <value>You have a protocol to read and acknowledge. {0}</value>
+  </data>
+  <data name="Protocol.Bundle.Many" xml:space="preserve">
+    <value>You have {0} protocols to read and acknowledge. {1}</value>
+  </data>
+  <data name="Protocol.Reminder.DueTitle" xml:space="preserve">
+    <value>Protocol acknowledgment due</value>
+  </data>
+  <data name="Protocol.Reminder.OverdueTitle" xml:space="preserve">
+    <value>Protocol acknowledgment overdue</value>
+  </data>
+  <data name="Protocol.Reminder.Due" xml:space="preserve">
+    <value>Protocol {0} {1} is due to be acknowledged. {2}</value>
+  </data>
+  <data name="Protocol.Reminder.DueOn" xml:space="preserve">
+    <value>Protocol {0} {1} is due to be acknowledged on {2}. {3}</value>
+  </data>
+  <data name="Protocol.Reminder.Overdue" xml:space="preserve">
+    <value>Protocol {0} {1} was due to be acknowledged. {2}</value>
+  </data>
+  <data name="Protocol.Reminder.OverdueOn" xml:space="preserve">
+    <value>Protocol {0} {1} was due to be acknowledged on {2}. {3}</value>
+  </data>
+  <data name="Protocol.Escalation.Message" xml:space="preserve">
+    <value>{0} has not acknowledged protocol {1} {2}, which is overdue. {3}</value>
+  </data>
+  <data name="Protocol.Review.Title" xml:space="preserve">
+    <value>Protocol to review</value>
+  </data>
+  <data name="Protocol.Review.Message" xml:space="preserve">
+    <value>Protocol {0} {1} is waiting for your review (step {2}). {3}</value>
+  </data>
+  <data name="Protocol.ReviewDue.Title" xml:space="preserve">
+    <value>Protocol review due</value>
+  </data>
+  <data name="Protocol.ReviewDue.Message" xml:space="preserve">
+    <value>Protocol {0} {1} is due for review on {2}.</value>
+  </data>
+  <data name="Protocol.ReviewOverdue.Title" xml:space="preserve">
+    <value>Protocol review overdue</value>
+  </data>
+  <data name="Protocol.ReviewOverdue.Message" xml:space="preserve">
+    <value>The review of protocol {0} {1} was due on {2}. Record it in the protocol library, with or without a new version.</value>
+  </data>
+  <data name="Requirement.Assigned.Title" xml:space="preserve">
+    <value>Training requirement</value>
+  </data>
+  <data name="Requirement.Assigned.Message" xml:space="preserve">
+    <value>New training requirement: {0} ({1}). {2}</value>
+  </data>
+  <data name="Requirement.Assigned.MessageDue" xml:space="preserve">
+    <value>New training requirement: {0} ({1}), due {2}. {3}</value>
+  </data>
+  <data name="Requirement.Overdue.Title" xml:space="preserve">
+    <value>Training requirement overdue</value>
+  </data>
+  <data name="Requirement.Overdue.Message" xml:space="preserve">
+    <value>{0} ({1}) was due and is overdue. {2}</value>
+  </data>
+  <data name="Requirement.Overdue.MessageOn" xml:space="preserve">
+    <value>{0} ({1}) was due on {2} and is overdue. {3}</value>
+  </data>
+  <data name="Requirement.DueSoon.Title" xml:space="preserve">
+    <value>Training requirement due soon</value>
+  </data>
+  <data name="Requirement.DueSoon.Message" xml:space="preserve">
+    <value>{0} ({1}) is due soon. {2}</value>
+  </data>
+  <data name="Requirement.DueSoon.MessageOn" xml:space="preserve">
+    <value>{0} ({1}) is due on {2}. {3}</value>
+  </data>
+  <data name="Requirement.Supervisor.CompletedTitle" xml:space="preserve">
+    <value>Training requirement completed</value>
+  </data>
+  <data name="Requirement.Supervisor.Completed" xml:space="preserve">
+    <value>{0} completed {1} ({2}). {3}</value>
+  </data>
+  <data name="Requirement.Supervisor.Overdue" xml:space="preserve">
+    <value>{0} is overdue on {1} ({2}). {3}</value>
+  </data>
+  <data name="Requirement.AMember" xml:space="preserve">
+    <value>A member</value>
+  </data>
+  <data name="Requirement.Met.Title" xml:space="preserve">
+    <value>Training requirement met</value>
+  </data>
+  <data name="Requirement.Met.Message" xml:space="preserve">
+    <value>Your completion of {0} restored the certification and roles it had affected. {1}</value>
+  </data>
+  <data name="Requirement.Enforced.Title" xml:space="preserve">
+    <value>Certification expired by training requirement</value>
+  </data>
+  <data name="Requirement.Enforced.Message" xml:space="preserve">
+    <value>{0} is overdue, so your {1} has expired. Complete it to restore the certification. {2}</value>
+  </data>
+  <data name="Requirement.Enforced.Certification" xml:space="preserve">
+    <value>certification</value>
+  </data>
+  <data name="Requirement.Refused.Title" xml:space="preserve">
+    <value>Training enforcement refused</value>
+  </data>
+  <data name="Requirement.Refused.Message" xml:space="preserve">
+    <value>Training-backed enforcement did not run today: it would have removed more than {0}% of a role's members ({1}). Review the requirements and the enforcement preview. {2}</value>
+  </data>
+  <data name="Requirement.Refused.Role" xml:space="preserve">
+    <value>role {0}</value>
+  </data>
+  <data name="Requirement.Refused.Breach" xml:space="preserve">
+    <value>{0}: {1} of {2}</value>
+  </data>
+  <data name="Skill.Title" xml:space="preserve">
+    <value>Training skills</value>
+  </data>
+  <data name="Skill.DigestTitle" xml:space="preserve">
+    <value>Training skills digest</value>
+  </data>
+  <data name="Skill.Digest" xml:space="preserve">
+    <value>Training skills digest: {0}</value>
+  </data>
+  <data name="Skill.DigestMore" xml:space="preserve">
+    <value>+{0} more</value>
+  </data>
+  <data name="Skill.EvaluationPassed" xml:space="preserve">
+    <value>Skill evaluation {0}: passed. {1}</value>
+  </data>
+  <data name="Skill.EvaluationPassedScore" xml:space="preserve">
+    <value>Skill evaluation {0}: passed (score {1:0.#}%). {2}</value>
+  </data>
+  <data name="Skill.EvaluationNotPassed" xml:space="preserve">
+    <value>Skill evaluation {0}: not passed. {1}</value>
+  </data>
+  <data name="Skill.EvaluationNotPassedScore" xml:space="preserve">
+    <value>Skill evaluation {0}: not passed (score {1:0.#}%). {2}</value>
+  </data>
+  <data name="Skill.TaskBookInitiated" xml:space="preserve">
+    <value>Task book {0} ({1}) initiated, valid until {2:d}. {3}</value>
+  </data>
+  <data name="Skill.TaskBookCertificationRequested" xml:space="preserve">
+    <value>Task book {0} is complete and waiting for the final evaluator and the certifying official. {1}</value>
+  </data>
+  <data name="Skill.TaskBookCertified" xml:space="preserve">
+    <value>Task book {0} ({1}) certified. {2}</value>
+  </data>
+  <data name="Skill.TaskBookExpired" xml:space="preserve">
+    <value>Task book {0} ({1}) expired before it was certified. {2}</value>
+  </data>
+  <data name="Skill.TaskSigned" xml:space="preserve">
+    <value>Task book {0}: task {1} signed ({2} of {3}); {4} of {5} tasks complete. {6}</value>
+  </data>
+  <data name="Skill.TaskSignedReady" xml:space="preserve">
+    <value>Task book {0}: task {1} signed ({2} of {3}); {4} of {5} tasks complete, ready for certification. {6}</value>
+  </data>
+  <data name="Signature.Needed.Title" xml:space="preserve">
+    <value>Signature needed</value>
+  </data>
+  <data name="Signature.Reminder.Title" xml:space="preserve">
+    <value>Signature reminder</value>
+  </data>
+  <data name="Signature.Needed.Message" xml:space="preserve">
+    <value>Your signature is needed on {0} (content code {1}). {2}</value>
+  </data>
+  <data name="Signature.Reminder.Message" xml:space="preserve">
+    <value>Reminder: your signature is still needed on {0} (content code {1}). {2}</value>
+  </data>
+  <data name="Signature.Closed.Title" xml:space="preserve">
+    <value>Signature request closed</value>
+  </data>
+  <data name="Signature.Closed.Completed" xml:space="preserve">
+    <value>The signature request for {0} was signed by everyone. {1}</value>
+  </data>
+  <data name="Signature.Closed.Declined" xml:space="preserve">
+    <value>The signature request for {0} was declined. {1}</value>
+  </data>
+  <data name="Signature.Closed.Expired" xml:space="preserve">
+    <value>The signature request for {0} expired before everyone signed. {1}</value>
+  </data>
+  <data name="Signature.Closed.Voided" xml:space="preserve">
+    <value>The signature request for {0} was withdrawn. {1}</value>
+  </data>
+  <data name="Signature.Closed.Other" xml:space="preserve">
+    <value>The signature request for {0} was closed. {1}</value>
+  </data>
+  <data name="Approval.Needed.Title" xml:space="preserve">
+    <value>Approval needed</value>
+  </data>
+  <data name="Approval.Escalated.Title" xml:space="preserve">
+    <value>Approval escalated</value>
+  </data>
+  <data name="Approval.Needed.Message" xml:space="preserve">
+    <value>Your approval is needed on {0} (content code {1}). {2}</value>
+  </data>
+  <data name="Approval.Escalated.Message" xml:space="preserve">
+    <value>Escalated: your approval is needed on {0} (content code {1}). {2}</value>
+  </data>
+  <data name="Approval.Decided.Title" xml:space="preserve">
+    <value>Approval decided</value>
+  </data>
+  <data name="Approval.Decided.Approved" xml:space="preserve">
+    <value>Your approval request for {0} was approved. {1}</value>
+  </data>
+  <data name="Approval.Decided.Rejected" xml:space="preserve">
+    <value>Your approval request for {0} was rejected: {1} {2}</value>
+  </data>
+  <data name="Approval.Decided.Expired" xml:space="preserve">
+    <value>Your approval request for {0} expired before it was approved. {1}</value>
+  </data>
+  <data name="Approval.Decided.Other" xml:space="preserve">
+    <value>Your approval request for {0} was closed. {1}</value>
+  </data>
+  <data name="CaseReview.Subject" xml:space="preserve">
+    <value>call {0}, protocol {1}</value>
+  </data>
+  <data name="CaseReview.Sent.Title" xml:space="preserve">
+    <value>Dispatch case reviewed</value>
+  </data>
+  <data name="CaseReview.Sent.Message" xml:space="preserve">
+    <value>Your dispatch case was reviewed ({0}). Read the feedback and acknowledge it: {1}</value>
+  </data>
+  <data name="CaseReview.Reply.Title" xml:space="preserve">
+    <value>Dispatcher replied to a case review</value>
+  </data>
+  <data name="CaseReview.Reply.Message" xml:space="preserve">
+    <value>The dispatcher replied to your case review ({0}): {1}</value>
+  </data>
+  <data name="Wellness.Suggestion.Title" xml:space="preserve">
+    <value>Please review your exposure log</value>
+  </data>
+  <data name="Wellness.Suggestion.Message" xml:space="preserve">
+    <value>An entry for the call {0} on {1} was suggested from dispatch records. Nothing is recorded until you review it in My exposures.</value>
+  </data>
+  <data name="Wellness.Anniversary.Title" xml:space="preserve">
+    <value>Thinking of you</value>
+  </data>
+  <data name="Wellness.Anniversary.OneYear" xml:space="preserve">
+    <value>{0:D} marks one year since a difficult call you attended. Your peer support team and wellness resources are here whenever you would like them.</value>
+  </data>
+  <data name="Wellness.Anniversary.Years" xml:space="preserve">
+    <value>{0:D} marks {1} years since a difficult call you attended. Your peer support team and wellness resources are here whenever you would like them.</value>
+  </data>
+  <data name="Wellness.PeerReminder.Title" xml:space="preserve">
+    <value>Peer support reminder</value>
+  </data>
+  <data name="Wellness.PeerReminder.OneYear" xml:space="preserve">
+    <value>{0} asked for the peer support team to know that {1:D} marks one year since a critical incident they attended. A check-in may be welcome.</value>
+  </data>
+  <data name="Wellness.PeerReminder.Years" xml:space="preserve">
+    <value>{0} asked for the peer support team to know that {1:D} marks {2} years since a critical incident they attended. A check-in may be welcome.</value>
+  </data>
+  <data name="Wellness.AMember" xml:space="preserve">
+    <value>A member</value>
+  </data>
+  <data name="Health.AMember" xml:space="preserve">
+    <value>A member</value>
+  </data>
+  <data name="Health.ExposureReported.Title" xml:space="preserve">
+    <value>Exposure reported</value>
+  </data>
+  <data name="Health.ExposureReported.Message" xml:space="preserve">
+    <value>{0} reported a possible bloodborne or infectious-disease exposure on {1:d}. Please open the exposure case: {2}</value>
+  </data>
+  <data name="Health.InjuryReported.Title" xml:space="preserve">
+    <value>Injury reported</value>
+  </data>
+  <data name="Health.InjuryReported.Message" xml:space="preserve">
+    <value>{0} has an injury report from {1:d} to review. {2}</value>
+  </data>
+  <data name="Health.NotificationOverdue.Title" xml:space="preserve">
+    <value>Exposure notification overdue</value>
+  </data>
+  <data name="Health.NotificationOverdue.Message" xml:space="preserve">
+    <value>The medical facility has not answered the exposure notification request for {0}. Ryan White asks for an answer within 48 hours. {1}</value>
+  </data>
+  <data name="Health.NotificationOverdue.MessageSent" xml:space="preserve">
+    <value>The medical facility has not answered the exposure notification request for {0} sent on {1:d}. Ryan White asks for an answer within 48 hours. {2}</value>
+  </data>
+  <data name="Health.ReturnReview.Title" xml:space="preserve">
+    <value>Return to duty review</value>
+  </data>
+  <data name="Health.ReturnReview.Message" xml:space="preserve">
+    <value>{0} was expected back on {1:d}. Please review the duty status. {2}</value>
+  </data>
+  <data name="Training.New.Title" xml:space="preserve">
+    <value>New Training Notice</value>
+  </data>
+  <data name="Training.New.Message" xml:space="preserve">
+    <value>New Training ({0}) assigned to you</value>
+  </data>
+  <data name="Training.New.MessageDue" xml:space="preserve">
+    <value>New Training ({0}) due on {1}</value>
+  </data>
+  <data name="Training.Due.Title" xml:space="preserve">
+    <value>Training Due Notice</value>
+  </data>
+  <data name="Training.Due.OneDay" xml:space="preserve">
+    <value>Training ({0}) is due within a day</value>
+  </data>
+  <data name="Training.Due.OneDayOn" xml:space="preserve">
+    <value>Training ({0}) is due within a day ({1})</value>
+  </data>
+  <data name="Training.Due.Days" xml:space="preserve">
+    <value>Training ({0}) is due within {1} days</value>
+  </data>
+  <data name="Training.Due.DaysOn" xml:space="preserve">
+    <value>Training ({0}) is due within {1} days ({2})</value>
+  </data>
+  <data name="Training.Overdue.Title" xml:space="preserve">
+    <value>Training Overdue Notice</value>
+  </data>
+  <data name="Training.Overdue.Message" xml:space="preserve">
+    <value>Training ({0}) is overdue</value>
+  </data>
+  <data name="Training.Overdue.MessageDue" xml:space="preserve">
+    <value>Training ({0}) is overdue (due {1})</value>
+  </data>
+  <data name="Training.CreatorOverdue" xml:space="preserve">
+    <value>{0} member(s) are overdue on training ({1})</value>
+  </data>
+  <data name="Training.QuestionFlagged.Title" xml:space="preserve">
+    <value>Training Question Flagged</value>
+  </data>
+  <data name="Training.QuestionFlagged.Message" xml:space="preserve">
+    <value>A question in training ({0}) was flagged for review</value>
+  </data>
+  <data name="Certification.Title" xml:space="preserve">
+    <value>Certification</value>
+  </data>
+  <data name="Certification.Expiring.Body" xml:space="preserve">
+    <value>Your {0} certification expires in {1} days ({2}).</value>
+  </data>
+  <data name="Certification.Expiring.BodyOne" xml:space="preserve">
+    <value>Your {0} certification expires in 1 day ({1}).</value>
+  </data>
+  <data name="Certification.RoleRemoved.Body" xml:space="preserve">
+    <value>You were removed from the {0} role: the required {1} certification is no longer valid.</value>
+  </data>
+  <data name="Certification.RemovalPending.Body" xml:space="preserve">
+    <value>Your {0} role membership ends on {1} unless your {2} certification is renewed.</value>
+  </data>
+  <data name="Certification.Digest.Title" xml:space="preserve">
+    <value>Certification digest</value>
+  </data>
+  <data name="Certification.Digest.Summary" xml:space="preserve">
+    <value>Certification summary for {0}: {1} expired, {2} expiring, {3} in grace, {4} removed from roles.</value>
+  </data>
+  <data name="Certification.Digest.Expired" xml:space="preserve">
+    <value>Expired: {0}</value>
+  </data>
+  <data name="Certification.Digest.Expiring" xml:space="preserve">
+    <value>Expiring: {0}</value>
+  </data>
+  <data name="Certification.Digest.InGrace" xml:space="preserve">
+    <value>In grace: {0}</value>
+  </data>
+  <data name="Certification.Digest.Removed" xml:space="preserve">
+    <value>Removed: {0}</value>
+  </data>
+  <data name="Certification.Digest.ExpiringEntry" xml:space="preserve">
+    <value>{0} – {1} ({2}d)</value>
+  </data>
+  <data name="Certification.Digest.InGraceEntry" xml:space="preserve">
+    <value>{0} – {1} ({2}, until {3})</value>
+  </data>
+  <data name="Certification.Digest.UnknownUnit" xml:space="preserve">
+    <value>Unit {0}</value>
+  </data>
+</root>

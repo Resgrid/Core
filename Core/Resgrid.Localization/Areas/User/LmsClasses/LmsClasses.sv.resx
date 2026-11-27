@@ -1,0 +1,1677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>Det gick inte att utföra.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddCost" xml:space="preserve">
+    <value>Lägg till kostnad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddInstructor" xml:space="preserve">
+    <value>Lägg till lärare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Lektioner ingår i LMS-tillägget, som inte är aktivt för avdelningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddonRequired" xml:space="preserve">
+    <value>Detta kräver ett aktivt LMS-tillägg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddPeople" xml:space="preserve">
+    <value>Lägg till personer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddWalkIn" xml:space="preserve">
+    <value>Markera en oanmäld som närvarande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllTags" xml:space="preserve">
+    <value>Alla taggar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AlreadySignedIn" xml:space="preserve">
+    <value>Du checkade in</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Belopp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>Godkänn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Godkänt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Absent" xml:space="preserve">
+    <value>Frånvarande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Attended" xml:space="preserve">
+    <value>Närvarande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Excused" xml:space="preserve">
+    <value>Ursäktad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Unmarked" xml:space="preserve">
+    <value>Ej markerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>Tillbaka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Book" xml:space="preserve">
+    <value>Boka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookedMessage" xml:space="preserve">
+    <value>Bokat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookingsHeader" xml:space="preserve">
+    <value>Lokaler och utrustning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookResource" xml:space="preserve">
+    <value>Boka för lektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>Kalender</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CalendarIsClass" xml:space="preserve">
+    <value>Det här kalenderobjektet är en lektion: anmälan och närvaro finns på lektionssidan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelClass" xml:space="preserve">
+    <value>Ställ in lektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Lektionen ställdes in och deltagarna meddelades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelReason" xml:space="preserve">
+    <value>Anledning till inställning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClassesIntro" xml:space="preserve">
+    <value>Lärarledda lektioner i kalendern: anmälan, väntelista, närvaroregistrering och den signerade deltagarlistan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClassesTitle" xml:space="preserve">
+    <value>Lektioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Absent" xml:space="preserve">
+    <value>Frånvarande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Attendance" xml:space="preserve">
+    <value>Närvaro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.AttendanceRate" xml:space="preserve">
+    <value>Närvarograd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Attended" xml:space="preserve">
+    <value>Närvarande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Attendee" xml:space="preserve">
+    <value>Deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Attendees" xml:space="preserve">
+    <value>Deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Bookings" xml:space="preserve">
+    <value>Bokningar (kommande 90 dagar)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Capacity" xml:space="preserve">
+    <value>Kapacitet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Class" xml:space="preserve">
+    <value>Lektion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.ClassCost" xml:space="preserve">
+    <value>Lektionskostnad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Classes" xml:space="preserve">
+    <value>Lektioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.ContentSummary" xml:space="preserve">
+    <value>Innehållssammanfattning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Course" xml:space="preserve">
+    <value>Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Date" xml:space="preserve">
+    <value>Datum</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Enrolled" xml:space="preserve">
+    <value>Anmälda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Exception" xml:space="preserve">
+    <value>Avvikelse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Hours" xml:space="preserve">
+    <value>Timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.HoursTaught" xml:space="preserve">
+    <value>Undervisade timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Instructor" xml:space="preserve">
+    <value>Lärare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Instructors" xml:space="preserve">
+    <value>Lärare och behörigheter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.JobTitle" xml:space="preserve">
+    <value>Befattning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Kind" xml:space="preserve">
+    <value>Typ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Member" xml:space="preserve">
+    <value>Medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Pending" xml:space="preserve">
+    <value>Väntande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Published" xml:space="preserve">
+    <value>Publicerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Qualifications" xml:space="preserve">
+    <value>Behörigheter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.RequestCost" xml:space="preserve">
+    <value>Kostnad för utbildningsansökningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Resource" xml:space="preserve">
+    <value>Resurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Role" xml:space="preserve">
+    <value>Roll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Seats" xml:space="preserve">
+    <value>Platser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Series" xml:space="preserve">
+    <value>Serie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Sessions" xml:space="preserve">
+    <value>Tillfällen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.SignIn" xml:space="preserve">
+    <value>Incheckning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Status" xml:space="preserve">
+    <value>Status</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Title" xml:space="preserve">
+    <value>Titel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Waitlisted" xml:space="preserve">
+    <value>Väntelista</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.WalkIns" xml:space="preserve">
+    <value>Utan anmälan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Year" xml:space="preserve">
+    <value>År</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.BackfillOvertime" xml:space="preserve">
+    <value>Övertid för ersättare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.Instructor" xml:space="preserve">
+    <value>Lärare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.Materials" xml:space="preserve">
+    <value>Material</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.Other" xml:space="preserve">
+    <value>Övrigt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.OutsideFees" xml:space="preserve">
+    <value>Externa avgifter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CostKind" xml:space="preserve">
+    <value>Kostnad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CostsHeader" xml:space="preserve">
+    <value>Kostnader</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CostsIntro" xml:space="preserve">
+    <value>Lärare, material, externa avgifter och övertid för ersättare per kurs, medlem eller år, bredvid utbildningsansökningarna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CostsTitle" xml:space="preserve">
+    <value>Lektionskostnader</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>Skapa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateClass" xml:space="preserve">
+    <value>Skapa lektion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Skapat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecisionNote" xml:space="preserve">
+    <value>Anteckning (krävs för att skicka tillbaka)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>Avböj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclinedMessage" xml:space="preserve">
+    <value>Avböjt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteClass" xml:space="preserve">
+    <value>Radera lektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>Borttaget.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteLessonPlan" xml:space="preserve">
+    <value>Radera lektionsplanen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftOnly" xml:space="preserve">
+    <value>Endast utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditClass" xml:space="preserve">
+    <value>Redigera lektion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditIntro" xml:space="preserve">
+    <value>Tiderna är i avdelningens tidszon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditResource" xml:space="preserve">
+    <value>Redigera lokal eller utrustning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enroll" xml:space="preserve">
+    <value>Anmäl</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Anmäld.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollMember" xml:space="preserve">
+    <value>Anmäl en medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Declined" xml:space="preserve">
+    <value>Avböjd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Enrolled" xml:space="preserve">
+    <value>Anmäld</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.PendingApproval" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Removed" xml:space="preserve">
+    <value>Borttagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Waitlisted" xml:space="preserve">
+    <value>På väntelistan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Withdrawn" xml:space="preserve">
+    <value>Avanmäld</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evaluation.CourseAssessment" xml:space="preserve">
+    <value>Tilldela den länkade kursen (dess quiz) till varje deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evaluation.None" xml:space="preserve">
+    <value>Ingen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.Excused" xml:space="preserve">
+    <value>Ursäktad frånvaro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.Inactive" xml:space="preserve">
+    <value>Inte längre aktiv medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.NeverPromoted" xml:space="preserve">
+    <value>Blev kvar på väntelistan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.NoShow" xml:space="preserve">
+    <value>Uteblev</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.OnShift" xml:space="preserve">
+    <value>I tjänst vid den tiden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.Pending" xml:space="preserve">
+    <value>Begäran ej beslutad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.Waitlisted" xml:space="preserve">
+    <value>På väntelistan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.AllowSelfUnenroll" xml:space="preserve">
+    <value>Medlemmar får avanmäla sig själva</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Capacity" xml:space="preserve">
+    <value>Kapacitet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CapacityHelp" xml:space="preserve">
+    <value>0 för ingen gräns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Category" xml:space="preserve">
+    <value>Utbildningskategori</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ChangeSummary" xml:space="preserve">
+    <value>Ändringssammanfattning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CompetencyItems" xml:space="preserve">
+    <value>Kompetenser som täcks</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ContentSummary" xml:space="preserve">
+    <value>Innehållssammanfattning (deltagarlista)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ContentSummaryHelp" xml:space="preserve">
+    <value>Vad som gicks igenom, så som den signerade listan anger det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Course" xml:space="preserve">
+    <value>LMS-kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CourseCode" xml:space="preserve">
+    <value>Kurskod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Currency" xml:space="preserve">
+    <value>Valuta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CutoffDays" xml:space="preserve">
+    <value>Anmälan stänger (dagar före)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Description" xml:space="preserve">
+    <value>Beskrivning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Duration" xml:space="preserve">
+    <value>Längd (minuter)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.End" xml:space="preserve">
+    <value>Slutar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.EnrollmentOpen" xml:space="preserve">
+    <value>Medlemmar får anmäla sig själva</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.GpsRequired" xml:space="preserve">
+    <value>Kräv telefonens position inom radien</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Instructors" xml:space="preserve">
+    <value>Lärare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Latitude" xml:space="preserve">
+    <value>Latitud</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LessonPlan" xml:space="preserve">
+    <value>Lektionsplan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Location" xml:space="preserve">
+    <value>Plats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Longitude" xml:space="preserve">
+    <value>Longitud</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Materials" xml:space="preserve">
+    <value>Material</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.MeetingUrl" xml:space="preserve">
+    <value>Möteslänk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.MeetingUrlHelp" xml:space="preserve">
+    <value>En Teams-, Zoom- eller Meet-länk för en virtuell eller hybrid lektion.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Notes" xml:space="preserve">
+    <value>Anteckningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Objectives" xml:space="preserve">
+    <value>Mål</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Occurrences" xml:space="preserve">
+    <value>Antal tillfällen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.PostEvaluation" xml:space="preserve">
+    <value>Efter lektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.PostEvaluationHelp" xml:space="preserve">
+    <value>Startas för varje deltagare vid första signeringen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.PreBrief" xml:space="preserve">
+    <value>Checklista för genomgång</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Props" xml:space="preserve">
+    <value>Övningsutrustning och lokaler</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.QrEnabled" xml:space="preserve">
+    <value>Incheckning med roterande QR (ett foto slutar fungera)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Radius" xml:space="preserve">
+    <value>Radie (meter)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Ratio" xml:space="preserve">
+    <value>Elever per lärare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ReminderHours" xml:space="preserve">
+    <value>Påminnelse (timmar före; 0 för ingen)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Repeat" xml:space="preserve">
+    <value>Upprepa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RequiresApproval" xml:space="preserve">
+    <value>En lektionsansvarig godkänner varje begäran</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RestrictGroups" xml:space="preserve">
+    <value>Endast dessa grupper får anmäla sig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RestrictGroupsHelp" xml:space="preserve">
+    <value>Inget valt: alla medlemmar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RetentionYears" xml:space="preserve">
+    <value>Behåll listan i (år)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RetentionYearsHelp" xml:space="preserve">
+    <value>Tomt: kategorins lagringstid (t.ex. 3 år för blodburen smitta).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Roles" xml:space="preserve">
+    <value>Roller</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.SafetyPlan" xml:space="preserve">
+    <value>Säkerhetsplan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Start" xml:space="preserve">
+    <value>Börjar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Tags" xml:space="preserve">
+    <value>Taggar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Title" xml:space="preserve">
+    <value>Titel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TitleHelp" xml:space="preserve">
+    <value>Lämna tomt för att använda kursens eller utbildningens namn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Training" xml:space="preserve">
+    <value>Utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.VisibleGroups" xml:space="preserve">
+    <value>Endast dessa grupper ser den</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.VisibleGroupsHelp" xml:space="preserve">
+    <value>Inget valt: synlig för alla.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WaitlistEnabled" xml:space="preserve">
+    <value>Väntelista när fullt (i turordning)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>Filtrera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>Fingeravtryck</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Footer.Costs" xml:space="preserve">
+    <value>Lektionskostnad {0}, utbildningsansökningar {1} ({2}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Footer.Exceptions" xml:space="preserve">
+    <value>{0} avvikelser.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Footer.Sessions" xml:space="preserve">
+    <value>{0} tillfällen, {1} personer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromStarter" xml:space="preserve">
+    <value>Från en Resgrid-mall</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GpsRequiredNotice" xml:space="preserve">
+    <value>Telefonens position kontrolleras vid incheckningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupBy" xml:space="preserve">
+    <value>Gruppera efter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursOverride" xml:space="preserve">
+    <value>Timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Importera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportAttendance" xml:space="preserve">
+    <value>Importera en närvarorapport från mötet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportAttendanceHelp" xml:space="preserve">
+    <value>CSV-närvarorapporten från Teams, Zoom eller Google Meet. Matchning på e-post, sedan namn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>Mötesrapporten importerades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportResultFormat" xml:space="preserve">
+    <value>Mötesrapport: {0} personer, {1} matchade, {2} tillagda utan anmälan, {3} ej matchade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inaktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InstructorsHeader" xml:space="preserve">
+    <value>Lärare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KioskInstruction" xml:space="preserve">
+    <value>Skanna koden med telefonen för att checka in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KioskTitle" xml:space="preserve">
+    <value>Incheckning till lektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>LMS-tillägget har upphört: lektioner kan fortfarande läsas och befintliga kan genomföras och signeras, men inget nytt kan skapas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonPlanIntro" xml:space="preserve">
+    <value>Planen används i sin publicerade version; varje inskickad version sparas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonPlansIntro" xml:space="preserve">
+    <value>Mål, kompetenser, material, lärartäthet, säkerhetsplan och checklista för genomgång, versionerade och godkända före användning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonPlansTitle" xml:space="preserve">
+    <value>Lektionsplaner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_addon_required" xml:space="preserve">
+    <value>Detta kräver ett aktivt LMS-tillägg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_calendar_failed" xml:space="preserve">
+    <value>Kalenderobjektet kunde inte skapas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_cancelled" xml:space="preserve">
+    <value>Lektionen är inställd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_capacity_invalid" xml:space="preserve">
+    <value>Kapaciteten måste vara mellan 0 och 10 000.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_category_invalid" xml:space="preserve">
+    <value>Välj en av avdelningens utbildningskategorier.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_change_summary_required" xml:space="preserve">
+    <value>Beskriv vad som ändrats innan du skickar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_code_expired" xml:space="preserve">
+    <value>Koden har gått ut. Skanna koden på skärmen igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_cost_invalid" xml:space="preserve">
+    <value>Ange en kostnadstyp och ett belopp på 0 eller mer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_course_invalid" xml:space="preserve">
+    <value>Välj en av avdelningens publicerade kurser eller utbildningar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_closed" xml:space="preserve">
+    <value>Anmälan görs av en lektionsansvarig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_cutoff" xml:space="preserve">
+    <value>Anmälan till lektionen har stängt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_full" xml:space="preserve">
+    <value>Lektionen är fullbokad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_gps_location_required" xml:space="preserve">
+    <value>Ange lektionens plats (latitud och longitud) för att kräva GPS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_gps_required" xml:space="preserve">
+    <value>Lektionen behöver telefonens position. Tillåt platsåtkomst och försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_gps_too_far" xml:space="preserve">
+    <value>Telefonen är för långt från lektionens plats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_hours_invalid" xml:space="preserve">
+    <value>Timmarna måste vara mellan 0 och 9 999.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_import_empty" xml:space="preserve">
+    <value>Inga närvarorader hittades i filen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_instructor_invalid" xml:space="preserve">
+    <value>Välj en medlem eller ange en extern lärares namn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_lesson_plan_invalid" xml:space="preserve">
+    <value>Välj en publicerad lektionsplan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_meeting_url_invalid" xml:space="preserve">
+    <value>Länken måste vara en webbadress (https://...).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_name_required" xml:space="preserve">
+    <value>Ange ett namn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_eligible" xml:space="preserve">
+    <value>Lektionen är för andra grupper.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_enrolled" xml:space="preserve">
+    <value>Du finns inte på lektionens deltagarlista.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_found" xml:space="preserve">
+    <value>Lektionen hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_member" xml:space="preserve">
+    <value>Endast nuvarande medlemmar kan stå på en deltagarlista.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_open" xml:space="preserve">
+    <value>Lektionen är inte öppen för det nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_pending" xml:space="preserve">
+    <value>Begäran är redan beslutad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_signed_in" xml:space="preserve">
+    <value>Du har inte checkat in till lektionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_started" xml:space="preserve">
+    <value>En lektion kan signeras när den har börjat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_changed" xml:space="preserve">
+    <value>Innehållet ändrades efter inskickningen; skicka igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_not_approved" xml:space="preserve">
+    <value>Endast en godkänd version kan publiceras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_not_draft" xml:space="preserve">
+    <value>Endast ett utkast kan ändras eller skickas in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_not_found" xml:space="preserve">
+    <value>Lektionsplanen hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_not_in_review" xml:space="preserve">
+    <value>Versionen väntar inte på beslut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_reason_required" xml:space="preserve">
+    <value>Ange varför den skickas tillbaka.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_resource_conflict" xml:space="preserve">
+    <value>Lokalen eller utrustningen är redan bokad vid den tiden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_retention_hold" xml:space="preserve">
+    <value>Listan sparas till lagringsdatumet och kan inte rensas ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_rules_invalid" xml:space="preserve">
+    <value>Kontrollera reglerna (stängning 0–365 dagar, påminnelse 0–336 timmar, 1–52 tillfällen).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_sign_in_closed" xml:space="preserve">
+    <value>Incheckningen är inte öppen nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_signed_off" xml:space="preserve">
+    <value>Lektionen är signerad; listan kan inte längre ändras så.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_times_invalid" xml:space="preserve">
+    <value>Lektionen måste sluta efter att den börjat och vara högst 14 dagar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_title_required" xml:space="preserve">
+    <value>Ange en titel eller länka en kurs eller utbildning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_unenroll_closed" xml:space="preserve">
+    <value>Be en lektionsansvarig att ta bort dig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MajorChange" xml:space="preserve">
+    <value>Större ändring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MarkPresent" xml:space="preserve">
+    <value>Markera närvaro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MessageRoster" xml:space="preserve">
+    <value>Skicka meddelande till deltagarna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.Calendar" xml:space="preserve">
+    <value>Kalenderincheckning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.Import" xml:space="preserve">
+    <value>Mötesrapport</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.Manual" xml:space="preserve">
+    <value>Av läraren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.None" xml:space="preserve">
+    <value>Ej incheckad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.Qr" xml:space="preserve">
+    <value>QR-incheckning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} min</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyClassesIntro" xml:space="preserve">
+    <value>Lektioner du är anmäld till eller leder, och de du fortfarande kan gå med i.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyClassesTitle" xml:space="preserve">
+    <value>Mina lektioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewClass" xml:space="preserve">
+    <value>Ny lektion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewDraft" xml:space="preserve">
+    <value>Nytt utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewLessonPlan" xml:space="preserve">
+    <value>Ny lektionsplan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewQrSecret" xml:space="preserve">
+    <value>Skapa ny QR (gamla foton slutar fungera)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewResource" xml:space="preserve">
+    <value>Ny lokal eller utrustning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoClasses" xml:space="preserve">
+    <value>Inga lektioner.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoConflicts" xml:space="preserve">
+    <value>Ingen i tjänst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCosts" xml:space="preserve">
+    <value>Inga lektionskostnader under perioden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoInstructors" xml:space="preserve">
+    <value>Inga lärare ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLessonPlans" xml:space="preserve">
+    <value>Inga lektionsplaner ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoMyClasses" xml:space="preserve">
+    <value>Inga lektioner för dig just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Ingen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoResources" xml:space="preserve">
+    <value>Inga lokaler eller övningsutrustning ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRoster" xml:space="preserve">
+    <value>Ingen är anmäld ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Cancelled" xml:space="preserve">
+    <value>{0} ({1}) har ställts in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CancelledTitle" xml:space="preserve">
+    <value>Lektion inställd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Declined" xml:space="preserve">
+    <value>Din begäran till {0} ({1}) avböjdes.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Enrolled" xml:space="preserve">
+    <value>Du är anmäld till {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.EnrolledTitle" xml:space="preserve">
+    <value>Lektionsdeltagande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Promoted" xml:space="preserve">
+    <value>En plats blev ledig: du är nu anmäld till {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Reminder" xml:space="preserve">
+    <value>{0} börjar {1}. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReminderTitle" xml:space="preserve">
+    <value>Lektionspåminnelse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Removed" xml:space="preserve">
+    <value>Du togs bort från {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Waitlisted" xml:space="preserve">
+    <value>Du står på väntelistan till {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnCalendar" xml:space="preserve">
+    <value>Öppna i kalendern</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnePerLine" xml:space="preserve">
+    <value>En per rad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnShift" xml:space="preserve">
+    <value>I tjänst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnShiftHelp" xml:space="preserve">
+    <value>På ett pass som överlappar lektionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>Öppna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenClass" xml:space="preserve">
+    <value>Öppna lektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenReport" xml:space="preserve">
+    <value>Öppna som rapport</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outside" xml:space="preserve">
+    <value>extern</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutsideInstructor" xml:space="preserve">
+    <value>Extern lärare (ange namnet)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutsideName" xml:space="preserve">
+    <value>Den externa lärarens namn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingHeader" xml:space="preserve">
+    <value>Begäranden som väntar på godkännande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>Incheckade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Publish" xml:space="preserve">
+    <value>Publicera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Publicerad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrAlt" xml:space="preserve">
+    <value>QR-kod för incheckning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrRotated" xml:space="preserve">
+    <value>En ny QR skapades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrRotates" xml:space="preserve">
+    <value>Koden byts var 30:e sekund.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>Senaste</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>Släpp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Ta bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>Borttagen från listan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Repeat.Daily" xml:space="preserve">
+    <value>Varje dag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Repeat.None" xml:space="preserve">
+    <value>En gång</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Repeat.Weekly" xml:space="preserve">
+    <value>Varje vecka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestPlace" xml:space="preserve">
+    <value>Begär en plats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Apparatus" xml:space="preserve">
+    <value>Fordon eller maskin</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Equipment" xml:space="preserve">
+    <value>Utrustning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Facility" xml:space="preserve">
+    <value>Lokal</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Other" xml:space="preserve">
+    <value>Övrigt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Prop" xml:space="preserve">
+    <value>Övningsutrustning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResourcesIntro" xml:space="preserve">
+    <value>Övningsområden, lektionssalar, övningsmaterial, fordon och utrustning; en resurs bokas aldrig dubbelt samtidigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResourcesTitle" xml:space="preserve">
+    <value>Lokaler och övningsutrustning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetainUntil" xml:space="preserve">
+    <value>Listan sparas till</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetentionHelpFormat" xml:space="preserve">
+    <value>Den signerade listan sparas till {0}; att radera lektionen döljer den, och den rensas först efter det datumet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Role.Assistant" xml:space="preserve">
+    <value>Biträdande lärare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Role.Lead" xml:space="preserve">
+    <value>Huvudlärare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Role.Safety" xml:space="preserve">
+    <value>Säkerhetsansvarig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>Deltagarlista</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.Approval" xml:space="preserve">
+    <value>godkännande krävs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.Closed" xml:space="preserve">
+    <value>endast av lektionsansvariga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.CutoffFormat" xml:space="preserve">
+    <value>stänger {0} dagar före</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.Open" xml:space="preserve">
+    <value>öppen för medlemmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.Waitlist" xml:space="preserve">
+    <value>väntelista</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rules" xml:space="preserve">
+    <value>Anmälan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>Sparat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>Spara utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatsFormat" xml:space="preserve">
+    <value>{0} av {1} platser tagna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.Details" xml:space="preserve">
+    <value>Detaljer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.Enrolment" xml:space="preserve">
+    <value>Anmälningsregler</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.Records" xml:space="preserve">
+    <value>Dokumentation och utvärdering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.SignIn" xml:space="preserve">
+    <value>Incheckning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.What" xml:space="preserve">
+    <value>Vad som lärs ut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.When" xml:space="preserve">
+    <value>När och var</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.You" xml:space="preserve">
+    <value>Du</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendBack" xml:space="preserve">
+    <value>Skicka tillbaka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeriesFormat" xml:space="preserve">
+    <value>Tillfälle {0} av {1} i en serie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeriesIntro" xml:space="preserve">
+    <value>Varje medlems närvaro vid lektionens tillfällen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeriesReport" xml:space="preserve">
+    <value>Närvaro i serien</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeriesTitle" xml:space="preserve">
+    <value>Närvaro i serien</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShiftPanelHeader" xml:space="preserve">
+    <value>Utbildning i passkalendern (kommande 14 dagar)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowQr" xml:space="preserve">
+    <value>Visa incheckningens QR</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedInAt" xml:space="preserve">
+    <value>Incheckad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedInMessage" xml:space="preserve">
+    <value>Du är incheckad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedOffFormat" xml:space="preserve">
+    <value>Signerad: {0} närvarande, {1} frånvarande; {2} poster skrivna, {3} ersatta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedOffOn" xml:space="preserve">
+    <value>Signerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedOutMessage" xml:space="preserve">
+    <value>Du är utcheckad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>Checka in mig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignInClosed" xml:space="preserve">
+    <value>Incheckningen är inte öppen för lektionen nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignInConfirm" xml:space="preserve">
+    <value>Checka in till lektionen nu?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignInTitle" xml:space="preserve">
+    <value>Checka in till lektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignOff" xml:space="preserve">
+    <value>Signera deltagarlistan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignOffAgain" xml:space="preserve">
+    <value>Signera igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignOffHelp" xml:space="preserve">
+    <value>Signeringen skriver en utbildningspost för varje närvarande (ingen för frånvarande) och sparar listan under lagringstiden. Omarkerade räknas som frånvarande om de inte checkat in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>Checka ut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evoc" xml:space="preserve">
+    <value>Utryckningskörning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evoc.Help" xml:space="preserve">
+    <value>Kontroll före körning, backning med kartläsare, banövningar; körtimmar och körd sträcka.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.hose-evolutions" xml:space="preserve">
+    <value>Årliga slangövningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.hose-evolutions.Help" xml:space="preserve">
+    <value>Förkopplade slangar, framryckning i trapphus och från stigarledning, slangpackning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.ladder-evolutions" xml:space="preserve">
+    <value>Årliga stegövningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.ladder-evolutions.Help" xml:space="preserve">
+    <value>Bärning, resning, placering för räddning och ventilation, klättring och säkring.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.live-fire" xml:space="preserve">
+    <value>Varmövning (bränningsplan)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.live-fire.Help" xml:space="preserve">
+    <value>Kontroller före tändning, roller, lärartäthet och säkerhetsplanen som avdelningen dokumenterar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.physical-ability" xml:space="preserve">
+    <value>Fysiskt test</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.physical-ability.Help" xml:space="preserve">
+    <value>Tidtagna stationer med avdelningens egna godkända tider.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.pump-evolutions" xml:space="preserve">
+    <value>Årliga pumpövningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.pump-evolutions.Help" xml:space="preserve">
+    <value>Försörjning från brandpost, sugning, tryck för slangarna, reläpumpning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scba" xml:space="preserve">
+    <value>Färdighet med andningsskydd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scba.Help" xml:space="preserve">
+    <value>Kontroll, påtagning på tid, täthetskontroll, lufthantering och nödrutiner.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartersHeader" xml:space="preserve">
+    <value>Resgrid-mallar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartersIntro" xml:space="preserve">
+    <value>Struktur och checklistor skrivna av Resgrid på enkelt språk (ingen standardtext). En kopia blir avdelningens utkast att anpassa och godkänna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Pending" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Seats" xml:space="preserve">
+    <value>Upptagna platser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Upcoming" xml:space="preserve">
+    <value>Schemalagda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Waitlisted" xml:space="preserve">
+    <value>På väntelistor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Cancelled" xml:space="preserve">
+    <value>Inställd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Scheduled" xml:space="preserve">
+    <value>Schemalagd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.SignedOff" xml:space="preserve">
+    <value>Signerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StripLabel" xml:space="preserve">
+    <value>Lektioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitForApproval" xml:space="preserve">
+    <value>Skicka för godkännande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Skickad för godkännande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.Classes" xml:space="preserve">
+    <value>Lektioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.Costs" xml:space="preserve">
+    <value>Lektionskostnader</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.LessonPlans" xml:space="preserve">
+    <value>Lektionsplaner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.My" xml:space="preserve">
+    <value>Mina lektioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.Resources" xml:space="preserve">
+    <value>Lokaler och övningsutrustning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TagFilter" xml:space="preserve">
+    <value>Tagg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TaughtHeader" xml:space="preserve">
+    <value>Lektioner du lett</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimecardOff" xml:space="preserve">
+    <value>Inget tidkort tar emot utbildningstid i avdelningen ännu (Workforce Pro).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimecardOn" xml:space="preserve">
+    <value>Deltagarnas timmar erbjuds deras tidkort vid signeringen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Totalt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Uncategorized" xml:space="preserve">
+    <value>Okategoriserad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpcomingHeader" xml:space="preserve">
+    <value>Kommande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UseMyLocation" xml:space="preserve">
+    <value>Använd min position</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UseStarter" xml:space="preserve">
+    <value>Kopiera som utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Version</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>Versioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>Godkänd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>Utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>Under granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>Äldre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>Publicerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>Avvecklad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>Ersatt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Virtual" xml:space="preserve">
+    <value>Virtuell</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WaitlistHeader" xml:space="preserve">
+    <value>Väntelista (i turordning)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WaitlistPositionFormat" xml:space="preserve">
+    <value>plats {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WalkIn" xml:space="preserve">
+    <value>Utan anmälan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WalkInMessage" xml:space="preserve">
+    <value>Markerad som närvarande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Withdraw" xml:space="preserve">
+    <value>Avanmäl</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Du avanmälde dig från lektionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YouTeach" xml:space="preserve">
+    <value>Du leder lektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CurrencyHelp" xml:space="preserve">
+    <value>Lämna tomt för avdelningens utbildningsvaluta ({0}). Använd en ISO-kod som CAD, EUR, GBP eller USD.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingCurrencyHelp" xml:space="preserve">
+    <value>Avdelningens utbildningsvaluta som ISO-kod, till exempel CAD, EUR, GBP eller USD. Kostnader i utbildningsansökningar anges i den, och nya kurstillfällen, kurskostnader och avgifter för öppna kurstillfällen använder den om inget kurstillfälle anger en annan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill" xml:space="preserve">
+    <value>Utrymningsövning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill.Help" xml:space="preserve">
+    <value>Utrymningsledare, genomsökning och räkning vid återsamlingsplatsen, för alla arbetsplatser och byggnader.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill" xml:space="preserve">
+    <value>Räddningsövning i slutet utrymme</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill.Help" xml:space="preserve">
+    <value>Räddningssystem, gasmätning och uttagning av den skadade, med säkerhetsbefäl och avbrottssignal.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise" xml:space="preserve">
+    <value>Fältövning i sök och räddning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise.Help" xml:space="preserve">
+    <value>En sökning från första anmälan till fynd, med uppdragsfördelning, ledtrådar och incheckningstider.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation" xml:space="preserve">
+    <value>Scenarioträning i deeskalering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation.Help" xml:space="preserve">
+    <value>Scenariobaserad träning med figuranter, ett stoppord och endast inert utrustning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_no_seat" xml:space="preserve">
+    <value>Du behöver en LMS-plats för att anmäla dig eller checka in själv. Be din administratör att aktivera LMS åt dig, eller be instruktören att lägga till dig.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

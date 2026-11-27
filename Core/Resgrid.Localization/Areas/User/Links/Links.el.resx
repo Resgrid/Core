@@ -163,4 +163,156 @@
   <data name="ViewDepartmentLinkTitle" xml:space="preserve">
     <value>Προβολή Συνδέσμου Τμήματος</value>
   </data>
+  <data name="AgreementFrom" xml:space="preserve">
+    <value>Από</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementRequested" xml:space="preserve">
+    <value>Ζητήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementTitle" xml:space="preserve">
+    <value>Συμφωνία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Έλεγχος και προσυπογραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsLink" xml:space="preserve">
+    <value>Σύνολα μαθημάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditSharing" xml:space="preserve">
+    <value>Κοινή χρήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolChange" xml:space="preserve">
+    <value>Τι άλλαξε:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolReadOnly" xml:space="preserve">
+    <value>Μόνο για ανάγνωση: αυτή είναι η ισχύουσα έκδοση του συνδεδεμένου τμήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolSubtitle" xml:space="preserve">
+    <value>{0}, έκδοση {1}, σε ισχύ από {2}, κωδικός περιεχομένου {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsHeader" xml:space="preserve">
+    <value>Συνδεδεμένα πρωτόκολλα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsIntro" xml:space="preserve">
+    <value>Τα δημοσιευμένα πρωτόκολλα που μοιράζεται αυτό το συνδεδεμένο τμήμα με το τμήμα σας. Εμφανίζεται μόνο η ισχύουσα έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsTitle" xml:space="preserve">
+    <value>Πρωτόκολλα: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLinkedProtocols" xml:space="preserve">
+    <value>Αυτό το τμήμα δεν μοιράζεται δημοσιευμένα πρωτόκολλα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerAgreements" xml:space="preserve">
+    <value>Καμία συμφωνία δεν αναμένει την προσυπογραφή του τμήματός σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsIntro" xml:space="preserve">
+    <value>Συμφωνίες αμοιβαίας βοήθειας που τα συνδεδεμένα τμήματα ζητούν από το τμήμα σας να προσυπογράψει. Μπορεί να προσυπογράψει οποιοσδήποτε διαχειριστής του τμήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsLink" xml:space="preserve">
+    <value>Συμφωνίες προς προσυπογραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolCategory" xml:space="preserve">
+    <value>Κατηγορία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolEffective" xml:space="preserve">
+    <value>Σε ισχύ από</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolName" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolNumber" xml:space="preserve">
+    <value>Αριθμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsLink" xml:space="preserve">
+    <value>Σύνολα πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersion" xml:space="preserve">
+    <value>Έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocols" xml:space="preserve">
+    <value>Πρωτόκολλα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetsIntro" xml:space="preserve">
+    <value>Μοιραστείτε πρωτόκολλα και μαθήματα με συνδεδεμένα τμήματα ως σύνολα, παρέχετε χορηγία στις θέσεις LMS τους και προσυπογράψτε τις συμφωνίες αμοιβαίας βοήθειας τους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocols" xml:space="preserve">
+    <value>Κοινή χρήση πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocolsHelp" xml:space="preserve">
+    <value>Το άλλο τμήμα μπορεί να διαβάζει τα δημοσιευμένα πρωτόκολλά σας και να εγγράφεται στα σύνολα πρωτοκόλλων σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTraining" xml:space="preserve">
+    <value>Κοινή χρήση εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTrainingHelp" xml:space="preserve">
+    <value>Το άλλο τμήμα μπορεί να εγγράφεται στα σύνολα μαθημάτων σας και εσείς μπορείτε να παρέχετε χορηγία στις θέσεις LMS του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBack" xml:space="preserve">
+    <value>Μοιράζονται:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingIntro" xml:space="preserve">
+    <value>Επιλέξτε τι μοιράζεται το τμήμα σας με {0}. Δεν αλλάζετε ποτέ όσα μοιράζονται εκείνοι με εσάς.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingRevokeHelp" xml:space="preserve">
+    <value>Η απενεργοποίηση διακόπτει αμέσως την πρόσβαση: οι αναγνώσεις σταματούν, οι συνδρομές στα σύνολά σας τίθενται σε αναστολή και οι χορηγίες μέσω αυτής της σύνδεσης λήγουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ViewProtocols" xml:space="preserve">
+    <value>Πρωτόκολλα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentsTitle" xml:space="preserve">
+    <value>Αναθέσεις αποστολών προς αποδοχή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerDeployments" xml:space="preserve">
+    <value>Κανένας συνδεδεμένος οργανισμός δεν σας ζητά να αποδεχθείτε ανάθεση αποστολής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAssignment" xml:space="preserve">
+    <value>Ανάθεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAccept" xml:space="preserve">
+    <value>Έλεγχος και αποδοχή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkAcceptanceSignatureNote" xml:space="preserve">
+    <value>Η αποδοχή αυτής της σύνδεσης είναι υπογεγραμμένη απόφαση: θα σας ζητηθεί να επαληθεύσετε ξανά την ταυτότητά σας και η υπογραφή σας καταγράφει και τους δύο οργανισμούς και τι μοιράζεται ο καθένας.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

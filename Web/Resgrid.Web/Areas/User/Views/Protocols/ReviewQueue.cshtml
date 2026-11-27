@@ -1,0 +1,79 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolReviewQueueModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + localizer["ReviewQueueTab"];
+    ViewData["Title"] = localizer["ReviewQueueTab"].Value;
+    ViewData["Subtitle"] = localizer["ReviewQueueIntro"].Value;
+    ViewData["Section"] = "Review";
+    ViewData["IsManager"] = true;
+    string Name(string userId) => string.IsNullOrEmpty(userId) ? "" : Model.Names.TryGetValue(userId, out var n) ? n : userId;
+    var mine = Model.Items.Count(i => i.CanDecide);
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (mine > 0)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-check-square-o" aria-hidden="true"></i> @string.Format(localizer["ReviewQueueCallout"].Value, mine)</div>
+    }
+    <div class="ibox">
+        <div class="ibox-content">
+            @if (Model.Items.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg" role="status">
+                    <i class="fa fa-check-circle fa-3x text-muted" aria-hidden="true"></i>
+                    <h4 class="m-t-sm">@localizer["ReviewQueueEmpty"]</h4>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["CodeLabel"]</th>
+                                <th>@commonLocalizer["Name"]</th>
+                                <th>@localizer["SubmittedColumn"]</th>
+                                <th>@localizer["StepColumn"]</th>
+                                <th>@localizer["ReviewCommentsHeader"]</th>
+                                <th class="rgw-row-actions">@commonLocalizer["Action"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td><span class="rgw-mono">@item.Protocol.Code</span></td>
+                                    <td>
+                                        <a asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@item.Protocol.DispatchProtocolId">@item.Protocol.Name</a>
+                                        <small class="rgw-sub text-muted">@ProtocolDisplay.KindName(item.Protocol.Kind, localizer)</small>
+                                    </td>
+                                    <td>@departmentTime.Format(item.Version.SubmittedOn)<small class="rgw-sub text-muted">@Name(item.Version.SubmittedByUserId)</small></td>
+                                    <td>
+                                        @(item.Step?.StepOrder ?? 0) / @item.StepsTotal
+                                        <small class="rgw-sub text-muted">@(!string.IsNullOrEmpty(item.Step?.ApproverUserId) ? Name(item.Step.ApproverUserId) : item.Step?.ApproverRoleId != null && Model.Roles.TryGetValue(item.Step.ApproverRoleId.Value, out var role) ? role : localizer["AnyApproverLabel"].Value)</small>
+                                    </td>
+                                    <td>@item.OpenComments</td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs @(item.CanDecide ? "btn-primary" : "btn-info")" asp-controller="Protocols" asp-action="Review" asp-route-area="User" asp-route-id="@item.Version.ProtocolVersionId">
+                                            <i class="fa @(item.CanDecide ? "fa-check-square-o" : "fa-eye")" aria-hidden="true"></i> @(item.CanDecide ? localizer["ReviewNowButton"] : localizer["OpenButton"])<span class="sr-only"> @item.Protocol.Name</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

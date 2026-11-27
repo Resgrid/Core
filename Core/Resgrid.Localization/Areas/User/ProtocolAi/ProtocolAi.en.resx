@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptCardsButton" xml:space="preserve">
+    <value>Keep the ticked cards</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="BackColumn" xml:space="preserve">
+    <value>Answer</value>
+  </data>
+  <data name="BackToProtocol" xml:space="preserve">
+    <value>Back to the protocol</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CardActive" xml:space="preserve">
+    <value>Shown</value>
+  </data>
+  <data name="CardCountLabel" xml:space="preserve">
+    <value>Number of cards</value>
+  </data>
+  <data name="CardNeedsReview" xml:space="preserve">
+    <value>Needs review</value>
+  </data>
+  <data name="CardRemoved" xml:space="preserve">
+    <value>Card removed.</value>
+  </data>
+  <data name="CardReviewed" xml:space="preserve">
+    <value>Card checked against the version in force and shown again.</value>
+  </data>
+  <data name="CardSaved" xml:space="preserve">
+    <value>Card saved.</value>
+  </data>
+  <data name="CardSourceFormat" xml:space="preserve">
+    <value>Drafted from {0}</value>
+  </data>
+  <data name="CardsAccepted" xml:space="preserve">
+    <value>{0} cards saved.</value>
+  </data>
+  <data name="CardsActive" xml:space="preserve">
+    <value>Shown to members</value>
+  </data>
+  <data name="CardsDropped" xml:space="preserve">
+    <value>{0} drafted cards were left out because they did not match the protocol.</value>
+  </data>
+  <data name="CardsFlagged" xml:space="preserve">
+    <value>Need review</value>
+  </data>
+  <data name="CardsHeader" xml:space="preserve">
+    <value>Cards</value>
+  </data>
+  <data name="CardsRule" xml:space="preserve">
+    <value>Every card cites one section of the version in force and may only use numbers written there. When a newer version goes into force, its cards are hidden until you check them.</value>
+  </data>
+  <data name="CitedLabel" xml:space="preserve">
+    <value>Cited:</value>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>Correct answer</value>
+  </data>
+  <data name="CreateTrainingButton" xml:space="preserve">
+    <value>Create the draft training</value>
+  </data>
+  <data name="DraftAgainButton" xml:space="preserve">
+    <value>Draft again</value>
+  </data>
+  <data name="DraftCardsButton" xml:space="preserve">
+    <value>Draft cards</value>
+  </data>
+  <data name="DraftCardsHeader" xml:space="preserve">
+    <value>Draft cards with AI</value>
+  </data>
+  <data name="DraftTrainingButton" xml:space="preserve">
+    <value>Draft the training</value>
+  </data>
+  <data name="DraftTrainingLink" xml:space="preserve">
+    <value>Draft a training</value>
+  </data>
+  <data name="DraftTranslationButton" xml:space="preserve">
+    <value>Draft translation with AI</value>
+  </data>
+  <data name="DraftTranslationHelp" xml:space="preserve">
+    <value>Fills the fields still in the source wording. Doses, links and structure stay the source's; you review and save.</value>
+  </data>
+  <data name="DraftedFromFormat" xml:space="preserve">
+    <value>Drafted from {0}</value>
+  </data>
+  <data name="Drafting" xml:space="preserve">
+    <value>Drafting with AI. This can take a minute...</value>
+  </data>
+  <data name="EditCardButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Explanation</value>
+  </data>
+  <data name="ExplanationNotSavedNote" xml:space="preserve">
+    <value>Explanations help you check each question; the training quiz keeps the questions and answers only.</value>
+  </data>
+  <data name="FlagSuperseded" xml:space="preserve">
+    <value>A newer version is in force</value>
+  </data>
+  <data name="FlagUnavailable" xml:space="preserve">
+    <value>Its section can no longer be read</value>
+  </data>
+  <data name="FlashcardsButton" xml:space="preserve">
+    <value>Practice cards</value>
+  </data>
+  <data name="FlashcardsIntro" xml:space="preserve">
+    <value>Cards drafted with Enhanced AI from the version in force. Members who can read this protocol practise them on its page; nothing is graded or recorded.</value>
+  </data>
+  <data name="FlashcardsTitle" xml:space="preserve">
+    <value>Practice cards</value>
+  </data>
+  <data name="FlashcardsTitleFormat" xml:space="preserve">
+    <value>Practice cards: {0}</value>
+  </data>
+  <data name="FrontColumn" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="KeyPointsLabel" xml:space="preserve">
+    <value>Key points</value>
+  </data>
+  <data name="NoCards" xml:space="preserve">
+    <value>No cards yet.</value>
+  </data>
+  <data name="NoQuestions" xml:space="preserve">
+    <value>No quiz questions were drafted.</value>
+  </data>
+  <data name="NothingTicked" xml:space="preserve">
+    <value>Tick at least one card to keep.</value>
+  </data>
+  <data name="Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Your department's monthly Enhanced AI budget is used up. It resets at the start of next month.</value>
+  </data>
+  <data name="Outcome.Busy" xml:space="preserve">
+    <value>AI is busy with other work. Try again in a minute.</value>
+  </data>
+  <data name="Outcome.Excluded" xml:space="preserve">
+    <value>This protocol is marked "no AI" or is licensed content, so it is never sent to AI.</value>
+  </data>
+  <data name="Outcome.Invalid" xml:space="preserve">
+    <value>That request was not valid.</value>
+  </data>
+  <data name="Outcome.KeptLocal" xml:space="preserve">
+    <value>Your department uses Advanced Data Protection, so its content stays local and AI drafts are not available.</value>
+  </data>
+  <data name="Outcome.NoContent" xml:space="preserve">
+    <value>There is no text to work from (an empty version or a scanned document), or nothing is left to translate.</value>
+  </data>
+  <data name="Outcome.NotAllowed" xml:space="preserve">
+    <value>Only protocol authors and approvers can use this. A training draft also needs the right to create trainings.</value>
+  </data>
+  <data name="Outcome.NotDraft" xml:space="preserve">
+    <value>Only a draft translation of a locked version can be drafted with AI.</value>
+  </data>
+  <data name="Outcome.NotEntitled" xml:space="preserve">
+    <value>Practice cards, training drafts and translation drafts need the Enhanced AI add-on with knowledge answers turned on.</value>
+  </data>
+  <data name="Outcome.NotFound" xml:space="preserve">
+    <value>This protocol has no published version in force that you can open.</value>
+  </data>
+  <data name="Outcome.NotSaved" xml:space="preserve">
+    <value>The training could not be created. Nothing was saved.</value>
+  </data>
+  <data name="Outcome.Refused" xml:space="preserve">
+    <value>The AI draft did not pass the checks (every item must cite the protocol and use only its numbers), so nothing was kept. Try again.</value>
+  </data>
+  <data name="Outcome.Stale" xml:space="preserve">
+    <value>The protocol changed since this draft was written. Draft again from the version in force.</value>
+  </data>
+  <data name="Outcome.Unavailable" xml:space="preserve">
+    <value>AI is not answering right now. Try again in a few minutes.</value>
+  </data>
+  <data name="Outcome.Unconfigured" xml:space="preserve">
+    <value>AI is not set up for your system yet. Ask your system operator.</value>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>Again</value>
+  </data>
+  <data name="PracticeCardFormat" xml:space="preserve">
+    <value>{0} of {1} known</value>
+  </data>
+  <data name="PracticeDone" xml:space="preserve">
+    <value>You know every card for now. Start over to practise again.</value>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>Practice cards</value>
+  </data>
+  <data name="PracticeIntro" xml:space="preserve">
+    <value>Short questions from this protocol. Your progress stays in this browser and is never recorded.</value>
+  </data>
+  <data name="PracticeKnown" xml:space="preserve">
+    <value>I knew it</value>
+  </data>
+  <data name="PracticeRestart" xml:space="preserve">
+    <value>Start over</value>
+  </data>
+  <data name="PracticeShow" xml:space="preserve">
+    <value>Show the answer</value>
+  </data>
+  <data name="PracticeSource" xml:space="preserve">
+    <value>From:</value>
+  </data>
+  <data name="QuestionCountLabel" xml:space="preserve">
+    <value>Number of quiz questions</value>
+  </data>
+  <data name="QuestionsHeaderFormat" xml:space="preserve">
+    <value>Quiz ({0} questions)</value>
+  </data>
+  <data name="RemoveCardButton" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveCardConfirm" xml:space="preserve">
+    <value>Remove this card?</value>
+  </data>
+  <data name="ReviewCardButton" xml:space="preserve">
+    <value>Check against the version in force</value>
+  </data>
+  <data name="SaveCardButton" xml:space="preserve">
+    <value>Save card</value>
+  </data>
+  <data name="SectionTextNote" xml:space="preserve">
+    <value>The training will quote the cited sections here, as the protocol wrote them.</value>
+  </data>
+  <data name="SourceColumn" xml:space="preserve">
+    <value>Section</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TrainingCitedLabel" xml:space="preserve">
+    <value>Cited:</value>
+  </data>
+  <data name="TrainingCreateNote" xml:space="preserve">
+    <value>The training is created as a draft: nobody is assigned and members do not see it until you assign it.</value>
+  </data>
+  <data name="TrainingCreatedMessage" xml:space="preserve">
+    <value>Draft training created from the protocol. It is not assigned yet: review it, then assign it or use it for the protocol's acknowledgment quiz.</value>
+  </data>
+  <data name="TrainingDraftAckNote" xml:space="preserve">
+    <value>A training created here can back this protocol's quiz-gated acknowledgment: choose it in the protocol's acknowledgment settings.</value>
+  </data>
+  <data name="TrainingDraftHeader" xml:space="preserve">
+    <value>Draft with AI</value>
+  </data>
+  <data name="TrainingDraftIntro" xml:space="preserve">
+    <value>Enhanced AI drafts a training and a quiz from the version in force. You review it before anything is created.</value>
+  </data>
+  <data name="TrainingDraftNote" xml:space="preserve">
+    <value>Drafted with Enhanced AI from {0}. Each part quotes the protocol as written; review it before you assign it.</value>
+  </data>
+  <data name="TrainingDraftRule" xml:space="preserve">
+    <value>Each part cites the sections it teaches and may only use numbers written there; the created training quotes those sections as written, so doses appear only as the protocol states them.</value>
+  </data>
+  <data name="TrainingDraftTitle" xml:space="preserve">
+    <value>Draft a training</value>
+  </data>
+  <data name="TrainingDraftTitleFormat" xml:space="preserve">
+    <value>Draft a training: {0}</value>
+  </data>
+  <data name="TrainingDropped" xml:space="preserve">
+    <value>{0} drafted items were left out because they did not match the protocol.</value>
+  </data>
+  <data name="TrainingFromTheProtocol" xml:space="preserve">
+    <value>From the protocol</value>
+  </data>
+  <data name="TrainingKeyPoints" xml:space="preserve">
+    <value>Key points</value>
+  </data>
+  <data name="TrainingNameLabel" xml:space="preserve">
+    <value>Training name</value>
+  </data>
+  <data name="TrainingPreviewHeader" xml:space="preserve">
+    <value>Review the draft</value>
+  </data>
+  <data name="TrainingTruncated" xml:space="preserve">
+    <value>The protocol is longer than one draft reads; only its first sections were used.</value>
+  </data>
+  <data name="TranslationDraftedNotice" xml:space="preserve">
+    <value>AI drafted {0} fields.</value>
+  </data>
+  <data name="TranslationDroppedNotice" xml:space="preserve">
+    <value>{0} drafted fields were refused because a number, link or markup changed, and keep their wording.</value>
+  </data>
+  <data name="TranslationRemainingNotice" xml:space="preserve">
+    <value>{0} fields are still in the source wording; draft again to continue.</value>
+  </data>
+  <data name="TranslationReviewNotice" xml:space="preserve">
+    <value>Review the wording below and save the draft: it is not saved yet and still needs approval. Doses, links and structure always stay the source's.</value>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+</root>

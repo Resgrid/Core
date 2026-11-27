@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Description>Department Import (Import &amp; Migration): file readers, the RustFS artifact store, workbook templates, embedded import catalogs and the helpdesk client.</Description>
+    <Description>Department Import (Import &amp; Migration): file readers, the RustFS artifact store, workbook templates, embedded import catalogs and the helpdesk client; protocol file text extraction (PDF, DOCX).</Description>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,6 +20,8 @@
     <PackageReference Include="AWSSDK.S3" Version="3.7.414.5" />
     <PackageReference Include="CsvHelper" Version="33.0.1" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="3.3.0" />
+    <!-- Protocol file text extraction (P1 R-P5): PdfPig, Apache-2.0 (namespace UglyToad.PdfPig). Never PDFsharp >= 6.5 or iText (plan 22.2). -->
+    <PackageReference Include="PdfPig" Version="0.1.11" />
   </ItemGroup>
 
   <ItemGroup>

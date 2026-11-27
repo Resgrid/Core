@@ -58,6 +58,14 @@ namespace Resgrid.Model
 		/// <summary>ADP row marker (M0140): true once this row's cataloged values carry rgdp envelopes.</summary>
 		public bool IsProtected { get; set; }
 
+		/// <summary>
+		/// "Move to Protocols" (P1 R-P6, M0347): the document-backed protocol this document became. The row stays as the redirect
+		/// at the old document link and leaves the document lists; its bytes now live with the protocol version.
+		/// </summary>
+		public int? MovedToProtocolId { get; set; }
+
+		public DateTime? MovedOn { get; set; }
+
 		[NotMapped]
 		public string TableName => "Documents";
 

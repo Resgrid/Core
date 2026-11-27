@@ -34,6 +34,7 @@ namespace Resgrid.Services.Invoicing
 		/// <summary>Contractor billing (C-M2): the linked contract's terms override the profile's net days when the invoice issues.</summary>
 		private readonly IServiceContractRepository _serviceContracts;
 		private readonly IDocumentNumberingService _documentNumbering;
+		private readonly IApprovalGateService _approvalGate;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 		private readonly IContactsService _contactsService;
 		private readonly ICallsService _callsService;
@@ -51,11 +52,12 @@ namespace Resgrid.Services.Invoicing
 			IInvoiceNumberSequenceRepository sequence, IDepartmentBillingIdentityRepository identities,
 			IContactsService contactsService, ICallsService callsService, IUnitsService unitsService,
 			IDomainEventOutboxService outbox, IEventAggregator eventAggregator,
-			IPdfProvider pdfProvider, IEmailService emailService, IDepartmentsService departmentsService, IAddressService addressService, IUnitOfWork unitOfWork,
+			IPdfProvider pdfProvider, IEmailService emailService, IDepartmentsService departmentsService, IAddressService addressService, IUnitOfWork unitOfWork, IApprovalGateService approvalGate,
 			Lazy<IInvoicePaymentsService> paymentsService = null, Lazy<IProtectedReadService> protectedRead = null,
 			IServiceContractRepository serviceContracts = null, Lazy<ISearchProjectionService> searchProjections = null,
 			IDocumentNumberingService documentNumbering = null)
 		{
+			_approvalGate = approvalGate;
 			_documentNumbering = documentNumbering;
 			_serviceContracts = serviceContracts;
 			_searchProjections = searchProjections;
@@ -633,6 +635,9 @@ namespace Resgrid.Services.Invoicing
 			if (invoice.Status != (int)InvoiceStatus.Draft) throw new InvalidOperationException("invoicing_invoice_not_draft");
 			var lines = (await _lineItems.GetByInvoiceIdAsync(invoiceId, departmentId))?.ToList() ?? new List<InvoiceLineItem>();
 			if (lines.Count == 0) throw new InvalidOperationException("invoicing_invoice_has_no_lines");
+			// e-Signature S4: where the department has an invoice approval chain, a draft is approved (as it is now) before it is sent.
+			if (_approvalGate != null && !(await _approvalGate.CheckAsync(departmentId, SignatureSubjectKinds.InvoiceApproval, invoiceId)).Allows)
+				throw new InvalidOperationException("invoicing_approval_required");
 
 			var profile = await _profiles.GetByIdForDepartmentAsync(invoice.CustomerBillingProfileId, departmentId);
 			var audit = NewAuditEvent(departmentId, userId, AuditLogTypes.InvoiceSent, ipAddress, userAgent);

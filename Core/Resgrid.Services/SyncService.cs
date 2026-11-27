@@ -33,6 +33,9 @@ namespace Resgrid.Services
 		private static readonly string CacheKey = "SyncReferenceData_{0}";
 		private static readonly TimeSpan CacheLength = TimeSpan.FromMinutes(5);
 
+		/// <summary>The department's cached reference snapshot; protocol saves, disables and deletes drop it (D21).</summary>
+		public static string ReferenceCacheKey(int departmentId) => string.Format(CacheKey, departmentId);
+
 		public SyncService(
 			ICallsService callsService,
 			ICommandsService commandsService,
@@ -75,7 +78,9 @@ namespace Resgrid.Services
 				data.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(departmentId) ?? new List<UnitType>();
 				data.Pois = await _mappingService.GetPOIsForDepartmentAsync(departmentId) ?? new List<Poi>();
 				data.PoiTypes = await _mappingService.GetPOITypesForDepartmentAsync(departmentId) ?? new List<PoiType>();
-				data.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(departmentId) ?? new List<DispatchProtocol>();
+				// Enabled protocols only, and never an attachment's bytes (D7, D19): the summaries carry attachment names and sizes,
+				// and DispatchProtocolAttachment.Data is not serialized. Apps download a file through Protocols/GetFile.
+				data.Protocols = await _protocolsService.GetProtocolSummariesForDepartmentAsync(departmentId, true) ?? new List<DispatchProtocol>();
 				data.CheckInTimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(departmentId) ?? new List<CheckInTimerConfig>();
 				data.PersonnelStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId) ?? new List<CustomState>();
 				data.UnitStates = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(departmentId) ?? new List<CustomState>();
@@ -104,7 +109,7 @@ namespace Resgrid.Services
 			// contained entities are mostly not [ProtoContract], so the payload is cached as a JSON snapshot inside a
 			// protobuf-safe envelope rather than ProtoContract-tagging ~8 shared entities (see ReferenceCacheEnvelope).
 			var envelope = await _cacheProvider.RetrieveAsync<ReferenceCacheEnvelope>(
-				string.Format(CacheKey, departmentId),
+				ReferenceCacheKey(departmentId),
 				async () => new ReferenceCacheEnvelope { Json = JsonConvert.SerializeObject(await build()) },
 				CacheLength);
 

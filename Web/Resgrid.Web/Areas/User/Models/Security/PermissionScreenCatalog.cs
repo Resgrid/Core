@@ -80,6 +80,26 @@ namespace Resgrid.Web.Areas.User.Models.Security
 			new PermissionScreenEntry(PermissionTypes.CloseCall, EveryoneFirst, Everyone, lockToGroupOffered: true),
 			new PermissionScreenEntry(PermissionTypes.AddCallData, EveryoneFirst, Everyone, lockToGroupOffered: true),
 			new PermissionScreenEntry(PermissionTypes.CreateTraining, AdminsUpward, DepartmentAdmins),
+			// Training T0: assign-and-report and delete were split out of Create Training; with no row of their own they show
+			// (and apply) the Create Training row (ClaimsLogic.AddTrainingClaims, GetTrainingManagementScopeAsync).
+			new PermissionScreenEntry(PermissionTypes.AssignTraining, AdminsUpward, DepartmentAdmins),
+			new PermissionScreenEntry(PermissionTypes.DeleteTraining, AdminsUpward, DepartmentAdmins),
+			// Protocols P1: author, approve and publish, manage acknowledgments (P2). No row: department admins only
+			// (ClaimsLogic.AddProtocolClaims, ProtocolAccessService).
+			new PermissionScreenEntry(PermissionTypes.AuthorProtocols, AdminsUpward, DepartmentAdmins),
+			new PermissionScreenEntry(PermissionTypes.ApproveProtocols, AdminsUpward, DepartmentAdmins),
+			new PermissionScreenEntry(PermissionTypes.ManageProtocolAcknowledgments, AdminsUpward, DepartmentAdmins),
+			// Training T2 (132-133): manage LMS courses and banks, grade assessments. No row: department admins only (LmsGateService).
+			new PermissionScreenEntry(PermissionTypes.ManageCourses, AdminsUpward, DepartmentAdmins),
+			new PermissionScreenEntry(PermissionTypes.GradeAssessments, AdminsUpward, DepartmentAdmins),
+			// Protocols P5 QA (134): dispatch case review. No row: department admins only (ProtocolAccessService, DispatchCaseReviewService).
+			new PermissionScreenEntry(PermissionTypes.ReviewDispatchCases, AdminsUpward, DepartmentAdmins),
+			// Round 7B (135): record training completions for members. No row: department admins only (ClaimsLogic.AddTrainingClaims,
+			// AuthorizationService.GetTrainingManagementScopeAsync: a group admin records for their own group's members only).
+			new PermissionScreenEntry(PermissionTypes.RecordTrainingCompletions, AdminsUpward, DepartmentAdmins),
+			// Round 10 A3 (136): protocol and course sets over Department Links and LMS sponsorship. No row: department admins only
+			// (ContentSetService.GetActorAsync).
+			new PermissionScreenEntry(PermissionTypes.ManageContentSets, AdminsUpward, DepartmentAdmins),
 			new PermissionScreenEntry(PermissionTypes.CreateDocument, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.CreateCalendarEntry, EveryoneFirst, Everyone),
 			new PermissionScreenEntry(PermissionTypes.CreateNote, EveryoneFirst, Everyone),
@@ -148,6 +168,8 @@ namespace Resgrid.Web.Areas.User.Models.Security
 				row = rows.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.AdjustInventory);
 			if (row == null && type == PermissionTypes.ViewCommandBoards)
 				row = rows.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.CommandAppLogin);
+			if (row == null && type is PermissionTypes.AssignTraining or PermissionTypes.DeleteTraining)
+				row = rows.FirstOrDefault(p => p.PermissionType == (int)PermissionTypes.CreateTraining);
 
 			return row;
 		}

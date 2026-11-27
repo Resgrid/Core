@@ -4714,4 +4714,8 @@
   <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
     <value>Journaler är inte på för din avdelning, så journalnumreringen kan inte ändras här. Ångra ändringen.</value>
   </data>
+  <data name="TabProtocols" xml:space="preserve">
+    <value>Protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

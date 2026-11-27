@@ -2298,4 +2298,72 @@
   <data name="RatedFlowHelp" xml:space="preserve">
     <value>Ονομαστική ροή κατά NFPA 291: μετρημένη ροή × ((στατική − 20) / (στατική − παραμένουσα))^0.54. Η κλάση ροής προκύπτει από αυτήν όταν έχουν καταχωριστεί στατική και παραμένουσα πίεση.</value>
   </data>
+  <data name="DeploymentPartner" xml:space="preserve">
+    <value>Συνδεδεμένος συνεργάτης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerNone" xml:space="preserve">
+    <value>Κανένας συνδεδεμένος συνεργάτης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSave" xml:space="preserve">
+    <value>Αποθήκευση συνεργάτη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerHelp" xml:space="preserve">
+    <value>Όταν η υπηρεσία για την οποία καλύπτεται αυτή η παραγγελία είναι συνδεδεμένος οργανισμός στο Resgrid, επιλέξτε την εδώ. Κάθε αποδεκτή κάλυψη ζητά τότε από τους διαχειριστές της να αποδεχθούν την ανάθεση με υπογραφή με επανεπιβεβαίωση ταυτότητας (step-up).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSaved" xml:space="preserve">
+    <value>Ο συνδεδεμένος συνεργάτης αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerRequested" xml:space="preserve">
+    <value>Ζητήθηκε από τον συνδεδεμένο συνεργάτη να αποδεχθεί την ανάθεση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerAsk" xml:space="preserve">
+    <value>Αίτημα αποδοχής προς τον συνεργάτη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotLinked" xml:space="preserve">
+    <value>Η σύνδεση με αυτόν τον οργανισμό δεν είναι ενεργοποιημένη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorClosedOut" xml:space="preserve">
+    <value>Η αποστολή έχει κλείσει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorConflict" xml:space="preserve">
+    <value>Κάποιος άλλος άλλαξε αυτή την αποστολή την ίδια στιγμή. Δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotFound" xml:space="preserve">
+    <value>Η αποστολή δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotAuthorized" xml:space="preserve">
+    <value>Δεν μπορείτε να αλλάξετε αυτή την αποστολή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateRequested" xml:space="preserve">
+    <value>Ζητήθηκε από τον συνεργάτη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateSigned" xml:space="preserve">
+    <value>Ο συνεργάτης αποδέχθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateDeclined" xml:space="preserve">
+    <value>Ο συνεργάτης απέρριψε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateLapsed" xml:space="preserve">
+    <value>Το αίτημα προς τον συνεργάτη έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateNone" xml:space="preserve">
+    <value>Καμία υπογραφή συνεργάτη</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

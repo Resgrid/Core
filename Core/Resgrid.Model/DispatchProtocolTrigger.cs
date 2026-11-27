@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Resgrid.Model
 {
 	[Table("DispatchProtocolTriggers")]
-	public class DispatchProtocolTrigger : IEntity
+	public class DispatchProtocolTrigger : IEntity, IDispatchTriggerCriteria
 	{
 		[Key]
 		[Required]
@@ -28,9 +28,41 @@ namespace Resgrid.Model
 
 		public int? Priority { get; set; }
 
+		/// <summary>
+		/// The call type's name, kept for display. Matching uses <see cref="CallTypeId"/>; a trigger with neither (null id and
+		/// no name) is the "no type" trigger, which matches a call that has no type.
+		/// </summary>
 		public string CallType { get; set; }
 
+		/// <summary>
+		/// The call type the trigger matches (M0336). Null with a blank <see cref="CallType"/> means "no type"; null with a name
+		/// is a trigger written before M0336 whose type no longer exists, matched by name as before.
+		/// </summary>
+		public int? CallTypeId { get; set; }
+
+		/// <summary>Never evaluated: a trigger's area is <see cref="GeofenceGroupId"/> (P4, "inside station or group geofence X"), drawn once on the group.</summary>
 		public string Geofence { get; set; }
+
+		/// <inheritdoc />
+		public int? GeofenceGroupId { get; set; }
+
+		/// <inheritdoc />
+		public int? DaysOfWeek { get; set; }
+
+		/// <inheritdoc />
+		public int? StartMinute { get; set; }
+
+		/// <inheritdoc />
+		public int? EndMinute { get; set; }
+
+		/// <inheritdoc />
+		public string Keywords { get; set; }
+
+		/// <inheritdoc />
+		public int? PoiTypeId { get; set; }
+
+		/// <inheritdoc />
+		public string CallSources { get; set; }
 
 		[NotMapped]
 		[JsonIgnore]

@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using Resgrid.Localization.Areas.User.ContentNotices;
 using Resgrid.Model;
 using Resgrid.Model.Certifications;
 using Resgrid.Model.Events;
@@ -34,6 +36,12 @@ namespace Resgrid.Tests.Services
 		private HashSet<string> _activeMembers;
 		private readonly List<object> _published = new List<object>();
 		private readonly List<(string UserId, string Message)> _notified = new List<(string, string)>();
+		/// <summary>Every notice with its title (the language tests read both).</summary>
+		private readonly List<(string UserId, string Title, string Message)> _notices = new List<(string, string, string)>();
+		/// <summary>Profile languages by member; a member not listed has none.</summary>
+		private readonly Dictionary<string, string> _languages = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+		/// <summary>The department's managing member, whose language is the department default.</summary>
+		private string _managingUserId;
 		private Mock<IPersonnelRolesService> _roles;
 		private Mock<IProtectedWriteService> _protectedWrite;
 		private CertificationService _service;
@@ -43,7 +51,7 @@ namespace Resgrid.Tests.Services
 		[SetUp]
 		public void SetUp()
 		{
-			_published.Clear(); _notified.Clear();
+			_published.Clear(); _notified.Clear(); _notices.Clear(); _languages.Clear(); _managingUserId = null;
 			_types = new List<DepartmentCertificationType>
 			{
 				new DepartmentCertificationType { DepartmentCertificationTypeId = 1, DepartmentId = Dept, Type = "NREMT Paramedic", Code = "NREMT-P", AppliesTo = 0, IsActive = true, DefaultValidityMonths = 24, RenewalCreditHoursRequired = 60 },
@@ -150,16 +158,17 @@ namespace Resgrid.Tests.Services
 			var units = new Mock<IUnitsService>();
 			units.Setup(u => u.GetUnitByIdAsync(It.IsAny<int>())).ReturnsAsync((int id) => id == 7 ? new Unit { UnitId = 7, DepartmentId = Dept, Name = "Engine 1" } : null);
 			var profiles = new Mock<IUserProfileService>();
-			profiles.Setup(p => p.GetProfileByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync((string id, bool _) => new UserProfile { UserId = id, FirstName = "Member", LastName = id });
+			profiles.Setup(p => p.GetProfileByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>())).ReturnsAsync((string id, bool _) => new UserProfile { UserId = id, FirstName = "Member", LastName = id,
+				Language = _languages.TryGetValue(id, out var language) ? language : null });
 			var departments = new Mock<IDepartmentsService>();
-			departments.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync(new Department { DepartmentId = Dept, Name = "Test" });
+			departments.Setup(d => d.GetDepartmentByIdAsync(Dept, It.IsAny<bool>())).ReturnsAsync((int _, bool __) => new Department { DepartmentId = Dept, Name = "Test", ManagingUserId = _managingUserId });
 			departments.Setup(d => d.GetActiveAdminsForDepartmentAsync(Dept)).ReturnsAsync(new List<Resgrid.Model.Identity.IdentityUser> { new Resgrid.Model.Identity.IdentityUser { UserId = "admin-1" } });
 			departments.Setup(d => d.GetActiveMemberUserIdsAsync(Dept)).ReturnsAsync(() => new HashSet<string>(_activeMembers));
 			var departmentSettings = new Mock<IDepartmentSettingsService>();
 			departmentSettings.Setup(d => d.GetTextToCallNumberForDepartmentAsync(Dept)).ReturnsAsync("+15555550100");
 			var communication = new Mock<ICommunicationService>();
 			communication.Setup(c => c.SendNotificationAsync(It.IsAny<string>(), Dept, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<Department>(), It.IsAny<string>(), It.IsAny<UserProfile>(), It.IsAny<bool>()))
-				.ReturnsAsync((string user, int _, string message, string __, Department ___, string ____, UserProfile _____, bool ______) => { _notified.Add((user, message)); return true; });
+				.ReturnsAsync((string user, int _, string message, string __, Department ___, string title, UserProfile _____, bool ______) => { _notified.Add((user, message)); _notices.Add((user, title, message)); return true; });
 
 			_protectedWrite = new Mock<IProtectedWriteService>();
 			_protectedWrite.Setup(p => p.PrepareCertificationWriteAsync(It.IsAny<int>(), It.IsAny<PersonnelCertification>(), It.IsAny<PersonnelCertification>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<CancellationToken>()))
@@ -420,6 +429,114 @@ namespace Resgrid.Tests.Services
 			var again = await _service.RunExpirySweepAsync(Dept, Today);
 			again.Expired.Should().Be(0); again.UnitsExpired.Should().Be(0); again.ExpiringNotified.Should().Be(1, "the same local day repeats the lead-day match; the worker's day claim is what prevents a second run");
 			(await _service.RunExpirySweepAsync(Dept, Today.AddDays(1))).ExpiringNotified.Should().Be(1, "only the record due in 8 days reaches its 7-day lead tomorrow");
+		}
+
+		private (string Title, string Message) Notice(string userId) => _notices.Where(n => n.UserId == userId).Select(n => (n.Title, n.Message)).Single();
+
+		private static CultureInfo C(string language) => CultureInfo.GetCultureInfo(language);
+
+		/// <summary>
+		/// 2026-11-26: every notice the sweep sends is in its recipient's language: the profile language, else the department default (the
+		/// managing member's language), else English. Certification type and member names stay as the department wrote them.
+		/// </summary>
+		[Test]
+		public async Task Sweep_notices_go_in_each_recipients_language_with_the_department_default_and_english_fallbacks()
+		{
+			_settings = new DepartmentCertificationSettings { DepartmentId = Dept, NotifyLeadDaysCsv = "7,1", NotifyCertificationHolder = true, SendAdminDigest = true };
+			_activeMembers.Add("u5");
+			_languages["u2"] = "de";
+			_languages["u3"] = "xx";
+			_languages["u5"] = "uk-UA";
+			_languages["admin-1"] = "es";
+			_languages["manager"] = "fr";
+			_managingUserId = "manager";
+			var soon = Today.AddDays(7);
+			AddRecord(1, soon, "u2");
+			AddRecord(1, soon, "u3");
+			AddRecord(1, soon, "u5");
+			AddRecord(1, Today.AddDays(1), "u1");
+			AddRecord(1, Today.AddDays(-1), "u4");
+
+			var result = await _service.RunExpirySweepAsync(Dept, Today);
+			result.ExpiringNotified.Should().Be(4); result.Expired.Should().Be(1); result.DigestSent.Should().BeTrue();
+
+			Notice("u2").Title.Should().Be(ContentNoticeText.Get("Certification.Title", C("de"))).And.Be("Zertifizierung");
+			Notice("u2").Message.Should().Be(ContentNoticeText.Format("Certification.Expiring.Body", C("de"), "NREMT Paramedic", 7, soon.ToString("d", C("de"))))
+				.And.Contain("NREMT Paramedic").And.Contain("Tagen");
+			Notice("u5").Message.Should().Be(ContentNoticeText.Format("Certification.Expiring.Body", C("uk"), "NREMT Paramedic", 7, soon.ToString("d", C("uk"))), "a regional profile language reads its language");
+			Notice("u3").Message.Should().Be(ContentNoticeText.Format("Certification.Expiring.Body", C("fr"), "NREMT Paramedic", 7, soon.ToString("d", C("fr"))),
+				"an unsupported profile language falls back to the department default");
+			Notice("u1").Message.Should().Be(ContentNoticeText.Format("Certification.Expiring.BodyOne", C("fr"), "NREMT Paramedic", Today.AddDays(1).ToString("d", C("fr"))),
+				"no profile language: the department default, and the one-day wording");
+
+			var digest = Notice("admin-1");
+			digest.Title.Should().Be("Resumen de certificaciones");
+			digest.Message.Should().StartWith(ContentNoticeText.Format("Certification.Digest.Summary", C("es"), Today.ToString("d", C("es")), 1, 4, 0, 0))
+				.And.Contain(ContentNoticeText.Format("Certification.Digest.Expired", C("es"), "Member u4 – NREMT Paramedic"))
+				.And.Contain("Member u2 – NREMT Paramedic (7 días)")
+				.And.NotContain("expiring").And.NotContain("Expired:");
+		}
+
+		[Test]
+		public async Task Sweep_notices_without_any_language_are_english_and_role_notices_follow_the_member()
+		{
+			_requirements.Add(new PersonnelRoleCertificationRequirement { PersonnelRoleCertificationRequirementId = 1, PersonnelRoleId = 12, DepartmentId = Dept, DepartmentCertificationTypeId = 1, IsMandatory = true, AddedOn = Today.AddYears(-1) });
+			_members.Add(new PersonnelRoleUser { PersonnelRoleUserId = 1, PersonnelRoleId = 12, DepartmentId = Dept, UserId = "u1" });
+			_members.Add(new PersonnelRoleUser { PersonnelRoleUserId = 2, PersonnelRoleId = 12, DepartmentId = Dept, UserId = "u2" });
+			AddRecord(1, Today.AddDays(-31), "u1", PersonnelCertificationStatuses.Expired);
+			AddRecord(1, Today.AddDays(-25), "u2", PersonnelCertificationStatuses.Expired);
+			_languages["u1"] = "pl";
+			_settings = new DepartmentCertificationSettings { DepartmentId = Dept, EnforcementMode = (int)CertificationEnforcementModes.Enforce, RoleRemovalGraceDays = 30,
+				NotifyLeadDaysCsv = "6", NotifyCertificationHolder = true, SendAdminDigest = true };
+
+			var result = await _service.RunExpirySweepAsync(Dept, Today);
+			result.Removed.Should().Be(1); result.InGrace.Should().Be(1);
+
+			Notice("u1").Message.Should().Be(ContentNoticeText.Format("Certification.RoleRemoved.Body", C("pl"), "Paramedic", "NREMT Paramedic")).And.StartWith("Usunięto");
+			var removal = _published.OfType<CertificationRoleRemovedEvent>().Single();
+			removal.UserId.Should().Be("u1");
+
+			// u2 is in grace; whether the removal-pending warning goes out today depends on the lead day, and when it does it is English.
+			var digest = Notice("admin-1");
+			digest.Title.Should().Be("Certification digest");
+			digest.Message.Should().Contain("0 expired, 0 expiring, 1 in grace, 1 removed from roles.")
+				.And.Contain("In grace: Member u2 – Paramedic (NREMT Paramedic")
+				.And.Contain("Removed: Member u1 – Paramedic (NREMT Paramedic)");
+			foreach (var (title, message) in _notices.Where(n => n.UserId == "u2").Select(n => (n.Title, n.Message)))
+			{
+				title.Should().Be("Certification");
+				message.Should().StartWith("Your Paramedic role membership ends on ").And.EndWith(" unless your NREMT Paramedic certification is renewed.");
+			}
+		}
+
+		[TestCase("en")] [TestCase("ar")] [TestCase("de")] [TestCase("el")] [TestCase("es")] [TestCase("fr")] [TestCase("it")] [TestCase("pl")] [TestCase("sv")] [TestCase("uk")]
+		public void Every_sweep_notice_is_written_in_each_locale_with_every_value_filled_in(string language)
+		{
+			var culture = C(language);
+			var result = new CertificationSweepResult { Expired = 1, UnitsExpired = 1, ExpiringNotified = 1, InGrace = 1, Removed = 1 };
+			result.Entries.Add(new CertificationSweepEntry { Kind = CertificationSweepEntryKinds.Expired, SubjectName = "Ana", TypeName = "EMT" });
+			result.Entries.Add(new CertificationSweepEntry { Kind = CertificationSweepEntryKinds.Expired, UnitId = 77, TypeName = "DOT" });
+			result.Entries.Add(new CertificationSweepEntry { Kind = CertificationSweepEntryKinds.Expiring, SubjectName = "Bo", TypeName = "EMT", DaysUntilExpiry = 30 });
+			result.Entries.Add(new CertificationSweepEntry { Kind = CertificationSweepEntryKinds.InGrace, SubjectName = "Cy", RoleName = "Driver", TypeName = "CDL", Until = Today });
+			result.Entries.Add(new CertificationSweepEntry { Kind = CertificationSweepEntryKinds.Removed, SubjectName = "Di", RoleName = "Driver", TypeName = "CDL" });
+
+			var notices = new[]
+			{
+				CertificationSweepNotices.Expiring(culture, "EMT", 30, Today), CertificationSweepNotices.Expiring(culture, "EMT", 1, Today),
+				CertificationSweepNotices.RoleRemoved(culture, "Driver", "CDL"), CertificationSweepNotices.RemovalPending(culture, "Driver", Today, "CDL"),
+				CertificationSweepNotices.Digest(culture, Today, result)
+			};
+			foreach (var (title, message) in notices)
+			{
+				title.Should().NotBeNullOrWhiteSpace().And.NotStartWith("Certification.");
+				message.Should().NotContain("{").And.NotContain("Certification.");
+			}
+			notices[4].Message.Should().Contain("Ana").And.Contain("77").And.Contain("Bo").And.Contain("Cy").And.Contain("Di").And.Contain(Today.ToString("d", culture));
+			if (language != "en")
+			{
+				notices[0].Message.Should().NotBe(CertificationSweepNotices.Expiring(C("en"), "EMT", 30, Today).Message);
+				notices[4].Title.Should().NotBe("Certification digest");
+			}
 		}
 
 		[Test]

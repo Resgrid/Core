@@ -1,0 +1,194 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Knowledge
+@model KnowledgeGapsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Knowledge.Knowledge> localizer
+@* Knowledge gaps (K1, §16.4): questions the department's content did not answer and answers marked not helpful, for the people who fix the content. *@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + localizer["GapsTitle"];
+    ViewData["Title"] = localizer["GapsTitle"].Value;
+    ViewData["Subtitle"] = localizer["GapsIntro"].Value;
+    ViewData["Section"] = "Gaps";
+    ViewData["IsAdmin"] = Model.IsAdmin;
+
+    string ReasonText(int reason) => reason == (int)KnowledgeGapReasons.ThumbsDown ? localizer["ReasonThumbsDown"].Value : localizer["ReasonNotCovered"].Value;
+    string SurfaceText(int surface) => Enum.IsDefined(typeof(KnowledgeAskSurfaces), surface) ? localizer["Surface" + (KnowledgeAskSurfaces)surface].Value : string.Empty;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    <div class="rgw-stat-tiles" role="list">
+        <a class="rgw-stat-tile" role="listitem" asp-controller="Knowledge" asp-action="Gaps" asp-route-area="User" asp-route-status="open">
+            <div class="rgw-stat-label">@localizer["OpenTile"]</div>
+            <div class="rgw-stat-value">@Model.OpenCount</div>
+        </a>
+        <a class="rgw-stat-tile" role="listitem" asp-controller="Knowledge" asp-action="Gaps" asp-route-area="User" asp-route-status="resolved">
+            <div class="rgw-stat-label">@localizer["ResolvedTile"]</div>
+            <div class="rgw-stat-value">@Model.ResolvedCount</div>
+        </a>
+        <a class="rgw-stat-tile" role="listitem" asp-controller="Knowledge" asp-action="Gaps" asp-route-area="User" asp-route-status="dismissed">
+            <div class="rgw-stat-label">@localizer["DismissedTile"]</div>
+            <div class="rgw-stat-value">@Model.DismissedCount</div>
+        </a>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-content">
+            <form method="get" class="rgw-toolbar" asp-controller="Knowledge" asp-action="Gaps" asp-route-area="User">
+                <label class="control-label" for="gapStatus">@localizer["StatusFilterLabel"]</label>
+                <select id="gapStatus" name="status" class="form-control" style="max-width: 220px;">
+                    <option value="open" selected="@(Model.Status == "open")">@localizer["OpenTile"]</option>
+                    <option value="resolved" selected="@(Model.Status == "resolved")">@localizer["ResolvedTile"]</option>
+                    <option value="dismissed" selected="@(Model.Status == "dismissed")">@localizer["DismissedTile"]</option>
+                    <option value="all" selected="@(Model.Status == "all")">@localizer["AllFilter"]</option>
+                </select>
+                <button type="submit" class="btn btn-default"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["FilterButton"]</button>
+            </form>
+
+            @if (Model.Rows.Count == 0)
+            {
+                <div class="text-center m-t-lg m-b-lg" role="status">
+                    <i class="fa fa-check-circle fa-3x text-muted" aria-hidden="true"></i>
+                    <h4 class="m-t-sm">@localizer["NoGaps"]</h4>
+                </div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["ColumnQuestion"]</th>
+                                <th>@localizer["ColumnAsked"]</th>
+                                <th>@localizer["ColumnReason"]</th>
+                                <th>@localizer["ColumnNearest"]</th>
+                                <th class="rgw-row-actions">@localizer["ColumnActions"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.Rows)
+                            {
+                                var gap = row.Gap;
+                                <tr>
+                                    <td>
+                                        @if (string.IsNullOrWhiteSpace(gap.Question))
+                                        {
+                                            <span class="text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["QuestionNotKept"]</span>
+                                        }
+                                        else
+                                        {
+                                            <span style="white-space: pre-wrap;">@gap.Question</span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(gap.ResolutionNote))
+                                        {
+                                            <small class="rgw-sub text-muted">@localizer["NoteLabel"]: @gap.ResolutionNote</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @departmentTime.Format(gap.AskedOn)
+                                        <small class="rgw-sub text-muted">@(string.IsNullOrWhiteSpace(row.AskedBy) ? "" : row.AskedBy + " · ")@(string.IsNullOrWhiteSpace(gap.AskerRole) ? localizer["NoRole"].Value : gap.AskerRole)</small>
+                                        <small class="rgw-sub text-muted">@SurfaceText(gap.Surface)</small>
+                                    </td>
+                                    <td>
+                                        <span class="label @(gap.Reason == (int)KnowledgeGapReasons.ThumbsDown ? "label-warning" : "label-info")">
+                                            <i class="fa @(gap.Reason == (int)KnowledgeGapReasons.ThumbsDown ? "fa-thumbs-down" : "fa-question")" aria-hidden="true"></i> @ReasonText(gap.Reason)
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @if (row.Nearest.Count == 0)
+                                        {
+                                            <span class="text-muted">@localizer["NoNearest"]</span>
+                                        }
+                                        else
+                                        {
+                                            <ul class="list-unstyled m-b-none">
+                                                @foreach (var source in row.Nearest)
+                                                {
+                                                    <li>
+                                                        @if (!string.IsNullOrEmpty(source.Url))
+                                                        {
+                                                            <a href="@source.Url">@source.Title</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            @source.Title
+                                                        }
+                                                        <small class="text-muted">@source.Kind @(source.Version == null ? "" : "· " + source.Version)</small>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        @if (gap.Status == (int)KnowledgeGapStatuses.Open)
+                                        {
+                                            @if (Model.CanAuthorProtocols && row.DraftProtocolId.HasValue)
+                                            {
+                                                <form method="post" asp-controller="Knowledge" asp-action="DraftProtocol" asp-route-area="User" asp-route-id="@gap.KnowledgeGapId" class="m-b-xs">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-code-fork" aria-hidden="true"></i> @localizer["DraftProtocolButton"]</button>
+                                                </form>
+                                            }
+                                            @if (Model.CanCreateTrainings)
+                                            {
+                                                <form method="post" asp-controller="Knowledge" asp-action="NewTraining" asp-route-area="User" asp-route-id="@gap.KnowledgeGapId" class="m-b-xs">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["NewTrainingButton"]</button>
+                                                </form>
+                                            }
+                                            <form method="post" asp-controller="Knowledge" asp-action="SetGapStatus" asp-route-area="User" class="form-inline m-b-xs">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@gap.KnowledgeGapId" />
+                                                <input type="hidden" name="returnStatus" value="@Model.Status" />
+                                                <label class="sr-only" for="note-@gap.KnowledgeGapId">@localizer["NoteLabel"]</label>
+                                                <input id="note-@gap.KnowledgeGapId" type="text" name="note" class="form-control input-sm" maxlength="@KnowledgeGap.ResolutionNoteMaxLength" placeholder="@localizer["NoteLabel"]" />
+                                                <button type="submit" name="status" value="@((int)KnowledgeGapStatuses.Resolved)" class="btn btn-xs btn-success"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ResolveButton"]</button>
+                                                <button type="submit" name="status" value="@((int)KnowledgeGapStatuses.Dismissed)" class="btn btn-xs btn-default"><i class="fa fa-times" aria-hidden="true"></i> @localizer["DismissButton"]</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form method="post" asp-controller="Knowledge" asp-action="SetGapStatus" asp-route-area="User">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@gap.KnowledgeGapId" />
+                                                <input type="hidden" name="returnStatus" value="@Model.Status" />
+                                                <button type="submit" name="status" value="@((int)KnowledgeGapStatuses.Open)" class="btn btn-xs btn-default"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["ReopenButton"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <nav aria-label="@localizer["GapsTitle"]">
+                    <ul class="pager">
+                        @if (Model.Page > 1)
+                        {
+                            <li class="previous"><a asp-controller="Knowledge" asp-action="Gaps" asp-route-area="User" asp-route-status="@Model.Status" asp-route-page="@(Model.Page - 1)"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["PreviousPage"]</a></li>
+                        }
+                        @if (Model.HasMore)
+                        {
+                            <li class="next"><a asp-controller="Knowledge" asp-action="Gaps" asp-route-area="User" asp-route-status="@Model.Status" asp-route-page="@(Model.Page + 1)">@localizer["NextPage"] <i class="fa fa-arrow-right" aria-hidden="true"></i></a></li>
+                        }
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

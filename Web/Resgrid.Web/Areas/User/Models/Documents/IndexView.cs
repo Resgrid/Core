@@ -12,5 +12,10 @@ namespace Resgrid.Web.Areas.User.Models.Documents
 		public List<DocumentCategory> Categories { get; set; }
 		public string SelectedType { get; set; }
 		public string SelectedCategory { get; set; }
+
+		/// <summary>The viewer may author protocols: "Move this category to Protocols" (P1 R-P6) is offered for the selected category.</summary>
+		public bool CanMoveToProtocols { get; set; }
+
+		public string Message { get; set; }
 	}
 }

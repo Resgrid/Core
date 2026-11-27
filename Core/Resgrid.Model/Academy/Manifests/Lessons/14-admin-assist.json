@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "id": "14-admin-assist",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Admin Assist",
+  "minutes": 6.4,
+  "walkthrough": true,
+  "audience": [
+    "administrator"
+  ],
+  "visibility": [],
+  "pages": [
+    "AdminAssist"
+  ],
+  "adminAssist": {
+    "areas": [
+      "security"
+    ],
+    "capabilities": [
+      "setup-help"
+    ]
+  },
+  "media": {
+    "video": "deep-dive/media/14-admin-assist.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "deep-dive/lessons/14-admin-assist/captions.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Use Admin Assist to review changes and follow up",
+    "ar": "استخدم Admin Assist لمراجعة التغييرات ومتابعتها",
+    "de": "Admin Assist nutzen, um Änderungen zu prüfen und nachzufassen",
+    "el": "Χρησιμοποιήστε το Admin Assist για έλεγχο αλλαγών και παρακολούθηση",
+    "es": "Usar Admin Assist para revisar cambios y hacer seguimiento",
+    "fr": "Utiliser Admin Assist pour revoir les changements et assurer le suivi",
+    "it": "Usare Admin Assist per rivedere le modifiche e dare seguito",
+    "pl": "Korzystaj z Admin Assist, aby przeglądać zmiany i działać dalej",
+    "sv": "Använd Admin Assist för att granska ändringar och följa upp",
+    "uk": "Користуйтеся Admin Assist, щоб переглядати зміни та діяти далі"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "What does Admin Assist help administrators do?",
+        "ar": "بمَ يساعد Admin Assist المديرين؟",
+        "de": "Wobei hilft Admin Assist Administratoren?",
+        "el": "Σε τι βοηθά το Admin Assist τους διαχειριστές;",
+        "es": "¿En qué ayuda Admin Assist a los administradores?",
+        "fr": "À quoi Admin Assist aide-t-il les administrateurs ?",
+        "it": "In che cosa Admin Assist aiuta gli amministratori?",
+        "pl": "W czym Admin Assist pomaga administratorom?",
+        "sv": "Vad hjälper Admin Assist administratörer med?",
+        "uk": "У чому Admin Assist допомагає адміністраторам?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Find settings and review changes",
+            "ar": "العثور على الإعدادات ومراجعة التغييرات",
+            "de": "Einstellungen finden und Änderungen prüfen",
+            "el": "Εύρεση ρυθμίσεων και έλεγχο αλλαγών",
+            "es": "Encontrar ajustes y revisar cambios",
+            "fr": "Trouver les paramètres et revoir les changements",
+            "it": "Trovare impostazioni e rivedere le modifiche",
+            "pl": "Znajdować ustawienia i przeglądać zmiany",
+            "sv": "Hitta inställningar och granska ändringar",
+            "uk": "Знаходити налаштування й переглядати зміни"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Dispatch calls automatically",
+            "ar": "إرسال البلاغات تلقائيًا",
+            "de": "Einsätze automatisch alarmieren",
+            "el": "Αυτόματη διασπορά κλήσεων",
+            "es": "Despachar llamadas automáticamente",
+            "fr": "Engager automatiquement des interventions",
+            "it": "Inviare chiamate automaticamente",
+            "pl": "Automatycznie dysponować zgłoszenia",
+            "sv": "Larma ut händelser automatiskt",
+            "uk": "Автоматично відправляти виклики"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Pay members",
+            "ar": "دفع أجور الأعضاء",
+            "de": "Mitglieder bezahlen",
+            "el": "Πληρωμή μελών",
+            "es": "Pagar a los miembros",
+            "fr": "Payer les membres",
+            "it": "Pagare i membri",
+            "pl": "Wypłacać członkom",
+            "sv": "Betala medlemmar",
+            "uk": "Платити учасникам"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What can you do after Admin Assist flags a change?",
+        "ar": "ماذا يمكنك فعله بعد أن يُعلّم Admin Assist تغييرًا؟",
+        "de": "Was können Sie tun, nachdem Admin Assist eine Änderung markiert hat?",
+        "el": "Τι μπορείτε να κάνετε αφού το Admin Assist επισημάνει μια αλλαγή;",
+        "es": "¿Qué puede hacer después de que Admin Assist señale un cambio?",
+        "fr": "Que faire après qu’Admin Assist a signalé un changement ?",
+        "it": "Che cosa puoi fare dopo che Admin Assist segnala una modifica?",
+        "pl": "Co możesz zrobić, gdy Admin Assist oznaczy zmianę?",
+        "sv": "Vad kan du göra när Admin Assist flaggar en ändring?",
+        "uk": "Що можна зробити, коли Admin Assist позначив зміну?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Nothing",
+            "ar": "لا شيء",
+            "de": "Nichts",
+            "el": "Τίποτα",
+            "es": "Nada",
+            "fr": "Rien",
+            "it": "Niente",
+            "pl": "Nic",
+            "sv": "Ingenting",
+            "uk": "Нічого"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Delete the department",
+            "ar": "حذف الإدارة",
+            "de": "Die Organisation löschen",
+            "el": "Διαγραφή της υπηρεσίας",
+            "es": "Eliminar el departamento",
+            "fr": "Supprimer le service",
+            "it": "Eliminare il dipartimento",
+            "pl": "Usunąć jednostkę",
+            "sv": "Radera organisationen",
+            "uk": "Видалити підрозділ"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Follow up and mark it reviewed",
+            "ar": "متابعته ووضع علامة تمت مراجعته",
+            "de": "Nachfassen und als geprüft markieren",
+            "el": "Παρακολούθηση και σήμανση ως ελεγμένη",
+            "es": "Hacer seguimiento y marcarlo como revisado",
+            "fr": "Assurer le suivi et le marquer comme revu",
+            "it": "Dare seguito e segnarla come rivista",
+            "pl": "Zająć się nią i oznaczyć jako przejrzaną",
+            "sv": "Följa upp och markera den som granskad",
+            "uk": "Відпрацювати й позначити переглянутою"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Admin Assist can link straight to the setting it explains.",
+        "ar": "يمكن لـ Admin Assist الربط مباشرة بالإعداد الذي يشرحه.",
+        "de": "Admin Assist kann direkt zu der erklärten Einstellung verlinken.",
+        "el": "Το Admin Assist μπορεί να οδηγεί κατευθείαν στη ρύθμιση που εξηγεί.",
+        "es": "Admin Assist puede enlazar directamente con el ajuste que explica.",
+        "fr": "Admin Assist peut mener directement au paramètre qu’il explique.",
+        "it": "Admin Assist può portare direttamente all’impostazione che spiega.",
+        "pl": "Admin Assist może prowadzić prosto do wyjaśnianego ustawienia.",
+        "sv": "Admin Assist kan länka direkt till inställningen den förklarar.",
+        "uk": "Admin Assist може вести прямо до налаштування, яке пояснює."
+      }
+    }
+  ]
+}

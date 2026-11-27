@@ -1,0 +1,1049 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetsHeader" xml:space="preserve">
+    <value>Geteilte Sammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinksCrumb" xml:space="preserve">
+    <value>Abteilungsverknüpfungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsTab" xml:space="preserve">
+    <value>Protokollsammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsTab" xml:space="preserve">
+    <value>Kurssammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxTab" xml:space="preserve">
+    <value>Aktualisierungseingang</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalsTab" xml:space="preserve">
+    <value>Vorschläge</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipsTab" xml:space="preserve">
+    <value>Sponsorings</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Sammlungseinstellungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsIntro" xml:space="preserve">
+    <value>Veröffentlichen Sie Protokolle als Sammlung für verknüpfte Abteilungen oder abonnieren Sie die Sammlungen, die verknüpfte Abteilungen veröffentlichen. Gesperrte Inhalte folgen dem Herausgeber; anpassbare Blöcke behalten Ihre Änderungen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsIntro" xml:space="preserve">
+    <value>Veröffentlichen Sie Kurse und Schulungen als Sammlung für verknüpfte Abteilungen oder abonnieren Sie deren Sammlungen. Abschlüsse bleiben in der eigenen Akte jedes Mitglieds.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedHeader" xml:space="preserve">
+    <value>Von Ihrer Abteilung veröffentlichte Sammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedIntro" xml:space="preserve">
+    <value>Verknüpfte Abteilungen, mit denen Sie diese Art von Inhalten teilen, können abonnieren. Jede neue Version, die Sie veröffentlichen, landet in deren Aktualisierungseingang.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSet" xml:space="preserve">
+    <value>Sammlung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnItems" xml:space="preserve">
+    <value>Elemente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSubscribers" xml:space="preserve">
+    <value>Abonnenten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Zustand</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnPublisher" xml:space="preserve">
+    <value>Herausgeber</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnItem" xml:space="preserve">
+    <value>Element</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnVersion" xml:space="preserve">
+    <value>Fassung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnEffective" xml:space="preserve">
+    <value>Gültig ab</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnDeadline" xml:space="preserve">
+    <value>Frist</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSponsor" xml:space="preserve">
+    <value>Sponsoring-Abteilung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSponsored" xml:space="preserve">
+    <value>Gesponserte Abteilung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSeats" xml:space="preserve">
+    <value>Plätze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Archiviert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLive" xml:space="preserve">
+    <value>Aktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSubscribed" xml:space="preserve">
+    <value>Abonniert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSuspended" xml:space="preserve">
+    <value>Ausgesetzt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>Nicht abonniert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetNameLabel" xml:space="preserve">
+    <value>Name der Sammlung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDescriptionLabel" xml:space="preserve">
+    <value>Beschreibung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewSetButton" xml:space="preserve">
+    <value>Neue Sammlung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableHeader" xml:space="preserve">
+    <value>Mit Ihrer Abteilung geteilte Sammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableIntroProtocols" xml:space="preserve">
+    <value>Sammlungen verknüpfter Abteilungen, die über eine Abteilungsverknüpfung Protokolle mit Ihrer Abteilung teilen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableIntroTraining" xml:space="preserve">
+    <value>Sammlungen verknüpfter Abteilungen, die über eine Abteilungsverknüpfung Schulungsinhalte mit Ihrer Abteilung teilen. Kurse erfordern Ihr eigenes LMS-Add-on oder das Sponsoring des Herausgebers; Schulungen nicht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAvailable" xml:space="preserve">
+    <value>Noch teilt keine verknüpfte Abteilung eine Sammlung dieser Art mit Ihrer Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredLabel" xml:space="preserve">
+    <value>Gesponsert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionsHeader" xml:space="preserve">
+    <value>Ihre Abonnements</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSubscriptions" xml:space="preserve">
+    <value>Ihre Abteilung hat keine Sammlung dieser Art abonniert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribedOn" xml:space="preserve">
+    <value>Abonniert am</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenUpdatesCount" xml:space="preserve">
+    <value>Ausstehende Aktualisierungen: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SuspendedHelp" xml:space="preserve">
+    <value>Die Verknüpfung teilt diese Inhalte nicht mehr, daher kommt nichts Neues an. Ihre Kopien bleiben unverändert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalChangesLabel" xml:space="preserve">
+    <value>Lokale Änderungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeButton" xml:space="preserve">
+    <value>Anpassen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeButton" xml:space="preserve">
+    <value>Änderung vorschlagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptOn" xml:space="preserve">
+    <value>Aktualisierungen automatisch annehmen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptOff" xml:space="preserve">
+    <value>Automatische Annahme beenden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SyncButton" xml:space="preserve">
+    <value>Fehlende Elemente abrufen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnsubscribeButton" xml:space="preserve">
+    <value>Abbestellen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnsubscribeConfirm" xml:space="preserve">
+    <value>Abonnement beenden? Die Kopien bleiben als eigene Inhalte in Ihrer Abteilung, und es kommen keine weiteren Aktualisierungen an.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusActive" xml:space="preserve">
+    <value>Aktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusSuspended" xml:space="preserve">
+    <value>Ausgesetzt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusEnded" xml:space="preserve">
+    <value>Beendet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeLocked" xml:space="preserve">
+    <value>Gesperrt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeCustomizableBlocks" xml:space="preserve">
+    <value>Anpassbare Blöcke</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeOpen" xml:space="preserve">
+    <value>Offen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetIntro" xml:space="preserve">
+    <value>Was verknüpfte Abteilungen erhalten, wie stark sie jedes Element ändern dürfen und wer abonniert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchivedHelp" xml:space="preserve">
+    <value>Diese Sammlung ist archiviert: Sie nimmt keine neuen Abonnenten auf und sendet keine weiteren Aktualisierungen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDetailsHeader" xml:space="preserve">
+    <value>Details der Sammlung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysLabel" xml:space="preserve">
+    <value>Tage, um die eine gesperrte Aktualisierung aufgeschoben werden kann</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysHelp" xml:space="preserve">
+    <value>Abonnenten können eine Aktualisierung gesperrter Inhalte bis zu so vielen Tagen nach ihrem Gültigkeitsdatum aufschieben; danach tritt sie zu ihrer nächsten Aktualisierungszeit in Kraft.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Speichern</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>Sammlung archivieren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>Diese Sammlung archivieren? Abonnements enden, und Abonnenten behalten ihre Kopien als eigene Inhalte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribersHeader" xml:space="preserve">
+    <value>Abonnierende Abteilungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSubscribers" xml:space="preserve">
+    <value>Noch abonniert keine Abteilung diese Sammlung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Entfernen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveSubscriberConfirm" xml:space="preserve">
+    <value>Das Abonnement dieser Abteilung beenden? Sie behält ihre Kopien als eigene Inhalte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenProposalsCount" xml:space="preserve">
+    <value>Offene Vorschläge: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>Elemente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModesHelp" xml:space="preserve">
+    <value>Gesperrt: Abonnenten können Aktualisierungen nur bis zur Frist aufschieben. Anpassbare Blöcke: Abonnenten dürfen die von Ihnen markierten Blöcke ersetzen (lokale Telefonnummern, Ziele, Ressourcen) und am Ende eigene Blöcke hinzufügen. Offen: Abonnenten dürfen alles ändern und Aktualisierungen ablehnen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>Diese Sammlung enthält noch keine Elemente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsItemLabel" xml:space="preserve">
+    <value>LMS-Element</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeLabel" xml:space="preserve">
+    <value>Sperre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizableBlocksLabel" xml:space="preserve">
+    <value>Blöcke, die Abonnenten ersetzen dürfen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveItemConfirm" xml:space="preserve">
+    <value>Dieses Element aus der Sammlung entfernen? Abonnenten behalten ihre Kopien als eigene Inhalte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemHeader" xml:space="preserve">
+    <value>Element hinzufügen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemLabel" xml:space="preserve">
+    <value>Element</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseItem" xml:space="preserve">
+    <value>Auswählen…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemHelp" xml:space="preserve">
+    <value>Bereits abonnierte Abteilungen erhalten das Element in ihrem Aktualisierungseingang.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemButton" xml:space="preserve">
+    <value>Zur Sammlung hinzufügen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableSubtitle" xml:space="preserve">
+    <value>Veröffentlicht von {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysSummary" xml:space="preserve">
+    <value>Aktualisierungen gesperrter Inhalte können bis zu {0} Tage nach ihrem Gültigkeitsdatum aufgeschoben werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredBy" xml:space="preserve">
+    <value>{0} sponsert die LMS-Plätze Ihrer Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsReady" xml:space="preserve">
+    <value>Ihre Abteilung kann die Kurse dieser Sammlung empfangen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsNeeded" xml:space="preserve">
+    <value>Die Kurse dieser Sammlung erfordern das LMS-Add-on oder das Sponsoring des Herausgebers. Schulungen werden auch ohne empfangen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YouCanChange" xml:space="preserve">
+    <value>Sie können ändern:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptLabel" xml:space="preserve">
+    <value>Aktualisierungen automatisch annehmen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptHelp" xml:space="preserve">
+    <value>Aktualisierungen treten zur Aktualisierungszeit Ihrer Abteilung an oder nach ihrem Gültigkeitsdatum in Kraft, ohne Entscheidung im Eingang.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribeConfirm" xml:space="preserve">
+    <value>Abonnieren? Jedes Element wird jetzt in Ihre Abteilung kopiert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribeButton" xml:space="preserve">
+    <value>Abonnieren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ManagersSubscribe" xml:space="preserve">
+    <value>Mitglieder mit der Berechtigung „Inhaltssammlungen verwalten“ können abonnieren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxIntro" xml:space="preserve">
+    <value>Neue Versionen aus den Sammlungen, die Ihre Abteilung abonniert hat. Angenommene Aktualisierungen treten zu Ihrer Aktualisierungszeit in Kraft, nie überraschend mitten in einer Schicht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowOpen" xml:space="preserve">
+    <value>Offene Aktualisierungen anzeigen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Alle Aktualisierungen anzeigen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxEmpty" xml:space="preserve">
+    <value>Es stehen keine Aktualisierungen aus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewItemLabel" xml:space="preserve">
+    <value>Neues Element</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDeadline" xml:space="preserve">
+    <value>Keine</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusPending" xml:space="preserve">
+    <value>Wartet auf Entscheidung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusScheduled" xml:space="preserve">
+    <value>Geplant</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusApplied" xml:space="preserve">
+    <value>In Kraft</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusDeferred" xml:space="preserve">
+    <value>Aufgeschoben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusDeclined" xml:space="preserve">
+    <value>Abgelehnt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusSuperseded" xml:space="preserve">
+    <value>Ersetzt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusFailed" xml:space="preserve">
+    <value>Konnte nicht angewendet werden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateSubtitle" xml:space="preserve">
+    <value>{0}, {1}, Version {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyOnLabel" xml:space="preserve">
+    <value>Tritt in Kraft</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AppliedOnLabel" xml:space="preserve">
+    <value>In Kraft getreten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureLabel" xml:space="preserve">
+    <value>Fehler</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Was sich geändert hat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DroppedChangesHelp" xml:space="preserve">
+    <value>Der Herausgeber hat Blöcke entfernt oder gesperrt, die Sie geändert hatten; diese lokalen Änderungen werden nicht mehr verwendet:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHeader" xml:space="preserve">
+    <value>Entscheiden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyOnHelp" xml:space="preserve">
+    <value>Vorschlag: die nächste Aktualisierungszeit Ihrer Abteilung an oder nach dem Gültigkeitsdatum des Herausgebers. Nie früher als das Gültigkeitsdatum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Annehmen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferUntilLabel" xml:space="preserve">
+    <value>Aufschieben bis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferLockedHelp" xml:space="preserve">
+    <value>Gesperrte Inhalte können nicht über ihre Frist hinaus aufgeschoben werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferButton" xml:space="preserve">
+    <value>Aufschieben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineConfirm" xml:space="preserve">
+    <value>Diese Aktualisierung ablehnen? Ihre Abteilung bleibt bei ihrer aktuellen Version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Ablehnen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockedCannotDeclineHelp" xml:space="preserve">
+    <value>Gesperrte Inhalte können nicht abgelehnt, sondern nur bis zu ihrer Frist aufgeschoben werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RedlineHeader" xml:space="preserve">
+    <value>Änderungen gegenüber Ihrer Version</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewItemHelp" xml:space="preserve">
+    <value>Dieses Element ist neu für Ihre Abteilung: Durch Annehmen wird es hineinkopiert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeIntro" xml:space="preserve">
+    <value>Ersetzen Sie die Blöcke, die der Herausgeber anpassbar gelassen hat, und fügen Sie am Ende eigene Blöcke hinzu. Ihre Änderungen treten sofort in Kraft und bleiben bei jeder späteren Aktualisierung erhalten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockCustomizable" xml:space="preserve">
+    <value>Anpassbar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLocked" xml:space="preserve">
+    <value>Gesperrt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalVersionLabel" xml:space="preserve">
+    <value>Ihre Version dieses Blocks</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalVersionHelp" xml:space="preserve">
+    <value>Leer lassen, um den Text des Herausgebers zu verwenden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdditionsHeader" xml:space="preserve">
+    <value>Ihre Ergänzungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdditionsHelp" xml:space="preserve">
+    <value>Eigene Blöcke, die nach den Inhalten des Herausgebers angezeigt werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeConfirm" xml:space="preserve">
+    <value>Speichern und Ihre Änderungen jetzt in Kraft setzen?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeSaveButton" xml:space="preserve">
+    <value>Änderungen speichern</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeHeader" xml:space="preserve">
+    <value>Änderung vorschlagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeSubtitle" xml:space="preserve">
+    <value>An {1}, zu {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalSectionLabel" xml:space="preserve">
+    <value>Abschnitt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalSectionHelp" xml:space="preserve">
+    <value>Optional: die Überschrift oder der Block, auf den sich Ihr Vorschlag bezieht.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalBodyLabel" xml:space="preserve">
+    <value>Ihr Vorschlag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalBodyHelp" xml:space="preserve">
+    <value>Der Herausgeber sieht Ihren Namen, Ihre Abteilung und diesen Text bei seinem nächsten Entwurf.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeSendButton" xml:space="preserve">
+    <value>Vorschlag senden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalsIntro" xml:space="preserve">
+    <value>Änderungen, die verknüpfte Abteilungen für Ihre Sammlungen vorgeschlagen haben, und die Vorschläge, die Ihre Mitglieder an Herausgeber gesendet haben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReceivedHeader" xml:space="preserve">
+    <value>Vorschläge an Ihre Abteilung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SentHeader" xml:space="preserve">
+    <value>Vorschläge Ihrer Abteilung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoProposals" xml:space="preserve">
+    <value>Keine Vorschläge.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResponseLabel" xml:space="preserve">
+    <value>Antwort (zum Ablehnen erforderlich)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptProposalButton" xml:space="preserve">
+    <value>In den nächsten Entwurf übernehmen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineProposalButton" xml:space="preserve">
+    <value>Ablehnen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusOpen" xml:space="preserve">
+    <value>Offen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusAccepted" xml:space="preserve">
+    <value>In den nächsten Entwurf übernommen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusDeclined" xml:space="preserve">
+    <value>Abgelehnt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusWithdrawn" xml:space="preserve">
+    <value>Zurückgezogen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipsIntro" xml:space="preserve">
+    <value>Eine Abteilung mit dem LMS-Add-on kann für die LMS-aktivierten Mitglieder einer verknüpften Abteilung bezahlen. Diese zählen in den Paketen des Sponsors und nutzen ausschließlich dessen Kurssammlungen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredCapacity" xml:space="preserve">
+    <value>Für Ihre Abteilung verfügbare Plätze: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSponsorships" xml:space="preserve">
+    <value>Ihre Abteilung vergibt und erhält kein Sponsoring.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipActive" xml:space="preserve">
+    <value>Aktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipLinkLapsed" xml:space="preserve">
+    <value>Die Verknüpfung teilt keine Schulungsinhalte mehr</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndNone" xml:space="preserve">
+    <value>Beendet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndEndedBySponsor" xml:space="preserve">
+    <value>Vom Sponsor beendet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndDeclinedBySponsored" xml:space="preserve">
+    <value>Von der gesponserten Abteilung abgelehnt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndLinkRevoked" xml:space="preserve">
+    <value>Beendet: Die Verknüpfung teilt keine Schulungsinhalte mehr</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatLimitLabel" xml:space="preserve">
+    <value>Platzlimit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndSponsorshipConfirm" xml:space="preserve">
+    <value>Dieses Sponsoring beenden? Bereits zugewiesene Kurse bleiben nach den üblichen Ablaufregeln verfügbar und enden dann.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndSponsorshipButton" xml:space="preserve">
+    <value>Sponsoring beenden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineSponsorshipButton" xml:space="preserve">
+    <value>Sponsoring ablehnen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorHeader" xml:space="preserve">
+    <value>Eine verknüpfte Abteilung sponsern</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorHelp" xml:space="preserve">
+    <value>Ihre LMS-aktivierten Mitglieder zählen in Ihren Paketen (Ihre eigenen Mitglieder haben Vorrang). Sie benötigt kein eigenes Add-on und kann den kostenlosen Tarif nutzen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSponsorable" xml:space="preserve">
+    <value>Teilen Sie Schulungsinhalte über die Abteilungsverknüpfung mit einer verknüpften Abteilung, um sie zu sponsern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatLimitHelp" xml:space="preserve">
+    <value>Optional: die maximale Anzahl an Plätzen, die die Abteilung nutzen darf. Leer: so viele, wie Ihre Pakete frei haben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorConfirm" xml:space="preserve">
+    <value>Mit der Bezahlung der LMS-Plätze dieser Abteilung beginnen?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorButton" xml:space="preserve">
+    <value>Sponsern</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Wann angenommene Aktualisierungen in Kraft treten und wer über neue informiert wird.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateTimeLabel" xml:space="preserve">
+    <value>Aktualisierungszeit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateTimeHelp" xml:space="preserve">
+    <value>Angenommene Aktualisierungen treten zu dieser Ortszeit an oder nach ihrem Gültigkeitsdatum in Kraft (zum Beispiel bei Ihrem Schichtwechsel).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyManagersLabel" xml:space="preserve">
+    <value>Abteilungsadministratoren benachrichtigen, wenn eine Aktualisierung eintrifft oder ein Vorschlag beantwortet wird</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CopyBanner" xml:space="preserve">
+    <value>Von {0}, Sammlung {1}, Version {2}. Änderungen kommen über die Sammlung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Customized" xml:space="preserve">
+    <value>Ihre Änderungen sind in Kraft.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAdded" xml:space="preserve">
+    <value>Das Element wurde der Sammlung hinzugefügt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemRemoved" xml:space="preserve">
+    <value>Das Element wurde aus der Sammlung entfernt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemSaved" xml:space="preserve">
+    <value>Das Element wurde gespeichert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalAnswered" xml:space="preserve">
+    <value>Der Vorschlag wurde beantwortet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Proposed" xml:space="preserve">
+    <value>Ihr Vorschlag wurde an den Herausgeber gesendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetArchived" xml:space="preserve">
+    <value>Die Sammlung wurde archiviert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetSaved" xml:space="preserve">
+    <value>Die Sammlung wurde gespeichert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Die Einstellungen wurden gespeichert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEnded" xml:space="preserve">
+    <value>Das Sponsoring wurde beendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipSaved" xml:space="preserve">
+    <value>Das Sponsoring wurde gespeichert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipStarted" xml:space="preserve">
+    <value>Das Sponsoring hat begonnen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Subscribed" xml:space="preserve">
+    <value>Abonniert. Die Elemente wurden in Ihre Abteilung kopiert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribedWithSkipped" xml:space="preserve">
+    <value>Einige Elemente wurden nicht kopiert:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriberRemoved" xml:space="preserve">
+    <value>Das Abonnement wurde beendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionSaved" xml:space="preserve">
+    <value>Das Abonnement wurde gespeichert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Synced" xml:space="preserve">
+    <value>Fehlende Elemente wurden kopiert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Unsubscribed" xml:space="preserve">
+    <value>Abbestellt. Die Kopien sind jetzt eigene Inhalte Ihrer Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateApplied" xml:space="preserve">
+    <value>Die Aktualisierung ist in Kraft.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateScheduled" xml:space="preserve">
+    <value>Die Aktualisierung ist geplant.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateDeclined" xml:space="preserve">
+    <value>Die Aktualisierung wurde abgelehnt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateDeferred" xml:space="preserve">
+    <value>Die Aktualisierung wurde aufgeschoben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNone" xml:space="preserve">
+    <value>Erledigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotFound" xml:space="preserve">
+    <value>Diese Sammlung, dieses Element oder diese Aktualisierung wurde nicht gefunden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotAuthorized" xml:space="preserve">
+    <value>Sie benötigen die Berechtigung „Inhaltssammlungen verwalten“.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorInvalidInput" xml:space="preserve">
+    <value>Bitte überprüfen Sie Ihre Eingaben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotShared" xml:space="preserve">
+    <value>Keine aktivierte Abteilungsverknüpfung teilt diese Inhalte mit Ihrer Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorAlreadySubscribed" xml:space="preserve">
+    <value>Ihre Abteilung hat diese Sammlung bereits abonniert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorItemNotShareable" xml:space="preserve">
+    <value>Dieses Element kann nicht in einer Sammlung geteilt werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorDuplicateItem" xml:space="preserve">
+    <value>Das Element ist bereits in der Sammlung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotPending" xml:space="preserve">
+    <value>Diese Aktualisierung wartet nicht mehr auf eine Entscheidung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorLockedCannotDecline" xml:space="preserve">
+    <value>Gesperrte Inhalte können nicht abgelehnt, sondern nur bis zu ihrer Frist aufgeschoben werden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorDateOutOfRange" xml:space="preserve">
+    <value>Dieses Datum liegt außerhalb dessen, was der Herausgeber zulässt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorBlockLocked" xml:space="preserve">
+    <value>Der Herausgeber hat diesen Block gesperrt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNeedsLms" xml:space="preserve">
+    <value>Ihre Abteilung benötigt für dieses Element das LMS-Add-on oder das Sponsoring des Herausgebers.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorOwnSet" xml:space="preserve">
+    <value>Eine Abteilung kann ihre eigene Sammlung nicht abonnieren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_published" xml:space="preserve">
+    <value>nicht veröffentlicht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_licensed" xml:space="preserve">
+    <value>lizenzierte Inhalte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_disabled" xml:space="preserve">
+    <value>deaktiviert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_document" xml:space="preserve">
+    <value>hochgeladenes Dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lesson_kinds" xml:space="preserve">
+    <value>Lektionen mit Live-Sitzungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_archived" xml:space="preserve">
+    <value>archiviert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_found" xml:space="preserve">
+    <value>nicht gefunden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lms" xml:space="preserve">
+    <value>erfordert das LMS-Add-on oder ein Sponsoring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_shared" xml:space="preserve">
+    <value>die Verknüpfung teilt es nicht mehr</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_error" xml:space="preserve">
+    <value>ein Fehler ist aufgetreten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_save" xml:space="preserve">
+    <value>konnte nicht gespeichert werden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNone" xml:space="preserve">
+    <value>Erledigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotAuthorized" xml:space="preserve">
+    <value>Sie benötigen die Berechtigung „Inhaltssammlungen verwalten“.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotFound" xml:space="preserve">
+    <value>Dieses Sponsoring wurde nicht gefunden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotShared" xml:space="preserve">
+    <value>Teilen Sie zuerst Schulungsinhalte über eine aktivierte Abteilungsverknüpfung mit dieser Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorSponsorNeedsLms" xml:space="preserve">
+    <value>Ihre Abteilung benötigt ein aktives LMS-Add-on, um Plätze zu sponsern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorAlreadySponsored" xml:space="preserve">
+    <value>Ihre Abteilung sponsert diese Abteilung bereits.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorInvalidInput" xml:space="preserve">
+    <value>Bitte überprüfen Sie Ihre Eingaben.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.UpdateArrived.Title" xml:space="preserve">
+    <value>Aktualisierung einer Sammlung ausstehend</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.UpdateArrived.Body" xml:space="preserve">
+    <value>{2} hat eine neue Version von {1} in der Sammlung {0} veröffentlicht. Prüfen Sie sie im Aktualisierungseingang.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalReceived.Title" xml:space="preserve">
+    <value>Änderung vorgeschlagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalReceived.Body" xml:space="preserve">
+    <value>{2} hat eine Änderung an {1} in Ihrer Sammlung {0} vorgeschlagen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalAnswered.Title" xml:space="preserve">
+    <value>Vorschlag beantwortet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalAnswered.Body" xml:space="preserve">
+    <value>{2} hat Ihren Vorschlag zu {1} in der Sammlung {0} beantwortet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipStarted.Title" xml:space="preserve">
+    <value>LMS-Plätze gesponsert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipStarted.Body" xml:space="preserve">
+    <value>{2} sponsert jetzt die LMS-Plätze Ihrer Abteilung für deren Kurssammlungen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipEnded.Title" xml:space="preserve">
+    <value>LMS-Sponsoring beendet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipEnded.Body" xml:space="preserve">
+    <value>{2} sponsert die LMS-Plätze Ihrer Abteilung nicht mehr. Bereits zugewiesene Kurse bleiben nach den üblichen Ablaufregeln verfügbar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyAdminsLabel" xml:space="preserve">
+    <value>Die Administratoren der Abteilung benachrichtigen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyRolesLabel" xml:space="preserve">
+    <value>Auch Mitglieder dieser Rollen benachrichtigen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyRolesHelp" xml:space="preserve">
+    <value>Mitglieder der gewählten Rollen erhalten dieselben Hinweise wie die Administratoren: eingehende Aktualisierungen, beantwortete Vorschläge, Änderungen am Sponsoring und zu registrierende LTI-Tools. Hinweise zu Sponsoring und LTI erreichen immer jemanden: Wenn niemand gewählt ist, erhalten sie die Administratoren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ToolRegistration.Title" xml:space="preserve">
+    <value>Ein LTI-Tool muss registriert werden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ToolRegistration.Body" xml:space="preserve">
+    <value>Ein Kurs in der Sammlung {0} von {2} verwendet das LTI-Tool {1}. Registrieren Sie Ihre Organisation beim Anbieter des Tools und aktivieren Sie das Tool; bis dahin lassen sich seine Lektionen nicht öffnen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_media_not_ready" xml:space="preserve">
+    <value>ein gehostetes Video ist nicht bereit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_package_not_ready" xml:space="preserve">
+    <value>ein SCORM- oder cmi5-Paket ist nicht bereit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lti_tool_missing" xml:space="preserve">
+    <value>ein LTI-Tool wurde entfernt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_path_steps" xml:space="preserve">
+    <value>Kurs oder Schulung eines Schritts ist nicht in der Sammlung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_path_step_missing" xml:space="preserve">
+    <value>Kurs oder Schulung eines Schritts wurde noch nicht kopiert</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

@@ -1,4 +1,5 @@
 @model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
 @using Resgrid.Model.WorkOrders
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
 @functions {
@@ -356,6 +357,15 @@
                     </table>
                 </div>
 
+                @* e-Signature S3 (Readiness Pro): the vendor accepts the completed work, in person on this device or by a Resgrid link with
+                   a one-time code; the signature binds to the order's operational content and the evidence is sealed. *@
+                @if (o.Status is WorkOrderStatus.Completed or WorkOrderStatus.Closed)
+                {
+                    <div class="hr-line-dashed"></div>
+                    <h4><i class="fa fa-handshake-o" aria-hidden="true"></i> @signatureText["VendorAcceptanceHeading"]</h4>
+                    @await Component.InvokeAsync("SignatureRequests", new { kind = Resgrid.Model.SignatureSubjectKinds.WorkOrderVendorAcceptance, subjectId = d.Order.Id,
+                        canRequest = d.CanManage, returnUrl = Url.Action("Detail", new { id = d.Order.Id }) })
+                }
                 @* ── Dialogs ────────────────────────────────────────────────────── *@
                 @if (d.Transitions.Length > 0)
                 {

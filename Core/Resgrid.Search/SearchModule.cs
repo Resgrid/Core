@@ -28,6 +28,12 @@ namespace Resgrid.Search
 
 			builder.RegisterType<LuceneGlobalSearchService>().As<IGlobalSearchService>().InstancePerLifetimeScope();
 			builder.RegisterType<LuceneGlobalSearchIndexer>().As<IGlobalSearchIndexer>().InstancePerLifetimeScope();
+
+			// K1 department knowledge: brute-force exact scoring over the department's chunks (decision §25.4a item 11), the prepared
+			// corpus cache (one per process) and the TEI bge-m3 embeddings client.
+			builder.RegisterType<Knowledge.KnowledgeCorpusCache>().AsSelf().SingleInstance();
+			builder.RegisterType<Knowledge.KnowledgeRetriever>().As<IKnowledgeRetriever>().InstancePerLifetimeScope();
+			builder.RegisterType<Knowledge.TeiEmbeddingProvider>().As<IEmbeddingProvider>().SingleInstance();
 		}
 	}
 }

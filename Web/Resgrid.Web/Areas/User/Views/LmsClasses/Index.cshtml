@@ -1,0 +1,118 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsClassesIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@*
+    Trainings → Classes (T4, LMS): upcoming and recent class sessions with their seats, waitlist and pending requests; tag filter; class
+    managers create sessions (or a series) here.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ClassesTitle"];
+    ViewData["Title"] = localizer["ClassesTitle"].Value;
+    ViewData["Subtitle"] = localizer["ClassesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var culture = CultureInfo.CurrentCulture;
+}
+
+@functions {
+    private static string StatusCss(int status) => status switch
+    {
+        (int)LmsClassSessionStatuses.Cancelled => "label-danger",
+        (int)LmsClassSessionStatuses.SignedOff => "label-success",
+        _ => "label-primary"
+    };
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-stat-tiles m-b-sm">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Stat.Upcoming"]</div><div class="rgw-stat-value">@Model.Upcoming.Count(s => s.Status == (int)LmsClassSessionStatuses.Scheduled)</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Stat.Seats"]</div><div class="rgw-stat-value">@Model.Upcoming.Sum(s => Model.Seats(s.LmsClassSessionId))</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Stat.Waitlisted"]</div><div class="rgw-stat-value">@Model.Waitlisted</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Stat.Pending"]</div><div class="rgw-stat-value">@Model.PendingApprovals</div></div>
+    </div>
+
+    <div class="rgw-toolbar m-b-sm">
+        @if (Model.CanManage && Model.CanAuthor)
+        {
+            <a class="btn btn-primary btn-sm" asp-controller="LmsClasses" asp-action="New" asp-route-area="User"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["NewClass"]</a>
+        }
+        @if (Model.Tags.Count > 0)
+        {
+            <form method="get" asp-controller="LmsClasses" asp-action="Index" asp-route-area="User" class="form-inline d-inline">
+                <label for="cls-tag" class="sr-only">@localizer["TagFilter"]</label>
+                <select id="cls-tag" name="tag" class="form-control input-sm">
+                    <option value="">@localizer["AllTags"]</option>
+                    @foreach (var tag in Model.Tags)
+                    {
+                        <option value="@tag" selected="@(string.Equals(tag, Model.Tag, StringComparison.OrdinalIgnoreCase))">@tag</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["Filter"]</button>
+            </form>
+        }
+    </div>
+
+    <h3>@localizer["UpcomingHeader"]</h3>
+    @if (Model.Upcoming.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoClasses"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Col.Date"]</th><th>@localizer["Col.Class"]</th><th>@localizer["Col.Seats"]</th><th>@localizer["Col.Waitlisted"]</th><th>@localizer["Col.Status"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var session in Model.Upcoming)
+                    {
+                        <tr>
+                            <td>@Model.Local(session.StartsOn).ToString("g", culture)<span class="rgw-sub">@Model.Local(session.EndsOn).ToString("t", culture)</span></td>
+                            <td>@session.Title<span class="rgw-sub">@(session.Location ?? (string.IsNullOrWhiteSpace(session.MeetingUrl) ? string.Empty : localizer["Virtual"].Value)) @session.Tags</span></td>
+                            <td>@Model.Seats(session.LmsClassSessionId)@(session.Capacity > 0 ? " / " + session.Capacity.ToString(culture) : string.Empty)</td>
+                            <td>@Model.Count(session.LmsClassSessionId, LmsClassEnrollmentStatuses.Waitlisted)</td>
+                            <td><span class="label @StatusCss(session.Status)">@localizer["Status." + (LmsClassSessionStatuses)session.Status]</span></td>
+                            <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@session.LmsClassSessionId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Open"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <h3>@localizer["RecentHeader"]</h3>
+    @if (Model.Recent.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoClasses"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Col.Date"]</th><th>@localizer["Col.Class"]</th><th>@localizer["Col.Seats"]</th><th>@localizer["Col.Status"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var session in Model.Recent)
+                    {
+                        <tr>
+                            <td>@Model.Local(session.StartsOn).ToString("g", culture)</td>
+                            <td>@session.Title<span class="rgw-sub">@session.Location</span></td>
+                            <td>@Model.Seats(session.LmsClassSessionId)@(session.Capacity > 0 ? " / " + session.Capacity.ToString(culture) : string.Empty)</td>
+                            <td><span class="label @StatusCss(session.Status)">@localizer["Status." + (LmsClassSessionStatuses)session.Status]</span></td>
+                            <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@session.LmsClassSessionId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Open"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -1,0 +1,1269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AnyApprover" xml:space="preserve">
+    <value>valfri godkännare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BindsToContentHelp" xml:space="preserve">
+    <value>Signaturen gäller exakt den här texten. Om texten ändras stämmer den inte längre och en ny signatur behövs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationVerificationStatement" xml:space="preserve">
+    <value>Jag verifierar certifieringsposten {0} ({1}, mottagen {2}, upphör {3}): jag har kontrollerat den och den är äkta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Kommentar (valfritt)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Innehållskod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentApprove" xml:space="preserve">
+    <value>Godkännande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentAttest" xml:space="preserve">
+    <value>Intygande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentColumn" xml:space="preserve">
+    <value>Innebörd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentReview" xml:space="preserve">
+    <value>Granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentVerify" xml:space="preserve">
+    <value>Verifiering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentWitness" xml:space="preserve">
+    <value>Vittne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelAttest" xml:space="preserve">
+    <value>inloggad session</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelBadge" xml:space="preserve">
+    <value>Nivå {0}: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelColumn" xml:space="preserve">
+    <value>Nivå</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelStepUp" xml:space="preserve">
+    <value>identiteten kontrollerad på nytt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodPasskey" xml:space="preserve">
+    <value>Nyckel (passkey)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodSession" xml:space="preserve">
+    <value>Inloggad session</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodStepUp" xml:space="preserve">
+    <value>Kontroll med andra faktor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSignatures" xml:space="preserve">
+    <value>Inga signaturer ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OthersToSignLabel" xml:space="preserve">
+    <value>Ska signera efter dig:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>Dialogrutan för nyckeln stängdes. Inget signerades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>Nyckeln kunde inte verifieras. Inget signerades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyOnlyHelp" xml:space="preserve">
+    <value>Din avdelning kräver en nyckel (passkey) för den här signaturen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyRequiredHelp" xml:space="preserve">
+    <value>En nyckel (passkey) krävs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyUnsupported" xml:space="preserve">
+    <value>Den här webbläsaren kan inte använda nycklar (passkeys). Använd Signera i stället.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolApprovalStatement" xml:space="preserve">
+    <value>Jag godkänner den här revideringen av protokoll {0} "{1}" (innehåll {2}) för publicering, som steg {3} av {4} i dess granskning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolReviewStatement" xml:space="preserve">
+    <value>Jag har granskat protokoll {0} "{1}" version {2} (innehåll {3}) och det är fortfarande korrekt utan ändring.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignApproveButton" xml:space="preserve">
+    <value>Signera och godkänn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignReviewButton" xml:space="preserve">
+    <value>Signera granskningen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignWithPasskeyButton" xml:space="preserve">
+    <value>Signera med nyckel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedOnColumn" xml:space="preserve">
+    <value>Signerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerColumn" xml:space="preserve">
+    <value>Undertecknare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementLabel" xml:space="preserve">
+    <value>Du signerar följande försäkran:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpHelp" xml:space="preserve">
+    <value>Signera ber dig bekräfta din identitet med din andra faktor om du inte nyss har gjort det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationChanged" xml:space="preserve">
+    <value>Innehållet ändrat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationColumn" xml:space="preserve">
+    <value>Kontroll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationMissing" xml:space="preserve">
+    <value>Innehållet hittades inte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationValid" xml:space="preserve">
+    <value>Stämmer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationVoided" xml:space="preserve">
+    <value>Ogiltigförklarad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdoptTypedButton" xml:space="preserve">
+    <value>Använd namnförtydligandet som signatur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditDepartment" xml:space="preserve">
+    <value>Organisation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditDocument" xml:space="preserve">
+    <value>Dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditEvidence" xml:space="preserve">
+    <value>Bevis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditMethod" xml:space="preserve">
+    <value>Metod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditNoSigners" xml:space="preserve">
+    <value>Inga signaturer är registrerade på dokumentet; det förseglas som det utfärdades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditPageTitle" xml:space="preserve">
+    <value>Resgrids granskningssida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditPreparedOn" xml:space="preserve">
+    <value>Upprättad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditRevisionHash" xml:space="preserve">
+    <value>Innehållshash (SHA-256)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditRole" xml:space="preserve">
+    <value>Roll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditSealNote" xml:space="preserve">
+    <value>Sidan ingår i det förseglade dokumentet. Förseglingen (PAdES med RFC 3161-tidsstämpel) visar att filen inte har ändrats sedan den förseglades; kontrollera den under Verifiera ett dokument i Resgrid eller i valfri PDF-läsare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditSigners" xml:space="preserve">
+    <value>Undertecknare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditSubject" xml:space="preserve">
+    <value>Ärende</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackLink" xml:space="preserve">
+    <value>Tillbaka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelLink" xml:space="preserve">
+    <value>Avbryt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChannelInPerson" xml:space="preserve">
+    <value>På plats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChannelLabel" xml:space="preserve">
+    <value>Sätt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChannelRemote" xml:space="preserve">
+    <value>Via länk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearSignatureButton" xml:space="preserve">
+    <value>Rensa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClosedText" xml:space="preserve">
+    <value>Signeringslänken gäller inte längre. Den kan redan ha använts, dragits tillbaka eller gått ut. Be avsändaren om en ny länk.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeAttemptsLeft" xml:space="preserve">
+    <value>{0} försök kvar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeHeading" xml:space="preserve">
+    <value>Ange din kod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Sexsiffrig kod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeNotSent" xml:space="preserve">
+    <value>Koden kunde inte skickas just nu. Vänta en minut och försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeSentEmail" xml:space="preserve">
+    <value>Vi har skickat en sexsiffrig kod till {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeSentSms" xml:space="preserve">
+    <value>Vi har skickat en sexsiffrig kod via sms till {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeWrong" xml:space="preserve">
+    <value>Koden är fel eller har gått ut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedPdfButton" xml:space="preserve">
+    <value>Slutfört dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentButton" xml:space="preserve">
+    <value>Godkänn och skicka min kod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentCheckbox" xml:space="preserve">
+    <value>Jag godkänner att signera dokumentet elektroniskt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentCodeNote" xml:space="preserve">
+    <value>Sedan skickar vi en engångskod till {0} för att bekräfta att det är du.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentHeading" xml:space="preserve">
+    <value>Samtycke till elektronisk signering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentRequired" xml:space="preserve">
+    <value>Kryssa i rutan för att godkänna innan du fortsätter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentText" xml:space="preserve">
+    <value>Du ombeds signera ett dokument elektroniskt. Genom att godkänna samtycker du till att hantera dokumentet elektroniskt och till att din elektroniska signatur är lika giltig som en handskriven. Du kan be avsändaren om en papperskopia och du kan återkalla samtycket genom att inte signera. Ditt namn, tidpunkten för signeringen och koden vi skickar sparas med din signatur, och det signerade dokumentet förseglas så att det inte kan ändras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Fortsätt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContinueInPersonLink" xml:space="preserve">
+    <value>Fortsätt på plats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DetailIntro" xml:space="preserve">
+    <value>En extern signaturbegäran: status, undertecknare och dokument.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DoneHeading" xml:space="preserve">
+    <value>Tack.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DoneText" xml:space="preserve">
+    <value>Din signatur har registrerats. Du kan stänga sidan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSignatureHelp" xml:space="preserve">
+    <value>Signera med finger, penna eller mus. Utan pekdon skriver du namnet och använder det som signatur.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSignatureLabel" xml:space="preserve">
+    <value>Signatur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSignatureRequired" xml:space="preserve">
+    <value>Signera i rutan eller använd namnet som signatur.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignAccountHeading" xml:space="preserve">
+    <value>Documenso-team för organisationen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignActiveLabel" xml:space="preserve">
+    <value>Använd kontot för signeringslänkar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignClusterHeading" xml:space="preserve">
+    <value>Signeringstjänster i installationen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignClusterHelp" xml:space="preserve">
+    <value>De ställs in av den som driver Resgrid-installationen. Utan e-signeringsplattformen finns inga signeringslänkar, men signering på plats fungerar. Utan försegling signeras dokument och väntar på försegling tills den har konfigurerats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignIntro" xml:space="preserve">
+    <value>E-signeringskontot som skickar dokument för signering via länk, och läget för dokumentförsegling.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignPlatformConfigured" xml:space="preserve">
+    <value>E-signeringsplattform (Documenso)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignRemoveButton" xml:space="preserve">
+    <value>Ta bort token</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignSaved" xml:space="preserve">
+    <value>E-signeringsinställningarna har sparats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTab" xml:space="preserve">
+    <value>E-signering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTeamIdLabel" xml:space="preserve">
+    <value>Team-ID</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTitle" xml:space="preserve">
+    <value>Inställningar för e-signering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTokenHelp" xml:space="preserve">
+    <value>En API-token för teamet. Den lagras krypterad och bara de fyra sista tecknen visas. Lämna tomt för att behålla nuvarande token.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTokenLabel" xml:space="preserve">
+    <value>API-token</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EmbedFrameTitle" xml:space="preserve">
+    <value>Signering av dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EmbedUnavailable" xml:space="preserve">
+    <value>Signeringstjänsten är inte tillgänglig just nu. Försök igen senare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Går ut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExternalPanelHelp" xml:space="preserve">
+    <value>En kund, nyttjare eller extern part kan signera dokumentet på plats på den här enheten, eller via en signeringslänk från Resgrid där det finns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExternalPanelTitle" xml:space="preserve">
+    <value>Extern signatur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FinishedButton" xml:space="preserve">
+    <value>Jag har signerat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HandDeviceButton" xml:space="preserve">
+    <value>Lämna enheten till undertecknaren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HandDeviceHelp" xml:space="preserve">
+    <value>Öppnar en signeringssida på enheten för den andra personen: samtycke, namn och ritad signatur, med valfritt vittne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HandDeviceTitle" xml:space="preserve">
+    <value>Signera på plats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Start</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InPersonSignedMessage" xml:space="preserve">
+    <value>Signerat på plats. Det signerade dokumentet förseglas när försegling finns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LandingExpires" xml:space="preserve">
+    <value>Länken går ut {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LandingIntro" xml:space="preserve">
+    <value>{0}, {1} ber dig granska och signera ett dokument.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelExternal" xml:space="preserve">
+    <value>Extern undertecknare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelSealed" xml:space="preserve">
+    <value>Förseglat dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkOnceHelp" xml:space="preserve">
+    <value>Signeringslänken kunde inte levereras. Du kan ge den till undertecknaren själv; den visas bara nu och kan användas en gång.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodExternalLink" xml:space="preserve">
+    <value>Signeringslänk och kod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodInPersonOffline" xml:space="preserve">
+    <value>På plats (offline)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodInPersonOnline" xml:space="preserve">
+    <value>På plats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRightToRequest" xml:space="preserve">
+    <value>Du kan inte begära signaturer för detta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenRequestStatus" xml:space="preserve">
+    <value>Signaturbegäran: {0} ({1}), går ut {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OtpChannelEmail" xml:space="preserve">
+    <value>E-post</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OtpChannelLabel" xml:space="preserve">
+    <value>Skicka engångskoden via</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OtpChannelSms" xml:space="preserve">
+    <value>Sms</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PdfFailed" xml:space="preserve">
+    <value>PDF-filen kunde inte skapas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintedNameLabel" xml:space="preserve">
+    <value>Namnförtydligande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolPdfButton" xml:space="preserve">
+    <value>PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Klart.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Vissa uppgifter saknas eller är ogiltiga.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Posten hittades inte eller så kan du inte öppna den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalRemoteNeedsAddon" xml:space="preserve">
+    <value>Signering via länk ingår i tillägget som dokumentet hör till. Signering på plats är tillgänglig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalProviderUnavailable" xml:space="preserve">
+    <value>Signering via länk är inte konfigurerad för organisationen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalRevisionChanged" xml:space="preserve">
+    <value>Dokumentet ändrades efter att det visades för signering. Börja om.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalRequestClosed" xml:space="preserve">
+    <value>Begäran är inte längre öppen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalProviderFailed" xml:space="preserve">
+    <value>E-signeringsplattformen kunde inte förbereda dokumentet. Försök igen senare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalContactRequired" xml:space="preserve">
+    <value>Ange en giltig e-postadress, eller ett telefonnummer i internationellt format, för engångskoden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteRequestButton" xml:space="preserve">
+    <value>Begär signatur via länk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteRequestHelp" xml:space="preserve">
+    <value>Resgrid skickar undertecknaren en engångslänk. Innan signeringen samtycker hen till elektronisk signering och anger en engångskod som skickas till e-postadressen eller telefonnumret ovan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableNone" xml:space="preserve">
+    <value>Signering via länk är tillgänglig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableInvalidRequest" xml:space="preserve">
+    <value>Signering via länk erbjuds inte för detta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableSubjectNotFound" xml:space="preserve">
+    <value>Signering via länk erbjuds inte för detta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableRemoteNeedsAddon" xml:space="preserve">
+    <value>Signering via länk ingår i tillägget som dokumentet hör till; signering på plats är kostnadsfri.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableProviderUnavailable" xml:space="preserve">
+    <value>Signering via länk är inte konfigurerad (e-signering); signering på plats är tillgänglig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableRevisionChanged" xml:space="preserve">
+    <value>Signering via länk är inte tillgänglig just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableRequestClosed" xml:space="preserve">
+    <value>Signering via länk är inte tillgänglig just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableProviderFailed" xml:space="preserve">
+    <value>Signering via länk är inte tillgänglig just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableContactRequired" xml:space="preserve">
+    <value>Signering via länk är inte tillgänglig just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestHeading" xml:space="preserve">
+    <value>Signaturbegäran</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestNotDeliveredMessage" xml:space="preserve">
+    <value>Begäran skapades men länken kunde inte levereras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestSentMessage" xml:space="preserve">
+    <value>Signeringslänken skickades till {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestVoidedMessage" xml:space="preserve">
+    <value>Begäran har dragits tillbaka.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResendButton" xml:space="preserve">
+    <value>Skicka en ny länk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResendCodeButton" xml:space="preserve">
+    <value>Skicka en ny kod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCustomer" xml:space="preserve">
+    <value>Kund</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleOccupant" xml:space="preserve">
+    <value>Nyttjare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleExternalParty" xml:space="preserve">
+    <value>Extern part</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleWitness" xml:space="preserve">
+    <value>Vittne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCounterparty" xml:space="preserve">
+    <value>Motpart</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Spara</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealedPdfButton" xml:space="preserve">
+    <value>Förseglad PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingKey" xml:space="preserve">
+    <value>Signeringscertifikat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingPendingState" xml:space="preserve">
+    <value>försegling väntar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingSidecar" xml:space="preserve">
+    <value>Förseglingstjänst (EU DSS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingStore" xml:space="preserve">
+    <value>Lagring av förseglade dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingTsa" xml:space="preserve">
+    <value>Tidsstämpeltjänst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendCodeButton" xml:space="preserve">
+    <value>Skicka min kod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendRequestButton" xml:space="preserve">
+    <value>Skicka begäran</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignNowButton" xml:space="preserve">
+    <value>Signera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturePageTitle" xml:space="preserve">
+    <value>Signaturer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturesHeading" xml:space="preserve">
+    <value>Signaturer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturesModuleTitle" xml:space="preserve">
+    <value>Signaturer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedByNote" xml:space="preserve">
+    <value>{0} · {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedState" xml:space="preserve">
+    <value>Signerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerEmailLabel" xml:space="preserve">
+    <value>E-post</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerNameLabel" xml:space="preserve">
+    <value>Undertecknarens namn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerPhoneLabel" xml:space="preserve">
+    <value>Mobiltelefon</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusPending" xml:space="preserve">
+    <value>Väntar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusOpened" xml:space="preserve">
+    <value>Öppnad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusVerified" xml:space="preserve">
+    <value>Kod verifierad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusSigned" xml:space="preserve">
+    <value>Signerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusDeclined" xml:space="preserve">
+    <value>Avböjd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningBeingConfirmed" xml:space="preserve">
+    <value>Din signatur bekräftas. Det kan ta en minut; du kan stänga sidan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningLinkLabel" xml:space="preserve">
+    <value>Signeringslänk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningPageTitle" xml:space="preserve">
+    <value>Signera ett dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementTimeReport" xml:space="preserve">
+    <value>Jag bekräftar att tiden som registrerats på {0} är korrekt (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementBid" xml:space="preserve">
+    <value>Jag godkänner {0} (innehållskod {1}) för kundens räkning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementServiceContract" xml:space="preserve">
+    <value>Jag godkänner {0} (innehållskod {1}) för min organisations räkning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementRecordsInspection" xml:space="preserve">
+    <value>Jag bekräftar att jag har tagit emot resultatet av {0} (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementCustodyTransfer" xml:space="preserve">
+    <value>Jag bekräftar att jag har tagit emot bevismaterialet i {0} (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Väntar på signatur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusPartiallySigned" xml:space="preserve">
+    <value>Delvis signerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>Slutförd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusDeclined" xml:space="preserve">
+    <value>Avböjd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Utgången</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusVoided" xml:space="preserve">
+    <value>Återkallad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectUnavailable" xml:space="preserve">
+    <value>Det går inte att signera detta just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TooManyRequests" xml:space="preserve">
+    <value>För många förfrågningar. Vänta en minut och försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyButton" xml:space="preserve">
+    <value>Verifiera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>Bekräfta kod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyFileLabel" xml:space="preserve">
+    <value>PDF-dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyFileRequired" xml:space="preserve">
+    <value>Välj en PDF-fil på högst 25 MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyFormatColumn" xml:space="preserve">
+    <value>Format</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIndicationColumn" xml:space="preserve">
+    <value>Resultat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIntro" xml:space="preserve">
+    <value>Ladda upp en PDF för att kontrollera signaturer och tidsstämplar, och om Resgrid utfärdade exakt den här filen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIssuedElsewhere" xml:space="preserve">
+    <value>Resgrid utfärdade exakt den här filen, för en annan organisation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIssuedHere" xml:space="preserve">
+    <value>Resgrid utfärdade exakt den här filen för organisationen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIssuedLabel" xml:space="preserve">
+    <value>Utfärdad av Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyNoSignatures" xml:space="preserve">
+    <value>Dokumentet innehåller inga signaturer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyNotIssued" xml:space="preserve">
+    <value>Resgrid har ingen uppgift om att ha utfärdat exakt den här filen. En fil som ändrats, även med en byte, stämmer inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyNotPdf" xml:space="preserve">
+    <value>Filen är inte en PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyResultHeading" xml:space="preserve">
+    <value>Resultat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifySidecarMissing" xml:space="preserve">
+    <value>Valideringstjänsten är inte konfigurerad i installationen, så bara Resgrids egna uppgifter kontrolleras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifySignaturesLabel" xml:space="preserve">
+    <value>Giltiga signaturer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTab" xml:space="preserve">
+    <value>Verifiera ett dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTimestampColumn" xml:space="preserve">
+    <value>Tidsstämpel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTimestampedOn" xml:space="preserve">
+    <value>tidsstämplad {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTitle" xml:space="preserve">
+    <value>Verifiera ett dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyUploadHeading" xml:space="preserve">
+    <value>Dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyValidationUnavailable" xml:space="preserve">
+    <value>Valideringstjänsten svarade inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ViewRequestLink" xml:space="preserve">
+    <value>Detaljer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Dra tillbaka begäran</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessNameLabel" xml:space="preserve">
+    <value>Vittne (valfritt)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Åtgärder</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllMySignaturesLink" xml:space="preserve">
+    <value>Alla mina signaturer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyEligibleMember" xml:space="preserve">
+    <value>valfri behörig medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Avböj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineConfirmButton" xml:space="preserve">
+    <value>Avböj att signera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineHelp" xml:space="preserve">
+    <value>Om du avböjer avslutas begäran för alla; den som begärde signaturen får veta ditt skäl.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineReasonLabel" xml:space="preserve">
+    <value>Varför avböjer du?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentColumn" xml:space="preserve">
+    <value>Dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>senast {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueReceiptButton" xml:space="preserve">
+    <value>Kvitto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueReceiptTitle" xml:space="preserve">
+    <value>Kvitto på utlämnad utrustning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberFallbackName" xml:space="preserve">
+    <value>en medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberRequestButton" xml:space="preserve">
+    <value>Be {0} att signera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberRequestHelp" xml:space="preserve">
+    <value>Medlemmen signerar i Resgrid efter en ny identitetskontroll (nivå 2); begäran visas under Mina signaturer och på medlemmens startsida.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberRequestSentMessage" xml:space="preserve">
+    <value>Begäran om signatur har skickats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySignaturesIntro" xml:space="preserve">
+    <value>Dokument som väntar på din signatur, med det steg som är ditt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySignaturesTab" xml:space="preserve">
+    <value>Mina signaturer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySignaturesTitle" xml:space="preserve">
+    <value>Mina signaturer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingToSign" xml:space="preserve">
+    <value>Inget väntar på din signatur.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenDocumentLink" xml:space="preserve">
+    <value>Öppna dokumentet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenSigningPageLink" xml:space="preserve">
+    <value>Signeringssida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenStepButton" xml:space="preserve">
+    <value>Granska och signera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OrderedHelp" xml:space="preserve">
+    <value>Undertecknarna signerar i stegnummerordning; steg med samma nummer kan signera samtidigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutsideSignerFallbackName" xml:space="preserve">
+    <value>extern undertecknare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingSignaturesHeader" xml:space="preserve">
+    <value>Väntar på din signatur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadinessProRequiredMessage" xml:space="preserve">
+    <value>Leverantörens godtagande av arbetsordrar och kvitton på utlämnad utrustning ingår i Readiness Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedCountLabel" xml:space="preserve">
+    <value>Signerade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignStepButton" xml:space="preserve">
+    <value>Signera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepDeclinedMessage" xml:space="preserve">
+    <value>Du avböjde att signera. Begäran är stängd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>Steg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepPageIntro" xml:space="preserve">
+    <value>Läs försäkran, kontrollera innehållskoden och signera ditt steg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepPanelTitle" xml:space="preserve">
+    <value>Din signatur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Undertecknare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepSignedMessage" xml:space="preserve">
+    <value>Din signatur har registrerats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnorderedHelp" xml:space="preserve">
+    <value>Alla undertecknare kan signera när som helst.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VendorAcceptanceHeading" xml:space="preserve">
+    <value>Leverantörens godtagande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessNotYouNote" xml:space="preserve">
+    <value>Den som utförde checklistan kan inte vara vittne till den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessPanelTitle" xml:space="preserve">
+    <value>Vittnessignatur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignatureHelp" xml:space="preserve">
+    <value>Skriv i rutan vad du bevittnade. Din signatur knyts till de visade resultaten (inte till anteckningar eller fritext), och checklistan är klar när du signerar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignButton" xml:space="preserve">
+    <value>Signera som vittne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignedMessage" xml:space="preserve">
+    <value>Din vittnessignatur har registrerats och checklistan är klar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignFailedMessage" xml:space="preserve">
+    <value>Vittnessignaturen kunde inte registreras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourStepColumn" xml:space="preserve">
+    <value>Ditt steg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourStepNote" xml:space="preserve">
+    <value>Ditt steg: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Det är inte din tur än: alla tidigare undertecknare har inte signerat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotEligible" xml:space="preserve">
+    <value>Du har inte en certifiering eller roll som det här steget kräver.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Det här steget kräver nivå 2: bekräfta din identitet med din andra faktor eller en nyckel (passkey) och signera sedan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Det här steget måste signeras med en nyckel (passkey).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotASigner" xml:space="preserve">
+    <value>Du är inte undertecknare för det här steget.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalArtifactMismatch" xml:space="preserve">
+    <value>Bekräftelsen med nyckel gällde ett annat innehåll. Ladda om sidan och signera igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleMember" xml:space="preserve">
+    <value>Medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCertifyingOfficial" xml:space="preserve">
+    <value>Certifierande ansvarig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleEvaluator" xml:space="preserve">
+    <value>Bedömare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleVendor" xml:space="preserve">
+    <value>Leverantör</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleRecipient" xml:space="preserve">
+    <value>Mottagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentEvaluate" xml:space="preserve">
+    <value>Bedömning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentCertify" xml:space="preserve">
+    <value>Certifiering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentAccept" xml:space="preserve">
+    <value>Godtagande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeStepUpRequired" xml:space="preserve">
+    <value>Bekräfta din identitet med din andra faktor och signera sedan igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomePasskeyRequired" xml:space="preserve">
+    <value>En nyckel (passkey) krävs för att signera.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeArtifactMismatch" xml:space="preserve">
+    <value>Bekräftelsen med nyckel gällde ett annat innehåll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeInvalidRequest" xml:space="preserve">
+    <value>Signaturen kunde inte registreras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementWorkOrderVendorAcceptance" xml:space="preserve">
+    <value>Jag godtar arbetet som utförts på {0} (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementInventoryIssueReceipt" xml:space="preserve">
+    <value>Jag bekräftar att jag har tagit emot {0} (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementSkillEvaluation" xml:space="preserve">
+    <value>Jag bekräftar bedömningen som registrerats för {0} (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementChecklistWitness" xml:space="preserve">
+    <value>Jag bevittnade checklistan {0} för {1} och bekräftar att de visade resultaten är det som registrerades (innehållskod {2}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Jag godkänner inköpsrekvisitionen {0} (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementIncidentPlanApproval" xml:space="preserve">
+    <value>Jag godkänner handlingsplanen för händelsen {0} (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementInvoiceApproval" xml:space="preserve">
+    <value>Jag godkänner att {0} skickas (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementPayrollRunApproval" xml:space="preserve">
+    <value>Jag godkänner lönekörningen {0} (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Jag godkänner Cal OES MARS-paketet {0} för inlämning (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementMutualAidAgreementApproval" xml:space="preserve">
+    <value>Jag godkänner avtalet om ömsesidigt bistånd {0} på avdelningens vägnar (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsTab" xml:space="preserve">
+    <value>Godkännanden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementMutualAidAgreementCountersignature" xml:space="preserve">
+    <value>Jag kontrasignerar avtalet om ömsesidigt bistånd {0} för vår avdelnings räkning som partner (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementRecordDeploymentPartnerAcceptance" xml:space="preserve">
+    <value>Jag godkänner uppdraget {0} för vår organisations räkning, som den länkade partner det tillsätts för (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementDepartmentLinkAcceptance" xml:space="preserve">
+    <value>Jag godkänner länken med {0} för vår organisations räkning, med den delning som visas (innehållskod {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentFrom" xml:space="preserve">
+    <value>Sändande organisation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentOrder" xml:space="preserve">
+    <value>Beställning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentRequest" xml:space="preserve">
+    <value>Begäran / tillsättning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentResource" xml:space="preserve">
+    <value>Resurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentPosition" xml:space="preserve">
+    <value>Befattning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentFilledOn" xml:space="preserve">
+    <value>Godkänd av avsändaren</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

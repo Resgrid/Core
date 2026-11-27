@@ -546,6 +546,18 @@ namespace Resgrid.Services
 				Result = RunCardConditionResults.No
 			};
 
+			// Protocols P4: a determinant condition reads the call's protocol outcomes, not resources (no ranking, no times).
+			if (conditionType == RunCardConditionTypes.ProtocolOutcome)
+			{
+				var parameters = RunCardProtocolOutcomeParameters.Parse(node.ParametersJson);
+				var determinants = context.Request.ProtocolDeterminants ?? new List<CallProtocolDeterminant>();
+				condition.Result = parameters != null && parameters.Matches(determinants) ? RunCardConditionResults.Yes : RunCardConditionResults.No;
+				condition.Note = determinants.Count == 0
+					? "No protocol determinant on the call."
+					: $"Determinant {string.Join(", ", determinants.Select(d => d.Determinant))} {(parameters?.Match == (int)RunCardProtocolOutcomeMatches.StartsWith ? "starts with" : "equals")} '{parameters?.Value}': {(condition.Result == RunCardConditionResults.Yes ? "yes" : "no")}.";
+				return condition;
+			}
+
 			var subject = await RankAsync(context, state, node.SubjectTargets, subjectFilter, node.SubjectStatusBaseTypes,
 				conditionType == RunCardConditionTypes.AvailableWithin ? requiredCount : 1);
 

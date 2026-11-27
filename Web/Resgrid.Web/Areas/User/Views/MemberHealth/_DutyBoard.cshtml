@@ -1,0 +1,51 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model DutyBoardView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> localizer
+@*
+    The duty board (member wellness WL1): members not on full duty or not fully cleared, for supervisors, staffing and the health officers.
+    Operational only: duty status with its dates and the clearance status. It never says why.
+*@
+<div class="ibox float-e-margins m-t-sm" id="dutyBoard">
+    <div class="ibox-title"><h5><i class="fa fa-user-md" aria-hidden="true"></i> @localizer["DutyBoardHeader"]</h5></div>
+    <div class="ibox-content">
+        <p class="text-muted small">@localizer["DutyBoardHelp"]</p>
+        @if (Model.Rows.Count == 0)
+        {
+            <p class="text-muted">@localizer["NoDutyBoard"]</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-striped rgw-table">
+                    <thead>
+                        <tr>
+                            <th>@localizer["MemberColumn"]</th>
+                            <th>@localizer["DutyStatusLabel"]</th>
+                            <th>@localizer["SinceLabel"]</th>
+                            <th>@localizer["ExpectedReturnLabel"]</th>
+                            <th>@localizer["ClearanceStatusLabel"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.Rows)
+                        {
+                            <tr>
+                                <td>@Model.NameOf(row.UserId)</td>
+                                <td><span class="@MemberHealthPresentation.DutyBadge((int)row.DutyStatus)">@localizer[MemberHealthPresentation.DutyKey((int)row.DutyStatus)]</span></td>
+                                <td class="text-nowrap">@MemberHealthPresentation.CalendarDate(row.DutyStatusSince)</td>
+                                <td class="text-nowrap">@MemberHealthPresentation.CalendarDate(row.ExpectedReturnOn)</td>
+                                <td>
+                                    @if (row.ClearanceStatus.HasValue)
+                                    {
+                                        <span class="@MemberHealthPresentation.ClearanceBadge((int)row.ClearanceStatus.Value)">@localizer[MemberHealthPresentation.ClearanceKey((int)row.ClearanceStatus.Value)]</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

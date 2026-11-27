@@ -41,6 +41,15 @@ namespace Resgrid.Web.Attributes
 	{
 		internal const string MfaVerifiedAtHttpContextItemKey = "mfa_verified_at";
 
+		/// <summary>The second factor's method (MfaEvidenceMethod) behind <see cref="MfaVerifiedAtHttpContextItemKey"/>, for an area guard.</summary>
+		internal const string MfaMethodHttpContextItemKey = "mfa_verified_method";
+
+		/// <summary>When the password or SSO was entered again, for an area guard whose department rule allows that kind.</summary>
+		internal const string ReauthenticatedAtHttpContextItemKey = "step_up_reauthenticated_at";
+
+		/// <summary>The reauthentication's method (MfaEvidenceMethod Password or Sso).</summary>
+		internal const string ReauthenticationMethodHttpContextItemKey = "step_up_reauthentication_method";
+
 		/// <summary>The response header a script call reads for where to send the user to verify.</summary>
 		public const string StepUpRedirectHeader = "X-Resgrid-Step-Up";
 
@@ -61,6 +70,13 @@ namespace Resgrid.Web.Attributes
 		/// changes, or ADP. Evidence of a method the active department no longer accepts does not count.
 		/// </summary>
 		public Resgrid.Model.Security.MfaMethodScope MethodScope { get; set; } = Resgrid.Model.Security.MfaMethodScope.Login;
+
+		/// <summary>
+		/// The department step-up area this action belongs to (owner decision 2026-11-26). When set, the department's rule for the area
+		/// decides instead of <see cref="RequireForOperation"/>: optional means no prompt; otherwise a fresh second factor, or the password /
+		/// SSO entered again where the rule allows it, lets the action through, and the member is sent to the verification they can use.
+		/// </summary>
+		public Resgrid.Model.Security.StepUpArea StepUpArea { get; set; }
 
 		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
@@ -101,6 +117,12 @@ namespace Resgrid.Web.Attributes
 				}
 
 				await next();
+				return;
+			}
+
+			if (StepUpArea != 0)
+			{
+				await EnforceAreaAsync(context, next, identityUser);
 				return;
 			}
 
@@ -233,6 +255,138 @@ namespace Resgrid.Web.Attributes
 					context.Result = new RedirectToRouteResult(verifyRoute);
 					return;
 			}
+		}
+
+		/// <summary>
+		/// The department rule for <see cref="StepUpArea"/> decides (owner decision 2026-11-26). Not required: through, carrying any fresh second
+		/// factor so a signature is still recorded at the level the member proved. Satisfied: through, with the proof the rule accepted.
+		/// Otherwise the submission is held and the member goes to the verification they can complete: Verify2FA (offering the password /
+		/// provider page too where the rule allows it), the password / provider page alone, or enrollment when nothing allowed is usable.
+		/// Every failure to read the policy or the evidence fails closed.
+		/// </summary>
+		private async Task EnforceAreaAsync(ActionExecutingContext context, ActionExecutionDelegate next, IdentityUser identityUser)
+		{
+			var httpContext = context.HttpContext;
+			var services = httpContext.RequestServices;
+			var stepUp = services.GetService<IStepUpPolicyService>();
+			var capabilities = services.GetService<IStepUpCapabilityService>();
+			var departmentId = StepUpFormReplay.ActiveDepartmentOf(httpContext.User);
+			if (departmentId is not > 0)
+			{
+				var departments = services.GetService<IDepartmentsService>();
+				departmentId = departments == null ? null : (await departments.GetDepartmentByUserIdAsync(identityUser.Id))?.DepartmentId;
+			}
+
+			if (stepUp == null || capabilities == null || departmentId is not > 0)
+			{
+				context.Result = new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
+				return;
+			}
+
+			var subject = new Resgrid.Model.Security.StepUpSubject
+			{
+				UserId = identityUser.Id,
+				DepartmentId = departmentId.Value,
+				SessionKey = MfaEvidenceSession.KeyFor(httpContext.User, httpContext),
+				AuthenticationGeneration = identityUser.AuthenticationGeneration
+			};
+
+			Resgrid.Model.Security.StepUpEvaluation evaluation;
+			try
+			{
+				evaluation = await stepUp.EvaluateAsync(subject, StepUpArea, httpContext.RequestAborted);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Framework.Logging.LogException(ex, "Step-up policy evaluation failed.");
+				context.Result = new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
+				return;
+			}
+
+			if (evaluation.NotRequired)
+			{
+				// Optional here: no prompt, but a second factor the member already has still raises what they sign at.
+				try
+				{
+					var latest = await Helpers.StepUpEvidence.GetLatestSecondFactorUtcAsync(services.GetService<IMfaEvidenceService>(), identityUser, httpContext,
+						services.GetService<IMfaPolicyService>(), departmentId, Resgrid.Model.Security.StepUpAreas.MfaScope(StepUpArea), httpContext.RequestAborted);
+					if (latest.HasValue)
+						httpContext.Items[MfaVerifiedAtHttpContextItemKey] = latest.Value;
+				}
+				catch (Exception ex) when (!(ex is OperationCanceledException))
+				{
+					Framework.Logging.LogException(ex, "Step-up evidence lookup failed.");
+				}
+
+				await next();
+				return;
+			}
+
+			if (evaluation.Satisfied && evaluation.VerifiedOnUtc.HasValue)
+			{
+				if (evaluation.MethodClass == Resgrid.Model.Security.StepUpMethodClasses.Mfa)
+				{
+					httpContext.Items[MfaVerifiedAtHttpContextItemKey] = evaluation.VerifiedOnUtc.Value;
+					httpContext.Items[MfaMethodHttpContextItemKey] = (int?)evaluation.Method;
+				}
+				else
+				{
+					httpContext.Items[ReauthenticatedAtHttpContextItemKey] = evaluation.VerifiedOnUtc.Value;
+					httpContext.Items[ReauthenticationMethodHttpContextItemKey] = (int?)evaluation.Method;
+				}
+
+				await next();
+				return;
+			}
+
+			var requirement = await capabilities.DescribeAsync(departmentId.Value, identityUser.Id, Resgrid.Model.UserSessionClientApplication.Web, StepUpArea,
+				httpContext.RequestAborted);
+			var request = httpContext.Request;
+			var areaName = Resgrid.Model.Security.StepUpAreas.Name(StepUpArea);
+			var mfa = requirement.UsableMethods.Contains(Resgrid.Model.Security.StepUpMethodNames.Mfa);
+			var reauthenticate = requirement.UsableMethods.Contains(Resgrid.Model.Security.StepUpMethodNames.Password) ||
+				requirement.UsableMethods.Contains(Resgrid.Model.Security.StepUpMethodNames.Sso);
+
+			if (!mfa && !reauthenticate)
+			{
+				// Nothing the department allows is usable: the only way forward is to set up a second factor.
+				var enrollUrl = $"{request.PathBase}{Middleware.Require2FAEnrollmentMiddleware.EnrollmentPath}";
+				if (Middleware.Require2FAEnrollmentMiddleware.IsScriptRequest(request))
+				{
+					httpContext.Response.Headers[StepUpRedirectHeader] = enrollUrl;
+					context.Result = new JsonResult(new { success = false, error = "mfa_enrollment_required", redirect = enrollUrl, area = areaName })
+					{
+						StatusCode = StatusCodes.Status403Forbidden
+					};
+					return;
+				}
+
+				context.Result = new RedirectResult(Middleware.Require2FAEnrollmentMiddleware.EnrollmentPath);
+				return;
+			}
+
+			var (returnUrl, submissionLost) = await StepUpFormReplay.HoldForVerificationAsync(httpContext, services.GetService<ICacheProvider>(),
+				services.GetService<IDataProtectionProvider>(), identityUser.Id, ReturnUrlFor(request));
+
+			// A second factor first (the page also links the password / provider page when the rule allows it and the member can use it).
+			var verifyUrl = mfa
+				? $"{request.PathBase}/User/TwoFactor/Verify2FA?returnUrl={Uri.EscapeDataString(returnUrl)}" +
+					$"&scope={Uri.EscapeDataString(Resgrid.Model.Security.StepUpAreas.MfaScope(StepUpArea).ToString())}&stepUpArea={areaName}" +
+					(reauthenticate ? "&reauth=1" : "") + (submissionLost ? "&resubmit=1" : "")
+				: $"{request.PathBase}/User/AccountSecurity/Reauthenticate?returnUrl={Uri.EscapeDataString(returnUrl)}&stepUpArea={areaName}" +
+					(submissionLost ? "&resubmit=1" : "");
+
+			if (StepUpFormReplay.IsScriptRequest(request))
+			{
+				httpContext.Response.Headers[StepUpRedirectHeader] = verifyUrl;
+				context.Result = new JsonResult(new { success = false, error = "step_up_required", redirect = verifyUrl, area = areaName })
+				{
+					StatusCode = StatusCodes.Status403Forbidden
+				};
+				return;
+			}
+
+			context.Result = new RedirectResult(verifyUrl);
 		}
 
 		/// <summary>

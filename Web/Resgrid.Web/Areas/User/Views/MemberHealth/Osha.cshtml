@@ -1,0 +1,110 @@
+@using Microsoft.AspNetCore.Html
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model OshaLogView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> localizer
+@*
+    The OSHA 300 log and 301 incident reports of a year (member wellness WL1, health officers): built from the recordable injuries, with
+    day counts from the duty periods. A privacy case shows "Privacy case" in place of the name on the 300 log (29 CFR 1904.29(b)).
+*@
+@{
+    var title = localizer["OshaTitle"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Osha";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["OshaIntro"].Value;
+    ViewData["Error"] = Model.Error;
+    var log = Model.Log ?? new OshaLog();
+
+    Func<dynamic, IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="MemberHealth" asp-action="OshaLogPdf" asp-route-area="User" asp-route-year="@Model.Year"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Export300Pdf"]</a>
+        <a class="btn btn-default" asp-controller="MemberHealth" asp-action="OshaLogCsv" asp-route-area="User" asp-route-year="@Model.Year"><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer["Export300Csv"]</a>
+        <a class="btn btn-default" asp-controller="MemberHealth" asp-action="OshaReportsPdf" asp-route-area="User" asp-route-year="@Model.Year"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Export301Pdf"]</a>
+        <a class="btn btn-default" asp-controller="MemberHealth" asp-action="OshaReportsCsv" asp-route-area="User" asp-route-year="@Model.Year"><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer["Export301Csv"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Wellness/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="get" asp-controller="MemberHealth" asp-action="Osha" asp-route-area="User" class="form-inline rgw-toolbar m-b-sm">
+        <label for="osha-year" class="m-r-xs">@localizer["Osha.Year"]</label>
+        <select id="osha-year" name="year" class="form-control input-sm">
+            @foreach (var year in Model.Years)
+            {
+                <option value="@year" selected="@(year == Model.Year)">@year</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["ShowButton"]</button>
+    </form>
+
+    @if (log.ProtectedWithheld)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ProtectedWithheldNotice"]</div>
+    }
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["Osha.Death"]</div><div class="rgw-stat-value">@log.Count(OshaCaseOutcomes.Death)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["Osha.DaysAwayCase"]</div><div class="rgw-stat-value">@log.Count(OshaCaseOutcomes.DaysAwayFromWork)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["Osha.RestrictedCase"]</div><div class="rgw-stat-value">@log.Count(OshaCaseOutcomes.JobTransferOrRestriction)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["Osha.OtherRecordable"]</div><div class="rgw-stat-value">@log.Count(OshaCaseOutcomes.OtherRecordable)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["Osha.DaysAway"]</div><div class="rgw-stat-value">@log.TotalDaysAway</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["Osha.DaysRestricted"]</div><div class="rgw-stat-value">@log.TotalDaysRestricted</div></div>
+    </div>
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-title"><h5><i class="fa fa-table" aria-hidden="true"></i> @localizer["Osha.LogTitle"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted small">@localizer["PrivacyMaskNote"]</p>
+            @if (log.Rows.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoCasesOnLog"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Osha.CaseNumber"]</th>
+                                <th>@localizer["Osha.EmployeeName"]</th>
+                                <th>@localizer["Osha.JobTitle"]</th>
+                                <th>@localizer["Osha.DateOfInjury"]</th>
+                                <th>@localizer["Osha.Where"]</th>
+                                <th>@localizer["OutcomeColumn"]</th>
+                                <th class="text-right">@localizer["Osha.DaysAway"]</th>
+                                <th class="text-right">@localizer["Osha.DaysRestricted"]</th>
+                                <th>@localizer["OshaTypeLabel"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in log.Rows)
+                            {
+                                <tr>
+                                    <td class="text-nowrap">@row.CaseNumber</td>
+                                    <td>@(row.IsPrivacyCase ? localizer["Osha.PrivacyCaseName"].Value : row.EmployeeName)</td>
+                                    <td>@row.JobTitle</td>
+                                    <td class="text-nowrap">@MemberHealthPresentation.CalendarDate(row.DateOfInjury)</td>
+                                    <td>@row.Location</td>
+                                    <td>@localizer["Outcome." + row.Outcome]</td>
+                                    <td class="text-right">@row.DaysAway</td>
+                                    <td class="text-right">@row.DaysRestricted</td>
+                                    <td>@localizer[MemberHealthPresentation.OshaTypeKey((int)row.InjuryType)]</td>
+                                    <td class="rgw-row-actions"><a class="btn btn-xs btn-default" asp-controller="MemberHealth" asp-action="Injury" asp-route-area="User" asp-route-id="@row.InjuryId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["OpenButton"]</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            <p class="text-muted small m-t-sm">@localizer["Osha.Retention"]</p>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

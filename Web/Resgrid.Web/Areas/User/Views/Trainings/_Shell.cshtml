@@ -1,0 +1,118 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> reviewText
+@inject Resgrid.Model.Services.ILmsAccessService lmsAccess
+@*
+    Page heading shared by the training screens (module-workspace.css): title, breadcrumb and a one line description,
+    the page's actions, and the module's sections in a strip underneath (Shared/_ModuleTabs).
+
+    ViewData["Section"]  My, Transcript, Courses, Academy, CourseLibrary, Manage, Records or Leave: the highlighted section (none for a training's own pages)
+    ViewData["LmsLibrary"] true shows the Course library and Standards sections (set by the Courses and Standards pages for LMS authors and graders)
+    ViewData["LmsRequirements"] true shows the Requirements section (set by the Programs pages; T3)
+    ViewData["LmsSkills"]  true on the Skills pages (T4); the Skills section shows with Programs
+    ViewData["Title"]    heading and last crumb (defaults to the module name)
+    ViewData["Subtitle"] optional description
+    ViewData["Scope"]    the member's TrainingManagementScope: decides which sections show
+    ViewData["Message"] / ViewData["Error"]  a one-time notice from the last action
+    ViewData["SubTabs"]  optional ModuleTabsView: the Records officer pages' own strip under the sections
+*@
+@{
+    var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Trainings, localizer["TrainingsHeader"].Value);
+    var section = ViewData["Section"] as string;
+    var title = ViewData["Title"] as string ?? moduleTitle;
+    var subtitle = ViewData["Subtitle"] as string;
+    var scope = ViewData["Scope"] as TrainingManagementScope;
+    var message = ViewData["Message"] as string;
+    var error = ViewData["Error"] as string;
+    var subTabs = ViewData["SubTabs"] as ModuleTabsView;
+
+    var sections = new ModuleTabsView { Label = moduleTitle };
+    sections.Tabs.Add(new ModuleTab(localizer["MyTrainingTab"].Value, "fa-graduation-cap", "Trainings", "Index", section == "My"));
+    sections.Tabs.Add(new ModuleTab(localizer["Rec.TranscriptTab"].Value, "fa-id-card-o", "TrainingRecords", "Transcript", section == "Transcript"));
+    // Training T2 / A1: the member's courses and the Resgrid Academy (free for everyone); the course library for LMS authors and graders.
+    sections.Tabs.Add(new ModuleTab(localizer["CoursesTab"].Value, "fa-play-circle", "Courses", "My", section == "Courses"));
+    sections.Tabs.Add(new ModuleTab(localizer["AcademyTab"].Value, "fa-university", "Courses", "Academy", section == "Academy"));
+    if (ViewData["LmsLibrary"] as bool? == true)
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["CourseLibraryTab"].Value, "fa-sitemap", "Courses", "Library", section == "CourseLibrary"));
+        // Training T5 (LMS): SCORM / cmi5 packages, LTI tools and the xAPI LRS, for the same LMS authors.
+        sections.Tabs.Add(new ModuleTab(localizer["Std.Tab.Standards"].Value, "fa-puzzle-piece", "LmsStandards", "Index", section == "Standards"));
+    }
+    // Training T3: requirements, compliance, paths, onboarding and enforcement (LMS), on the LMS pages for their managers and readers.
+    if (ViewData["LmsRequirements"] as bool? == true || ViewData["LmsLibrary"] as bool? == true)
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["RequirementsTab"].Value, "fa-check-circle-o", "LmsRequirements", "Index", section == "Requirements"));
+    }
+    if (scope != null && scope.IsManager)
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["ManageTrainingsTab"].Value, "fa-tasks", "Trainings", "Manage", section == "Manage"));
+    }
+    if (scope != null && (scope.CanManageRecords || (scope.AssignRight.AdministeredMemberUserIds?.Count ?? 0) > 0))
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["Rec.RecordsTab"].Value, "fa-check-square-o", "TrainingRecords", "Queue", section == "Records"));
+    }
+    // Round 9B: members' training hours submissions waiting for review (training captains, instructors and record reviewers).
+    if (scope != null && scope.CanReviewSubmissions)
+    {
+        sections.Tabs.Add(new ModuleTab(reviewText["Reviews.Tab"].Value, "fa-inbox", "TrainingReviews", "Index", section == "Reviews"));
+    }
+    if (scope != null && scope.AssignRight.HoldsAny)
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["LeaveTab"].Value, "fa-calendar-times-o", "Trainings", "Leave", section == "Leave"));
+    }
+    // Training T3 part 2 (LMS, dark behind Training.Lms): plans, frameworks, training requests, reports. The flag read is cached per request
+    // and never asks billing (LmsRequestGate); the Programs pages answer the add-on question themselves.
+    if (ViewData["LmsPrograms"] as bool? == true || await Resgrid.Web.Helpers.LmsRequestGate.IsFlagEnabledAsync(Context, lmsAccess, Resgrid.Web.Helpers.ClaimsAuthorizationHelper.GetDepartmentId()))
+    {
+        sections.Tabs.Add(new ModuleTab(localizer["Prg.Tab.Programs"].Value, "fa-road", "LmsPrograms", "Index", section == "Programs"));
+        // Training T4 part 1 (LMS, same flag): class sessions, rosters, QR sign-in, lesson plans, resources and class costs.
+        sections.Tabs.Add(new ModuleTab(localizer["Cls.Tab.Classes"].Value, "fa-users", "LmsClasses", "Index", section == "Classes"));
+        // Training T4 part 2 (LMS, dark behind Training.Lms): skill sheets, evaluations and position task books.
+        sections.Tabs.Add(new ModuleTab(localizer["Skl.Tab.Skills"].Value, "fa-check-square", "LmsSkills", "Index", section == "Skills"));
+        // Training T5 (LMS, same flag): external learners, the learner portal and paid public classes, for those who manage training.
+        if (section == "External" || (scope != null && scope.IsManager))
+        {
+            sections.Tabs.Add(new ModuleTab(localizer["Ext.Tab.External"].Value, "fa-id-badge", "LmsExternalLearners", "Index", section == "External"));
+        }
+    }
+}
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2>@title</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a></li>
+            @if (section == "My" && title == moduleTitle)
+            {
+                <li class="active"><strong>@moduleTitle</strong></li>
+            }
+            else
+            {
+                <li><a asp-controller="Trainings" asp-action="Index" asp-route-area="User">@moduleTitle</a></li>
+                <li class="active"><strong>@title</strong></li>
+            }
+        </ol>
+        @if (!string.IsNullOrEmpty(subtitle))
+        {
+            <small class="text-muted">@subtitle</small>
+        }
+    </div>
+    @await Html.PartialAsync("_WorkspaceHeaderActions")
+    <div class="col-sm-12 rgw-module-navigation">
+        @await Html.PartialAsync("_ModuleTabs", sections)
+        @if (subTabs != null && subTabs.Tabs.Count > 1)
+        {
+            <div class="m-t-xs">
+                @await Html.PartialAsync("_ModuleTabs", subTabs)
+            </div>
+        }
+    </div>
+</div>
+@if (!string.IsNullOrEmpty(message))
+{
+    <div class="alert alert-success m-t-sm" role="status"><i class="fa fa-check" aria-hidden="true"></i> @message</div>
+}
+@if (!string.IsNullOrEmpty(error))
+{
+    <div class="alert alert-danger m-t-sm" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @error</div>
+}

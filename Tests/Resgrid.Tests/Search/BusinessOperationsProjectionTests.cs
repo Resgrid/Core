@@ -40,7 +40,7 @@ namespace Resgrid.Tests.Search
 			protection.Setup(p => p.GetPinnedCatalogVersionAsync(It.IsAny<int>())).ReturnsAsync(28);
 			_personnel = new Mock<IDeploymentPersonnelRepository>();
 			_personnel.Setup(p => p.GetByDeploymentAsync(It.IsAny<string>())).ReturnsAsync(Enumerable.Empty<DeploymentPersonnel>());
-			_service = new SearchProjectionService(_repository.Object, protection.Object, _personnel.Object);
+			_service = new SearchProjectionService(_repository.Object, protection.Object, Mock.Of<Resgrid.Model.Repositories.IProtocolVersionTranslationsRepository>(), _personnel.Object);
 		}
 
 		private Mock<IDeploymentPersonnelRepository> _personnel;

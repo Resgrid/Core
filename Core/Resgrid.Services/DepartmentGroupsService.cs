@@ -34,13 +34,15 @@ namespace Resgrid.Services
 		private readonly IInventoryStore _inventoryStore;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 		private readonly ITypeIconsService _typeIconsService;
+		private readonly IContentAudienceChangeQueue _audienceChanges;
 
 		public DepartmentGroupsService(IDepartmentGroupsRepository departmentGroupsRepository, IDepartmentGroupMembersRepository departmentGroupMembersRepository,
 			ISubscriptionsService subscriptionsService, IAddressService addressService, IDepartmentsService departmentsService, IGeoLocationProvider geoLocationProvider,
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator, ICacheProvider cacheProvider,
 			IIdentityRepository identityRepository, IUnitOfWork unitOfWork, IInventoryStore inventoryStore = null,
-			Lazy<ISearchProjectionService> searchProjections = null, ITypeIconsService typeIconsService = null)
+			Lazy<ISearchProjectionService> searchProjections = null, ITypeIconsService typeIconsService = null, IContentAudienceChangeQueue audienceChanges = null)
 		{
+			_audienceChanges = audienceChanges;
 			_searchProjections = searchProjections;
 			_typeIconsService = typeIconsService;
 			_departmentGroupsRepository = departmentGroupsRepository;
@@ -55,6 +57,19 @@ namespace Resgrid.Services
 			_identityRepository = identityRepository;
 			_unitOfWork = unitOfWork;
 			_inventoryStore = inventoryStore;
+		}
+
+		/// <summary>Group membership changed: worker 83 re-evaluates dynamic training (and protocol) audiences for these members.</summary>
+		private async Task QueueAudienceChangeAsync(int departmentId, IEnumerable<string> userIds, CancellationToken cancellationToken)
+		{
+			if (_audienceChanges == null)
+				return;
+
+			var ids = userIds?.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+			if (ids == null)
+				await _audienceChanges.EnqueueAsync(departmentId, null, ContentAudienceChangeSources.Group, cancellationToken);
+			else
+				await _audienceChanges.EnqueueManyAsync(departmentId, ids, ContentAudienceChangeSources.Group, cancellationToken);
 		}
 
 		public async Task<List<DepartmentGroup>> GetAllAsync()
@@ -143,6 +158,7 @@ namespace Resgrid.Services
 			// Never UserAssignedToGroupEvent (notification + workflow 7) on this path: that belongs to MoveUserIntoGroupAsync.
 			await _departmentGroupMembersRepository.SaveOrUpdateAsync(depMember, cancellationToken);
 			await InvalidateGroupInCache(depMember.DepartmentGroupId);
+			await QueueAudienceChangeAsync(depMember.DepartmentId, new[] { depMember.UserId }, cancellationToken);
 			if (effects.ImmediateSecurityRefresh)
 				SendGroupVisibilityRefresh(depMember.DepartmentId);
 			if (effects.ImmediateSearchProjection)
@@ -408,6 +424,7 @@ namespace Resgrid.Services
 				await _departmentGroupMembersRepository.DeleteAsync(departmentGroupMember, cancellationToken);
 			}
 
+			await QueueAudienceChangeAsync(departmentGroup.DepartmentId, members?.Select(m => m.UserId), cancellationToken);
 			await InvalidateGroupInCache(departmentGroup.DepartmentGroupId);
 			SendGroupVisibilityRefresh(departmentGroup.DepartmentId);
 
@@ -464,6 +481,7 @@ namespace Resgrid.Services
 
 			SendGroupVisibilityRefresh(departmentId);
 			await RefreshPersonnelProjectionsAsync(departmentId, new[] { userId }, cancellationToken);
+			await QueueAudienceChangeAsync(departmentId, new[] { userId }, cancellationToken);
 
 			return true;
 		}
@@ -520,6 +538,7 @@ namespace Resgrid.Services
 			await InvalidateGroupInCache(depMember.DepartmentGroupId);
 			SendGroupVisibilityRefresh(depMember.DepartmentId);
 			await RefreshPersonnelProjectionsAsync(depMember.DepartmentId, new[] { depMember.UserId }, cancellationToken);
+			await QueueAudienceChangeAsync(depMember.DepartmentId, new[] { depMember.UserId }, cancellationToken);
 
 			return depMember;
 		}
@@ -636,6 +655,7 @@ namespace Resgrid.Services
 			_eventAggregator.SendMessage<UserAssignedToGroupEvent>(new UserAssignedToGroupEvent() { DepartmentId = departmentGroup.DepartmentId, UserId = userId, Group = departmentGroup });
 			SendGroupVisibilityRefresh(departmentGroup.DepartmentId);
 			await RefreshPersonnelProjectionsAsync(departmentGroup.DepartmentId, new[] { userId }, cancellationToken);
+			await QueueAudienceChangeAsync(departmentGroup.DepartmentId, new[] { userId }, cancellationToken);
 
 			return saved;
 		}
@@ -715,10 +735,11 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var formerMembers = _searchProjections != null
+			var formerMembers = _searchProjections != null || _audienceChanges != null
 				? (await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(groupId) ?? Enumerable.Empty<DepartmentGroupMember>()).Select(m => m.UserId).ToList()
 				: null;
 			var result = await _departmentGroupMembersRepository.DeleteGroupMembersByGroupIdAsync(groupId, departmentId, cancellationToken);
+			await QueueAudienceChangeAsync(departmentId, formerMembers ?? new List<string>(), cancellationToken);
 
 			await InvalidateGroupInCache(groupId);
 			SendGroupVisibilityRefresh(departmentId);

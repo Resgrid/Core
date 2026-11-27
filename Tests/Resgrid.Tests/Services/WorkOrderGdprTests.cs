@@ -77,7 +77,7 @@ namespace Resgrid.Tests.Services
             _service = new GdprDataExportService(_repository.Object, _userProfileService.Object, _memberSensitiveDataService.Object, _emergencyContactService.Object,
                 _usersService.Object, _departmentsService.Object, _departmentGroupsService.Object, _personnelRolesService.Object, _actionLogsService.Object,
                 _messageService.Object, _certificationService.Object, _trainingService.Object, _shiftsService.Object, _emailService.Object, new ChecklistWorkflowTests.MemoryStore(),
-                new Lazy<IReadinessHistoryProtectionService>(()=>new ReadinessHistoryProtectionService(Mock.Of<IProtectedWriteService>(),policy.Object)),reminders.Object,store.Object,EmptyInventory(), maintenance.Object);
+                new Lazy<IReadinessHistoryProtectionService>(()=>new ReadinessHistoryProtectionService(Mock.Of<IProtectedWriteService>(),policy.Object)),reminders.Object,store.Object,EmptyInventory(), maintenance.Object, Mock.Of<IMemberWellnessService>(), Mock.Of<ILearningRecordService>(), Mock.Of<IMemberHealthService>(), Array.Empty<IGdprExportSection>());
             var files = await RunExportAsync();
             files["workorders.json"].Should().Contain("REDACTED").And.NotContain("SYNTHETIC-PHI-CANARY").And.NotContain("VENDOR-CANARY")
                 .And.NotContain("MOVEMENT-CANARY").And.NotContain("PII-FILENAME-CANARY").And.NotContain("AQID");

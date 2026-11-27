@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CaseReviewsTab" xml:space="preserve">
+    <value>Αξιολογήσεις περιστατικών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCaseReviewsTab" xml:space="preserve">
+    <value>Οι αξιολογήσεις μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueLink" xml:space="preserve">
+    <value>Ουρά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleLink" xml:space="preserve">
+    <value>Δείγμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsLink" xml:space="preserve">
+    <value>Αναφορές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsLink" xml:space="preserve">
+    <value>Κλίμακες αξιολόγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueIntro" xml:space="preserve">
+    <value>Περιστατικά διαχείρισης κλήσεων από δειγματοληψία που περιμένουν αξιολόγηση, τα παλαιότερα πρώτα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueCaption" xml:space="preserve">
+    <value>Περιστατικά που περιμένουν αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>Η ουρά είναι κενή. Πάρτε ένα δείγμα για να ξεκινήσετε τις αξιολογήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileQueued" xml:space="preserve">
+    <value>Στην ουρά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileInReview" xml:space="preserve">
+    <value>Πρόχειρα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAssignedToMe" xml:space="preserve">
+    <value>Ανατεθειμένα σε μένα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAwaitingAcknowledgment" xml:space="preserve">
+    <value>Αναμονή του χειριστή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAcknowledged" xml:space="preserve">
+    <value>Επιβεβαιωμένες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileReviews" xml:space="preserve">
+    <value>Αξιολογήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAverageScore" xml:space="preserve">
+    <value>Μέση βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrides" xml:space="preserve">
+    <value>Χειροκίνητες αλλαγές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileToAcknowledge" xml:space="preserve">
+    <value>Προς επιβεβαίωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowWholeQueue" xml:space="preserve">
+    <value>Όλη η ουρά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowMineOnly" xml:space="preserve">
+    <value>Ανατεθειμένα σε μένα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleCallsButton" xml:space="preserve">
+    <value>Δειγματοληψία κλήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Κλήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolColumn" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Χειριστής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>Ανατέθηκε σε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverriddenLabel" xml:space="preserve">
+    <value>Αλλαγμένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Χωρίς ανάθεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnCaseShort" xml:space="preserve">
+    <value>Δική σας κλήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakeButton" xml:space="preserve">
+    <value>Ανάληψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Αφαίρεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveConfirm" xml:space="preserve">
+    <value>Αφαίρεση αυτού του περιστατικού από την ουρά; Μπορεί να επιλεγεί ξανά αργότερα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>Στην ουρά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>Πρόχειρο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Εστάλη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusAcknowledged" xml:space="preserve">
+    <value>Επιβεβαιώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleTitle" xml:space="preserve">
+    <value>Δειγματοληψία κλήσεων για αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleIntro" xml:space="preserve">
+    <value>Επιλέξτε τυχαία κλήσεις για αξιολόγηση ανά πρωτόκολλο, έκδοση, καθοριστικό κωδικό, χειριστή και ημερομηνίες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Προεπισκόπηση δείγματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewCandidates" xml:space="preserve">
+    <value>Αντίστοιχα περιστατικά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewAlreadyReviewed" xml:space="preserve">
+    <value>Ήδη αξιολογημένα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewExcluded" xml:space="preserve">
+    <value>Εξαιρέθηκαν</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewEligible" xml:space="preserve">
+    <value>Επιλέξιμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewSampleSize" xml:space="preserve">
+    <value>Θα επιλεγούν</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewCapped" xml:space="preserve">
+    <value>Μετρήθηκαν μόνο οι {0} πιο πρόσφατες αντίστοιχες κλήσεις. Περιορίστε τις ημερομηνίες για πλήρη μέτρηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WhichCallsLegend" xml:space="preserve">
+    <value>Ποιες κλήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Από</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Έως</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolLabel" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantLabel" xml:space="preserve">
+    <value>Καθοριστικός κωδικός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantHelp" xml:space="preserve">
+    <value>Ένας καθοριστικός κωδικός ή η αρχή του, για παράδειγμα 09-E.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherLabel" xml:space="preserve">
+    <value>Χειριστής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HowManyLegend" xml:space="preserve">
+    <value>Πόσα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModeCount" xml:space="preserve">
+    <value>Αριθμός περιστατικών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModePercent" xml:space="preserve">
+    <value>Ποσοστό επιλέξιμων περιστατικών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleSizeHelp" xml:space="preserve">
+    <value>Το πολύ {0} περιστατικά ανά δείγμα. Το ποσοστό στρογγυλοποιείται προς τα πάνω. Κλήσεις που αξιολογήθηκαν δεν επιλέγονται ποτέ ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricLabel" xml:space="preserve">
+    <value>Κλίμακα αξιολόγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Ανάθεση σε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignHelp" xml:space="preserve">
+    <value>Οι δικές του κλήσεις εξαιρούνται από το δείγμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Μέτρηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSampleButton" xml:space="preserve">
+    <value>Λήψη δείγματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyProtocol" xml:space="preserve">
+    <value>Οποιοδήποτε πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyVersion" xml:space="preserve">
+    <value>Οποιαδήποτε έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyDispatcher" xml:space="preserve">
+    <value>Οποιοσδήποτε χειριστής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRubricWillBeCreated" xml:space="preserve">
+    <value>Τυπική κλίμακα (δημιουργείται με το πρώτο δείγμα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampledMessage" xml:space="preserve">
+    <value>{0} περιστατικά μπήκαν στην ουρά αξιολόγησης ({1} επιλέξιμα, {2} ήδη αξιολογημένα).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewTitle" xml:space="preserve">
+    <value>Αξιολόγηση περιστατικού: κλήση {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnCaseNotice" xml:space="preserve">
+    <value>Αυτή είναι δική σας κλήση: πρέπει να τη βαθμολογήσει άλλος αξιολογητής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionComplianceLabel" xml:space="preserve">
+    <value>Συμμόρφωση ερωτήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InstructionComplianceLabel" xml:space="preserve">
+    <value>Συμμόρφωση οδηγιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotApplicableShort" xml:space="preserve">
+    <value>δ/ε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseHeader" xml:space="preserve">
+    <value>Το περιστατικό όπως καταγράφηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverrideDetail" xml:space="preserve">
+    <value>Υπολογίστηκε {0}· άλλαξε από {1} στις {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverrideReasonLabel" xml:space="preserve">
+    <value>Αιτία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PriorityLabel" xml:space="preserve">
+    <value>Προτεινόμενη προτεραιότητα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceLabel" xml:space="preserve">
+    <value>Προέλευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceAi" xml:space="preserve">
+    <value>Πρόταση Enhanced AI, επιβεβαιωμένη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineHeader" xml:space="preserve">
+    <value>Χρονολόγιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCallLogged" xml:space="preserve">
+    <value>Καταγραφή κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineAttached" xml:space="preserve">
+    <value>Επισύναψη πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCaseCompleted" xml:space="preserve">
+    <value>Ολοκλήρωση ροής περιστατικού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCaseNotCompleted" xml:space="preserve">
+    <value>Η ροή του περιστατικού δεν ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineOverridden" xml:space="preserve">
+    <value>Αλλαγή καθοριστικού κωδικού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCallerText" xml:space="preserve">
+    <value>Μήνυμα στον καλούντα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineStepsStarted" xml:space="preserve">
+    <value>Έναρξη βήμα προς βήμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineStepsCompleted" xml:space="preserve">
+    <value>ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineSampled" xml:space="preserve">
+    <value>Επιλογή για αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineSent" xml:space="preserve">
+    <value>Αποστολή αξιολόγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineAcknowledged" xml:space="preserve">
+    <value>Επιβεβαίωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>Ερωτήσεις και οδηγίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>Δεν καταγράφηκαν ερωτήσεις ή οδηγίες σε αυτό το περιστατικό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindEntryQuestion" xml:space="preserve">
+    <value>Αρχική ερώτηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindKeyQuestion" xml:space="preserve">
+    <value>Βασική ερώτηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindInstruction" xml:space="preserve">
+    <value>Οδηγία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnswerLabel" xml:space="preserve">
+    <value>Απάντηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceLabel" xml:space="preserve">
+    <value>Συμμόρφωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotScored" xml:space="preserve">
+    <value>Χωρίς βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceCompliant" xml:space="preserve">
+    <value>Σύμφωνο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompliancePartial" xml:space="preserve">
+    <value>Εν μέρει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotCompliant" xml:space="preserve">
+    <value>Μη σύμφωνο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotApplicable" xml:space="preserve">
+    <value>Δεν εφαρμόζεται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Σημείωση (προαιρετική)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriteriaHeader" xml:space="preserve">
+    <value>Κριτήρια κλίμακας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeightLabel" xml:space="preserve">
+    <value>βάρος {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DerivedCriterionHelp" xml:space="preserve">
+    <value>Βαθμολογείται από τις παραπάνω ερωτήσεις και οδηγίες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotScoredOption" xml:space="preserve">
+    <value>Χωρίς βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score100" xml:space="preserve">
+    <value>100 - πλήρως</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score75" xml:space="preserve">
+    <value>75 - κατά κύριο λόγο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score50" xml:space="preserve">
+    <value>50 - εν μέρει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score25" xml:space="preserve">
+    <value>25 - ελάχιστα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score0" xml:space="preserve">
+    <value>0 - καθόλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsLabel" xml:space="preserve">
+    <value>Σχόλια για τον χειριστή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsHelp" xml:space="preserve">
+    <value>Ο χειριστής διαβάζει αυτά τα σχόλια μαζί με τις βαθμολογίες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveDraftButton" xml:space="preserve">
+    <value>Αποθήκευση πρόχειρου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>Αποστολή στον χειριστή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriterionColumn" xml:space="preserve">
+    <value>Κριτήριο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeightColumn" xml:space="preserve">
+    <value>Βάρος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeedbackHeader" xml:space="preserve">
+    <value>Ανταπόκριση του χειριστή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedOn" xml:space="preserve">
+    <value>Επιβεβαιώθηκε στις {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotAcknowledgedYet" xml:space="preserve">
+    <value>Δεν έχει επιβεβαιωθεί ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherReplyHeader" xml:space="preserve">
+    <value>Απάντηση του χειριστή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyOptionalLabel" xml:space="preserve">
+    <value>Απάντηση (προαιρετική)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyOnceHelp" xml:space="preserve">
+    <value>Μπορείτε να απαντήσετε μία φορά· ο αξιολογητής ειδοποιείται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeButton" xml:space="preserve">
+    <value>Επιβεβαίωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>Η απάντησή σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Αποστολή απάντησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphHeader" xml:space="preserve">
+    <value>Ροή περιστατικού του πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoGraph" xml:space="preserve">
+    <value>Η έκδοση που αναφέρεται δεν έχει ροή περιστατικού για εμφάνιση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathLegend" xml:space="preserve">
+    <value>Βήματα της διαδρομής που ακολούθησε αυτή η κλήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MineIntro" xml:space="preserve">
+    <value>Αξιολογήσεις κλήσεων που διαχειριστήκατε. Διαβάστε και επιβεβαιώστε την καθεμία· μπορείτε να απαντήσετε μία φορά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MineEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη αξιολογήσεις για εσάς.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadAndAcknowledgeButton" xml:space="preserve">
+    <value>Ανάγνωση και επιβεβαίωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RepliedLabel" xml:space="preserve">
+    <value>Απαντήσατε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsTitle" xml:space="preserve">
+    <value>Αναφορές αξιολογήσεων περιστατικών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsIntro" xml:space="preserve">
+    <value>Συμμόρφωση των αξιολογημένων περιστατικών ανά πρωτόκολλο, έκδοση, χειριστή και μήνα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyButton" xml:space="preserve">
+    <value>Εφαρμογή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Εξαγωγή σε CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν απεσταλμένες αξιολογήσεις για κλήσεις αυτής της περιόδου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByMonthHeader" xml:space="preserve">
+    <value>Ανά μήνα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByProtocolHeader" xml:space="preserve">
+    <value>Ανά πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByVersionHeader" xml:space="preserve">
+    <value>Ανά έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>Ανά χειριστή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByItemHeader" xml:space="preserve">
+    <value>Ανά ερώτηση και οδηγία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Ομάδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCall" xml:space="preserve">
+    <value>Κλήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCallDate" xml:space="preserve">
+    <value>Ημερομηνία κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvProtocol" xml:space="preserve">
+    <value>Πρωτόκολλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvVersion" xml:space="preserve">
+    <value>Έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDeterminant" xml:space="preserve">
+    <value>Καθοριστικός κωδικός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverridden" xml:space="preserve">
+    <value>Αλλαγμένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDispatcher" xml:space="preserve">
+    <value>Χειριστής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvReviewer" xml:space="preserve">
+    <value>Αξιολογητής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvScore" xml:space="preserve">
+    <value>Βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvQuestionCompliance" xml:space="preserve">
+    <value>Συμμόρφωση ερωτήσεων %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvInstructionCompliance" xml:space="preserve">
+    <value>Συμμόρφωση οδηγιών %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvSent" xml:space="preserve">
+    <value>Εστάλη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAcknowledged" xml:space="preserve">
+    <value>Επιβεβαιώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ναι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Όχι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsTitle" xml:space="preserve">
+    <value>Κλίμακες αξιολόγησης περιστατικών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsIntro" xml:space="preserve">
+    <value>Κλίμακες ποιοτικού ελέγχου του Records που χρησιμοποιούνται για τη βαθμολόγηση περιστατικών. Κάθε αξιολόγηση κρατά τα κριτήρια με τα οποία επιλέχθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRubrics" xml:space="preserve">
+    <value>Δεν υπάρχει ακόμη κλίμακα αξιολόγησης περιστατικών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateTemplateButton" xml:space="preserve">
+    <value>Δημιουργία τυπικής κλίμακας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InactiveLabel" xml:space="preserve">
+    <value>Ανενεργή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DerivedLabel" xml:space="preserve">
+    <value>από τα στοιχεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Επεξεργασία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewRubricHeader" xml:space="preserve">
+    <value>Νέα κλίμακα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditRubricHeader" xml:space="preserve">
+    <value>Επεξεργασία κλίμακας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricNameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Ενεργή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriteriaHelp" xml:space="preserve">
+    <value>Τα κλειδιά "questions" και "instructions" παίρνουν τη βαθμολογία τους από τις ερωτήσεις και τις οδηγίες· τα άλλα κριτήρια βαθμολογούνται χειροκίνητα. Τα βάρη είναι από 1 έως 10.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriterionKeyColumn" xml:space="preserve">
+    <value>Κλειδί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveRubricButton" xml:space="preserve">
+    <value>Αποθήκευση κλίμακας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricSavedMessage" xml:space="preserve">
+    <value>Η κλίμακα αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricNotSaved" xml:space="preserve">
+    <value>Η κλίμακα δεν αποθηκεύτηκε. Χρειάζεται όνομα και τουλάχιστον ένα κριτήριο με μοναδικά κλειδιά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRubricName" xml:space="preserve">
+    <value>Αξιολόγηση περιστατικών διαχείρισης κλήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCaseEntry" xml:space="preserve">
+    <value>Λήψη περιστατικού: επιβεβαίωση διεύθυνσης, αριθμού επανάκλησης και κύριου προβλήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateQuestions" xml:space="preserve">
+    <value>Ερωτήσεις όπως είναι γραμμένες, με τη σειρά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateDeterminant" xml:space="preserve">
+    <value>Ο σωστός καθοριστικός κωδικός (μια αλλαγή έχει βάσιμη αιτία)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateInstructions" xml:space="preserve">
+    <value>Οδηγίες όπως είναι γραμμένες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCallerCare" xml:space="preserve">
+    <value>Ήρεμος, σαφής και ευγενικός με τον καλούντα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakenMessage" xml:space="preserve">
+    <value>Το περιστατικό είναι στην ουρά σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>Το περιστατικό αφαιρέθηκε από την ουρά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>Η αξιολόγηση στάλθηκε στον χειριστή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftSavedMessage" xml:space="preserve">
+    <value>Το πρόχειρο αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Η αξιολόγηση επιβεβαιώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RepliedMessage" xml:space="preserve">
+    <value>Η απάντησή σας στάλθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultDone" xml:space="preserve">
+    <value>Ολοκληρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNotFound" xml:space="preserve">
+    <value>Η αξιολόγηση δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultForbidden" xml:space="preserve">
+    <value>Δεν έχετε δικαίωμα να το κάνετε αυτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultOwnCase" xml:space="preserve">
+    <value>Δεν μπορείτε να αξιολογήσετε τη δική σας κλήση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadySent" xml:space="preserve">
+    <value>Η αξιολόγηση έχει ήδη σταλεί στον χειριστή και δεν μπορεί πλέον να αλλάξει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultIncomplete" xml:space="preserve">
+    <value>Βαθμολογήστε κάθε ερώτηση, οδηγία και κριτήριο πριν από την αποστολή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadyAcknowledged" xml:space="preserve">
+    <value>Αυτή η αξιολόγηση έχει ήδη επιβεβαιωθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadyCommented" xml:space="preserve">
+    <value>Έχετε ήδη απαντήσει σε αυτή την αξιολόγηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNotSent" xml:space="preserve">
+    <value>Αυτή η αξιολόγηση δεν έχει σταλεί ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultConflict" xml:space="preserve">
+    <value>Κάποιος άλλος άλλαξε ή ανέλαβε αυτή την αξιολόγηση. Ανανεώστε τη σελίδα και δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultCommentRequired" xml:space="preserve">
+    <value>Γράψτε πρώτα μια απάντηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNoRubric" xml:space="preserve">
+    <value>Επιλέξτε μια ενεργή κλίμακα αξιολόγησης περιστατικών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultInvalid" xml:space="preserve">
+    <value>Ελέγξτε τις ημερομηνίες και το μέγεθος του δείγματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

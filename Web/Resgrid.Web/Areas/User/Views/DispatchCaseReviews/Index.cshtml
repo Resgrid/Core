@@ -1,0 +1,127 @@
+@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Protocols.DispatchCaseQueueModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatchCaseReviews.DispatchCaseReviews> L
+@*
+    Protocols P5 QA: the officers' queue of sampled dispatch cases (Review Dispatch Cases 134 or department admins). Tiles count the queue,
+    drafts and reviews waiting for the dispatcher; each row opens the review, takes it into the member's own queue or removes it.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + L["CaseReviewsTab"];
+    ViewData["Title"] = L["CaseReviewsTab"].Value;
+    ViewData["Subtitle"] = L["QueueIntro"].Value;
+    ViewData["CaseReviewPage"] = "Queue";
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_CaseReviewNav")
+
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    <div class="rgw-stat-tiles" role="list">
+        <a class="rgw-stat-tile" role="listitem" asp-action="Index" asp-route-area="User"><div class="rgw-stat-label">@L["TileQueued"]</div><div class="rgw-stat-value">@Model.Summary.Queued</div></a>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["TileInReview"]</div><div class="rgw-stat-value">@Model.Summary.InReview</div></div>
+        <a class="rgw-stat-tile" role="listitem" asp-action="Index" asp-route-area="User" asp-route-mine="true"><div class="rgw-stat-label">@L["TileAssignedToMe"]</div><div class="rgw-stat-value">@Model.Summary.AssignedToMe</div></a>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["TileAwaitingAcknowledgment"]</div><div class="rgw-stat-value @(Model.Summary.AwaitingAcknowledgment > 0 ? "text-warning" : "")">@Model.Summary.AwaitingAcknowledgment</div></div>
+        <a class="rgw-stat-tile" role="listitem" asp-action="Reports" asp-route-area="User"><div class="rgw-stat-label">@L["TileAcknowledged"]</div><div class="rgw-stat-value">@Model.Summary.Acknowledged</div></a>
+    </div>
+
+    <div class="rgw-toolbar">
+        @if (Model.MineOnly)
+        {
+            <a class="btn btn-default btn-sm" asp-action="Index" asp-route-area="User"><i class="fa fa-users" aria-hidden="true"></i> @L["ShowWholeQueue"]</a>
+        }
+        else
+        {
+            <a class="btn btn-default btn-sm" asp-action="Index" asp-route-area="User" asp-route-mine="true"><i class="fa fa-user" aria-hidden="true"></i> @L["ShowMineOnly"]</a>
+        }
+        <a class="btn btn-primary btn-sm" asp-action="Sample" asp-route-area="User"><i class="fa fa-random" aria-hidden="true"></i> @L["SampleCallsButton"]</a>
+    </div>
+
+    @if (Model.Reviews.Count == 0)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-inbox" aria-hidden="true"></i> @L["QueueEmpty"]</div>
+    }
+    else
+    {
+        <div class="ibox">
+            <div class="ibox-content table-responsive">
+                <table class="table rgw-table">
+                    <caption class="sr-only">@L["QueueCaption"]</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">@L["CallColumn"]</th>
+                            <th scope="col">@L["ProtocolColumn"]</th>
+                            <th scope="col">@L["DispatcherColumn"]</th>
+                            <th scope="col">@L["AssignedColumn"]</th>
+                            <th scope="col">@L["StatusColumn"]</th>
+                            <th scope="col"><span class="sr-only">@L["ActionsColumn"]</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var review in Model.Reviews)
+                        {
+                            var own = string.Equals(review.DispatcherUserId, Model.UserId, StringComparison.OrdinalIgnoreCase);
+                            var mine = string.Equals(review.AssignedToUserId, Model.UserId, StringComparison.OrdinalIgnoreCase);
+                            <tr>
+                                <td>
+                                    <a asp-action="Review" asp-route-area="User" asp-route-id="@review.DispatchCaseReviewId">@(review.CallNumber ?? review.CallId.ToString())</a>
+                                    <div class="rgw-sub">@review.CallName · @departmentTime.Format(review.CallLoggedOn)</div>
+                                </td>
+                                <td>
+                                    @review.ProtocolCode @review.ProtocolName
+                                    <div class="rgw-sub">
+                                        @if (!string.IsNullOrEmpty(review.VersionLabel)) { <text>v@(review.VersionLabel)</text> }
+                                        @if (!string.IsNullOrEmpty(review.Determinant)) { <text> · </text><span class="rgw-mono">@review.Determinant</span> }
+                                        @if (review.Overridden) { <text> · </text><span class="label label-warning">@L["OverriddenLabel"]</span> }
+                                    </div>
+                                </td>
+                                <td>@Model.NameOf(review.DispatcherUserId)</td>
+                                <td>@(string.IsNullOrEmpty(review.AssignedToUserId) ? L["Unassigned"].Value : Model.NameOf(review.AssignedToUserId))</td>
+                                <td>@await Html.PartialAsync("_Status", review.Status)</td>
+                                <td class="rgw-row-actions">
+                                    @if (own)
+                                    {
+                                        <span class="text-muted small"><i class="fa fa-ban" aria-hidden="true"></i> @L["OwnCaseShort"]</span>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-xs btn-primary" asp-action="Review" asp-route-area="User" asp-route-id="@review.DispatchCaseReviewId"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @L["ReviewButton"]</a>
+                                        @if (!mine && (string.IsNullOrEmpty(review.AssignedToUserId) || Model.IsAdmin))
+                                        {
+                                            <form method="post" asp-action="Take" asp-route-area="User" asp-route-id="@review.DispatchCaseReviewId" class="rgw-inline-form" style="display:inline">
+                                                @Html.AntiForgeryToken()
+                                                <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-hand-paper-o" aria-hidden="true"></i> @L["TakeButton"]</button>
+                                            </form>
+                                        }
+                                    }
+                                    @if (mine || string.IsNullOrEmpty(review.AssignedToUserId) || Model.IsAdmin)
+                                    {
+                                        <form method="post" asp-action="Remove" asp-route-area="User" asp-route-id="@review.DispatchCaseReviewId" style="display:inline">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-xs btn-default" onclick="return confirm(this.getAttribute('data-confirm'));" data-confirm="@L["RemoveConfirm"]"><i class="fa fa-times" aria-hidden="true"></i> @L["RemoveButton"]</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

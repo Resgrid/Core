@@ -1,0 +1,47 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingAssignmentStatus
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@{
+    var department = ViewData["Department"] as Department;
+    var due = TrainingStatePresentation.LocalDate(Model.DueUtc, department);
+    var hasQuiz = Model.Training.HasQuiz;
+    var limit = Model.Training.QuizAttemptLimit.GetValueOrDefault();
+    var attemptsLeft = limit > 0 ? Math.Max(0, limit - Model.Assignment.AttemptCount) : (int?)null;
+}
+<div class="rgw-card">
+    <h4><a asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@Model.Training.TrainingId">@Model.Training.Name</a></h4>
+    <div>@await Html.PartialAsync("_StatePill", Model.State)</div>
+    <div class="rgw-card-meta">
+        @if (due != null)
+        {
+            <span><i class="fa fa-calendar" aria-hidden="true"></i> @localizer["DueOnLabel"] @due</span>
+        }
+        else
+        {
+            <span><i class="fa fa-calendar-o" aria-hidden="true"></i> @localizer["NoDueDate"]</span>
+        }
+        @if (Model.Training.Hours.HasValue)
+        {
+            <span> · <i class="fa fa-clock-o" aria-hidden="true"></i> @string.Format(localizer["HoursValue"].Value, Model.Training.Hours.Value)</span>
+        }
+        @if (Model.QuizFailed && Model.Assignment.Score > 0)
+        {
+            <span> · @string.Format(localizer["LastScoreValue"].Value, Model.Assignment.Score)</span>
+        }
+    </div>
+    <div class="rgw-card-action">
+        @if (hasQuiz && Model.State != TrainingAssignmentStates.Complete && Model.State != TrainingAssignmentStates.Exempt && (attemptsLeft == null || attemptsLeft > 0) && Model.Assignment.Viewed)
+        {
+            <a class="btn btn-sm btn-primary" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" asp-route-trainingId="@Model.Training.TrainingId">
+                <i class="fa @(Model.QuizFailed ? "fa-repeat" : "fa-pencil-square-o")" aria-hidden="true"></i> @(Model.QuizFailed ? localizer["RetakeQuizButton"] : localizer["TakeQuizButton"])
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-sm @(Model.State == TrainingAssignmentStates.Complete ? "btn-default" : "btn-primary")" asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@Model.Training.TrainingId">
+                <i class="fa fa-book" aria-hidden="true"></i> @(Model.Assignment.Viewed ? localizer["ContinueTrainingButton"] : localizer["OpenTrainingButton"])
+            </a>
+        }
+    </div>
+</div>

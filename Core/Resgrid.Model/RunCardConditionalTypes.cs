@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Resgrid.Model
 {
 	/// <summary>
@@ -13,7 +16,79 @@ namespace Resgrid.Model
 		ArrivesBefore = 1,
 
 		/// <summary>At least RequiredCount resources of the subject can arrive in under ThresholdSeconds (turnout + travel).</summary>
-		AvailableWithin = 2
+		AvailableWithin = 2,
+
+		/// <summary>
+		/// Protocols P4: a protocol on the call has a determinant that equals or starts with a value (ParametersJson
+		/// <see cref="RunCardProtocolOutcomeParameters"/>), so an "Echo" determinant can raise the alarm level or pick another package.
+		/// Run cards stay the only place that picks resources.
+		/// </summary>
+		ProtocolOutcome = 3
+	}
+
+	/// <summary>How a ProtocolOutcome condition compares the determinant.</summary>
+	public enum RunCardProtocolOutcomeMatches
+	{
+		Equals = 0,
+		StartsWith = 1
+	}
+
+	/// <summary>The parameters of a ProtocolOutcome condition, stored in RunCardDecisionNode.ParametersJson.</summary>
+	public sealed class RunCardProtocolOutcomeParameters
+	{
+		public const int ValueMaxLength = 32;
+
+		/// <summary><see cref="RunCardProtocolOutcomeMatches"/>.</summary>
+		public int Match { get; set; }
+
+		/// <summary>The determinant (or prefix) compared case-insensitively.</summary>
+		public string Value { get; set; }
+
+		/// <summary>Only determinants of this protocol count; null for any protocol on the call.</summary>
+		public int? ProtocolId { get; set; }
+
+		public static RunCardProtocolOutcomeParameters Parse(string json)
+		{
+			if (string.IsNullOrWhiteSpace(json))
+				return null;
+			try
+			{
+				return Newtonsoft.Json.JsonConvert.DeserializeObject<RunCardProtocolOutcomeParameters>(json);
+			}
+			catch (Newtonsoft.Json.JsonException)
+			{
+				return null;
+			}
+		}
+
+		public string ToJson() => Newtonsoft.Json.JsonConvert.SerializeObject(this);
+
+		/// <summary>True when any determinant (of the named protocol, when one is named) matches.</summary>
+		public bool Matches(IEnumerable<CallProtocolDeterminant> determinants)
+		{
+			var value = ProtocolDecisionGraphs.NormalizeDeterminant(Value);
+			if (value == null || determinants == null)
+				return false;
+
+			return determinants.Any(d => d != null && !string.IsNullOrWhiteSpace(d.Determinant)
+				&& (!ProtocolId.HasValue || d.ProtocolId == ProtocolId.Value)
+				&& (Match == (int)RunCardProtocolOutcomeMatches.StartsWith
+					? ProtocolDecisionGraphs.NormalizeDeterminant(d.Determinant).StartsWith(value, System.StringComparison.OrdinalIgnoreCase)
+					: ProtocolDecisionGraphs.SameDeterminant(d.Determinant, value)));
+		}
+	}
+
+	/// <summary>A determinant in force on a call (CallProtocols.Determinant), as run card conditions read it.</summary>
+	public sealed class CallProtocolDeterminant
+	{
+		public int ProtocolId { get; set; }
+		public string Determinant { get; set; }
+
+		public static List<CallProtocolDeterminant> From(IEnumerable<CallProtocol> protocols) =>
+			(protocols ?? Enumerable.Empty<CallProtocol>())
+				.Where(p => p != null && !p.IsRemoved && !string.IsNullOrWhiteSpace(p.Determinant))
+				.Select(p => new CallProtocolDeterminant { ProtocolId = p.DispatchProtocolId, Determinant = p.Determinant })
+				.ToList();
 	}
 
 	/// <summary>Which resources, by status meaning, a row or condition operand accepts.</summary>

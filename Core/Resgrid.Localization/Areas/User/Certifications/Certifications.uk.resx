@@ -230,4 +230,98 @@
   <data name="SelectMember" xml:space="preserve"><value>Виберіть учасника</value></data>
   <data name="SelectType" xml:space="preserve"><value>Виберіть тип сертифікації</value></data>
   <data name="CertificationNameRequired" xml:space="preserve"><value>Введіть назву сертифікації.</value></data>
+  <data name="RenewalHoursLabel" xml:space="preserve"><value>Години для поновлення</value><comment>machine-translated</comment></data>
+  <data name="RenewalHoursValue" xml:space="preserve"><value>Зараховано {0} год ({1} год з журналу навчання)</value><comment>machine-translated</comment></data>
+  <data name="UncreditedLedgerHours" xml:space="preserve"><value>{0} год у пов'язаних категоріях ще не зараховано</value><comment>machine-translated</comment></data>
+  <data name="ApplyHistoryLink" xml:space="preserve"><value>Зарахувати історію до сертифікації</value><comment>machine-translated</comment></data>
+  <data name="FromTranscript" xml:space="preserve"><value>З журналу</value><comment>machine-translated</comment></data>
+  <data name="Validity.Rule" xml:space="preserve">
+    <value>Як закінчується</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Rule.RollingMonths" xml:space="preserve">
+    <value>Кількість місяців після видачі (чинність вище)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Rule.CalendarYearEnd" xml:space="preserve">
+    <value>Наприкінці кожного календарного року (31 грудня)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Rule.FiscalYearEnd" xml:space="preserve">
+    <value>Наприкінці нашого власного року (фінансового, навчального чи ліцензійного)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Rule.FixedDate" xml:space="preserve">
+    <value>У фіксовану дату</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.Help" xml:space="preserve">
+    <value>Використовується, коли навчання видає або поновлює цю сертифікацію (курси LMS, навчальні шляхи, набори вимог), і для автоматичних циклів. Дати відповідають часовому поясу організації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.YearEnd" xml:space="preserve">
+    <value>Наш рік закінчується</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.YearEndMonth" xml:space="preserve">
+    <value>Місяць</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.YearEndDay" xml:space="preserve">
+    <value>День</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.FixedDate" xml:space="preserve">
+    <value>Закінчується</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.GraceDays" xml:space="preserve">
+    <value>Пільговий період (днів)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.GraceHelp" xml:space="preserve">
+    <value>Після закінчення виконання вимог протягом стількох днів усе ще поновлює той самий цикл.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.WindowMonths" xml:space="preserve">
+    <value>Вікно поновлення (місяців)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.WindowHelp" xml:space="preserve">
+    <value>Для поновлення зараховуються лише виконання за стільки місяців до закінчення. Порожньо: увесь цикл.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.RequirementSet" xml:space="preserve">
+    <value>Набір вимог</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.RequirementSetHelp" xml:space="preserve">
+    <value>Виберіть курси LMS, навчання та практику під наглядом, які учасник має виконати, щоб отримати або зберегти цю сертифікацію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Validity.RequirementSetEdit" xml:space="preserve">
+    <value>Редагувати набір вимог</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_validity_rule_invalid" xml:space="preserve">
+    <value>Виберіть, як закінчується сертифікація.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_year_end_invalid" xml:space="preserve">
+    <value>Введіть дійсний кінець року (місяць і день).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_fixed_date_required" xml:space="preserve">
+    <value>Введіть фіксовану дату закінчення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_grace_invalid" xml:space="preserve">
+    <value>Пільговий період має бути від 0 до 365 днів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="certifications_type_window_invalid" xml:space="preserve">
+    <value>Вікно поновлення має бути від 1 до 60 місяців.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoryLawEnforcement" xml:space="preserve"><value>Правоохоронні органи</value><comment>machine-translated</comment></data>
 </root>

@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Std.StripLabel" xml:space="preserve">
+    <value>أقسام المعايير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Packages" xml:space="preserve">
+    <value>حزم المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Tools" xml:space="preserve">
+    <value>أدوات LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Xapi" xml:space="preserve">
+    <value>xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.LapsedNotice" xml:space="preserve">
+    <value>انتهت صلاحية إضافة نظام إدارة التعلم: يبقى كل شيء ظاهرًا وتستمر الدروس المعيّنة في العمل، لكن لا يمكن تغيير الحزم والأدوات وإعدادات xAPI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.AddonNotice" xml:space="preserve">
+    <value>معايير المحتوى جزء من إضافة نظام إدارة التعلم. فعّلها لرفع الحزم وتسجيل أدوات LTI وإرسال بيانات xAPI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackagesTitle" xml:space="preserve">
+    <value>حزم المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackagesIntro" xml:space="preserve">
+    <value>حزم SCORM 1.2 وSCORM 2004 وcmi5 لدروس الدورات، تُشغَّل في مشغّل معزول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.StoreNotConfigured" xml:space="preserve">
+    <value>لم يتم إعداد تخزين وسائط نظام إدارة التعلم على هذا النظام، لذا لا يمكن رفع الحزم أو تشغيلها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadLabel" xml:space="preserve">
+    <value>الحزمة (.zip)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadButton" xml:space="preserve">
+    <value>رفع الحزمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadHelp" xml:space="preserve">
+    <value>حتى {0} ميغابايت. يجب أن يحتوي ملف zip على imsmanifest.xml (SCORM) أو cmi5.xml (cmi5) في جذره؛ يُفحص قبل تخزينه ويُفك بعد ذلك بقليل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NoPackages" xml:space="preserve">
+    <value>لا توجد حزم محتوى بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Title" xml:space="preserve">
+    <value>العنوان</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Standard" xml:space="preserve">
+    <value>المعيار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Items" xml:space="preserve">
+    <value>وحدات SCO / AU</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Status" xml:space="preserve">
+    <value>الحالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Uploaded" xml:space="preserve">
+    <value>تاريخ الرفع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Scorm12" xml:space="preserve">
+    <value>SCORM 1.2</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Scorm2004" xml:space="preserve">
+    <value>SCORM 2004</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Cmi5" xml:space="preserve">
+    <value>cmi5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.FilesFormat" xml:space="preserve">
+    <value>{0} ملفات، {1} ميغابايت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Queued" xml:space="preserve">
+    <value>بانتظار فك الضغط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Processing" xml:space="preserve">
+    <value>جارٍ فك الضغط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Ready" xml:space="preserve">
+    <value>جاهزة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Failed" xml:space="preserve">
+    <value>فشل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Remove" xml:space="preserve">
+    <value>إزالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.SandboxNote" xml:space="preserve">
+    <value>تعمل الحزم في إطار معزول لا يمكنه الوصول إلى صفحات Resgrid أو جلسات تسجيل الدخول؛ وهي تُبلغ فقط عن تقدّم عملية التشغيل التي تنتمي إليها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageUploaded" xml:space="preserve">
+    <value>تم رفع الحزمة. ستصبح جاهزة بعد فك ضغطها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageRemoved" xml:space="preserve">
+    <value>أُزيلت الحزمة من الدروس الجديدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolSaved" xml:space="preserve">
+    <value>تم حفظ أداة LTI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolRemoved" xml:space="preserve">
+    <value>تمت إزالة أداة LTI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.KeyRotated" xml:space="preserve">
+    <value>مفتاح توقيع جديد أصبح نشطًا. يبقى المفتاح السابق منشورًا لمدة أسبوع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiSaved" xml:space="preserve">
+    <value>تم حفظ إعدادات xAPI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiRequeued" xml:space="preserve">
+    <value>أُعيدت البيانات الفاشلة إلى قائمة الانتظار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolsTitle" xml:space="preserve">
+    <value>أدوات LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolsIntro" xml:space="preserve">
+    <value>دورات من جهات خارجية (LTI 1.3) تُفتح من درس وتُعيد الدرجة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NewTool" xml:space="preserve">
+    <value>تسجيل أداة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NoTools" xml:space="preserve">
+    <value>لم تُسجَّل أي أدوات LTI بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Name" xml:space="preserve">
+    <value>الاسم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.ClientId" xml:space="preserve">
+    <value>معرّف العميل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Passback" xml:space="preserve">
+    <value>إرجاع الدرجة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Yes" xml:space="preserve">
+    <value>نعم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.No" xml:space="preserve">
+    <value>لا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Active" xml:space="preserve">
+    <value>نشطة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Inactive" xml:space="preserve">
+    <value>غير نشطة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Open" xml:space="preserve">
+    <value>فتح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.RotateKey" xml:space="preserve">
+    <value>تدوير مفتاح التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.RotateKeyHelp" xml:space="preserve">
+    <value>تُوقَّع عمليات التشغيل بمفتاح القسم (RS256). بعد التدوير، تلتقط الأدوات التي تقرأ مجموعة المفاتيح المفتاح الجديد؛ ويبقى القديم منشورًا لمدة أسبوع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PlatformTitle" xml:space="preserve">
+    <value>تفاصيل المنصة لمزوّدي الأدوات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PlatformIntro" xml:space="preserve">
+    <value>قدّم هذه البيانات إلى المزوّد عند تسجيل Resgrid مع أداته، مع معرّف العميل ومعرّف النشر الخاصين بالأداة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Issuer" xml:space="preserve">
+    <value>الجهة المُصدِرة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Jwks" xml:space="preserve">
+    <value>رابط مجموعة المفاتيح (JWKS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Auth" xml:space="preserve">
+    <value>رابط التفويض (OIDC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Token" xml:space="preserve">
+    <value>رابط رمز الوصول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Kid" xml:space="preserve">
+    <value>معرّف المفتاح النشط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.NoKey" xml:space="preserve">
+    <value>يُنشأ مع أول أداة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolTitle" xml:space="preserve">
+    <value>أداة LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolIntro" xml:space="preserve">
+    <value>نقاط نهاية المزوّد ومفاتيحه. لا تشارك عمليات التشغيل سوى معرّف عضو مستعار ما لم تفعّل الاسم أو البريد الإلكتروني أدناه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.DeploymentId" xml:space="preserve">
+    <value>معرّف النشر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.OidcLoginUrl" xml:space="preserve">
+    <value>رابط بدء تسجيل الدخول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LaunchUrl" xml:space="preserve">
+    <value>رابط التشغيل (الرابط الهدف)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.JwksUrl" xml:space="preserve">
+    <value>رابط مجموعة مفاتيح الأداة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.RedirectUris" xml:space="preserve">
+    <value>روابط إعادة التوجيه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.RedirectUrisHelp" xml:space="preserve">
+    <value>رابط واحد في كل سطر (https). لا تُرسَل عمليات التشغيل إلا إليها؛ ويُستخدم رابط التشغيل عند تركها فارغة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PublicJwks" xml:space="preserve">
+    <value>المفاتيح العامة للأداة (JWKS) بدلًا من رابط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PublicJwksHelp" xml:space="preserve">
+    <value>الصق مجموعة مفاتيح الأداة إن لم يكن لها رابط لمجموعة المفاتيح. تُستخدم للتحقق من طلبات الأداة لإرجاع الدرجة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.Custom" xml:space="preserve">
+    <value>معلمات مخصصة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.CustomHelp" xml:space="preserve">
+    <value>زوج key=value واحد في كل سطر، يُرسَل مع كل تشغيل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.Passback" xml:space="preserve">
+    <value>تُعيد الأداة الدرجة (خدمات المهام والدرجات)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareName" xml:space="preserve">
+    <value>مشاركة اسم العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareEmail" xml:space="preserve">
+    <value>مشاركة البريد الإلكتروني للعضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PassbackHelp" xml:space="preserve">
+    <value>مع إرجاع الدرجة يكتمل الدرس عندما تُبلغ الأداة أنه انتهى وقُيّم بدرجة النجاح أو أعلى؛ وبدونه يكتمل الدرس بمجرد فتح الأداة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Save" xml:space="preserve">
+    <value>حفظ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Back" xml:space="preserve">
+    <value>رجوع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiTitle" xml:space="preserve">
+    <value>بيانات xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiIntro" xml:space="preserve">
+    <value>أرسل نتائج الدورات والدروس إلى مستودع سجلات التعلم الخاص بك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Pending" xml:space="preserve">
+    <value>بانتظار الإرسال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Delivered" xml:space="preserve">
+    <value>تم التسليم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Failed" xml:space="preserve">
+    <value>فشلت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.XapiEnabled" xml:space="preserve">
+    <value>إرسال بيانات xAPI إلى مستودع LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsEndpoint" xml:space="preserve">
+    <value>نقطة نهاية LRS (https)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsKey" xml:space="preserve">
+    <value>مفتاح LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsSecret" xml:space="preserve">
+    <value>سر LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.SecretStored" xml:space="preserve">
+    <value>مخزّن (اتركه فارغًا للإبقاء عليه)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ClearSecret" xml:space="preserve">
+    <value>إزالة السر المخزّن</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareEmailInActor" xml:space="preserve">
+    <value>تعريف الأعضاء بعنوان البريد الإلكتروني (وإلا بحساب مستعار خاص بالقسم)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiHelp" xml:space="preserve">
+    <value>تُوضع البيانات (attempted وcompleted وpassed وfailed) في قائمة الانتظار عند حدوثها وتُرسل على دفعات، مع إعادة المحاولة عند تعذر الوصول إلى LRS. يُخزَّن السر مشفّرًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.RecentFailures" xml:space="preserve">
+    <value>الإخفاقات الأخيرة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Statement" xml:space="preserve">
+    <value>البيان</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Attempts" xml:space="preserve">
+    <value>المحاولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.LastError" xml:space="preserve">
+    <value>آخر خطأ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Queued" xml:space="preserve">
+    <value>وقت الإدراج</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Retry" xml:space="preserve">
+    <value>إعادة محاولة البيانات الفاشلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Tool" xml:space="preserve">
+    <value>أداة LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Choose" xml:space="preserve">
+    <value>اختر…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoPassback" xml:space="preserve">
+    <value>بلا إرجاع للدرجة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Target" xml:space="preserve">
+    <value>رابط الهدف (اختياري)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.PassMark" xml:space="preserve">
+    <value>درجة النجاح (%)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.LtiHelp" xml:space="preserve">
+    <value>يفتح العضو الأداة في نافذة جديدة. مع إرجاع الدرجة يكتمل الدرس عند بلوغ درجة النجاح (0 = عندما تُبلغ الأداة بالانتهاء)؛ وإلا عند فتح الأداة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoTools" xml:space="preserve">
+    <value>سجّل أداة LTI أولًا (التدريبات ← المعايير ← أدوات LTI).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Package" xml:space="preserve">
+    <value>حزمة المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.PackageHelp" xml:space="preserve">
+    <value>يكتمل الدرس عندما تُبلغ الحزمة بذلك (حالة SCORM أو قاعدة moveOn في cmi5)؛ ولا يمكن للعضو تعليمه كمكتمل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoPackages" xml:space="preserve">
+    <value>ارفع حزمة أولًا (التدريبات ← المعايير ← حزم المحتوى).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Completed" xml:space="preserve">
+    <value>هذا الدرس مكتمل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiIntro" xml:space="preserve">
+    <value>يقدّم {0} هذا الدرس ويُفتح في نافذة جديدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LaunchTool" xml:space="preserve">
+    <value>فتح الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiScoreHelp" xml:space="preserve">
+    <value>تصل نتيجتك من المزوّد عند انتهائك؛ حدّث هذه الصفحة لرؤيتها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiOpenHelp" xml:space="preserve">
+    <value>فتح الدورة يُكمل هذا الدرس.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Items" xml:space="preserve">
+    <value>أجزاء هذا الدرس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Done" xml:space="preserve">
+    <value>منجز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Sandboxed" xml:space="preserve">
+    <value>تعمل الدورة في إطار محمي ولا تُبلغ إلا عن تقدّمها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Status" xml:space="preserve">
+    <value>النتيجة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Satisfied" xml:space="preserve">
+    <value>تحققت قاعدة الإكمال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.NotSatisfied" xml:space="preserve">
+    <value>لم ينتهِ بعد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Score" xml:space="preserve">
+    <value>الدرجة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Refresh" xml:space="preserve">
+    <value>تحديث التقدّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotFound" xml:space="preserve">
+    <value>لم يُعثر على هذا العنصر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotAuthorized" xml:space="preserve">
+    <value>ليست لديك صلاحية للقيام بذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.AddonRequired" xml:space="preserve">
+    <value>يتطلب هذا إضافة نظام إدارة تعلم نشطة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.LapseWindowEnded" xml:space="preserve">
+    <value>انتهت إضافة نظام إدارة التعلم ولم يعد بالإمكان أخذ هذه الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotEntitled" xml:space="preserve">
+    <value>هذا المحتوى غير متاح لقسمك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.InvalidInput" xml:space="preserve">
+    <value>بعض التفاصيل ناقصة أو غير صالحة (يجب أن تكون العناوين https).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.LessonLocked" xml:space="preserve">
+    <value>أكمل الدروس السابقة أولًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.MediaUnavailable" xml:space="preserve">
+    <value>لا يمكن فتح هذا المحتوى الآن (الحزمة غير جاهزة أو الأداة غير نشطة).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.FileTooLarge" xml:space="preserve">
+    <value>الحزمة كبيرة جدًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.UnsupportedFile" xml:space="preserve">
+    <value>هذا الملف ليس حزمة قابلة للتشغيل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.RequirementNotMet" xml:space="preserve">
+    <value>يكتمل هذا الدرس عندما يُبلغ محتواه بذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.CodeExpired" xml:space="preserve">
+    <value>انتهت صلاحية عملية التشغيل هذه. افتح الدرس مجددًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.AlreadySubmitted" xml:space="preserve">
+    <value>تم تسجيل هذا بالفعل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.Empty" xml:space="preserve">
+    <value>الملف فارغ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.TooLarge" xml:space="preserve">
+    <value>الحزمة أكبر من المسموح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.NotZip" xml:space="preserve">
+    <value>الملف ليس أرشيف zip.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.TooManyFiles" xml:space="preserve">
+    <value>تحتوي الحزمة على عدد كبير جدًا من الملفات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UnsafePath" xml:space="preserve">
+    <value>تحتوي الحزمة على مسار ملف يخرج من مجلد الحزمة، لذلك رُفضت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UncompressedTooLarge" xml:space="preserve">
+    <value>تتجاوز الحزمة بعد فك ضغطها الحجم المسموح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.SuspiciousCompression" xml:space="preserve">
+    <value>ملف في الحزمة مضغوط بنسبة تفوق المحتوى الحقيقي بكثير فرُفض.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.ManifestMissing" xml:space="preserve">
+    <value>لا يوجد imsmanifest.xml (SCORM) أو cmi5.xml (cmi5) في جذر ملف zip.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.ManifestInvalid" xml:space="preserve">
+    <value>ملف البيان غير صالح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UnsupportedStandard" xml:space="preserve">
+    <value>إصدار SCORM هذا غير مدعوم (المدعوم هو SCORM 1.2 و2004).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.NoLaunchableItem" xml:space="preserve">
+    <value>لا تحتوي الحزمة على وحدة SCO أو AU لتشغيلها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.LaunchFileMissing" xml:space="preserve">
+    <value>تشير وحدة SCO أو AU إلى ملف غير موجود في الحزمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.RemoteAuNotSupported" xml:space="preserve">
+    <value>وحدة AU مستضافة في مكان آخر؛ لا يعمل داخل Resgrid إلا المحتوى المضمّن في الحزمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ClientReportedNote" xml:space="preserve">
+    <value>تُبلِّغ الحزمة التي تعمل في متصفح المتعلم عن نتائج SCORM وcmi5 (الإكمال والدرجة والنجاح أو الرسوب)، لذا قد يتمكن متعلم مصمِّم من تغييرها. في الدورات التي تمنح ساعات تعليم مستمر، أضف أيضًا درس تقييم من Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotLicensed" xml:space="preserve">
+    <value>تحتاج إلى مقعد LMS لهذا الإجراء. اطلب من المسؤول تفعيل وصولك إلى نظام إدارة التعلم. تبقى الأكاديمية وسجلات تدريبك متاحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Busy" xml:space="preserve">
+    <value>محاولات كثيرة جدًا. انتظر دقيقة ثم حاول مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiFramed" xml:space="preserve">
+    <value>تُفتح الدورة في نافذة جديدة. عُد إلى هنا عند الانتهاء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiOpening" xml:space="preserve">
+    <value>جارٍ فتح الدورة…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiScoreHelp" xml:space="preserve">
+    <value>تصل نتيجتك من المزوّد عند الانتهاء. يتم تحديث التطبيق عند وصولها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Returned" xml:space="preserve">
+    <value>لقد عدت من الدورة. يمكنك إغلاق هذه النافذة والعودة إلى التطبيق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Ended" xml:space="preserve">
+    <value>لا يمكن متابعة هذا الدرس هنا. أغلقه وافتح الدرس مرة أخرى من التطبيق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Close" xml:space="preserve">
+    <value>إغلاق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Offline" xml:space="preserve">
+    <value>أنت غير متصل. يحتاج هذا الدرس إلى اتصال لحفظ تقدمك.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

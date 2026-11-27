@@ -55,7 +55,8 @@ namespace Resgrid.Services.Records
 		public async Task<List<RmsQualityRubric>> GetRubricsAsync(int departmentId, string userId, bool includeInactive)
 		{
 			await RequireReviewerAsync(departmentId, userId);
-			return (await _rubrics.GetForDepartmentAsync(departmentId, includeInactive))?.ToList() ?? new List<RmsQualityRubric>();
+			// Protocols P5 QA keeps its dispatch case rubrics in the same store; they score calls, not Records, and are managed there.
+			return (await _rubrics.GetForDepartmentAsync(departmentId, includeInactive))?.Where(r => !DispatchCaseRubrics.IsDispatchRubric(r)).ToList() ?? new List<RmsQualityRubric>();
 		}
 
 		public async Task<RmsQualityRubric> GetRubricAsync(int departmentId, string userId, string rubricId)

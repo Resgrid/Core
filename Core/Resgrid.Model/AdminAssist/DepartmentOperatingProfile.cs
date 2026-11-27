@@ -10,7 +10,9 @@ namespace Resgrid.Model.AdminAssist
 	[ProtoContract]
 	public sealed class DepartmentOperatingProfile : IValidatableObject
 	{
-		public static readonly string[] ArchetypeCodes = { "fire", "ems", "mental-health", "sar", "emergency-response", "hazmat", "industrial", "security", "mutual-aid" };
+		// Round 9C appends law enforcement and business (workplaces of any kind): the LMS and Protocols serve them too, and their template
+		// suggestions follow these codes. Append only; stored profiles keep their codes.
+		public static readonly string[] ArchetypeCodes = { "fire", "ems", "mental-health", "sar", "emergency-response", "hazmat", "industrial", "security", "mutual-aid", "law-enforcement", "business" };
 		public static readonly string[] WorkforceCodes = { "unknown", "career", "volunteer", "contract", "combination" };
 		public static readonly string[] DispatchCodes = { "unknown", "central", "self", "external", "combination" };
 		public static readonly string[] HoursCodes = { "unknown", "continuous", "scheduled", "on-call", "seasonal" };

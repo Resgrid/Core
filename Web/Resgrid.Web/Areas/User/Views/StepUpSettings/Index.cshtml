@@ -1,0 +1,145 @@
+@using Resgrid.Model.Security
+@model Resgrid.Web.Areas.User.Models.Security.StepUpSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
+@* Security → Step-up verification (department setting 153). Every value here is re-checked by StepUpPolicyService.SaveAsync. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["StepUpPageTitle"];
+    string AreaName(StepUpArea area) => area switch
+    {
+        StepUpArea.Signatures => localizer["StepUpAreaSignatures"].Value,
+        StepUpArea.Acknowledgments => localizer["StepUpAreaAcknowledgments"].Value,
+        StepUpArea.Approvals => localizer["StepUpAreaApprovals"].Value,
+        _ => localizer["StepUpAreaProtectedData"].Value
+    };
+    string AreaHelp(StepUpArea area) => area switch
+    {
+        StepUpArea.Signatures => localizer["StepUpAreaSignaturesHelp"].Value,
+        StepUpArea.Acknowledgments => localizer["StepUpAreaAcknowledgmentsHelp"].Value,
+        StepUpArea.Approvals => localizer["StepUpAreaApprovalsHelp"].Value,
+        _ => localizer["StepUpAreaProtectedDataHelp"].Value
+    };
+    string Reason(StepUpGapReasons reason) => reason switch
+    {
+        StepUpGapReasons.NoPassword => localizer["StepUpReasonNoPassword"].Value,
+        StepUpGapReasons.NoSsoLink => localizer["StepUpReasonNoSsoLink"].Value,
+        _ => localizer["StepUpReasonNoSecondFactor"].Value
+    };
+}
+
+<div class="row wrapper border-bottom white-bg page-heading rgw-page-heading">
+    <div class="col-sm-12">
+        <h2><i class="fa fa-user-secret" aria-hidden="true"></i> @localizer["StepUpPageTitle"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Security" asp-action="Index" asp-route-area="User">@localizer["StepUpSecurityBreadcrumb"]</a></li>
+            <li class="active"><strong>@localizer["StepUpPageTitle"]</strong></li>
+        </ol>
+        <small class="text-muted">@localizer["StepUpPageIntro"]</small>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content rgw-page" id="stepUpSettings">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert @(Model.MessageIsError ? "alert-danger" : "alert-success")" role="status" id="stepUpMessage">@Model.Message</div>
+    }
+
+    <form method="post" asp-controller="StepUpSettings" asp-action="Index" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        @for (var i = 0; i < Model.Areas.Count; i++)
+        {
+            var row = Model.Areas[i];
+            var area = row.AreaValue;
+            var methodsLocked = area == StepUpArea.ProtectedData && !Model.IsManagingMember;
+            var key = StepUpAreas.Name(area);
+            <div class="ibox" id="stepUpArea-@key">
+                <div class="ibox-title"><h5>@AreaName(area)</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@AreaHelp(area)</p>
+                    <input type="hidden" name="Areas[@i].Area" value="@row.Area" />
+                    @if (row.RequiredEditable)
+                    {
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="Areas[@i].Required" value="true" id="stepUpRequired-@key" @(row.Required ? "checked" : "") />
+                                @localizer["StepUpRequiredLabel"]
+                            </label>
+                            <input type="hidden" name="Areas[@i].Required" value="false" />
+                        </div>
+                        <p class="help-block" id="stepUpLowersLevel-@key">@localizer["StepUpOptionalLowersLevel"]</p>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="Areas[@i].Required" value="true" />
+                        <p>
+                            <i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["StepUpProtectedDataRequiredNote"]
+                            <a asp-controller="DataProtection" asp-action="Index" asp-route-area="User">@localizer["StepUpDataProtectionLink"]</a>
+                        </p>
+                        @if (!Model.HasDataProtection)
+                        {
+                            <p class="text-muted">@localizer["StepUpNoDataProtection"]</p>
+                        }
+                    }
+
+                    <fieldset @(methodsLocked ? "disabled" : "")>
+                        <legend class="h5">@localizer["StepUpMethodsLegend"]</legend>
+                        <div class="checkbox disabled">
+                            <label><input type="checkbox" checked disabled /> @localizer["StepUpMethodMfa"]</label>
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="Areas[@i].AllowSso" value="true" id="stepUpSso-@key" @(row.AllowSso ? "checked" : "") />
+                                @localizer["StepUpMethodSso"]
+                            </label>
+                            <input type="hidden" name="Areas[@i].AllowSso" value="false" />
+                        </div>
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox" name="Areas[@i].AllowPassword" value="true" id="stepUpPassword-@key" @(row.AllowPassword ? "checked" : "") />
+                                @localizer["StepUpMethodPassword"]
+                            </label>
+                            <input type="hidden" name="Areas[@i].AllowPassword" value="false" />
+                        </div>
+                    </fieldset>
+                    @if (methodsLocked)
+                    {
+                        <p class="text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["StepUpManagingMemberOnly"]</p>
+                    }
+                    <p class="help-block">@localizer["StepUpPasswordWarning"]</p>
+                    @if (area == StepUpArea.ProtectedData)
+                    {
+                        <p class="help-block" id="stepUpProtectedDataWeaker">@localizer["StepUpProtectedDataWeakerNote"]</p>
+                    }
+
+                    @if (row.UnableCount > 0)
+                    {
+                        <div class="alert @(row.Required ? "alert-warning" : "alert-info")" role="alert" id="stepUpWarning-@key">
+                            <strong>
+                                <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+                                @(row.Required ? string.Format(localizer["StepUpWarningTitle"].Value, row.UnableCount) : string.Format(localizer["StepUpWarningIfRequired"].Value, row.UnableCount))
+                            </strong>
+                            <p>@localizer["StepUpWarningBody"]</p>
+                            <ul>
+                                @foreach (var member in row.UnableMembers)
+                                {
+                                    <li>@member.Name <small class="text-muted">(@Reason(member.Reason))</small></li>
+                                }
+                                @if (row.UnableCount > row.UnableMembers.Count)
+                                {
+                                    <li class="text-muted">@string.Format(localizer["StepUpWarningMore"].Value, row.UnableCount - row.UnableMembers.Count)</li>
+                                }
+                            </ul>
+                            <p>
+                                <a asp-controller="Security" asp-action="Index" asp-route-area="User" class="alert-link">@localizer["StepUpWarningLinkEnforce"]</a>
+                                &middot;
+                                <a asp-controller="Security" asp-action="SecurityPolicy" asp-route-area="User" class="alert-link">@localizer["StepUpWarningLinkPolicy"]</a>
+                            </p>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        <button type="submit" class="btn btn-primary" id="stepUpSave">@localizer["StepUpSaveButton"]</button>
+        <a asp-controller="Security" asp-action="Index" asp-route-area="User" class="btn btn-white">@localizer["StepUpCancelButton"]</a>
+    </form>
+</div>

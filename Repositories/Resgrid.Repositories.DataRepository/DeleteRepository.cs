@@ -39,6 +39,9 @@ namespace Resgrid.Repositories.DataRepository
 						// The remaining tables without a foreign key to Departments (DepartmentDeletionDatabaseTests guards them); after
 						// the checklist, inventory and RMS cleanups, which remove their own workflow runs and outbox rows first.
 						await UnlinkedDepartmentCleanup.DeleteWithinTransactionAsync(db, transaction, departmentId, DatabaseTypes.SqlServer);
+						// The protocol tree (call rows citing the protocols, snapshots, answers, questions, attachments, triggers,
+						// protocols), written for both databases rather than in the script below (D23).
+						await ProtocolDepartmentCleanup.DeleteWithinTransactionAsync(db, transaction, departmentId, DatabaseTypes.SqlServer);
 						var result = await db.ExecuteAsync(@"
 								DECLARE @UserId NVARCHAR(128)
 								DECLARE @UnitId INT
@@ -148,11 +151,7 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[TrainingAttachments] WHERE TrainingId IN (SELECT TrainingId FROM [dbo].[Trainings] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[TrainingUsers] WHERE TrainingId IN (SELECT TrainingId FROM [dbo].[Trainings] WHERE DepartmentId = @DepartmentId)
 
-								-- Dispatch protocol tree (DispatchProtocols row deleted further down)
-								DELETE FROM [dbo].[DispatchProtocolQuestionAnswers] WHERE DispatchProtocolQuestionId IN (SELECT DispatchProtocolQuestionId FROM [dbo].[DispatchProtocolQuestions] WHERE DispatchProtocolId IN (SELECT DispatchProtocolId FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId))
-								DELETE FROM [dbo].[DispatchProtocolQuestions] WHERE DispatchProtocolId IN (SELECT DispatchProtocolId FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[DispatchProtocolAttachments] WHERE DispatchProtocolId IN (SELECT DispatchProtocolId FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[DispatchProtocolTriggers] WHERE DispatchProtocolId IN (SELECT DispatchProtocolId FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId)
+								-- Dispatch protocol tree: ProtocolDepartmentCleanup, before this script
 
 								-- Calendar
 								DELETE FROM [dbo].[CalendarItemCheckIns] WHERE DepartmentId = @DepartmentId OR CalendarItemId IN (SELECT CalendarItemId FROM [dbo].[CalendarItems] WHERE DepartmentId = @DepartmentId)
@@ -261,10 +260,7 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[Payments] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PersonnelRoles] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[UnitTypes] WHERE DepartmentId = @DepartmentId
-								-- CallProtocols no longer cascades from DispatchProtocols (M0333): clear any row that still cites this
-								-- department's protocols (its own calls' rows went with the call tree above).
-								DELETE FROM [dbo].[CallProtocols] WHERE DispatchProtocolId IN (SELECT DispatchProtocolId FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId)
-								DELETE FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId
+								-- DispatchProtocols and the CallProtocols rows citing them: ProtocolDepartmentCleanup, before this script
 								DELETE FROM [dbo].[FormAutomations] WHERE FormId IN (SELECT FormId FROM [dbo].[Forms] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[Forms] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PaymentAddons] WHERE DepartmentId = @DepartmentId

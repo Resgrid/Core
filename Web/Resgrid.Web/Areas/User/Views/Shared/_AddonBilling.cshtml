@@ -8,9 +8,14 @@
 @{
     var status = Model.Status;
     var addon = Model.Addon;
-    var amount = status?.Amount ?? addon.Price;
-    var symbol = status == null ? AddonCatalog.CurrencySymbol : string.Equals(status.Currency, "EUR", StringComparison.OrdinalIgnoreCase) ? "€" : "$";
+    var packs = Model.Packs;
+    // A pack add-on's headline price is the first pack's (the graduated tiers are listed below it); a flat add-on's is its price.
+    var amount = packs?.Schedule != null ? packs.Schedule.PriceOfPack(1) : status?.Amount ?? addon.Price;
+    var symbol = packs != null ? packs.CurrencySymbol : status == null ? AddonCatalog.CurrencySymbol : string.Equals(status.Currency, "EUR", StringComparison.OrdinalIgnoreCase) ? "€" : "$";
     var period = addon.Period == AddonBillingPeriod.Yearly ? addonLocalizer["PerYear"] : addonLocalizer["PerMonth"];
+    var unit = addon.IsPackAddon ? string.Format(addonLocalizer["PerMemberPack"].Value, packs?.Schedule?.PackSize ?? addon.PackSize)
+        : addon.PerUserPack ? addonLocalizer["PerUserPack"].Value : addonLocalizer["PerDepartment"].Value;
+    string Money(decimal value) => symbol + value.ToString("N0");
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -43,6 +48,22 @@
     {
         <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @addonLocalizer["BillingUnavailable"]</div>
     }
+    else if (Model.Result == AddonBillingResults.PacksAdded)
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check-circle" aria-hidden="true"></i> @addonLocalizer["BillingPacksAdded"]</div>
+    }
+    else if (Model.Result == AddonBillingResults.PacksScheduled)
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> @addonLocalizer["BillingPacksScheduled"]</div>
+    }
+    else if (Model.Result == AddonBillingResults.PacksBelowSeats)
+    {
+        <div class="alert alert-warning" role="alert"><i class="fa fa-users" aria-hidden="true"></i> @addonLocalizer["BillingPacksBelowSeats"]</div>
+    }
+    else if (Model.Result == AddonBillingResults.PacksFailed)
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @addonLocalizer["BillingPacksFailed"]</div>
+    }
     @foreach (var notice in Model.Notices)
     {
         <div class="alert alert-warning" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @notice</div>
@@ -59,7 +80,7 @@
         </div>
         <div class="rg-addon-hero-price">
             <div class="rg-addon-price"><span class="rg-addon-currency">@symbol</span>@amount.ToString("N0")<span class="rg-addon-period">@period</span></div>
-            <div class="rg-addon-unit">@(addon.PerUserPack ? addonLocalizer["PerUserPack"] : addonLocalizer["PerDepartment"])</div>
+            <div class="rg-addon-unit">@unit</div>
             <div class="rg-addon-unit">@(addon.Period == AddonBillingPeriod.Yearly ? addonLocalizer["BillingBilledYearly"] : addonLocalizer["BillingBilledMonthly"])</div>
         </div>
     </div>
@@ -81,6 +102,48 @@
                     }
                 </div>
             </div>
+            @if (packs?.Schedule != null)
+            {
+                @* Pack add-on (R-L10): packs in force, seats in use, the graduated tiers, next month's price and the quantity change. *@
+                <div class="ibox" id="addon-packs">
+                    <div class="ibox-title"><h5><i class="fa fa-cubes" aria-hidden="true"></i> @addonLocalizer["PacksHeading"]</h5></div>
+                    <div class="ibox-content">
+                        @if (packs.Packs > 0)
+                        {
+                            <p><strong>@string.Format(addonLocalizer["PacksInForce"].Value, packs.Packs, packs.PurchasedSeats, packs.EnabledSeats)</strong></p>
+                            <p>@string.Format(addonLocalizer["PacksNextMonth"].Value, Money(packs.NextMonthly))</p>
+                            @if (packs.ScheduledPacks.HasValue && packs.ScheduledPacks.Value != packs.Packs && packs.NextBillingUtc.HasValue)
+                            {
+                                <p class="text-muted">@string.Format(addonLocalizer["PacksScheduledNote"].Value, packs.NextBillingUtc.Value.ToString("D"), packs.ScheduledPacks.Value)</p>
+                            }
+                        }
+                        <ul class="rg-addon-features">
+                            @foreach (var tier in packs.Schedule.Tiers)
+                            {
+                                <li><i class="fa fa-tag" aria-hidden="true"></i>
+                                    @(tier.LastPack.HasValue
+                                        ? string.Format(addonLocalizer["PackTierLine"].Value, tier.FirstPack, tier.LastPack.Value, Money(tier.UnitAmount))
+                                        : string.Format(addonLocalizer["PackTierLineOpen"].Value, tier.FirstPack, Money(tier.UnitAmount)))
+                                </li>
+                            }
+                        </ul>
+                        @if (Model.CanChangePacks)
+                        {
+                            <form method="post" asp-action="ChangePacks" id="addon-pack-change" class="form-inline m-t-sm">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="expectedPacks" value="@packs.Packs" />
+                                <div class="form-group">
+                                    <label for="addon-pack-quantity">@addonLocalizer["PacksLabel"]</label>
+                                    <input type="number" id="addon-pack-quantity" name="packs" class="form-control" data-pack-preview="addon-pack-preview"
+                                           min="@packs.Schedule.MinimumPacks" max="@packs.Schedule.MaximumPacks" step="1" value="@packs.Packs" required />
+                                </div>
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-refresh" aria-hidden="true"></i> @addonLocalizer["PacksUpdate"]</button>
+                            </form>
+                            <p class="m-t-sm" id="addon-pack-preview" aria-live="polite"></p>
+                        }
+                    </div>
+                </div>
+            }
         </div>
         <div class="col-lg-4">
             <div class="ibox rg-addon-status">
@@ -116,6 +179,15 @@
                         {
                             <form method="post" asp-action="Checkout" id="addon-checkout">
                                 @Html.AntiForgeryToken()
+                                @if (packs?.Schedule != null)
+                                {
+                                    <div class="form-group">
+                                        <label for="addon-checkout-packs">@addonLocalizer["PacksLabel"]</label>
+                                        <input type="number" id="addon-checkout-packs" name="packs" class="form-control" data-pack-preview="addon-checkout-preview"
+                                               min="@packs.Schedule.MinimumPacks" max="@packs.Schedule.MaximumPacks" step="1" value="@packs.ProposedPacks" required />
+                                    </div>
+                                    <p id="addon-checkout-preview" aria-live="polite">@string.Format(addonLocalizer["PackPreviewFirst"].Value, packs.ProposedPacks, packs.Schedule.SeatsFor(packs.ProposedPacks), Money(packs.Schedule.MonthlyTotal(packs.ProposedPacks)))</p>
+                                }
                                 <button type="submit" class="btn btn-primary btn-lg btn-block rg-addon-buy">
                                     <i class="fa fa-lock" aria-hidden="true"></i> @string.Format(addonLocalizer["BillingBuy"].Value, Model.Title)
                                 </button>

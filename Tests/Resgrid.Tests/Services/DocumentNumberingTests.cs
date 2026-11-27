@@ -283,9 +283,12 @@ namespace Resgrid.Tests.Services
 		{
 			var statuses = await _service.GetStatusesAsync(Dept, false, new DateTime(2026, 6, 1));
 
-			statuses.Select(s => s.Kind).Should().Equal(DocumentNumberKinds.WorkOrder, DocumentNumberKinds.Invoice, DocumentNumberKinds.Bid, DocumentNumberKinds.TimeReport);
+			statuses.Select(s => s.Kind).Should().Equal(DocumentNumberKinds.WorkOrder, DocumentNumberKinds.Invoice, DocumentNumberKinds.Bid, DocumentNumberKinds.TimeReport,
+				DocumentNumberKinds.Protocol);
 			statuses.Single(s => s.Kind == DocumentNumberKinds.WorkOrder).Example.Should().Be("WO-2026-000153");
 			statuses.Single(s => s.Kind == DocumentNumberKinds.Invoice).Example.Should().Be("153");
+			// Protocols (P1) number from 1 with no prefix unless the department sets a pattern.
+			statuses.Single(s => s.Kind == DocumentNumberKinds.Protocol).Example.Should().Be("153");
 			statuses.Should().OnlyContain(s => !s.Custom && s.NextNumber == null);
 			(await _service.GetStatusesAsync(Dept, true, new DateTime(2026, 6, 1))).Single(s => s.Kind == DocumentNumberKinds.Permit).Example.Should().Be("PRM-2026-0153");
 		}

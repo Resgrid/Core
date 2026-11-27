@@ -33,14 +33,44 @@ namespace Resgrid.Services
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
 
+		private readonly Lazy<ILearningRecordWriter> _learningRecords;
+
+		/// <summary>
+		/// Training T1 (R-T9): attendance on a calendar item whose type counts as training goes on the attendee's transcript (a
+		/// check-in without a check-out waits as Pending). Never fails the check-in itself.
+		/// </summary>
+		private async System.Threading.Tasks.Task WriteAttendanceAsync(CalendarItemCheckIn checkIn, bool removed, string actingUserId, CancellationToken cancellationToken)
+		{
+			if (_learningRecords == null || checkIn == null)
+				return;
+
+			try
+			{
+				if (removed)
+					await _learningRecords.Value.RemoveCalendarCheckInAsync(checkIn, actingUserId, cancellationToken);
+				else
+					await _learningRecords.Value.WriteCalendarCheckInAsync(checkIn, actingUserId, cancellationToken);
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex, $"Transcript record for check-in {checkIn.CalendarItemCheckInId} was not written");
+			}
+		}
+
 		public CalendarService(ICalendarItemsRepository calendarItemRepository, ICalendarItemTypeRepository calendarItemTypeRepository,
 			ICalendarItemAttendeeRepository calendarItemAttendeeRepository, IDepartmentsService departmentsService, ICommunicationService communicationService,
 			IUserProfileService userProfileService, IDepartmentGroupsService departmentGroupsService, IDepartmentSettingsService departmentSettingsService,
 			IEncryptionService encryptionService, ICalendarItemCheckInRepository calendarItemCheckInRepository,
 			IMessageRecipientRepository messageRecipientRepository, IUnitOfWork unitOfWork,
 			Lazy<IProtectedWriteService> protectedWriteService,
-			ITextResponsePromptService textResponsePromptService = null, Lazy<ISearchProjectionService> searchProjections = null)
+			ITextResponsePromptService textResponsePromptService = null, Lazy<ISearchProjectionService> searchProjections = null,
+			Lazy<ILearningRecordWriter> learningRecords = null)
 		{
+			_learningRecords = learningRecords;
 			_searchProjections = searchProjections;
 			_protectedWriteService = protectedWriteService;
 			_calendarItemRepository = calendarItemRepository;
@@ -931,6 +961,7 @@ namespace Resgrid.Services
 			};
 
 			var saved = await _calendarItemCheckInRepository.InsertAsync(checkIn, cancellationToken);
+			await WriteAttendanceAsync(saved ?? checkIn, false, adminUserId ?? userId, cancellationToken);
 			return saved;
 		}
 
@@ -951,6 +982,7 @@ namespace Resgrid.Services
 			existing.CheckOutLatitude = latitude;
 			existing.CheckOutLongitude = longitude;
 			var saved = await _calendarItemCheckInRepository.SaveOrUpdateAsync(existing, cancellationToken);
+			await WriteAttendanceAsync(saved ?? existing, false, adminUserId ?? userId, cancellationToken);
 			return saved;
 		}
 
@@ -972,6 +1004,8 @@ namespace Resgrid.Services
 			existing.CheckOutNote = checkOutNote;
 
 			var saved = await _calendarItemCheckInRepository.SaveOrUpdateAsync(existing, cancellationToken);
+			// A corrected check-out supersedes the record with the new hours (R-T4).
+			await WriteAttendanceAsync(saved ?? existing, false, null, cancellationToken);
 			return saved;
 		}
 
@@ -997,7 +1031,10 @@ namespace Resgrid.Services
 			if (checkIn == null)
 				return false;
 
-			return await _calendarItemCheckInRepository.DeleteAsync(checkIn, cancellationToken);
+			var deleted = await _calendarItemCheckInRepository.DeleteAsync(checkIn, cancellationToken);
+			if (deleted)
+				await WriteAttendanceAsync(checkIn, true, null, cancellationToken);
+			return deleted;
 		}
 
 		public async Task<List<CalendarItemCheckIn>> GetCheckInsByDepartmentDateRangeAsync(int departmentId, DateTime start, DateTime end)

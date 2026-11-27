@@ -582,6 +582,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			DateTime Local(DateTime utc) => department != null ? utc.TimeConverter(department) : utc;
+			// A count of one takes the key's singular wording (its "One" key), so the panel never reads "1 were skipped".
+			string Counted(string key, int count, params object[] more) =>
+				string.Format(_localizer[count == 1 ? key + "One" : key].Value, new object[] { count }.Concat(more).ToArray());
 			var items = new List<PoiImportListItem>();
 
 			foreach (var import in imports)
@@ -600,17 +603,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!import.IsFinished)
 				{
-					item.Lines.Add(string.Format(_localizer["PoiImportPending"].Value, import.TotalRows));
+					item.Lines.Add(Counted("PoiImportPending", import.TotalRows));
 					if (import.PendingRetryCount > 0 && import.RetryAfter.HasValue)
-						item.Lines.Add(string.Format(_localizer["PoiImportRetrying"].Value, import.PendingRetryCount, Local(import.RetryAfter.Value).ToString("t")));
+						item.Lines.Add(Counted("PoiImportRetrying", import.PendingRetryCount, Local(import.RetryAfter.Value).ToString("t")));
 				}
 				else
 				{
 					item.Lines.Add(string.Format(_localizer["PoiImportSummary"].Value, import.ImportedCount, import.TotalRows + import.SkippedCount));
 					if (import.GeocodedCount > 0)
-						item.Lines.Add(string.Format(_localizer["PoiImportGeocoded"].Value, import.GeocodedCount));
+						item.Lines.Add(Counted("PoiImportGeocoded", import.GeocodedCount));
 					if (import.SkippedCount > 0)
-						item.Lines.Add(string.Format(_localizer["PoiImportSkipped"].Value, import.SkippedCount));
+						item.Lines.Add(Counted("PoiImportSkipped", import.SkippedCount));
 
 					var unlocated = _poiImportService.GetUnlocatedRows(import);
 
@@ -622,7 +625,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 						const int listed = 10;
 						var names = unlocated.Where(r => lookups.Contains((PoiImportRowLookup)r.Lookup)).Take(listed).Select(r => r.Name ?? r.Address).ToList();
-						var line = string.Format(_localizer[lineKey].Value, count);
+						var line = Counted(lineKey, count);
 						if (names.Count > 0)
 							line += " " + string.Join("; ", names);
 						if (count > names.Count)

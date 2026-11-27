@@ -564,4 +564,5 @@
   <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>The rate profile is no longer editable.</value></data>
   <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Labor &amp; Costing pay data is not available to this department.</value></data>
   <data name="workforce_disabled" xml:space="preserve"><value>Labor &amp; Costing pay data is not enabled for this department.</value></data>
+  <data name="calmars_approval_required" xml:space="preserve"><value>This package needs its approval before the portal hand-off. Submit it for approval first.</value></data>
 </root>

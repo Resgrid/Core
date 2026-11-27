@@ -1,0 +1,37 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@model bool
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    How a learner's details are used (round 9C, GDPR / PIPEDA-friendly wording): the department or organization running the portal decides how
+    they are used and answers for them; what is kept and why; no marketing; how to get a copy or delete the account; that some records may
+    have to be kept. Plain statements of what the portal does, no legal claims. The model is true for the full notice (the Privacy page and
+    My learning), false for the short version under the registration form.
+*@
+@{
+    var branding = ViewData["Branding"] as LmsLearnerPortalBranding ?? LmsExternalLearnerRules.Branding(null, null, null);
+    var key = ViewData["PortalKey"] as string;
+    var culture = CultureInfo.CurrentUICulture;
+    var name = branding.DisplayName;
+}
+<div class="rgl-privacy">
+    @if (Model)
+    {
+        <p>@string.Format(culture, localizer["Portal.Privacy.Controller"].Value, name)</p>
+        <p>@localizer["Portal.Privacy.WhatKept"]</p>
+        <p>@string.Format(culture, localizer["Portal.Privacy.Why"].Value, name)</p>
+        <p>@localizer["Portal.Privacy.Rights"]</p>
+        <p>@string.Format(culture, localizer["Portal.Privacy.Retention"].Value, name)</p>
+        <p>@string.Format(culture, localizer["Portal.Privacy.Contact"].Value, name)</p>
+    }
+    else
+    {
+        <p class="help-block">
+            @string.Format(culture, localizer["Portal.Privacy.Short"].Value, name)
+            @if (!string.IsNullOrEmpty(key))
+            {
+                <a href="~/Learn/@key/Privacy">@localizer["Portal.Privacy.Link"]</a>
+            }
+        </p>
+    }
+</div>

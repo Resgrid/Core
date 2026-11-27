@@ -17,85 +17,188 @@ using Resgrid.Services;
 namespace Resgrid.Tests.Services
 {
 	/// <summary>
-	/// What the training notifier sends. The notifier sent nothing for years, so every stored training looks unannounced;
-	/// these pin who is told and that an old training is never announced as new.
+	/// What the training notifier sends each assignee (T-D9, T-D19, T0 item 4). The notifier sent nothing for years, so old
+	/// rows still look unannounced: these pin who is told, that an old assignment is never announced as new, and that
+	/// reminders are "due within the next N hours and not yet reminded" rather than a 10:00 window.
 	/// </summary>
 	[TestFixture]
 	public class TrainingNoticePlannerTests
 	{
 		private static readonly DateTime Now = new DateTime(2026, 11, 24, 18, 0, 0, DateTimeKind.Utc);
 
-		private static Training NewTraining(DateTime createdOn, DateTime? notified, params TrainingUser[] users) => new Training
+		private static Training NewTraining(DateTime createdOn, DateTime? notified = null) => new Training
 		{
 			TrainingId = 1,
 			DepartmentId = 10,
 			Name = "Hose Testing",
 			CreatedOn = createdOn,
 			Notified = notified,
-			Users = users.ToList()
+			Users = new List<TrainingUser>()
 		};
 
-		private static TrainingUser Assignee(string userId, bool complete = false) => new TrainingUser { UserId = userId, Complete = complete };
+		private static TrainingUser Assignee(string userId, DateTime? assignedOn = null, DateTime? notifiedOn = null, bool complete = false) =>
+			new TrainingUser { UserId = userId, AssignedOn = assignedOn ?? Now.AddHours(-1), NotifiedOn = notifiedOn, Complete = complete };
+
+		private static TrainingNoticePlan Plan(Training training, TrainingUser assignment, DateTime? due, bool active = true, bool onLeave = false, string dueText = null) =>
+			TrainingNoticePlanner.PlanAssignment(training, assignment, due, active, onLeave, dueText, Now);
 
 		[Test]
-		public void A_new_training_is_announced_to_its_assignees()
+		public void A_new_assignment_is_announced()
 		{
-			var plan = TrainingNoticePlanner.Plan(NewTraining(Now.AddHours(-1), null, Assignee("a"), Assignee("b")), new[] { "a", "b" }, Now);
+			var plan = Plan(NewTraining(Now.AddHours(-1)), Assignee("a"), null);
 
 			plan.Kind.Should().Be(TrainingNoticeKinds.NewTraining);
 			plan.Title.Should().Be(TrainingNoticePlanner.NewTrainingTitle);
 			plan.Message.Should().Be("New Training (Hose Testing) assigned to you");
-			plan.RecipientUserIds.Should().BeEquivalentTo(new[] { "a", "b" });
 		}
 
 		[Test]
-		public void An_old_training_that_was_never_announced_is_not_announced_now()
+		public void A_new_assignment_with_a_due_date_names_it_and_the_custom_message_follows()
 		{
-			var training = NewTraining(Now.AddDays(-(TrainingNoticePlanner.NewNoticeMaxAgeDays + 1)), null, Assignee("a"));
+			var training = NewTraining(Now.AddHours(-1));
+			training.ReminderMessage = "Bring your SCBA.";
 
-			TrainingNoticePlanner.IsStaleUnannounced(training, Now).Should().BeTrue();
-			TrainingNoticePlanner.Plan(training, new[] { "a" }, Now).Kind.Should().Be(TrainingNoticeKinds.None);
+			var plan = Plan(training, Assignee("a"), Now.AddDays(5), dueText: "11/29/2026");
+
+			plan.Message.Should().Be("New Training (Hose Testing) due on 11/29/2026 Bring your SCBA.");
 		}
 
 		[Test]
-		public void An_announced_training_gets_the_due_tomorrow_reminder()
+		public void An_old_assignment_that_was_never_announced_is_only_marked()
 		{
-			var training = NewTraining(Now.AddDays(-30), Now.AddDays(-30), Assignee("a"));
-			training.ToBeCompletedBy = Now.AddDays(1);
+			var training = NewTraining(Now.AddDays(-30));
+			var plan = Plan(training, Assignee("a", assignedOn: Now.AddDays(-(TrainingNoticePlanner.NewNoticeMaxAgeDays + 1))), null);
 
-			var plan = TrainingNoticePlanner.Plan(training, new[] { "a" }, Now);
-
-			plan.Kind.Should().Be(TrainingNoticeKinds.DueTomorrow);
-			plan.Title.Should().Be(TrainingNoticePlanner.DueTomorrowTitle);
-			plan.Message.Should().Be("Training (Hose Testing) is due tomorrow");
+			plan.Kind.Should().Be(TrainingNoticeKinds.None);
+			plan.MarkNotifiedOnly.Should().BeTrue();
 		}
 
 		[Test]
-		public void Members_who_completed_it_are_not_told()
+		public void A_scheduled_training_is_not_announced_before_it_starts_and_is_announced_once_it_does()
 		{
-			var plan = TrainingNoticePlanner.Plan(NewTraining(Now, null, Assignee("done", complete: true), Assignee("open")), new[] { "done", "open" }, Now);
+			var training = NewTraining(Now.AddDays(-30));
+			training.StartsOn = Now.AddDays(2);
 
-			plan.RecipientUserIds.Should().Equal("open");
+			Plan(training, Assignee("a", assignedOn: Now.AddDays(-30)), null).Kind.Should().Be(TrainingNoticeKinds.None);
+
+			training.StartsOn = Now.AddHours(-2);
+			Plan(training, Assignee("a", assignedOn: Now.AddDays(-30)), null).Kind.Should().Be(TrainingNoticeKinds.NewTraining);
+		}
+
+		[Test]
+		public void Members_who_completed_are_exempt_or_removed_are_not_told()
+		{
+			var training = NewTraining(Now);
+
+			Plan(training, Assignee("done", complete: true), null).Kind.Should().Be(TrainingNoticeKinds.None);
+			var exempt = Assignee("exempt");
+			exempt.ExemptOn = Now.AddDays(-1);
+			Plan(training, exempt, null).Kind.Should().Be(TrainingNoticeKinds.None);
+			var removed = Assignee("removed");
+			removed.RemovedOn = Now.AddDays(-1);
+			Plan(training, removed, null).Kind.Should().Be(TrainingNoticeKinds.None);
 		}
 
 		[Test]
 		public void Members_who_are_no_longer_active_are_not_told()
 		{
-			var plan = TrainingNoticePlanner.Plan(NewTraining(Now, null, Assignee("gone"), Assignee("HERE")), new[] { "here" }, Now);
+			var plan = Plan(NewTraining(Now), Assignee("gone"), null, active: false);
 
-			plan.RecipientUserIds.Should().Equal("HERE");
+			plan.Kind.Should().Be(TrainingNoticeKinds.None);
+			plan.MarkNotifiedOnly.Should().BeTrue();
+			Plan(NewTraining(Now), Assignee("gone", notifiedOn: Now.AddDays(-2)), Now.AddHours(3), active: false).Kind.Should().Be(TrainingNoticeKinds.None);
 		}
 
 		[Test]
-		public void Nothing_is_sent_when_nobody_is_left_to_tell()
+		public void A_reminder_goes_when_the_due_moment_is_within_the_lead_and_not_yet_reminded()
 		{
-			TrainingNoticePlanner.Plan(NewTraining(Now, null), new[] { "a" }, Now).Kind.Should().Be(TrainingNoticeKinds.None);
-			TrainingNoticePlanner.Plan(NewTraining(Now, null, Assignee("a", complete: true)), new[] { "a" }, Now).Kind.Should().Be(TrainingNoticeKinds.None);
-			TrainingNoticePlanner.Plan(null, new[] { "a" }, Now).Kind.Should().Be(TrainingNoticeKinds.None);
+			var training = NewTraining(Now.AddDays(-10), Now.AddDays(-10));
+			var assignment = Assignee("a", notifiedOn: Now.AddDays(-10));
+
+			// Due in 30 hours: outside the default one-day lead.
+			Plan(training, assignment, Now.AddHours(30)).Kind.Should().Be(TrainingNoticeKinds.None);
+
+			// Due in 20 hours: inside it, at any minute of the day (no 10:00 window).
+			var plan = Plan(training, assignment, Now.AddHours(20));
+			plan.Kind.Should().Be(TrainingNoticeKinds.DueReminder);
+			plan.LeadDays.Should().Be(1);
+			plan.Title.Should().Be(TrainingNoticePlanner.DueReminderTitle);
+
+			// Reminded for that lead: not again.
+			assignment.LastReminderLeadDays = 1;
+			Plan(training, assignment, Now.AddHours(10)).Kind.Should().Be(TrainingNoticeKinds.None);
+		}
+
+		[Test]
+		public void Each_configured_lead_is_reminded_once_and_a_late_start_skips_the_wider_ones()
+		{
+			var training = NewTraining(Now.AddDays(-20), Now.AddDays(-20));
+			training.ReminderLeadDaysCsv = "7,1";
+			var assignment = Assignee("a", notifiedOn: Now.AddDays(-20));
+
+			var week = Plan(training, assignment, Now.AddDays(5));
+			week.Kind.Should().Be(TrainingNoticeKinds.DueReminder);
+			week.LeadDays.Should().Be(7);
+			assignment.LastReminderLeadDays = 7;
+			Plan(training, assignment, Now.AddDays(4)).Kind.Should().Be(TrainingNoticeKinds.None);
+			Plan(training, assignment, Now.AddHours(12)).LeadDays.Should().Be(1);
+
+			// Nothing reminded yet and already inside one day: only the one-day reminder goes.
+			Plan(training, Assignee("b", notifiedOn: Now.AddDays(-20)), Now.AddHours(12)).LeadDays.Should().Be(1);
+		}
+
+		[Test]
+		public void An_overdue_notice_goes_once_or_on_the_repeating_cadence_and_only_when_switched_on()
+		{
+			var training = NewTraining(Now.AddDays(-20), Now.AddDays(-20));
+			var assignment = Assignee("a", notifiedOn: Now.AddDays(-20));
+
+			Plan(training, assignment, Now.AddDays(-1)).Kind.Should().Be(TrainingNoticeKinds.None);
+
+			training.SendOverdueNotices = true;
+			Plan(training, assignment, Now.AddDays(-1)).Kind.Should().Be(TrainingNoticeKinds.Overdue);
+
+			assignment.OverdueNotifiedOn = Now.AddDays(-3);
+			Plan(training, assignment, Now.AddDays(-5)).Kind.Should().Be(TrainingNoticeKinds.None);
+
+			training.OverdueRepeatDays = 7;
+			Plan(training, assignment, Now.AddDays(-5)).Kind.Should().Be(TrainingNoticeKinds.None);
+			assignment.OverdueNotifiedOn = Now.AddDays(-8);
+			Plan(training, assignment, Now.AddDays(-9)).Kind.Should().Be(TrainingNoticeKinds.Overdue);
+		}
+
+		[Test]
+		public void A_member_on_leave_gets_no_reminder()
+		{
+			var training = NewTraining(Now.AddDays(-20), Now.AddDays(-20));
+			training.SendOverdueNotices = true;
+
+			Plan(training, Assignee("a", notifiedOn: Now.AddDays(-20)), Now.AddHours(5), onLeave: true).Kind.Should().Be(TrainingNoticeKinds.None);
+			Plan(training, Assignee("a", notifiedOn: Now.AddDays(-20)), Now.AddDays(-2), onLeave: true).Kind.Should().Be(TrainingNoticeKinds.None);
+		}
+
+		[Test]
+		public void Nothing_is_planned_without_a_training_or_an_assignee()
+		{
+			Plan(null, Assignee("a"), null).Kind.Should().Be(TrainingNoticeKinds.None);
+			Plan(NewTraining(Now), null, null).Kind.Should().Be(TrainingNoticeKinds.None);
+			var archived = NewTraining(Now);
+			archived.ArchivedOn = Now.AddHours(-1);
+			Plan(archived, Assignee("a"), null).Kind.Should().Be(TrainingNoticeKinds.None);
+		}
+
+		[Test]
+		public void A_training_never_announced_and_older_than_the_window_is_stale()
+		{
+			TrainingNoticePlanner.IsStaleUnannounced(NewTraining(Now.AddDays(-(TrainingNoticePlanner.NewNoticeMaxAgeDays + 1))), Now).Should().BeTrue();
+			TrainingNoticePlanner.IsStaleUnannounced(NewTraining(Now.AddDays(-1)), Now).Should().BeFalse();
 		}
 	}
 
-	/// <summary>The notifier's service side: assignees are loaded for the trainings it will announce, and marking a training touches the row alone.</summary>
+	/// <summary>
+	/// The notifier's service side: one query over every department finds the trainings with notice work (no load of every
+	/// training and no 10:00 window, T-D19), each comes back with its assignees, and marking a training touches the row alone.
+	/// </summary>
 	[TestFixture]
 	public class TrainingNotifierServiceTests
 	{
@@ -112,18 +215,15 @@ namespace Resgrid.Tests.Services
 				Mock.Of<ITrainingQuestionRepository>(),
 				Mock.Of<ICommunicationService>(),
 				Mock.Of<IDepartmentsService>(),
-				Mock.Of<IDepartmentSettingsService>());
+				Mock.Of<IDepartmentSettingsService>(),
+				Mock.Of<IKnowledgeIndexQueue>(), Mock.Of<IUserProfileService>());
 		}
 
 		[Test]
-		public async Task Unannounced_trainings_come_back_with_their_assignees()
+		public async Task Trainings_with_notice_work_come_back_with_their_assignees()
 		{
 			var now = DateTime.UtcNow;
-			// GetAllAsync reads the rows alone: no assignees, which is why the notifier used to skip every training.
-			_trainings.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<Training>
-			{
-				new Training { TrainingId = 5, DepartmentId = 10, Name = "Fresh", CreatedOn = now.AddHours(-2) }
-			});
+			_trainings.Setup(x => x.GetTrainingIdsWithNoticeWorkAsync(now, TrainingService.MaxReminderLeadDays)).ReturnsAsync(new List<int> { 5 });
 			_trainings.Setup(x => x.GetTrainingByTrainingIdAsync(5)).ReturnsAsync(new Training
 			{
 				TrainingId = 5,
@@ -138,16 +238,23 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task A_training_whose_assignees_could_not_be_read_is_left_for_a_later_run()
+		public async Task The_old_load_everything_sweep_is_gone()
 		{
 			var now = DateTime.UtcNow;
-			_trainings.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<Training>
-			{
-				new Training { TrainingId = 5, DepartmentId = 10, Name = "Read fails", CreatedOn = now.AddHours(-2) },
-				new Training { TrainingId = 9, DepartmentId = 10, Name = "Read works", CreatedOn = now.AddHours(-1) }
-			});
-			// The repository answers null when the read throws. Returned with no assignees, the training would be marked
-			// notified with nobody told and its notice would never go out.
+			_trainings.Setup(x => x.GetTrainingIdsWithNoticeWorkAsync(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<int>());
+
+			(await _service.GetTrainingsToNotifyAsync(now)).Should().BeEmpty();
+
+			_trainings.Verify(x => x.GetAllAsync(), Times.Never);
+			_trainings.Verify(x => x.GetTrainingByTrainingIdAsync(It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
+		public async Task A_training_that_could_not_be_read_is_left_for_a_later_run()
+		{
+			var now = DateTime.UtcNow;
+			_trainings.Setup(x => x.GetTrainingIdsWithNoticeWorkAsync(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<int> { 5, 9, 9 });
+			// The repository answers null when the read throws: returned empty it would be marked notified with nobody told.
 			_trainings.Setup(x => x.GetTrainingByTrainingIdAsync(5)).ReturnsAsync((Training)null);
 			_trainings.Setup(x => x.GetTrainingByTrainingIdAsync(9)).ReturnsAsync(new Training
 			{
@@ -162,33 +269,15 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task A_training_read_with_no_assignees_is_still_returned_to_be_marked()
+		public async Task A_training_read_with_no_assignees_comes_back_with_an_empty_list()
 		{
 			var now = DateTime.UtcNow;
-			_trainings.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<Training>
-			{
-				new Training { TrainingId = 5, DepartmentId = 10, Name = "Nobody assigned", CreatedOn = now.AddHours(-2) }
-			});
-			_trainings.Setup(x => x.GetTrainingByTrainingIdAsync(5)).ReturnsAsync(new Training { TrainingId = 5, DepartmentId = 10, Users = new List<TrainingUser>() });
+			_trainings.Setup(x => x.GetTrainingIdsWithNoticeWorkAsync(It.IsAny<DateTime>(), It.IsAny<int>())).ReturnsAsync(new List<int> { 5 });
+			_trainings.Setup(x => x.GetTrainingByTrainingIdAsync(5)).ReturnsAsync(new Training { TrainingId = 5, DepartmentId = 10 });
 
 			var result = await _service.GetTrainingsToNotifyAsync(now);
 
 			result.Should().ContainSingle(x => x.TrainingId == 5).Which.Users.Should().BeEmpty();
-		}
-
-		[Test]
-		public async Task A_stale_unannounced_training_is_returned_to_be_marked_without_loading_assignees()
-		{
-			var now = DateTime.UtcNow;
-			_trainings.Setup(x => x.GetAllAsync()).ReturnsAsync(new List<Training>
-			{
-				new Training { TrainingId = 6, DepartmentId = 10, Name = "Old", CreatedOn = now.AddDays(-400) }
-			});
-
-			var result = await _service.GetTrainingsToNotifyAsync(now);
-
-			result.Should().ContainSingle(x => x.TrainingId == 6);
-			_trainings.Verify(x => x.GetTrainingByTrainingIdAsync(It.IsAny<int>()), Times.Never);
 		}
 
 		[Test]
@@ -326,12 +415,17 @@ namespace Resgrid.Tests.Services
 
 			var view = System.IO.File.ReadAllText(System.IO.Path.Combine(directory.FullName, "Web", "Resgrid.Web", "Areas", "User", "Views", "Trainings", "Index.cshtml"));
 
+			// Any comparison of an assignee id in the list is the scope's (or a case-insensitive one), never a plain ==.
 			view.Should().NotContain("x.UserId == currentUserId");
-			System.Text.RegularExpressions.Regex.Matches(view, @"string\.Equals\(x\.UserId, currentUserId, StringComparison\.OrdinalIgnoreCase\)").Count.Should().Be(2);
+			System.Text.RegularExpressions.Regex.IsMatch(view, @"\.UserId\s*==").Should().BeFalse();
 		}
 	}
 
-	/// <summary>"Everyone" on the Create Training permission lets every member create a training; it no longer hands every member the department-wide edit and delete claims.</summary>
+	/// <summary>
+	/// "Everyone" on the Create Training permission lets every member create a training, and (Assign and Delete following the
+	/// Create row) hands them the assign and delete claims too; what those claims reach is only the member's own trainings,
+	/// decided by the scope, never everyone else's.
+	/// </summary>
 	[TestFixture]
 	public class TrainingClaimsTests
 	{
@@ -348,14 +442,27 @@ namespace Resgrid.Tests.Services
 		private static bool Has(ClaimsIdentity identity, string action) => identity.HasClaim(ResgridClaimTypes.Resources.Training, action);
 
 		[Test]
-		public void Under_everyone_a_member_may_view_and_create_but_holds_no_department_wide_edit_or_delete()
+		public void Under_everyone_a_member_holds_the_claims_but_the_scope_limits_them_to_their_own_trainings()
 		{
 			var identity = ClaimsFor(PermissionActions.Everyone, isAdmin: false);
 
 			Has(identity, ResgridClaimTypes.Actions.View).Should().BeTrue();
 			Has(identity, ResgridClaimTypes.Actions.Create).Should().BeTrue();
-			Has(identity, ResgridClaimTypes.Actions.Update).Should().BeFalse();
-			Has(identity, ResgridClaimTypes.Actions.Delete).Should().BeFalse();
+			Has(identity, ResgridClaimTypes.Actions.Update).Should().BeTrue();
+			Has(identity, ResgridClaimTypes.Actions.Delete).Should().BeTrue();
+
+			// The scope an Everyone member gets (GetTrainingManagementScopeAsync): own only, for every right.
+			var own = new TrainingRightScope { ManagesOwn = true };
+			var scope = new TrainingManagementScope { UserId = "member", DepartmentId = 10, Author = own, Assign = own, Delete = own };
+			var mine = new Training { TrainingId = 1, DepartmentId = 10, CreatedByUserId = "MEMBER", Users = new List<TrainingUser>() };
+			var theirs = new Training { TrainingId = 2, DepartmentId = 10, CreatedByUserId = "officer", Users = new List<TrainingUser> { new TrainingUser { UserId = "ff1" } } };
+
+			scope.CanAuthor(mine).Should().BeTrue();
+			scope.CanAssign(mine).Should().BeTrue();
+			scope.CanDelete(mine).Should().BeTrue();
+			scope.CanAuthor(theirs).Should().BeFalse();
+			scope.CanAssign(theirs).Should().BeFalse();
+			scope.CanDelete(theirs).Should().BeFalse();
 		}
 
 		[Test]

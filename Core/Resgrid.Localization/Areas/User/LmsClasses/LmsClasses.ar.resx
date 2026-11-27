@@ -1,0 +1,1677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActionFailed" xml:space="preserve">
+    <value>تعذّر تنفيذ ذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddCost" xml:space="preserve">
+    <value>إضافة تكلفة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddInstructor" xml:space="preserve">
+    <value>إضافة مدرّب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>الدورات جزء من إضافة نظام إدارة التعلم، وهي غير مفعّلة لهذا القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddonRequired" xml:space="preserve">
+    <value>يتطلب هذا إضافة نشطة لنظام إدارة التعلم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddPeople" xml:space="preserve">
+    <value>إضافة أشخاص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddWalkIn" xml:space="preserve">
+    <value>تسجيل حضور شخص دون تسجيل مسبق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllTags" xml:space="preserve">
+    <value>كل الوسوم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AlreadySignedIn" xml:space="preserve">
+    <value>سجّلت حضورك في</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>المبلغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approve" xml:space="preserve">
+    <value>موافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>تمت الموافقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Absent" xml:space="preserve">
+    <value>غائب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Attended" xml:space="preserve">
+    <value>حضر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Excused" xml:space="preserve">
+    <value>غياب بعذر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Attendance.Unmarked" xml:space="preserve">
+    <value>غير مسجّل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Back" xml:space="preserve">
+    <value>رجوع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Book" xml:space="preserve">
+    <value>حجز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookedMessage" xml:space="preserve">
+    <value>تم الحجز.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookingsHeader" xml:space="preserve">
+    <value>المرافق والمعدات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookResource" xml:space="preserve">
+    <value>حجز لهذه الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Calendar" xml:space="preserve">
+    <value>التقويم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CalendarIsClass" xml:space="preserve">
+    <value>عنصر التقويم هذا دورة: التسجيل وتسجيل الحضور والحضور في صفحة الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelClass" xml:space="preserve">
+    <value>إلغاء الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>أُلغيت الدورة وأُبلغ المسجّلون.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelReason" xml:space="preserve">
+    <value>سبب الإلغاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClassesIntro" xml:space="preserve">
+    <value>جلسات يقودها مدرّب على التقويم: التسجيل وقائمة الانتظار وتسجيل الحضور وقائمة الحضور المعتمدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClassesTitle" xml:space="preserve">
+    <value>الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Absent" xml:space="preserve">
+    <value>غائبون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Attendance" xml:space="preserve">
+    <value>الحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.AttendanceRate" xml:space="preserve">
+    <value>نسبة الحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Attended" xml:space="preserve">
+    <value>حضروا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Attendee" xml:space="preserve">
+    <value>الحاضر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Attendees" xml:space="preserve">
+    <value>الحاضرون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Bookings" xml:space="preserve">
+    <value>الحجوزات (90 يومًا القادمة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Capacity" xml:space="preserve">
+    <value>السعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Class" xml:space="preserve">
+    <value>الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.ClassCost" xml:space="preserve">
+    <value>تكلفة الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Classes" xml:space="preserve">
+    <value>الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.ContentSummary" xml:space="preserve">
+    <value>ملخص المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Course" xml:space="preserve">
+    <value>المقرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Date" xml:space="preserve">
+    <value>التاريخ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Enrolled" xml:space="preserve">
+    <value>مسجّلون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Exception" xml:space="preserve">
+    <value>الاستثناء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Hours" xml:space="preserve">
+    <value>الساعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.HoursTaught" xml:space="preserve">
+    <value>ساعات التدريس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Instructor" xml:space="preserve">
+    <value>المدرّب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Instructors" xml:space="preserve">
+    <value>المدرّبون ومؤهلاتهم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.JobTitle" xml:space="preserve">
+    <value>المسمى الوظيفي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Kind" xml:space="preserve">
+    <value>النوع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Member" xml:space="preserve">
+    <value>العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Pending" xml:space="preserve">
+    <value>معلّقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Published" xml:space="preserve">
+    <value>منشورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Qualifications" xml:space="preserve">
+    <value>المؤهلات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.RequestCost" xml:space="preserve">
+    <value>تكلفة طلبات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Resource" xml:space="preserve">
+    <value>المورد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Role" xml:space="preserve">
+    <value>الدور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Seats" xml:space="preserve">
+    <value>المقاعد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Series" xml:space="preserve">
+    <value>السلسلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Sessions" xml:space="preserve">
+    <value>الجلسات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.SignIn" xml:space="preserve">
+    <value>تسجيل الحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Status" xml:space="preserve">
+    <value>الحالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Title" xml:space="preserve">
+    <value>العنوان</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Waitlisted" xml:space="preserve">
+    <value>الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.WalkIns" xml:space="preserve">
+    <value>الحضور دون تسجيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Year" xml:space="preserve">
+    <value>السنة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.BackfillOvertime" xml:space="preserve">
+    <value>عمل إضافي للتغطية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.Instructor" xml:space="preserve">
+    <value>المدرّب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.Materials" xml:space="preserve">
+    <value>المواد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.Other" xml:space="preserve">
+    <value>أخرى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Cost.OutsideFees" xml:space="preserve">
+    <value>رسوم خارجية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CostKind" xml:space="preserve">
+    <value>التكلفة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CostsHeader" xml:space="preserve">
+    <value>التكاليف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CostsIntro" xml:space="preserve">
+    <value>المدرّب والمواد والرسوم الخارجية والعمل الإضافي للتغطية حسب المقرر أو العضو أو السنة، بجانب تكاليف طلبات التدريب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CostsTitle" xml:space="preserve">
+    <value>تكاليف الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Create" xml:space="preserve">
+    <value>إنشاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateClass" xml:space="preserve">
+    <value>إنشاء الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>تم الإنشاء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecisionNote" xml:space="preserve">
+    <value>ملاحظة (مطلوبة للإعادة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decline" xml:space="preserve">
+    <value>رفض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclinedMessage" xml:space="preserve">
+    <value>تم الرفض.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteClass" xml:space="preserve">
+    <value>حذف الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Deleted" xml:space="preserve">
+    <value>تم الحذف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteLessonPlan" xml:space="preserve">
+    <value>حذف خطة الدرس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftOnly" xml:space="preserve">
+    <value>مسودة فقط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditClass" xml:space="preserve">
+    <value>تعديل الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditIntro" xml:space="preserve">
+    <value>الأوقات بتوقيت القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditResource" xml:space="preserve">
+    <value>تعديل المرفق أو المعدات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enroll" xml:space="preserve">
+    <value>تسجيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>تم التسجيل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollMember" xml:space="preserve">
+    <value>تسجيل عضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Declined" xml:space="preserve">
+    <value>مرفوض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Enrolled" xml:space="preserve">
+    <value>مسجّل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.PendingApproval" xml:space="preserve">
+    <value>بانتظار الموافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Removed" xml:space="preserve">
+    <value>أُزيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Waitlisted" xml:space="preserve">
+    <value>على قائمة الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Enrollment.Withdrawn" xml:space="preserve">
+    <value>منسحب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evaluation.CourseAssessment" xml:space="preserve">
+    <value>إسناد الدورة المرتبطة (اختبارها) لكل حاضر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evaluation.None" xml:space="preserve">
+    <value>لا شيء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.Excused" xml:space="preserve">
+    <value>غياب بعذر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.Inactive" xml:space="preserve">
+    <value>لم يعد عضوًا نشطًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.NeverPromoted" xml:space="preserve">
+    <value>بقي على قائمة الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.NoShow" xml:space="preserve">
+    <value>لم يحضر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.OnShift" xml:space="preserve">
+    <value>في المناوبة في ذلك الوقت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.Pending" xml:space="preserve">
+    <value>الطلب لم يُبتّ فيه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exception.Waitlisted" xml:space="preserve">
+    <value>على قائمة الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.AllowSelfUnenroll" xml:space="preserve">
+    <value>يمكن للأعضاء الانسحاب بأنفسهم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Capacity" xml:space="preserve">
+    <value>السعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CapacityHelp" xml:space="preserve">
+    <value>0 بلا حد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Category" xml:space="preserve">
+    <value>فئة التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ChangeSummary" xml:space="preserve">
+    <value>ملخص التغييرات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CompetencyItems" xml:space="preserve">
+    <value>الكفاءات المشمولة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ContentSummary" xml:space="preserve">
+    <value>ملخص المحتوى (القائمة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ContentSummaryHelp" xml:space="preserve">
+    <value>ما تم تناوله، كما تسجّله القائمة المعتمدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Course" xml:space="preserve">
+    <value>مقرر نظام إدارة التعلم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CourseCode" xml:space="preserve">
+    <value>رمز المقرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Currency" xml:space="preserve">
+    <value>العملة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CutoffDays" xml:space="preserve">
+    <value>يُغلق التسجيل (أيام قبل)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Description" xml:space="preserve">
+    <value>الوصف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Duration" xml:space="preserve">
+    <value>المدة (دقائق)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.End" xml:space="preserve">
+    <value>ينتهي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.EnrollmentOpen" xml:space="preserve">
+    <value>يمكن للأعضاء التسجيل بأنفسهم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.GpsRequired" xml:space="preserve">
+    <value>اشتراط موقع الهاتف ضمن النطاق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Instructors" xml:space="preserve">
+    <value>المدرّبون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Latitude" xml:space="preserve">
+    <value>خط العرض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LessonPlan" xml:space="preserve">
+    <value>خطة الدرس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Location" xml:space="preserve">
+    <value>الموقع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Longitude" xml:space="preserve">
+    <value>خط الطول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Materials" xml:space="preserve">
+    <value>المواد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.MeetingUrl" xml:space="preserve">
+    <value>رابط الاجتماع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.MeetingUrlHelp" xml:space="preserve">
+    <value>رابط Teams أو Zoom أو Meet لدورة افتراضية أو مختلطة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Notes" xml:space="preserve">
+    <value>ملاحظات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Objectives" xml:space="preserve">
+    <value>الأهداف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Occurrences" xml:space="preserve">
+    <value>عدد الجلسات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.PostEvaluation" xml:space="preserve">
+    <value>بعد الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.PostEvaluationHelp" xml:space="preserve">
+    <value>تبدأ لكل حاضر عند الاعتماد الأول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.PreBrief" xml:space="preserve">
+    <value>قائمة الإيجاز المسبق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Props" xml:space="preserve">
+    <value>المعدات والمرافق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.QrEnabled" xml:space="preserve">
+    <value>تسجيل الحضور برمز QR متغيّر (صورته تتوقف عن العمل)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Radius" xml:space="preserve">
+    <value>النطاق (متر)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Ratio" xml:space="preserve">
+    <value>طلاب لكل مدرّب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ReminderHours" xml:space="preserve">
+    <value>التذكير (ساعات قبل؛ 0 لا يوجد)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Repeat" xml:space="preserve">
+    <value>التكرار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RequiresApproval" xml:space="preserve">
+    <value>يوافق مدير الدورات على كل طلب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RestrictGroups" xml:space="preserve">
+    <value>يمكن لهذه المجموعات فقط التسجيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RestrictGroupsHelp" xml:space="preserve">
+    <value>دون اختيار: كل الأعضاء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RetentionYears" xml:space="preserve">
+    <value>الاحتفاظ بالقائمة لمدة (سنوات)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.RetentionYearsHelp" xml:space="preserve">
+    <value>فارغ: مدة احتفاظ الفئة (مثل 3 سنوات لتدريب مسببات الأمراض المنقولة بالدم).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Roles" xml:space="preserve">
+    <value>الأدوار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.SafetyPlan" xml:space="preserve">
+    <value>خطة السلامة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Start" xml:space="preserve">
+    <value>يبدأ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Tags" xml:space="preserve">
+    <value>الوسوم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Title" xml:space="preserve">
+    <value>العنوان</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TitleHelp" xml:space="preserve">
+    <value>اتركه فارغًا لاستخدام اسم المقرر أو التدريب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.Training" xml:space="preserve">
+    <value>التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.VisibleGroups" xml:space="preserve">
+    <value>يراها هؤلاء فقط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.VisibleGroupsHelp" xml:space="preserve">
+    <value>دون اختيار: مرئية لكل الأعضاء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WaitlistEnabled" xml:space="preserve">
+    <value>قائمة انتظار عند الامتلاء (ترقية بالترتيب)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter" xml:space="preserve">
+    <value>تصفية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Fingerprint" xml:space="preserve">
+    <value>البصمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Footer.Costs" xml:space="preserve">
+    <value>تكلفة الدورات {0}، طلبات التدريب {1} ({2}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Footer.Exceptions" xml:space="preserve">
+    <value>{0} استثناءً.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Footer.Sessions" xml:space="preserve">
+    <value>{0} جلسة، {1} شخصًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromStarter" xml:space="preserve">
+    <value>من خطة Resgrid أولية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GpsRequiredNotice" xml:space="preserve">
+    <value>يُتحقّق من موقع هاتفك عند تسجيل الحضور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupBy" xml:space="preserve">
+    <value>التجميع حسب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursOverride" xml:space="preserve">
+    <value>الساعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>استيراد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportAttendance" xml:space="preserve">
+    <value>استيراد تقرير حضور اجتماع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportAttendanceHelp" xml:space="preserve">
+    <value>تقرير الحضور بصيغة CSV من Teams أو Zoom أو Google Meet. تتم المطابقة بالبريد الإلكتروني ثم بالاسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>تم استيراد تقرير الاجتماع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportResultFormat" xml:space="preserve">
+    <value>تقرير الاجتماع: {0} شخصًا، طابق {1}، أُضيف {2} حضورًا دون تسجيل، ولم يطابق {3}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>غير نشط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InstructorsHeader" xml:space="preserve">
+    <value>المدرّبون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KioskInstruction" xml:space="preserve">
+    <value>امسح هذا الرمز بهاتفك لتسجيل الحضور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KioskTitle" xml:space="preserve">
+    <value>تسجيل حضور الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>انتهت إضافة نظام إدارة التعلم: تبقى الدورات قابلة للقراءة ويمكن إدارة الدورات الحالية واعتمادها، لكن لا يمكن إنشاء جديد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonPlanIntro" xml:space="preserve">
+    <value>تُدرَّس الخطة من نسختها المنشورة؛ ويُحتفظ بكل نسخة مقدَّمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonPlansIntro" xml:space="preserve">
+    <value>الأهداف والكفاءات والمواد والنسبة وخطة السلامة وقائمة الإيجاز المسبق، بإصدارات معتمدة قبل الاستخدام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonPlansTitle" xml:space="preserve">
+    <value>خطط الدروس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_addon_required" xml:space="preserve">
+    <value>يتطلب هذا إضافة نشطة لنظام إدارة التعلم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_calendar_failed" xml:space="preserve">
+    <value>تعذّر إنشاء عنصر التقويم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_cancelled" xml:space="preserve">
+    <value>أُلغيت هذه الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_capacity_invalid" xml:space="preserve">
+    <value>يجب أن تكون السعة بين 0 و10,000.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_category_invalid" xml:space="preserve">
+    <value>اختر إحدى فئات التدريب في القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_change_summary_required" xml:space="preserve">
+    <value>صف ما تغيّر قبل الإرسال.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_code_expired" xml:space="preserve">
+    <value>انتهت صلاحية هذا الرمز. امسح الرمز المعروض مجددًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_cost_invalid" xml:space="preserve">
+    <value>أدخل نوع التكلفة ومبلغًا قدره 0 أو أكثر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_course_invalid" xml:space="preserve">
+    <value>اختر أحد المقررات أو التدريبات المنشورة في القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_closed" xml:space="preserve">
+    <value>يتم التسجيل عبر مدير الدورات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_enrollment_cutoff" xml:space="preserve">
+    <value>أُغلق التسجيل في هذه الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_full" xml:space="preserve">
+    <value>هذه الدورة ممتلئة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_gps_location_required" xml:space="preserve">
+    <value>حدّد موقع الدورة (خط العرض والطول) لاشتراط GPS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_gps_required" xml:space="preserve">
+    <value>تتطلب هذه الدورة موقع هاتفك لتسجيل الحضور. اسمح بالوصول إلى الموقع وحاول مجددًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_gps_too_far" xml:space="preserve">
+    <value>هاتفك بعيد جدًا عن موقع الدورة لتسجيل الحضور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_hours_invalid" xml:space="preserve">
+    <value>يجب أن تكون الساعات بين 0 و9,999.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_import_empty" xml:space="preserve">
+    <value>لم يُعثر على صفوف حضور في هذا الملف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_instructor_invalid" xml:space="preserve">
+    <value>اختر عضوًا أو أدخل اسم مدرّب خارجي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_lesson_plan_invalid" xml:space="preserve">
+    <value>اختر خطة درس منشورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_meeting_url_invalid" xml:space="preserve">
+    <value>يجب أن يكون رابط الاجتماع عنوان ويب (https://...).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_name_required" xml:space="preserve">
+    <value>أدخل اسمًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_eligible" xml:space="preserve">
+    <value>هذه الدورة مخصّصة لمجموعات أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_enrolled" xml:space="preserve">
+    <value>لست على قائمة هذه الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_found" xml:space="preserve">
+    <value>لم يُعثر على الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_member" xml:space="preserve">
+    <value>يمكن للأعضاء الحاليين فقط أن يكونوا على القائمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_open" xml:space="preserve">
+    <value>هذه الدورة غير متاحة لذلك الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_pending" xml:space="preserve">
+    <value>سبق البت في هذا الطلب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_signed_in" xml:space="preserve">
+    <value>لم تسجّل حضورك في هذه الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_not_started" xml:space="preserve">
+    <value>يمكن اعتماد الدورة بعد بدئها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_changed" xml:space="preserve">
+    <value>تغيّر محتوى الخطة بعد إرسالها؛ أرسلها مجددًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_not_approved" xml:space="preserve">
+    <value>يمكن نشر النسخة المعتمدة فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_not_draft" xml:space="preserve">
+    <value>يمكن تعديل المسودة أو إرسالها فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_not_found" xml:space="preserve">
+    <value>لم يُعثر على خطة الدرس.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_plan_not_in_review" xml:space="preserve">
+    <value>هذه النسخة لا تنتظر قرارًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_reason_required" xml:space="preserve">
+    <value>اذكر سبب الإعادة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_resource_conflict" xml:space="preserve">
+    <value>هذا المرفق أو المعدّة محجوز بالفعل في هذا الوقت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_retention_hold" xml:space="preserve">
+    <value>تُحفظ القائمة حتى تاريخ الاحتفاظ ولا يمكن محوها بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_rules_invalid" xml:space="preserve">
+    <value>تحقّق من قواعد التسجيل (الإغلاق 0–365 يومًا، التذكير 0–336 ساعة، 1–52 جلسة).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_sign_in_closed" xml:space="preserve">
+    <value>تسجيل الحضور غير متاح لهذه الدورة الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_signed_off" xml:space="preserve">
+    <value>اعتُمدت الدورة؛ لا يمكن تغيير قائمتها بهذه الطريقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_times_invalid" xml:space="preserve">
+    <value>يجب أن تنتهي الدورة بعد بدئها وألا تزيد على 14 يومًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_title_required" xml:space="preserve">
+    <value>أدخل عنوانًا، أو اربط مقررًا أو تدريبًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_unenroll_closed" xml:space="preserve">
+    <value>اطلب من مدير الدورات إزالتك من هذه الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MajorChange" xml:space="preserve">
+    <value>تغيير جوهري</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MarkPresent" xml:space="preserve">
+    <value>تسجيل الحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MessageRoster" xml:space="preserve">
+    <value>مراسلة المسجّلين</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.Calendar" xml:space="preserve">
+    <value>تسجيل حضور التقويم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.Import" xml:space="preserve">
+    <value>تقرير الاجتماع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.Manual" xml:space="preserve">
+    <value>بواسطة المدرّب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.None" xml:space="preserve">
+    <value>لم يسجّل الحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Method.Qr" xml:space="preserve">
+    <value>تسجيل عبر رمز QR</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} دقيقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyClassesIntro" xml:space="preserve">
+    <value>الدورات التي سجّلت فيها أو تدرّسها، وتلك التي لا يزال بإمكانك الانضمام إليها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyClassesTitle" xml:space="preserve">
+    <value>دوراتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewClass" xml:space="preserve">
+    <value>دورة جديدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewDraft" xml:space="preserve">
+    <value>مسودة جديدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewLessonPlan" xml:space="preserve">
+    <value>خطة درس جديدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewQrSecret" xml:space="preserve">
+    <value>إصدار رمز QR جديد (تتوقف الصور القديمة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewResource" xml:space="preserve">
+    <value>مرفق أو معدات جديدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoClasses" xml:space="preserve">
+    <value>لا توجد دورات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoConflicts" xml:space="preserve">
+    <value>لا أحد في المناوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCosts" xml:space="preserve">
+    <value>لا توجد تكاليف دورات في هذه الفترة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoInstructors" xml:space="preserve">
+    <value>لا يوجد مدرّبون بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLessonPlans" xml:space="preserve">
+    <value>لا توجد خطط دروس بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoMyClasses" xml:space="preserve">
+    <value>لا توجد دورات لك حاليًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>لا شيء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoResources" xml:space="preserve">
+    <value>لا توجد مرافق أو معدات بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRoster" xml:space="preserve">
+    <value>لم يسجّل أحد بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Cancelled" xml:space="preserve">
+    <value>أُلغيت {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CancelledTitle" xml:space="preserve">
+    <value>أُلغيت الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Declined" xml:space="preserve">
+    <value>رُفض طلبك لـ {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Enrolled" xml:space="preserve">
+    <value>أنت مسجّل في {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.EnrolledTitle" xml:space="preserve">
+    <value>قائمة الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Promoted" xml:space="preserve">
+    <value>توفّر مقعد: أنت الآن مسجّل في {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Reminder" xml:space="preserve">
+    <value>تبدأ {0} في {1}. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReminderTitle" xml:space="preserve">
+    <value>تذكير بالدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Removed" xml:space="preserve">
+    <value>أُزلت من {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.Waitlisted" xml:space="preserve">
+    <value>أنت على قائمة الانتظار لـ {0} ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnCalendar" xml:space="preserve">
+    <value>فتح في التقويم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnePerLine" xml:space="preserve">
+    <value>عنصر في كل سطر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnShift" xml:space="preserve">
+    <value>في المناوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnShiftHelp" xml:space="preserve">
+    <value>في مناوبة تتداخل مع الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Open" xml:space="preserve">
+    <value>فتح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenClass" xml:space="preserve">
+    <value>فتح الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenReport" xml:space="preserve">
+    <value>فتح كتقرير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outside" xml:space="preserve">
+    <value>خارجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutsideInstructor" xml:space="preserve">
+    <value>مدرّب خارجي (أدخل الاسم)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutsideName" xml:space="preserve">
+    <value>اسم المدرّب الخارجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingHeader" xml:space="preserve">
+    <value>طلبات بانتظار الموافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>سجّلوا الحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Publish" xml:space="preserve">
+    <value>نشر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>تم النشر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrAlt" xml:space="preserve">
+    <value>رمز QR لتسجيل الحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrRotated" xml:space="preserve">
+    <value>تم إصدار رمز QR جديد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrRotates" xml:space="preserve">
+    <value>يتغيّر الرمز كل 30 ثانية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>الأخيرة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Release" xml:space="preserve">
+    <value>تحرير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>إزالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>أُزيل من القائمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Repeat.Daily" xml:space="preserve">
+    <value>يوميًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Repeat.None" xml:space="preserve">
+    <value>مرة واحدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Repeat.Weekly" xml:space="preserve">
+    <value>أسبوعيًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestPlace" xml:space="preserve">
+    <value>طلب مقعد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Apparatus" xml:space="preserve">
+    <value>مركبة أو آلية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Equipment" xml:space="preserve">
+    <value>تجهيزات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Facility" xml:space="preserve">
+    <value>مرفق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Other" xml:space="preserve">
+    <value>أخرى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Resource.Prop" xml:space="preserve">
+    <value>معدات تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResourcesIntro" xml:space="preserve">
+    <value>ساحات التدريب والقاعات والوسائل التدريبية والمركبات والتجهيزات؛ لا يُحجز المورد مرتين في الوقت نفسه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResourcesTitle" xml:space="preserve">
+    <value>المرافق والمعدات التدريبية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetainUntil" xml:space="preserve">
+    <value>القائمة محفوظة حتى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetentionHelpFormat" xml:space="preserve">
+    <value>تُحفظ القائمة المعتمدة حتى {0}؛ حذف الدورة يخفيها ولا تُمحى إلا بعد ذلك التاريخ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Role.Assistant" xml:space="preserve">
+    <value>مدرّب مساعد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Role.Lead" xml:space="preserve">
+    <value>المدرّب الرئيسي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Role.Safety" xml:space="preserve">
+    <value>ضابط السلامة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterHeader" xml:space="preserve">
+    <value>قائمة الحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.Approval" xml:space="preserve">
+    <value>تتطلب موافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.Closed" xml:space="preserve">
+    <value>بواسطة مديري الدورات فقط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.CutoffFormat" xml:space="preserve">
+    <value>يُغلق قبل {0} أيام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.Open" xml:space="preserve">
+    <value>مفتوح للأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rule.Waitlist" xml:space="preserve">
+    <value>قائمة انتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Rules" xml:space="preserve">
+    <value>التسجيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Saved" xml:space="preserve">
+    <value>تم الحفظ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveDraft" xml:space="preserve">
+    <value>حفظ المسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatsFormat" xml:space="preserve">
+    <value>{0} من {1} مقعدًا محجوزًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.Details" xml:space="preserve">
+    <value>التفاصيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.Enrolment" xml:space="preserve">
+    <value>قواعد التسجيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.Records" xml:space="preserve">
+    <value>السجلات والتقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.SignIn" xml:space="preserve">
+    <value>تسجيل الحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.What" xml:space="preserve">
+    <value>ما يُدرَّس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.When" xml:space="preserve">
+    <value>متى وأين</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Section.You" xml:space="preserve">
+    <value>أنت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendBack" xml:space="preserve">
+    <value>إعادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeriesFormat" xml:space="preserve">
+    <value>الجلسة {0} من {1} ضمن سلسلة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeriesIntro" xml:space="preserve">
+    <value>حضور كل عضو عبر جلسات هذه الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeriesReport" xml:space="preserve">
+    <value>حضور السلسلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeriesTitle" xml:space="preserve">
+    <value>حضور السلسلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShiftPanelHeader" xml:space="preserve">
+    <value>التدريب على تقويم المناوبات (14 يومًا القادمة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowQr" xml:space="preserve">
+    <value>عرض رمز QR للحضور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedInAt" xml:space="preserve">
+    <value>سجّل الحضور في</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedInMessage" xml:space="preserve">
+    <value>تم تسجيل حضورك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedOffFormat" xml:space="preserve">
+    <value>تم الاعتماد: حضر {0}، غاب {1}؛ كُتب {2} سجلًا، واستُبدل {3}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedOffOn" xml:space="preserve">
+    <value>تاريخ الاعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedOutMessage" xml:space="preserve">
+    <value>تم تسجيل خروجك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignInButton" xml:space="preserve">
+    <value>سجّل حضوري</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignInClosed" xml:space="preserve">
+    <value>تسجيل الحضور غير متاح لهذه الدورة الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignInConfirm" xml:space="preserve">
+    <value>هل تسجّل حضورك في هذه الدورة الآن؟</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignInTitle" xml:space="preserve">
+    <value>تسجيل الحضور في الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignOff" xml:space="preserve">
+    <value>اعتماد القائمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignOffAgain" xml:space="preserve">
+    <value>اعتماد مجددًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignOffHelp" xml:space="preserve">
+    <value>يكتب الاعتماد سجل تدريب لكل حاضر (لا شيء للغائبين) ويحفظ القائمة طوال مدة الاحتفاظ. الأعضاء غير المسجّلين يُعدّون غائبين ما لم يسجّلوا حضورهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignOut" xml:space="preserve">
+    <value>تسجيل الخروج من الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evoc" xml:space="preserve">
+    <value>قيادة مركبات الطوارئ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evoc.Help" xml:space="preserve">
+    <value>فحص ما قبل الرحلة، الرجوع للخلف مع موجّه، تمارين المسار؛ ساعات القيادة والمسافة المقطوعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.hose-evolutions" xml:space="preserve">
+    <value>تمارين الخراطيم السنوية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.hose-evolutions.Help" xml:space="preserve">
+    <value>الخطوط الموصولة مسبقًا، التقدم عبر السلالم وأنابيب المياه الرأسية، تحميل الخراطيم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.ladder-evolutions" xml:space="preserve">
+    <value>تمارين السلالم السنوية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.ladder-evolutions.Help" xml:space="preserve">
+    <value>الحمل، الرفع، التموضع للإنقاذ والتهوية، التسلق والتثبيت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.live-fire" xml:space="preserve">
+    <value>تمرين الحريق الحي (خطة الحرق)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.live-fire.Help" xml:space="preserve">
+    <value>فحوص ما قبل الحرق والأدوار والنسب وخطة السلامة التي يسجّلها القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.physical-ability" xml:space="preserve">
+    <value>اختبار القدرة البدنية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.physical-ability.Help" xml:space="preserve">
+    <value>محطات موقّتة بأزمنة النجاح الخاصة بالقسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.pump-evolutions" xml:space="preserve">
+    <value>تمارين المضخات السنوية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.pump-evolutions.Help" xml:space="preserve">
+    <value>التزويد من الحنفية، السحب من مصدر ثابت، الضغوط للخطوط المستخدمة، الضخ المتتابع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scba" xml:space="preserve">
+    <value>إتقان جهاز التنفس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scba.Help" xml:space="preserve">
+    <value>الفحص، الارتداء الموقّت، فحص الإحكام، إدارة الهواء وإجراءات الطوارئ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartersHeader" xml:space="preserve">
+    <value>خطط Resgrid الأولية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartersIntro" xml:space="preserve">
+    <value>بنية وقوائم تحقق كتبتها Resgrid بلغة بسيطة (دون نص أي معيار). تصبح النسخة مسودة لقسمك لتعديلها واعتمادها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Pending" xml:space="preserve">
+    <value>بانتظار الموافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Seats" xml:space="preserve">
+    <value>المقاعد المحجوزة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Upcoming" xml:space="preserve">
+    <value>مجدولة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stat.Waitlisted" xml:space="preserve">
+    <value>على قوائم الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Cancelled" xml:space="preserve">
+    <value>ملغاة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.Scheduled" xml:space="preserve">
+    <value>مجدولة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Status.SignedOff" xml:space="preserve">
+    <value>معتمدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StripLabel" xml:space="preserve">
+    <value>الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitForApproval" xml:space="preserve">
+    <value>إرسال للموافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>أُرسلت للموافقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.Classes" xml:space="preserve">
+    <value>الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.Costs" xml:space="preserve">
+    <value>تكاليف الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.LessonPlans" xml:space="preserve">
+    <value>خطط الدروس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.My" xml:space="preserve">
+    <value>دوراتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Tab.Resources" xml:space="preserve">
+    <value>المرافق والمعدات التدريبية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TagFilter" xml:space="preserve">
+    <value>الوسم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TaughtHeader" xml:space="preserve">
+    <value>الدورات التي درّستها</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimecardOff" xml:space="preserve">
+    <value>لا توجد بعد بطاقة دوام تستقبل وقت التدريب في هذا القسم (Workforce Pro).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimecardOn" xml:space="preserve">
+    <value>تُعرض ساعات الحاضرين على بطاقات دوامهم عند الاعتماد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>الإجمالي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Uncategorized" xml:space="preserve">
+    <value>بلا فئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpcomingHeader" xml:space="preserve">
+    <value>القادمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UseMyLocation" xml:space="preserve">
+    <value>استخدام موقعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UseStarter" xml:space="preserve">
+    <value>نسخ كمسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>الإصدار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>الإصدارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>معتمدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>مسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>قيد المراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>قديمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>منشورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>متقاعدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>مستبدلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Virtual" xml:space="preserve">
+    <value>افتراضية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WaitlistHeader" xml:space="preserve">
+    <value>قائمة الانتظار (بالترتيب)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WaitlistPositionFormat" xml:space="preserve">
+    <value>الترتيب {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WalkIn" xml:space="preserve">
+    <value>دون تسجيل مسبق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WalkInMessage" xml:space="preserve">
+    <value>سُجّل الحضور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Withdraw" xml:space="preserve">
+    <value>انسحاب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>انسحبت من الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YouTeach" xml:space="preserve">
+    <value>أنت تدرّس هذه الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.CurrencyHelp" xml:space="preserve">
+    <value>اتركه فارغًا لاستخدام عملة التدريب الخاصة بالإدارة ({0}). استخدم رمز ISO مثل CAD أو EUR أو GBP أو USD.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingCurrencyHelp" xml:space="preserve">
+    <value>عملة التدريب الخاصة بالإدارة، برمز ISO مثل CAD أو EUR أو GBP أو USD. تُدخل بها تكاليف طلبات التدريب، وتستخدمها الدروس الجديدة وتكاليفها ورسوم الدروس العامة ما لم يحدّد الدرس عملة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill" xml:space="preserve">
+    <value>تمرين الإخلاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.evacuation-drill.Help" xml:space="preserve">
+    <value>مسؤولو الإخلاء وعمليات المسح والعدّ عند نقطة التجمع، لأي مكان عمل أو مبنى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill" xml:space="preserve">
+    <value>تمرين الإنقاذ في الأماكن المحصورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.confined-space-rescue-drill.Help" xml:space="preserve">
+    <value>نظام الإنقاذ ومراقبة الهواء وإخراج المصاب، مع ضابط سلامة وإشارة توقف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise" xml:space="preserve">
+    <value>تمرين ميداني للبحث والإنقاذ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.sar-field-exercise.Help" xml:space="preserve">
+    <value>بحث من البلاغ الأول حتى العثور، مع التكليف والأدلة وأوقات تسجيل الحضور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation" xml:space="preserve">
+    <value>التدريب على سيناريوهات خفض التصعيد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Starter.scenario-de-escalation.Help" xml:space="preserve">
+    <value>تدريب قائم على السيناريوهات مع مؤدي أدوار وكلمة توقف ومعدات خاملة فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_class_no_seat" xml:space="preserve">
+    <value>تحتاج إلى مقعد LMS لتسجيل نفسك أو تسجيل حضورك بنفسك. اطلب من المسؤول تفعيل وصولك إلى نظام إدارة التعلم، أو اطلب من المدرّب إضافتك.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

@@ -1,0 +1,75 @@
+@using Resgrid.Model
+@using Resgrid.Model.Approvals
+@model Resgrid.Web.Areas.User.Models.Approvals.ApprovalChainsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    Approval chains (department admins): one active chain per kind, its ordered and parallel steps with thresholds and escalation. A
+    kind whose module or add-on is not active is shown as unavailable.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + approvalText["ChainsTab"];
+    ViewData["Title"] = approvalText["ChainsTab"].Value;
+    ViewData["Subtitle"] = approvalText["ChainsIntro"].Value;
+    ViewData["Section"] = "Chains";
+    ViewData["Message"] = Model.Message;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Approvals/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-card-grid">
+        @foreach (var kind in Model.Kinds)
+        {
+            var chain = Model.Chains.FirstOrDefault(c => c.Chain.SubjectKind == (int)kind);
+            var available = Model.Available.TryGetValue(kind, out var a) && a;
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@approvalText["Kind" + kind]</h5></div>
+                <div class="ibox-content">
+                    @if (!available)
+                    {
+                        <p class="text-muted">@approvalText["RefusalModuleUnavailable"]</p>
+                    }
+                    @if (chain == null)
+                    {
+                        <p class="text-muted">@approvalText["NoChainDefined"]</p>
+                    }
+                    else
+                    {
+                        <p><strong>@chain.Chain.Name</strong></p>
+                        <ol class="m-b-sm">
+                            @foreach (var step in chain.Steps.OrderBy(s => s.StepOrder))
+                            {
+                                <li value="@step.StepOrder">@(string.IsNullOrWhiteSpace(step.Label) ? approvalText["Approver" + (ApprovalApproverKinds)step.ApproverKind].Value : step.Label)
+                                    @if (step.MinimumAmount.HasValue)
+                                    {
+                                        <span class="text-muted">@string.Format(approvalText["AboveAmountNote"].Value, step.MinimumAmount.Value.ToString("N2"))</span>
+                                    }
+                                    @if (step.EscalateAfterHours > 0)
+                                    {
+                                        <span class="text-muted">@string.Format(approvalText["EscalatesAfterNote"].Value, step.EscalateAfterHours)</span>
+                                    }
+                                </li>
+                            }
+                        </ol>
+                    }
+                    <div class="rgw-row-actions">
+                        <a class="btn btn-primary btn-xs" asp-area="User" asp-controller="Approvals" asp-action="EditChain" asp-route-kind="@((int)kind)"><i class="fa fa-pencil" aria-hidden="true"></i> @(chain == null ? approvalText["DefineChainButton"] : approvalText["EditChainButton"])</a>
+                        @if (chain != null)
+                        {
+                            <form asp-area="User" asp-controller="Approvals" asp-action="DeactivateChain" asp-route-id="@chain.Chain.ApprovalChainId" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-default btn-xs"><i class="fa fa-power-off" aria-hidden="true"></i> @approvalText["DeactivateChainButton"]</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <p class="text-muted small"><i class="fa fa-info-circle" aria-hidden="true"></i> @approvalText["PayrollRunsNote"]</p>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

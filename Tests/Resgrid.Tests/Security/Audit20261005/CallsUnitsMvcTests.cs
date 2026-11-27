@@ -888,9 +888,10 @@ namespace Resgrid.Tests.Security.Audit20261005
 			listed[0].IsActive.Should().BeTrue();
 			listed[0].Lines.Should().Equal("PoiImportPending", "PoiImportRetrying");
 			listed[1].TypeName.Should().Be("Stores");
+			// One unlocated row and one failed lookup take the keys' singular ("One") wording; two geocoded stay plural.
 			listed[1].Lines.Should().Equal("PoiImportSummary", "PoiImportGeocoded",
-				"PoiImportUnlocated Gretna", "PoiImportUnlocatedHint",
-				"PoiImportLookupFailed Cherokee", "PoiImportLookupFailedHint");
+				"PoiImportUnlocatedOne Gretna", "PoiImportUnlocatedHint",
+				"PoiImportLookupFailedOne Cherokee", "PoiImportLookupFailedHint");
 		}
 
 		private static IFormFile PoiUpload(string fileName)

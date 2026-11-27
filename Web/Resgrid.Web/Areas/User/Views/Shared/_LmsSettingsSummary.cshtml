@@ -1,0 +1,44 @@
+@model Resgrid.Web.ViewComponents.LmsSeatPanelView
+@using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@*
+    The LMS section of the training records settings page (LmsSettingsSummaryViewComponent; §17.4 implementation notes): seats, packs
+    and next month's price, with a scheduled decrease when there is one. Changes are made on the LMS billing page and the personnel page.
+*@
+@{
+    var summary = Model.Summary;
+}
+<div class="ibox float-e-margins" id="lms-settings">
+    <div class="ibox-title"><h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @addonLocalizer["LmsSettingsHeading"]</h5></div>
+    <div class="ibox-content">
+        @if (summary.State == LmsSubscriptionStates.DunningGrace && summary.GraceEndsUtc.HasValue)
+        {
+            <div class="alert alert-warning" role="status">@string.Format(addonLocalizer["LmsSettingsGrace"].Value, summary.GraceEndsUtc.Value.ToString("D"))</div>
+        }
+        else if (summary.State == LmsSubscriptionStates.Lapsed)
+        {
+            <div class="alert alert-info" role="status">@addonLocalizer["LmsSettingsLapsed"]</div>
+        }
+        else if (!Model.Entitled)
+        {
+            <p class="text-muted">@addonLocalizer["LmsSettingsNotPurchased"]</p>
+        }
+
+        @if (Model.Entitled)
+        {
+            <div class="rgw-stat-tiles">
+                <div class="rgw-stat-tile"><div class="rgw-stat-label">@addonLocalizer["PacksLabel"]</div><div class="rgw-stat-value">@summary.PurchasedPacks</div></div>
+                <div class="rgw-stat-tile"><div class="rgw-stat-label">@addonLocalizer["LmsSeatHeading"]</div><div class="rgw-stat-value">@string.Format(addonLocalizer["LmsSeatCounter"].Value, summary.EnabledSeats, summary.PurchasedSeats)</div></div>
+                <div class="rgw-stat-tile"><div class="rgw-stat-label">@addonLocalizer["PacksNextMonthLabel"]</div><div class="rgw-stat-value">@Model.CurrencySymbol@Model.NextMonthly.ToString("N0")</div></div>
+            </div>
+            @if (Model.ScheduledPacks.HasValue && Model.ScheduledPacks.Value != summary.PurchasedPacks && summary.PaidThroughUtc.HasValue)
+            {
+                <p class="text-muted">@string.Format(addonLocalizer["PacksScheduledNote"].Value, summary.PaidThroughUtc.Value.ToString("D"), Model.ScheduledPacks.Value)</p>
+            }
+        }
+        <p class="m-b-none">
+            <a class="btn btn-default btn-sm" asp-controller="LmsBilling" asp-action="Index" asp-route-area="User"><i class="fa fa-credit-card" aria-hidden="true"></i> @addonLocalizer["LmsManagePacks"]</a>
+            <a class="btn btn-default btn-sm" asp-controller="Personnel" asp-action="Index" asp-route-area="User"><i class="fa fa-users" aria-hidden="true"></i> @addonLocalizer["LmsManageSeats"]</a>
+        </p>
+    </div>
+</div>

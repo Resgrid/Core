@@ -1,0 +1,102 @@
+@using Resgrid.Model.Approvals
+@model Resgrid.Web.Areas.User.Models.Approvals.ApprovalDelegatesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    Approval delegates (e-Signature S4): while a member is on leave (their leave periods), their named approval steps also go to their
+    delegate; an optional window delegates outside leave too. Members name their own; department admins anyone's.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + approvalText["DelegatesTab"];
+    ViewData["Title"] = approvalText["DelegatesTab"].Value;
+    ViewData["Subtitle"] = approvalText["DelegatesIntro"].Value;
+    ViewData["Section"] = "Delegates";
+    ViewData["Message"] = Model.Message;
+    string Name(string id) => id != null && Model.Names.TryGetValue(id, out var n) ? n : "—";
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Approvals/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-user-plus" aria-hidden="true"></i> @approvalText["AddDelegateHeading"]</h5></div>
+        <div class="ibox-content">
+            <form asp-area="User" asp-controller="Approvals" asp-action="SaveDelegate" method="post" class="row">
+                @Html.AntiForgeryToken()
+                @if (Model.IsAdmin)
+                {
+                    <div class="col-sm-3 form-group">
+                        <label for="delegate-for">@approvalText["DelegateForLabel"]</label>
+                        <select id="delegate-for" name="userId" class="form-control">
+                            @foreach (var o in Model.Members) { <option value="@o.Value" selected="@(string.Equals(o.Value, Model.CurrentUserId, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@o.Text</option> }
+                        </select>
+                    </div>
+                }
+                <div class="col-sm-3 form-group">
+                    <label for="delegate-to">@approvalText["DelegateLabel"]</label>
+                    <select id="delegate-to" name="delegateUserId" class="form-control" required>
+                        <option value="">—</option>
+                        @foreach (var o in Model.Members) { <option value="@o.Value">@o.Text</option> }
+                    </select>
+                </div>
+                <div class="col-sm-2 form-group">
+                    <label for="delegate-start">@approvalText["StartsLabel"]</label>
+                    <input id="delegate-start" type="date" name="startsOn" class="form-control" />
+                </div>
+                <div class="col-sm-2 form-group">
+                    <label for="delegate-end">@approvalText["EndsLabel"]</label>
+                    <input id="delegate-end" type="date" name="endsOn" class="form-control" />
+                </div>
+                <div class="col-sm-2 form-group">
+                    <label class="sr-only" for="delegate-save">@approvalText["SaveDelegateButton"]</label>
+                    <button id="delegate-save" type="submit" class="btn btn-primary m-t-md"><i class="fa fa-save" aria-hidden="true"></i> @approvalText["SaveDelegateButton"]</button>
+                </div>
+            </form>
+            <p class="text-muted small">@approvalText["DelegateHelp"]</p>
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            @if (Model.Delegates.Count == 0)
+            {
+                <p class="text-muted">@approvalText["NoDelegates"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@approvalText["DelegateForLabel"]</th>
+                                <th scope="col">@approvalText["DelegateLabel"]</th>
+                                <th scope="col">@approvalText["WindowColumn"]</th>
+                                <th scope="col"><span class="sr-only">@approvalText["ActionsColumn"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var d in Model.Delegates)
+                            {
+                                <tr>
+                                    <td>@Name(d.UserId)</td>
+                                    <td>@Name(d.DelegateUserId)</td>
+                                    <td>@(d.StartsOn.HasValue || d.EndsOn.HasValue ? (d.StartsOn?.ToString("yyyy-MM-dd") ?? "…") + " – " + (d.EndsOn?.ToString("yyyy-MM-dd") ?? "…") : approvalText["OnLeaveOnly"].Value)</td>
+                                    <td class="rgw-row-actions">
+                                        <form asp-area="User" asp-controller="Approvals" asp-action="RemoveDelegate" asp-route-id="@d.ApprovalDelegateId" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-default btn-xs"><i class="fa fa-trash" aria-hidden="true"></i> @approvalText["RemoveButton"]</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -1,0 +1,31 @@
+@using Resgrid.Model.Approvals
+@model List<Resgrid.Model.Approvals.ApprovalInboxItem>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    The approvals waiting for the member (e-Signature S4): on home as an rgw-next-action item. Each opens the request's page; the list
+    is "My approvals".
+*@
+<div class="rgw-next-action rg-pending-approvals" role="region" aria-label="@approvalText["PendingApprovalsHeader"]">
+    <strong><i class="fa fa-check-square-o" aria-hidden="true"></i> @approvalText["PendingApprovalsHeader"] (@Model.Count)</strong>
+    <ul class="list-unstyled m-b-none m-t-xs">
+        @foreach (var item in Model.Take(3))
+        {
+            <li class="m-b-xs">
+                <a asp-area="User" asp-controller="Approvals" asp-action="Detail" asp-route-id="@item.ApprovalRequestId">@item.Title</a>
+                @if (item.Amount.HasValue)
+                {
+                    <span class="text-muted">@ApprovalRouting.AmountText(item.Amount, item.Currency)</span>
+                }
+                @if (item.Escalated)
+                {
+                    <span class="label label-warning">@approvalText["EscalatedLabel"]</span>
+                }
+                <span class="rgw-progress-honest">@string.Format(approvalText["DueByLabel"].Value, item.ExpiresOn.ToString("yyyy-MM-dd"))</span>
+            </li>
+        }
+    </ul>
+    @if (Model.Count > 3)
+    {
+        <a asp-area="User" asp-controller="Approvals" asp-action="Index">@approvalText["AllMyApprovalsLink"]</a>
+    }
+</div>

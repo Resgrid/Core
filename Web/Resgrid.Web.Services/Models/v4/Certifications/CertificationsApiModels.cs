@@ -32,6 +32,13 @@ namespace Resgrid.Web.Services.Models.v4.Certifications
 		public bool RequiresVerification { get; set; }
 		public bool IsActive { get; set; }
 		public DateTime? UpdatedOn { get; set; }
+		/// <summary>Round 9A (additive): CertificationValidityRules value: 0 rolling months, 1 calendar year end, 2 fiscal year end, 3 fixed date.</summary>
+		public int ValidityRule { get; set; }
+		public int? ValidityYearEndMonth { get; set; }
+		public int? ValidityYearEndDay { get; set; }
+		public DateTime? ValidityFixedDate { get; set; }
+		public int? RenewalGraceDays { get; set; }
+		public int? RenewalWindowMonths { get; set; }
 	}
 
 	public class SaveCertificationTypeInput
@@ -48,6 +55,16 @@ namespace Resgrid.Web.Services.Models.v4.Certifications
 		public decimal? RenewalCreditHoursRequired { get; set; }
 		public bool RequiresVerification { get; set; }
 		public bool IsActive { get; set; } = true;
+		/// <summary>
+		/// Round 9A (optional, additive): the validity rule and its fields. Left out (null) by older clients: the stored rule is kept. When
+		/// given, the year end, fixed date, grace and window given with it replace the stored ones.
+		/// </summary>
+		public int? ValidityRule { get; set; }
+		public int? ValidityYearEndMonth { get; set; }
+		public int? ValidityYearEndDay { get; set; }
+		public DateTime? ValidityFixedDate { get; set; }
+		public int? RenewalGraceDays { get; set; }
+		public int? RenewalWindowMonths { get; set; }
 	}
 
 	public class CertificationTemplatesResult : StandardApiResponseV4Base

@@ -564,4 +564,5 @@
   <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>ملف المعدلات لم يعد قابلًا للتعديل.</value></data>
   <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>بيانات الأجور غير متاحة لهذا القسم.</value></data>
   <data name="workforce_disabled" xml:space="preserve"><value>بيانات الأجور غير مفعّلة لهذا القسم.</value></data>
+  <data name="calmars_approval_required" xml:space="preserve"><value>تحتاج هذه الحزمة إلى اعتمادها قبل التسليم إلى البوابة. قدّمها للاعتماد أولًا.</value><comment>machine-translated</comment></data>
 </root>

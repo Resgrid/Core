@@ -535,12 +535,35 @@ namespace Resgrid.Services
 			return string.IsNullOrWhiteSpace(title) ? prefix : prefix + " " + title;
 		}
 
+		/// <summary>
+		/// Protocols P4: the title with the lead protocol's determinant and name ("Call 1234 · 10-D-1 Chest pain") when setting 134's
+		/// ShowDeterminantInDispatch is on and the call carries a determinant; the title unchanged otherwise (or when the setting cannot be read).
+		/// </summary>
+		private async Task<string> WithDeterminantAsync(string title, Call call, int departmentId)
+		{
+			if (call?.Protocols == null || !call.Protocols.Any(p => p != null && !p.IsRemoved && !string.IsNullOrWhiteSpace(p.Determinant)))
+				return title;
+
+			try
+			{
+				var settings = await _departmentSettingsService.GetProtocolLibrarySettingsAsync(departmentId);
+				return ProtocolDispatchText.PushTitle(title, call.Protocols, settings?.ShowDeterminantInDispatch == true);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return title;
+			}
+		}
+
 		/// <summary>The push a member gets for a dispatch: title, priority colour, and the address (or nature) as the subtitle, scrubbed of markup and links.</summary>
 		private async Task<StandardPushCall> BuildUserPushCallAsync(Call pushCall, string pushAddress, int departmentId)
 		{
 			var spc = new StandardPushCall();
 			spc.CallId = pushCall.CallId;
 			spc.Title = string.Format("Call {0}", pushCall.Name);
+			// Protocols P4: the case's determinant and protocol name after the title, when the department turned it on (off by default).
+			spc.Title = await WithDeterminantAsync(spc.Title, pushCall, departmentId);
 			spc.Priority = pushCall.Priority;
 			spc.ActiveCallCount = 1;
 			spc.DepartmentId = departmentId;
@@ -634,6 +657,9 @@ namespace Resgrid.Services
 				spc.ResponseCode = dispatch.ResponseCode;
 				spc.Title = string.Format("{0} Call {1}", dispatch.ResponseCode, call.Name);
 			}
+
+			// Protocols P4: the case's determinant and protocol name after the title, when the department turned it on (off by default).
+			spc.Title = await WithDeterminantAsync(spc.Title, call, call.DepartmentId);
 
 			if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
 			{

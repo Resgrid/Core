@@ -1061,4 +1061,684 @@
   <data name="CredentialDeliversRecordsExport" xml:space="preserve">
     <value>ترسل إحدى خطوات سير العمل تصدير تقرير السجلات عبر بيانات الاعتماد هذه، لذا يتطلب تغييرها صلاحيتي "طباعة السجلات وتصديرها" و"إدارة تقارير السجلات" (وصلاحية "عرض الأقسام المقيّدة" عندما يتضمن التصدير أقسامًا مقيّدة).</value>
   </data>
+  <data name="Trigger.DocumentSealed" xml:space="preserve">
+    <value>تم ختم المستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DocumentSealingFailed" xml:space="preserve">
+    <value>فشل ختم المستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolVersionPublished" xml:space="preserve">
+    <value>تم نشر إصدار البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolRetired" xml:space="preserve">
+    <value>تم سحب البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolVersionExpired" xml:space="preserve">
+    <value>انتهت صلاحية إصدار البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolReviewDue" xml:space="preserve">
+    <value>حان موعد مراجعة البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolReviewOverdue" xml:space="preserve">
+    <value>تأخرت مراجعة البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolBulletinIssued" xml:space="preserve">
+    <value>تم إصدار نشرة أولوية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolBulletinWithdrawn" xml:space="preserve">
+    <value>تم سحب نشرة أولوية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolTranslationApproved" xml:space="preserve">
+    <value>تمت الموافقة على ترجمة البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolPublicLinkChanged" xml:space="preserve">
+    <value>تم إنشاء رابط عام للبروتوكول أو إلغاؤه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentAssigned" xml:space="preserve">
+    <value>تم تعيين الإقرار بالبروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentCompleted" xml:space="preserve">
+    <value>اكتمل الإقرار بالبروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentOverdue" xml:space="preserve">
+    <value>تأخر الإقرار بالبروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallDeterminantChanged" xml:space="preserve">
+    <value>تم تغيير الرمز المحدِّد للبلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DispatchCaseReviewSent" xml:space="preserve">
+    <value>تم إرسال مراجعة حالة الإرسال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DispatchCaseReviewAcknowledged" xml:space="preserve">
+    <value>تم الإقرار بمراجعة حالة الإرسال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExchangeListingReviewed" xml:space="preserve">
+    <value>تمت مراجعة المشاركة في التبادل المجتمعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.KnowledgeGapRecorded" xml:space="preserve">
+    <value>تم تسجيل فجوة معرفية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseVersionPublished" xml:space="preserve">
+    <value>تم نشر إصدار الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseCompleted" xml:space="preserve">
+    <value>اكتملت الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AssessmentGraded" xml:space="preserve">
+    <value>تم تصحيح التقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SkillEvaluationCompleted" xml:space="preserve">
+    <value>اكتمل تقييم المهارة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TaskBookClosed" xml:space="preserve">
+    <value>تم إغلاق دفتر المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RequirementEnforcementUndone" xml:space="preserve">
+    <value>تم التراجع عن فرض المتطلب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingRequestSubmitted" xml:space="preserve">
+    <value>تم تقديم طلب تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingRequestDecided" xml:space="preserve">
+    <value>تم البت في طلب التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsAddonLapsed" xml:space="preserve">
+    <value>انتهت صلاحية إضافة نظام إدارة التعلم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsAddonReactivated" xml:space="preserve">
+    <value>أعيد تفعيل إضافة نظام إدارة التعلم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsDataExportReady" xml:space="preserve">
+    <value>تصدير بيانات التدريب جاهز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureStepAssigned" xml:space="preserve">
+    <value>حان دورك للتوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseAssigned" xml:space="preserve">
+    <value>تم إسناد دورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AssessmentAwaitingGrading" xml:space="preserve">
+    <value>تقييم بانتظار التصحيح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseRetired" xml:space="preserve">
+    <value>تم سحب الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsSeatsChanged" xml:space="preserve">
+    <value>تم تغيير مقاعد أو حزم نظام إدارة التعلم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationIssuedByTraining" xml:space="preserve">
+    <value>منح شهادة عبر التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationRenewedByTraining" xml:space="preserve">
+    <value>تجديد شهادة عبر التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationRevokedByVoid" xml:space="preserve">
+    <value>التراجع عن شهادة بسبب إلغاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationRequirementsDue" xml:space="preserve">
+    <value>متطلبات الشهادة مستحقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionReceived" xml:space="preserve">
+    <value>تم استلام طلب ساعات تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionApproved" xml:space="preserve">
+    <value>تم اعتماد طلب ساعات تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionDenied" xml:space="preserve">
+    <value>لم يُقبل طلب ساعات تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionInfoRequested" xml:space="preserve">
+    <value>طُلب مزيد من المعلومات عن طلب تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionResubmitted" xml:space="preserve">
+    <value>أُعيد تقديم طلب ساعات تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingCompletionRecordingVoided" xml:space="preserve">
+    <value>أُلغي إكمال تدريب مسجّل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureRequested" xml:space="preserve">
+    <value>طُلب توقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureCompleted" xml:space="preserve">
+    <value>اكتمل طلب التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureDeclined" xml:space="preserve">
+    <value>رُفض طلب التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureExpired" xml:space="preserve">
+    <value>انتهت صلاحية طلب التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingAssigned" xml:space="preserve">
+    <value>تم إسناد تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingCompleted" xml:space="preserve">
+    <value>اكتمل التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingFailed" xml:space="preserve">
+    <value>لم يتم اجتياز التقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingOverdue" xml:space="preserve">
+    <value>التدريب متأخر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RequirementAtRisk" xml:space="preserve">
+    <value>متطلب معرض للخطر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RequirementEnforced" xml:space="preserve">
+    <value>تم تطبيق متطلب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalRequested" xml:space="preserve">
+    <value>طُلبت موافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalGranted" xml:space="preserve">
+    <value>مُنحت الموافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalRejected" xml:space="preserve">
+    <value>رُفضت الموافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalEscalated" xml:space="preserve">
+    <value>تم تصعيد الموافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassSessionScheduled" xml:space="preserve">
+    <value>تمت جدولة جلسة صف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassSessionCancelled" xml:space="preserve">
+    <value>أُلغيت جلسة صف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassSessionSignedOff" xml:space="preserve">
+    <value>تم اعتماد جلسة صف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassWaitlistPromoted" xml:space="preserve">
+    <value>نُقل من قائمة انتظار صف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingCompletionRecorded" xml:space="preserve">
+    <value>تم تسجيل إتمام تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExternalLearnerRegistered" xml:space="preserve">
+    <value>سُجّل متعلم خارجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExternalLearnerEnrolled" xml:space="preserve">
+    <value>التحق متعلم خارجي بدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExternalLearnerCompletedCourse" xml:space="preserve">
+    <value>أكمل متعلم خارجي دورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallAdded" xml:space="preserve">
+    <value>تمت إضافة بلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallUpdated" xml:space="preserve">
+    <value>تم تحديث بلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallClosed" xml:space="preserve">
+    <value>تم إغلاق بلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UnitStatusChanged" xml:space="preserve">
+    <value>تغيّرت حالة الوحدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PersonnelStaffingChanged" xml:space="preserve">
+    <value>تغيّر توفر الأفراد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PersonnelStatusChanged" xml:space="preserve">
+    <value>تغيّرت حالة الأفراد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UserCreated" xml:space="preserve">
+    <value>تم إنشاء مستخدم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UserAssignedToGroup" xml:space="preserve">
+    <value>تم تعيين مستخدم إلى مجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DocumentAdded" xml:space="preserve">
+    <value>تمت إضافة مستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.NoteAdded" xml:space="preserve">
+    <value>تمت إضافة ملاحظة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UnitAdded" xml:space="preserve">
+    <value>تمت إضافة وحدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LogAdded" xml:space="preserve">
+    <value>تمت إضافة سجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CalendarEventAdded" xml:space="preserve">
+    <value>تمت إضافة حدث في التقويم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CalendarEventUpdated" xml:space="preserve">
+    <value>تم تحديث حدث في التقويم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftCreated" xml:space="preserve">
+    <value>تم إنشاء مناوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftUpdated" xml:space="preserve">
+    <value>تم تحديث مناوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ResourceOrderAdded" xml:space="preserve">
+    <value>تمت إضافة طلب موارد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftTradeRequested" xml:space="preserve">
+    <value>طُلب تبديل مناوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftTradeFilled" xml:space="preserve">
+    <value>تم تنفيذ تبديل المناوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MessageSent" xml:space="preserve">
+    <value>تم إرسال رسالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingAdded" xml:space="preserve">
+    <value>تمت إضافة تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingUpdated" xml:space="preserve">
+    <value>تم تحديث تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.FormSubmitted" xml:space="preserve">
+    <value>تم إرسال نموذج</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PersonnelRoleChanged" xml:space="preserve">
+    <value>تغيّر دور الأفراد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.GroupAdded" xml:space="preserve">
+    <value>تمت إضافة مجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.GroupUpdated" xml:space="preserve">
+    <value>تم تحديث مجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CommandEstablished" xml:space="preserve">
+    <value>تم إنشاء قيادة الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ResourceAssigned" xml:space="preserve">
+    <value>تم تعيين مورد للحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ResourceReleased" xml:space="preserve">
+    <value>تم تحرير مورد الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ObjectiveCompleted" xml:space="preserve">
+    <value>تم إنجاز هدف الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CriticalParDetected" xml:space="preserve">
+    <value>تم رصد PAR حرج</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CommandTransferred" xml:space="preserve">
+    <value>تم نقل قيادة الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentRoleAssigned" xml:space="preserve">
+    <value>تم تعيين دور في الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdHocResourceCreated" xml:space="preserve">
+    <value>تم إنشاء مورد مؤقت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentChannelOpened" xml:space="preserve">
+    <value>تم فتح قناة الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentClosed" xml:space="preserve">
+    <value>تم إغلاق الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PublicIncidentNoteAdded" xml:space="preserve">
+    <value>تمت إضافة ملاحظة عامة للحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.InternalIncidentNoteAdded" xml:space="preserve">
+    <value>تمت إضافة ملاحظة داخلية للحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PublicIncidentDocumentAdded" xml:space="preserve">
+    <value>تمت إضافة مستند عام للحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.InternalIncidentDocumentAdded" xml:space="preserve">
+    <value>تمت إضافة مستند داخلي للحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentNoteRemoved" xml:space="preserve">
+    <value>تمت إزالة ملاحظة الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentDocumentRemoved" xml:space="preserve">
+    <value>تمت إزالة مستند الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentActionPlanUpdated" xml:space="preserve">
+    <value>تم تحديث خطة عمل الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentCommandPostUpdated" xml:space="preserve">
+    <value>تم تحديث مركز قيادة الحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentPublicSharingEnabled" xml:space="preserve">
+    <value>تم تشغيل المشاركة العامة للحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentPublicSharingDisabled" xml:space="preserve">
+    <value>تم إيقاف المشاركة العامة للحادث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RunCardActivated" xml:space="preserve">
+    <value>تم تفعيل بطاقة الاستجابة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallAlarmEscalated" xml:space="preserve">
+    <value>تم تصعيد إنذار البلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DispatchShortfallDetected" xml:space="preserve">
+    <value>تم رصد نقص في الإرسال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.StationCoverageGapDetected" xml:space="preserve">
+    <value>تم رصد فجوة في تغطية المحطة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordCreated" xml:space="preserve">
+    <value>تم إنشاء سجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmittedForReview" xml:space="preserve">
+    <value>تم إرسال سجل للمراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordReturnedForCorrection" xml:space="preserve">
+    <value>تمت إعادة سجل للتصحيح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordApproved" xml:space="preserve">
+    <value>تمت الموافقة على سجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordFinalized" xml:space="preserve">
+    <value>تم اعتماد سجل نهائيًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordAmended" xml:space="preserve">
+    <value>تم تعديل سجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordVoided" xml:space="preserve">
+    <value>تم إبطال سجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordCancelled" xml:space="preserve">
+    <value>تم إلغاء سجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionQueued" xml:space="preserve">
+    <value>تم وضع إرسال السجل في قائمة الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionAccepted" xml:space="preserve">
+    <value>تم قبول إرسال السجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionRejected" xml:space="preserve">
+    <value>تم رفض إرسال السجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionFailed" xml:space="preserve">
+    <value>فشل إرسال السجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordOverdue" xml:space="preserve">
+    <value>السجل متأخر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDefinitionPublished" xml:space="preserve">
+    <value>تم نشر تعريف السجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDefinitionRetired" xml:space="preserve">
+    <value>تم إيقاف تعريف السجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordAttachmentAdded" xml:space="preserve">
+    <value>تمت إضافة مرفق إلى السجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureRequested" xml:space="preserve">
+    <value>تم تسجيل طلب سجلات عامة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureProduced" xml:space="preserve">
+    <value>تم إعداد حزمة السجلات العامة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureReleased" xml:space="preserve">
+    <value>تم إصدار حزمة السجلات العامة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureClosed" xml:space="preserve">
+    <value>تم إغلاق طلب السجلات العامة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordLegalHoldPlaced" xml:space="preserve">
+    <value>تم فرض حجز قانوني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordLegalHoldReleased" xml:space="preserve">
+    <value>تم رفع الحجز القانوني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordEvidenceCaptured" xml:space="preserve">
+    <value>تم حفظ دليل للسجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordPurged" xml:space="preserve">
+    <value>تم حذف السجل نهائيًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordExportScheduled" xml:space="preserve">
+    <value>التصدير المجدول للسجلات جاهز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordInspectionCompleted" xml:space="preserve">
+    <value>اكتمل التفتيش</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordViolationOverdue" xml:space="preserve">
+    <value>مخالفة متأخرة التصحيح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordPermitExpiring" xml:space="preserve">
+    <value>التصريح على وشك الانتهاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdminAssistFindingOpened" xml:space="preserve">
+    <value>تم فتح ملاحظة Admin Assist</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdminAssistFindingResolved" xml:space="preserve">
+    <value>تم حل ملاحظة Admin Assist</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdminAssistFindingReopened" xml:space="preserve">
+    <value>تمت إعادة فتح ملاحظة Admin Assist</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleCreated" xml:space="preserve">
+    <value>تم إنشاء جدول بلاغ متكرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleUpdated" xml:space="preserve">
+    <value>تم تحديث جدول بلاغ متكرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallSchedulePaused" xml:space="preserve">
+    <value>تم إيقاف جدول بلاغ متكرر مؤقتًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleResumed" xml:space="preserve">
+    <value>تم استئناف جدول بلاغ متكرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleDeleted" xml:space="preserve">
+    <value>تم حذف جدول بلاغ متكرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceCreated" xml:space="preserve">
+    <value>تم إنشاء تكرار بلاغ متكرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceSkipped" xml:space="preserve">
+    <value>تم تخطي تكرار بلاغ متكرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceDispatched" xml:space="preserve">
+    <value>تم إرسال تكرار بلاغ متكرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallAlertRaised" xml:space="preserve">
+    <value>تم إطلاق تنبيه بلاغ متكرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallAlertResolved" xml:space="preserve">
+    <value>تم حل تنبيه بلاغ متكرر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetUpdateArrived" xml:space="preserve">
+    <value>وصل تحديث مجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetUpdateApplied" xml:space="preserve">
+    <value>تحديث مجموعة ساري المفعول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetSubscribed" xml:space="preserve">
+    <value>اشترك قسم في مجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetProposalReceived" xml:space="preserve">
+    <value>اقتُرح تغيير على مجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetProposalAnswered" xml:space="preserve">
+    <value>تم الرد على اقتراح مجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsSponsorshipStarted" xml:space="preserve">
+    <value>بدأت رعاية LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsSponsorshipEnded" xml:space="preserve">
+    <value>انتهت رعاية LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MutualAidCountersignRequested" xml:space="preserve">
+    <value>طُلب توقيع مقابل على اتفاقية مساعدة متبادلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MutualAidAgreementCountersigned" xml:space="preserve">
+    <value>وُقّعت اتفاقية مساعدة متبادلة توقيعًا مقابلًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MutualAidCountersignDeclined" xml:space="preserve">
+    <value>رُفض التوقيع المقابل على اتفاقية مساعدة متبادلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDeploymentPartnerSignRequested" xml:space="preserve">
+    <value>طُلب قبول شريك الانتشار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDeploymentPartnerSignDecided" xml:space="preserve">
+    <value>تم البت في قبول شريك الانتشار</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

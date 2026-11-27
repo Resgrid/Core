@@ -1,0 +1,107 @@
+@using Microsoft.AspNetCore.Html
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingNccpReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@*
+    LMS (dark, §24): NREMT NCCP progress, each member's national, local and individual hours in their current cycle against the
+    hours their certification level asks for.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Doc.NccpReport"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Doc.NccpReport"].Value;
+    ViewData["Subtitle"] = localizer["Rec.NccpReportIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var report = Model.Report;
+
+    Func<dynamic, IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="NccpReport" asp-route-area="User" asp-route-former="@(Model.Former ? "true" : null)" asp-route-format="pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Rec.ExportPdfButton"]</a>
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="NccpReport" asp-route-area="User" asp-route-former="@(Model.Former ? "true" : null)" asp-route-format="csv"><i class="fa fa-file-excel-o" aria-hidden="true"></i> @localizer["Rec.ExportCsvButton"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+
+    string Progress(decimal hours, decimal? target) =>
+        target.HasValue ? string.Format(localizer["Rec.ProgressValue"].Value, LearningRecordPresentation.Hours(hours), LearningRecordPresentation.Hours(target)) : LearningRecordPresentation.Hours(hours);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="get" asp-controller="TrainingRecords" asp-action="NccpReport" asp-route-area="User" class="rgw-toolbar m-b-sm" role="search">
+        <div class="checkbox m-t-none m-b-none">
+            <label><input type="checkbox" name="former" value="true" checked="@Model.Former" /> @localizer["Rec.IncludeFormerLabel"]</label>
+        </div>
+        <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["FilterButton"]</button>
+    </form>
+
+    @if (!report.CategoriesApplied)
+    {
+        <div class="rgw-next-action">
+            <p class="m-b-xs"><strong><i class="fa fa-tags" aria-hidden="true"></i> @localizer["Rec.NccpNoCategories"]</strong></p>
+            <a class="btn btn-primary btn-sm" asp-controller="TrainingRecords" asp-action="Categories" asp-route-area="User"><i class="fa fa-tags" aria-hidden="true"></i> @localizer["Rec.CategoriesTitle"]</a>
+        </div>
+    }
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-medkit" aria-hidden="true"></i> @localizer["Doc.NccpReport"]</h5></div>
+        <div class="ibox-content">
+            @if (report.Rows.Count == 0)
+            {
+                <p class="text-muted m-b-none">@localizer["Rec.NccpNoRows"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Doc.Member"]</th>
+                                <th>@localizer["Rec.CertificationTypeLabel"]</th>
+                                <th>@localizer["Doc.Cycle"]</th>
+                                <th>@localizer["Doc.Level"]</th>
+                                <th class="text-right">@localizer["Doc.National"]</th>
+                                <th class="text-right">@localizer["Doc.Local"]</th>
+                                <th class="text-right">@localizer["Doc.Individual"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in report.Rows)
+                            {
+                                <tr>
+                                    <td>
+                                        @(string.IsNullOrWhiteSpace(row.Name) ? Model.NameOf(row.UserId) : row.Name)
+                                        @if (Model.IsFormer(row.UserId))
+                                        {
+                                            <small class="rgw-sub text-muted"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["FormerMemberLabel"]</small>
+                                        }
+                                        @if (row.NotLicensed)
+                                        {
+                                            @* §17.4 seat rules: a member without an LMS seat shows as not licensed, never as compliant or behind. *@
+                                            <small class="rgw-sub text-muted"><i class="fa fa-id-card-o" aria-hidden="true"></i> @addonLocalizer["LmsSeatNotLicensed"]</small>
+                                        }
+                                    </td>
+                                    <td>@row.CertificationName</td>
+                                    <td class="text-nowrap">@(row.CycleStart?.ToString("d", System.Globalization.CultureInfo.CurrentCulture) ?? "—") – @(row.CycleEnd?.ToString("d", System.Globalization.CultureInfo.CurrentCulture) ?? "—")</td>
+                                    <td>@(row.Target?.Level ?? "—")</td>
+                                    <td class="text-right">@Progress(row.National, row.NotLicensed ? null : row.Target?.National)</td>
+                                    <td class="text-right">@Progress(row.Local, row.NotLicensed ? null : row.Target?.Local)</td>
+                                    <td class="text-right">@Progress(row.Individual, row.NotLicensed ? null : row.Target?.Individual)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted small m-b-none">@localizer["Doc.NotAccreditor"]</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

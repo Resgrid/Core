@@ -172,33 +172,29 @@ namespace Resgrid.Tests.Security.Audit20261005
 		[Test]
 		public async Task A_training_is_never_assigned_to_users_groups_or_roles_of_another_department()
 		{
-			DepartmentUsers("member-1", "member-2");
-			M<IDepartmentGroupsService>().Setup(x => x.GetGroupByIdAsync(30, It.IsAny<bool>())).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 30, DepartmentId = 99 });
-			M<IDepartmentGroupsService>().Setup(x => x.GetAllMembersForGroupAsync(30)).ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "outsider-group" } });
-			M<IPersonnelRolesService>().Setup(x => x.GetRoleByIdAsync(40)).ReturnsAsync(new PersonnelRole { PersonnelRoleId = 40, DepartmentId = 99 });
-			M<IPersonnelRolesService>().Setup(x => x.GetAllMembersOfRoleAsync(40)).ReturnsAsync(new List<PersonnelRoleUser> { new PersonnelRoleUser { UserId = "outsider-role" } });
-			Training saved = null;
-			M<ITrainingService>().Setup(x => x.SaveAsync(It.IsAny<Training>(), It.IsAny<CancellationToken>())).Callback<Training, CancellationToken>((t, _) => saved = t).ReturnsAsync((Training t, CancellationToken _) => t);
+			// T0: the page hands the picks to the assignment service as audience rules; the shared resolver checks that every
+			// group and role is this department's and every picked user an active member of it.
+			M<IAuthorizationService>().Setup(x => x.GetTrainingManagementScopeAsync(UserId, DepartmentId))
+				.ReturnsAsync(new TrainingManagementScope { UserId = UserId, DepartmentId = DepartmentId, ManagesAll = true, ManagesOwn = true });
+			M<ITrainingService>().Setup(x => x.SaveAsync(It.IsAny<Training>(), It.IsAny<CancellationToken>())).ReturnsAsync((Training t, CancellationToken _) => t);
+			List<IContentAudienceRule> rules = null;
+			Training audienceTraining = null;
+			M<ITrainingAssignmentService>().Setup(x => x.SaveAudienceAsync(It.IsAny<Training>(), It.IsAny<IEnumerable<IContentAudienceRule>>(), UserId, It.IsAny<TrainingRightScope>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.Callback<Training, IEnumerable<IContentAudienceRule>, string, TrainingRightScope, DateTime, CancellationToken>((t, r, _, _, _, _) => { audienceTraining = t; rules = r.ToList(); })
+				.ReturnsAsync(new TrainingAssignmentOutcome());
 
-			var form = Form(new Dictionary<string, string> { ["usersToAdd"] = "member-2,outsider", ["groupsToAdd"] = "30", ["rolesToAdd"] = "40" });
-			await Build<TrainingsController>(DepartmentAdmin).New(new NewTrainingModel { Training = new Training { Name = "Pump ops" } }, form, new List<IFormFile>());
+			var model = new NewTrainingModel { Name = "Pump ops", UserIds = new List<string> { "member-2", "outsider" }, GroupIds = new List<int> { 30 }, RoleIds = new List<int> { 40 } };
+			await Build<TrainingsController>(DepartmentAdmin).New(model, Form(new Dictionary<string, string>()), new List<IFormFile>());
 
-			saved.Should().NotBeNull();
-			saved.Users.Select(u => u.UserId).Should().BeEquivalentTo(new[] { "member-2" });
+			audienceTraining.Should().NotBeNull();
+			audienceTraining.DepartmentId.Should().Be(DepartmentId);
+			audienceTraining.Users.Should().BeNull("the page itself never writes assignee rows");
+			(await OtherDepartmentResolver().ResolveAsync(DepartmentId, rules)).MemberUserIds.Should().BeEquivalentTo(new[] { "member-2" });
 		}
 
 		[Test]
 		public async Task Editing_a_training_never_adds_users_groups_or_roles_of_another_department()
 		{
-			DepartmentUsers("member-1", "member-2", "member-3", "member-4");
-			M<IDepartmentGroupsService>().Setup(x => x.GetGroupByIdAsync(30, It.IsAny<bool>())).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 30, DepartmentId = 99 });
-			M<IDepartmentGroupsService>().Setup(x => x.GetAllMembersForGroupAsync(30)).ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "outsider-group" } });
-			M<IDepartmentGroupsService>().Setup(x => x.GetGroupByIdAsync(31, It.IsAny<bool>())).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 31, DepartmentId = DepartmentId });
-			M<IDepartmentGroupsService>().Setup(x => x.GetAllMembersForGroupAsync(31)).ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "member-3" } });
-			M<IPersonnelRolesService>().Setup(x => x.GetRoleByIdAsync(40)).ReturnsAsync(new PersonnelRole { PersonnelRoleId = 40, DepartmentId = 99 });
-			M<IPersonnelRolesService>().Setup(x => x.GetAllMembersOfRoleAsync(40)).ReturnsAsync(new List<PersonnelRoleUser> { new PersonnelRoleUser { UserId = "outsider-role" } });
-			M<IPersonnelRolesService>().Setup(x => x.GetRoleByIdAsync(41)).ReturnsAsync(new PersonnelRole { PersonnelRoleId = 41, DepartmentId = DepartmentId });
-			M<IPersonnelRolesService>().Setup(x => x.GetAllMembersOfRoleAsync(41)).ReturnsAsync(new List<PersonnelRoleUser> { new PersonnelRoleUser { UserId = "member-4" } });
 			M<ITrainingService>().Setup(x => x.GetTrainingByIdAsync(7)).ReturnsAsync(new Training
 			{
 				TrainingId = 7, DepartmentId = DepartmentId, Name = "Pump ops", Users = new List<TrainingUser> { new TrainingUser { TrainingUserId = 1, UserId = "member-1" } }
@@ -206,14 +202,43 @@ namespace Resgrid.Tests.Security.Audit20261005
 			// The editor is a department admin, who manages every training of the department.
 			M<IAuthorizationService>().Setup(x => x.GetTrainingManagementScopeAsync(UserId, DepartmentId))
 				.ReturnsAsync(new TrainingManagementScope { UserId = UserId, DepartmentId = DepartmentId, ManagesAll = true, ManagesOwn = true });
-			Training saved = null;
-			M<ITrainingService>().Setup(x => x.SaveAsync(It.IsAny<Training>(), It.IsAny<CancellationToken>())).Callback<Training, CancellationToken>((t, _) => saved = t).ReturnsAsync((Training t, CancellationToken _) => t);
+			M<ITrainingService>().Setup(x => x.SaveAsync(It.IsAny<Training>(), It.IsAny<CancellationToken>())).ReturnsAsync((Training t, CancellationToken _) => t);
+			List<string> picked = null;
+			List<IContentAudienceRule> rules = null;
+			M<ITrainingAssignmentService>().Setup(x => x.AssignAsync(It.IsAny<Training>(), It.IsAny<IEnumerable<string>>(), It.IsAny<IEnumerable<IContentAudienceRule>>(), TrainingAssignmentSources.Manual,
+					It.IsAny<TrainingRightScope>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+				.Callback<Training, IEnumerable<string>, IEnumerable<IContentAudienceRule>, TrainingAssignmentSources, TrainingRightScope, DateTime, CancellationToken>((_, p, r, _, _, _, _) => { picked = p.ToList(); rules = r.ToList(); })
+				.ReturnsAsync(new TrainingAssignmentOutcome());
 
-			var form = Form(new Dictionary<string, string> { ["usersToAdd"] = "member-2,outsider", ["groupsToAdd"] = "30,31", ["rolesToAdd"] = "40,41" });
-			await Build<TrainingsController>(DepartmentAdmin).Edit(7, new EditTrainingModel { Training = new Training { Name = "Pump ops" } }, form, new List<IFormFile>());
+			var model = new EditTrainingModel { Name = "Pump ops", UserIds = new List<string> { "member-2", "outsider" }, GroupIds = new List<int> { 30, 31 }, RoleIds = new List<int> { 40, 41 } };
+			await Build<TrainingsController>(DepartmentAdmin).Edit(7, model, Form(new Dictionary<string, string>()), new List<IFormFile>());
 
-			saved.Should().NotBeNull();
-			saved.Users.Select(u => u.UserId).Should().BeEquivalentTo(new[] { "member-1", "member-2", "member-3", "member-4" });
+			picked.Should().BeEquivalentTo(new[] { "member-2", "outsider" });
+			var resolver = OtherDepartmentResolver();
+			(await resolver.ResolveAsync(DepartmentId, rules)).MemberUserIds.Should().BeEquivalentTo(new[] { "member-3", "member-4" });
+			(await resolver.ExplainSkippedAsync(DepartmentId, picked)).Select(s => s.UserId).Should().Equal("outsider");
+		}
+
+		/// <summary>The shared audience resolver over this fixture's groups and roles: 30 and 40 belong to another department.</summary>
+		private ContentAudienceService OtherDepartmentResolver()
+		{
+			var departments = new Mock<IDepartmentsService>();
+			departments.Setup(x => x.GetActiveMemberUserIdsAsync(DepartmentId))
+				.ReturnsAsync(new HashSet<string>(new[] { "member-1", "member-2", "member-3", "member-4" }, StringComparer.OrdinalIgnoreCase));
+			departments.Setup(x => x.GetAllMembersForDepartmentIncludingDeletedAsync(DepartmentId)).ReturnsAsync(new[] { "member-1", "member-2", "member-3", "member-4" }
+				.Select(id => new DepartmentMember { DepartmentId = DepartmentId, UserId = id }).ToList());
+			var groups = new Mock<IDepartmentGroupsService>();
+			groups.Setup(x => x.GetGroupByIdAsync(30, It.IsAny<bool>())).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 30, DepartmentId = 99 });
+			groups.Setup(x => x.GetAllMembersForGroupAsync(30)).ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "outsider-group" } });
+			groups.Setup(x => x.GetGroupByIdAsync(31, It.IsAny<bool>())).ReturnsAsync(new DepartmentGroup { DepartmentGroupId = 31, DepartmentId = DepartmentId });
+			groups.Setup(x => x.GetAllMembersForGroupAsync(31)).ReturnsAsync(new List<DepartmentGroupMember> { new DepartmentGroupMember { UserId = "member-3" } });
+			var roles = new Mock<IPersonnelRolesService>();
+			roles.Setup(x => x.GetRoleByIdAsync(40)).ReturnsAsync(new PersonnelRole { PersonnelRoleId = 40, DepartmentId = 99 });
+			roles.Setup(x => x.GetAllMembersOfRoleAsync(40)).ReturnsAsync(new List<PersonnelRoleUser> { new PersonnelRoleUser { UserId = "outsider-role" } });
+			roles.Setup(x => x.GetRoleByIdAsync(41)).ReturnsAsync(new PersonnelRole { PersonnelRoleId = 41, DepartmentId = DepartmentId });
+			roles.Setup(x => x.GetAllMembersOfRoleAsync(41)).ReturnsAsync(new List<PersonnelRoleUser> { new PersonnelRoleUser { UserId = "member-4" } });
+
+			return new ContentAudienceService(departments.Object, groups.Object, roles.Object, Mock.Of<ICertificationService>(), Mock.Of<IUnitsService>(), Mock.Of<IShiftsService>());
 		}
 
 		[Test]

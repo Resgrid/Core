@@ -24,6 +24,14 @@ namespace Resgrid.Model
 
 		public string Color { get; set; }
 
+		/// <summary>
+		/// Training T1 (R-T9): check-in/out on items of this type produces training hours on the attendees' transcripts.
+		/// </summary>
+		public bool CountsAsTraining { get; set; }
+
+		/// <summary>The training category those hours land in (null: Uncategorized).</summary>
+		public int? DefaultCategoryId { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

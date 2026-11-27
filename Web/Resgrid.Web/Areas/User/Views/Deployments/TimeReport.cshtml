@@ -157,6 +157,11 @@
                             <button type="submit" class="btn btn-sm btn-default"><i class="fa fa-pencil-square-o"></i> @localizer["Sign"]</button>
                         </form>
                     }
+                    @* e-Signature S2: the customer signs in person on this device (free) or by a Resgrid link with a one-time code (Business
+                       Operations add-on); the typed name above stays the fallback when neither is used. *@
+                    @await Component.InvokeAsync("SignatureRequests", new { kind = Resgrid.Model.SignatureSubjectKinds.TimeReport, subjectId = r.DeploymentTimeReportId,
+                        canRequest = Model.CanActOnReport && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Void && status != Resgrid.Model.Invoicing.DeploymentTimeReportStatuses.Billed,
+                        returnUrl = Url.Action("TimeReport", new { id = r.DeploymentTimeReportId }), suggestedName = r.CustomerSignerName })
                 </div>
             </div>
             <div class="ibox float-e-margins">

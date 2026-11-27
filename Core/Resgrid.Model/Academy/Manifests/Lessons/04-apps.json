@@ -1,0 +1,203 @@
+{
+  "schema": 1,
+  "id": "04-apps",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Apps",
+  "minutes": 3.0,
+  "walkthrough": false,
+  "audience": [
+    "member"
+  ],
+  "visibility": [],
+  "pages": [],
+  "adminAssist": {
+    "areas": [
+      "apps"
+    ],
+    "capabilities": [
+      "responder-app",
+      "unit-app",
+      "dispatch-app",
+      "incident-command",
+      "big-board"
+    ]
+  },
+  "media": {
+    "video": "media/04-apps.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/04-apps.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Put the right Resgrid app on each device",
+    "ar": "ثبّت تطبيق Resgrid المناسب على كل جهاز",
+    "de": "Die richtige Resgrid-App auf jedes Gerät bringen",
+    "el": "Βάλτε τη σωστή εφαρμογή Resgrid σε κάθε συσκευή",
+    "es": "Instalar la aplicación de Resgrid adecuada en cada dispositivo",
+    "fr": "Installer la bonne application Resgrid sur chaque appareil",
+    "it": "Installare l’app Resgrid giusta su ogni dispositivo",
+    "pl": "Zainstaluj właściwą aplikację Resgrid na każdym urządzeniu",
+    "sv": "Rätt Resgrid-app på varje enhet",
+    "uk": "Встановіть потрібний застосунок Resgrid на кожен пристрій"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Which app is meant for responders in the field?",
+        "ar": "أي تطبيق مخصص للمستجيبين في الميدان؟",
+        "de": "Welche App ist für Einsatzkräfte vor Ort gedacht?",
+        "el": "Ποια εφαρμογή προορίζεται για το προσωπικό στο πεδίο;",
+        "es": "¿Qué aplicación es para el personal sobre el terreno?",
+        "fr": "Quelle application est destinée aux intervenants sur le terrain ?",
+        "it": "Quale app è pensata per i soccorritori sul campo?",
+        "pl": "Która aplikacja jest przeznaczona dla ratowników w terenie?",
+        "sv": "Vilken app är avsedd för utryckande personal?",
+        "uk": "Який застосунок призначений для рятувальників на виїзді?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "The responder app on their phone",
+            "ar": "تطبيق المستجيب على هاتفهم",
+            "de": "Die Einsatzkräfte-App auf dem Telefon",
+            "el": "Η εφαρμογή για το προσωπικό στο τηλέφωνό τους",
+            "es": "La aplicación de respuesta en su teléfono",
+            "fr": "L’application d’intervention sur leur téléphone",
+            "it": "L’app per soccorritori sul telefono",
+            "pl": "Aplikacja dla ratowników na telefonie",
+            "sv": "Responder-appen i telefonen",
+            "uk": "Застосунок для рятувальників на телефоні"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "The billing portal",
+            "ar": "بوابة الفوترة",
+            "de": "Das Abrechnungsportal",
+            "el": "Η πύλη χρεώσεων",
+            "es": "El portal de facturación",
+            "fr": "Le portail de facturation",
+            "it": "Il portale di fatturazione",
+            "pl": "Portal rozliczeń",
+            "sv": "Faktureringsportalen",
+            "uk": "Портал оплати"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "The administrator import wizard",
+            "ar": "معالج الاستيراد للمسؤول",
+            "de": "Der Import-Assistent für Administratoren",
+            "el": "Ο οδηγός εισαγωγής διαχειριστή",
+            "es": "El asistente de importación del administrador",
+            "fr": "L’assistant d’importation des administrateurs",
+            "it": "La procedura guidata di importazione per amministratori",
+            "pl": "Kreator importu administratora",
+            "sv": "Administratörens importguide",
+            "uk": "Майстер імпорту для адміністратора"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "Why install the apps on members' phones?",
+        "ar": "لماذا تُثبّت التطبيقات على هواتف الأعضاء؟",
+        "de": "Warum die Apps auf den Telefonen der Mitglieder installieren?",
+        "el": "Γιατί να εγκατασταθούν οι εφαρμογές στα τηλέφωνα των μελών;",
+        "es": "¿Por qué instalar las aplicaciones en los teléfonos de los miembros?",
+        "fr": "Pourquoi installer les applications sur les téléphones des membres ?",
+        "it": "Perché installare le app sui telefoni dei membri?",
+        "pl": "Po co instalować aplikacje na telefonach członków?",
+        "sv": "Varför installera apparna i medlemmarnas telefoner?",
+        "uk": "Навіщо встановлювати застосунки на телефони учасників?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "To change the department's plan",
+            "ar": "لتغيير خطة الإدارة",
+            "de": "Um den Tarif der Organisation zu ändern",
+            "el": "Για να αλλάξει το πρόγραμμα της υπηρεσίας",
+            "es": "Para cambiar el plan del departamento",
+            "fr": "Pour changer la formule du service",
+            "it": "Per cambiare il piano del dipartimento",
+            "pl": "Aby zmienić plan jednostki",
+            "sv": "För att byta organisationens plan",
+            "uk": "Щоб змінити тариф підрозділу"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "To receive alerts and respond quickly",
+            "ar": "لتلقي التنبيهات والاستجابة بسرعة",
+            "de": "Um Alarme zu erhalten und schnell zu reagieren",
+            "el": "Για να λαμβάνουν ειδοποιήσεις και να ανταποκρίνονται γρήγορα",
+            "es": "Para recibir alertas y responder rápido",
+            "fr": "Pour recevoir les alertes et répondre vite",
+            "it": "Per ricevere allarmi e rispondere in fretta",
+            "pl": "Aby otrzymywać alarmy i szybko reagować",
+            "sv": "För att få larm och svara snabbt",
+            "uk": "Щоб отримувати сповіщення й швидко реагувати"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To delete old calls",
+            "ar": "لحذف البلاغات القديمة",
+            "de": "Um alte Einsätze zu löschen",
+            "el": "Για να διαγράφουν παλιές κλήσεις",
+            "es": "Para borrar llamadas antiguas",
+            "fr": "Pour supprimer d’anciennes interventions",
+            "it": "Per eliminare chiamate vecchie",
+            "pl": "Aby usuwać stare zgłoszenia",
+            "sv": "För att radera gamla larm",
+            "uk": "Щоб видаляти старі виклики"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "All Resgrid features can only be used from a desktop computer.",
+        "ar": "لا يمكن استخدام جميع ميزات Resgrid إلا من حاسوب مكتبي.",
+        "de": "Alle Resgrid-Funktionen lassen sich nur an einem Desktop-Computer nutzen.",
+        "el": "Όλες οι λειτουργίες του Resgrid χρησιμοποιούνται μόνο από επιτραπέζιο υπολογιστή.",
+        "es": "Todas las funciones de Resgrid solo se pueden usar desde un ordenador de escritorio.",
+        "fr": "Toutes les fonctions de Resgrid ne s’utilisent que depuis un ordinateur de bureau.",
+        "it": "Tutte le funzioni di Resgrid si possono usare solo da un computer fisso.",
+        "pl": "Wszystkie funkcje Resgrid działają tylko na komputerze stacjonarnym.",
+        "sv": "Alla funktioner i Resgrid kan bara användas från en stationär dator.",
+        "uk": "Усі функції Resgrid можна використовувати лише з настільного комп’ютера."
+      }
+    }
+  ]
+}

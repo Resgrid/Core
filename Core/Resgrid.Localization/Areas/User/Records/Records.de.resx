@@ -2298,4 +2298,72 @@
   <data name="RatedFlowHelp" xml:space="preserve">
     <value>Nenndurchfluss nach NFPA 291: gemessener Durchfluss × ((Ruhedruck − 20) / (Ruhedruck − Fließdruck))^0.54. Die Durchflussklasse wird daraus bestimmt, wenn Ruhe- und Fließdruck eingetragen sind.</value>
   </data>
+  <data name="DeploymentPartner" xml:space="preserve">
+    <value>Verknüpfter Partner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerNone" xml:space="preserve">
+    <value>Kein verknüpfter Partner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSave" xml:space="preserve">
+    <value>Partner speichern</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerHelp" xml:space="preserve">
+    <value>Wenn die Behörde, für die diese Anforderung besetzt wird, eine verknüpfte Organisation auf Resgrid ist, wählen Sie sie hier aus. Jede angenommene Besetzung fordert dann deren Administratoren auf, die Zuweisung mit einer Signatur mit erneuter Bestätigung (Step-up) anzunehmen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSaved" xml:space="preserve">
+    <value>Der verknüpfte Partner wurde gespeichert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerRequested" xml:space="preserve">
+    <value>Der verknüpfte Partner wurde gebeten, die Zuweisung anzunehmen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerAsk" xml:space="preserve">
+    <value>Partner um Annahme bitten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotLinked" xml:space="preserve">
+    <value>Die Verknüpfung mit dieser Organisation ist nicht aktiviert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorClosedOut" xml:space="preserve">
+    <value>Der Einsatz ist abgeschlossen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorConflict" xml:space="preserve">
+    <value>Jemand anderes hat diesen Einsatz gleichzeitig geändert. Versuchen Sie es erneut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotFound" xml:space="preserve">
+    <value>Der Einsatz wurde nicht gefunden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotAuthorized" xml:space="preserve">
+    <value>Sie können diesen Einsatz nicht ändern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateRequested" xml:space="preserve">
+    <value>Partner angefragt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateSigned" xml:space="preserve">
+    <value>Vom Partner angenommen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateDeclined" xml:space="preserve">
+    <value>Vom Partner abgelehnt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateLapsed" xml:space="preserve">
+    <value>Partneranfrage abgelaufen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateNone" xml:space="preserve">
+    <value>Keine Partnersignatur</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

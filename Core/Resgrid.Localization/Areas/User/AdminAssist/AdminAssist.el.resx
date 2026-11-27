@@ -3243,6 +3243,26 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Δημιουργία εκπαίδευσης</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Ανάθεση εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Διαγραφή εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.AuthorProtocols">
+    <value>Σύνταξη πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveProtocols">
+    <value>Έγκριση πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageProtocolAcknowledgments">
+    <value>Διαχείριση επιβεβαιώσεων πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Δημιουργία Ροής Εργασίας</value>
   </data>
@@ -3487,7 +3507,44 @@
     <value>Επιτρέπει τη δημιουργία, την επεξεργασία και τη διαγραφή βαρδιών και βαρδιών εργασίας, καθώς και τη διαχείριση δηλώσεων συμμετοχής για κάθε ομάδα. Οι διαχειριστές ομάδων διαχειρίζονται πάντα τις δηλώσεις συμμετοχής των δικών τους ομάδων. Τα μέλη που δηλώνουν συμμετοχή — στον ιστό, στις εφαρμογές ή μέσω του chatbot — πρέπει να τηρούν τους κανόνες της βάρδιας (όχι παρελθούσες ημέρες, οι βάρδιες με ανάθεση χρειάζονται ανάθεση, οι βάρδιες ομάδας χρειάζονται την ομάδα του μέλους). Όλοι εξακολουθούν να μπορούν να βλέπουν τις βάρδιες. Χωρίς αποθηκευμένο κανόνα, μόνο οι διαχειριστές τμήματος μπορούν να αλλάζουν βάρδιες.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Επιτρέπει τη δημιουργία, την επεξεργασία και τη διαγραφή εκπαιδεύσεων, καθώς και την επαναφορά της προόδου εκπαίδευσης των μελών. Όλοι εξακολουθούν να μπορούν να βλέπουν και να ολοκληρώνουν εκπαιδεύσεις. Χωρίς αποθηκευμένο κανόνα, αυτό επιτρέπεται μόνο στους διαχειριστές τμήματος.</value>
+    <value>Επιτρέπει τη δημιουργία εκπαιδεύσεων και τη σύνταξη του περιεχομένου και του κουίζ τους, μαζί με το κλειδί απαντήσεων. Η ανάθεση και οι αναφορές (Ανάθεση εκπαίδευσης) και η αρχειοθέτηση ή διαγραφή (Διαγραφή εκπαίδευσης) είναι χωριστοί κανόνες που ακολουθούν αυτόν μέχρι να αποθηκευτούν. Όλοι μπορούν ακόμη να βλέπουν και να ολοκληρώνουν τις εκπαιδεύσεις που τους έχουν ανατεθεί ή είναι ανοιχτές σε αυτούς. Χωρίς αποθηκευμένο κανόνα, μόνο οι διαχειριστές του τμήματος μπορούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Επιτρέπει την ανάθεση εκπαιδεύσεων σε μέλη, τον ορισμό προθεσμιών, παρατάσεων και απαλλαγών, την επαναφορά μελών και την ανάγνωση της αναφοράς εκπαίδευσης και του ιστορικού προσπαθειών. Οι διαχειριστές ομάδων ενεργούν μόνο για τα μέλη της ομάδας τους. Μέχρι να αποθηκευτεί, ακολουθεί τη Δημιουργία εκπαίδευσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Επιτρέπει την αρχειοθέτηση, την επαναφορά και τη διαγραφή εκπαιδεύσεων. Μια εκπαίδευση που ολοκλήρωσε κάποιος αρχειοθετείται αντί να διαγραφεί, ώστε οι ολοκληρώσεις της να παραμένουν στο αρχείο. Μέχρι να αποθηκευτεί, ακολουθεί τη Δημιουργία εκπαίδευσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AuthorProtocols">
+    <value>Επιτρέπει τη δημιουργία, αντιγραφή και εισαγωγή πρωτοκόλλων, την επεξεργασία των πεδίων βιβλιοθήκης, των εναυσμάτων, των ερωτήσεων και του κοινού τους, τη σύνταξη προσχεδίων και την υποβολή τους για έγκριση, την απενεργοποίηση πρωτοκόλλων και την εξαγωγή της βιβλιοθήκης. Οι συντάκτες βλέπουν επίσης τα προσχέδια, την ουρά αναθεώρησης και κάθε πρωτόκολλο ανεξάρτητα από το κοινό του. Η έγκριση και η δημοσίευση απαιτούν την Έγκριση πρωτοκόλλων. Χωρίς αποθηκευμένο κανόνα, μόνο οι διαχειριστές του τμήματος μπορούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ApproveProtocols">
+    <value>Επιτρέπει την έγκριση ή απόρριψη υποβληθεισών εκδόσεων πρωτοκόλλων, τη δημοσίευσή τους αμέσως ή σε ορισμένη ημερομηνία, την καταγραφή «αναθεωρήθηκε, χωρίς αλλαγή», την απόσυρση και διαγραφή πρωτοκόλλων, την επιβολή νομικής δέσμευσης σε πρωτόκολλο και τη διαχείριση κατηγοριών και των βημάτων έγκρισής τους. Κάθε έγκριση υπογράφεται με νέα ενισχυμένη επαλήθευση ή κλειδί πρόσβασης. Χωρίς αποθηκευμένο κανόνα, μόνο οι διαχειριστές του τμήματος μπορούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageCourses">
+    <value>Διαχείριση μαθημάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageCourses">
+    <value>Επιτρέπει τη δημιουργία μαθημάτων και τραπεζών ερωτήσεων, τη μεταφόρτωση βίντεο μαθημάτων, την υποβολή, έγκριση και δημοσίευση εκδόσεων μαθημάτων, την ανάθεση μαθημάτων και την προβολή των αποτελεσμάτων τους. Κάθε έγκριση υπογράφεται με πρόσφατο πρόσθετο έλεγχο. Τα μαθήματα ανήκουν στο πρόσθετο LMS, που δεν είναι ακόμη διαθέσιμο· τα μαθήματα της Resgrid Academy ανατίθενται με αυτό το δικαίωμα ή με την Ανάθεση εκπαίδευσης. Χωρίς αποθηκευμένο κανόνα μπορούν μόνο οι διαχειριστές της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.GradeAssessments">
+    <value>Βαθμολόγηση αξιολογήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.GradeAssessments">
+    <value>Επιτρέπει τη βαθμολόγηση ελεύθερων απαντήσεων στην ουρά βαθμολόγησης και την προβολή της ανάλυσης ερωτήσεων. Κανείς δεν βαθμολογεί τη δική του προσπάθεια. Ανήκει στο πρόσθετο LMS, που δεν είναι ακόμη διαθέσιμο. Χωρίς αποθηκευμένο κανόνα μπορούν μόνο οι διαχειριστές της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageProtocolAcknowledgments">
+    <value>Προορίζεται για τις επιβεβαιώσεις ανάγνωσης και υπογραφής: ποιος θα αναθέτει πρωτόκολλα στα μέλη για ανάγνωση και υπογραφή, θα απαλλάσσει μέλη και θα διαβάζει την αναφορά επιβεβαιώσεων. Η ανάγνωση και υπογραφή δεν είναι ακόμη διαθέσιμη, οπότε η αποθήκευση αυτού του κανόνα δεν αλλάζει τίποτα προς το παρόν. Χωρίς αποθηκευμένο κανόνα, μόνο οι διαχειριστές του τμήματος μπορούν.</value>
+    <comment>machine-translated</comment>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Επιτρέπει τη δημιουργία, την επεξεργασία και τη διαγραφή ροών εργασίας, την προεπισκόπηση των συνθηκών τους, την ανάγνωση της διαμόρφωσης βημάτων στις εφαρμογές και στο API, καθώς και την προβολή του παραγόμενου αποτελέσματος των εκτελέσεων ροών εργασίας. Χωρίς αποθηκευμένο κανόνα, μόνο οι διαχειριστές τμήματος μπορούν να αλλάζουν ροές εργασίας, αλλά κάθε μέλος μπορεί να ανοίξει τη σελίδα Ροές εργασίας και να διαβάσει τους ορισμούς· η αποθήκευση της επιλογής «Διαχειριστές Τμήματος» αποκρύπτει επίσης τις ροές εργασίας από όλους τους άλλους. Τα βήματα που στέλνουν εξαγωγή από τα Αρχεία απαιτούν επίσης τα δικαιώματα «Εξαγωγή εγγραφών» και «Διαχείριση συγκεντρωτικών αναφορών». Τα δωρεάν πλάνα έχουν όριο στον αριθμό των ροών εργασίας.</value>
@@ -8267,5 +8324,2201 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Χρησιμοποιούνται όταν η μορφή email σας είναι «Labeled fields». Εισαγάγετε την ετικέτα που γράφει το CAD σας μπροστά από κάθε τιμή. Χωρίστε τις εναλλακτικές με |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Επεξεργασία πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Αλλάξτε επί τόπου το περιεχόμενο, τα εναύσματα και τις ερωτήσεις ενός πρωτοκόλλου· οι κλήσεις κρατούν το κείμενο με το οποίο διαβιβάστηκαν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Απενεργοποίηση πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Σταματήστε να προτείνετε και να επισυνάπτετε ένα πρωτόκολλο χωρίς να το διαγράψετε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Αφαίρεση πρωτοκόλλου από κλήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Αφαιρέστε από μια κλήση ένα λάθος επισυναπτόμενο πρωτόκολλο με αιτία· το αρχείο το κρατά, σημειωμένο ως αφαιρεμένο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Ρυθμίσεις βιβλιοθήκης πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Κανόνες για όλο το τμήμα στη σελίδα Ρυθμίσεις των πρωτοκόλλων: αν οι εγκρίσεις απαιτούν κλειδί πρόσβασης και η ανάγνωση και υπογραφή ενισχυμένη επαλήθευση, με ποιο διάστημα αναθεώρησης ξεκινούν τα νέα πρωτόκολλα και πόσο διατηρούνται οι εκδόσεις που αντικαταστάθηκαν ή αποσύρθηκαν, με νομική δέσμευση που σταματά κάθε διαγραφή. Αν λείπει, ισχύουν τα τυπικά επίπεδα υπογραφής, κανένα προεπιλεγμένο διάστημα και διατηρούνται όλες οι εκδόσεις. Μόνο οι διαχειριστές του τμήματος μπορούν να την αλλάξουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Ρυθμίσεις βιβλιοθήκης πρωτοκόλλων / Απαίτηση κλειδιού πρόσβασης για έγκριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Οι εγκρίσεις και οι σημάνσεις «αναθεωρήθηκε, χωρίς αλλαγή» πρέπει να υπογράφονται με κλειδί πρόσβασης· η ενισχυμένη επαλήθευση με κωδικό εφαρμογής ελέγχου ταυτότητας ή μέσω του παρόχου σύνδεσης δεν αρκεί πλέον. Όσοι εγκρίνουν χωρίς καταχωρισμένο κλειδί πρόσβασης δεν μπορούν να υπογράψουν μέχρι να προσθέσουν ένα. Όταν είναι απενεργοποιημένο, υπογράφει οποιαδήποτε νέα ενισχυμένη επαλήθευση ή κλειδί πρόσβασης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Ρυθμίσεις βιβλιοθήκης πρωτοκόλλων / Η ανάγνωση και υπογραφή απαιτεί ενισχυμένη επαλήθευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Οι επιβεβαιώσεις ανάγνωσης και υπογραφής θα απαιτούν νέα ενισχυμένη επαλήθευση αντί μόνο για τη συνεδρία σύνδεσης. Η ανάγνωση και υπογραφή δεν είναι ακόμη διαθέσιμη· η επιλογή αποθηκεύεται για όταν γίνει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Ρυθμίσεις βιβλιοθήκης πρωτοκόλλων / Προεπιλεγμένο διάστημα αναθεώρησης σε ημέρες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Ημέρες μεταξύ αναθεωρήσεων για νέα και εισαγόμενα πρωτόκολλα που δεν ορίζουν δικό τους διάστημα, από 0 έως 3650· το 0 δεν ορίζει κανένα. Τα υπάρχοντα πρωτόκολλα κρατούν το δικό τους. Η δημοσίευση έκδοσης ή η καταγραφή «αναθεωρήθηκε, χωρίς αλλαγή» ξεκινά ξανά το διάστημα, και ο υπεύθυνος του πρωτοκόλλου, ή οι διαχειριστές του τμήματος αν δεν υπάρχει, λαμβάνει υπενθύμιση 30 και 7 ημέρες πριν λήξει η αναθεώρηση και ξανά όταν καθυστερεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>Ρυθμίσεις βιβλιοθήκης πρωτοκόλλων / Νομική δέσμευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>Νομική δέσμευση για όλο το τμήμα: όσο είναι ενεργή, καμία έκδοση πρωτοκόλλου που αντικαταστάθηκε ή αποσύρθηκε δεν διαγράφεται, όποιες κι αν είναι οι ημέρες διατήρησης. Όποιος εγκρίνει μπορεί επίσης να δεσμεύσει ένα μεμονωμένο πρωτόκολλο από τη σελίδα επεξεργασίας του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Ρυθμίσεις βιβλιοθήκης πρωτοκόλλων / Διατήρηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Ημέρες που κάθε είδος πρωτοκόλλου (Αποστολή, SOG, Κλινική κατευθυντήρια οδηγία, Πολιτική, Διαδικασία, Αναφορά) διατηρεί μια έκδοση αφού αντικατασταθεί ή αποσυρθεί, έως 36500· μετά μια διεργασία παρασκηνίου τη διαγράφει. Το 0 διατηρεί τις εκδόσεις αυτού του είδους. Έκδοση που είναι ακόμη επισυναπτόμενη σε κλήση δεν διαγράφεται ποτέ, και τίποτα δεν διαγράφεται όσο ισχύει νομική δέσμευση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Διατήρηση ανά είδος πρωτοκόλλου / Είδος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Το είδος πρωτοκόλλου στο οποίο αφορά η καταχώριση: 0 Αποστολή, 1 SOG, 2 Κλινική κατευθυντήρια οδηγία, 3 Πολιτική, 4 Διαδικασία, 5 Αναφορά. Μία καταχώριση ανά είδος· ένα είδος χωρίς καταχώριση διατηρεί όλες τις εκδόσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Διατήρηση ανά είδος πρωτοκόλλου / Ημέρες διατήρησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Ημέρες αφού μια έκδοση αυτού του είδους αντικατασταθεί ή αποσυρθεί πριν μπορεί να διαγραφεί, από 1 έως 36500. Μια καταχώριση με 0 απορρίπτεται κατά την αποθήκευση, οπότε το είδος διατηρεί τις εκδόσεις του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-queue" xml:space="preserve">
+    <value>Ουρά αναθεώρησης πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-queue" xml:space="preserve">
+    <value>Εγκρίνετε με υπογραφή ή απορρίψτε τις υποβληθείσες εκδόσεις πρωτοκόλλων και δημοσιεύστε τις αμέσως ή σε ορισμένη ημερομηνία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-stamp" xml:space="preserve">
+    <value>Καταγραφή αναθεώρησης πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-stamp" xml:space="preserve">
+    <value>Σημειώστε ένα δημοσιευμένο πρωτόκολλο ως «αναθεωρήθηκε, χωρίς αλλαγή» με υπογεγραμμένη σήμανση, χωρίς νέα έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compare" xml:space="preserve">
+    <value>Σύγκριση εκδόσεων πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compare" xml:space="preserve">
+    <value>Δείτε τι άλλαξε ανάμεσα σε δύο εκδόσεις ενός πρωτοκόλλου με σημειωμένες αλλαγές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-categories" xml:space="preserve">
+    <value>Κατηγορίες πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-categories" xml:space="preserve">
+    <value>Ομαδοποιήστε τη βιβλιοθήκη σε κατηγορίες και ορίστε τα βήματα έγκρισης κάθε κατηγορίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-settings" xml:space="preserve">
+    <value>Ρυθμίσεις πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-settings" xml:space="preserve">
+    <value>Ορίστε τις απαιτήσεις υπογραφής, το προεπιλεγμένο διάστημα αναθεώρησης, τη διατήρηση εκδόσεων και τη νομική δέσμευση όλου του τμήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-import" xml:space="preserve">
+    <value>Εισαγωγή πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-import" xml:space="preserve">
+    <value>Φέρτε πρωτόκολλα από αρχείο ανταλλαγής πρωτοκόλλων Resgrid ως προσχέδια για αναθεώρηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.TrainingRecordSettings" xml:space="preserve">
+    <value>Ρυθμίσεις εγγραφών εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.TrainingRecordSettings" xml:space="preserve">
+    <value>Πώς τηρούνται οι εγγραφές εκπαίδευσης: στρογγυλοποίηση των ωρών παρουσίας από το ημερολόγιο, αν τα μέλη μπορούν να υποβάλλουν μόνα τους εξωτερική εκπαίδευση και πόσα έτη τουλάχιστον διατηρούνται οι εγγραφές μετά την αποχώρηση μέλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Ρυθμίσεις εγγραφών εκπαίδευσης / Στρογγυλοποίηση ωρών παρουσίας σε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Οι ώρες από την άφιξη έως την αναχώρηση σε εκδηλώσεις του ημερολογίου που μετρούν ως εκπαίδευση στρογγυλοποιούνται σε αυτό το βήμα: 5, 6, 10, 15, 30 ή 60 λεπτά, ή 0 για το ακριβές λεπτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Ρυθμίσεις εγγραφών εκπαίδευσης / Κατεύθυνση στρογγυλοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Αν οι ώρες παρουσίας στρογγυλοποιούνται στο πλησιέστερο βήμα, προς τα κάτω ή προς τα πάνω. Δεν έχει επίδραση όσο οι ώρες τηρούνται στο ακριβές λεπτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>Ρυθμίσεις εγγραφών εκπαίδευσης / Τα μέλη δεν μπορούν να υποβάλλουν εξωτερική εκπαίδευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>Όταν είναι ενεργό, τα μέλη δεν μπορούν να υποβάλλουν μόνα τους εξωτερική εκπαίδευση. Τα στελέχη μπορούν ακόμη να την καταχωρούν μέσω εισαγωγής ή πίστωσης πιστοποίησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Ρυθμίσεις εγγραφών εκπαίδευσης / Διατήρηση εγγραφών μετά την αποχώρηση μέλους (έτη)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Ελάχιστα έτη διατήρησης των εγγραφών εκπαίδευσης ενός πρώην μέλους όταν η κατηγορία τους δεν ορίζει κάτι. Το 0 δεν ορίζει ελάχιστο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-transcript" xml:space="preserve">
+    <value>Μητρώο εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-transcript" xml:space="preserve">
+    <value>Τα ολοκληρωμένα μαθήματα, οι εγγραφές εκπαίδευσης, οι παρουσίες στο ημερολόγιο, οι εισαγωγές και τα εξωτερικά πιστοποιητικά κάθε μέλους, με τις ώρες τους και αν μετρούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-transcript" xml:space="preserve">
+    <value>Ένα ενιαίο αρχείο της εκπαίδευσης και των ωρών κάθε μέλους για ανανεώσεις και ελέγχους, χωρίς άθροιση φύλλων παρουσίας με το χέρι.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-transcript" xml:space="preserve">
+    <value>Πριν ανανεώσει μια πιστοποίηση, ένα μέλος κατεβάζει το μητρώο του σε PDF με ώρες ανά κατηγορία, και ο υπεύθυνος εκπαίδευσης ανοίγει το ίδιο μητρώο από το όνομα του μέλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-transcript" xml:space="preserve">
+    <value>Ανοίξτε τις Εκπαιδεύσεις και επιλέξτε Το μητρώο μου. Τα στελέχη που ελέγχουν τις εγγραφές ενός μέλους επιλέγουν το μέλος στο μητρώο. Μόνο οι επαληθευμένες εγγραφές μετρούν στις ώρες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-external-submissions" xml:space="preserve">
+    <value>Υποβολές εξωτερικής εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-external-submissions" xml:space="preserve">
+    <value>Τα μέλη υποβάλλουν μαθήματα που ολοκλήρωσαν εκτός της υπηρεσίας, με ώρες και τεκμήρια (πιστοποιητικό, φωτογραφία, έγγραφο ή απόδειξη). Ένας ελεγκτής εγκρίνει ή απορρίπτει καθεμία στους Ελέγχους εκπαίδευσης, εκτός αν η υπηρεσία τις δέχεται ως αυτοδηλωμένες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-external-submissions" xml:space="preserve">
+    <value>Τα εξωτερικά μαθήματα και η συνεχιζόμενη εκπαίδευση φτάνουν στο μητρώο με συνημμένο τεκμήριο και ελέγχονται όταν το θέλει η υπηρεσία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-external-submissions" xml:space="preserve">
+    <value>Ένα μέλος ολοκληρώνει ένα διαδικτυακό μάθημα ασφάλειας και το υποβάλλει με το πιστοποιητικό και 4 ώρες· ο υπεύθυνος εκπαίδευσης το εγκρίνει στους Ελέγχους εκπαίδευσης και οι ώρες μετράνε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-external-submissions" xml:space="preserve">
+    <value>Τα μέλη επιλέγουν Υποβολή εξωτερικής εκπαίδευσης στο μητρώο τους. Οι ελεγκτές ανοίγουν τους Ελέγχους εκπαίδευσης για να εγκρίνουν, να απορρίψουν ή να ζητήσουν περισσότερες πληροφορίες· τα πιθανά διπλότυπα μένουν στην ουρά εγγραφών. Οι υποβολές μπορούν να απενεργοποιηθούν στις ρυθμίσεις εγγραφών εκπαίδευσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-categories" xml:space="preserve">
+    <value>Κατηγορίες εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-categories" xml:space="preserve">
+    <value>Ομαδοποιήστε τις ώρες εκπαίδευσης σε κατηγορίες με προαιρετικούς στόχους ωρών και διατήρηση, ξεκινήστε από πρότυπα για πυροσβεστική (ISO), προνοσοκομειακή φροντίδα (NCCP), ασφάλεια στην εργασία (OSHA), βιομηχανία, έρευνα και διάσωση, επιβολή του νόμου, υπηρεσίες ασφαλείας, CPD, Καναδά ή ΕΕ, και κατηγοριοποιήστε μαζικά τις υπάρχουσες εγγραφές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-categories" xml:space="preserve">
+    <value>Οι ώρες αθροίζονται όπως τις ζητά η ρυθμιστική αρχή, ο φορέας αδειοδότησης, ο ασφαλιστής ή ο φορέας διαπίστευσής σας, και οι στόχοι δείχνουν ποιος υστερεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-categories" xml:space="preserve">
+    <value>Μια υπηρεσία εφαρμόζει το πρότυπο ISO, ορίζει ετήσιο στόχο για την εκπαίδευση των βαρδιών και κατηγοριοποιεί μαζικά τις περσινές ασκήσεις ανά όνομα μαθήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-categories" xml:space="preserve">
+    <value>Στις Εκπαιδεύσεις, ανοίξτε τις Εγγραφές εκπαίδευσης και μετά τις Κατηγορίες εκπαίδευσης. Εφαρμόστε ένα πρότυπο ή προσθέστε δικές σας και χρησιμοποιήστε την Κατηγοριοποίηση ιστορικού για τις εγγραφές χωρίς κατηγορία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-credit-mappings" xml:space="preserve">
+    <value>Αντιστοιχίσεις πιστώσεων πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-credit-mappings" xml:space="preserve">
+    <value>Προσμέτρηση των επαληθευμένων ωρών μιας κατηγορίας εκπαίδευσης στην ανανέωση μιας πιστοποίησης, για όλη την κατηγορία ή μόνο ένα μέρος της.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-credit-mappings" xml:space="preserve">
+    <value>Οι ώρες ανανέωσης συμπληρώνονται από την εκπαίδευση που κάνουν ήδη τα μέλη, αντί να πληκτρολογούνται σε κάθε πιστοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-credit-mappings" xml:space="preserve">
+    <value>Οι ώρες της κατηγορίας συνεχιζόμενης εκπαίδευσης προνοσοκομειακής φροντίδας μετρούν για την πιστοποίηση διασώστη, έτσι η πρόοδος ανανέωσης ενός μέλους αυξάνεται μόλις επαληθευτεί μια συνεδρία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-credit-mappings" xml:space="preserve">
+    <value>Στις Εκπαιδεύσεις, ανοίξτε τις Εγγραφές εκπαίδευσης και μετά τις Πιστώσεις πιστοποίησης και αντιστοιχίστε μια κατηγορία σε έναν τύπο πιστοποίησης. Οι εγγραφές που ολοκληρώθηκαν πριν ενεργοποιηθεί η αντιστοίχιση γίνονται πιστώσεις μόνο όταν εφαρμόσετε το ιστορικό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-backfill" xml:space="preserve">
+    <value>Μεταφορά ιστορικού εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-backfill" xml:space="preserve">
+    <value>Μεταφορά στα μητρώα των μελών των ολοκληρωμένων μαθημάτων και εγγραφών εκπαίδευσης από πριν από το μητρώο, με δοκιμαστική εκτέλεση που μετρά τι θα γραφτεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-backfill" xml:space="preserve">
+    <value>Τα μητρώα ξεκινούν με το ιστορικό που έχει ήδη η υπηρεσία σας στο Resgrid αντί για κενά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-backfill" xml:space="preserve">
+    <value>Ένα στέλεχος κάνει δοκιμαστική εκτέλεση, βλέπει πόσες παλαιότερες ολοκληρώσεις και εγγραφές βρέθηκαν και μετά ξεκινά τη μεταφορά, που συνεχίζεται στο παρασκήνιο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-backfill" xml:space="preserve">
+    <value>Στις Εκπαιδεύσεις, ανοίξτε τις Εγγραφές εκπαίδευσης και μετά τη Μεταφορά ιστορικού και κάντε πρώτα δοκιμαστική εκτέλεση. Οι μεταφερμένες εγγραφές γίνονται πιστώσεις πιστοποίησης μόνο όταν εφαρμόσετε το ιστορικό σε έναν τύπο πιστοποίησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-import" xml:space="preserve">
+    <value>Εισαγωγή ιστορικού εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-import" xml:space="preserve">
+    <value>Εισαγωγή ολοκληρώσεων από άλλο σύστημα με αρχείο CSV: έλεγχος του πώς αντιστοιχίστηκε κάθε γραμμή σε μέλος, διόρθωση των γραμμών χωρίς αντιστοίχιση και μετά εισαγωγή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-import" xml:space="preserve">
+    <value>Χρόνια εγγραφών από ένα υπολογιστικό φύλλο ή προηγούμενο σύστημα εκπαίδευσης φτάνουν στα μητρώα των μελών χωρίς επανάληψη πληκτρολόγησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-import" xml:space="preserve">
+    <value>Μια υπηρεσία που αφήνει το παλιό της σύστημα εξάγει τις ολοκληρώσεις της, τις εισάγει και επιλέγει το σωστό μέλος για τις λίγες γραμμές που αντιστοιχίστηκαν μόνο με το όνομα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-import" xml:space="preserve">
+    <value>Στις Εκπαιδεύσεις, ανοίξτε τις Εγγραφές εκπαίδευσης και μετά την Εισαγωγή ιστορικού εκπαίδευσης. Κατεβάστε το πρότυπο, συμπληρώστε μία γραμμή ανά ολοκλήρωση με μέλος, μάθημα, ημερομηνία και ώρες, ανεβάστε το και εξετάστε τα αποτελέσματα του ελέγχου πριν από την εισαγωγή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-hours-report" xml:space="preserve">
+    <value>Αναφορά ωρών εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-hours-report" xml:space="preserve">
+    <value>Επαληθευμένες ώρες εκπαίδευσης ανά κατηγορία, μέλος ή μήνα, με εξαγωγή σε CSV και PDF και, κατόπιν επιλογής, πρώην μέλη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-hours-report" xml:space="preserve">
+    <value>Απαντήστε πόσες ώρες εκπαιδεύτηκε η υπηρεσία, και σε τι, για προϋπολογισμούς, επιχορηγήσεις και ετήσιες εκθέσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-hours-report" xml:space="preserve">
+    <value>Για την ετήσια έκθεση, ο διοικητής εξάγει σε PDF τις ώρες εκπαίδευσης του προηγούμενου έτους ανά κατηγορία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-hours-report" xml:space="preserve">
+    <value>Στις Εκπαιδεύσεις, ανοίξτε τις Εγγραφές εκπαίδευσης και μετά τις Ώρες εκπαίδευσης. Επιλέξτε περίοδο και ομαδοποίηση και εξαγάγετε σε CSV ή PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.my-courses" xml:space="preserve">
+    <value>Τα μαθήματά μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.my-courses" xml:space="preserve">
+    <value>Τα μαθήματα που έχουν ανατεθεί σε ένα μέλος, όσα μπορεί να παρακολουθήσει και τα μαθήματα της Resgrid Academy, με πρόοδο και προθεσμίες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.my-courses" xml:space="preserve">
+    <value>Τα μέλη βλέπουν τι πρέπει να ολοκληρώσουν και συνεχίζουν από εκεί που σταμάτησαν, στον ιστότοπο ή στην εφαρμογή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.my-courses" xml:space="preserve">
+    <value>Ένα νέο μέλος ανοίγει τα Μαθήματά μου, ολοκληρώνει το εισαγωγικό μάθημα και τον σύντομο έλεγχο, και η ολοκλήρωση εμφανίζεται στο ιστορικό του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.my-courses" xml:space="preserve">
+    <value>Ανοίξτε την Εκπαίδευση και επιλέξτε Μαθήματα. Τα ανατεθειμένα μαθήματα εμφανίζονται πρώτα· τα μαθήματα της Resgrid Academy είναι πάντα διαθέσιμα όσο η ενότητα εκπαίδευσης είναι ενεργή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy" xml:space="preserve">
+    <value>Σύντομα βιντεομαθήματα για το Resgrid, το καθένα με έλεγχο τριών ερωτήσεων, που δημοσιεύει δωρεάν το Resgrid για κάθε υπηρεσία, καθώς και διαδρομές ρόλων για μέλη, διασπορείς, αξιωματικούς και διαχειριστές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy" xml:space="preserve">
+    <value>Νέα μέλη και αξιωματικοί μαθαίνουν το σύστημα με τον ίδιο τρόπο, και κάθε ολοκληρωμένο μάθημα μετρά στο ιστορικό τους ως εκπαίδευση συστήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy" xml:space="preserve">
+    <value>Ο υπεύθυνος εκπαίδευσης αναθέτει τη διαδρομή Διασπορέα στο νέο προσωπικό διασποράς και παρακολουθεί ποια μαθήματα ολοκλήρωσε ο καθένας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy" xml:space="preserve">
+    <value>Ανοίξτε την Εκπαίδευση και επιλέξτε Academy. Όσοι μπορούν να αναθέτουν εκπαίδευση αναθέτουν ένα μάθημα ή μια διαδρομή ρόλου σε μέλη, ρόλους ή ομάδες. Τα μαθήματα για ενότητες ή πρόσθετα που δεν χρησιμοποιεί η υπηρεσία παραμένουν κρυφά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-builder" xml:space="preserve">
+    <value>Δημιουργός μαθημάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-builder" xml:space="preserve">
+    <value>Μαθήματα της υπηρεσίας με ενότητες, βίντεο, έγγραφα, μαθήματα πρωτοκόλλων, αξιολογήσεις από τράπεζες ερωτήσεων και έρευνες, εγκεκριμένα και με εκδόσεις όπως τα πρωτόκολλα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-course-builder" xml:space="preserve">
+    <value>Διεξαγωγή της εκπαίδευσης της υπηρεσίας διαδικτυακά, με βαθμολογημένες αξιολογήσεις, χρόνο μελέτης και ολοκληρώσεις που εκδίδουν ή ανανεώνουν πιστοποιήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-course-builder" xml:space="preserve">
+    <value>Ο συντονιστής ΕΚΑΒ δημιουργεί ετήσια επανεκπαίδευση με βίντεο και τεστ 20 ερωτήσεων από τράπεζα με βάση επιτυχίας 80% και την αναθέτει σε κάθε διασώστη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-course-builder" xml:space="preserve">
+    <value>Τίποτα για ρύθμιση ακόμη: ο δημιουργός μαθημάτων ανήκει στο πρόσθετο LMS, που δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-grading" xml:space="preserve">
+    <value>Βαθμολόγηση αξιολογήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-grading" xml:space="preserve">
+    <value>Ουρά ελεύθερων απαντήσεων που περιμένουν βαθμολόγηση, και ανάλυση ερωτήσεων που δείχνει πόσο δύσκολη είναι κάθε ερώτηση και πόσο καλά ξεχωρίζει τα δυνατά από τα αδύναμα αποτελέσματα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-grading" xml:space="preserve">
+    <value>Οι γραπτές απαντήσεις παίρνουν δίκαιο, καταγεγραμμένο βαθμό, και οι αδύναμες ερωτήσεις εντοπίζονται και διορθώνονται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-grading" xml:space="preserve">
+    <value>Ένας υπεύθυνος εκπαίδευσης βαθμολογεί τρεις σύντομες απαντήσεις από το τεστ επικίνδυνων υλικών της περασμένης εβδομάδας· η ανάλυση δείχνει μια ερώτηση που σχεδόν όλοι απαντούν λάθος, οπότε ξαναγράφεται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-grading" xml:space="preserve">
+    <value>Τίποτα για ρύθμιση ακόμη: η βαθμολόγηση ανήκει στο πρόσθετο LMS, που δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.lms" xml:space="preserve">
+    <value>Διαχείριση μάθησης (LMS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.lms" xml:space="preserve">
+    <value>Μαθήματα, απαιτήσεις εκπαίδευσης, τάξεις και επίσημες αναφορές εκπαίδευσης. Δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.lms" xml:space="preserve">
+    <value>Δομημένα μαθήματα και επίσημες αναφορές επιπλέον του δωρεάν μητρώου εκπαίδευσης, μόλις κυκλοφορήσει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.lms" xml:space="preserve">
+    <value>Τίποτα για δοκιμή ακόμη: το πρόσθετο διαχείρισης μάθησης βρίσκεται ακόμη σε ανάπτυξη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.lms" xml:space="preserve">
+    <value>Τίποτα για ρύθμιση ακόμη. Το δωρεάν μητρώο εκπαίδευσης λειτουργεί χωρίς αυτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-lms" xml:space="preserve">
+    <value>Πρόσθετο LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-lms" xml:space="preserve">
+    <value>Το πρόσθετο διαχείρισης μάθησης, σε πακέτα 25 μελών: μαθήματα, επίσημες αναφορές εκπαίδευσης και επαληθεύσιμα πιστοποιητικά. Διατίθεται μόλις το Resgrid το ενεργοποιήσει για το τμήμα σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-lms" xml:space="preserve">
+    <value>Προσθέτει μαθήματα, επίσημες αναφορές και επαληθεύσιμα πιστοποιητικά στο δωρεάν ιστορικό εκπαίδευσης, για τα μέλη που ενεργοποιείτε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-lms" xml:space="preserve">
+    <value>Ένα τμήμα αγοράζει 2 πακέτα, ενεργοποιεί τους 40 μόνιμους υπαλλήλους του και βγάζει την αναφορά ISO FSRS· οι εθελοντές κρατούν τη δωρεάν εκπαίδευση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-lms" xml:space="preserve">
+    <value>Στη Συνδρομή, ανοίξτε την κάρτα LMS και επιλέξτε αριθμό πακέτων, έπειτα ενεργοποιήστε μέλη στη σελίδα προσωπικού.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-seats" xml:space="preserve">
+    <value>Θέσεις LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-seats" xml:space="preserve">
+    <value>Ενεργοποιήστε το LMS για κάθε μέλος στη σελίδα προσωπικού του ή για ολόκληρη ομάδα με μία κίνηση, εντός των θέσεων των πακέτων σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-seats" xml:space="preserve">
+    <value>Πληρώνετε μόνο για τα μέλη που εκπαιδεύετε μέσω του LMS· όλοι οι άλλοι κρατούν τη δωρεάν ενότητα Εκπαίδευσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-seats" xml:space="preserve">
+    <value>Ένα μικτό τμήμα ενεργοποιεί το LMS για τους 40 μόνιμους υπαλλήλους του και αφήνει τους εθελοντές στη δωρεάν εκπαίδευση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-seats" xml:space="preserve">
+    <value>Στο Προσωπικό, χρησιμοποιήστε τις Θέσεις LMS για να ενεργοποιήσετε μια ομάδα ή ανοίξτε ένα μέλος και επιλέξτε Ενεργοποίηση LMS. Θέση μπορούν να έχουν μόνο ενεργά μέλη· προσθέστε πακέτο όταν εξαντληθούν οι θέσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-packs" xml:space="preserve">
+    <value>Πακέτα LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-packs" xml:space="preserve">
+    <value>Αγοράστε το πρόσθετο LMS σε πακέτα 25 μελών και αλλάξτε τον αριθμό πακέτων, βλέποντας την τιμή πριν από κάθε αλλαγή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-packs" xml:space="preserve">
+    <value>Ο λογαριασμός ακολουθεί τις θέσεις που χρειάζεστε: η κλιμακωτή τιμολόγηση κάνει τα μεγάλα δυναμικά φθηνότερα ανά μέλος, και τα πρόσθετα πακέτα χρεώνονται αναλογικά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-packs" xml:space="preserve">
+    <value>Ένα τμήμα με 110 μέλη με ενεργό LMS έχει 5 πακέτα· όταν ξεπεράσει τα 125 προσθέτει έκτο πακέτο και πληρώνει αμέσως την αναλογική διαφορά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-packs" xml:space="preserve">
+    <value>Στη Συνδρομή, ανοίξτε την κάρτα LMS, επιλέξτε αριθμό πακέτων και ολοκληρώστε την αγορά. Η αφαίρεση πακέτων ισχύει από την επόμενη ημερομηνία χρέωσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.WellnessSettings" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.WellnessSettings" xml:space="preserve">
+    <value>Ποιος διαβάζει τα αρχεία εκθέσεων και κρίσιμων συμβάντων των μελών (ο ρόλος υπεύθυνου ευεξίας), ποιοι είναι οι ορισμένοι υπεύθυνοι και η ομάδα υποστήριξης συναδέλφων, ποια πιστοποίηση μπορεί να έχει κάθε ρόλος ευεξίας και για πόσα χρόνια διατηρούνται οι καταχωρίσεις. Η ευεξία των μελών ανήκει στο πρόσθετο Workforce Pro, όχι στο πρόσθετο LMS: χωρίς αυτό, τα υπάρχοντα αρχεία είναι μόνο για ανάγνωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Ρόλος υπεύθυνου ευεξίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Τα μέλη αυτού του ρόλου διαβάζουν το αρχείο εκθέσεων κάθε μέλους και διαχειρίζονται σημάνσεις ελέγχου και ενέργειες παρακολούθησης. Οι διαχειριστές δεν βλέπουν τα αρχεία αν δεν έχουν τον ρόλο. Κανένας αφήνει κάθε αρχείο μόνο στο μέλος του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Πιστοποίηση ομάδας υποστήριξης συναδέλφων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Ο τύπος πιστοποίησης της ομάδας υποστήριξης συναδέλφων. Με ρόλο ομάδας υποστήριξης συναδέλφων εμφανίζεται ως κατάσταση κάθε μέλους της ομάδας· χωρίς ρόλο, την ομάδα αποτελούν τα μέλη με ισχύουσα πιστοποίηση αυτού του τύπου, που λαμβάνουν τις υπενθυμίσεις επετείου που επιλέγει να μοιραστεί ένα μέλος. Χωρίς κανένα από τα δύο δεν υπάρχει ομάδα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Διατήρηση καταχωρίσεων (έτη)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Τα έτη που διατηρείται μια καταχώριση έκθεσης μετά το συμβάν, από 30 (το ελάχιστο του OSHA 29 CFR 1910.1020) έως 100. Μια νομική δέσμευση τις διατηρεί περισσότερο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.member-wellness" xml:space="preserve">
+    <value>Οι εκθέσεις μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.member-wellness" xml:space="preserve">
+    <value>Το προσωπικό αρχείο κάθε μέλους για εκθέσεις σε καρκινογόνα, αιματογενή παθογόνα, επικίνδυνες ουσίες και κρίσιμα συμβάντα, με καταχωρίσεις που προτείνονται από τα δεδομένα κλήσεων αφού σημανθεί μια κλήση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.member-wellness" xml:space="preserve">
+    <value>Αρχεία εκθέσεων για το τεκμήριο καρκίνου και την αποζημίωση εργαζομένων, διατηρούνται 30 χρόνια και τα διαβάζουν μόνο το μέλος και οι υπεύθυνοι ευεξίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.member-wellness" xml:space="preserve">
+    <value>Μετά από πυρκαγιά κτιρίου, ο αξιωματικός σημαίνει την κλήση· κάθε μέλος που ήταν εκεί επιβεβαιώνει μια προτεινόμενη καταχώριση καρκινογόνου και προσθέτει τα ΜΑΠ και την απολύμανση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.member-wellness" xml:space="preserve">
+    <value>Επιλέξτε τον ρόλο υπεύθυνου ευεξίας στο Προσωπικό, Οι εκθέσεις μου, Ρυθμίσεις και, προαιρετικά, έναν τύπο πιστοποίησης για κάθε ρόλο ευεξίας. Τα μέλη ανοίγουν το Οι εκθέσεις μου από το Προσωπικό· οι αξιωματικοί σημαίνουν μια κλήση από το κουμπί Παρακολούθηση ευεξίας. Η ευεξία των μελών ανήκει στο πρόσθετο Workforce Pro (όχι στο πρόσθετο LMS): τα αρχεία τηρούνται για τα μέλη με ενεργό το Workforce Pro και χωρίς το πρόσθετο τα υπάρχοντα αρχεία είναι μόνο για ανάγνωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-knowledge" xml:space="preserve">
+    <value>Απαντήσεις γνώσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-knowledge" xml:space="preserve">
+    <value>Τα μέλη κάνουν μια ερώτηση και λαμβάνουν απάντηση μόνο από τα δημοσιευμένα πρωτόκολλα και τις εκπαιδεύσεις του τμήματός σας και την Resgrid Academy, με κάθε μέρος συνδεδεμένο στην πηγή του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-knowledge" xml:space="preserve">
+    <value>Τα μέλη βρίσκουν σε δευτερόλεπτα τι λένε τα πρωτόκολλά σας, και όσοι τα γράφουν βλέπουν τις ερωτήσεις που το περιεχόμενο δεν απαντά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-knowledge" xml:space="preserve">
+    <value>Ένα μέλος ρωτά ποιον προστατευτικό εξοπλισμό απαιτεί η οδηγία επικίνδυνων υλικών και λαμβάνει την απάντηση με σύνδεσμο σε εκείνη την ενότητα της ισχύουσας έκδοσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-knowledge" xml:space="preserve">
+    <value>Απαιτεί το πρόσθετο Enhanced AI με ενεργές απαντήσεις γνώσης για το τμήμα σας. Δημοσιεύστε τα πρωτόκολλά σας και ξεκινήστε τις εκπαιδεύσεις σας· τα μέλη χρησιμοποιούν έπειτα το «Ρωτήστε» στη βιβλιοθήκη πρωτοκόλλων, σε πρωτόκολλο, εκπαίδευση ή κλήση. Οι υπεύθυνοι εκπαίδευσης βλέπουν τις αναπάντητες ερωτήσεις στα Κενά γνώσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.KnowledgeSettings" xml:space="preserve">
+    <value>Ρυθμίσεις γνώσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.KnowledgeSettings" xml:space="preserve">
+    <value>Κανόνες για όλο το τμήμα για τις απαντήσεις γνώσης στη σελίδα Ρυθμίσεις γνώσης: αν χρησιμοποιείται η ενότητα Έγγραφα και ο σύνδεσμος του εργαλείου δοσολογίας του τμήματος. Αν λείπει, τα έγγραφα δεν χρησιμοποιούνται και δεν υπάρχει σύνδεσμος δοσολογίας. Μόνο οι διαχειριστές του τμήματος μπορούν να την αλλάξουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Ρυθμίσεις γνώσης / Συμπερίληψη εγγράφων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Τα έγγραφα γίνονται πηγές για τις απαντήσεις γνώσης. Τα έγγραφα μόνο για διαχειριστές χρησιμοποιούνται μόνο για διαχειριστές, και κανένα έγγραφο δεν χρησιμοποιείται όσο είναι ενεργό το Advanced Data Protection. Η αλλαγή αναδημιουργεί στο παρασκήνιο το ευρετήριο γνώσης του τμήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>Ρυθμίσεις γνώσης / Σύνδεσμος εργαλείου δοσολογίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>Ένας σύνδεσμος https προς το εργαλείο δοσολογίας του τμήματος. Οι απαντήσεις που παραθέτουν δόση τον εμφανίζουν· οι δόσεις παρατίθενται μόνο από πηγή, και ούτε το μοντέλο ούτε το Resgrid υπολογίζει δόση. Οτιδήποτε εκτός από σύνδεσμο https απορρίπτεται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.document-sealing" xml:space="preserve">
+    <value>Σφραγισμένα έγγραφα και επαλήθευση εγγράφων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.document-sealing" xml:space="preserve">
+    <value>Πιστοποιητικά, καρτέλες, PDF πρωτοκόλλων και υπογεγραμμένα έγγραφα σφραγίζονται με χρονοσφραγίδα ώστε ο καθένας να ελέγχει ότι δεν άλλαξαν· τα στελέχη ελέγχουν κάθε PDF στην Επαλήθευση εγγράφου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.document-sealing" xml:space="preserve">
+    <value>Παραδώστε έγγραφα που εμπιστεύονται άλλοι φορείς και δικαστήρια, και εντοπίστε αλλοιωμένα αντίγραφα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.document-sealing" xml:space="preserve">
+    <value>Ένας επιθεωρητής ελέγχει ότι ένα πιστοποιητικό που έφερε ένα μέλος από άλλη υπηρεσία εκδόθηκε από το Resgrid και δεν τροποποιήθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.document-sealing" xml:space="preserve">
+    <value>Ανοίξτε την Επαλήθευση εγγράφου και ανεβάστε ένα PDF. Τη σφράγιση τη ρυθμίζει ο διαχειριστής της εγκατάστασης· μέχρι τότε τα έγγραφα σημειώνονται ως εκκρεμής σφράγιση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.external-signatures" xml:space="preserve">
+    <value>Εξωτερικές υπογραφές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.external-signatures" xml:space="preserve">
+    <value>Πελάτες, ένοικοι και τρίτοι υπογράφουν αναφορές χρόνου, προσφορές, συμβάσεις, επιθεωρήσεις και παραδόσεις πειστηρίων αυτοπροσώπως σε συσκευή μέλους ή μέσω συνδέσμου Resgrid με κωδικό μίας χρήσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.external-signatures" xml:space="preserve">
+    <value>Αντικαταστήστε πληκτρολογημένα ονόματα με υπογραφές που επαληθεύει ο άλλος, σφραγισμένες με σελίδα ελέγχου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.external-signatures" xml:space="preserve">
+    <value>Ο επικεφαλής πληρώματος δίνει το tablet στον εκπρόσωπο του πελάτη για να υπογράψει το ημερήσιο δελτίο πριν αποχωρήσουν από το συμβάν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.external-signatures" xml:space="preserve">
+    <value>Ανοίξτε το έγγραφο και επιλέξτε Παράδοση συσκευής στον υπογράφοντα ή ζητήστε υπογραφή μέσω συνδέσμου. Για συνδέσμους, ένας διαχειριστής προσθέτει το διακριτικό της ομάδας Documenso στις Ρυθμίσεις ηλεκτρονικής υπογραφής· οι σύνδεσμοι περιλαμβάνονται στο πρόσθετο του εγγράφου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-acknowledgments" xml:space="preserve">
+    <value>Οι επιβεβαιώσεις μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-acknowledgments" xml:space="preserve">
+    <value>Διαβάστε και υπογράψτε τα πρωτόκολλα και δελτία που σας ζητείται να επιβεβαιώσετε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compliance" xml:space="preserve">
+    <value>Συμμόρφωση επιβεβαιώσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compliance" xml:space="preserve">
+    <value>Δείτε ποιος διάβασε και υπέγραψε κάθε έκδοση πρωτοκόλλου, ανά ομάδα, και εξαγάγετέ το.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulletins" xml:space="preserve">
+    <value>Δελτία προτεραιότητας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulletins" xml:space="preserve">
+    <value>Εκδώστε σύντομη υποχρεωτική ειδοποίηση που ισχύει αμέσως και εγκρίνεται μετά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulk-upload" xml:space="preserve">
+    <value>Μεταφόρτωση εγγράφων πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulk-upload" xml:space="preserve">
+    <value>Φέρτε μονομιάς πρωτόκολλα PDF και Word ως πρόχειρα, με αναζητήσιμο κείμενο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Ρυθμίσεις βιβλιοθήκης πρωτοκόλλων / Γλώσσα περιεχομένου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Η γλώσσα σύνταξης των πρωτοκόλλων. Τα μέλη χωρίς εγκεκριμένη μετάφραση στη γλώσσα τους διαβάζουν την έκδοση σε αυτή τη γλώσσα, και οι ετικέτες μπλοκ όπως «Προσοχή» γράφονται σε αυτήν. Κενό σημαίνει Αγγλικά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-block-editor" xml:space="preserve">
+    <value>Δομημένο περιεχόμενο πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-block-editor" xml:space="preserve">
+    <value>Γράψτε πρωτόκολλα ως μπλοκ: βήματα, προφυλάξεις, επικοινωνία με ιατρικό έλεγχο, πίνακες, φάρμακα και παραλλαγές ενηλίκων/παίδων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-step-through" xml:space="preserve">
+    <value>Εκτέλεση πρωτοκόλλου βήμα-βήμα σε συμβάντα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-step-through" xml:space="preserve">
+    <value>Εκτελέστε ένα πρωτόκολλο διαδικασίας ή αποστολής σε συμβάν σαν λίστα ελέγχου, με χρονοσήμανση σε κάθε βήμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-book" xml:space="preserve">
+    <value>Βιβλίο PDF πρωτοκόλλων, κωδικός QR και προβολή εκτύπωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-book" xml:space="preserve">
+    <value>Εξαγάγετε μια κατηγορία ή όλη τη βιβλιοθήκη ως ένα βιβλίο PDF, εκτυπώστε ένα πρωτόκολλο ή αναρτήστε τον κωδικό QR του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-translations" xml:space="preserve">
+    <value>Μεταφράσεις περιεχομένου πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-translations" xml:space="preserve">
+    <value>Μεταφράστε μια έκδοση πρωτοκόλλου στις γλώσσες των μελών, με χωριστή έγκριση για κάθε μετάφραση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Ρόλος ορισμένου υπευθύνου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Τα μέλη αυτού του ρόλου λαμβάνουν αναφορές έκθεσης σε αιματογενή παθογόνα και λοιμώδη νοσήματα (Ryan White Part G) και διαχειρίζονται τις περιπτώσεις έκθεσης. Κανένας σημαίνει ότι αναλαμβάνει ο ρόλος υπευθύνου ευεξίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Πιστοποίηση εκπαίδευσης για αιματογενή παθογόνα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Ο τύπος πιστοποίησης της ετήσιας εκπαίδευσης για αιματογενή παθογόνα (OSHA 1910.1030). Κάθε περίπτωση έκθεσης δείχνει την τρέχουσα κατάσταση του μέλους. Κανένας την αφήνει χωρίς παρακολούθηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Πιστοποίηση ιατρικής έγκρισης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Ο τύπος πιστοποίησης με τον οποίο καταγράφεται επίσης μια ιατρική αξιολόγηση NFPA 1582 (από το πρότυπο Medical Clearance (NFPA 1582)). Το Μη εγκεκριμένος την αναστέλλει. Κανένας κρατά τις εγκρίσεις μόνο στην ευεξία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Διατήρηση αρχείων τραυματισμών (έτη)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Έτη διατήρησης ενός αρχείου τραυματισμού μετά το τέλος του έτους του, από 5 (OSHA 29 CFR 1904.33) έως 100. Η νομική δέσμευση διατηρεί τα αρχεία περισσότερο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-authoring-aids" xml:space="preserve">
+    <value>Βοηθήματα σύνταξης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-authoring-aids" xml:space="preserve">
+    <value>Προσχέδια ερωτήσεων κουίζ, διαγραμμάτων μαθημάτων και περιλήψεων αλλαγών από το περιεχόμενο της υπηρεσίας, για έλεγχο από τους συντάκτες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-authoring-aids" xml:space="preserve">
+    <value>Οι συντάκτες ξεκινούν από τεκμηριωμένο προσχέδιο αντί για λευκή σελίδα, και τίποτα δεν αποθηκεύεται πριν το αποδεχτούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-authoring-aids" xml:space="preserve">
+    <value>Ένας υπεύθυνος εκπαίδευσης συντάσσει πέντε ερωτήσεις από τη νέα εκπαίδευση αναπνευστικών συσκευών και κρατά τρεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-authoring-aids" xml:space="preserve">
+    <value>Ενεργοποιήστε τις απαντήσεις γνώσης με το Enhanced AI· τα βοηθήματα εμφανίζονται στον επεξεργαστή εκπαίδευσης και στη δημιουργία μαθημάτων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.help-search" xml:space="preserve">
+    <value>Αναζήτηση στο κέντρο βοήθειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.help-search" xml:space="preserve">
+    <value>Δωρεάν αναζήτηση λέξεων-κλειδιών στη Resgrid Academy και στο εγχειρίδιο από το μενού Βοήθειας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.help-search" xml:space="preserve">
+    <value>Τα μέλη βρίσκουν το μάθημα ή τη ρύθμιση που χρειάζονται χωρίς να φύγουν από το Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.help-search" xml:space="preserve">
+    <value>Ένα νέο μέλος αναζητά "κατάσταση" και ανοίγει το εισαγωγικό μάθημα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.help-search" xml:space="preserve">
+    <value>Δεν χρειάζεται ρύθμιση: ανοίξτε τη Βοήθεια και μετά την Αναζήτηση βοήθειας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy-guidance" xml:space="preserve">
+    <value>Καθοδηγούμενες περιηγήσεις και Τι νέο υπάρχει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy-guidance" xml:space="preserve">
+    <value>Πρώτες εργασίες για κάθε ρόλο βασισμένες στις περιηγήσεις της Academy, και ένα σύντομο μάθημα για κάθε έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy-guidance" xml:space="preserve">
+    <value>Τα νέα μέλη και οι διαχειριστές ξέρουν τι να κάνουν πρώτα, και όλοι βλέπουν τι άλλαξε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy-guidance" xml:space="preserve">
+    <value>Ένας νέος χειριστής ολοκληρώνει το άνοιγμα της λίστας συμβάντων, τον έλεγχο οχημάτων και του χάρτη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy-guidance" xml:space="preserve">
+    <value>Δεν χρειάζεται ρύθμιση: κάθε μέλος βλέπει την περιήγηση του ρόλου του στον πίνακα και μπορεί να την κρύψει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.multi-signer-signatures" xml:space="preserve">
+    <value>Υπογραφές πολλών υπογραφόντων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.multi-signer-signatures" xml:space="preserve">
+    <value>Πολλά άτομα υπογράφουν ένα έγγραφο με σειρά: μέλη σε επίπεδο 1 ή 2, μάρτυρες, υπεύθυνοι πιστοποίησης, αξιολογητές και τρίτοι, με υπενθυμίσεις μέχρι να υπογράψουν όλοι.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.multi-signer-signatures" xml:space="preserve">
+    <value>Οι εγκρίσεις που απαιτούν περισσότερα από ένα άτομα καταγράφονται με τη σωστή σειρά, δεσμεύονται με το ακριβές περιεχόμενο και σφραγίζονται με σελίδα ελέγχου μόλις ολοκληρωθούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.multi-signer-signatures" xml:space="preserve">
+    <value>Ένας υπεύθυνος εκπαίδευσης αξιολογεί μια δεξιότητα σε επίπεδο 2 και έπειτα υπογράφει ο υπεύθυνος πιστοποίησης· ο καθένας λαμβάνει υπενθύμιση όταν έρθει η σειρά του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.multi-signer-signatures" xml:space="preserve">
+    <value>Τα μέλη βρίσκουν ό,τι τα περιμένει στις Υπογραφές μου και στην αρχική τους σελίδα· τα αιτήματα ξεκινούν από το έγγραφο που χρειάζεται υπογραφή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.checklist-witness-signature" xml:space="preserve">
+    <value>Υπογραφή μάρτυρα λίστας ελέγχου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.checklist-witness-signature" xml:space="preserve">
+    <value>Μια λίστα ελέγχου μπορεί να απαιτεί από τον ανεξάρτητο μάρτυρά της να υπογράψει σε επίπεδο 2 (νέος έλεγχος ταυτότητας ή κλειδί πρόσβασης) αντί να βεβαιώνει μόνο με κείμενο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.checklist-witness-signature" xml:space="preserve">
+    <value>Οι έλεγχοι ελεγχόμενων ουσιών και ασφάλειας αποκτούν υπογραφή μάρτυρα δεσμευμένη με τα καταγεγραμμένα αποτελέσματα, που περιλαμβάνεται στις Λίστες ελέγχου χωρίς επιπλέον κόστος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.checklist-witness-signature" xml:space="preserve">
+    <value>Μετά τον έλεγχο ενός κουτιού φαρμάκων, ένας δεύτερος διασώστης υπογράφει ως μάρτυρας με το κλειδί πρόσβασής του πριν ο έλεγχος θεωρηθεί ολοκληρωμένος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.checklist-witness-signature" xml:space="preserve">
+    <value>Επεξεργαστείτε τη λίστα ελέγχου, ενεργοποιήστε τον ανεξάρτητο μάρτυρα και την υπογραφή μάρτυρα και δημοσιεύστε τη νέα έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.readiness-signatures" xml:space="preserve">
+    <value>Αποδοχή προμηθευτή και αποδείξεις χορήγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.readiness-signatures" xml:space="preserve">
+    <value>Οι προμηθευτές αποδέχονται ολοκληρωμένες εντολές εργασίας και τα μέλη ή οι παραλήπτες υπογράφουν αποδείξεις για τον χορηγημένο εξοπλισμό, αυτοπροσώπως ή μέσω συνδέσμου Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.readiness-signatures" xml:space="preserve">
+    <value>Αντικαταστήστε τις προφορικές παραδόσεις με υπογεγραμμένες αποδοχές και αποδείξεις που μπορεί να επαληθεύσει ο άλλος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.readiness-signatures" xml:space="preserve">
+    <value>Ο τεχνικός του συνεργείου επισκευής αντλιών υπογράφει την ολοκληρωμένη εντολή εργασίας στο τάμπλετ του σταθμού πριν φύγει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.readiness-signatures" xml:space="preserve">
+    <value>Ανοίξτε μια ολοκληρωμένη εντολή εργασίας ή την Απόδειξη ενός χορηγημένου είδους και ζητήστε την υπογραφή. Οι απομακρυσμένοι σύνδεσμοι απαιτούν το Readiness Pro και τις ρυθμίσεις ηλεκτρονικής υπογραφής του τμήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsProgramSettings" xml:space="preserve">
+    <value>Ρυθμίσεις προγράμματος εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsProgramSettings" xml:space="preserve">
+    <value>Πώς εγκρίνονται τα αιτήματα εκπαίδευσης και σε ποιο νόμισμα καταχωρίζεται το κόστος τους, καθώς και αν οι επιθεωρήσεις και οι αναθεωρήσεις προσχεδίων επέμβασης στα Αρχεία πιστώνονται ως εξοικείωση με κτίρια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Ο προϊστάμενος εγκρίνει τα αιτήματα εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Οι διαχειριστές της ομάδας του μέλους (ή οι διαχειριστές του τμήματος) εγκρίνουν πρώτοι ένα αίτημα εκπαίδευσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Ο υπεύθυνος εκπαίδευσης εγκρίνει τα αιτήματα εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Ένα μέλος που διαχειρίζεται τις εγγραφές εκπαίδευσης ολόκληρου του τμήματος εγκρίνει το αίτημα, μετά τον προϊστάμενο όταν είναι ενεργά και τα δύο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Νόμισμα εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Ο τριψήφιος κωδικός νομίσματος (EUR, CAD, USD …) στον οποίο καταχωρίζονται και αθροίζονται το κόστος των αιτημάτων εκπαίδευσης, το κόστος των μαθημάτων και τα τέλη συμμετοχής. Ένα μάθημα μπορεί να ορίσει το δικό του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Πίστωση εξοικείωσης με κτίρια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Οι ολοκληρωμένες επιθεωρήσεις κτιρίων και αναθεωρήσεις προσχεδίων επέμβασης στα Αρχεία καταχωρίζονται στο μητρώο εκπαίδευσης του ατόμου που τις πραγματοποίησε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Κατηγορία εξοικείωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Η κατηγορία εκπαίδευσης στην οποία καταχωρίζεται η πίστωση εξοικείωσης, για παράδειγμα η κατηγορία σχεδιασμού επέμβασης του ISO.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>Λεπτά ανά επίσκεψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>Τα λεπτά που πιστώνονται για μια επίσκεψη χωρίς ώρα έναρξης και λήξης. Μια επίσκεψη με δικές της ώρες πιστώνεται με την πραγματική της διάρκεια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Πίστωση από επιθεωρήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Οι ολοκληρωμένες επιθεωρήσεις κτιρίων πιστώνονται στον επιθεωρητή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Πίστωση από αναθεωρήσεις προσχεδίων επέμβασης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Οι αναθεωρήσεις προσχεδίων επέμβασης κτιρίων και επαφών πιστώνονται σε αυτόν που τις έκανε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-plan" xml:space="preserve">
+    <value>Ετήσιο σχέδιο εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-plan" xml:space="preserve">
+    <value>Ένα έτος προγραμματισμένων συνεδριών και ωρών ανά κατηγορία και μήνα για το τμήμα, μια ομάδα ή μια βάρδια, σε σύγκριση με τις ώρες που καταγράφηκαν πραγματικά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-plan" xml:space="preserve">
+    <value>Το γραπτό σχέδιο που ζητούν οι ελεγκτές, οι ρυθμιστικές αρχές και οι φορείς διαπίστευσης, και ένα έλλειμμα σε σχέση με τους ετήσιους στόχους που φαίνεται τον Ιούνιο, όχι στον έλεγχο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-plan" xml:space="preserve">
+    <value>Ο υπεύθυνος εκπαίδευσης προγραμματίζει 16 ώρες εκπαίδευσης πληρώματος κάθε μήνα· τον Ιούνιο η πρόβλεψη δείχνει ότι το τμήμα θα υστερήσει κατά 20 ώρες από τον στόχο των 192 ωρών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-plan" xml:space="preserve">
+    <value>Δεν χρειάζεται ακόμη ρύθμιση: το ετήσιο σχέδιο ανήκει στο πρόσθετο LMS, το οποίο δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-competency-frameworks" xml:space="preserve">
+    <value>Πλαίσια ικανοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-competency-frameworks" xml:space="preserve">
+    <value>Απαιτήσεις επαγγελματικής απόδοσης, θέσεις και δεξιότητες, με σήμανση στα μαθήματα, τις εκπαιδεύσεις και τις πιστοποιήσεις που τις τεκμηριώνουν, και με αναφορά κενών ανά μέλος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-competency-frameworks" xml:space="preserve">
+    <value>Δείχνει για κάθε μέλος ποιες απαιτήσεις έχουν τεκμήριο, πόσο παλιό είναι και ποιες δεν έχουν καθόλου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-competency-frameworks" xml:space="preserve">
+    <value>Μια υπηρεσία εισάγει το πλαίσιο ικανοτήτων της ρυθμιστικής της αρχής, επισημαίνει τα μαθήματά της και βλέπει ότι ένας νεοσύλλεκτος δεν έχει ακόμη τεκμήρια για τρεις απαιτήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-competency-frameworks" xml:space="preserve">
+    <value>Δεν χρειάζεται ακόμη ρύθμιση: τα πλαίσια ικανοτήτων ανήκουν στο πρόσθετο LMS, το οποίο δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-requests" xml:space="preserve">
+    <value>Αιτήματα εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-requests" xml:space="preserve">
+    <value>Τα μέλη ζητούν να παρακολουθήσουν ένα εξωτερικό σεμινάριο μαζί με το κόστος του· ο προϊστάμενος και ένας υπεύθυνος εκπαίδευσης το εγκρίνουν και το σεμινάριο καταχωρίζεται στο μητρώο εκπαίδευσης μόλις ολοκληρωθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-requests" xml:space="preserve">
+    <value>Μία εγκεκριμένη εγγραφή με κόστος για κάθε εξωτερικό σεμινάριο και σύνολα δαπανών ανά μέλος, μάθημα και έτος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-requests" xml:space="preserve">
+    <value>Ένας διασώστης ζητά να παρακολουθήσει ένα σεμινάριο 16 ωρών κόστους 450 δολαρίων· ο αξιωματικός βάρδιας και ο υπεύθυνος εκπαίδευσης το εγκρίνουν και το πιστοποιητικό επαληθεύεται στη συνέχεια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-requests" xml:space="preserve">
+    <value>Δεν χρειάζεται ακόμη ρύθμιση: τα αιτήματα εκπαίδευσης ανήκουν στο πρόσθετο LMS, το οποίο δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-report-catalog" xml:space="preserve">
+    <value>Κατάλογος αναφορών εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-report-catalog" xml:space="preserve">
+    <value>Όλες οι αναφορές εκπαίδευσης σε ένα σημείο, αποθηκευμένες με τις ρυθμίσεις τους σε φακέλους και αποστελλόμενες ημερήσια, εβδομαδιαία ή μηνιαία ως CSV ή PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-report-catalog" xml:space="preserve">
+    <value>Οι αναφορές που χρειάζεται ένας έλεγχος φτάνουν από μόνες τους, φιλτραρισμένες με τον ίδιο τρόπο κάθε φορά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-report-catalog" xml:space="preserve">
+    <value>Η αναφορά εκπαίδευσης ISO αποστέλλεται στον διοικητή και στον υπεύθυνο εκπαίδευσης ως PDF την πρώτη κάθε μήνα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-report-catalog" xml:space="preserve">
+    <value>Δεν χρειάζεται ακόμη ρύθμιση: οι αποθηκευμένες και προγραμματισμένες αναφορές ανήκουν στο πρόσθετο LMS, το οποίο δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-cycles" xml:space="preserve">
+    <value>Κύκλοι πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-cycles" xml:space="preserve">
+    <value>Ο επόμενος κύκλος μιας πιστοποίησης ξεκινά αυτόματα μόλις συμπληρωθούν οι ώρες ανανέωσης, και οι προϊστάμενοι, οι διαχειριστές ή συγκεκριμένα μέλη ειδοποιούνται όταν ένας κύκλος ολοκληρώνεται, ξεκινά, πλησιάζει στη λήξη ή λήγει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-cycles" xml:space="preserve">
+    <value>Οι επαναλαμβανόμενες πιστοποιήσεις συνεχίζουν να καταγράφουν ώρες χωρίς να τις ξαναπερνά κανείς, και τα σωστά άτομα ενημερώνονται εγκαίρως.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-cycles" xml:space="preserve">
+    <value>Όταν ένας EMT συμπληρώσει τις ώρες ανανέωσης, ο επόμενος διετής κύκλος ξεκινά από την τρέχουσα λήξη και ο υπεύθυνος του τομέα EMS λαμβάνει ειδοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-cycles" xml:space="preserve">
+    <value>Δεν χρειάζεται ακόμη ρύθμιση: οι κανόνες κύκλων πιστοποίησης ανήκουν στο πρόσθετο LMS, το οποίο δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-credential-audiences" xml:space="preserve">
+    <value>Μηνύματα βάσει κατάστασης πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-credential-audiences" xml:space="preserve">
+    <value>Στείλτε μήνυμα στα μέλη των οποίων η πιστοποίηση έχει λήξει, λήγει εντός ορισμένων ημερών ή που δεν την είχαν ποτέ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-credential-audiences" xml:space="preserve">
+    <value>Οι υπενθυμίσεις φτάνουν ακριβώς σε όσους τις χρειάζονται, χωρίς να φτιάξει κανείς λίστα με το χέρι.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-credential-audiences" xml:space="preserve">
+    <value>Ο υπεύθυνος εκπαίδευσης στέλνει μήνυμα σε όλους όσων η κάρτα CPR λήγει εντός 30 ημερών με την ημερομηνία του επόμενου σεμιναρίου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-credential-audiences" xml:space="preserve">
+    <value>Δεν χρειάζεται ακόμη ρύθμιση: οι ομάδες παραληπτών βάσει κατάστασης πιστοποίησης ανήκουν στο πρόσθετο LMS, το οποίο δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LearningRequirementSettings" xml:space="preserve">
+    <value>Ρυθμίσεις απαιτήσεων εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LearningRequirementSettings" xml:space="preserve">
+    <value>Επιβολή βάσει εκπαίδευσης για το τμήμα (ανενεργή από προεπιλογή), το μέγιστο ποσοστό μελών ενός ρόλου που μπορεί να αφαιρέσει μία εκτέλεση επιβολής και η προεπιλεγμένη προειδοποίηση κινδύνου για νέες απαιτήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>Ρυθμίσεις απαιτήσεων εκπαίδευσης / Επιβολή βάσει εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>Όταν είναι ενεργή, μια απαίτηση που τη χρησιμοποιεί μπορεί να προκαλέσει λήξη της πιστοποίησης που υποστηρίζει μόλις ένα μέλος γίνει εκπρόθεσμο πέραν της περιόδου χάριτος. Στη συνέχεια η ενότητα πιστοποιήσεων αφαιρεί ρόλους μετά τη δική της περίοδο χάριτος. Ανενεργή από προεπιλογή, ποτέ όσο το πρόσθετο LMS είναι ανενεργό, και η ενεργοποίησή της δείχνει πρώτα ποιος θα έχανε ποιον ρόλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>Ρυθμίσεις απαιτήσεων εκπαίδευσης / Μέγιστο ποσοστό ρόλου που αφαιρείται σε μία εκτέλεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>Μια εκτέλεση που θα αφαιρούσε περισσότερο από αυτό το ποσοστό των ενεργών μελών ενός ρόλου απορρίπτεται και οι διαχειριστές του τμήματος ενημερώνονται. Προεπιλογή 20.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Ρυθμίσεις απαιτήσεων εκπαίδευσης / Προεπιλεγμένη προειδοποίηση κινδύνου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Πόσες ημέρες πριν από την προθεσμία μια νέα απαίτηση αρχίζει να εμφανίζει τα μέλη σε κίνδυνο. Προεπιλογή 14.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-requirements" xml:space="preserve">
+    <value>Απαιτήσεις εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-requirements" xml:space="preserve">
+    <value>Επαναλαμβανόμενες και εφάπαξ απαιτήσεις εκπαίδευσης ανά ρόλο, ομάδα, πιστοποίηση ή βάρδια: μαθήματα, εκπαιδεύσεις, ώρες ανά κατηγορία, διαδρομές μάθησης και επιτυχείς αξιολογήσεις δεξιοτήτων, με προθεσμίες από την ένταξη των μελών ή την ανάθεση ρόλου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-requirements" xml:space="preserve">
+    <value>Όλοι ξέρουν τι οφείλουν και έως πότε, και οι αξιωματικοί βλέπουν ποιος είναι σε κίνδυνο πριν από έναν έλεγχο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-requirements" xml:space="preserve">
+    <value>Κάθε οδηγός-χειριστής ολοκληρώνει το μάθημα λειτουργίας αντλιών κάθε 12 μήνες και κάθε μέλος καταγράφει 24 ώρες εκπαίδευσης κλιμακίου ανά ημερολογιακό έτος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-requirements" xml:space="preserve">
+    <value>Ανοίξτε τις Εκπαιδεύσεις, επιλέξτε Προγράμματα και προσθέστε μια απαίτηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-compliance-matrix" xml:space="preserve">
+    <value>Πίνακας συμμόρφωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-compliance-matrix" xml:space="preserve">
+    <value>Κάθε μέλος έναντι κάθε απαίτησης: σε συμμόρφωση, προθεσμία αργότερα, σε κίνδυνο, εκπρόθεσμο, εξαιρείται, σε άδεια απουσίας ή χωρίς άδεια χρήσης, με εξαγωγή σε CSV και PDF, ενώ ο διαχειριστής ομάδας βλέπει τη δική του ομάδα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-compliance-matrix" xml:space="preserve">
+    <value>Μία σελίδα απαντά ποιος δεν είναι σε συμμόρφωση και τι λήγει στη συνέχεια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-compliance-matrix" xml:space="preserve">
+    <value>Ένας διοικητής σταθμού φιλτράρει τον πίνακα για τον σταθμό του και εξαιρεί ένα μέλος σε στρατιωτική άδεια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-compliance-matrix" xml:space="preserve">
+    <value>Ανοίξτε τις Εκπαιδεύσεις, επιλέξτε Προγράμματα και μετά Συμμόρφωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learning-paths" xml:space="preserve">
+    <value>Διαδρομές μάθησης και ένταξη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learning-paths" xml:space="preserve">
+    <value>Μαθήματα, ενότητες Academy και εκπαιδεύσεις σε σειρά, με προαπαιτούμενα και βήματα επιλογής. Η ολοκλήρωση μιας διαδρομής μπορεί να εκδίδει πιστοποίηση. Μια διαδρομή ανά ρόλο μπορεί να ανατίθεται αυτόματα όταν κάποιος εντάσσεται ή λαμβάνει τον ρόλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learning-paths" xml:space="preserve">
+    <value>Τα νέα μέλη ακολουθούν την ίδια ένταξη με προθεσμία, χωρίς να χρειάζεται κάποιος να θυμηθεί να την αναθέσει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learning-paths" xml:space="preserve">
+    <value>Οι νέοι συντονιστές λαμβάνουν τη διαδρομή Συντονιστής με 30 ημέρες για να την ολοκληρώσουν, και η ολοκλήρωσή της εκδίδει την πιστοποίηση συντονιστή του τμήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learning-paths" xml:space="preserve">
+    <value>Ανοίξτε τις Εκπαιδεύσεις, επιλέξτε Προγράμματα, μετά Διαδρομές για να δημιουργήσετε μια διαδρομή και Ένταξη για να την αναθέσετε ανά ρόλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-call-answers" xml:space="preserve">
+    <value>Ερωτήσεις για μια κλήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-call-answers" xml:space="preserve">
+    <value>Τα μέλη κάνουν μια ερώτηση στην Προβολή κλήσης και παίρνουν απάντηση μόνο από τις εκδόσεις πρωτοκόλλων που επικαλείται η κλήση και από τον τύπο, την προτεραιότητα, τον κωδικό εκτίμησης και τον τύπο τοποθεσίας της, με κάθε μέρος συνδεδεμένο με την ενότητά του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-call-answers" xml:space="preserve">
+    <value>Πληρώματα και συντονιστές βρίσκουν σε δευτερόλεπτα τι λένε τα πρωτόκολλα της κλήσης για αυτή την κλήση, και στοιχεία ασθενούς ή καλούντος δεν στέλνονται ποτέ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-call-answers" xml:space="preserve">
+    <value>Σε πυρκαγιά κτιρίου σε σχολείο, ένας υπαξιωματικός ρωτά πού σταθμεύουν τα πληρώματα και παίρνει την απάντηση από την ενότητα του πρωτοκόλλου σχολείων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-call-answers" xml:space="preserve">
+    <value>Ενεργοποιήστε τις απαντήσεις γνώσης με το Enhanced AI και επισυνάψτε πρωτόκολλα στις κλήσεις· η «Ερώτηση για αυτή την κλήση» εμφανίζεται στην καρτέλα πρωτοκόλλων της Προβολής κλήσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-tutor" xml:space="preserve">
+    <value>Βοηθός μελέτης και εξάσκηση σε σενάρια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-tutor" xml:space="preserve">
+    <value>Οι εκπαιδευόμενοι κάνουν ερωτήσεις για το μάθημα που παρακολουθούν και τα μέλη εξασκούνται σε σύντομο σενάριο από ένα πρωτόκολλο, με τις δικές τους απαντήσεις να βαθμολογούνται με βάση αυτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-tutor" xml:space="preserve">
+    <value>Τα μέλη ελέγχουν την κατανόησή τους ανάμεσα στις ασκήσεις, και κάθε απάντηση και βαθμός παραπέμπει στην ακριβή ενότητα, χωρίς να καταγράφεται τίποτα στο ιστορικό τους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-tutor" xml:space="preserve">
+    <value>Ένας νέος διασώστης εξασκείται στο πρωτόκολλο καρδιακής ανακοπής: ένα σύντομο σενάριο, τρεις ερωτήσεις και σχόλια που παραθέτουν τα βήματα του πρωτοκόλλου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-tutor" xml:space="preserve">
+    <value>Ενεργοποιήστε τις απαντήσεις γνώσης με το Enhanced AI· τότε η «Εξάσκηση» εμφανίζεται σε κάθε πρωτόκολλο. Το «Ρωτήστε αυτό το μάθημα» στο πρόγραμμα αναπαραγωγής μαθημάτων χρειάζεται επίσης το πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-recommendations" xml:space="preserve">
+    <value>Προτάσεις μάθησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-recommendations" xml:space="preserve">
+    <value>Προτείνει σε κάθε μέλος διαδρομές μάθησης και μαθήματα από τις ανοιχτές απαιτήσεις του, τις διαδρομές που ακολουθεί, τα κενά δεξιοτήτων και τα μαθήματα που προσφέρονται στους ρόλους του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-recommendations" xml:space="preserve">
+    <value>Τα μέλη βλέπουν τι να παρακολουθήσουν μετά και γιατί, και οι αξιωματικοί βλέπουν το ίδιο για τα μέλη που επιβλέπουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-recommendations" xml:space="preserve">
+    <value>Ένας πυροσβέστης χωρίς τεκμήριο για τη δεξιότητα κλιμάκων βλέπει να του προτείνεται το μάθημα χειρισμού κλιμάκων στην ενότητα «Η εκπαίδευσή μου», με τον λόγο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-recommendations" xml:space="preserve">
+    <value>Ανοίξτε τις Εκπαιδεύσεις, επιλέξτε Προγράμματα και μετά Προτάσεις· τα μέλη βλέπουν επίσης το «Προτείνεται για εσάς» στην ενότητα «Η εκπαίδευσή μου». Η «Εξήγηση με ΤΝ» απαιτεί Enhanced AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.approval-chains" xml:space="preserve">
+    <value>Αλυσίδες εγκρίσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.approval-chains" xml:space="preserve">
+    <value>Αγορές, σχέδια δράσης συμβάντος, τιμολόγια, πακέτα Cal OES MARS και συμφωνίες αμοιβαίας συνδρομής εγκρίνονται με σειρά από μια αλυσίδα προσώπων, με όρια ποσών, παράλληλα βήματα, αναπληρωτές όσο κάποιος είναι σε άδεια και κλιμάκωση όταν ένα βήμα κολλάει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.approval-chains" xml:space="preserve">
+    <value>Κάθε έγκριση είναι υπογραφή επιπέδου 2 δεσμευμένη στο ακριβές περιεχόμενο: μια αλλαγή την ακυρώνει, μια απόρριψη χρειάζεται αιτιολογία και η ολοκληρωμένη αλυσίδα σφραγίζει το έγγραφο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.approval-chains" xml:space="preserve">
+    <value>Οι αγορές άνω των 5.000 χρειάζονται τον οικονομικό υπεύθυνο μετά τον επικεφαλής του τομέα επιμελητείας· αν ο οικονομικός υπεύθυνος δεν ενεργήσει εντός 24 ωρών, ερωτώνται οι διαχειριστές του τμήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.approval-chains" xml:space="preserve">
+    <value>Ένας διαχειριστής τμήματος ορίζει μια αλυσίδα ανά είδος στις Εγκρίσεις, Αλυσίδες· τα μέλη υποβάλλουν από τη σελίδα του στοιχείου ή από τις Εγκρίσεις και οι εγκρίνοντες βρίσκουν τα αιτήματα στις «Οι εγκρίσεις μου» και στην αρχική τους σελίδα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-protocol-learning" xml:space="preserve">
+    <value>Κουίζ πρωτοκόλλων και μικρομάθηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-protocol-learning" xml:space="preserve">
+    <value>Κάντε την επιβεβαίωση ενός πρωτοκόλλου να περιμένει ένα κουίζ από τράπεζα ερωτήσεων και στείλτε στα μέλη μία ερώτηση σεναρίου την εβδομάδα από επιλεγμένα πρωτόκολλα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-protocol-learning" xml:space="preserve">
+    <value>Τα μέλη δείχνουν ότι κατάλαβαν ένα πρωτόκολλο, όχι μόνο ότι το άνοιξαν, και το διατηρούν φρέσκο ανάμεσα στις αναθεωρήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-protocol-learning" xml:space="preserve">
+    <value>Μια νέα διαδικασία mayday απαιτεί πέντε ερωτήσεις με επιτυχία 80% πριν μετρήσει η επιβεβαίωση, και κάθε Δευτέρα κάθε πυροσβέστης απαντά σε ένα σενάριο από αυτήν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-protocol-learning" xml:space="preserve">
+    <value>Τίποτα για ρύθμιση ακόμη: τα κουίζ πρωτοκόλλων και η μικρομάθηση είναι μέρος του πρόσθετου LMS, που δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-class-sessions" xml:space="preserve">
+    <value>Μαθήματα με εκπαιδευτή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-class-sessions" xml:space="preserve">
+    <value>Μαθήματα με εκπαιδευτή στο ημερολόγιο με χωρητικότητα, λίστα αναμονής, κανόνες εγγραφής, καταχώριση με εναλλασσόμενο QR και GPS και υπογραφή εκπαιδευτή που καταγράφει την εκπαίδευση κάθε παρόντα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-class-sessions" xml:space="preserve">
+    <value>Μία κατάσταση ανά μάθημα ως αρχείο: ποιος δίδαξε, ποιος παρακολούθησε, τι καλύφθηκε και για πόσο, που διατηρείται όσο ορίζει η κατηγορία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-class-sessions" xml:space="preserve">
+    <value>Μια επανεκπαίδευση για αιματογενή παθογόνα 20 θέσεων γεμίζει· τρία μέλη περιμένουν και όταν κάποιος αποσυρθεί, ο επόμενος εγγράφεται και ενημερώνεται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-class-sessions" xml:space="preserve">
+    <value>Τίποτα για ρύθμιση ακόμη: τα μαθήματα ανήκουν στο πρόσθετο LMS, που δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-lesson-plans" xml:space="preserve">
+    <value>Σχέδια μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-lesson-plans" xml:space="preserve">
+    <value>Επαναχρησιμοποιήσιμα σχέδια για μαθήματα με εκπαιδευτή: στόχοι, δεξιότητες, υλικά και βοηθήματα, αναλογία εκπαιδευτή προς εκπαιδευόμενους, σχέδιο ασφαλείας και λίστα προενημέρωσης, με εκδόσεις που εγκρίνονται πριν τη χρήση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-lesson-plans" xml:space="preserve">
+    <value>Οι ασκήσεις πραγματικής φωτιάς, οδήγησης και αναπνευστικής συσκευής διδάσκονται από εγκεκριμένο σχέδιο και η κατάσταση δείχνει ποια έκδοση χρησιμοποιήθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-lesson-plans" xml:space="preserve">
+    <value>Ο υπεύθυνος εκπαίδευσης αντιγράφει το πρότυπο πραγματικής φωτιάς, προσθέτει το κτίριο καύσης και τις αναλογίες του τμήματος και ένας διοικητής το εγκρίνει πριν την πρώτη άσκηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-lesson-plans" xml:space="preserve">
+    <value>Τίποτα για ρύθμιση ακόμη: τα σχέδια μαθήματος ανήκουν στο πρόσθετο LMS, που δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-resources" xml:space="preserve">
+    <value>Κράτηση εγκαταστάσεων και βοηθημάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-resources" xml:space="preserve">
+    <value>Τα πεδία εκπαίδευσης, οι αίθουσες, οι εκπαιδευτικές διατάξεις, τα οχήματα και ο εξοπλισμός του οργανισμού, που κρατούνται για τις ώρες των τάξεων ώστε τίποτα να μην κρατείται διπλά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-resources" xml:space="preserve">
+    <value>Δύο μαθήματα δεν σχεδιάζουν ποτέ το ίδιο κτίριο καύσης ή όχημα για το ίδιο απόγευμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-resources" xml:space="preserve">
+    <value>Η άσκηση κλιμάκων κλείνει τον πύργο εκπαίδευσης και το Όχημα 3 για το πρωί του Σαββάτου· ένα δεύτερο μάθημα που ζητά τον πύργο τότε απορρίπτεται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-resources" xml:space="preserve">
+    <value>Τίποτα για ρύθμιση ακόμη: η κράτηση εγκαταστάσεων ανήκει στο πρόσθετο LMS, που δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Ρυθμίσεις βιβλιοθήκης πρωτοκόλλων / Κωδικός στα κείμενα αποστολής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Προσθέτει τον κωδικό και το όνομα πρωτοκόλλου της ροής περιστατικού μιας κλήσης στον τίτλο της ειδοποίησης, στο SMS και στο φωνητικό μήνυμα αποστολής. Ανενεργό από προεπιλογή· τότε όλα τα κείμενα μένουν όπως πριν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-case-flow" xml:space="preserve">
+    <value>Ροή περιστατικού πρωτοκόλλου (μηχανή αποφάσεων αποστολής)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-case-flow" xml:space="preserve">
+    <value>Ένα πρωτόκολλο αποστολής μπορεί να έχει ροή περιστατικού: αρχικές και βασικές ερωτήσεις, οδηγίες για ανάγνωση και αποτελέσματα με κωδικό και προτεινόμενη προτεραιότητα. Οι συντονιστές την ακολουθούν στη νέα κλήση, παρακάμπτουν τον κωδικό μόνο με αιτιολογία, στέλνουν οδηγίες σε καλούντα με SMS και με το Enhanced AI λαμβάνουν προτεινόμενο πρωτόκολλο για επιβεβαίωση. Οι κάρτες απόκρισης μπορούν να αντιδρούν στον κωδικό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-sheets" xml:space="preserve">
+    <value>Φύλλα δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-sheets" xml:space="preserve">
+    <value>Φύλλα δεξιοτήτων απόδοσης εργασίας με διατεταγμένα βήματα, κρίσιμα κριτήρια που αποτυγχάνουν την αξιολόγηση, κλίμακες, χρονόμετρο και τεκμήρια, με εκδόσεις και βιβλιοθήκη προτύπων Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-sheets" xml:space="preserve">
+    <value>Κάθε αξιολογητής βαθμολογεί την ίδια δεξιότητα με τον ίδιο τρόπο και η υπηρεσία δείχνει ακριβώς τι ελέγχθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-sheets" xml:space="preserve">
+    <value>Το φύλλο ένδυσης αναπνευστικής συσκευής αποτυγχάνει όποιον χρειαστεί πάνω από 60 δευτερόλεπτα ή παραλείψει τον έλεγχο στεγανότητας της μάσκας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-sheets" xml:space="preserve">
+    <value>Ανοίξτε την Εκπαίδευση, επιλέξτε Δεξιότητες, μετά Φύλλα δεξιοτήτων, και ξεκινήστε από πρότυπο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-evaluations" xml:space="preserve">
+    <value>Αξιολογήσεις δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-evaluations" xml:space="preserve">
+    <value>Λειτουργία αξιολογητή: βαθμολογήστε ένα μέλος ή όλο το πλήρωμα σε φύλλο, με επιτυχία σε όλα, σχόλια και τεκμήρια, και υπογράψτε στο επίπεδο L2· οι επιτυχείς αξιολογήσεις μπαίνουν στο ιστορικό και η εγγραφή σφραγίζεται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-evaluations" xml:space="preserve">
+    <value>Οι δεξιότητες που ελέγχονται στην άσκηση γίνονται υπογεγραμμένα, σφραγισμένα τεκμήρια που μετρούν σε απαιτήσεις και πιστοποιήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-evaluations" xml:space="preserve">
+    <value>Ένας επικεφαλής βαθμολογεί το πλήρωμα του Οχήματος 2 στην προώθηση σωληνογραμμής σε μία φόρμα, διαχωρίζει το μέλος που δυσκολεύτηκε και υπογράφει από το tablet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-evaluations" xml:space="preserve">
+    <value>Δημοσιεύστε ένα φύλλο, ορίστε ποιος μπορεί να αξιολογεί με αυτό και επιλέξτε Έναρξη αξιολόγησης στην Εκπαίδευση, Δεξιότητες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-task-books" xml:space="preserve">
+    <value>Βιβλία εργασιών θέσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-task-books" xml:space="preserve">
+    <value>Βιβλία εργασιών κατά το πρότυπο NWCG: ξεκινούν με κωδικό θέσης και ημερομηνία, οι εργασίες υπογράφονται από εξουσιοδοτημένους αξιολογητές σε διάφορες ημέρες και συμβάντα, προτείνονται από τελικό αξιολογητή και πιστοποιούνται από τον υπεύθυνο· η πιστοποίηση ενεργοποιεί την πιστοποίηση του εκπαιδευόμενου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-task-books" xml:space="preserve">
+    <value>Οι εκπαιδευόμενοι γίνονται πιστοποιημένοι με πλήρες υπογεγραμμένο ίχνος αντί για χάρτινο βιβλίο σε ντουλάπι.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-task-books" xml:space="preserve">
+    <value>Το βιβλίο FFT2 ενός εκπαιδευόμενου ξεκινά τον Μάρτιο, δύο εργασίες συμβάντων υπογράφονται σε δασικές πυρκαγιές το καλοκαίρι και ο υπεύθυνος το πιστοποιεί τον Σεπτέμβριο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-task-books" xml:space="preserve">
+    <value>Ανοίξτε την Εκπαίδευση, επιλέξτε Δεξιότητες, μετά Ορισμοί, ξεκινήστε από πρότυπο βιβλίου, ορίστε ποιος υπογράφει και πιστοποιεί και ξεκινήστε βιβλία στα Βιβλία εργασιών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsSkillSettings" xml:space="preserve">
+    <value>Ρυθμίσεις ειδοποιήσεων δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsSkillSettings" xml:space="preserve">
+    <value>Πώς αποστέλλονται οι ειδοποιήσεις αξιολογήσεων και βιβλίων εργασιών, άμεσα ή ως ημερήσια ή εβδομαδιαία σύνοψη, και αν τις λαμβάνουν τα αξιολογούμενα μέλη και οι διαχειριστές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Αποστολή ειδοποιήσεων δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Άμεσα, ως ημερήσια ή εβδομαδιαία σύνοψη (ένα μήνυμα ανά άτομο με όλες τις ειδοποιήσεις) ή ανενεργό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Ώρα σύνοψης δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Η τοπική ώρα της υπηρεσίας κατά την οποία αποστέλλονται οι συνόψεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>Ημέρα εβδομαδιαίας σύνοψης δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>Η ημέρα της εβδομάδας που αποστέλλονται οι εβδομαδιαίες συνόψεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Ειδοποίηση αξιολογούμενων μελών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Τα αξιολογούμενα μέλη και οι εκπαιδευόμενοι λαμβάνουν ειδοποιήσεις για τις δικές τους αξιολογήσεις και βιβλία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Ειδοποίηση διαχειριστών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Οι ενεργοί διαχειριστές της υπηρεσίας λαμβάνουν ειδοποίηση για κάθε αξιολόγηση και βιβλίο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewDispatchCases">
+    <value>Αξιολόγηση περιστατικών διαχείρισης κλήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ReviewDispatchCases">
+    <value>Επιτρέπει τη δειγματοληψία κλήσεων για αξιολόγηση, τη βαθμολόγηση του καταγεγραμμένου περιστατικού με κλίμακα, την αποστολή της αξιολόγησης στον χειριστή και την ανάγνωση της αναφοράς συμμόρφωσης. Κανείς δεν αξιολογεί τις δικές του κλήσεις. Χωρίς αποθηκευμένο κανόνα μόνο οι διαχειριστές της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.dispatch-case-review">
+    <value>Αξιολόγηση περιστατικών διαχείρισης κλήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dispatch-case-review">
+    <value>Οι υπεύθυνοι επιλέγουν κλήσεις ανά πρωτόκολλο, έκδοση, καθοριστικό κωδικό, χειριστή και ημερομηνίες, βαθμολογούν κάθε καταγεγραμμένο περιστατικό ερώτηση προς ερώτηση και οδηγία προς οδηγία με κλίμακα ποιοτικού ελέγχου του Records δίπλα στη ροή του πρωτοκόλλου και στέλνουν την αξιολόγηση στον χειριστή. Οι αναφορές δείχνουν τη συμμόρφωση ανά πρωτόκολλο, έκδοση, χειριστή και μήνα, με CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.my-case-reviews">
+    <value>Οι αξιολογήσεις μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.my-case-reviews">
+    <value>Οι χειριστές διαβάζουν τις αξιολογήσεις των κλήσεων που διαχειρίστηκαν, με κάθε ερώτηση και οδηγία βαθμολογημένη και τα σχόλια του αξιολογητή, επιβεβαιώνουν την καθεμία μία φορά και μπορούν να απαντήσουν μία φορά· ο αξιολογητής ειδοποιείται για την απάντηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsCeReportingSettings" xml:space="preserve">
+    <value>Ρυθμίσεις αναφορών συνεχιζόμενης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsCeReportingSettings" xml:space="preserve">
+    <value>Οι αριθμοί παρόχου CAPCE και CE Broker, οι τύποι πιστοποίησης που περιέχουν τους αριθμούς άδειας, NREMT και National EMS ID των μελών, καθώς και οι λίστες στηλών του αρχείου ωρών εκπαίδευσης CE / CPD και των αρχείων CAPCE, πολιτειακών CE και πολιτειακού καταλόγου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>Αριθμός παρόχου CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>Ο αριθμός παρόχου CAPCE της υπηρεσίας όταν είναι διαπιστευμένος πάροχος CAPCE. Χωρίς αυτόν δεν δημιουργείται αρχείο ολοκληρώσεων CAPCE.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>Όνομα παρόχου CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>Το όνομα του παρόχου όπως το καταχωρίζει η υπηρεσία σε μαθήματα και εγγραφές· οι ολοκληρώσεις που το αναφέρουν μετρούν ως δική της εκπαίδευση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>Τύπος πιστοποίησης πολιτειακής άδειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>Ο τύπος πιστοποίησης του οποίου τον αριθμό, την περιοχή, τον τύπο και τη λήξη αναφέρουν τα αρχεία ως πολιτειακή άδεια του μέλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>Τύπος πιστοποίησης NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>Ο τύπος πιστοποίησης του οποίου τον αριθμό και τη λήξη αναφέρουν τα αρχεία ως αριθμό NREMT και επόμενη ημερομηνία επανεγγραφής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>Τύπος πιστοποίησης εθνικού αναγνωριστικού EMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>Ο τύπος πιστοποίησης του οποίου τον αριθμό αναφέρουν τα αρχεία ως εθνικό αναγνωριστικό EMS (NEMSID) του μέλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>Αριθμός παρόχου CE Broker</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>Ο αριθμός παρακολούθησης παρόχου CE Broker (Φλόριντα) που γράφεται στη στήλη A του αρχείου CE Broker χωρίς το πρόθεμα 50-.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>Λίστες στηλών αρχείων συνεχιζόμενης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>Οι δικές σας λίστες στηλών, μία ανά τύπο αρχείου· ένας τύπος αρχείου χωρίς λίστα χρησιμοποιεί τις προεπιλεγμένες στήλες του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>Τύπος αρχείου συνεχιζόμενης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>Σε ποιο αρχείο ανήκει μια λίστα στηλών: training-hours, capce, fl-ems, va-ems, nj-ems, fl-fire, state-ce ή state-roster.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>Στήλες αρχείου συνεχιζόμενης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>Οι στήλες του αρχείου με τη σειρά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Header" xml:space="preserve">
+    <value>Επικεφαλίδα στήλης αρχείου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Header" xml:space="preserve">
+    <value>Η επικεφαλίδα που γράφεται στη γραμμή επικεφαλίδων του αρχείου· τα αρχεία χωρίς γραμμή επικεφαλίδων την παραλείπουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Source" xml:space="preserve">
+    <value>Τιμή στήλης αρχείου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Source" xml:space="preserve">
+    <value>Ποια τιμή περιέχει η στήλη: πεδίο μέλους, εγγραφής, πιστοποίησης ή παρόχου, ή σταθερό κείμενο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Argument" xml:space="preserve">
+    <value>Μορφή στήλης αρχείου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Argument" xml:space="preserve">
+    <value>Μορφή ημερομηνίας ή αριθμού για την τιμή, ή το κείμενο μιας στήλης σταθερού κειμένου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-data-export" xml:space="preserve">
+    <value>Εξαγωγή δεδομένων εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-data-export" xml:space="preserve">
+    <value>Οι κάτοχοι και οι διαχειριστές εξάγουν ό,τι έχει καταχωρίσει η υπηρεσία στην Εκπαίδευση: μαθήματα με εκδόσεις, ενότητες και πολυμέσα, τράπεζες ερωτήσεων με κλειδιά απαντήσεων, και κάθε εγγραφή μάθησης, προσπάθεια και πιστοποιητικό σε CSV και δηλώσεις xAPI, με πακέτο SCORM 1.2 ανά μάθημα όπου το επιτρέπουν τα μαθήματα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-data-export" xml:space="preserve">
+    <value>Μια υπηρεσία μπορεί πάντα να πάρει μαζί της το εκπαιδευτικό περιεχόμενο και τα αποδεικτικά της, ακόμη και μετά τη λήξη του πρόσθετου LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-data-export" xml:space="preserve">
+    <value>Πριν από τη μετάβαση στο σύστημα μιας περιφερειακής ακαδημίας, ο υπεύθυνος εκπαίδευσης εξάγει τα πάντα, φορτώνει τις δηλώσεις xAPI στη νέα αποθήκη εγγραφών και κρατά τις εγγραφές CSV για τον έλεγχο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-data-export" xml:space="preserve">
+    <value>Ανοίξτε την Εκπαίδευση, επιλέξτε Προγράμματα και μετά Εξαγωγή δεδομένων, διαλέξτε «Τα πάντα» ή «Μόνο εγγραφές» και ξεκινήστε την εξαγωγή· κατεβάστε το zip όταν είναι έτοιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-ce-reporting" xml:space="preserve">
+    <value>Αρχεία αναφορών συνεχιζόμενης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-ce-reporting" xml:space="preserve">
+    <value>Δημιουργεί αρχείο ωρών εκπαίδευσης CE / CPD με τις στήλες που ζητά η ρυθμιστική αρχή ή ο επαγγελματικός σας φορέας, και για υπηρεσίες των ΗΠΑ το αρχείο ολοκληρώσεων CAPCE, πολιτειακά αρχεία CE (τη διάταξη CE Broker της Φλόριντα και ένα παραμετροποιήσιμο CSV για άλλες πολιτείες) και έναν κατάλογο έτοιμο για την πολιτεία για συστήματα όπως το Acadis, με προεπισκόπηση και στήλες ανά υπηρεσία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-ce-reporting" xml:space="preserve">
+    <value>Οι ολοκληρώσεις φτάνουν στη ρυθμιστική αρχή, τον επαγγελματικό φορέα, το CAPCE ή την πολιτειακή υπηρεσία σας χωρίς επαναπληκτρολόγηση καταλόγου, και τίποτα δεν υποβάλλεται πριν κάποιος ελέγξει το αρχείο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-ce-reporting" xml:space="preserve">
+    <value>Κάθε μήνα ο συντονιστής EMS κάνει προεπισκόπηση του αρχείου CAPCE του προηγούμενου μήνα, διορθώνει δύο μέλη χωρίς αριθμό πολιτειακής άδειας και ανεβάζει το CSV στο CAPCE.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-ce-reporting" xml:space="preserve">
+    <value>Ανοίξτε την Εκπαίδευση, επιλέξτε Προγράμματα και μετά Αναφορές συνεχιζόμενης εκπαίδευσης, καταχωρίστε τους αριθμούς παρόχου και τους τύπους πιστοποίησης με τους αριθμούς άδειας και δημιουργήστε αρχείο για ένα διάστημα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-public-pages" xml:space="preserve">
+    <value>Δημόσιες σελίδες πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-public-pages" xml:space="preserve">
+    <value>Δημοσιεύστε την ισχύουσα έκδοση ενός πρωτοκόλλου ή μια κατηγορία ως σύνολο σε προαιρετική δημόσια διεύθυνση, με κώδικα ενσωμάτωσης. Τα πρόχειρα, το περιεχόμενο περιορισμένου κοινού και το περιεχόμενο με άδεια χρήσης δεν εμφανίζονται ποτέ, και μια σελίδα μπορεί να ανακληθεί ανά πάσα στιγμή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-template-library" xml:space="preserve">
+    <value>Βιβλιοθήκη προτύπων πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-template-library" xml:space="preserve">
+    <value>Κλωνοποιήστε σύνολα εκκίνησης που συνέταξε η Resgrid (SOG πυρόσβεσης, έρευνα και διάσωση, βιομηχανικοί κίνδυνοι, επιχειρησιακή συνέχεια, πολιτικές επιβολής του νόμου, εντολές θέσης φύλαξης, πολιτικές χώρου εργασίας και ένα περίγραμμα προνοσοκομειακής φροντίδας χωρίς κλινικό κείμενο) στη βιβλιοθήκη ως πρόχειρα στη γλώσσα σας, με την πηγή, την άδεια χρήσης και την έκδοση να διατηρούνται σε κάθε έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.community-exchange" xml:space="preserve">
+    <value>Κοινοτική ανταλλαγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.community-exchange" xml:space="preserve">
+    <value>Κοινοποιήστε δωρεάν πρωτόκολλα και εκπαιδεύσεις σε άλλες υπηρεσίες. Τα δεδομένα της υπηρεσίας αφαιρούνται, το περιεχόμενο με άδεια χρήσης απορρίπτεται, το Resgrid ελέγχει κάθε συνεισφορά πριν καταχωριστεί και οι άλλες υπηρεσίες μπορούν να βαθμολογούν, να σχολιάζουν και να εισάγουν αντίγραφο διατηρώντας την αναφορά στον συντελεστή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-open-format" xml:space="preserve">
+    <value>Ανοιχτή μορφή και εξαγωγή πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-open-format" xml:space="preserve">
+    <value>Εξαγάγετε τη βιβλιοθήκη ή μια κατηγορία στην τεκμηριωμένη ανοιχτή μορφή JSON (μπλοκ, ιστορικό εκδόσεων, γράφημα αποφάσεων, μεταφράσεις και λίστα συνημμένων), ως ένα αρχείο HTML ή ως βιβλίο PDF. Τα αρχεία της παλαιότερης μορφής εξακολουθούν να εισάγονται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-analytics" xml:space="preserve">
+    <value>Αναλυτικά στοιχεία πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-analytics" xml:space="preserve">
+    <value>Δείτε πώς χρησιμοποιούνται τα πρωτόκολλα στις κλήσεις ανά έκδοση, την κατανομή κωδικών και το ποσοστό αλλαγής τους, τον χρόνο στο πρωτόκολλο, τη συμμόρφωση επιβεβαιώσεων και τις αναζητήσεις χωρίς αποτέλεσμα, με εξαγωγή CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-external-learners" xml:space="preserve">
+    <value>Εξωτερικοί εκπαιδευόμενοι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-external-learners" xml:space="preserve">
+    <value>Εκπαιδεύστε άτομα που δεν είναι μέλη: συνεργάτες αμοιβαίας βοήθειας, εργολάβους, εθελοντές και το κοινό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-external-learners" xml:space="preserve">
+    <value>Συνεργάτες και κοινό παρακολουθούν μαθήματα και τμήματα χωρίς λογαριασμό μέλους ή πρόσβαση σε οτιδήποτε άλλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-external-learners" xml:space="preserve">
+    <value>Εργολάβοι παρακολουθούν την εισαγωγική εκπαίδευση ασφάλειας του χώρου σας, μια γειτονική εθελοντική υπηρεσία παρακολουθεί το μάθημα χειριστή αντλίας σας και εθελοντές CERT εγγράφονται σε μια τάξη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-external-learners" xml:space="preserve">
+    <value>Ενεργοποιήστε την πύλη, ανοίξτε μαθήματα σε εξωτερικούς και προσκαλέστε με email. Περιλαμβάνεται έως το 25% των θέσεων (τουλάχιστον 25).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learner-portal" xml:space="preserve">
+    <value>Επώνυμη πύλη εκπαιδευομένων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learner-portal" xml:space="preserve">
+    <value>Σελίδα σύνδεσης και κατάλογος για εξωτερικούς με το λογότυπο και το χρώμα της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learner-portal" xml:space="preserve">
+    <value>Οι εκπαιδευόμενοι βλέπουν την υπηρεσία σας, όχι το Resgrid, και μόνο τη δική τους εκπαίδευση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learner-portal" xml:space="preserve">
+    <value>Το κοινό βρίσκει τα τμήματα ΚΑΡΠΑ στην πύλη και εγγράφεται μετά την επιβεβαίωση email.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learner-portal" xml:space="preserve">
+    <value>Ανεβάστε λογότυπο στο προφίλ, επιλέξτε χρώμα και ορίστε αν επιτρέπονται αυτοεγγραφή και δημόσια λίστα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-public-class-fees" xml:space="preserve">
+    <value>Δημόσια τμήματα επί πληρωμή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-public-class-fees" xml:space="preserve">
+    <value>Προαιρετικό τέλος ανά εξωτερικό εκπαιδευόμενο, με εξαγωγή καταλόγου και τιμολόγια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-public-class-fees" xml:space="preserve">
+    <value>Χρεώστε τμήματα ΚΑΡΠΑ, πρώτων βοηθειών και CERT: εξαγάγετε τον κατάλογο ή εκδώστε τιμολόγια με Business Ops.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-public-class-fees" xml:space="preserve">
+    <value>Ένα τμήμα ΚΑΡΠΑ χρεώνει 45 ανά άτομο· ένα τιμολόγιο πηγαίνει στον εργοδότη που έστειλε έξι εργαζόμενους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-public-class-fees" xml:space="preserve">
+    <value>Ανοίξτε τη σελίδα δημόσιου τμήματος, ορίστε τέλος και εξαγάγετε ή τιμολογήστε ανά εκπαιδευόμενο ή οργανισμό. Το Resgrid δεν εισπράττει πληρωμές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-course-drafts" xml:space="preserve">
+    <value>Πρόχειρα μαθήματα από πρωτόκολλα και διαδικασίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-course-drafts" xml:space="preserve">
+    <value>Συντάξτε ένα διαδικτυακό μάθημα από δημοσιευμένο πρωτόκολλο ή ανεβασμένο έγγραφο διαδικασιών: ενότητες, μαθήματα που παραθέτουν τις ενότητες που διδάσκουν και τράπεζα ερωτήσεων για έλεγχο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-course-drafts" xml:space="preserve">
+    <value>Οι υπεύθυνοι εκπαίδευσης ξεκινούν από ένα πλήρες πρόχειρο που ακολουθεί τη διαδικασία της υπηρεσίας αντί για κενή σελίδα, και κάθε μάθημα δείχνει το κείμενο πηγής στο οποίο βασίζεται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-course-drafts" xml:space="preserve">
+    <value>Ένας υπεύθυνος εκπαίδευσης μετατρέπει τη νέα διαδικασία mayday σε πρόχειρο μάθημα με τέσσερις ενότητες και πέντε ερωτήσεις, ελέγχει κάθε μάθημα με την ενότητα που παραθέτει και το υποβάλλει για έγκριση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-course-drafts" xml:space="preserve">
+    <value>Απαιτεί Enhanced AI με απαντήσεις γνώσης και το πρόσθετο LMS· ανοίξτε Εκπαίδευση, Βιβλιοθήκη μαθημάτων, Πρόχειρο με ΤΝ. Τα πρόχειρα δεν δημοσιεύονται ποτέ μόνα τους, κάθε αριθμός πρέπει να υπάρχει στις ενότητες που παρατίθενται, περιεχόμενο με σήμανση χωρίς ΤΝ δεν αποστέλλεται ποτέ και οι υπηρεσίες με Advanced Data Protection δεν λαμβάνουν πρόχειρα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-flashcards" xml:space="preserve">
+    <value>Κάρτες μελέτης μαθημάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-flashcards" xml:space="preserve">
+    <value>Κάρτες εξάσκησης που συντάσσονται από ένα μάθημα ή το πρωτόκολλο στο οποίο βασίζεται· οι συντάκτες κρατούν όσες θέλουν και οι εκπαιδευόμενοι εξασκούνται στο πρόγραμμα αναπαραγωγής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-flashcards" xml:space="preserve">
+    <value>Τα μέλη επαναλαμβάνουν ανάμεσα στις ασκήσεις τα βήματα και τα κριτήρια που πρέπει να θυμούνται, και μια κάρτα αποκρύπτεται και σημαίνεται για έλεγχο μόλις η πηγή της αποκτήσει νέα έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-flashcards" xml:space="preserve">
+    <value>Όταν το πρωτόκολλο ανακοπής αποκτήσει νέα έκδοση, οι κάρτες του εξαφανίζονται από το πρόγραμμα αναπαραγωγής μέχρι ο υπεύθυνος εκπαίδευσης να τις ελέγξει με τη νέα έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-flashcards" xml:space="preserve">
+    <value>Απαιτεί Enhanced AI με απαντήσεις γνώσης και το πρόσθετο LMS· ανοίξτε ένα μάθημα και επιλέξτε Κάρτες μελέτης. Η εξάσκηση δεν βαθμολογείται ούτε καταγράφεται ποτέ στο ιστορικό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-starter-courses" xml:space="preserve">
+    <value>Αρχικά μαθήματα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-starter-courses" xml:space="preserve">
+    <value>Μαθήματα γραμμένα από τη Resgrid (πρώτα βήματα με το Resgrid, βασικές αρχές ασφάλειας, διάγραμμα για επικίνδυνα υλικά, βασικά οδήγησης) για αντιγραφή στην υπηρεσία ως πρόχειρο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-starter-courses" xml:space="preserve">
+    <value>Μια υπηρεσία αποκτά σε λίγα λεπτά ένα δομημένο πρώτο μάθημα και το προσαρμόζει στις διαδικασίες της· το αντίγραφο διατηρεί την αναφορά προέλευσης και οι θέσεις συνεργατών δείχνουν πού θα συνδεθεί διαπιστευμένο περιεχόμενο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-starter-courses" xml:space="preserve">
+    <value>Μια εθελοντική υπηρεσία αντιγράφει το Πρώτα βήματα με το Resgrid, προσθέτει τα κανάλια ασυρμάτου και τα ονόματα των σταθμών της και το αναθέτει σε κάθε νέο μέλος μετά την έγκριση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-starter-courses" xml:space="preserve">
+    <value>Απαιτεί το πρόσθετο LMS και Διαχείριση μαθημάτων· ανοίξτε Εκπαίδευση, Βιβλιοθήκη μαθημάτων, Αρχικά μαθήματα. Τα αρχικά μαθήματα δεν περιέχουν κείμενο προτύπων ούτε διαπίστευση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsStandardsSettings" xml:space="preserve">
+    <value>Ρυθμίσεις xAPI (LRS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsStandardsSettings" xml:space="preserve">
+    <value>Αν τα αποτελέσματα μαθημάτων και ενοτήτων του LMS αποστέλλονται ως δηλώσεις xAPI στο Learning Record Store του τμήματος, με ποιο κλειδί και μυστικό, και αν τα μέλη ταυτοποιούνται με διεύθυνση email.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>Αποστολή δηλώσεων xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>Τα αποτελέσματα μαθημάτων και ενοτήτων (attempted, completed, passed, failed) μπαίνουν σε ουρά και αποστέλλονται στο LRS από την εργασία προτύπων, με επαναλήψεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>Τελικό σημείο LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>Η διεύθυνση https του τελικού σημείου xAPI του Learning Record Store· οι δηλώσεις αποστέλλονται στον πόρο statements.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>Κλειδί LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>Το κλειδί basic-auth (όνομα χρήστη) που εξέδωσε το LRS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>Μυστικό LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>Το μυστικό basic-auth, αποθηκευμένο κρυπτογραφημένο για το τμήμα και δεν εμφανίζεται ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Ταυτοποίηση μελών με email</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Ανενεργό: κάθε μέλος είναι ψευδώνυμος λογαριασμός τμήματος. Ενεργό: η διεύθυνση email του μέλους αποστέλλεται ως ο δράστης της δήλωσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-content-standards" xml:space="preserve">
+    <value>SCORM, cmi5, xAPI και LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-content-standards" xml:space="preserve">
+    <value>Εισαγωγή πακέτων SCORM 1.2/2004 και cmi5 που αναπαράγονται σε απομονωμένο πρόγραμμα, εκκίνηση μαθημάτων συνεχιζόμενης εκπαίδευσης τρίτων μέσω LTI 1.3 με επιστροφή βαθμολογίας και αποστολή αποτελεσμάτων σε εξωτερικό LRS ως δηλώσεις xAPI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-content-standards" xml:space="preserve">
+    <value>Η ηλεκτρονική μάθηση συνεργατών και αγορών εκτελείται μέσα στο Resgrid και καταγράφεται στο ιστορικό εκπαίδευσης, ενώ τα αποτελέσματα μπορούν να μεταφερθούν στο LRS του τμήματος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-content-standards" xml:space="preserve">
+    <value>Ένα μάθημα καρδιολογίας παρόχου CAPCE ξεκινά από μια ενότητα μέσω LTI· η βαθμολογία επιστρέφει, η ενότητα ολοκληρώνεται και οι ώρες καταγράφονται στο ιστορικό του μέλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-content-standards" xml:space="preserve">
+    <value>Ανοίξτε τις Εκπαιδεύσεις, επιλέξτε Πρότυπα, ανεβάστε ένα πακέτο ή καταχωρίστε ένα εργαλείο LTI και προσθέστε σε ένα μάθημα μια ενότητα SCORM, cmi5 ή LTI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-protocol-tools" xml:space="preserve">
+    <value>Κάρτες εξάσκησης, προσχέδια εκπαίδευσης και μετάφρασης πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-protocol-tools" xml:space="preserve">
+    <value>Συντάξτε κάρτες εξάσκησης, μια εκπαίδευση με κουίζ και μεταφράσεις από μια δημοσιευμένη έκδοση πρωτοκόλλου για έλεγχο από τους συντάκτες· τα μέλη εξασκούνται με τις κάρτες στο πρωτόκολλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-protocol-tools" xml:space="preserve">
+    <value>Οι συντάκτες πρωτοκόλλων λαμβάνουν, μόνο με το Enhanced AI, προσχέδια βασισμένα στα πρωτόκολλα της υπηρεσίας, και κάθε στοιχείο παραπέμπει στην ενότητα από την οποία προέρχεται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-protocol-tools" xml:space="preserve">
+    <value>Μετά τη δημοσίευση του πρωτοκόλλου εγκεφαλικού, ο συντονιστής ΕΚΑΒ συντάσσει δέκα κάρτες εξάσκησης, μια εκπαίδευση με πέντε ερωτήσεις για την επιβεβαίωση και μια ισπανική μετάφραση για έλεγχο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-protocol-tools" xml:space="preserve">
+    <value>Ενεργοποιήστε τις απαντήσεις γνώσης με το Enhanced AI· ανοίξτε ένα δημοσιευμένο πρωτόκολλο και επιλέξτε Κάρτες εξάσκησης ή Σύνταξη εκπαίδευσης, ή ανοίξτε ένα προσχέδιο μετάφρασης και επιλέξτε Σύνταξη μετάφρασης με ΤΝ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.RecordTrainingCompletions" xml:space="preserve">
+    <value>Καταγραφή ολοκληρώσεων εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.RecordTrainingCompletions" xml:space="preserve">
+    <value>Επιτρέπει την καταγραφή ότι μέλη ολοκλήρωσαν μαζί μια εκπαίδευση ή ένα course LMS (από τη λίστα μαθήματος ή, με σημείωση, από τη λίστα εγγραφών ενός course ή τη λίστα ανάθεσης μιας εκπαίδευσης). Κάθε αρχείο δείχνει ότι καταγράφηκε από εκπαιδευτή, και όποιος το κατέγραψε μπορεί να το ακυρώσει με αιτιολογία. Οι διαχειριστές ομάδων καταγράφουν μόνο για μέλη της ομάδας τους. Χωρίς αποθηκευμένο κανόνα επιτρέπεται μόνο στους διαχειριστές του φορέα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-record-completions" xml:space="preserve">
+    <value>Καταγραφή ολοκληρώσεων εκπαίδευσης για μέλη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-record-completions" xml:space="preserve">
+    <value>Ένας εκπαιδευτής ή υπεύθυνος εκπαίδευσης καταγράφει ότι μέλη ολοκλήρωσαν μια εκπαίδευση ή ένα course που έκαναν μαζί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-record-completions" xml:space="preserve">
+    <value>Η ομαδική εκπαίδευση (ένα μάθημα ΚΑΡΠΑ, ένα πλήρωμα που βλέπει μαζί τα βίντεο) καταγράφεται στο αρχείο κάθε μέλους με ανανέωση της πιστοποίησης, και το αρχείο αναφέρει ποιος την κατέγραψε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-record-completions" xml:space="preserve">
+    <value>Μετά από ένα μάθημα ΚΑΡΠΑ, ο υπεύθυνος εκπαίδευσης επιλέγει τους παρόντες στη λίστα του μαθήματος και καταγράφει το course ΚΑΡΠΑ ως ολοκληρωμένο για όλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-record-completions" xml:space="preserve">
+    <value>Δώστε στους κατάλληλους ρόλους το δικαίωμα Καταγραφή ολοκληρώσεων εκπαίδευσης στη σελίδα Ασφάλειας και συνδέστε το μάθημα με το course ή την εκπαίδευσή του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.law-enforcement" xml:space="preserve">
+    <value>Επιβολή του νόμου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.law-enforcement" xml:space="preserve">
+    <value>Επανεξέταση της κάλυψης βαρδιών, των προσόντων, της ενδοϋπηρεσιακής εκπαίδευσης, των αποδοχών πολιτικών και του ελέγχου εγγραφών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.law-enforcement" xml:space="preserve">
+    <value>Το πακέτο μπορεί να επανεξετάσει τις ρυθμίσεις κάλυψης βαρδιών, διαπιστευτηρίων, εκπαίδευσης και ελέγχου εγγραφών. Οι νομικές απαιτήσεις, οι κανόνες του φορέα αδειοδότησης, ο έλεγχος της χρήσης βίας και τα συστήματα πειστηρίων δεν αξιολογούνται. Ο αρμόδιος διοικητής ή υπεύθυνος εκπαίδευσης πρέπει να επαληθεύσει αυτές τις πηγές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.business" xml:space="preserve">
+    <value>Επιχειρήσεις και χώροι εργασίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.business" xml:space="preserve">
+    <value>Επανεξέταση ομάδων προσωπικού, προσόντων, εκπαίδευσης, λιστών ελέγχου και αποδοχών πολιτικών για έναν χώρο εργασίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.business" xml:space="preserve">
+    <value>Το πακέτο μπορεί να επανεξετάσει ομάδες, διαπιστευτήρια, εκπαίδευση, λίστες ελέγχου και δεσμεύσεις εξοπλισμού. Η εργατική νομοθεσία, οι κανόνες υγείας και ασφάλειας στην εργασία, οι ασφαλίσεις και οι απαιτήσεις για εργολάβους δεν αξιολογούνται. Ο αρμόδιος διευθυντής πρέπει να επαληθεύσει αυτές τις πηγές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-requirements" xml:space="preserve">
+    <value>Σύνολα απαιτήσεων πιστοποιήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-requirements" xml:space="preserve">
+    <value>Μια πιστοποίηση εκδίδεται ή ανανεώνεται αυτόματα όταν ένα μέλος ολοκληρώσει όλα τα στοιχεία του συνόλου της μέσα στον κύκλο: μαθήματα LMS, σειρά μαθημάτων, εκπαιδεύσεις, εποπτευόμενη πρακτική που καταγράφει εκπαιδευτής, αξιολογήσεις δεξιοτήτων ή ώρες συνεχιζόμενης εκπαίδευσης. Η ακύρωση μιας ολοκλήρωσης στην οποία βασίζεται αναιρεί την πιστοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-requirements" xml:space="preserve">
+    <value>Μέλη και υπεύθυνοι βλέπουν ακριβώς τι απομένει («3 από 4 ολοκληρώθηκαν»), κανείς δεν καταχωρεί ανανεώσεις με το χέρι και μια λανθασμένη ολοκλήρωση δεν αφήνει πιστοποίηση χωρίς βάση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-requirements" xml:space="preserve">
+    <value>Μια πιστοποίηση χειριστή απαιτεί το ετήσιο μάθημα οδήγησης, το μάθημα ελέγχου οχήματος και ένα μάθημα χαμηλής ταχύτητας που υπογράφει εκπαιδευτής· όταν καταγραφεί το τελευταίο, η πιστοποίηση ανανεώνεται έως την επόμενη 31η Δεκεμβρίου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-requirements" xml:space="preserve">
+    <value>Τίποτα προς ρύθμιση ακόμη: τα σύνολα απαιτήσεων πιστοποιήσεων ανήκουν στο πρόσθετο LMS, που δεν είναι ακόμη διαθέσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.certification-validity-rules" xml:space="preserve">
+    <value>Κανόνες ισχύος πιστοποιήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.certification-validity-rules" xml:space="preserve">
+    <value>Ένας τύπος πιστοποίησης λήγει ορισμένους μήνες μετά την έκδοση, στο τέλος κάθε ημερολογιακού έτους, στο τέλος του δικού έτους του οργανισμού ή σε συγκεκριμένη ημερομηνία, με προαιρετική περίοδο χάριτος και παράθυρο ανανέωσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.certification-validity-rules" xml:space="preserve">
+    <value>Οι ετήσιες εξουσιοδοτήσεις και αυτές του οικονομικού έτους λήγουν την ίδια ημέρα για όλους, οι ανανεώσεις πέφτουν στο σωστό έτος και οι ημερομηνίες ακολουθούν τη ζώνη ώρας του οργανισμού.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.certification-validity-rules" xml:space="preserve">
+    <value>Μια εξουσιοδότηση περονοφόρου που λήγει στις 31 Μαρτίου κάθε έτους ανανεώνεται έως την επόμενη 31η Μαρτίου όταν η επανεκπαίδευση ολοκληρωθεί τον Φεβρουάριο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.certification-validity-rules" xml:space="preserve">
+    <value>Ανοίξτε τις Πιστοποιήσεις, μετά έναν τύπο πιστοποίησης, και επιλέξτε πώς λήγει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-read-and-confirm" xml:space="preserve">
+    <value>Εκπαιδεύσεις ανάγνωσης και επιβεβαίωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-read-and-confirm" xml:space="preserve">
+    <value>Μια εκπαίδευση χωρίς κουίζ μπορεί να ζητά από κάθε μέλος να επιβεβαιώσει ότι τη διάβασε και την εξέτασε πριν από την προθεσμία και να επαναλαμβάνεται κάθε χρόνο: εγχειρίδιο εργαζομένων, κώδικας δεοντολογίας ή κανόνας εγκατάστασης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-read-and-confirm" xml:space="preserve">
+    <value>Το άνοιγμα ενός εγγράφου δεν μετρά πλέον ως ανάγνωση: η καταγραφή δείχνει ποιος επιβεβαίωσε και πότε, έτοιμη για έλεγχο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-read-and-confirm" xml:space="preserve">
+    <value>Το εγχειρίδιο εργαζομένων ανατίθεται κάθε Ιανουάριο με προθεσμία 31 Ιανουαρίου· κάθε μέλος επιλέγει «Διάβασα και εξέτασα αυτή την εκπαίδευση» και η καταγραφή δείχνει την ημερομηνία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-read-and-confirm" xml:space="preserve">
+    <value>Δημιουργήστε μια εκπαίδευση, επισυνάψτε ή γράψτε το έγγραφο, επιλέξτε «Τα μέλη επιβεβαιώνουν ότι το διάβασαν και το εξέτασαν», ορίστε προθεσμία και επανάληψη κάθε 12 μήνες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Ρυθμίσεις αρχείων εκπαίδευσης / Έλεγχος υποβολών μελών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Αν οι ώρες εκπαίδευσης που υποβάλλουν τα μέλη περιμένουν έλεγχο πριν μετρήσουν: κάθε υποβολή (προεπιλογή), καμία (γίνεται δεκτή με την υποβολή και εμφανίζεται ως αυτοδηλωμένη) ή μόνο επιλεγμένες κατηγορίες ή πάνω από ένα όριο ωρών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>Ρυθμίσεις αρχείων εκπαίδευσης / Κατηγορίες που χρειάζονται έλεγχο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>Με έλεγχο επιλεγμένων υποβολών, οι υποβολές σε αυτές τις κατηγορίες εκπαίδευσης περιμένουν έλεγχο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>Ρυθμίσεις αρχείων εκπαίδευσης / Έλεγχος υποβολών άνω των (ωρών)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>Με έλεγχο επιλεγμένων υποβολών, οι υποβολές με περισσότερες ώρες από αυτή την τιμή περιμένουν έλεγχο. 0 σημαίνει χωρίς όριο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>Ρυθμίσεις αρχείων εκπαίδευσης / Ελεγκτές μέσω ρόλου μόνο για τη δική τους ομάδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>Όταν είναι ενεργό, οι ελεγκτές που ορίζονται μέσω ρόλου (Καταγραφή ολοκληρώσεων εκπαίδευσης ή Ανάθεση εκπαίδευσης) ελέγχουν μόνο τα μέλη της ομάδας τους. Οι διαχειριστές του οργανισμού εξακολουθούν να ελέγχουν όλους και οι διαχειριστές ομάδων τη δική τους ομάδα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>Ρυθμίσεις αρχείων εκπαίδευσης / Ειδοποιήσεις ελεγκτών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>Πώς μαθαίνουν οι ελεγκτές για νέες υποβολές: μία ειδοποίηση για καθεμία (προεπιλογή), μία σύνοψη την ημέρα ή καμία (μόνο τα εισερχόμενα των Ελέγχων εκπαίδευσης και το στοιχείο της αρχικής σελίδας).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-submission-reviews" xml:space="preserve">
+    <value>Έλεγχοι εκπαίδευσης (ώρες εκπαίδευσης μελών με αποδεικτικά)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-submission-reviews" xml:space="preserve">
+    <value>Τα μέλη καταγράφουν ώρες συνεχιζόμενης εκπαίδευσης ή εκπαίδευσης που έγιναν αλλού με πιστοποιητικό, φωτογραφία, έγγραφο ή απόδειξη· οι ελεγκτές τις εγκρίνουν, τις απορρίπτουν ή ζητούν περισσότερες πληροφορίες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-submission-reviews" xml:space="preserve">
+    <value>Η εξωτερική εκπαίδευση φτάνει στο αρχείο με το αποδεικτικό της, ελεγμένη όταν το θέλει ο οργανισμός, και τα μέλη ενημερώνονται σε κάθε βήμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-submission-reviews" xml:space="preserve">
+    <value>Ένα μέλος ανεβάζει φωτογραφία του πιστοποιητικού μιας οκτάωρης επανεκπαίδευσης σε επικίνδυνα υλικά· ο υπεύθυνος εκπαίδευσης τη βλέπει στους Ελέγχους εκπαίδευσης, ανοίγει τη φωτογραφία και την εγκρίνει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-submission-reviews" xml:space="preserve">
+    <value>Επιλέξτε τον έλεγχο στις ρυθμίσεις αρχείων εκπαίδευσης και δώστε στους υπεύθυνους εκπαίδευσης και στους εκπαιδευτές το δικαίωμα Καταγραφή ολοκληρώσεων εκπαίδευσης στη σελίδα Ασφάλεια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Πιστοποίηση υπευθύνου ευεξίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>Ένας τύπος πιστοποίησης του οργανισμού, για παράδειγμα από το πρότυπο Υπεύθυνος ευεξίας, του οποίου τις απαιτήσεις και τη διάρκεια ισχύος ορίζει ο οργανισμός. Η κατάσταση κάθε υπευθύνου ευεξίας (ισχύει, λήγει σύντομα, έληξε, λείπει) εμφανίζεται στη σελίδα ρυθμίσεων και στην αναφορά εκθέσεων των μελών. Καθορίζει ποιος ενεργεί μόνο όταν ο διακόπτης πιστοποίησης είναι ενεργός. Κανένας δεν εμφανίζει κατάσταση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Πιστοποίηση ορισμένου υπευθύνου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>Ένας τύπος πιστοποίησης του οργανισμού, για παράδειγμα από το πρότυπο Ορισμένος υπεύθυνος ελέγχου εκθέσεων, που εμφανίζεται ως κατάσταση κάθε ορισμένου υπευθύνου. Κανένας: όσο δεν έχει οριστεί ρόλος ορισμένου υπευθύνου, ισχύει η πιστοποίηση του υπευθύνου ευεξίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Ρόλος ομάδας υποστήριξης συναδέλφων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Τα μέλη αυτού του ρόλου προσωπικού αποτελούν την ομάδα υποστήριξης συναδέλφων και λαμβάνουν τις υπενθυμίσεις επετείου που επιλέγει να μοιραστεί ένα μέλος. Κανένας: την ομάδα αποτελούν τα μέλη με ισχύουσα πιστοποίηση ομάδας υποστήριξης συναδέλφων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Ρυθμίσεις ευεξίας / Ενεργούν μόνο μέλη με ισχύουσα πιστοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Ανενεργό (προεπιλογή): μόνο οι ρόλοι υπευθύνου ευεξίας, ορισμένου υπευθύνου και υποστήριξης συναδέλφων καθορίζουν ποιος ενεργεί, και κάθε συνδεδεμένη πιστοποίηση εμφανίζεται ως κατάσταση. Ενεργό: ένα μέλος του ρόλου χρειάζεται επίσης ισχύουσα πιστοποίηση του συνδεδεμένου τύπου του ρόλου· ένας ρόλος χωρίς συνδεδεμένο τύπο δεν επηρεάζεται. Δεν μπορεί να ενεργοποιηθεί όσο κανείς στον ρόλο υπευθύνου ευεξίας ή ορισμένου υπευθύνου δεν έχει ισχύουσα πιστοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.ManageContentSets" xml:space="preserve">
+    <value>Διαχείριση συνόλων περιεχομένου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.ManageContentSets" xml:space="preserve">
+    <value>Επιτρέπει τη δημοσίευση συνόλων πρωτοκόλλων και μαθημάτων σε συνδεδεμένα τμήματα, την εγγραφή στα δικά τους, τη λήψη αποφάσεων στα εισερχόμενα ενημερώσεων, την προσαρμογή των μπλοκ που άφησε ανοιχτά ένας εκδότης, την απάντηση σε προτάσεις και τη χορηγία των θέσεων LMS ενός συνδεδεμένου τμήματος. Οποιοδήποτε μέλος μπορεί να προτείνει μια αλλαγή στον εκδότη. Χωρίς αποθηκευμένο κανόνα, μόνο οι διαχειριστές του τμήματος έχουν αυτή τη δυνατότητα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ContentSetSettings" xml:space="preserve">
+    <value>Ώρα ενημέρωσης συνόλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ContentSetSettings" xml:space="preserve">
+    <value>Η τοπική ώρα κατά την οποία οι αποδεκτές ενημερώσεις συνόλων πρωτοκόλλων και μαθημάτων τίθενται σε ισχύ κατά ή μετά την ημερομηνία έναρξης ισχύος τους (προεπιλογή 07:00, ώστε τίποτα να μην αλλάζει αιφνιδιαστικά στη μέση μιας βάρδιας), καθώς και ποιοι ειδοποιούνται όταν φτάνει μια ενημέρωση, απαντάται μια πρόταση, αλλάζει μια χορηγία ή ένα εργαλείο LTI χρειάζεται εγγραφή: οι διαχειριστές (εκτός αν έχει απενεργοποιηθεί) και τα μέλη των επιλεγμένων ρόλων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-sets" xml:space="preserve">
+    <value>Σύνολα πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-sets" xml:space="preserve">
+    <value>Δημοσιεύστε πρωτόκολλα σε συνδεδεμένα τμήματα ως περιφερειακό σύνολο ή εγγραφείτε σε σύνολο μιας κομητείας, ενός ιατρικού διευθυντή ή μιας εταιρείας. Το κλειδωμένο περιεχόμενο ακολουθεί τον εκδότη, τα προσαρμόσιμα μπλοκ διατηρούν τοπικούς αριθμούς τηλεφώνου και πόρους, κάθε νέα έκδοση φτάνει με επισημασμένες αλλαγές στα εισερχόμενα ενημερώσεων και τίθεται σε ισχύ στην ώρα ενημέρωσής σας, ενώ τα μέλη προτείνουν αλλαγές στον εκδότη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.linked-department-protocols" xml:space="preserve">
+    <value>Πρωτόκολλα συνδεδεμένων τμημάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.linked-department-protocols" xml:space="preserve">
+    <value>Διαβάστε τα δημοσιευμένα πρωτόκολλα ενός εταίρου αμοιβαίας βοήθειας μέσω μιας Σύνδεσης τμημάτων που μοιράζεται πρωτόκολλα, μόνο για ανάγνωση και μόνο την ισχύουσα έκδοση. Τα περιορισμένα, αδειοδοτημένα και μεταφορτωμένα ως έγγραφο πρωτόκολλα δεν κοινοποιούνται ποτέ, και η απενεργοποίηση της κοινής χρήσης διακόπτει αμέσως την πρόσβαση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.course-sets" xml:space="preserve">
+    <value>Σύνολα μαθημάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.course-sets" xml:space="preserve">
+    <value>Δημοσιεύστε εκπαιδεύσεις (και, με το LMS, μαθήματα και διαδρομές μάθησης) σε συνδεδεμένους οργανισμούς ως σύνολο· οι συνδρομητές λαμβάνουν δικά τους αντίγραφα, κλειδωμένα ή ανοιχτά όπως επιλέγει ο εκδότης, και κάθε ενημέρωση φτάνει στα εισερχόμενά τους για να τεθεί σε ισχύ την ώρα ενημέρωσής τους. Οι εκπαιδεύσεις δεν απαιτούν πρόσθετο και οι αλλαγές στα κουίζ μεταφέρονται με κάθε ενημέρωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-sponsorship" xml:space="preserve">
+    <value>Θέσεις LMS με χορηγία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-sponsorship" xml:space="preserve">
+    <value>Πληρώστε για τα μέλη ενός συνδεδεμένου τμήματος με ενεργοποιημένο LMS από τα δικά σας πακέτα, προαιρετικά έως ένα όριο θέσεων. Το χορηγούμενο τμήμα δεν χρειάζεται πρόσθετο, μπορεί να έχει το δωρεάν πρόγραμμα, παρακολουθεί μόνο τα σύνολα μαθημάτων σας και βλέπει ποιος πληρώνει· ο τερματισμός της χορηγίας ή της σύνδεσης οδηγεί σε λήξη της πρόσβασης σύμφωνα με τους συνήθεις κανόνες λήξης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.StepUpPolicy" xml:space="preserve">
+    <value>Πολιτική επαναλαμβανόμενης επαλήθευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.StepUpPolicy" xml:space="preserve">
+    <value>Πού τα μέλη πρέπει να επιβεβαιώσουν ξανά την ταυτότητά τους (υπογραφές, επιβεβαιώσεις ανάγνωσης, εγκρίσεις, προστατευμένα δεδομένα), αν είναι προαιρετικό και αν επιτρέπεται κωδικός πρόσβασης ή σύνδεση μέσω παρόχου ταυτότητας εκτός από τον έλεγχο ταυτότητας δύο παραγόντων. Ελέγξτε τα μέλη χωρίς έλεγχο ταυτότητας δύο παραγόντων που εμφανίζει η σελίδα πριν τον απαιτήσετε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>Πολιτική επαλήθευσης / Περιοχές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>Μία καταχώριση ανά περιοχή που διαφέρει από την προεπιλογή. Μια περιοχή χωρίς καταχώριση απαιτεί επαλήθευση δύο παραγόντων όπου την απαιτούσε και πριν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Περιοχή επαλήθευσης / Περιοχή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Για ποιες ενέργειες ισχύει η καταχώριση: 1 υπογραφές, 2 επιβεβαιώσεις ανάγνωσης και υπογραφής, 3 αποφάσεις έγκρισης, 4 προστατευμένα δεδομένα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Περιοχή επαλήθευσης / Προαιρετικό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Δεν απαιτείται επαλήθευση για υπογραφές ή αποφάσεις έγκρισης: υπογράφονται με τη συνδεδεμένη συνεδρία, εκτός αν το μέλος επαληθεύτηκε πρόσφατα. Οι επιβεβαιώσεις ανάγνωσης ακολουθούν τη ρύθμιση της βιβλιοθήκης πρωτοκόλλων και τα προστατευμένα δεδομένα τις εξαιρέσεις ADP.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Περιοχή επαλήθευσης / Εναλλακτικές μέθοδοι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Αποδεκτές επαληθεύσεις εκτός από τον έλεγχο ταυτότητας δύο παραγόντων: 2 νέα σύνδεση μέσω του παρόχου ταυτότητας, 4 νέα εισαγωγή του κωδικού πρόσβασης του λογαριασμού. Καμία δεν είναι δεύτερος παράγοντας· για τα προστατευμένα δεδομένα μόνο το διαχειριστικό μέλος μπορεί να το αλλάξει, και μια αλλαγή τερματίζει τις άδειες που έχουν ήδη εκδοθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-sets" xml:space="preserve">
+    <value>Μαθήματα και διαδρομές LMS σε σύνολα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-sets" xml:space="preserve">
+    <value>Τα μαθήματα και οι διαδρομές μάθησης LMS μεταφέρονται σε σύνολα μαθημάτων: τα φιλοξενούμενα βίντεο και τα πακέτα SCORM ή cmi5 μοιράζονται με τον συνδρομητή, μια διδακτική ενότητα LTI χρησιμοποιεί τη δική του εγγραφή του συνδρομητή στο εργαλείο (οι υπεύθυνοί του ειδοποιούνται να την ολοκληρώσουν) και μια διαδρομή παραπέμπει στα αντίγραφα των μαθημάτων της που έχει ο συνδρομητής. Απαιτεί το πρόσθετο LMS του συνδρομητή ή τη χορηγία του εκδότη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.deployment-partner-acceptance" xml:space="preserve">
+    <value>Αποδοχή αποστολών από συνεργάτες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.deployment-partner-acceptance" xml:space="preserve">
+    <value>Όταν μια παραγγελία αποστολής καλύπτεται για συνδεδεμένο οργανισμό στο Resgrid, ορίστε τον ως συνεργάτη: κάθε κάλυψη που αποδέχεστε ζητά από τους διαχειριστές του να αποδεχθούν την ανάθεση με υπογραφή με επανεπιβεβαίωση ταυτότητας (step-up) μέσω της σύνδεσης, και η αποστολή δείχνει ποιος την αποδέχθηκε και πότε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.department-link-acceptance" xml:space="preserve">
+    <value>Υπογεγραμμένη αποδοχή συνδέσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.department-link-acceptance" xml:space="preserve">
+    <value>Η αποδοχή μιας σύνδεσης από άλλον οργανισμό είναι υπογραφή με επανεπιβεβαίωση ταυτότητας (step-up) από έναν από τους διαχειριστές σας, δεσμευμένη στους δύο οργανισμούς και σε ό,τι μοιράζεται ο καθένας εκείνη τη στιγμή· χωρίς την επανεπιβεβαίωση η σύνδεση παραμένει μη αποδεκτή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.workforce-pro" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.workforce-pro" xml:space="preserve">
+    <value>Το επί πληρωμή πρόσθετο ανά μέλος για αρχεία ευεξίας μελών και έκθεσης στον χώρο εργασίας: ημερολόγιο έκθεσης, περιπτώσεις έκθεσης, τραυματισμοί και ιατρικές εγκρίσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.workforce-pro" xml:space="preserve">
+    <value>Μακροχρόνια αρχεία έκθεσης και τραυματισμών για τα μέλη που τα χρειάζονται, με πληρωμή ανά πακέτο 25 μελών, αναγνώσιμα ακόμη κι αν λήξει το πρόσθετο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.workforce-pro" xml:space="preserve">
+    <value>Ένα μικτό τμήμα αγοράζει δύο πακέτα για τα 40 μόνιμα μέλη του, ενεργοποιεί το Workforce Pro για αυτά και αφήνει τους εθελοντές εκτός.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.workforce-pro" xml:space="preserve">
+    <value>Αγοράστε πακέτα στη σελίδα του πρόσθετου Workforce Pro, ενεργοποιήστε το Workforce Pro για τα μέλη των οποίων τηρείτε αρχεία και μετά επιλέξτε τους ρόλους ευεξίας στις ρυθμίσεις ευεξίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-workforce-pro" xml:space="preserve">
+    <value>Πρόσθετο Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-workforce-pro" xml:space="preserve">
+    <value>Αγοράστε το Workforce Pro σε πακέτα 25 μελών και αλλάξτε τον αριθμό των πακέτων, με την τιμή να εμφανίζεται πριν από κάθε αλλαγή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-workforce-pro" xml:space="preserve">
+    <value>Οι κλιμακωτές τιμές κάνουν τα μεγάλα δυναμικά φθηνότερα ανά μέλος, δεν υπάρχει τέλος εγκατάστασης και τα πρόσθετα πακέτα χρεώνονται αναλογικά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-workforce-pro" xml:space="preserve">
+    <value>Ένα τμήμα με 60 ενεργά μέλη έχει 3 πακέτα· όταν φτάσει τα 76 προσθέτει ένα τέταρτο και πληρώνει αμέσως την αναλογική διαφορά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-workforce-pro" xml:space="preserve">
+    <value>Στη Συνδρομή, ανοίξτε την κάρτα Workforce Pro, επιλέξτε τον αριθμό πακέτων και ολοκληρώστε την αγορά. Η αφαίρεση πακέτων ισχύει από την επόμενη ημερομηνία χρέωσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.workforce-pro-seats" xml:space="preserve">
+    <value>Θέσεις Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.workforce-pro-seats" xml:space="preserve">
+    <value>Ενεργοποιήστε το Workforce Pro για τα μέλη των οποίων τηρείτε αρχεία ευεξίας και έκθεσης, εντός των θέσεων που αγοράζουν τα πακέτα σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.workforce-pro-seats" xml:space="preserve">
+    <value>Πληρώνετε μόνο για αυτά τα μέλη· οι υπεύθυνοι και οι διευθυντές που ενεργούν για άλλους χρειάζονται τη δική τους άδεια, όχι θέση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.workforce-pro-seats" xml:space="preserve">
+    <value>Ένα μικτό τμήμα ενεργοποιεί το Workforce Pro για τα 40 μόνιμα μέλη του και αφήνει τους εθελοντές εκτός.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.workforce-pro-seats" xml:space="preserve">
+    <value>Ανοίξτε τις θέσεις Workforce Pro από τη σελίδα του πρόσθετου Workforce Pro και ενεργοποιήστε μέλη. Η απενεργοποίηση ενός μέλους δεν διαγράφει ποτέ αρχείο: τα αρχεία του γίνονται μόνο για ανάγνωση.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

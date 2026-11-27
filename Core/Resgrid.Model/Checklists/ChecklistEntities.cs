@@ -179,6 +179,8 @@ namespace Resgrid.Model.Checklists
 				return false;
 			}
 		}
+		/// <summary>Whether an item type's answer value is a typed value (plaintext metadata), not free text (S3 witness hash).</summary>
+		public static bool IsTypedAnswerType(ChecklistItemType type) => TypedAnswers.Contains((int)type);
 		/// <summary>The column a protected table seals: ProtectedContent for a mixed table, Content for a wholly private one.</summary>
 		public static string SealedColumn(string table) => PrivateMembers.ContainsKey(table) ? "ProtectedContent" : "Content";
 		public static IReadOnlyDictionary<string, (Func<T, string> Get, Action<T, string> Set)> Fields<T>() where T : ChecklistRow

@@ -3243,6 +3243,26 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Створення навчання</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Призначення навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Видалення навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.AuthorProtocols">
+    <value>Створення протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveProtocols">
+    <value>Затвердження протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageProtocolAcknowledgments">
+    <value>Керування підтвердженнями протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Створення робочого процесу</value>
   </data>
@@ -3487,7 +3507,44 @@
     <value>Дозволяє створювати, редагувати й видаляти зміни та робочі зміни, а також керувати записами на зміни для всіх груп. Адміністратори груп завжди керують записами на зміни для власних груп. Учасники, які записуються — у вебі, у застосунках або через чат-бот, — мають дотримуватися правил зміни (не на минулі дні, для призначених змін потрібне призначення, для групових змін — група учасника). Усі й надалі можуть переглядати зміни. Якщо правило не збережено, редагувати зміни можуть лише адміністратори підрозділу.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Дозволяє створювати, редагувати й видаляти навчання та скидати прогрес навчання учасників. Усі й надалі можуть переглядати та проходити навчання. Якщо правило не збережено, це можуть робити лише адміністратори підрозділу.</value>
+    <value>Дозволяє створювати навчання та готувати їхній зміст і тест, зокрема ключ відповідей. Призначення та звіти («Призначення навчання») і архівування чи видалення («Видалення навчання») — окремі правила, які до збереження наслідують це. Усі й надалі можуть переглядати та проходити навчання, призначені їм або відкриті для них. Без збереженого правила це можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Дозволяє призначати навчання учасникам, встановлювати терміни, продовження та звільнення, скидати прогрес учасників і читати звіт навчання та історію спроб. Адміністратори груп діють лише щодо учасників власної групи. Доки правило не збережено, діє «Створення навчання».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Дозволяє архівувати, відновлювати та видаляти навчання. Навчання, яке хтось завершив, архівується замість видалення, тож його завершення залишаються в записах. Доки правило не збережено, діє «Створення навчання».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AuthorProtocols">
+    <value>Дозволяє створювати, копіювати й імпортувати протоколи, редагувати їхні поля бібліотеки, тригери, запитання та аудиторію, писати чернетки й подавати їх на затвердження, вимикати протоколи та експортувати бібліотеку. Автори також бачать чернетки, чергу перегляду й усі протоколи незалежно від їхньої аудиторії. Для затвердження й публікації потрібне «Затвердження протоколів». Без збереженого правила це можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ApproveProtocols">
+    <value>Дозволяє затверджувати або відхиляти подані версії протоколів, публікувати їх одразу чи у визначену дату, фіксувати «переглянуто, без змін», виводити з обігу й видаляти протоколи, накладати юридичне утримання на протокол і керувати категоріями та їхніми етапами затвердження. Кожне затвердження підписується новою додатковою перевіркою або ключем доступу. Без збереженого правила це можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageCourses">
+    <value>Керування курсами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageCourses">
+    <value>Дозволяє створювати курси й банки питань, завантажувати відео курсів, подавати, затверджувати й публікувати версії курсів, призначати курси та переглядати їхні результати. Кожне затвердження підписується зі свіжою додатковою перевіркою. Курси входять до доповнення LMS, яке ще недоступне; уроки Resgrid Academy можна призначати з цим дозволом або з дозволом Призначення навчання. Без збереженого правила це можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.GradeAssessments">
+    <value>Оцінювання тестів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.GradeAssessments">
+    <value>Дозволяє оцінювати відповіді у вільній формі з черги оцінювання та переглядати аналіз питань. Ніхто не оцінює власну спробу. Входить до доповнення LMS, яке ще недоступне. Без збереженого правила це можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageProtocolAcknowledgments">
+    <value>Зарезервовано для підтверджень «прочитано й підписано»: хто призначатиме учасникам протоколи для прочитання й підпису, звільнятиме учасників і читатиме звіт про підтвердження. Функція «прочитано й підписано» ще недоступна, тож збереження цього правила зараз нічого не змінює. Без збереженого правила це можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Дозволяє створювати, редагувати й видаляти робочі процеси, попередньо переглядати їхні умови, читати конфігурацію кроків у застосунках і API, а також бачити згенерований результат запусків робочих процесів. Якщо правило не збережено, змінювати робочі процеси можуть лише адміністратори підрозділу, але кожен учасник може відкрити сторінку «Робочі процеси» й читати визначення; збереження варіанта «Адміністратори підрозділу» також приховує робочі процеси від усіх інших. Для кроків, що надсилають експорт із Записів, також потрібні дозволи «Експорт записів» і «Керування зведеннями звітів». Безкоштовні плани мають обмеження на кількість робочих процесів.</value>
@@ -8267,5 +8324,2201 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Використовуються, коли ваш формат листів — "Labeled fields". Введіть мітку, яку ваш CAD пише перед кожним значенням. Розділяйте варіанти символом |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Редагування протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Змінюйте зміст, тригери й запитання протоколу на місці; виклики зберігають текст, з яким їх диспетчеризували.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Вимкнення протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Припиніть пропонувати й додавати протокол, не видаляючи його.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Зняття протоколу з виклику</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Зніміть помилково доданий протокол із виклику із зазначенням причини; запис зберігає його з позначкою «знято».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Налаштування бібліотеки протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Правила для всього підрозділу на сторінці налаштувань протоколів: чи потрібен для затверджень ключ доступу, а для «прочитано й підписано» додаткова перевірка, з яким інтервалом перегляду починають нові протоколи та скільки зберігаються замінені й виведені з обігу версії, з юридичним утриманням, що зупиняє будь-яке видалення. Якщо налаштування немає, діють стандартні рівні підпису, без типового інтервалу, і всі версії зберігаються. Змінювати його можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Налаштування бібліотеки протоколів / Вимагати ключ доступу для затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Затвердження й позначки «переглянуто, без змін» потрібно підписувати ключем доступу; додаткової перевірки кодом автентифікатора чи через постачальника входу вже недостатньо. Затверджувачі без зареєстрованого ключа доступу не зможуть підписати, доки не додадуть його. Якщо вимкнено, підписати можна будь-якою новою додатковою перевіркою або ключем доступу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Налаштування бібліотеки протоколів / «Прочитано й підписано» потребує додаткової перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Підтвердження «прочитано й підписано» потребуватимуть нової додаткової перевірки, а не лише сеансу, у якому виконано вхід. Ця функція ще недоступна; вибір зберігається до часу, коли вона стане доступною.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Налаштування бібліотеки протоколів / Типовий інтервал перегляду в днях</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Кількість днів між переглядами для нових та імпортованих протоколів без власного інтервалу, від 0 до 3650; 0 означає без інтервалу. Наявні протоколи зберігають свій. Публікація версії або позначка «переглянуто, без змін» запускає інтервал наново, а власник протоколу, або адміністратори підрозділу, якщо власника немає, отримує нагадування за 30 і 7 днів до терміну перегляду та ще раз, коли його прострочено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>Налаштування бібліотеки протоколів / Юридичне утримання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>Юридичне утримання для всього підрозділу: доки воно діє, жодна замінена чи виведена з обігу версія протоколу не видаляється, незалежно від днів зберігання. Затверджувач також може накласти утримання на окремий протокол на сторінці його редагування.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Налаштування бібліотеки протоколів / Зберігання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Кількість днів, протягом яких кожен вид протоколу (Диспетчеризація, SOG, Клінічна настанова, Політика, Процедура, Довідка) зберігає версію після її заміни або виведення з обігу, до 36500; після цього фоновий процес її видаляє. 0 зберігає версії цього виду. Версію, яка ще додана до виклику, ніколи не видаляють, і поки діє юридичне утримання, нічого не видаляється.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Зберігання за видом протоколу / Вид</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Вид протоколу, до якого застосовується запис: 0 Диспетчеризація, 1 SOG, 2 Клінічна настанова, 3 Політика, 4 Процедура, 5 Довідка. Один запис на вид; вид без запису зберігає всі версії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Зберігання за видом протоколу / Дні зберігання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Кількість днів після заміни або виведення з обігу версії цього виду, після яких її можна видалити, від 1 до 36500. Запис зі значенням 0 відкидається під час збереження, тож вид зберігає свої версії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-queue" xml:space="preserve">
+    <value>Черга перегляду протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-queue" xml:space="preserve">
+    <value>Затверджуйте з підписом або відхиляйте подані версії протоколів, а потім публікуйте їх одразу чи у визначену дату.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-stamp" xml:space="preserve">
+    <value>Фіксація перегляду протоколу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-stamp" xml:space="preserve">
+    <value>Позначте опублікований протокол як «переглянуто, без змін» підписаною позначкою, без нової версії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compare" xml:space="preserve">
+    <value>Порівняння версій протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compare" xml:space="preserve">
+    <value>Переглядайте зміни між двома версіями протоколу з позначеними правками.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-categories" xml:space="preserve">
+    <value>Категорії протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-categories" xml:space="preserve">
+    <value>Групуйте бібліотеку за категоріями й задавайте етапи затвердження для кожної з них.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-settings" xml:space="preserve">
+    <value>Налаштування протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-settings" xml:space="preserve">
+    <value>Задавайте вимоги до підпису, типовий інтервал перегляду, зберігання версій і юридичне утримання для всього підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-import" xml:space="preserve">
+    <value>Імпорт протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-import" xml:space="preserve">
+    <value>Завантажуйте протоколи з файлу обміну протоколами Resgrid як чернетки для перегляду.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.TrainingRecordSettings" xml:space="preserve">
+    <value>Налаштування записів навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.TrainingRecordSettings" xml:space="preserve">
+    <value>Як ведуться записи навчання: округлення годин відмітки присутності з календаря, чи можуть учасники самі подавати зовнішнє навчання, і скільки років щонайменше записи зберігаються після вибуття учасника.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Налаштування записів навчання / Округлювати години відмітки до</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Години від приходу до виходу на подіях календаря, що зараховуються як навчання, округлюються до цього кроку: 5, 6, 10, 15, 30 або 60 хвилин, або 0 для точної хвилини.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Налаштування записів навчання / Напрям округлення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Чи округлюються години відмітки до найближчого кроку, вниз чи вгору. Не діє, поки години ведуться з точністю до хвилини.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>Налаштування записів навчання / Учасники не можуть подавати зовнішнє навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>Якщо ввімкнено, учасники не можуть самі подавати зовнішнє навчання. Керівники й надалі можуть записати його через імпорт або залік сертифікації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Налаштування записів навчання / Зберігати записи після вибуття учасника (років)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Мінімальна кількість років зберігання записів навчання колишнього учасника, якщо їхня категорія її не задає. 0 означає без мінімуму.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-transcript" xml:space="preserve">
+    <value>Журнал навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-transcript" xml:space="preserve">
+    <value>Завершені курси, записи навчання, присутність на подіях календаря, імпорти та зовнішні сертифікати кожного учасника з годинами та позначкою, чи вони зараховуються.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-transcript" xml:space="preserve">
+    <value>Єдиний облік навчання та годин кожного учасника для поновлень і перевірок без ручного підсумовування листів присутності.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-transcript" xml:space="preserve">
+    <value>Перед поновленням сертифікації учасник завантажує свій журнал у PDF з годинами за категоріями, а відповідальний за навчання відкриває той самий журнал з імені учасника.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-transcript" xml:space="preserve">
+    <value>Відкрийте Навчання й виберіть Мій журнал навчання. Керівники, які перевіряють записи учасника, вибирають його в журналі. До годин зараховуються лише підтверджені записи.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-external-submissions" xml:space="preserve">
+    <value>Подання зовнішнього навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-external-submissions" xml:space="preserve">
+    <value>Учасники подають курси, пройдені поза підрозділом, з годинами й підтвердженням (сертифікат, фото, документ або квитанція); перевіряльник затверджує або відхиляє кожне подання в розділі «Перевірка навчання», якщо підрозділ не приймає їх як самозвіт.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-external-submissions" xml:space="preserve">
+    <value>Зовнішні курси й безперервне навчання потрапляють до журналу з доданим підтвердженням і перевіряються, коли цього хоче підрозділ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-external-submissions" xml:space="preserve">
+    <value>Учасник завершує онлайн-курс із безпеки й подає його із сертифікатом і 4 годинами; керівник навчання затверджує його в розділі «Перевірка навчання», і години зараховуються.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-external-submissions" xml:space="preserve">
+    <value>Учасники вибирають Подати зовнішнє навчання у своєму журналі. Перевіряльники відкривають розділ «Перевірка навчання», щоб затверджувати, відхиляти або запитувати додаткову інформацію; можливі дублікати лишаються в черзі записів. Подання можна вимкнути в налаштуваннях записів навчання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-categories" xml:space="preserve">
+    <value>Категорії навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-categories" xml:space="preserve">
+    <value>Групуйте години навчання за категоріями з необов’язковими цільовими годинами та строком зберігання, починайте з шаблонів для пожежної охорони (ISO), EMS (NCCP), безпеки на робочому місці (OSHA), промисловості, пошуку та рятування, правоохоронних органів, охорони, CPD, Канади або ЄС і масово розподіляйте наявні записи за категоріями.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-categories" xml:space="preserve">
+    <value>Години підсумовуються так, як цього вимагає ваш регулятор, ліцензійний орган, страховик або акредитаційний орган, а цілі показують, хто відстає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-categories" xml:space="preserve">
+    <value>Підрозділ застосовує шаблон ISO, задає річну ціль для навчання змін, а потім масово призначає категорії торішнім навчанням за назвою курсу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-categories" xml:space="preserve">
+    <value>У Навчанні відкрийте Записи навчання, а потім Категорії навчання. Застосуйте шаблон або додайте власні категорії, а потім скористайтеся Призначити категорії історії для записів без категорії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-credit-mappings" xml:space="preserve">
+    <value>Відповідності заліків сертифікації</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-credit-mappings" xml:space="preserve">
+    <value>Зараховувати підтверджені години категорії навчання до поновлення сертифікації, для всієї категорії або лише її частини.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-credit-mappings" xml:space="preserve">
+    <value>Години для поновлення заповнюються з навчання, яке учасники й так проходять, а не вводяться вручну в кожній сертифікації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-credit-mappings" xml:space="preserve">
+    <value>Години категорії підвищення кваліфікації з екстреної медицини зараховуються до сертифікації парамедика, тож поступ поновлення учасника зростає, щойно заняття підтверджено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-credit-mappings" xml:space="preserve">
+    <value>У Навчанні відкрийте Записи навчання, а потім Заліки сертифікації, і зіставте категорію з типом сертифікації. Записи, завершені до ввімкнення відповідності, стають заліками лише після застосування історії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-backfill" xml:space="preserve">
+    <value>Перенесення історії навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-backfill" xml:space="preserve">
+    <value>Перенесення до журналів учасників завершених курсів і записів навчання з часу до появи журналу, з пробним запуском, що підраховує, що буде записано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-backfill" xml:space="preserve">
+    <value>Журнали починаються з історії, яка вже є у підрозділу в Resgrid, а не порожніми.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-backfill" xml:space="preserve">
+    <value>Керівник робить пробний запуск, бачить, скільки попередніх проходжень і записів знайдено, а потім запускає перенесення, яке триває у фоні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-backfill" xml:space="preserve">
+    <value>У Навчанні відкрийте Записи навчання, а потім Перенесення історії, і спочатку зробіть пробний запуск. Перенесені записи стають заліками сертифікації лише після застосування історії до типу сертифікації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-import" xml:space="preserve">
+    <value>Імпорт історії навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-import" xml:space="preserve">
+    <value>Імпорт проходжень з іншої системи з файлу CSV: перевірка, як кожен рядок зіставлено з учасником, виправлення незіставлених рядків та імпорт.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-import" xml:space="preserve">
+    <value>Роки записів з електронної таблиці чи попередньої системи навчання потрапляють до журналів учасників без повторного введення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-import" xml:space="preserve">
+    <value>Підрозділ, що відмовляється від старої облікової системи, експортує проходження, імпортує їх і вибирає правильного учасника для кількох рядків, зіставлених лише за ім'ям.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-import" xml:space="preserve">
+    <value>У Навчанні відкрийте Записи навчання, а потім Імпорт історії навчання. Завантажте шаблон, заповніть по рядку на кожне проходження з учасником, курсом, датою й годинами, вивантажте його та перегляньте перевірку перед імпортом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-hours-report" xml:space="preserve">
+    <value>Звіт про години навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-hours-report" xml:space="preserve">
+    <value>Підтверджені години навчання за категорією, учасником чи місяцем, з експортом у CSV і PDF та, за потреби, з колишніми учасниками.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-hours-report" xml:space="preserve">
+    <value>Дайте відповідь, скільки годин і чому навчався підрозділ, для бюджету, грантів і річних звітів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-hours-report" xml:space="preserve">
+    <value>Для річного звіту начальник експортує в PDF години навчання за минулий рік за категоріями.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-hours-report" xml:space="preserve">
+    <value>У Навчанні відкрийте Записи навчання, а потім Години навчання. Виберіть період і групування, а потім експортуйте в CSV або PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.my-courses" xml:space="preserve">
+    <value>Мої курси</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.my-courses" xml:space="preserve">
+    <value>Курси, призначені учаснику, курси, до яких можна приєднатися, та уроки Resgrid Academy, з прогресом і термінами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.my-courses" xml:space="preserve">
+    <value>Учасники бачать, що завершити далі, і продовжують з того місця, де зупинилися, на сайті чи в застосунку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.my-courses" xml:space="preserve">
+    <value>Новий учасник відкриває Мої курси, завершує вступний урок і коротку перевірку, і завершення з’являється в його виписці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.my-courses" xml:space="preserve">
+    <value>Відкрийте Навчання й виберіть Курси. Призначені курси йдуть першими; уроки Resgrid Academy доступні завжди, поки модуль навчання увімкнено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy" xml:space="preserve">
+    <value>Короткі відеоуроки про Resgrid, кожен із перевіркою з трьох питань, які Resgrid безкоштовно публікує для кожного підрозділу, а також рольові шляхи для учасників, диспетчерів, офіцерів та адміністраторів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy" xml:space="preserve">
+    <value>Нові учасники й офіцери вивчають систему однаково, а кожен завершений урок зараховується у виписці як навчання роботі з системою.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy" xml:space="preserve">
+    <value>Відповідальний за навчання призначає новому персоналу диспетчерської шлях Диспетчер і стежить, які уроки завершив кожен.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy" xml:space="preserve">
+    <value>Відкрийте Навчання й виберіть Academy. Ті, хто може призначати навчання, призначають урок або рольовий шлях учасникам, ролям чи групам. Уроки для модулів і доповнень, якими підрозділ не користується, залишаються прихованими.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-builder" xml:space="preserve">
+    <value>Конструктор курсів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-builder" xml:space="preserve">
+    <value>Власні курси підрозділу з модулями, відео, документами, уроками за протоколами, тестами з банків питань та опитуваннями, які затверджують і версіонують як протоколи.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-course-builder" xml:space="preserve">
+    <value>Проводьте власне навчання онлайн з оцінюваними тестами, часом навчання та завершеннями, що видають або подовжують сертифікації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-course-builder" xml:space="preserve">
+    <value>Координатор екстреної медичної допомоги створює щорічний курс оновлення знань із відео та тестом із 20 питань із банку з прохідним балом 80% і призначає його кожному парамедику.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-course-builder" xml:space="preserve">
+    <value>Поки нічого налаштовувати: конструктор курсів входить до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-grading" xml:space="preserve">
+    <value>Оцінювання тестів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-grading" xml:space="preserve">
+    <value>Черга відповідей у вільній формі, що чекають на оцінювання, та аналіз питань, який показує складність кожного питання й наскільки добре воно розрізняє сильні та слабкі результати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-grading" xml:space="preserve">
+    <value>Письмові відповіді отримують справедливу зафіксовану оцінку, а слабкі питання виявляють і виправляють.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-grading" xml:space="preserve">
+    <value>Відповідальний за навчання оцінює три короткі відповіді з минулотижневого тесту з небезпечних речовин; аналіз показує питання, на яке майже всі відповідають неправильно, тож його переписують.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-grading" xml:space="preserve">
+    <value>Поки нічого налаштовувати: оцінювання входить до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.lms" xml:space="preserve">
+    <value>Керування навчанням (LMS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.lms" xml:space="preserve">
+    <value>Курси, вимоги до навчання, заняття та формальні звіти про навчання. Ще недоступно.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.lms" xml:space="preserve">
+    <value>Структуровані курси та формальні звіти на додачу до безкоштовного журналу навчання, щойно їх випустять.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.lms" xml:space="preserve">
+    <value>Поки нічого спробувати: додаток керування навчанням ще в розробці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.lms" xml:space="preserve">
+    <value>Поки нічого налаштовувати; безкоштовний журнал навчання працює без нього.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-lms" xml:space="preserve">
+    <value>Додаток LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-lms" xml:space="preserve">
+    <value>Доповнення для керування навчанням, пакетами на 25 учасників: курси, офіційні звіти про навчання та сертифікати, які можна перевірити. Доступне, щойно Resgrid увімкне його для вашого підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-lms" xml:space="preserve">
+    <value>Додає курси, офіційні звіти та сертифікати, які можна перевірити, до безкоштовного переліку навчання для учасників, яким ви ввімкнете LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-lms" xml:space="preserve">
+    <value>Підрозділ купує 2 пакети, вмикає LMS для 40 штатних учасників і формує звіт ISO FSRS; добровольці зберігають безкоштовне навчання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-lms" xml:space="preserve">
+    <value>У розділі «Підписка» відкрийте картку LMS і виберіть кількість пакетів, а потім увімкніть учасників на сторінці персоналу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-seats" xml:space="preserve">
+    <value>Місця LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-seats" xml:space="preserve">
+    <value>Вмикайте LMS для окремих учасників на їхній сторінці персоналу або для цілої групи одразу, у межах місць, які дають ваші пакети.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-seats" xml:space="preserve">
+    <value>Ви платите лише за учасників, яких навчаєте через LMS; усі інші зберігають безкоштовний модуль «Навчання».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-seats" xml:space="preserve">
+    <value>Змішаний підрозділ вмикає LMS для 40 штатних працівників, а добровольці лишаються на безкоштовному навчанні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-seats" xml:space="preserve">
+    <value>У розділі «Персонал» скористайтеся місцями LMS, щоб увімкнути групу, або відкрийте учасника й виберіть «Увімкнути LMS». Місце може мати лише активний учасник; додайте пакет, коли місця закінчаться.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-packs" xml:space="preserve">
+    <value>Пакети LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-packs" xml:space="preserve">
+    <value>Купуйте доповнення LMS пакетами на 25 учасників і змінюйте кількість пакетів, бачачи ціну перед кожною зміною.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-packs" xml:space="preserve">
+    <value>Рахунок відповідає потрібним місцям: ступінчасті ціни роблять великі підрозділи дешевшими на одного учасника, а додані пакети оплачуються пропорційно.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-packs" xml:space="preserve">
+    <value>Підрозділ із 110 учасниками з увімкненим LMS має 5 пакетів; перевищивши 125, він додає шостий пакет і одразу сплачує пропорційну різницю.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-packs" xml:space="preserve">
+    <value>У розділі «Підписка» відкрийте картку LMS, виберіть кількість пакетів і завершіть покупку. Вилучення пакетів діє з наступної дати оплати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.WellnessSettings" xml:space="preserve">
+    <value>Налаштування добробуту</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.WellnessSettings" xml:space="preserve">
+    <value>Хто читає журнали впливів і критичних подій членів (роль відповідального за добробут), хто є призначеними відповідальними особами та командою підтримки колег, яку сертифікацію може мати кожна роль добробуту і скільки років зберігаються записи. Добробут членів входить до додатка Workforce Pro, а не до додатка LMS: без нього наявні записи лише для перегляду.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Налаштування добробуту / Роль відповідального за добробут</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Члени цієї ролі читають журнал впливів кожного члена та ведуть позначки скринінгу й подальші кроки. Адміністратори не бачать журналів без цієї ролі. Немає залишає кожен журнал лише його власнику.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Налаштування добробуту / Сертифікація команди підтримки колег</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифікації команди підтримки колег. Якщо вибрано роль команди, його показано як статус кожного члена команди; без ролі команду утворюють члени з чинним сертифікатом цього типу, і вони отримують нагадування про річниці, якими член вирішив поділитися. Без жодного з них команди немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Налаштування добробуту / Зберігати записи (років)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Скільки років зберігається запис впливу після події: від 30 (мінімум за OSHA 29 CFR 1910.1020) до 100. Юридичне утримання зберігає записи довше.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.member-wellness" xml:space="preserve">
+    <value>Мої впливи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.member-wellness" xml:space="preserve">
+    <value>Власний журнал кожного члена про впливи канцерогенів, патогенів, що передаються з кров'ю, небезпечних речовин і критичних подій, із записами, запропонованими з диспетчерських даних після позначення виклику.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.member-wellness" xml:space="preserve">
+    <value>Записи про впливи для презумпції раку та компенсацій працівникам, що зберігаються 30 років і доступні лише члену та відповідальним за добробут.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.member-wellness" xml:space="preserve">
+    <value>Після пожежі в будівлі командир позначає виклик; кожен член, який був на місці, підтверджує запропонований запис про канцероген і додає використані ЗІЗ та проведене знезараження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.member-wellness" xml:space="preserve">
+    <value>Оберіть роль відповідального за добробут у розділі Особовий склад, Мої впливи, Налаштування та за бажанням тип сертифікації для кожної ролі добробуту. Члени відкривають Мої впливи з розділу Особовий склад; командири позначають виклик кнопкою Супровід добробуту. Добробут членів входить до додатка Workforce Pro (не до додатка LMS): записи ведуться для членів з увімкненим Workforce Pro, а без додатка наявні записи лише для перегляду.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-knowledge" xml:space="preserve">
+    <value>Відповіді знань</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-knowledge" xml:space="preserve">
+    <value>Члени ставлять запитання й отримують відповідь лише з опублікованих протоколів і навчань вашого підрозділу та Resgrid Academy, де кожна частина посилається на джерело.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-knowledge" xml:space="preserve">
+    <value>Члени за секунди знаходять, що кажуть ваші протоколи, а їх автори бачать запитання, на які зміст не відповідає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-knowledge" xml:space="preserve">
+    <value>Член питає, яке захисне спорядження вимагає настанова щодо небезпечних речовин, і отримує відповідь із посиланням на цей розділ чинної версії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-knowledge" xml:space="preserve">
+    <value>Потрібен додаток Enhanced AI з увімкненими відповідями знань для вашого підрозділу. Опублікуйте протоколи й розпочніть навчання; члени користуються «Запитати» в бібліотеці протоколів, протоколі, навчанні чи виклику. Відповідальні за навчання бачать запитання без відповіді в розділі «Прогалини в знаннях».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.KnowledgeSettings" xml:space="preserve">
+    <value>Налаштування знань</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.KnowledgeSettings" xml:space="preserve">
+    <value>Правила для всього підрозділу щодо відповідей знань на сторінці «Налаштування знань»: чи використовується модуль «Документи» та посилання на інструмент дозування підрозділу. Якщо налаштування немає, документи не використовуються і посилання на дозування немає. Змінювати можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Налаштування знань / Включити документи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Документи стають джерелами відповідей знань. Документи лише для адміністраторів використовуються лише для адміністраторів, і жоден документ не використовується, поки ввімкнено Advanced Data Protection. Зміна перебудовує індекс знань підрозділу у фоновому режимі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>Налаштування знань / Посилання на інструмент дозування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>Посилання https на інструмент дозування підрозділу. Відповіді, що цитують дозу, його показують; дози лише цитуються з джерела, і ні модель, ні Resgrid їх не обчислює. Усе, крім посилання https, відхиляється.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.document-sealing" xml:space="preserve">
+    <value>Запечатані документи й перевірка документів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.document-sealing" xml:space="preserve">
+    <value>Сертифікати, виписки, PDF протоколів і підписані документи запечатуються з позначкою часу, щоб кожен міг перевірити, що їх не змінено; керівники перевіряють будь-який PDF у розділі «Перевірити документ».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.document-sealing" xml:space="preserve">
+    <value>Видавайте документи, яким довіряють інші установи й суди, і виявляйте змінені копії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.document-sealing" xml:space="preserve">
+    <value>Інспектор перевіряє, що сертифікат, який учасник приніс з іншого підрозділу, видав Resgrid і його не редагували.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.document-sealing" xml:space="preserve">
+    <value>Відкрийте «Перевірити документ» і завантажте PDF. Запечатування налаштовує оператор інсталяції; доти документи позначаються як такі, що очікують запечатування.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.external-signatures" xml:space="preserve">
+    <value>Зовнішні підписи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.external-signatures" xml:space="preserve">
+    <value>Клієнти, мешканці та сторонні особи підписують звіти про час, пропозиції, договори, інспекції й передачі доказів особисто на пристрої учасника або за посиланням Resgrid з одноразовим кодом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.external-signatures" xml:space="preserve">
+    <value>Замініть набрані імена підписами, які інша сторона може перевірити, запечатаними зі сторінкою аудиту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.external-signatures" xml:space="preserve">
+    <value>Керівник екіпажу передає планшет представнику клієнта, щоб той підписав денний звіт перед від'їздом з події.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.external-signatures" xml:space="preserve">
+    <value>Відкрийте документ і скористайтеся «Передати пристрій підписанту» або запитайте підпис за посиланням. Для посилань адміністратор додає токен команди Documenso в налаштуваннях е-підпису; посилання входять до доповнення, якому належить документ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-acknowledgments" xml:space="preserve">
+    <value>Мої підтвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-acknowledgments" xml:space="preserve">
+    <value>Читайте й підписуйте протоколи та бюлетені, які вас просять підтвердити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compliance" xml:space="preserve">
+    <value>Виконання підтверджень</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compliance" xml:space="preserve">
+    <value>Дивіться, хто прочитав і підписав кожну версію протоколу, за групами, та експортуйте.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulletins" xml:space="preserve">
+    <value>Пріоритетні бюлетені</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulletins" xml:space="preserve">
+    <value>Видайте короткий обов'язковий бюлетень, що діє одразу й затверджується згодом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulk-upload" xml:space="preserve">
+    <value>Завантаження документів протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulk-upload" xml:space="preserve">
+    <value>Завантажте одразу протоколи PDF і Word як чернетки з текстом, доступним для пошуку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Налаштування бібліотеки протоколів / Мова вмісту</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Мова, якою написано протоколи. Учасники без затвердженого перекладу своєю мовою читають версію цією мовою, і нею пишуться мітки блоків, як-от «Обережно». Порожнє значення означає англійську.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-block-editor" xml:space="preserve">
+    <value>Структурований вміст протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-block-editor" xml:space="preserve">
+    <value>Пишіть протоколи блоками: кроки, застереження, звʼязок із медичним контролем, таблиці, препарати та варіанти для дорослих і дітей.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-step-through" xml:space="preserve">
+    <value>Покрокове виконання протоколів на викликах</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-step-through" xml:space="preserve">
+    <value>Виконуйте протокол процедури чи диспетчеризації на виклику як контрольний список, із часом кожного кроку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-book" xml:space="preserve">
+    <value>PDF-книга протоколів, QR-код і вигляд для друку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-book" xml:space="preserve">
+    <value>Експортуйте категорію або всю бібліотеку як одну PDF-книгу, надрукуйте протокол або розмістіть його QR-код.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-translations" xml:space="preserve">
+    <value>Переклади вмісту протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-translations" xml:space="preserve">
+    <value>Перекладайте версію протоколу мовами учасників, кожен переклад затверджується окремо.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Налаштування добробуту / Роль призначеної відповідальної особи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Члени цієї ролі отримують повідомлення про контакт із патогенами, що передаються через кров, та інфекційними хворобами (Ryan White, частина G) і ведуть випадки контакту. «Немає» означає, що цим займається роль відповідального за добробут.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Налаштування добробуту / Сертифікат навчання щодо патогенів, що передаються через кров</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифіката щорічного навчання щодо патогенів, що передаються через кров (OSHA 1910.1030). Кожен випадок контакту показує поточний стан члена. «Немає» залишає його без відстеження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Налаштування добробуту / Сертифікат медичного допуску</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифіката, яким також записується медичне обстеження NFPA 1582 (із шаблону Medical Clearance (NFPA 1582)). «Не допущений» призупиняє його. «Немає» залишає допуски лише в розділі добробуту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Налаштування добробуту / Зберігати записи про травми (роки)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Кількість років зберігання запису про травму після закінчення його року, від 5 (OSHA 29 CFR 1904.33) до 100. Юридичне утримання зберігає записи довше.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-authoring-aids" xml:space="preserve">
+    <value>Помічники для чернеток</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-authoring-aids" xml:space="preserve">
+    <value>Чернетки запитань, планів курсів і підсумків змін із власного вмісту підрозділу, які перевіряють автори.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-authoring-aids" xml:space="preserve">
+    <value>Автори починають з обґрунтованої чернетки замість порожньої сторінки, і нічого не зберігається без їхньої згоди.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-authoring-aids" xml:space="preserve">
+    <value>Відповідальний за навчання створює п'ять запитань із нового навчання з дихальних апаратів і залишає три.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-authoring-aids" xml:space="preserve">
+    <value>Увімкніть відповіді бази знань з Enhanced AI; помічники з'являться в редакторі навчань і конструкторі курсів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.help-search" xml:space="preserve">
+    <value>Пошук у довідковому центрі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.help-search" xml:space="preserve">
+    <value>Безкоштовний пошук за ключовими словами в Resgrid Academy та довіднику продукту з меню Довідки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.help-search" xml:space="preserve">
+    <value>Учасники знаходять потрібний урок або налаштування, не залишаючи Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.help-search" xml:space="preserve">
+    <value>Новий учасник шукає "статус" і відкриває вступний урок.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.help-search" xml:space="preserve">
+    <value>Нічого налаштовувати: відкрийте Довідку, потім Пошук у довідці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy-guidance" xml:space="preserve">
+    <value>Покрокові огляди та новинки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy-guidance" xml:space="preserve">
+    <value>Перші завдання для кожної ролі на основі оглядів Academy і короткий урок про кожен випуск.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy-guidance" xml:space="preserve">
+    <value>Нові учасники та адміністратори знають, з чого почати, а всі бачать, що змінилося.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy-guidance" xml:space="preserve">
+    <value>Новий диспетчер позначає відкриття списку викликів, перевірку підрозділів і карти.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy-guidance" xml:space="preserve">
+    <value>Нічого налаштовувати: кожен учасник бачить огляд своєї ролі на панелі й може його сховати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.multi-signer-signatures" xml:space="preserve">
+    <value>Підписи кількох підписантів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.multi-signer-signatures" xml:space="preserve">
+    <value>Кілька людей підписують один документ по черзі: учасники на рівні 1 або 2, свідки, відповідальні за сертифікацію, оцінювачі та сторонні особи, з нагадуваннями, доки всі не підпишуть.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.multi-signer-signatures" xml:space="preserve">
+    <value>Погодження, які потребують більше ніж однієї особи, записуються в правильному порядку, прив'язуються до точного вмісту й після завершення запечатуються зі сторінкою аудиту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.multi-signer-signatures" xml:space="preserve">
+    <value>Відповідальний за навчання оцінює навичку на рівні 2, після чого підписує відповідальний за сертифікацію; кожен отримує нагадування, коли настає його черга.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.multi-signer-signatures" xml:space="preserve">
+    <value>Учасники бачать, що на них очікує, у розділі «Мої підписи» та на своїй головній сторінці; запити починаються з документа, який потрібно підписати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.checklist-witness-signature" xml:space="preserve">
+    <value>Підпис свідка для контрольного списку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.checklist-witness-signature" xml:space="preserve">
+    <value>Контрольний список може вимагати, щоб його незалежний свідок підписав на рівні 2 (нова перевірка особи або ключ доступу), а не засвідчував лише текстом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.checklist-witness-signature" xml:space="preserve">
+    <value>Перевірки контрольованих речовин і безпеки отримують підпис свідка, прив'язаний до записаних результатів; це входить до контрольних списків без додаткової плати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.checklist-witness-signature" xml:space="preserve">
+    <value>Після перевірки укладки з ліками другий парамедик підписує як свідок своїм ключем доступу, перш ніж перевірка вважатиметься завершеною.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.checklist-witness-signature" xml:space="preserve">
+    <value>Відредагуйте контрольний список, увімкніть незалежного свідка й підпис свідка та опублікуйте нову версію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.readiness-signatures" xml:space="preserve">
+    <value>Прийняття постачальником і розписки про видачу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.readiness-signatures" xml:space="preserve">
+    <value>Постачальники приймають завершені наряди на роботи, а учасники або отримувачі підписують розписки за видане обладнання — особисто або за посиланням Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.readiness-signatures" xml:space="preserve">
+    <value>Замініть усні передачі підписаними актами прийняття та розписками, які інша сторона може перевірити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.readiness-signatures" xml:space="preserve">
+    <value>Технік майстерні з ремонту насосів підписує завершений наряд на роботи на планшеті пожежної частини перед від'їздом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.readiness-signatures" xml:space="preserve">
+    <value>Відкрийте завершений наряд на роботи або розписку виданого предмета (кнопка «Розписка») і запитайте підпис. Віддалені посилання потребують Readiness Pro і налаштувань е-підпису підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsProgramSettings" xml:space="preserve">
+    <value>Налаштування навчальних програм</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsProgramSettings" xml:space="preserve">
+    <value>Як погоджуються заявки на навчання й у якій валюті вводять їхні витрати, а також чи зараховуються перевірки та перегляди планів реагування з модуля Записи як ознайомлення з об’єктами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Керівник погоджує заявки на навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Адміністратори групи учасника (або адміністратори підрозділу) першими погоджують заявку на навчання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Відповідальний за навчання погоджує заявки на навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Заявку погоджує учасник, який веде записи навчання для всього підрозділу, після керівника, якщо ввімкнено обидва параметри.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Валюта навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Трилітерний код валюти (EUR, CAD, USD …), у якій вводять і підсумовують витрати за заявками на навчання, витрати на заняття та плату за заняття. Заняття може мати власну валюту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Зараховувати ознайомлення з об’єктами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Завершені перевірки об’єктів і перегляди планів реагування в модулі Записи потрапляють до журналу навчання того, хто їх виконав.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Категорія ознайомлення з об’єктами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Категорія навчання, до якої зараховується ознайомлення з об’єктами, наприклад категорія ISO з планування реагування на пожежі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>Хвилин за відвідування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>Кількість хвилин, що зараховується за відвідування без часу початку й завершення. Відвідування з власним часом зараховується за фактичною тривалістю.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Зарахування з перевірок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Завершені перевірки об’єктів зараховуються інспекторові.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Зарахування з переглядів планів реагування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Перегляди планів реагування для об’єктів і контактів зараховуються тому, хто їх переглядав.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-plan" xml:space="preserve">
+    <value>Річний план навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-plan" xml:space="preserve">
+    <value>Рік запланованих занять і годин за категоріями та місяцями для всього підрозділу, групи або зміни в порівнянні з фактично зареєстрованими годинами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-plan" xml:space="preserve">
+    <value>Письмовий план, якого вимагають аудитори, регулятори та акредитаційні органи, і відставання від річних цілей, яке видно в червні, а не під час аудиту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-plan" xml:space="preserve">
+    <value>Відповідальний за навчання щомісяця планує 16 годин навчання караулу; у червні прогноз показує, що підрозділу забракне 20 годин до цілі в 192 години.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-plan" xml:space="preserve">
+    <value>Поки що нічого налаштовувати: річний план входить до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-competency-frameworks" xml:space="preserve">
+    <value>Рамки компетенцій</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-competency-frameworks" xml:space="preserve">
+    <value>Вимоги до виконання посадових обов’язків, посади й навички, позначені на курсах, навчаннях і сертифікатах, які їх підтверджують, зі звітом про прогалини для кожного учасника.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-competency-frameworks" xml:space="preserve">
+    <value>Показує для кожного учасника, які вимоги мають підтвердження, наскільки воно давнє і які вимоги його не мають.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-competency-frameworks" xml:space="preserve">
+    <value>Підрозділ імпортує рамку компетентностей свого регулятора, позначає нею свої курси та бачить, що в новобранця досі немає підтверджень для трьох вимог.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-competency-frameworks" xml:space="preserve">
+    <value>Поки що нічого налаштовувати: рамки компетенцій входять до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-requests" xml:space="preserve">
+    <value>Заявки на навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-requests" xml:space="preserve">
+    <value>Учасники подають заявку на зовнішній курс із зазначенням вартості; її погоджують керівник і відповідальний за навчання, а після проходження курс потрапляє до журналу навчання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-requests" xml:space="preserve">
+    <value>Один погоджений запис із вартістю для кожного зовнішнього курсу та підсумки витрат за учасником, курсом і роком.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-requests" xml:space="preserve">
+    <value>Парамедик подає заявку на 16-годинний курс вартістю 450 доларів; начальник караулу та відповідальний за навчання погоджують її, а свідоцтво згодом перевіряють.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-requests" xml:space="preserve">
+    <value>Поки що нічого налаштовувати: заявки на навчання входять до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-report-catalog" xml:space="preserve">
+    <value>Каталог звітів з навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-report-catalog" xml:space="preserve">
+    <value>Усі звіти з навчання в одному місці, збережені з налаштуваннями в папках і надіслані щодня, щотижня або щомісяця у форматі CSV чи PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-report-catalog" xml:space="preserve">
+    <value>Звіти, потрібні для аудиту, надходять самі й щоразу відфільтровані однаково.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-report-catalog" xml:space="preserve">
+    <value>Звіт з навчання ISO надходить начальнику підрозділу та відповідальному за навчання у форматі PDF першого числа кожного місяця.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-report-catalog" xml:space="preserve">
+    <value>Поки що нічого налаштовувати: збережені звіти та звіти за розкладом входять до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-cycles" xml:space="preserve">
+    <value>Цикли сертифікації</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-cycles" xml:space="preserve">
+    <value>Наступний цикл сертифіката починається автоматично, щойно набрано години для поновлення, а керівників, адміністраторів або вказаних учасників сповіщають, коли цикл завершується, починається, наближається до закінчення строку дії або спливає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-cycles" xml:space="preserve">
+    <value>Періодичні кваліфікації й надалі обліковують години без повторного введення, а потрібні люди дізнаються про них вчасно.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-cycles" xml:space="preserve">
+    <value>Коли EMT набирає години для поновлення, наступний дворічний цикл починається з дати закінчення поточного, а керівник служби EMS отримує повідомлення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-cycles" xml:space="preserve">
+    <value>Поки що нічого налаштовувати: правила циклів сертифікації входять до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-credential-audiences" xml:space="preserve">
+    <value>Повідомлення за станом сертифіката</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-credential-audiences" xml:space="preserve">
+    <value>Надсилайте повідомлення учасникам, сертифікат яких прострочено, спливає протягом певної кількості днів або яким його ніколи не видавали.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-credential-audiences" xml:space="preserve">
+    <value>Нагадування отримують саме ті, кому вони потрібні, без складання списку вручну.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-credential-audiences" xml:space="preserve">
+    <value>Відповідальний за навчання надсилає всім, у кого посвідчення CPR спливає протягом 30 днів, повідомлення з датою наступного курсу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-credential-audiences" xml:space="preserve">
+    <value>Поки що нічого налаштовувати: адресати за станом сертифіката входять до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LearningRequirementSettings" xml:space="preserve">
+    <value>Налаштування вимог до навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LearningRequirementSettings" xml:space="preserve">
+    <value>Застосування на основі навчання для підрозділу (типово вимкнено), найбільша частка учасників ролі, яку може вилучити один запуск застосування, і типове попередження про загрозу для нових вимог.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>Налаштування вимог до навчання / Застосування на основі навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>Якщо ввімкнено, вимога, для якої це дозволено, може припинити дію сертифіката, який вона підкріплює, щойно учасник прострочить її понад пільговий період; потім модуль сертифікатів вилучає ролі після власного пільгового періоду. Типово вимкнено, ніколи не діє, поки доповнення LMS неактивне, а під час ввімкнення спершу показує, хто втратить яку роль.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>Налаштування вимог до навчання / Найбільша частка ролі, вилучена за один запуск</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>Запуск, який вилучив би більше за цей відсоток активних учасників ролі, відхиляється, а адміністраторів підрозділу повідомляють. Типово 20.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Налаштування вимог до навчання / Типове попередження про загрозу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>За скільки днів до терміну нова вимога починає показувати учасників як під загрозою. Типово 14.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-requirements" xml:space="preserve">
+    <value>Вимоги до навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-requirements" xml:space="preserve">
+    <value>Повторювані та одноразові вимоги до навчання за роллю, групою, сертифікатом або зміною: курси, навчання, години за категорією, навчальні шляхи та успішні оцінювання навичок, з термінами від дня приєднання учасника або отримання ролі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-requirements" xml:space="preserve">
+    <value>Кожен знає, що і до якого терміну має виконати, а керівники ще до перевірки бачать, хто під загрозою.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-requirements" xml:space="preserve">
+    <value>Кожен водій пожежного автомобіля проходить курс роботи з насосами кожні 12 місяців, а кожен учасник набирає 24 години навчання у складі команди за календарний рік.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-requirements" xml:space="preserve">
+    <value>Відкрийте Навчання, виберіть Програми та додайте вимогу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-compliance-matrix" xml:space="preserve">
+    <value>Матриця відповідності</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-compliance-matrix" xml:space="preserve">
+    <value>Кожен учасник щодо кожної вимоги: відповідає, термін не настав, під загрозою, прострочено, звільнено, у відпустці або без ліцензії, з експортом у CSV і PDF, а адміністратор групи бачить свою групу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-compliance-matrix" xml:space="preserve">
+    <value>Одна сторінка показує, хто не відповідає вимогам і що потрібно виконати далі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-compliance-matrix" xml:space="preserve">
+    <value>Начальник варти фільтрує матрицю за своєю частиною й звільняє учасника, який перебуває у військовій відпустці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-compliance-matrix" xml:space="preserve">
+    <value>Відкрийте Навчання, виберіть Програми, потім Відповідність.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learning-paths" xml:space="preserve">
+    <value>Навчальні шляхи та адаптація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learning-paths" xml:space="preserve">
+    <value>Упорядковані курси, уроки Academy та навчання з попередніми умовами та кроками за вибором; завершення шляху може видавати сертифікат. Шлях для кожної ролі можна призначати автоматично, коли хтось приєднується або отримує роль.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learning-paths" xml:space="preserve">
+    <value>Нові учасники проходять однакову адаптацію з терміном, і нікому не треба пам’ятати про її призначення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learning-paths" xml:space="preserve">
+    <value>Нові диспетчери отримують шлях Диспетчер із 30 днями на завершення, а його завершення видає сертифікат диспетчера підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learning-paths" xml:space="preserve">
+    <value>Відкрийте Навчання, виберіть Програми, потім Шляхи, щоб створити шлях, і Адаптація, щоб призначити його за роллю.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-call-answers" xml:space="preserve">
+    <value>Запитання про виклик</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-call-answers" xml:space="preserve">
+    <value>Учасники ставлять запитання в перегляді виклику й отримують відповідь лише з версій протоколів, на які посилається виклик, та з його типу, пріоритету, детермінанти й типу місця, кожна частина з посиланням на свій розділ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-call-answers" xml:space="preserve">
+    <value>Екіпажі й диспетчери за секунди знаходять, що кажуть протоколи виклику саме для цього випадку, а дані пацієнта чи абонента ніколи не надсилаються.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-call-answers" xml:space="preserve">
+    <value>Під час пожежі в будівлі школи лейтенант питає, де розташовуються екіпажі, і отримує відповідь із наведеного розділу шкільного протоколу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-call-answers" xml:space="preserve">
+    <value>Увімкніть відповіді знань у Enhanced AI та додавайте протоколи до викликів; «Запитайте про цей виклик» з’явиться на вкладці протоколів перегляду виклику.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-tutor" xml:space="preserve">
+    <value>Наставник і практика на сценаріях</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-tutor" xml:space="preserve">
+    <value>Слухачі ставлять запитання про курс, який проходять, а учасники практикуються на короткому сценарії з протоколу, і їхні відповіді оцінюються за цим протоколом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-tutor" xml:space="preserve">
+    <value>Учасники перевіряють своє розуміння між навчаннями, а кожна відповідь і оцінка вказують на точний розділ, без жодного запису до навчального журналу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-tutor" xml:space="preserve">
+    <value>Новий парамедик практикує протокол зупинки серця: короткий сценарій, три запитання та відгук, що цитує кроки протоколу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-tutor" xml:space="preserve">
+    <value>Увімкніть відповіді бази знань в Enhanced AI; тоді «Практика» з'явиться на кожному протоколі. «Запитати про цей курс» у програвачі курсів також потребує доповнення LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-recommendations" xml:space="preserve">
+    <value>Навчальні рекомендації</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-recommendations" xml:space="preserve">
+    <value>Рекомендує кожному учаснику навчальні шляхи й курси на основі відкритих вимог, шляхів, які він проходить, прогалин у компетенціях і курсів для його ролей.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-recommendations" xml:space="preserve">
+    <value>Учасники бачать, що проходити далі й чому, а керівники бачать те саме для учасників, яких курують.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-recommendations" xml:space="preserve">
+    <value>Пожежник без підтвердження компетенції з драбин бачить у «Моєму навчанні» рекомендований курс роботи з драбинами з поясненням причини.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-recommendations" xml:space="preserve">
+    <value>Відкрийте «Навчання», виберіть «Програми», потім «Рекомендації»; учасники також бачать «Рекомендовано вам» у «Моєму навчанні». «Пояснити за допомогою ШІ» потребує Enhanced AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.approval-chains" xml:space="preserve">
+    <value>Ланцюжки затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.approval-chains" xml:space="preserve">
+    <value>Закупівлі, плани дій щодо інциденту, рахунки, пакети Cal OES MARS і угоди про взаємодопомогу по черзі затверджує ланцюжок людей: із пороговими сумами, паралельними етапами, заступниками на час чиєїсь відпустки та ескалацією, коли етап завис.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.approval-chains" xml:space="preserve">
+    <value>Кожне затвердження є підписом рівня 2, прив'язаним до точного вмісту: зміна робить його недійсним, відхилення потребує причини, а завершений ланцюжок запечатує документ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.approval-chains" xml:space="preserve">
+    <value>Закупівлі понад 5 000 потребують фінансового керівника після керівника секції логістики; якщо фінансовий керівник не діє протягом 24 годин, запит отримують адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.approval-chains" xml:space="preserve">
+    <value>Адміністратор підрозділу визначає ланцюжок для кожного виду в розділі «Затвердження», «Ланцюжки»; учасники подають зі сторінки елемента або з розділу «Затвердження», а затверджувачі знаходять запити в «Мої затвердження» та на своїй головній сторінці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-protocol-learning" xml:space="preserve">
+    <value>Тести до протоколів і мікронавчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-protocol-learning" xml:space="preserve">
+    <value>Зробіть так, щоб підтвердження протоколу чекало на тест із банку питань, і надсилайте учасникам одне сценарне питання на тиждень із вибраних протоколів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-protocol-learning" xml:space="preserve">
+    <value>Учасники показують, що зрозуміли протокол, а не лише відкрили його, і підтримують знання між переглядами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-protocol-learning" xml:space="preserve">
+    <value>Нова процедура mayday вимагає скласти п'ять питань на 80%, перш ніж підтвердження зарахується, а щопонеділка кожен пожежник відповідає на один сценарій із неї.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-protocol-learning" xml:space="preserve">
+    <value>Поки що нічого налаштовувати: тести до протоколів і мікронавчання входять до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-class-sessions" xml:space="preserve">
+    <value>Заняття з інструктором</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-class-sessions" xml:space="preserve">
+    <value>Заняття з інструктором у календарі з місткістю, листом очікування, правилами запису, реєстрацією за змінним QR і GPS та підписом інструктора, що створює запис про навчання кожного присутнього.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-class-sessions" xml:space="preserve">
+    <value>Один список на заняття як документ: хто викладав, хто був присутній, що розглянули й скільки тривало, зі зберіганням упродовж строку категорії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-class-sessions" xml:space="preserve">
+    <value>Курс-повторення щодо патогенів, що передаються з кров'ю, на 20 місць заповнено; троє в черзі, і коли хтось відписується, наступного записують і повідомляють.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-class-sessions" xml:space="preserve">
+    <value>Поки нічого налаштовувати: заняття входять до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-lesson-plans" xml:space="preserve">
+    <value>Плани занять</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-lesson-plans" xml:space="preserve">
+    <value>Багаторазові плани для занять з інструктором: цілі, компетенції, матеріали й тренажери, співвідношення інструкторів і учнів, план безпеки та чек-лист інструктажу, з версіями, що схвалюються перед використанням.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-lesson-plans" xml:space="preserve">
+    <value>Навчання з реальним вогнем, водіння й дихальних апаратів проводиться за схваленим планом, а список показує використану версію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-lesson-plans" xml:space="preserve">
+    <value>Відповідальний за навчання копіює шаблон навчань з вогнем, додає вогневу споруду й співвідношення підрозділу, а начальник схвалює його перед першим навчанням.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-lesson-plans" xml:space="preserve">
+    <value>Поки нічого налаштовувати: плани занять входять до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-resources" xml:space="preserve">
+    <value>Бронювання об'єктів і тренажерів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-resources" xml:space="preserve">
+    <value>Навчальні полігони, класи, тренажери, транспортні засоби та обладнання організації, заброньовані на час занять, щоб нічого не було заброньовано двічі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-resources" xml:space="preserve">
+    <value>Два заняття ніколи не розраховують на ту саму вогневу споруду чи машину того самого дня.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-resources" xml:space="preserve">
+    <value>Вправа з драбинами бронює навчальну вежу й Машину 3 на суботній ранок; друге заняття, що просить вежу на цей час, отримує відмову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-resources" xml:space="preserve">
+    <value>Поки нічого налаштовувати: бронювання об'єктів входить до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Налаштування бібліотеки протоколів / Детермінанта в текстах диспетчеризації</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Додає детермінанту й назву протоколу з перебігу випадку до заголовка push, SMS і голосового повідомлення диспетчеризації. Типово вимкнено; тоді всі тексти лишаються як раніше.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-case-flow" xml:space="preserve">
+    <value>Перебіг випадку протоколу (рушій рішень диспетчеризації)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-case-flow" xml:space="preserve">
+    <value>Протокол диспетчеризації може мати перебіг випадку: вступні й ключові питання, інструкції для читання та результати з детермінантою й запропонованим пріоритетом. Диспетчери проходять його у формі нового виклику, змінюють детермінанту лише з причиною, надсилають інструкції абонентові SMS, а з Enhanced AI отримують запропонований протокол для підтвердження. Картки реагування можуть реагувати на детермінанту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-sheets" xml:space="preserve">
+    <value>Листи навичок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-sheets" xml:space="preserve">
+    <value>Листи навичок за вимогами до виконання з упорядкованими кроками, критичними критеріями, що провалюють оцінювання, шкалами, таймером і доказами, з версіями та бібліотекою шаблонів Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-sheets" xml:space="preserve">
+    <value>Усі оцінювачі оцінюють ту саму навичку однаково, а підрозділ може точно показати, що перевіряли.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-sheets" xml:space="preserve">
+    <value>Лист одягання дихального апарата не зараховує тому, хто витратив понад 60 секунд або пропустив перевірку герметичності маски.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-sheets" xml:space="preserve">
+    <value>Відкрийте Навчання, виберіть Навички, потім Листи навичок, і почніть із шаблону.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-evaluations" xml:space="preserve">
+    <value>Оцінювання навичок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-evaluations" xml:space="preserve">
+    <value>Режим оцінювача: оцініть одного учасника або весь екіпаж за листом, із зарахуванням усіх кроків, примітками й доказами, потім підпишіть на рівні L2; зараховані оцінювання потрапляють до журналу навчання, а запис запечатується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-evaluations" xml:space="preserve">
+    <value>Навички, перевірені на навчаннях, стають підписаними й запечатаними доказами, які зараховуються у вимоги та сертифікації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-evaluations" xml:space="preserve">
+    <value>Командир оцінює екіпаж автоцистерни 2 на прокладанні рукавної лінії в одній формі, виокремлює учасника, якому було важко, і підписує з планшета.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-evaluations" xml:space="preserve">
+    <value>Опублікуйте лист, укажіть, хто може за ним оцінювати, і виберіть Розпочати оцінювання в розділі Навчання, Навички.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-task-books" xml:space="preserve">
+    <value>Книжки завдань посад</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-task-books" xml:space="preserve">
+    <value>Книжки завдань за моделлю NWCG: відкриваються з кодом посади й датою, завдання підписують уповноважені оцінювачі в різні дні та на різних викликах, рекомендує остаточний оцінювач і сертифікує посадова особа; сертифікація активує сертифікацію стажиста.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-task-books" xml:space="preserve">
+    <value>Стажисти отримують кваліфікацію з повним підписаним слідом замість паперової книжки в шафці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-task-books" xml:space="preserve">
+    <value>Книжку FFT2 стажиста відкривають у березні, два завдання на викликах підписують на лісових пожежах улітку, а посадова особа сертифікує її у вересні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-task-books" xml:space="preserve">
+    <value>Відкрийте Навчання, виберіть Навички, потім Визначення, почніть із шаблону книжки, укажіть, хто підписує та сертифікує, і відкривайте книжки в розділі Книжки завдань.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsSkillSettings" xml:space="preserve">
+    <value>Налаштування сповіщень про навички</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsSkillSettings" xml:space="preserve">
+    <value>Як надсилаються сповіщення про оцінювання та книжки завдань, одразу чи щоденним або щотижневим дайджестом, і чи отримують їх оцінювані учасники та адміністратори.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Надсилання сповіщень про навички</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Одразу, щоденним або щотижневим дайджестом (одне повідомлення на особу з усіма сповіщеннями) або вимкнено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Час дайджесту навичок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Година за місцевим часом підрозділу, коли надсилаються дайджести.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>День щотижневого дайджесту навичок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>День тижня, коли надсилаються щотижневі дайджести.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Сповіщати оцінюваних учасників</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Оцінювані учасники та стажисти отримують сповіщення про свої оцінювання та книжки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Сповіщати адміністраторів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Активні адміністратори підрозділу отримують сповіщення про кожне оцінювання та книжку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewDispatchCases">
+    <value>Перевіряти виклики диспетчерської</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ReviewDispatchCases">
+    <value>Дозволяє відбирати виклики для перевірки, оцінювати записаний виклик за шкалою, надсилати перевірку диспетчеру й читати звіт про дотримання. Ніхто не перевіряє власні виклики. Без збереженого правила це можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.dispatch-case-review">
+    <value>Перевірка викликів диспетчерської</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dispatch-case-review">
+    <value>Керівники відбирають виклики за протоколом, версією, детермінантою, диспетчером і датами, оцінюють кожен записаний виклик запитання за запитанням та інструкцію за інструкцією за шкалою контролю якості Records поруч із перебігом протоколу й надсилають перевірку диспетчеру. Звіти показують дотримання за протоколом, версією, диспетчером і місяцем, з CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.my-case-reviews">
+    <value>Мої перевірки викликів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.my-case-reviews">
+    <value>Диспетчери читають перевірки оброблених викликів з оцінкою кожного запитання та інструкції й коментарями перевіряльника, підтверджують кожну один раз і можуть один раз відповісти; перевіряльника сповіщають про відповідь.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsCeReportingSettings" xml:space="preserve">
+    <value>Налаштування звітності безперервної освіти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsCeReportingSettings" xml:space="preserve">
+    <value>Номери постачальників CAPCE і CE Broker, типи сертифікацій, у яких зберігаються номери ліцензій членів, NREMT і National EMS ID, а також списки стовпців файлу годин навчання CE / CPD та файлів CAPCE, CE штатів і списків учасників штатів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>Номер постачальника CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>Номер постачальника CAPCE підрозділу, коли він є акредитованим постачальником CAPCE. Без нього файл завершень CAPCE не створюється.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>Назва постачальника CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>Назва постачальника, як підрозділ вносить її в курси та записи; завершення з цією назвою вважаються власною освітою підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифіката ліцензії штату</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифіката, чий номер, область, тип і дату закінчення файли подають як ліцензію штату учасника.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифіката NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифіката, чий номер і дату закінчення файли подають як номер NREMT і дату наступної повторної реєстрації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифіката національного ідентифікатора EMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифіката, чий номер файли подають як національний ідентифікатор EMS (NEMSID) учасника.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>Номер постачальника CE Broker</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>Номер відстеження постачальника CE Broker (Флорида), що записується у стовпець A файлу CE Broker без префікса 50-.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>Списки стовпців файлів безперервної освіти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>Власні списки стовпців підрозділу, по одному на тип файлу; тип файлу без списку використовує стовпці за замовчуванням.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>Тип файлу безперервної освіти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>До якого файлу належить список стовпців: training-hours, capce, fl-ems, va-ems, nj-ems, fl-fire, state-ce або state-roster.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>Стовпці файлу безперервної освіти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>Стовпці файлу в порядку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Header" xml:space="preserve">
+    <value>Заголовок стовпця</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Header" xml:space="preserve">
+    <value>Заголовок у рядку заголовків файлу; файли без рядка заголовків його пропускають.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Source" xml:space="preserve">
+    <value>Значення стовпця</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Source" xml:space="preserve">
+    <value>Яке значення містить стовпець: поле учасника, запису, сертифіката чи постачальника або сталий текст.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Argument" xml:space="preserve">
+    <value>Формат стовпця</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Argument" xml:space="preserve">
+    <value>Формат дати чи числа для значення або текст стовпця зі сталим текстом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-data-export" xml:space="preserve">
+    <value>Експорт навчальних даних</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-data-export" xml:space="preserve">
+    <value>Власники й адміністратори експортують усе, що підрозділ вніс до Навчання: курси з версіями, уроками й медіа, банки питань із ключами відповідей і кожен навчальний запис, спробу та сертифікат у CSV і твердженнях xAPI, з пакетом SCORM 1.2 для кожного курсу, де це дозволяють уроки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-data-export" xml:space="preserve">
+    <value>Підрозділ завжди може забрати свій навчальний вміст і докази, навіть після завершення доповнення LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-data-export" xml:space="preserve">
+    <value>Перед переходом до системи регіональної академії відповідальний за навчання експортує все, завантажує твердження xAPI до нового сховища записів і зберігає записи CSV для аудиту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-data-export" xml:space="preserve">
+    <value>Відкрийте Навчання, виберіть Програми, потім Експорт даних, оберіть «Усе» або «Лише записи» та почніть експорт; завантажте zip, коли він буде готовий.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-ce-reporting" xml:space="preserve">
+    <value>Файли звітності безперервної освіти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-ce-reporting" xml:space="preserve">
+    <value>Формує файл годин навчання CE / CPD зі стовпцями, яких вимагає ваш регулятор або професійний орган, а для підрозділів у США — файл завершень CAPCE, файли CE штатів (макет CE Broker для Флориди та налаштовуваний CSV для інших штатів) і готовий для штату список учасників для таких систем, як Acadis, з попереднім переглядом і стовпцями для кожного підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-ce-reporting" xml:space="preserve">
+    <value>Дані про завершення потрапляють до вашого регулятора, професійного органу, CAPCE або органу штату без повторного введення списку, і нічого не подається, доки хтось не перевірить файл.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-ce-reporting" xml:space="preserve">
+    <value>Щомісяця координатор EMS переглядає файл CAPCE за минулий місяць, виправляє двох учасників без номера ліцензії штату й завантажує CSV до CAPCE.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-ce-reporting" xml:space="preserve">
+    <value>Відкрийте Навчання, виберіть Програми, потім Звітність безперервної освіти, введіть номери постачальника й типи сертифікатів із номерами ліцензій, а тоді створіть файл за період.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-public-pages" xml:space="preserve">
+    <value>Публічні сторінки протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-public-pages" xml:space="preserve">
+    <value>Публікуйте чинну версію протоколу або категорію як набір за публічною адресою, що вмикається за бажанням, із кодом вбудовування. Чернетки, вміст з обмеженою аудиторією та ліцензований вміст ніколи не показуються, а сторінку можна відкликати будь-коли.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-template-library" xml:space="preserve">
+    <value>Бібліотека шаблонів протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-template-library" xml:space="preserve">
+    <value>Клонуйте стартові набори, підготовлені Resgrid (SOG для пожежної охорони, пошук і рятування, промислові небезпеки, безперервність діяльності, політики правоохоронних органів, інструкції для постів охорони, політики робочого місця та структура EMS без клінічного тексту), до бібліотеки як чернетки вашою мовою, зі збереженням джерела, ліцензії та версії в кожній версії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.community-exchange" xml:space="preserve">
+    <value>Обмін спільноти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.community-exchange" xml:space="preserve">
+    <value>Безкоштовно діліться протоколами та навчаннями з іншими підрозділами. Дані підрозділу вилучаються, ліцензований вміст відхиляється, Resgrid перевіряє кожен внесок перед розміщенням, а інші підрозділи можуть оцінювати, коментувати й імпортувати копію зі збереженням зазначення автора.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-open-format" xml:space="preserve">
+    <value>Відкритий формат і експорт протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-open-format" xml:space="preserve">
+    <value>Експортуйте бібліотеку або категорію в задокументованому відкритому форматі JSON (блоки, історія версій, граф рішень, переклади та список вкладень), як один файл HTML або як книгу PDF. Файли в старішому форматі й надалі імпортуються.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-analytics" xml:space="preserve">
+    <value>Аналітика протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-analytics" xml:space="preserve">
+    <value>Дивіться, як протоколи використовуються на викликах за версіями, розподіл детермінант і частку перевизначень, час за протоколом, виконання підтверджень ознайомлення та пошуки без результатів, з експортом у CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-external-learners" xml:space="preserve">
+    <value>Зовнішні слухачі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-external-learners" xml:space="preserve">
+    <value>Навчайте людей, які не є членами: партнерів взаємодопомоги, підрядників, волонтерів і громадськість.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-external-learners" xml:space="preserve">
+    <value>Партнери й громадськість проходять курси та заняття без облікового запису члена й доступу до чогось іншого.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-external-learners" xml:space="preserve">
+    <value>Підрядники проходять ваш вступний інструктаж з безпеки на об’єкті, сусідня добровільна пожежна команда проходить ваш курс оператора насоса, а волонтери CERT реєструються на заняття.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-external-learners" xml:space="preserve">
+    <value>Увімкніть портал слухача, відкрийте курси для зовнішніх слухачів і запросіть їх поштою. Включено до 25% місць (щонайменше 25).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learner-portal" xml:space="preserve">
+    <value>Брендований портал слухача</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learner-portal" xml:space="preserve">
+    <value>Сторінка входу й каталог для зовнішніх слухачів із логотипом і кольором підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learner-portal" xml:space="preserve">
+    <value>Слухачі бачать ваш підрозділ, а не Resgrid, і лише власне навчання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learner-portal" xml:space="preserve">
+    <value>Громадськість знаходить ваші заняття з першої допомоги на порталі й реєструється після підтвердження пошти.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learner-portal" xml:space="preserve">
+    <value>Завантажте логотип у профілі підрозділу, оберіть колір і вирішіть, чи дозволені самореєстрація та публічний список.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-public-class-fees" xml:space="preserve">
+    <value>Платні відкриті заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-public-class-fees" xml:space="preserve">
+    <value>Необов'язкова плата за зовнішнього слухача з експортом списку та рахунками.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-public-class-fees" xml:space="preserve">
+    <value>Виставляйте плату за заняття з СЛР, першої допомоги та CERT: експортуйте список або рахунки через Business Ops.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-public-class-fees" xml:space="preserve">
+    <value>Заняття з СЛР коштує 45 з особи; один рахунок іде роботодавцю, який направив шістьох працівників.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-public-class-fees" xml:space="preserve">
+    <value>Відкрийте сторінку відкритого заняття, опублікуйте його, задайте плату, а потім експортуйте список або виставте рахунки за слухача чи організацію. Resgrid не приймає оплату.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-course-drafts" xml:space="preserve">
+    <value>Чернетки курсів із протоколів і процедур</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-course-drafts" xml:space="preserve">
+    <value>Створіть чернетку онлайн-курсу з опублікованого протоколу або завантаженого документа процедури: модулі, уроки з посиланнями на розділи, яких вони навчають, і банк запитань для перевірки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-course-drafts" xml:space="preserve">
+    <value>Відповідальні за навчання починають із повної чернетки за власною процедурою підрозділу, а не з порожньої сторінки, і кожен урок показує вихідний текст, на якому він ґрунтується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-course-drafts" xml:space="preserve">
+    <value>Відповідальний за навчання перетворює нову процедуру mayday на чернетку курсу з чотирма модулями та п'ятьма запитаннями, перевіряє кожен урок за цитованим розділом і надсилає на затвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-course-drafts" xml:space="preserve">
+    <value>Потрібні Enhanced AI з відповідями на основі знань і доповнення LMS; відкрийте Навчання, Бібліотека курсів, Чернетка з ШІ. Чернетки ніколи не публікуються самі, кожне число має бути в цитованих розділах, вміст із позначкою без ШІ ніколи не надсилається, а підрозділи з Advanced Data Protection чернеток не отримують.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-flashcards" xml:space="preserve">
+    <value>Картки для курсів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-flashcards" xml:space="preserve">
+    <value>Картки для практики, складені з курсу або протоколу, на якому він побудований; автори залишають потрібні, а слухачі практикуються в програвачі курсу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-flashcards" xml:space="preserve">
+    <value>Члени між навчаннями повторюють кроки й критерії, які мають пам'ятати, а картку приховують і позначають для перевірки, щойно її джерело отримує нову версію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-flashcards" xml:space="preserve">
+    <value>Коли протокол зупинки серця отримує нову версію, його картки зникають із програвача, доки відповідальний за навчання не перевірить їх за новою версією.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-flashcards" xml:space="preserve">
+    <value>Потрібні Enhanced AI з відповідями на основі знань і доповнення LMS; відкрийте курс і виберіть Картки. Практику ніколи не оцінюють і не записують до навчальної картки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-starter-courses" xml:space="preserve">
+    <value>Стартові курси</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-starter-courses" xml:space="preserve">
+    <value>Курси від Resgrid (початок роботи з Resgrid, основи безпеки, план щодо небезпечних матеріалів, основи керування транспортом) для копіювання в підрозділ як чернетка.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-starter-courses" xml:space="preserve">
+    <value>Підрозділ за кілька хвилин отримує структурований перший курс і адаптує його до своїх процедур; копія зберігає зазначення авторства, а місця партнерів показують, куди під'єднається акредитований вміст.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-starter-courses" xml:space="preserve">
+    <value>Добровольча команда копіює «Початок роботи з Resgrid», додає свої радіоканали й назви частин і після затвердження призначає курс кожному новому члену.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-starter-courses" xml:space="preserve">
+    <value>Потрібні доповнення LMS і право «Керування курсами»; відкрийте Навчання, Бібліотека курсів, Стартові курси. Стартові курси не містять тексту стандартів і не дають акредитації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsStandardsSettings" xml:space="preserve">
+    <value>Налаштування xAPI (LRS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsStandardsSettings" xml:space="preserve">
+    <value>Чи надсилаються результати курсів і уроків LMS як твердження xAPI до Learning Record Store підрозділу, з яким ключем і секретом, і чи ідентифікуються учасники за електронною адресою.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>Надсилати твердження xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>Результати курсів і уроків (attempted, completed, passed, failed) стають у чергу й надсилаються до LRS процесом стандартів із повторами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>Кінцева точка LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>Адреса https кінцевої точки xAPI у Learning Record Store; твердження надсилаються до її ресурсу statements.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>Ключ LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>Ключ базової автентифікації (ім’я користувача), виданий LRS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>Секрет LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>Секрет базової автентифікації, зберігається зашифрованим для підрозділу й більше не показується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Ідентифікувати учасників за ел. поштою</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Вимкнено: кожен учасник — псевдонімний обліковий запис підрозділу. Увімкнено: електронна адреса учасника надсилається як виконавець твердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-content-standards" xml:space="preserve">
+    <value>SCORM, cmi5, xAPI і LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-content-standards" xml:space="preserve">
+    <value>Імпортуйте пакети SCORM 1.2/2004 і cmi5, що відтворюються в ізольованому програвачі, запускайте сторонні курси безперервної освіти через LTI 1.3 з поверненням оцінки та надсилайте результати до зовнішнього LRS як твердження xAPI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-content-standards" xml:space="preserve">
+    <value>Партнерське й придбане електронне навчання працює в Resgrid і потрапляє до навчальної виписки, а результати можуть надходити до власного LRS підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-content-standards" xml:space="preserve">
+    <value>Кардіологічний курс постачальника CAPCE запускається з уроку через LTI; оцінка повертається, урок завершується, а кредит потрапляє до виписки учасника.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-content-standards" xml:space="preserve">
+    <value>Відкрийте Навчання, виберіть Стандарти, завантажте пакет або зареєструйте інструмент LTI, а потім додайте до курсу урок SCORM, cmi5 чи LTI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-protocol-tools" xml:space="preserve">
+    <value>Картки для практики, чернетки навчань і перекладів протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-protocol-tools" xml:space="preserve">
+    <value>Готуйте з опублікованої версії протоколу картки для практики, навчання з тестом і переклади для перегляду авторами; члени практикуються з картками на сторінці протоколу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-protocol-tools" xml:space="preserve">
+    <value>Автори протоколів отримують, маючи лише Enhanced AI, чернетки на основі власних протоколів підрозділу, і кожен підготовлений елемент посилається на розділ, з якого він походить.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-protocol-tools" xml:space="preserve">
+    <value>Після публікації протоколу інсульту координатор ЕМД готує десять карток для практики, навчання з п'ятьма запитаннями для ознайомлення та іспанський переклад для перегляду.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-protocol-tools" xml:space="preserve">
+    <value>Увімкніть відповіді бази знань в Enhanced AI; відкрийте опублікований протокол і виберіть «Картки для практики» або «Підготувати навчання», або відкрийте чернетку перекладу й виберіть «Підготувати переклад за допомогою ШІ».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.RecordTrainingCompletions" xml:space="preserve">
+    <value>Реєстрація завершення навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.RecordTrainingCompletions" xml:space="preserve">
+    <value>Дозволяє реєструвати, що члени разом завершили навчання або курс LMS (зі списку заняття або, з приміткою, зі списку записаних на курс чи призначених на навчання). Кожен запис показує, що його зареєстрував інструктор, і той, хто реєстрував, може анулювати його із зазначенням причини. Адміністратори груп реєструють лише для членів своєї групи. Без збереженого правила це можуть лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-record-completions" xml:space="preserve">
+    <value>Реєстрація завершення навчання для членів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-record-completions" xml:space="preserve">
+    <value>Інструктор або відповідальний за навчання реєструє, що члени завершили навчання чи курс, які проходили разом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-record-completions" xml:space="preserve">
+    <value>Групове навчання (заняття з СЛР, зміна, що разом дивиться відео) потрапляє до запису кожного члена з поновленням сертифіката, а запис показує, хто його зареєстрував.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-record-completions" xml:space="preserve">
+    <value>Після заняття з СЛР відповідальний за навчання позначає присутніх у списку заняття і реєструє курс СЛР як завершений для всіх.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-record-completions" xml:space="preserve">
+    <value>Надайте потрібним ролям право «Реєстрація завершення навчання» на сторінці «Безпека» і пов'яжіть заняття з його курсом чи навчанням.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.law-enforcement" xml:space="preserve">
+    <value>Правоохоронні органи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.law-enforcement" xml:space="preserve">
+    <value>Перегляньте покриття змін, кваліфікації, службову підготовку, підтвердження ознайомлення з політиками та перевірку записів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.law-enforcement" xml:space="preserve">
+    <value>Пакет може перевіряти покриття змін, посвідчення, навчання та налаштування перевірки записів. Законодавчі вимоги, правила ліцензійних органів, перевірка застосування сили та системи обліку доказів не оцінюються. Відповідальний командир або офіцер з підготовки повинен перевірити ці джерела.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.business" xml:space="preserve">
+    <value>Підприємства та робочі місця</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.business" xml:space="preserve">
+    <value>Перегляньте групи персоналу, кваліфікації, навчання, контрольні списки та підтвердження ознайомлення з політиками для робочого місця.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.business" xml:space="preserve">
+    <value>Пакет може перевіряти групи, посвідчення, навчання, контрольні списки та блокування обладнання. Трудове законодавство, правила охорони праці, страхування та вимоги до підрядників не оцінюються. Відповідальний керівник повинен перевірити ці джерела.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-requirements" xml:space="preserve">
+    <value>Набори вимог до сертифікацій</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-requirements" xml:space="preserve">
+    <value>Сертифікацію видають або поновлюють автоматично, коли учасник виконує всі елементи її набору в межах циклу: курси LMS, набір курсів, навчання, практику під наглядом, зафіксовану інструктором, оцінювання навичок або години безперервної освіти. Анулювання виконання, на якому вона ґрунтується, повертає сертифікацію назад.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-requirements" xml:space="preserve">
+    <value>Учасники й керівники бачать, що саме залишилось («виконано 3 з 4»), ніхто не вносить поновлення вручну, а помилкове виконання не залишає сертифікацію без підстави.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-requirements" xml:space="preserve">
+    <value>Сертифікація оператора вимагає щорічного курсу водіння, курсу огляду транспортного засобу та курсу маневрування на низькій швидкості, який підписує інструктор; коли зафіксовано останній, сертифікацію поновлено до наступного 31 грудня.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-requirements" xml:space="preserve">
+    <value>Поки що нічого налаштовувати: набори вимог до сертифікацій входять до доповнення LMS, яке ще недоступне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.certification-validity-rules" xml:space="preserve">
+    <value>Правила чинності сертифікацій</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.certification-validity-rules" xml:space="preserve">
+    <value>Тип сертифікації закінчується через кілька місяців після видачі, наприкінці кожного календарного року, наприкінці власного року організації або у фіксовану дату, з необов'язковими пільговим періодом і вікном поновлення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.certification-validity-rules" xml:space="preserve">
+    <value>Річні дозволи та дозволи на фінансовий рік закінчуються в один день для всіх, поновлення потрапляють у правильний рік, а дати відповідають часовому поясу організації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.certification-validity-rules" xml:space="preserve">
+    <value>Дозвіл на навантажувач, що закінчується 31 березня щороку, поновлюється до наступного 31 березня, коли курс оновлення виконано в лютому.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.certification-validity-rules" xml:space="preserve">
+    <value>Відкрийте Сертифікації, потім тип сертифікації, і виберіть, як він закінчується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-read-and-confirm" xml:space="preserve">
+    <value>Навчання з прочитанням і підтвердженням</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-read-and-confirm" xml:space="preserve">
+    <value>Навчання без тесту може просити кожного учасника підтвердити до терміну, що він його прочитав і переглянув, і повторюватися щороку: довідник працівника, кодекс поведінки чи правило об'єкта.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-read-and-confirm" xml:space="preserve">
+    <value>Відкриття документа більше не вважається його прочитанням: запис показує, хто і коли підтвердив, готовий до аудиту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-read-and-confirm" xml:space="preserve">
+    <value>Довідник працівника призначають щосічня з терміном 31 січня; кожен учасник позначає «Я прочитав і переглянув це навчання», а в записі видно дату.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-read-and-confirm" xml:space="preserve">
+    <value>Створіть навчання, додайте або напишіть документ, позначте «Учасники підтверджують, що прочитали й переглянули», встановіть термін і повторюйте кожні 12 місяців.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Налаштування записів про навчання / Перевірка подань членів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Чи чекають години навчання, подані членами, на перевірку перед зарахуванням: кожне подання (за замовчуванням), жодне (приймається під час подання й позначається як самостійно заявлене) або лише вибрані категорії чи понад поріг годин.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>Налаштування записів про навчання / Категорії, що потребують перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>Під час перевірки вибраних подань подання в цих категоріях навчання чекають на перевірку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>Налаштування записів про навчання / Перевіряти подання понад (годин)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>Під час перевірки вибраних подань подання з більшою кількістю годин, ніж це значення, чекають на перевірку. 0 означає без порогу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>Налаштування записів про навчання / Перевіряльники за роллю лише для своєї групи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>Якщо ввімкнено, перевіряльники, призначені за роллю (Записувати завершення навчання або Призначати навчання), перевіряють лише членів своєї групи. Адміністратори підрозділу й надалі перевіряють усіх, а адміністратори груп — свою групу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>Налаштування записів про навчання / Сповіщення для перевіряльників</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>Як перевіряльники дізнаються про нові подання: сповіщення про кожне (за замовчуванням), одне зведення на день або без сповіщень (лише вхідні розділу «Перевірка навчання» та елемент на головній сторінці).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-submission-reviews" xml:space="preserve">
+    <value>Перевірка навчання (години навчання членів із підтвердженнями)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-submission-reviews" xml:space="preserve">
+    <value>Члени записують години безперервного навчання або навчання, пройденого деінде, із сертифікатом, фото, документом або квитанцією; перевіряльники затверджують, відхиляють або запитують більше інформації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-submission-reviews" xml:space="preserve">
+    <value>Зовнішнє навчання потрапляє до записів разом із підтвердженням, перевірене тоді, коли цього хоче організація, а члена повідомляють на кожному кроці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-submission-reviews" xml:space="preserve">
+    <value>Член завантажує фото сертифіката 8-годинного курсу з небезпечних речовин; керівник навчання бачить його в розділі «Перевірка навчання», відкриває фото й затверджує.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-submission-reviews" xml:space="preserve">
+    <value>Виберіть перевірку в налаштуваннях записів про навчання і надайте керівникам навчання та інструкторам право «Записувати завершення навчання» на сторінці «Безпека».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>Налаштування добробуту / Сертифікація відповідального за добробут</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифікації організації, наприклад доданий із шаблону «Відповідальний за добробут», вимоги й термін дії якого визначає організація. Статус кожного відповідального (чинний, спливає, прострочений, відсутній) показано на сторінці налаштувань і у звіті про впливи членів. Він визначає, хто діє, лише коли перемикач сертифікації ввімкнено. Немає — статус не показується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>Налаштування добробуту / Сертифікація призначеної відповідальної особи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>Тип сертифікації організації, наприклад доданий із шаблону «Призначена відповідальна особа з контролю контактів», що показується як статус кожної призначеної відповідальної особи. Немає: поки роль призначеної відповідальної особи не вибрано, діє сертифікація відповідального за добробут.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Налаштування добробуту / Роль команди підтримки колег</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Члени цієї ролі персоналу утворюють команду підтримки колег і отримують нагадування про річниці, якими член вирішив поділитися. Немає: команду утворюють члени з чинним сертифікатом команди підтримки колег.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Налаштування добробуту / Діють лише члени з чинним сертифікатом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Вимкнено (типово): лише ролі відповідального за добробут, призначеної відповідальної особи та підтримки колег визначають, хто діє, а кожну пов'язану сертифікацію показано як статус. Увімкнено: члену ролі також потрібен чинний сертифікат пов'язаного з роллю типу; ролі без пов'язаного типу це не стосується. Це не можна ввімкнути, поки ніхто в ролі відповідального за добробут або призначеної відповідальної особи не має чинного сертифіката.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.ManageContentSets" xml:space="preserve">
+    <value>Керування наборами вмісту</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.ManageContentSets" xml:space="preserve">
+    <value>Дає змогу публікувати набори протоколів і курсів для пов'язаних підрозділів, підписуватися на їхні набори, ухвалювати рішення в скриньці оновлень, налаштовувати блоки, які видавець залишив відкритими, відповідати на пропозиції та спонсорувати місця LMS пов'язаного підрозділу. Будь-який учасник може запропонувати зміну видавцеві. Без збереженого правила це можуть робити лише адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ContentSetSettings" xml:space="preserve">
+    <value>Час оновлення наборів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ContentSetSettings" xml:space="preserve">
+    <value>Місцевий час, коли прийняті оновлення наборів протоколів і курсів набирають чинності в дату набрання чинності або пізніше (за замовчуванням 07:00, щоб ніщо не змінювалося несподівано посеред зміни), а також кого сповіщати, коли надходить оновлення, на пропозицію надано відповідь, змінюється спонсорство або інструмент LTI потребує реєстрації: адміністраторів (якщо це не вимкнено) і учасників вибраних ролей.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-sets" xml:space="preserve">
+    <value>Набори протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-sets" xml:space="preserve">
+    <value>Публікуйте протоколи для пов'язаних підрозділів як регіональний набір або підписуйтеся на набір округу, медичного директора чи компанії. Заблокований вміст відповідає версії видавця, налаштовувані блоки зберігають місцеві номери телефонів і ресурси, кожна нова версія надходить до скриньки оновлень із позначеними змінами й набирає чинності у ваш час оновлення, а учасники пропонують зміни видавцеві.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.linked-department-protocols" xml:space="preserve">
+    <value>Протоколи пов'язаних підрозділів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.linked-department-protocols" xml:space="preserve">
+    <value>Читайте опубліковані протоколи партнера з взаємодопомоги через Зв'язок підрозділів, що надає доступ до протоколів, — лише для читання й лише чинну версію. Протоколи з обмеженим доступом, ліцензовані та у вигляді завантажених документів ніколи не надаються, а вимкнення спільного доступу одразу припиняє доступ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.course-sets" xml:space="preserve">
+    <value>Набори курсів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.course-sets" xml:space="preserve">
+    <value>Публікуйте тренінги (а з LMS — також курси й навчальні шляхи) для пов'язаних організацій як набір; підписники отримують власні копії, заблоковані або відкриті на вибір видавця, і кожне оновлення надходить до їхньої скриньки, щоб набрати чинності в їхній час оновлення. Для тренінгів доповнення не потрібне, а зміни тестів передаються з кожним оновленням.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-sponsorship" xml:space="preserve">
+    <value>Спонсоровані місця LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-sponsorship" xml:space="preserve">
+    <value>Оплачуйте учасників пов'язаного підрозділу з увімкненим LMS зі своїх пакетів, за бажанням у межах ліміту місць. Підрозділу, що спонсорується, не потрібне доповнення, він може користуватися безкоштовним планом, проходить лише ваші набори курсів і бачить, хто платить; завершення спонсорства або зв'язку припиняє доступ за звичайними правилами припинення доступу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.StepUpPolicy" xml:space="preserve">
+    <value>Політика повторної перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.StepUpPolicy" xml:space="preserve">
+    <value>Де учасники мають повторно підтвердити свою особу (підписи, підтвердження ознайомлення, затвердження, захищені дані), чи це необов’язково і чи можна, окрім двофакторної автентифікації, використати пароль або вхід через постачальника ідентичності. Перш ніж вимагати це, перегляньте учасників без двофакторної автентифікації, яких показує сторінка.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>Політика повторної перевірки / Області</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>Один запис для кожної області, що відрізняється від стандартної. Область без запису вимагає двофакторної перевірки там, де вимагала її раніше.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Область перевірки / Область</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Для яких дій призначено запис: 1 підписи, 2 підтвердження ознайомлення з підписом, 3 рішення про затвердження, 4 захищені дані.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Область перевірки / Необов’язково</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Повторна перевірка не потрібна для підписів і рішень про затвердження: їх підписують у поточному сеансі, якщо учасник нещодавно не проходив перевірку. Підтвердження ознайомлення керуються перемикачем бібліотеки протоколів, а захищені дані — винятками ADP.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Область перевірки / Альтернативні способи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Способи перевірки, прийнятні окрім двофакторної автентифікації: 2 повторний вхід через постачальника ідентичності, 4 повторне введення пароля облікового запису. Жоден не є другим фактором; для захищених даних змінити це може лише керівний учасник, і зміна скасовує вже видані дозволи.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-sets" xml:space="preserve">
+    <value>Курси й шляхи LMS у наборах</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-sets" xml:space="preserve">
+    <value>Курси й навчальні шляхи LMS передаються в наборах курсів: розміщене відео та пакети SCORM або cmi5 спільно використовуються з підписником, урок LTI використовує власну реєстрацію підписника в інструменті (його керівникам повідомляють, що її потрібно завершити), а шлях вказує на копії своїх курсів у підписника. Потрібне доповнення LMS підписника або спонсорство видавця.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.deployment-partner-acceptance" xml:space="preserve">
+    <value>Прийняття розгортань партнерами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.deployment-partner-acceptance" xml:space="preserve">
+    <value>Коли замовлення на розгортання виконується для пов'язаної організації в Resgrid, вкажіть її як партнера: кожне прийняте вами заповнення просить її адміністраторів прийняти призначення підписом із повторним підтвердженням особи (step-up) через зв'язок, а розгортання показує, хто і коли його прийняв.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.department-link-acceptance" xml:space="preserve">
+    <value>Підписане прийняття зв'язків</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.department-link-acceptance" xml:space="preserve">
+    <value>Прийняття зв'язку від іншої організації — це підпис із повторним підтвердженням особи (step-up) одного з ваших адміністраторів, прив'язаний до обох організацій і до того, чим кожна з них ділиться на ту мить; без повторного підтвердження зв'язок залишається неприйнятим.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.workforce-pro" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.workforce-pro" xml:space="preserve">
+    <value>Платне доповнення на члена для записів про добробут і впливи на робочому місці: журнал впливів, випадки впливу, травми та медичні допуски.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.workforce-pro" xml:space="preserve">
+    <value>Довготривалі записи про впливи й травми для членів, яким вони потрібні, з оплатою за пакет на 25 членів і доступом до перегляду навіть після завершення доповнення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.workforce-pro" xml:space="preserve">
+    <value>Змішаний підрозділ купує два пакети для своїх 40 штатних працівників, вмикає їм Workforce Pro і залишає волонтерів без нього.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.workforce-pro" xml:space="preserve">
+    <value>Придбайте пакети на сторінці доповнення Workforce Pro, увімкніть Workforce Pro для членів, чиї записи ви ведете, а потім виберіть ролі з добробуту в налаштуваннях добробуту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-workforce-pro" xml:space="preserve">
+    <value>Доповнення Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-workforce-pro" xml:space="preserve">
+    <value>Купуйте Workforce Pro пакетами на 25 членів і змінюйте кількість пакетів; ціну видно перед кожною зміною.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-workforce-pro" xml:space="preserve">
+    <value>Ступінчасті ціни роблять великі склади дешевшими на члена, плати за налаштування немає, а додані пакети оплачуються пропорційно.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-workforce-pro" xml:space="preserve">
+    <value>Підрозділ із 60 увімкненими членами має 3 пакети; коли їх стає 76, він додає четвертий і одразу сплачує пропорційну різницю.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-workforce-pro" xml:space="preserve">
+    <value>У Підписці відкрийте картку Workforce Pro, виберіть кількість пакетів і оформіть покупку. Вилучення пакетів діє з наступної дати оплати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.workforce-pro-seats" xml:space="preserve">
+    <value>Місця Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.workforce-pro-seats" xml:space="preserve">
+    <value>Увімкніть Workforce Pro для членів, чиї записи про добробут і впливи ви ведете, у межах місць, придбаних вашими пакетами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.workforce-pro-seats" xml:space="preserve">
+    <value>Ви платите лише за цих членів; відповідальні особи й керівники, які діють щодо інших, потребують дозволу, а не місця.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.workforce-pro-seats" xml:space="preserve">
+    <value>Змішаний підрозділ вмикає Workforce Pro для 40 штатних працівників і залишає волонтерів без нього.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.workforce-pro-seats" xml:space="preserve">
+    <value>Відкрийте місця Workforce Pro на сторінці доповнення Workforce Pro та ввімкніть членів. Вимкнення члена ніколи не видаляє записів: його записи стають лише для перегляду.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

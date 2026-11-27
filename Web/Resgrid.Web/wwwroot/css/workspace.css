@@ -54,6 +54,8 @@
 .rgw-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 15px 0; }
 .rgw-toolbar .rgw-toolbar-spacer { flex: 1 1 auto; }
 .rgw-toolbar form { margin: 0; }
+/* A toolbar button toggled with the hidden attribute (practice cards' Show / Again / Known): .btn's display would otherwise keep it on screen. */
+.rgw-toolbar [hidden] { display: none !important; }
 
 /* -- Filter block --------------------------------------------------------- */
 .rgw-filter { border: 1px solid #e7eaec; border-radius: 3px; padding: 15px 20px 5px 20px; margin: 0 0 20px 0; background: #f3f3f4; }

@@ -1,0 +1,47 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Knowledge
+@model KnowledgePracticePanelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Knowledge.Knowledge> localizer
+@*
+    "Practice" (K3 tutor): a short scenario written only from this protocol's version in force, and the member's own answers scored against
+    the sections it cites. Practice only: nothing is recorded on the transcript. Rendered hidden; resgrid.knowledge.practice.js asks
+    KnowledgePractice/Status and shows the panel only when the department has practice (Enhanced AI with knowledge answers; no LMS needed).
+*@
+@{
+    var id = string.IsNullOrWhiteSpace(Model.PanelId) ? "kpractice" : Model.PanelId;
+    var text = new
+    {
+        starting = localizer["PracticeStarting"].Value,
+        scoring = localizer["PracticeScoring"].Value,
+        error = localizer["ErrorNotice"].Value,
+        answerRequired = localizer["PracticeAnswerRequired"].Value,
+        scenario = localizer["PracticeScenarioLabel"].Value,
+        answer = localizer["PracticeAnswerLabel"].Value,
+        submit = localizer["PracticeSubmit"].Value,
+        again = localizer["PracticeAgain"].Value,
+        sources = localizer["SourcesLabel"].Value,
+        dosingTool = localizer["DosingToolLink"].Value,
+        openSource = localizer["OpenSource"].Value,
+        practiceOnly = localizer["PracticeOnlyNotice"].Value
+    };
+}
+<section class="ibox rgw-knowledge-practice" id="@id" hidden aria-labelledby="@(id)-title"
+         data-status-url="@Url.Action("Status", "KnowledgePractice", new { area = "User" })"
+         data-start-url="@Url.Action("Start", "KnowledgePractice", new { area = "User" })"
+         data-score-url="@Url.Action("Score", "KnowledgePractice", new { area = "User" })"
+         data-text='@Html.ScriptJson(text)'>
+    <div class="ibox-title">
+        <h5 id="@(id)-title"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["PracticeHeader"]</h5>
+    </div>
+    <div class="ibox-content">
+        <p class="text-muted small">@localizer["PracticeHelp"]</p>
+        <p class="text-warning small" id="@(id)-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @commonLocalizer["AiPromptPiiWarning"]</p>
+        <form data-role="start-form" novalidate>
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="protocolId" value="@Model.ProtocolId" />
+            <button type="submit" class="btn btn-primary"><i class="fa fa-play" aria-hidden="true"></i> @localizer["PracticeStart"]</button>
+        </form>
+        <div data-role="practice" class="m-t-sm" aria-live="polite"></div>
+    </div>
+</section>
+<script src="~/js/app/internal/knowledge/resgrid.knowledge.practice.js" asp-append-version="true" defer></script>

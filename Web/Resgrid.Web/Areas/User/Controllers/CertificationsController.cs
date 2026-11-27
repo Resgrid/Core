@@ -43,11 +43,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IProtectedReadService _protectedRead;
 		private readonly Resgrid.Model.Services.IAuthorizationService _authorization;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> _strings;
+		private readonly ISignatureService _signatures;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> _signatureStrings;
+		private readonly ILearningRecordService _learningRecords;
 
 		public CertificationsController(ICertificationService certifications, IPersonnelRolesService roles, IUnitsService units, IDepartmentsService departments,
 			IDepartmentGroupsService groups, IUserProfileService profiles, IProtectedReadService protectedRead,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> strings, Resgrid.Model.Services.IAuthorizationService authorization)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> strings, Resgrid.Model.Services.IAuthorizationService authorization,
+			ILearningRecordService learningRecords, ISignatureService signatures,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureStrings)
 		{
+			_learningRecords = learningRecords;
+			_signatures = signatures;
+			_signatureStrings = signatureStrings;
 			_certifications = certifications;
 			_roles = roles;
 			_units = units;
@@ -57,6 +65,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_protectedRead = protectedRead;
 			_strings = strings;
 			_authorization = authorization;
+		}
+
+		/// <summary>The L2 signature a verification carries; the step-up the action required is this session's proof.</summary>
+		private async Task SignVerificationAsync(PersonnelCertification saved, CancellationToken cancellationToken)
+		{
+			if (_signatures == null || saved == null)
+				return;
+
+			var type = saved.DepartmentCertificationTypeId.HasValue ? (await _certifications.GetCertificationTypeByIdAsync(saved.DepartmentCertificationTypeId.Value))?.Type : null;
+			var proof = SignatureProof.SessionOnly(UserId, IpAddressHelper.GetRequestIP(Request, true), Request?.Headers["User-Agent"].ToString());
+			Resgrid.Web.Helpers.WebStepUpProof.Apply(proof, HttpContext);
+
+			var signed = await _signatures.SignAsync(new SignatureRequest
+			{
+				DepartmentId = DepartmentId,
+				Use = SignatureUse.CertificationVerification,
+				SubjectId = saved.PersonnelCertificationId.ToString(CultureInfo.InvariantCulture),
+				RevisionId = saved.VerifiedOn?.ToString("o", CultureInfo.InvariantCulture),
+				ArtifactSha256 = _signatures.CertificationArtifactSha256(saved),
+				StatementText = CertificationStatements.Verification(saved, type, _signatureStrings?["CertificationVerificationStatement"]?.Value)
+			}, proof, cancellationToken);
+
+			if (!signed.Succeeded)
+				Logging.LogError($"Certification {saved.PersonnelCertificationId} was verified but its signature was refused: {signed.Outcome}");
 		}
 
 		#region Plumbing
@@ -422,7 +454,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var added = 0; var skipped = new List<string>();
 			foreach (var templateId in (templateIds ?? Array.Empty<string>()).Where(t => !string.IsNullOrWhiteSpace(t)).Distinct())
 			{
-				try { await _certifications.CreateCertificationTypeFromTemplateAsync(DepartmentId, templateId, UserId, cancellationToken); added++; }
+				try { await _certifications.CreateCertificationTypeFromTemplateAsync(DepartmentId, templateId, UserId, CultureInfo.CurrentUICulture.Name, cancellationToken); added++; }
 				catch (InvalidOperationException ex) when (ex.Message.StartsWith("certifications_", StringComparison.Ordinal)) { skipped.Add(CertificationTypeTemplateCatalog.GetById(templateId)?.Code ?? templateId); }
 			}
 			if (skipped.Count > 0)
@@ -681,6 +713,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Credits = await _certifications.GetCertificationCreditsAsync(id),
 				DaysUntilExpiry = CertificationRequirementEvaluator.DaysUntilExpiry(record.ExpiresOn, type?.NeverExpires == true, Resgrid.Web.Helpers.DepartmentTime.From(ViewData).Today)
 			});
+
+			// Training T1: hours toward renewal from the credits and the transcript (mapped categories not yet credited).
+			if (type != null && !type.IsUnitScoped)
+			{
+				try
+				{
+					var renewal = await _learningRecords.GetRenewalHoursAsync(DepartmentId, new[] { id });
+					if (renewal != null && renewal.TryGetValue(id, out var hours))
+						view.RenewalHours = hours;
+				}
+				catch (Exception ex) { Framework.Logging.LogException(ex, "Renewal hours could not be read for the certification record page."); }
+			}
 			return View(view);
 		}
 
@@ -702,14 +746,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 		}
 
+		/// <summary>
+		/// Verifying a record is an L2 signature (S0): the officer re-proves identity (step-up, held and replayed across the
+		/// verification page), and the verification is recorded with a signature bound to the record's holder, type and dates.
+		/// </summary>
 		[HttpPost, ValidateAntiForgeryToken]
+		[Resgrid.Web.Attributes.RequiresRecentTwoFactor(RequireForOperation = true, StepUpArea = Resgrid.Model.Security.StepUpArea.Signatures)]
 		public async Task<IActionResult> Verify(int id, CancellationToken cancellationToken)
 		{
 			if (!CanManage)
 				return Unauthorized();
 			try
 			{
-				await _certifications.VerifyCertificationAsync(id, DepartmentId, UserId, cancellationToken);
+				var saved = await _certifications.VerifyCertificationAsync(id, DepartmentId, UserId, cancellationToken);
+				await SignVerificationAsync(saved, cancellationToken);
 				return Saved(nameof(Record), new { id });
 			}
 			catch (InvalidOperationException ex) when (ex.Message.StartsWith("certifications_", StringComparison.Ordinal))

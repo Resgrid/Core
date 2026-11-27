@@ -1,0 +1,175 @@
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsEnforcementView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@* Training-backed enforcement (T3 item 3, R-L11): the department switch (setting 143, off by default), the blast-radius share, the
+   preview of who would lose which role today (shown before enforcement can be turned on), and every action with its undo. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["EnforcementTitle"];
+    ViewData["Title"] = localizer["EnforcementTitle"].Value;
+    ViewData["Subtitle"] = localizer["EnforcementIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["Scope"] = Model.Scope;
+    ViewData["Sub"] = "Enforcement";
+    ViewData["CanManage"] = Model.Actor?.MayManage == true;
+    ViewData["CanPaths"] = Model.Actor?.MayAssignAcademy == true;
+    ViewData["Paused"] = Model.Paused;
+    var preview = Model.Preview ?? new LmsEnforcementPreview();
+    string ModeText(int mode) => localizer["Mode." + (CertificationEnforcementModes)mode].Value;
+    string NameOf(string userId) => userId != null && Model.Names.TryGetValue(userId, out var name) ? name : userId;
+}
+
+@await Html.PartialAsync("_Heading")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-sliders" aria-hidden="true"></i> @localizer["SettingsHeader"]</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-controller="LmsRequirements" asp-action="SaveSettings" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <div class="checkbox">
+                    <label for="EnforcementEnabled"><input id="EnforcementEnabled" type="checkbox" name="EnforcementEnabled" value="true" checked="@Model.Settings.EnforcementEnabled" /> @localizer["EnforcementEnabledLabel"]</label>
+                </div>
+                <p class="text-muted small">@localizer["EnforcementEnabledHelp"]</p>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="MaxRoleRemovalSharePercent">@localizer["MaxShareLabel"]</label>
+                        <input id="MaxRoleRemovalSharePercent" name="MaxRoleRemovalSharePercent" type="number" min="1" max="100" class="form-control" value="@Model.Settings.MaxRoleRemovalSharePercent" aria-describedby="set-share-help" />
+                        <span id="set-share-help" class="help-block">@localizer["MaxShareHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultAtRiskDays">@localizer["DefaultAtRiskLabel"]</label>
+                        <input id="DefaultAtRiskDays" name="DefaultAtRiskDays" type="number" min="0" max="365" class="form-control" value="@Model.Settings.DefaultAtRiskDays" />
+                    </div>
+                </div>
+                @if (!Model.Settings.EnforcementEnabled)
+                {
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="ConfirmPreview" value="true" /> @localizer["ConfirmPreviewLabel"]</label>
+                    </div>
+                }
+                @if (Model.CanEdit)
+                {
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Save"]</button>
+                }
+            </form>
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-eye" aria-hidden="true"></i> @localizer["PreviewHeader"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted">@string.Format(localizer["PreviewModeFormat"].Value, ModeText(preview.CertificationEnforcementMode), preview.RoleRemovalGraceDays)</p>
+            @if (preview.WouldRefuse)
+            {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fa fa-ban" aria-hidden="true"></i> @string.Format(localizer["WouldRefuseFormat"].Value, preview.MaxSharePercent)
+                    <ul>
+                        @foreach (var breach in preview.Breaches)
+                        {
+                            <li>@string.Format(localizer["BreachFormat"].Value, breach.RoleName, breach.Losing, breach.Holders, breach.SharePercent)</li>
+                        }
+                    </ul>
+                </div>
+            }
+            @if (preview.Rows.Count == 0)
+            {
+                <p>@localizer["PreviewEmpty"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@localizer["Member"]</th>
+                                <th scope="col">@localizer["Requirement"]</th>
+                                <th scope="col">@localizer["CertificationExpires"]</th>
+                                <th scope="col">@localizer["RolesLost"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in preview.Rows)
+                            {
+                                <tr>
+                                    <td>@row.Name</td>
+                                    <td>@row.Requirement.Name<div class="rgw-sub">@string.Format(localizer["DueFormat"].Value, Model.Date(row.DueUtc))</div></td>
+                                    <td>@row.CertificationTypeName</td>
+                                    <td>@(row.RolesLost.Count == 0 ? localizer["NoRolesLost"].Value : string.Join(", ", row.RolesLost.Select(r => r.RoleName)))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-history" aria-hidden="true"></i> @localizer["HistoryHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.History.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoHistory"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@localizer["ActedOn"]</th>
+                                <th scope="col">@localizer["Member"]</th>
+                                <th scope="col">@localizer["Requirement"]</th>
+                                <th scope="col">@localizer["Status"]</th>
+                                <th scope="col"><span class="sr-only">@localizer["ColActions"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var action in Model.History)
+                            {
+                                <tr>
+                                    <td>@Model.Date(action.ActedOn)</td>
+                                    <td>@NameOf(action.UserId)</td>
+                                    <td>@(Model.RequirementNames.TryGetValue(action.LmsRequirementId, out var requirementName) ? requirementName : "#" + action.LmsRequirementId)</td>
+                                    <td>
+                                        @if (action.UndoneOn.HasValue)
+                                        {
+                                            <span class="label label-default">@localizer["Undone"]</span>
+                                            <span class="rgw-sub">@Model.Date(action.UndoneOn) · @localizer["UndoReason." + (LmsEnforcementUndoReasons)(action.UndoReason ?? 0)]</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-danger">@localizer["InForce"]</span>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        @if (!action.UndoneOn.HasValue && Model.Actor?.MayManage == true)
+                                        {
+                                            <form method="post" asp-controller="LmsRequirements" asp-action="UndoEnforcement" asp-route-area="User" data-confirm="@localizer["ConfirmUndo"]">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@action.LmsRequirementEnforcementId" />
+                                                <button type="submit" class="btn btn-xs btn-white"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["Undo"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.programs.js" asp-append-version="true"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

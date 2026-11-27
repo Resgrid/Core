@@ -1,0 +1,151 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolBulletinsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    Priority bulletins (P2 R-P7): the composer (short content, an audience, an expiry, must-read) issues straight into force with a
+    push; the list shows each bulletin's acknowledgment progress and its approval afterwards (countersign at L2, or withdraw).
+    Expired bulletins leave the library by themselves (worker 84 retires them at their expiry).
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + localizer["BulletinsTab"];
+    ViewData["Title"] = localizer["BulletinsTab"].Value;
+    ViewData["Subtitle"] = localizer["BulletinsIntro"].Value;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    @if (Model.CanIssue)
+    {
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["IssueBulletinHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted small">@localizer["IssueBulletinHelp"]</p>
+                <form method="post" asp-controller="ProtocolAcknowledgments" asp-action="IssueBulletin" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label class="control-label required" for="Title">@localizer["BulletinTitleLabel"]</label>
+                        <input id="Title" name="Title" class="form-control" maxlength="@ProtocolAcknowledgmentRules.BulletinTitleMaxLength" value="@Model.Title" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label required" for="ContentHtml">@localizer["BulletinContentLabel"]</label>
+                        <textarea id="ContentHtml" name="ContentHtml" class="form-control" rows="6" maxlength="@ProtocolAcknowledgmentRules.BulletinTextMaxLength" required>@Model.ContentHtml</textarea>
+                        <span class="help-block">@string.Format(localizer["BulletinContentHelp"].Value, ProtocolAcknowledgmentRules.BulletinTextMaxLength)</span>
+                    </div>
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label class="control-label required" for="ExpiresOn">@localizer["BulletinExpiresLabel"]</label>
+                            <input id="ExpiresOn" name="ExpiresOn" type="datetime-local" class="form-control" value="@Model.ExpiresOn" required />
+                            <span class="help-block">@string.Format(localizer["BulletinExpiresHelp"].Value, ProtocolAcknowledgmentRules.MaxBulletinDays)</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="AudienceGroups">@localizer["AudienceGroupLabel"]</label>
+                            <select id="AudienceGroups" name="AudienceGroups" class="form-control" multiple size="4">
+                                @foreach (var group in Model.Groups.OrderBy(g => g.Value))
+                                {
+                                    <option value="@group.Key" selected="@Model.AudienceGroups.Contains(group.Key)">@group.Value</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="AudienceRoles">@localizer["AudienceRoleLabel"]</label>
+                            <select id="AudienceRoles" name="AudienceRoles" class="form-control" multiple size="4">
+                                @foreach (var role in Model.Roles.OrderBy(r => r.Value))
+                                {
+                                    <option value="@role.Key" selected="@Model.AudienceRoles.Contains(role.Key)">@role.Value</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <p class="help-block small">@localizer["BulletinAudienceHelp"]</p>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="MustRead" value="true" checked="@Model.MustRead" /> @localizer["BulletinMustReadLabel"]</label>
+                        <input type="hidden" name="MustRead" value="false" />
+                    </div>
+                    <div class="rgw-wizard-actions">
+                        <button type="submit" class="btn btn-danger" data-confirm="@localizer["IssueBulletinConfirm"]"><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["IssueBulletinButton"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-list" aria-hidden="true"></i> @localizer["BulletinsListHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Items.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoBulletins"]</p>
+            }
+            else
+            {
+                <table class="table rgw-table">
+                    <thead><tr><th scope="col">@localizer["BulletinTitleLabel"]</th><th scope="col">@localizer["BulletinExpiresLabel"]</th><th scope="col">@localizer["AcknowledgedLabel"]</th><th scope="col">@localizer["BulletinApprovalLabel"]</th><th scope="col"><span class="sr-only">@localizer["ActionsLabel"]</span></th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            var decided = item.Countersign != null && item.Countersign.Decision != (int)ProtocolApprovalDecisions.Pending;
+                            <tr>
+                                <td><a asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@item.Protocol.DispatchProtocolId">@item.Protocol.Name</a>
+                                    <div class="rgw-sub">@string.Format(localizer["BulletinIssuedBy"].Value, Model.Names.TryGetValue(item.Version.PublishedByUserId ?? "", out var issuer) ? issuer : item.Version.PublishedByUserId, departmentTime.Format(item.Version.PublishedOn))</div>
+                                </td>
+                                <td>@departmentTime.Format(item.Version.ExpiresOn)@if (item.IsExpired) { <div class="rgw-sub"><span class="label label-default">@localizer["BulletinExpiredLabel"]</span></div> }</td>
+                                <td>@item.Acknowledged / @item.Assigned</td>
+                                <td>
+                                    @if (item.Countersign == null || item.Countersign.Decision == (int)ProtocolApprovalDecisions.Pending)
+                                    {
+                                        <span class="label label-warning"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @localizer["BulletinAwaitingApproval"]</span>
+                                    }
+                                    else if (item.Countersign.Decision == (int)ProtocolApprovalDecisions.Approved)
+                                    {
+                                        <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @string.Format(localizer["BulletinCountersignedBy"].Value, Model.Names.TryGetValue(item.Countersign.DecidedByUserId ?? "", out var signer) ? signer : item.Countersign.DecidedByUserId)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-default"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["BulletinWithdrawnLabel"]</span>
+                                    }
+                                </td>
+                                <td class="rgw-row-actions">
+                                    @if (Model.CanIssue && !decided && !item.IsExpired)
+                                    {
+                                        <form method="post" asp-controller="ProtocolAcknowledgments" asp-action="Countersign" asp-route-area="User" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Protocol.DispatchProtocolId" />
+                                            <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["CountersignButton"]</button>
+                                        </form>
+                                    }
+                                    @if (Model.CanIssue && !item.IsExpired)
+                                    {
+                                        <form method="post" asp-controller="ProtocolAcknowledgments" asp-action="WithdrawBulletin" asp-route-area="User" class="inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Protocol.DispatchProtocolId" />
+                                            <label class="sr-only" for="reason-@item.Protocol.DispatchProtocolId">@localizer["BulletinWithdrawReasonLabel"]</label>
+                                            <input id="reason-@item.Protocol.DispatchProtocolId" name="reason" class="form-control input-sm" maxlength="2000" placeholder="@localizer["BulletinWithdrawReasonLabel"]" />
+                                            <button type="submit" class="btn btn-xs btn-warning" data-confirm="@localizer["WithdrawBulletinConfirm"]"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["WithdrawBulletinButton"]</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

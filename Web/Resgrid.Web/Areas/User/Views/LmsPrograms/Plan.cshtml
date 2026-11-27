@@ -1,0 +1,304 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsPlanView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    One annual training plan (R-C5): planned against actual per category for the plan's audience, the forecast against each annual
+    target (a shortfall shows mid-year), the planned lines by month with "make it a calendar item", and the plan's own actions.
+*@
+@{
+    var dashboard = Model.Dashboard;
+    var plan = dashboard.Plan;
+    var culture = CultureInfo.CurrentCulture;
+    var months = Enumerable.Range(1, 12).Select(m => culture.DateTimeFormat.GetAbbreviatedMonthName(m)).ToList();
+    var edit = Model.EditItem;
+    string H(decimal value) => value.ToString("0.##", culture);
+    ViewBag.Title = "Resgrid | " + plan.Name;
+    ViewData["Title"] = plan.Name + " " + plan.Year.ToString(CultureInfo.InvariantCulture);
+    ViewData["Subtitle"] = string.Format(culture, localizer["Prg.PlanAudience"].Value, Model.ScopeName, dashboard.MemberCount);
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-toolbar m-b-sm">
+        <span class="label @(plan.Status == (int)LmsTrainingPlanStatuses.Adopted ? "label-primary" : "label-default")">@localizer["Prg.PlanStatus." + (LmsTrainingPlanStatuses)plan.Status]</span>
+        @if (Model.CanAuthor)
+        {
+            @if (plan.Status == (int)LmsTrainingPlanStatuses.Draft)
+            {
+                <form method="post" asp-controller="LmsPrograms" asp-action="SetPlanStatus" asp-route-area="User" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@plan.LmsTrainingPlanId" />
+                    <input type="hidden" name="status" value="@((int)LmsTrainingPlanStatuses.Adopted)" />
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Prg.AdoptPlan"]</button>
+                </form>
+            }
+            else if (plan.Status == (int)LmsTrainingPlanStatuses.Adopted)
+            {
+                <form method="post" asp-controller="LmsPrograms" asp-action="SetPlanStatus" asp-route-area="User" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@plan.LmsTrainingPlanId" />
+                    <input type="hidden" name="status" value="@((int)LmsTrainingPlanStatuses.Archived)" />
+                    <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-archive" aria-hidden="true"></i> @localizer["Prg.ArchivePlan"]</button>
+                </form>
+            }
+            <form method="post" asp-controller="LmsPrograms" asp-action="CopyPlan" asp-route-area="User" class="form-inline d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@plan.LmsTrainingPlanId" />
+                <label for="copy-year" class="sr-only">@localizer["Prg.Year"]</label>
+                <input id="copy-year" name="year" type="number" min="2000" max="2100" value="@(plan.Year + 1)" class="form-control input-sm" style="width:6em" />
+                <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-copy" aria-hidden="true"></i> @localizer["Prg.CopyPlan"]</button>
+            </form>
+        }
+        <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Report" asp-route-area="User" asp-route-key="training-plan" asp-route-planId="@plan.LmsTrainingPlanId" asp-route-run="true"><i class="fa fa-table" aria-hidden="true"></i> @localizer["Prg.AsReport"]</a>
+        <span class="rgw-toolbar-spacer"></span>
+        <form method="post" asp-controller="LmsPrograms" asp-action="DeletePlan" asp-route-area="User" class="d-inline">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@plan.LmsTrainingPlanId" />
+            <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Prg.Delete"]</button>
+        </form>
+    </div>
+
+    @if (dashboard.AtRiskCount > 0)
+    {
+        <div class="rgw-next-action m-b-sm"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @string.Format(culture, localizer["Prg.AtRiskCallout"].Value, dashboard.AtRiskCount)</div>
+    }
+
+    <h3>@localizer["Prg.PlannedVsActual"]</h3>
+    <p class="text-muted">@localizer["Prg.PlannedVsActualHelp"]</p>
+    @if (dashboard.Rows.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoPlanRows"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Prg.Col.Category"]</th>
+                        <th>@localizer["Prg.Col.Target"]</th>
+                        <th>@localizer["Prg.Col.PlannedYear"]</th>
+                        <th>@localizer["Prg.Col.ActualToDate"]</th>
+                        <th>@localizer["Prg.Col.Forecast"]</th>
+                        <th>@localizer["Prg.Col.RunRate"]</th>
+                        <th>@localizer["Prg.Col.Status"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in dashboard.Rows)
+                    {
+                        <tr>
+                            <td>@(row.CategoryName ?? localizer["Prg.Uncategorized"].Value)</td>
+                            <td>@(row.AnnualTarget.HasValue ? H(row.AnnualTarget.Value) : "—")</td>
+                            <td>@H(row.PlannedYear)
+                                @if (row.PlanShortOfTarget) {<span class="rgw-sub text-warning">@localizer["Prg.PlanShort"]</span>}</td>
+                            <td>@H(row.ActualToDate)</td>
+                            <td>@H(row.Forecast)</td>
+                            <td>@(row.RunRate.HasValue ? H(row.RunRate.Value) : "—")</td>
+                            <td>
+                                @if (row.AtRisk)
+                                {
+                                    <span class="label label-danger"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @string.Format(culture, localizer["Prg.ShortBy"].Value, H(row.Shortfall))</span>
+                                }
+                                else if (row.AnnualTarget.HasValue)
+                                {
+                                    <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Prg.OnTrack"]</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <h4>@localizer["Prg.ByMonth"]</h4>
+        <div class="table-responsive">
+            <table class="table table-condensed rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Prg.Col.Category"]</th>
+                        @foreach (var month in months)
+                        {
+                            <th>@month</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in dashboard.Rows)
+                    {
+                        <tr>
+                            <td>@(row.CategoryName ?? localizer["Prg.Uncategorized"].Value)<span class="rgw-sub">@localizer["Prg.PlannedSlashActual"]</span></td>
+                            @for (var i = 0; i < 12; i++)
+                            {
+                                <td>@H(row.PlannedByMonth[i])<span class="rgw-sub">@H(row.ActualByMonth[i])</span></td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <h3>@localizer["Prg.PlanLines"]</h3>
+    @if (dashboard.Items.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoPlanLines"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Prg.Col.Month"]</th>
+                        <th>@localizer["Prg.Col.Title"]</th>
+                        <th>@localizer["Prg.Col.Category"]</th>
+                        <th>@localizer["Prg.Col.Hours"]</th>
+                        <th>@localizer["Prg.Sessions"]</th>
+                        <th class="rgw-row-actions">@localizer["Prg.Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in dashboard.Items)
+                    {
+                        <tr>
+                            <td>@months[item.Month - 1]@if (item.PlannedOn.HasValue) {<span class="rgw-sub">@item.PlannedOn.Value.ToString("d", culture)</span>}</td>
+                            <td>@item.Title@if (!string.IsNullOrWhiteSpace(item.Notes)) {<span class="rgw-sub">@item.Notes</span>}</td>
+                            <td>@(Model.CategoryName(item.CategoryId) ?? localizer["Prg.Uncategorized"].Value)</td>
+                            <td>@H(item.PlannedHours)</td>
+                            <td>@item.PlannedSessions</td>
+                            <td class="rgw-row-actions">
+                                @if (item.ClassSessionId.HasValue)
+                                {
+                                    @* T4 seam: the line became a class session (with its calendar item). *@
+                                    <a class="btn btn-white btn-xs" asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@item.ClassSessionId"><i class="fa fa-users" aria-hidden="true"></i> @localizer["Cls.OpenClassSession"]</a>
+                                }
+                                else if (item.CalendarItemId.HasValue)
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="Calendar" asp-action="View" asp-route-area="User" asp-route-calendarItemId="@item.CalendarItemId"><i class="fa fa-calendar-check-o" aria-hidden="true"></i> @localizer["Prg.OnCalendar"]</a>
+                                }
+                                else if (Model.CanAuthor)
+                                {
+                                    @* T4: "make it a calendar item" creates a class session on the calendar (roster, QR sign-in, sign-off into the transcript). *@
+                                    <form method="post" asp-controller="LmsClasses" asp-action="FromPlanItem" asp-route-area="User" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@item.LmsTrainingPlanItemId" />
+                                        <input type="hidden" name="planId" value="@plan.LmsTrainingPlanId" />
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i> @localizer["Prg.MakeCalendarItem"]</button>
+                                    </form>
+                                }
+                                <a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="Plan" asp-route-area="User" asp-route-id="@plan.LmsTrainingPlanId" asp-route-editItemId="@item.LmsTrainingPlanItemId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Prg.Edit"]</a>
+                                <form method="post" asp-controller="LmsPrograms" asp-action="DeletePlanItem" asp-route-area="User" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@item.LmsTrainingPlanItemId" />
+                                    <input type="hidden" name="planId" value="@plan.LmsTrainingPlanId" />
+                                    <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Prg.Remove"]</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins" id="plan-line">
+            <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @(edit == null ? localizer["Prg.AddLine"] : localizer["Prg.EditLine"])</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="LmsPrograms" asp-action="SavePlanItem" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="Id" value="@(edit?.LmsTrainingPlanItemId ?? 0)" />
+                    <input type="hidden" name="PlanId" value="@plan.LmsTrainingPlanId" />
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="line-title">@localizer["Prg.Col.Title"]</label>
+                            <input id="line-title" name="Title" class="form-control" maxlength="200" value="@edit?.Title" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="line-month">@localizer["Prg.Col.Month"]</label>
+                            <select id="line-month" name="Month" class="form-control">
+                                @for (var m = 1; m <= 12; m++)
+                                {
+                                    <option value="@m" selected="@(edit?.Month == m)">@culture.DateTimeFormat.GetMonthName(m)</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="line-category">@localizer["Prg.Col.Category"]</label>
+                            <select id="line-category" name="CategoryId" class="form-control">
+                                <option value="">@localizer["Prg.Uncategorized"]</option>
+                                @foreach (var category in Model.Categories.Where(c => !c.IsDeleted).OrderBy(c => c.SortOrder).ThenBy(c => c.Name))
+                                {
+                                    <option value="@category.TrainingCategoryId" selected="@(edit?.CategoryId == category.TrainingCategoryId)">@category.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="line-hours">@localizer["Prg.HoursPerSession"]</label>
+                            <input id="line-hours" name="PlannedHours" type="number" step="0.25" min="0.25" max="1000" class="form-control" value="@(edit?.PlannedHours.ToString("0.##", CultureInfo.InvariantCulture) ?? "2")" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="line-sessions">@localizer["Prg.Sessions"]</label>
+                            <input id="line-sessions" name="PlannedSessions" type="number" min="1" max="100" class="form-control" value="@(edit?.PlannedSessions ?? 1)" />
+                        </div>
+                        <div class="form-group">
+                            <label for="line-date">@localizer["Prg.PlannedDate"]</label>
+                            <input id="line-date" name="PlannedOn" type="date" class="form-control" value="@(edit?.PlannedOn?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="line-notes">@localizer["Prg.Notes"]</label>
+                        <input id="line-notes" name="Notes" class="form-control" maxlength="2000" value="@edit?.Notes" />
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Prg.Save"]</button>
+                    @if (edit != null)
+                    {
+                        <a class="btn btn-white" asp-controller="LmsPrograms" asp-action="Plan" asp-route-area="User" asp-route-id="@plan.LmsTrainingPlanId">@localizer["Prg.Cancel"]</a>
+                    }
+                </form>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Prg.EditPlan"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="LmsPrograms" asp-action="SavePlan" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@plan.LmsTrainingPlanId" />
+                    <input type="hidden" name="scopeKind" value="@plan.ScopeKind" />
+                    <input type="hidden" name="groupId" value="@plan.ScopeId" />
+                    <input type="hidden" name="shiftId" value="@plan.ScopeId" />
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="edit-name">@localizer["Prg.Name"]</label>
+                            <input id="edit-name" name="name" class="form-control" maxlength="150" value="@plan.Name" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-year">@localizer["Prg.Year"]</label>
+                            <input id="edit-year" name="year" type="number" min="2000" max="2100" class="form-control" value="@plan.Year" required />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-notes">@localizer["Prg.Notes"]</label>
+                        <textarea id="edit-notes" name="notes" class="form-control" rows="2" maxlength="4000">@plan.Notes</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-white"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Prg.Save"]</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

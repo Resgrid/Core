@@ -1,0 +1,68 @@
+{
+  "key": "annual-policy-review",
+  "revision": 1,
+  "kind": "course",
+  "title": "Annual policy review (in-service)",
+  "code": "RG-APR",
+  "summary": "An in-service course structure for law enforcement agencies, security companies and other organizations that review critical policies every year: use of force, de-escalation, legal updates and reporting duties, each closing with the member's acknowledgment. Structure only; add your agency's policies and set the hours your training standard requires.",
+  "tags": "in-service, policy review, law enforcement, security, starter",
+  "hours": 2,
+  "license": "resgrid-starter",
+  "overview": "<p>A structure written by Resgrid. It contains no policy text and no legal advice: add your agency's current policies, this year's legal updates and your instructors' material before you publish the course. Record the hours against the in-service category your training standard uses.</p>",
+  "modules": [
+    {
+      "title": "Use of force and de-escalation",
+      "lessons": [
+        {
+          "title": "Policy review",
+          "html": "<p>Review your agency's use-of-force policy in full, and what changed since last year.</p><p><em>Attach or paste the current policy, and link the protocol members acknowledge.</em></p>"
+        },
+        {
+          "title": "De-escalation",
+          "html": "<p>Review the de-escalation expectations in your policy with scenarios drawn from your own calls.</p><p><em>Add your scenarios and instructor notes.</em></p>"
+        }
+      ]
+    },
+    {
+      "title": "Legal updates and reporting",
+      "lessons": [
+        {
+          "title": "This year's legal updates",
+          "html": "<p><em>Add the court decisions, legislation and policy changes your legal adviser selected for this year.</em></p>"
+        },
+        {
+          "title": "Reporting duties",
+          "html": "<p>Review what members must report, to whom and how quickly: force used, injuries, complaints and misconduct they witness.</p>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Policy review check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "Where does the policy text in this course come from?",
+        "kind": "single",
+        "options": [ "Your agency's current policies", "Resgrid", "Last year's course, unchanged" ],
+        "correct": 0,
+        "explanation": "Add your agency's current policies, this year's legal updates and your instructors' material."
+      },
+      {
+        "text": "Members must report misconduct they witness.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 0,
+        "explanation": "Review what members must report: force used, injuries, complaints and misconduct they witness."
+      },
+      {
+        "text": "What should the de-escalation lesson use?",
+        "kind": "single",
+        "options": [ "Scenarios drawn from your own calls", "Only a written test", "Nothing; it is optional" ],
+        "correct": 0,
+        "explanation": "Review the de-escalation expectations in your policy with scenarios drawn from your own calls."
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+@model Resgrid.Web.Models.LmsLearn.LmsLearnForgotModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@{
+    ViewData["Title"] = localizer["Portal.Forgot"].Value;
+    var key = ViewData["PortalKey"] as string;
+}
+<div class="rgl-panel" style="max-width: 480px; margin: 0 auto;">
+    <h2><i class="fa fa-question-circle" aria-hidden="true"></i> @localizer["Portal.Forgot"]</h2>
+    <form method="post" action="~/Learn/@key/Forgot" data-submit-once>
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+        <div class="form-group">
+            <label asp-for="Email">@localizer["Email"]</label>
+            <input asp-for="Email" class="form-control" type="email" autocomplete="email" required />
+        </div>
+        <partial name="_Captcha" model="Model.SiteKey" />
+        <button type="submit" class="btn btn-rgl"><i class="fa fa-envelope" aria-hidden="true"></i> @localizer["Portal.SendResetLink"]</button>
+    </form>
+</div>
+@section Scripts {
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="~/js/app/public/resgrid.recaptcha-field.js" asp-append-version="true"></script>
+}
+

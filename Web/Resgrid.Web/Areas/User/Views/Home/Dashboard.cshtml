@@ -38,7 +38,14 @@
 
 
 <div class="wrapper wrapper-content">
+  @* P2 R-P7: must-read priority bulletins sit at the top of home until acknowledged (home only, never dispatch or a call). *@
+  @await Component.InvokeAsync("ProtocolMustRead")
+  @* e-Signature S3: steps of multi-signer requests whose turn it is (home and My Training). *@
+  @await Component.InvokeAsync("PendingSignatures")
+  @await Component.InvokeAsync("PendingApprovals")
+  @await Component.InvokeAsync("PendingTrainingReviews")
   @await Component.InvokeAsync("AdminAssistSetupPrompt")
+  @await Component.InvokeAsync("AcademyGuidance")
   @if (Model.ModernAvailable)
   {
     <div class="alert alert-info" id="modernDashboardOffer">

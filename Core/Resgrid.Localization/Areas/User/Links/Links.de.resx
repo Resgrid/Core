@@ -163,4 +163,156 @@
   <data name="ViewDepartmentLinkTitle" xml:space="preserve">
     <value>Abteilungsverknüpfung Anzeigen</value>
   </data>
+  <data name="AgreementFrom" xml:space="preserve">
+    <value>Von</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementRequested" xml:space="preserve">
+    <value>Angefordert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementTitle" xml:space="preserve">
+    <value>Vereinbarung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Prüfen und gegenzeichnen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsLink" xml:space="preserve">
+    <value>Kurssammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditSharing" xml:space="preserve">
+    <value>Freigabe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolChange" xml:space="preserve">
+    <value>Was sich geändert hat:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolReadOnly" xml:space="preserve">
+    <value>Schreibgeschützt: Dies ist die gültige Version der verknüpften Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolSubtitle" xml:space="preserve">
+    <value>{0}, Version {1}, in Kraft seit {2}, Inhaltscode {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsHeader" xml:space="preserve">
+    <value>Verknüpfte Protokolle</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsIntro" xml:space="preserve">
+    <value>Die veröffentlichten Protokolle, die diese verknüpfte Abteilung mit Ihrer Abteilung teilt. Nur die gültige Version wird angezeigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsTitle" xml:space="preserve">
+    <value>Protokolle von {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLinkedProtocols" xml:space="preserve">
+    <value>Diese Abteilung teilt keine veröffentlichten Protokolle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerAgreements" xml:space="preserve">
+    <value>Keine Vereinbarung wartet auf die Gegenzeichnung Ihrer Abteilung.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsIntro" xml:space="preserve">
+    <value>Vereinbarungen über gegenseitige Hilfe, die verknüpfte Abteilungen Ihrer Abteilung zur Gegenzeichnung vorlegen. Jeder Abteilungsadministrator kann gegenzeichnen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsLink" xml:space="preserve">
+    <value>Gegenzuzeichnende Vereinbarungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolCategory" xml:space="preserve">
+    <value>Kategorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolEffective" xml:space="preserve">
+    <value>In Kraft seit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolName" xml:space="preserve">
+    <value>Protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolNumber" xml:space="preserve">
+    <value>Nummer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsLink" xml:space="preserve">
+    <value>Protokollsammlungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersion" xml:space="preserve">
+    <value>Fassung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocols" xml:space="preserve">
+    <value>Protokolle</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetsIntro" xml:space="preserve">
+    <value>Teilen Sie Protokolle und Kurse als Sammlungen mit verknüpften Abteilungen, sponsern Sie deren LMS-Plätze und zeichnen Sie deren Vereinbarungen über gegenseitige Hilfe gegen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocols" xml:space="preserve">
+    <value>Protokolle teilen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocolsHelp" xml:space="preserve">
+    <value>Die andere Abteilung kann Ihre veröffentlichten Protokolle lesen und Ihre Protokollsammlungen abonnieren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTraining" xml:space="preserve">
+    <value>Schulungen teilen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTrainingHelp" xml:space="preserve">
+    <value>Die andere Abteilung kann Ihre Kurssammlungen abonnieren, und Sie können deren LMS-Plätze sponsern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBack" xml:space="preserve">
+    <value>Die andere Seite teilt:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingIntro" xml:space="preserve">
+    <value>Wählen Sie, was Ihre Abteilung mit {0} teilt. Was die andere Seite mit Ihnen teilt, ändern Sie nie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingRevokeHelp" xml:space="preserve">
+    <value>Das Ausschalten sperrt den Zugriff sofort: Lesezugriffe enden, Abonnements Ihrer Sammlungen werden ausgesetzt und Sponsorings über diese Verknüpfung enden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Schulung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ViewProtocols" xml:space="preserve">
+    <value>Protokolle</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentsTitle" xml:space="preserve">
+    <value>Anzunehmende Einsatzzuweisungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerDeployments" xml:space="preserve">
+    <value>Keine verknüpfte Organisation bittet Sie, eine Einsatzzuweisung anzunehmen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAssignment" xml:space="preserve">
+    <value>Zuweisung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAccept" xml:space="preserve">
+    <value>Prüfen und annehmen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkAcceptanceSignatureNote" xml:space="preserve">
+    <value>Das Annehmen dieser Verknüpfung ist eine signierte Entscheidung: Sie werden gebeten, Ihre Identität erneut zu bestätigen, und Ihre Signatur hält beide Organisationen und das fest, was jede teilt.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

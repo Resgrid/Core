@@ -1,0 +1,75 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsExports
+@model LmsCeColumnsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExports.LmsExports> localizer
+@*
+    Trainings → Programs → CE reporting → Columns: one exporter's column list (header, the value it carries, and a date or number format or
+    constant text). Saving replaces the exporter's default columns for this department; Reset returns to the defaults.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Ce.ColumnsTitle"];
+    ViewData["Title"] = localizer["Ce.ColumnsTitle"].Value + " — " + localizer[Model.Exporter.NameKey].Value;
+    ViewData["Subtitle"] = localizer["Ce.ColumnsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var rows = Model.Columns.Concat(Enumerable.Range(0, Model.CanConfigure ? LmsCeColumnsView.BlankRows : 0).Select(_ => new LmsCeColumn { Source = (int)LmsCeColumnSources.Constant })).ToList();
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <p>
+        <a asp-controller="LmsExports" asp-action="Ce" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Ce.Back"]</a>
+    </p>
+    <p>@localizer[Model.Exporter.NoteKey]</p>
+    <p class="help-block">@(Model.IsCustom ? localizer["Ce.ColumnsCustom"] : localizer["Ce.ColumnsDefault"])</p>
+
+    <form method="post" asp-controller="LmsExports" asp-action="CeColumns" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="key" value="@Model.Exporter.Key" />
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">@localizer["Ce.Col.Header"]</th>
+                        <th scope="col">@localizer["Ce.Col.Source"]</th>
+                        <th scope="col">@localizer["Ce.Col.Argument"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < rows.Count; i++)
+                    {
+                        var column = rows[i];
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td><input class="form-control" name="header" maxlength="@LmsCeColumn.MaxHeaderLength" value="@column.Header" aria-label="@localizer["Ce.Col.Header"] @(i + 1)" disabled="@(!Model.CanConfigure)" /></td>
+                            <td>
+                                <select class="form-control" name="source" aria-label="@localizer["Ce.Col.Source"] @(i + 1)" disabled="@(!Model.CanConfigure)">
+                                    @foreach (var source in LmsCeColumnsView.Sources)
+                                    {
+                                        <option value="@((int)source)" selected="@(column.Source == (int)source)">@localizer["Ce.Source." + source]</option>
+                                    }
+                                </select>
+                            </td>
+                            <td><input class="form-control" name="argument" maxlength="@LmsCeColumn.MaxArgumentLength" value="@column.Argument" aria-label="@localizer["Ce.Col.Argument"] @(i + 1)" disabled="@(!Model.CanConfigure)" /></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="help-block">@localizer["Ce.ColumnsHelp"]</p>
+        @if (Model.CanConfigure)
+        {
+            <div class="rgw-toolbar">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Ce.SaveColumns"]</button>
+                <button type="submit" class="btn btn-white" name="reset" value="true"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["Ce.ResetColumns"]</button>
+            </div>
+        }
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

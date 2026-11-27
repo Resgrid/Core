@@ -119,6 +119,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CreateTraining = Value(PermissionTypes.CreateTraining);
 			model.CreateTrainingPermissions = Options(PermissionTypes.CreateTraining);
 
+			// Assign-and-report and delete: with no row of their own they show (and apply) the Create Training row.
+			model.AssignTraining = Value(PermissionTypes.AssignTraining);
+			model.AssignTrainingPermissions = Options(PermissionTypes.AssignTraining);
+			model.DeleteTraining = Value(PermissionTypes.DeleteTraining);
+			model.DeleteTrainingPermissions = Options(PermissionTypes.DeleteTraining);
+
+			// Protocols P1 (128-130): with no row, department admins only.
+			model.AuthorProtocols = Value(PermissionTypes.AuthorProtocols);
+			model.AuthorProtocolsPermissions = Options(PermissionTypes.AuthorProtocols);
+			model.ApproveProtocols = Value(PermissionTypes.ApproveProtocols);
+			model.ApproveProtocolsPermissions = Options(PermissionTypes.ApproveProtocols);
+			model.ManageProtocolAcknowledgments = Value(PermissionTypes.ManageProtocolAcknowledgments);
+			model.ManageProtocolAcknowledgmentsPermissions = Options(PermissionTypes.ManageProtocolAcknowledgments);
+
+			// Training T2 (132-133): with no row, department admins only.
+			model.ManageCourses = Value(PermissionTypes.ManageCourses);
+			model.ManageCoursesPermissions = Options(PermissionTypes.ManageCourses);
+			model.GradeAssessments = Value(PermissionTypes.GradeAssessments);
+			model.GradeAssessmentsPermissions = Options(PermissionTypes.GradeAssessments);
+
+			// Protocols P5 QA (134): with no row, department admins only.
+			model.ReviewDispatchCases = Value(PermissionTypes.ReviewDispatchCases);
+			model.ReviewDispatchCasesPermissions = Options(PermissionTypes.ReviewDispatchCases);
+
+			// Round 7B (135): record training completions for members. With no row, department admins only.
+			model.RecordTrainingCompletions = Value(PermissionTypes.RecordTrainingCompletions);
+			model.RecordTrainingCompletionsPermissions = Options(PermissionTypes.RecordTrainingCompletions);
+
+			// Round 10 A3 (136): publish and subscribe to protocol and course sets, decide the set inbox, sponsor LMS seats. No row: admins only.
+			model.ManageContentSets = Value(PermissionTypes.ManageContentSets);
+			model.ManageContentSetsPermissions = Options(PermissionTypes.ManageContentSets);
+
 			model.CreateDocument = Value(PermissionTypes.CreateDocument);
 			model.CreateDocumentPermissions = Options(PermissionTypes.CreateDocument);
 
@@ -493,6 +525,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (type == PermissionTypes.ViewCommandBoards)
 				return await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CommandAppLogin);
+
+			if (type is PermissionTypes.AssignTraining or PermissionTypes.DeleteTraining)
+				return await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CreateTraining);
 
 			return null;
 		}

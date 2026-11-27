@@ -53,7 +53,7 @@
                             <div class="progress-bar" style="width: @(pct)%"></div>
                         </div>
                         <div class="m-t-sm small">
-                            @localizer["StartedLabel"]: @(instance.ActualStartOn?.ToString("HH:mm") ?? "-")
+                            @localizer["StartedLabel"]: @(instance.ActualStartOn?.TimeConverter(Model.Department).ToString("HH:mm") ?? "-")
                         </div>
                         @if (instance.CallId.HasValue && Model.LinkedCalls.TryGetValue(instance.CallId.Value, out var linkedCall))
                         {

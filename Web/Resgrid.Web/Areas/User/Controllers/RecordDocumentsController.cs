@@ -23,8 +23,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRecordsDocumentService _documents;
 		private readonly IRecordsCutoverService _cutover;
 		private readonly IRecordsService _records;
-		public RecordDocumentsController(IRecordsDocumentService documents, IRecordsCutoverService cutover, IRecordsService records)
-		{ _documents = documents; _cutover = cutover; _records = records; }
+		private readonly IDocumentSealingService _sealing;
+		public RecordDocumentsController(IRecordsDocumentService documents, IRecordsCutoverService cutover, IRecordsService records, IDocumentSealingService sealing)
+		{ _documents = documents; _cutover = cutover; _records = records; _sealing = sealing; }
 
 		[HttpGet]
 		public async Task<IActionResult> Revision(string id, RmsRecordKind kind, string revisionId = null)
@@ -58,7 +59,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_Export)]
-		public async Task<IActionResult> Export(string id, RmsRecordKind kind, string revisionId = null, string format = "pdf")
+		public async Task<IActionResult> Export(string id, RmsRecordKind kind, string revisionId = null, string format = "pdf", bool sealedCopy = false)
 		{
 			if (!(await _cutover.GetModuleStateAsync(DepartmentId)).RecordsUsable) return NotFound();
 			if (format != "pdf" && format != "json" && format != "csv") return BadRequest("Choose PDF, JSON, or CSV.");
@@ -67,7 +68,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var document = await _documents.GetAsync(DepartmentId, UserId, id, kind, revisionId, true);
 				if (document == null) return NotFound();
 				byte[] bytes; string contentType;
-				if (format == "pdf") { bytes = await _documents.RenderPdfAsync(DepartmentId, UserId, document); contentType = "application/pdf"; }
+				if (format == "pdf") { bytes = await _documents.RenderPdfAsync(DepartmentId, UserId, document); contentType = "application/pdf"; if (sealedCopy) bytes = await SealedExportAsync(document, bytes); }
 				else if (format == "json") { bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new { document.Format, document.RecordId, document.RecordKind, document.RecordNumber, document.RevisionId, document.RevisionNumber, document.OriginalChecksum, document.ContentChecksum, document.FinalizedOn, document.AttestedBy, document.AttestationVersion, document.WithheldFields, Content = JObject.Parse(document.ContentJson) }, Formatting.Indented)); contentType = "application/json"; }
 				else { bytes = Encoding.UTF8.GetBytes(Csv(document)); contentType = "text/csv"; }
 				await Audit(document, RmsAccessAuditAction.Export, "Departmental " + format + " export");
@@ -99,6 +100,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (UnauthorizedAccessException) { return Forbid(); }
 			catch (InvalidOperationException ex) { return Problem(ex.Message, statusCode: 409); }
 		}
+		/// <summary>
+		/// e-Signature S1: the optional sealed copy of a revision export (L3, B-LT or above by Records retention). The PDF is the
+		/// Records renderer's own, sealed as given; Records code and RmsSignatures are unchanged (decision 21). While sealing is not
+		/// configured the unsealed export is returned and the copy stays "sealing pending".
+		/// </summary>
+		private async Task<byte[]> SealedExportAsync(RecordDocument document, byte[] pdf)
+		{
+			var outcome = await _sealing.SealPdfAsync(new SealPdfRequest
+			{
+				DepartmentId = DepartmentId,
+				SubjectKind = SignatureSubjectKinds.RecordsDocument,
+				SubjectId = document.RecordId,
+				RevisionId = document.RevisionId,
+				RevisionSha256 = SignaturePolicy.IsSha256(document.ContentChecksum) ? document.ContentChecksum : null,
+				Title = document.RecordNumber,
+				FileName = (document.RecordNumber ?? "record") + "-revision-" + document.RevisionNumber + ".pdf",
+				Pdf = pdf,
+				LongTermSubject = true,
+				RequestedByUserId = UserId
+			});
+			Response.Headers["X-Resgrid-Seal"] = outcome.Sealed ? "sealed" : "pending";
+			return outcome.Bytes;
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Record_Export)]
 		public async Task<IActionResult> PrintDiff(string id, RmsRecordKind kind, string from, string to)

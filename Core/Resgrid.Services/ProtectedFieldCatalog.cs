@@ -788,6 +788,38 @@ namespace Resgrid.Services
 				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", familyName, table, column, ProtectedFieldStorageKind.Text,
 					Enum.Parse<ProtectedFieldClassification>(classification), view, edit, version));
 			}
+
+			// Member wellness WL0 (catalog 37, registered with M0360; protocols-training-knowledge-plan §13b, §25.4 item 4c): the
+			// substance, narrative, PPE, decontamination and health details of a member's exposure entry and the screening plan are
+			// health data about a member (Personnel family). The member link, call, category, dates and statuses are operational.
+			// Who may SEE an entry at all is decided by the wellness tier on top (the member, or the wellness officer role).
+			foreach (var (table, column, classification) in Resgrid.Model.WellnessProtectedFields.All())
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", PersonnelFamily, table, column, ProtectedFieldStorageKind.Text,
+					Enum.Parse<ProtectedFieldClassification>(classification), PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData,
+					Resgrid.Model.WellnessProtectedFields.CatalogVersion));
+
+			// Member wellness WL1 (catalog 38, registered with M0372-M0374; §13b, §25.4 item 4c): the notes of a BBP exposure case, the
+			// description, injury, restriction, treatment and clearance notes of an injury, and a medical clearance's restriction detail.
+			// Member, call, dates, stage, duty status, clearance status and the OSHA codes are operational. Who may SEE a record at all is
+			// decided by the wellness tier on top (the member, the designated officer or the wellness officer role).
+			foreach (var (table, column, classification) in Resgrid.Model.MemberHealthProtectedFields.All())
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", PersonnelFamily, table, column, ProtectedFieldStorageKind.Text,
+					Enum.Parse<ProtectedFieldClassification>(classification), PermissionTypes.ViewProtectedPersonnelData, PermissionTypes.ViewProtectedPersonnelData,
+					Resgrid.Model.MemberHealthProtectedFields.CatalogVersion));
+
+			// Protocols + Training/LMS under ADP (catalog 39, round 8, 2026-11-25): only copies of what ADP already protects elsewhere.
+			// A call's case record, questionnaire in words and override reason are caller content (Calls family, like NatureOfCall and
+			// CallFormData); the determinant stays operational. The external signer of a Records-owned signature (an inspection's
+			// occupant representative, a custody transfer's outside party) is Records data (Records family, like RmsInspections.SignatureName),
+			// scoped by the request's subject kind so customers, vendors and outside evaluators are never encrypted.
+			foreach (var (table, column, classification, family) in Resgrid.Model.ContentProtectedFields.All())
+			{
+				var calls = family == Resgrid.Model.ContentProtectedFields.CallsFamily;
+				list.Add(new ProtectedFieldDefinition($"{table.ToLowerInvariant()}.{column.ToLowerInvariant()}", calls ? CallsFamily : RmsProtectedFields.Family, table, column,
+					ProtectedFieldStorageKind.Text, Enum.Parse<ProtectedFieldClassification>(classification),
+					calls ? PermissionTypes.ViewProtectedCallData : PermissionTypes.ViewProtectedOperationalData,
+					PermissionTypes.EditProtectedCallData, Resgrid.Model.ContentProtectedFields.CatalogVersion));
+			}
 			return list;
 		}
 	}

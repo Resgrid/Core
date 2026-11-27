@@ -36,12 +36,12 @@ namespace Resgrid.Tests.Web.Eventing
 		{
 			Case("Eventing.Connect", h => h.Eventing.Connect(DepartmentId)),
 			Case("Eventing.SubscribeToDepartmentLink", h => h.Eventing.SubscribeToDepartmentLink(LinkId)),
-			Case("Eventing.UnsubscribeToDepartmentLink", h => h.Eventing.UnsubscribeToDepartmentLink(LinkId)),
+			Case("Eventing.UnsubscribeToDepartmentLink", h => h.Eventing.UnsubscribeToDepartmentLink(LinkId), arrange: h => h.Eventing.SubscribeToDepartmentLink(LinkId)),
 			Case("Eventing.SubscribeToCall", h => h.Eventing.SubscribeToCall(CallId)),
 			Case("Eventing.UnsubscribeToCall", h => h.Eventing.UnsubscribeToCall(CallId)),
 			Case("Services.Connect", h => h.Services.Connect(DepartmentId)),
 			Case("Services.SubscribeToDepartmentLink", h => h.Services.SubscribeToDepartmentLink(LinkId)),
-			Case("Services.UnsubscribeToDepartmentLink", h => h.Services.UnsubscribeToDepartmentLink(LinkId)),
+			Case("Services.UnsubscribeToDepartmentLink", h => h.Services.UnsubscribeToDepartmentLink(LinkId), arrange: h => h.Services.SubscribeToDepartmentLink(LinkId)),
 			Case("Chat.Connect", h => h.Chat.Connect()),
 			Case("Chat.JoinChannel", h => h.Chat.JoinChannel(ChannelId)),
 			Case("Chat.LeaveChannel", h => h.Chat.LeaveChannel(ChannelId), arrange: h => h.Chat.JoinChannel(ChannelId))
@@ -96,8 +96,9 @@ namespace Resgrid.Tests.Web.Eventing
 				clients.Setup(x => x.Group(It.IsAny<string>())).Returns(Mock.Of<IClientProxy>());
 
 				var links = new Mock<IDepartmentLinksService>();
-				links.Setup(x => x.GetLinkByIdAsync(LinkId))
-					.ReturnsAsync(new DepartmentLink { DepartmentId = DepartmentId, LinkedDepartmentId = 8, LinkEnabled = true });
+				// The other side shares units toward the caller, in its current access epoch.
+				links.Setup(x => x.GetShareGroupsForSubscriberAsync(LinkId, DepartmentId))
+					.ReturnsAsync(new List<string> { "DepartmentLinkShare:8:Units:v1" });
 
 				var calls = new Mock<ICallsService>();
 				calls.Setup(x => x.GetCallByIdAsync(CallId, It.IsAny<bool>())).ReturnsAsync(new Call { DepartmentId = DepartmentId });

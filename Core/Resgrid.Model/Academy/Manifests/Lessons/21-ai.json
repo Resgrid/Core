@@ -1,0 +1,208 @@
+{
+  "schema": 1,
+  "id": "21-ai",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "AI",
+  "minutes": 2.4,
+  "walkthrough": false,
+  "audience": [
+    "officer"
+  ],
+  "visibility": [
+    "addon:EnhancedAi"
+  ],
+  "pages": [
+    "AiDispatch",
+    "AiDestinations"
+  ],
+  "adminAssist": {
+    "areas": [
+      "ai"
+    ],
+    "capabilities": [
+      "ai-intake",
+      "ai-voice-intake",
+      "ai-destination-advice",
+      "ai-knowledge",
+      "ai-authoring-aids"
+    ]
+  },
+  "media": {
+    "video": "media/21-ai.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/21-ai.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Understand AI availability and human review",
+    "ar": "افهم توفر الذكاء الاصطناعي والمراجعة البشرية",
+    "de": "KI-Verfügbarkeit und menschliche Prüfung verstehen",
+    "el": "Κατανοήστε τη διαθεσιμότητα της ΤΝ και τον ανθρώπινο έλεγχο",
+    "es": "Entender la disponibilidad de la IA y la revisión humana",
+    "fr": "Comprendre la disponibilité de l’IA et la vérification humaine",
+    "it": "Capire la disponibilità dell’IA e la revisione umana",
+    "pl": "Poznaj dostępność AI i weryfikację przez człowieka",
+    "sv": "Förstå när AI finns och mänsklig granskning",
+    "uk": "Зрозумійте доступність ШІ та перевірку людиною"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Who makes the final decision when AI suggests something?",
+        "ar": "من يتخذ القرار النهائي عندما يقترح الذكاء الاصطناعي شيئًا؟",
+        "de": "Wer trifft die endgültige Entscheidung, wenn die KI etwas vorschlägt?",
+        "el": "Ποιος παίρνει την τελική απόφαση όταν η ΤΝ προτείνει κάτι;",
+        "es": "¿Quién decide al final cuando la IA sugiere algo?",
+        "fr": "Qui prend la décision finale quand l’IA suggère quelque chose ?",
+        "it": "Chi prende la decisione finale quando l’IA suggerisce qualcosa?",
+        "pl": "Kto podejmuje ostateczną decyzję, gdy AI coś sugeruje?",
+        "sv": "Vem fattar det slutliga beslutet när AI föreslår något?",
+        "uk": "Хто ухвалює остаточне рішення, коли ШІ щось пропонує?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "A person reviews and decides",
+            "ar": "شخص يراجع ويقرر",
+            "de": "Ein Mensch prüft und entscheidet",
+            "el": "Ένας άνθρωπος ελέγχει και αποφασίζει",
+            "es": "Una persona revisa y decide",
+            "fr": "Une personne vérifie et décide",
+            "it": "Una persona verifica e decide",
+            "pl": "Człowiek sprawdza i decyduje",
+            "sv": "En människa granskar och beslutar",
+            "uk": "Людина перевіряє й вирішує"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "The AI always decides",
+            "ar": "الذكاء الاصطناعي يقرر دائمًا",
+            "de": "Die KI entscheidet immer",
+            "el": "Αποφασίζει πάντα η ΤΝ",
+            "es": "La IA siempre decide",
+            "fr": "L’IA décide toujours",
+            "it": "Decide sempre l’IA",
+            "pl": "Zawsze decyduje AI",
+            "sv": "AI beslutar alltid",
+            "uk": "Завжди вирішує ШІ"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Nobody",
+            "ar": "لا أحد",
+            "de": "Niemand",
+            "el": "Κανείς",
+            "es": "Nadie",
+            "fr": "Personne",
+            "it": "Nessuno",
+            "pl": "Nikt",
+            "sv": "Ingen",
+            "uk": "Ніхто"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "Where are AI features available?",
+        "ar": "أين تتوفر ميزات الذكاء الاصطناعي؟",
+        "de": "Wo sind KI-Funktionen verfügbar?",
+        "el": "Πού είναι διαθέσιμες οι λειτουργίες ΤΝ;",
+        "es": "¿Dónde están disponibles las funciones de IA?",
+        "fr": "Où les fonctions d’IA sont-elles disponibles ?",
+        "it": "Dove sono disponibili le funzioni di IA?",
+        "pl": "Gdzie dostępne są funkcje AI?",
+        "sv": "Var finns AI-funktionerna?",
+        "uk": "Де доступні функції ШІ?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "In every department by default",
+            "ar": "في كل إدارة افتراضيًا",
+            "de": "Standardmäßig in jeder Organisation",
+            "el": "Σε κάθε υπηρεσία από προεπιλογή",
+            "es": "En todos los departamentos de forma predeterminada",
+            "fr": "Dans tous les services par défaut",
+            "it": "In ogni dipartimento per impostazione predefinita",
+            "pl": "Domyślnie w każdej jednostce",
+            "sv": "I alla organisationer som standard",
+            "uk": "У кожному підрозділі за замовчуванням"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Where the department has enabled them",
+            "ar": "حيث فعّلتها الإدارة",
+            "de": "Dort, wo die Organisation sie aktiviert hat",
+            "el": "Όπου τις έχει ενεργοποιήσει η υπηρεσία",
+            "es": "Donde el departamento las haya activado",
+            "fr": "Là où le service les a activées",
+            "it": "Dove il dipartimento le ha attivate",
+            "pl": "Tam, gdzie jednostka je włączyła",
+            "sv": "Där organisationen har aktiverat dem",
+            "uk": "Там, де підрозділ їх увімкнув"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Only on paper",
+            "ar": "على الورق فقط",
+            "de": "Nur auf Papier",
+            "el": "Μόνο σε χαρτί",
+            "es": "Solo en papel",
+            "fr": "Seulement sur papier",
+            "it": "Solo su carta",
+            "pl": "Tylko na papierze",
+            "sv": "Bara på papper",
+            "uk": "Лише на папері"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "AI suggestions should be checked before they are acted on.",
+        "ar": "يجب التحقق من اقتراحات الذكاء الاصطناعي قبل العمل بها.",
+        "de": "KI-Vorschläge sollten geprüft werden, bevor danach gehandelt wird.",
+        "el": "Οι προτάσεις της ΤΝ πρέπει να ελέγχονται πριν από κάθε ενέργεια.",
+        "es": "Las sugerencias de la IA deben comprobarse antes de actuar.",
+        "fr": "Les suggestions de l’IA doivent être vérifiées avant d’agir.",
+        "it": "I suggerimenti dell’IA vanno controllati prima di agire.",
+        "pl": "Sugestie AI należy sprawdzić przed działaniem.",
+        "sv": "AI-förslag ska kontrolleras innan man agerar på dem.",
+        "uk": "Пропозиції ШІ слід перевіряти, перш ніж діяти."
+      }
+    }
+  ]
+}

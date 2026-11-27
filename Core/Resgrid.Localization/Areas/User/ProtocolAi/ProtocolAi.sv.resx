@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptCardsButton" xml:space="preserve">
+    <value>Behåll de markerade korten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Åtgärder</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackColumn" xml:space="preserve">
+    <value>Svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToProtocol" xml:space="preserve">
+    <value>Tillbaka till protokollet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Avbryt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardActive" xml:space="preserve">
+    <value>Visas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardCountLabel" xml:space="preserve">
+    <value>Antal kort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardNeedsReview" xml:space="preserve">
+    <value>Behöver granskas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardRemoved" xml:space="preserve">
+    <value>Kortet borttaget.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardReviewed" xml:space="preserve">
+    <value>Kortet kontrollerat mot den gällande versionen och visas igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardSaved" xml:space="preserve">
+    <value>Kortet sparat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardSourceFormat" xml:space="preserve">
+    <value>Utkast från {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsAccepted" xml:space="preserve">
+    <value>{0} kort sparade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsActive" xml:space="preserve">
+    <value>Visas för medlemmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsDropped" xml:space="preserve">
+    <value>{0} utkastkort utelämnades eftersom de inte stämde med protokollet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsFlagged" xml:space="preserve">
+    <value>Behöver granskas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsHeader" xml:space="preserve">
+    <value>Kort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsRule" xml:space="preserve">
+    <value>Varje kort hänvisar till ett avsnitt i den gällande versionen och får bara använda siffror som står där. När en nyare version börjar gälla döljs korten tills du kontrollerar dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CitedLabel" xml:space="preserve">
+    <value>Hänvisning:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>Rätt svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateTrainingButton" xml:space="preserve">
+    <value>Skapa utbildningsutkastet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftAgainButton" xml:space="preserve">
+    <value>Skapa nytt utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftCardsButton" xml:space="preserve">
+    <value>Skapa kort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftCardsHeader" xml:space="preserve">
+    <value>Skapa kort med AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTrainingButton" xml:space="preserve">
+    <value>Skapa utbildningsutkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTrainingLink" xml:space="preserve">
+    <value>Skapa en utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTranslationButton" xml:space="preserve">
+    <value>Skapa översättningsutkast med AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTranslationHelp" xml:space="preserve">
+    <value>Fyller i fälten som fortfarande har källtexten. Doser, länkar och struktur förblir källans; du granskar och sparar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftedFromFormat" xml:space="preserve">
+    <value>Utkast från {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Drafting" xml:space="preserve">
+    <value>Skriver utkast med AI. Det kan ta en minut...</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditCardButton" xml:space="preserve">
+    <value>Redigera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Förklaring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExplanationNotSavedNote" xml:space="preserve">
+    <value>Förklaringarna hjälper dig att kontrollera varje fråga; utbildningens quiz behåller bara frågor och svar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagSuperseded" xml:space="preserve">
+    <value>En nyare version gäller</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagUnavailable" xml:space="preserve">
+    <value>Avsnittet kan inte längre läsas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsButton" xml:space="preserve">
+    <value>Övningskort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsIntro" xml:space="preserve">
+    <value>Kort som skrivits med Enhanced AI från den gällande versionen. Medlemmar som kan läsa protokollet övar på dess sida; inget betygsätts eller registreras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsTitle" xml:space="preserve">
+    <value>Övningskort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsTitleFormat" xml:space="preserve">
+    <value>Övningskort: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FrontColumn" xml:space="preserve">
+    <value>Fråga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KeyPointsLabel" xml:space="preserve">
+    <value>Viktiga punkter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCards" xml:space="preserve">
+    <value>Inga kort ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoQuestions" xml:space="preserve">
+    <value>Inga quizfrågor skrevs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingTicked" xml:space="preserve">
+    <value>Markera minst ett kort att behålla.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Avdelningens månatliga Enhanced AI-budget är förbrukad. Den återställs i början av nästa månad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Busy" xml:space="preserve">
+    <value>AI är upptagen med annat arbete. Försök igen om en minut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Excluded" xml:space="preserve">
+    <value>Det här protokollet är markerat "ingen AI" eller är licensierat innehåll och skickas därför aldrig till AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Invalid" xml:space="preserve">
+    <value>Begäran var ogiltig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.KeptLocal" xml:space="preserve">
+    <value>Er avdelning använder Advanced Data Protection, så innehållet stannar lokalt och AI-utkast är inte tillgängliga.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NoContent" xml:space="preserve">
+    <value>Det finns ingen text att utgå från (en tom version eller ett skannat dokument), eller så finns inget kvar att översätta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotAllowed" xml:space="preserve">
+    <value>Endast protokollförfattare och godkännare kan använda detta. Ett utbildningsutkast kräver även behörighet att skapa utbildningar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotDraft" xml:space="preserve">
+    <value>Endast ett översättningsutkast av en låst version kan skrivas med AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotEntitled" xml:space="preserve">
+    <value>Övningskort, utbildningsutkast och översättningsutkast kräver tillägget Enhanced AI med kunskapssvar aktiverade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotFound" xml:space="preserve">
+    <value>Det här protokollet har ingen publicerad gällande version som du kan öppna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotSaved" xml:space="preserve">
+    <value>Utbildningen kunde inte skapas. Inget sparades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Refused" xml:space="preserve">
+    <value>AI-utkastet klarade inte kontrollerna (varje del måste hänvisa till protokollet och bara använda dess siffror), så inget sparades. Försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Stale" xml:space="preserve">
+    <value>Protokollet har ändrats sedan utkastet skrevs. Skapa ett nytt utkast från den gällande versionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Unavailable" xml:space="preserve">
+    <value>AI svarar inte just nu. Försök igen om några minuter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Unconfigured" xml:space="preserve">
+    <value>AI är inte konfigurerad för ert system ännu. Fråga er systemoperatör.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>Igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeCardFormat" xml:space="preserve">
+    <value>{0} av {1} kan du</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeDone" xml:space="preserve">
+    <value>Du kan alla kort för tillfället. Börja om för att öva igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>Övningskort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeIntro" xml:space="preserve">
+    <value>Korta frågor från det här protokollet. Dina framsteg stannar i den här webbläsaren och registreras aldrig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeKnown" xml:space="preserve">
+    <value>Jag kunde det</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeRestart" xml:space="preserve">
+    <value>Börja om</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeShow" xml:space="preserve">
+    <value>Visa svaret</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeSource" xml:space="preserve">
+    <value>Från:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionCountLabel" xml:space="preserve">
+    <value>Antal quizfrågor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionsHeaderFormat" xml:space="preserve">
+    <value>Quiz ({0} frågor)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveCardButton" xml:space="preserve">
+    <value>Ta bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveCardConfirm" xml:space="preserve">
+    <value>Ta bort det här kortet?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewCardButton" xml:space="preserve">
+    <value>Kontrollera mot gällande version</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveCardButton" xml:space="preserve">
+    <value>Spara kort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SectionTextNote" xml:space="preserve">
+    <value>Utbildningen citerar de hänvisade avsnitten här, så som protokollet skrev dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceColumn" xml:space="preserve">
+    <value>Avsnitt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCitedLabel" xml:space="preserve">
+    <value>Hänvisning:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCreateNote" xml:space="preserve">
+    <value>Utbildningen skapas som utkast: ingen är tilldelad och medlemmar ser den inte förrän du tilldelar den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCreatedMessage" xml:space="preserve">
+    <value>Utbildningsutkast skapat från protokollet. Det är inte tilldelat ännu: granska det och tilldela det sedan eller använd det för protokollets bekräftelsequiz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftAckNote" xml:space="preserve">
+    <value>En utbildning som skapas här kan användas för protokollets bekräftelse med quiz: välj den i protokollets bekräftelseinställningar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftHeader" xml:space="preserve">
+    <value>Skapa utkast med AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftIntro" xml:space="preserve">
+    <value>Enhanced AI skriver ett utkast till utbildning och quiz från den gällande versionen. Du granskar det innan något skapas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftNote" xml:space="preserve">
+    <value>Utkast skrivet med Enhanced AI från {0}. Varje del citerar protokollet ordagrant; granska utbildningen innan du tilldelar den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftRule" xml:space="preserve">
+    <value>Varje del hänvisar till avsnitten den lär ut och får bara använda siffror som står där; den skapade utbildningen citerar avsnitten ordagrant, så doser visas bara som protokollet anger dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftTitle" xml:space="preserve">
+    <value>Skapa en utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftTitleFormat" xml:space="preserve">
+    <value>Skapa en utbildning: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDropped" xml:space="preserve">
+    <value>{0} utkastdelar utelämnades eftersom de inte stämde med protokollet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingFromTheProtocol" xml:space="preserve">
+    <value>Från protokollet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingKeyPoints" xml:space="preserve">
+    <value>Viktiga punkter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingNameLabel" xml:space="preserve">
+    <value>Utbildningens namn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingPreviewHeader" xml:space="preserve">
+    <value>Granska utkastet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingTruncated" xml:space="preserve">
+    <value>Protokollet är längre än ett utkast läser; bara de första avsnitten användes.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationDraftedNotice" xml:space="preserve">
+    <value>AI skrev utkast till {0} fält.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationDroppedNotice" xml:space="preserve">
+    <value>{0} utkastfält avvisades eftersom en siffra, länk eller formatering ändrades, och behåller sin text.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationRemainingNotice" xml:space="preserve">
+    <value>{0} fält har fortfarande källtexten; skapa ett nytt utkast för att fortsätta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationReviewNotice" xml:space="preserve">
+    <value>Granska texten nedan och spara utkastet: det är inte sparat ännu och behöver fortfarande godkännas. Doser, länkar och struktur är alltid källans.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>Version {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

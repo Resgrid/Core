@@ -1,0 +1,67 @@
+@using Resgrid.Model.Approvals
+@model Resgrid.Web.Areas.User.Models.Approvals.MutualAidAgreementsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    Mutual-aid agreements (e-Signature S4, department admins): agreement documents the department's approval chain approves and seals.
+    The partner department's countersignature over a Department Link is a later step.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + approvalText["AgreementsTab"];
+    ViewData["Title"] = approvalText["AgreementsTab"].Value;
+    ViewData["Subtitle"] = approvalText["AgreementsIntro"].Value;
+    ViewData["Section"] = "Agreements";
+    ViewData["Message"] = Model.Message;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Approvals/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-heading-actions m-b-sm">
+        <a class="btn btn-primary" asp-area="User" asp-controller="Approvals" asp-action="EditAgreement"><i class="fa fa-plus" aria-hidden="true"></i> @approvalText["NewAgreementButton"]</a>
+    </div>
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            @if (Model.Agreements.Count == 0)
+            {
+                <p class="text-muted">@approvalText["NoAgreements"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@approvalText["AgreementTitleLabel"]</th>
+                                <th scope="col">@approvalText["PartnerLabel"]</th>
+                                <th scope="col">@approvalText["StatusLabel"]</th>
+                                <th scope="col"><span class="sr-only">@approvalText["ActionsColumn"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in Model.Agreements)
+                            {
+                                Model.Latest.TryGetValue(a.MutualAidAgreementId, out var latest);
+                                <tr>
+                                    <td>@a.Title<div class="rgw-sub">@(a.EffectiveOn?.ToString("yyyy-MM-dd") ?? "…") – @(a.ExpiresOn?.ToString("yyyy-MM-dd") ?? "…")</div></td>
+                                    <td>@a.PartnerName</td>
+                                    <td>@approvalText["AgreementStatus" + (MutualAidAgreementStatuses)a.Status]
+                                        @if (latest != null)
+                                        {
+                                            <div class="rgw-sub">@approvalText["Status" + (ApprovalRequestStatuses)latest.Status]</div>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions"><a class="btn btn-default btn-xs" asp-area="User" asp-controller="Approvals" asp-action="EditAgreement" asp-route-id="@a.MutualAidAgreementId"><i class="fa fa-pencil" aria-hidden="true"></i> @approvalText["OpenRequestLink"]</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

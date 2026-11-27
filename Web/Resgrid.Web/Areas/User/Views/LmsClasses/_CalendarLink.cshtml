@@ -1,0 +1,8 @@
+@using Resgrid.Model.Lms
+@model LmsClassSession
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@* On a calendar item's page: the item is a class session (T4, LMS); enrolment, sign-in and attendance live on the class page. *@
+<div class="alert alert-info" role="status">
+    <i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["CalendarIsClass"]
+    <a class="btn btn-white btn-xs" asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@Model.LmsClassSessionId"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["OpenClass"]</a>
+</div>

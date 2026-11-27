@@ -83,6 +83,7 @@ Se non hai richiesto tu questa operazione, contatta l'assistenza.
 
 
 Il team Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GdprExportWithheldNotice" xml:space="preserve">
     <value>Il tuo dipartimento utilizza la Protezione avanzata dei dati, quindi alcuni valori di questa esportazione sono cifrati e compaiono come REDACTED. Fanno comunque parte dei tuoi dati e non sono stati eliminati.</value>
@@ -128,6 +129,7 @@ Questo codice scade tra {2} minuti. Se non hai richiesto tu questa operazione, i
 
 
 Il team Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">
     <value>Codice di verifica Resgrid</value>
@@ -175,4 +177,41 @@ Il team Resgrid</value>
   <data name="SecurityNoticeWhere" xml:space="preserve"><value>Dove: {0}</value></data>
   <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Se non sei stato tu, reimposta subito la password su {0}, poi accedi e controlla i tuoi metodi di accesso. Resgrid non chiede mai codici o password via e-mail.</value></data>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>Questo è un avviso di sicurezza automatico sul tuo account Resgrid.</value></data>
+  <data name="SigningLinkEmailSubject" xml:space="preserve">
+    <value>{0}: un documento da firmare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningLinkEmailBody" xml:space="preserve">
+    <value>Ciao {0},
+
+{1} ti chiede di leggere e firmare "{2}".
+
+Apri questo link per firmare:
+{3}
+
+Il link si può usare una volta e scade il {4}. Prima di firmare confermerai un codice monouso.
+
+Se non aspettavi questo messaggio, puoi ignorarlo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningLinkSmsBody" xml:space="preserve">
+    <value>{0} ti chiede di firmare "{1}": {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningCodeEmailSubject" xml:space="preserve">
+    <value>{0}: il tuo codice di firma</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningCodeEmailBody" xml:space="preserve">
+    <value>Ciao {0},
+
+Il tuo codice per firmare il documento di {3} è {1}. Scade tra {2} minuti.
+
+Se non hai richiesto questo codice, puoi ignorare questo messaggio.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningCodeSmsBody" xml:space="preserve">
+    <value>Il tuo codice di firma per {2} è {0}. Scade tra {1} minuti.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

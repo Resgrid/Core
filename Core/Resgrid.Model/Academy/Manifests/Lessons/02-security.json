@@ -1,0 +1,211 @@
+{
+  "schema": 1,
+  "id": "02-security",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Security",
+  "minutes": 3.7,
+  "walkthrough": false,
+  "audience": [
+    "administrator"
+  ],
+  "visibility": [],
+  "pages": [
+    "Security",
+    "AccountSecurity",
+    "TwoFactor",
+    "Passkeys",
+    "ProtectedWorkflows"
+  ],
+  "adminAssist": {
+    "areas": [
+      "security"
+    ],
+    "capabilities": [
+      "permissions",
+      "two-factor",
+      "security-policy",
+      "sso",
+      "audit-history",
+      "account-sessions",
+      "api-keys"
+    ]
+  },
+  "media": {
+    "video": "media/02-security.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/02-security.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Configure a department and protect access",
+    "ar": "اضبط الإدارة واحمِ الوصول",
+    "de": "Eine Organisation einrichten und den Zugang schützen",
+    "el": "Ρυθμίστε μια υπηρεσία και προστατέψτε την πρόσβαση",
+    "es": "Configurar un departamento y proteger el acceso",
+    "fr": "Configurer un service et protéger l’accès",
+    "it": "Configurare un dipartimento e proteggere l’accesso",
+    "pl": "Skonfiguruj jednostkę i chroń dostęp",
+    "sv": "Konfigurera en organisation och skydda åtkomsten",
+    "uk": "Налаштуйте підрозділ і захистіть доступ"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Which setting best protects member accounts?",
+        "ar": "أي إعداد يحمي حسابات الأعضاء على أفضل وجه؟",
+        "de": "Welche Einstellung schützt Mitgliederkonten am besten?",
+        "el": "Ποια ρύθμιση προστατεύει καλύτερα τους λογαριασμούς των μελών;",
+        "es": "¿Qué ajuste protege mejor las cuentas de los miembros?",
+        "fr": "Quel réglage protège le mieux les comptes des membres ?",
+        "it": "Quale impostazione protegge meglio gli account dei membri?",
+        "pl": "Które ustawienie najlepiej chroni konta członków?",
+        "sv": "Vilken inställning skyddar medlemskonton bäst?",
+        "uk": "Яке налаштування найкраще захищає облікові записи учасників?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Requiring two-factor authentication",
+            "ar": "اشتراط المصادقة الثنائية",
+            "de": "Zwei-Faktor-Authentifizierung verlangen",
+            "el": "Απαίτηση ταυτοποίησης δύο παραγόντων",
+            "es": "Exigir la autenticación en dos pasos",
+            "fr": "Exiger l’authentification à deux facteurs",
+            "it": "Richiedere l’autenticazione a due fattori",
+            "pl": "Wymaganie uwierzytelniania dwuskładnikowego",
+            "sv": "Kräva tvåfaktorsautentisering",
+            "uk": "Вимагати двофакторну автентифікацію"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Sharing one login per station",
+            "ar": "مشاركة حساب واحد لكل مركز",
+            "de": "Einen Login pro Wache teilen",
+            "el": "Κοινή σύνδεση ανά σταθμό",
+            "es": "Compartir un inicio de sesión por parque",
+            "fr": "Partager un identifiant par caserne",
+            "it": "Condividere un accesso per sede",
+            "pl": "Jedno wspólne konto na strażnicę",
+            "sv": "Dela en inloggning per station",
+            "uk": "Один спільний логін на частину"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Turning off passwords",
+            "ar": "إيقاف كلمات المرور",
+            "de": "Passwörter abschalten",
+            "el": "Απενεργοποίηση κωδικών",
+            "es": "Desactivar las contraseñas",
+            "fr": "Désactiver les mots de passe",
+            "it": "Disattivare le password",
+            "pl": "Wyłączenie haseł",
+            "sv": "Stänga av lösenord",
+            "uk": "Вимкнути паролі"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "Who should hold department administrator rights?",
+        "ar": "من يجب أن يملك صلاحيات مدير الإدارة؟",
+        "de": "Wer sollte Administratorrechte für die Organisation haben?",
+        "el": "Ποιος πρέπει να έχει δικαιώματα διαχειριστή της υπηρεσίας;",
+        "es": "¿Quién debería tener derechos de administrador del departamento?",
+        "fr": "Qui devrait avoir les droits d’administrateur du service ?",
+        "it": "Chi dovrebbe avere i diritti di amministratore del dipartimento?",
+        "pl": "Kto powinien mieć uprawnienia administratora jednostki?",
+        "sv": "Vem bör ha administratörsbehörighet i organisationen?",
+        "uk": "Хто має мати права адміністратора підрозділу?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Every member",
+            "ar": "كل الأعضاء",
+            "de": "Jedes Mitglied",
+            "el": "Κάθε μέλος",
+            "es": "Todos los miembros",
+            "fr": "Tous les membres",
+            "it": "Ogni membro",
+            "pl": "Każdy członek",
+            "sv": "Alla medlemmar",
+            "uk": "Кожен учасник"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Anyone who asks",
+            "ar": "أي شخص يطلب ذلك",
+            "de": "Jeder, der danach fragt",
+            "el": "Όποιος το ζητήσει",
+            "es": "Cualquiera que lo pida",
+            "fr": "Quiconque le demande",
+            "it": "Chiunque lo chieda",
+            "pl": "Każdy, kto poprosi",
+            "sv": "Alla som ber om det",
+            "uk": "Будь-хто, хто попросить"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Only the people who manage the department",
+            "ar": "فقط من يديرون الإدارة",
+            "de": "Nur die Personen, die die Organisation verwalten",
+            "el": "Μόνο όσοι διαχειρίζονται την υπηρεσία",
+            "es": "Solo quienes gestionan el departamento",
+            "fr": "Seulement les personnes qui gèrent le service",
+            "it": "Solo chi gestisce il dipartimento",
+            "pl": "Tylko osoby zarządzające jednostką",
+            "sv": "Bara de som leder organisationen",
+            "uk": "Лише ті, хто керує підрозділом"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Permissions in Resgrid cannot be limited to specific roles or groups.",
+        "ar": "لا يمكن قصر الصلاحيات في Resgrid على أدوار أو مجموعات محددة.",
+        "de": "Berechtigungen in Resgrid lassen sich nicht auf bestimmte Rollen oder Gruppen beschränken.",
+        "el": "Τα δικαιώματα στο Resgrid δεν μπορούν να περιοριστούν σε συγκεκριμένους ρόλους ή ομάδες.",
+        "es": "Los permisos de Resgrid no se pueden limitar a funciones o grupos concretos.",
+        "fr": "Les autorisations de Resgrid ne peuvent pas être limitées à certains rôles ou groupes.",
+        "it": "I permessi di Resgrid non possono essere limitati a ruoli o gruppi specifici.",
+        "pl": "Uprawnień w Resgrid nie można ograniczyć do wybranych ról lub grup.",
+        "sv": "Behörigheter i Resgrid kan inte begränsas till vissa roller eller grupper.",
+        "uk": "Дозволи в Resgrid не можна обмежити певними ролями чи групами."
+      }
+    }
+  ]
+}

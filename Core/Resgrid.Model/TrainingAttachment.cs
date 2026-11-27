@@ -25,6 +25,10 @@ namespace Resgrid.Model
 
 		public byte[] Data { get; set; }
 
+		/// <summary>Size in bytes from a metadata read (the bytes themselves are not loaded).</summary>
+		[NotMapped]
+		public long? FileSize { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -43,6 +47,6 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Training" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Training", "FileSize" };
 	}
 }

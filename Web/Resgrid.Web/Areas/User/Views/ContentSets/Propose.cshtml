@@ -1,0 +1,38 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetProposeModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3: a member proposes a change to the publisher's item (like a Proposal for Change, but open). It reaches the publisher as a
+    suggestion thread on the item's next draft; the answer comes back on the Proposals page.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["ProposeHeader"];
+    ViewData["Title"] = text["ProposeHeader"].Value;
+    ViewData["Subtitle"] = string.Format(text["ProposeSubtitle"].Value, Model.ItemTitle, Model.Copy.PublisherName);
+    ViewData["SetSection"] = "Proposals";
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
+        <div class="ibox-content">
+            <form method="post" asp-action="Propose" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="copyId" value="@Model.Copy.Copy.ContentSetCopyId" />
+                <div class="form-group">
+                    <label class="control-label" for="anchor">@text["ProposalSectionLabel"]</label>
+                    <input id="anchor" name="anchor" class="form-control" maxlength="@ContentSetProposal.AnchorMaxLength" />
+                    <span class="help-block small">@text["ProposalSectionHelp"]</span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label required" for="body">@text["ProposalBodyLabel"]</label>
+                    <textarea id="body" name="body" class="form-control" rows="6" maxlength="@ContentSetProposal.BodyMaxLength" required></textarea>
+                    <span class="help-block small">@text["ProposalBodyHelp"]</span>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @text["ProposeSendButton"]</button>
+            </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,268 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolReviewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@inject Resgrid.Model.Services.IAiKnowledgeService knowledgeService
+@*
+    The review of one version (P1 §18.2): the redline against the version in force first, the anchored review comments (all
+    resolved before anyone approves), the approval steps, and the signature panel (approve at L2, bound to this content's hash).
+    An approved version is published here: now or on a date, minor or major, with its change summary.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    var p = Model.Protocol;
+    var v = Model.Version;
+    ViewBag.Title = "Resgrid | " + localizer["ReviewHeader"];
+    ViewData["Title"] = localizer["ReviewHeader"].Value + ": " + p.Name;
+    ViewData["Subtitle"] = p.Code + " · " + ProtocolDisplay.VersionStatusName(v.Status, localizer);
+    ViewData["Section"] = "Review";
+    ViewData["IsManager"] = true;
+    string Name(string userId) => string.IsNullOrEmpty(userId) ? "" : Model.Names.TryGetValue(userId, out var n) ? n : userId;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    <ol class="rgw-journey" aria-label="@localizer["LifecycleLabel"]">
+        @foreach (var stage in new[] { ProtocolVersionStatuses.Draft, ProtocolVersionStatuses.InReview, ProtocolVersionStatuses.Approved, ProtocolVersionStatuses.Published })
+        {
+            var reached = v.Status >= (int)stage && v.Status <= (int)ProtocolVersionStatuses.Published;
+            var when = stage == ProtocolVersionStatuses.Draft ? departmentTime.Format(v.CreatedOn)
+                : stage == ProtocolVersionStatuses.InReview ? departmentTime.Format(v.SubmittedOn) + (v.SubmittedByUserId != null ? " · " + Name(v.SubmittedByUserId) : "")
+                : stage == ProtocolVersionStatuses.Approved ? departmentTime.Format(v.ApprovedOn)
+                : departmentTime.Format(v.PublishedOn ?? v.EffectiveOn);
+            <li aria-current="@(v.Status == (int)stage ? "step" : null)">
+                <span><i class="fa @(reached ? "fa-check-circle text-navy" : "fa-circle-o text-muted")" aria-hidden="true"></i> @ProtocolDisplay.VersionStatusName((int)stage, localizer)</span>
+                <small class="text-muted">@when</small>
+            </li>
+        }
+    </ol>
+
+    <div class="row m-t-md">
+        <div class="col-md-8">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-exchange" aria-hidden="true"></i> @(Model.Current == null ? localizer["FirstVersionHeader"] : string.Format(localizer["ChangesSinceHeader"].Value, ProtocolDisplay.VersionLabel(Model.Current, localizer)))</h5>
+                </div>
+                <div class="ibox-content">
+                    @if (!string.IsNullOrEmpty(v.ChangeSummary))
+                    {
+                        <p><strong>@localizer["ChangeSummaryLabel"]:</strong> @v.ChangeSummary</p>
+                    }
+                    @{ ViewData["ChangedOnly"] = Model.Current != null; }
+                    <partial name="_Redline" model="Model.Diff" />
+                    <details class="m-t-md">
+                        <summary>@localizer["FullTextToggle"]</summary>
+                        @{ string dosingToolUrl = null; try { dosingToolUrl = (await knowledgeService.GetSettingsAsync(ClaimsAuthorizationHelper.GetDepartmentId()))?.DosingToolUrl; } catch (Exception) { dosingToolUrl = null; } }
+                        <div class="protocol-content rgp-reader m-t-sm">@Html.ProtocolContent(v.ContentHtml, dosingToolUrl, localizer["DosingToolLinkText"].Value)</div>
+                    </details>
+                    <p class="small text-muted m-t-sm"><i class="fa fa-hashtag" aria-hidden="true"></i> @localizer["ContentCodeLabel"] <span class="rgw-mono">@SignaturePolicy.ShortCode(v.ContentHash)</span></p>
+                </div>
+            </div>
+
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-comments-o" aria-hidden="true"></i> @localizer["ReviewCommentsHeader"] (@Model.OpenComments @localizer["OpenLabel"])</h5></div>
+                <div class="ibox-content">
+                    @foreach (var c in Model.Comments.Where(x => !x.ParentCommentId.HasValue).OrderBy(x => x.CreatedOn))
+                    {
+                        <div class="m-b-sm @(c.ResolvedOn.HasValue ? "text-muted" : "")">
+                            <strong>@Name(c.AuthorUserId)</strong>
+                            <small>@departmentTime.Format(c.CreatedOn)@if (!string.IsNullOrEmpty(c.Anchor)) { <text> · @(Model.Outline.FirstOrDefault(a => a.Id == c.Anchor)?.Text ?? c.Anchor)</text> }</small>
+                            @if (c.ResolvedOn.HasValue)
+                            {
+                                <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ResolvedLabel"]</span>
+                            }
+                            <div style="white-space: pre-wrap">@c.Body</div>
+                            @foreach (var reply in Model.Comments.Where(x => x.ParentCommentId == c.ProtocolCommentId).OrderBy(x => x.CreatedOn))
+                            {
+                                <div class="m-l-md small"><strong>@Name(reply.AuthorUserId)</strong>: <span style="white-space: pre-wrap">@reply.Body</span></div>
+                            }
+                            @if (!c.ResolvedOn.HasValue)
+                            {
+                                <form method="post" asp-controller="Protocols" asp-action="Comment" asp-route-area="User" class="m-l-md m-t-xs">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                                    <input type="hidden" name="versionId" value="@v.ProtocolVersionId" />
+                                    <input type="hidden" name="parentId" value="@c.ProtocolCommentId" />
+                                    <input type="hidden" name="kind" value="@((int)ProtocolCommentKinds.Reply)" />
+                                    <input type="hidden" name="returnTo" value="review" />
+                                    <label class="sr-only" for="reply-@c.ProtocolCommentId">@localizer["ReplyLabel"]</label>
+                                    <input id="reply-@c.ProtocolCommentId" name="body" class="form-control input-sm" maxlength="@ProtocolComment.BodyMaxLength" placeholder="@localizer["ReplyLabel"]" required />
+                                    <button type="submit" class="btn btn-xs btn-default m-t-xs"><i class="fa fa-reply" aria-hidden="true"></i> @localizer["ReplyButton"]</button>
+                                </form>
+                                <form method="post" asp-controller="Protocols" asp-action="ResolveComment" asp-route-area="User" class="m-l-md">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                                    <input type="hidden" name="versionId" value="@v.ProtocolVersionId" />
+                                    <input type="hidden" name="commentId" value="@c.ProtocolCommentId" />
+                                    <input type="hidden" name="returnTo" value="review" />
+                                    <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ResolveButton"]</button>
+                                </form>
+                            }
+                        </div>
+                    }
+                    @if (v.Status == (int)ProtocolVersionStatuses.InReview)
+                    {
+                        <form method="post" asp-controller="Protocols" asp-action="Comment" asp-route-area="User" class="m-t-md">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                            <input type="hidden" name="versionId" value="@v.ProtocolVersionId" />
+                            <input type="hidden" name="kind" value="@((int)ProtocolCommentKinds.ReviewComment)" />
+                            <input type="hidden" name="returnTo" value="review" />
+                            <div class="form-group">
+                                <label class="control-label" for="commentAnchor">@localizer["SectionLabel"]</label>
+                                <select id="commentAnchor" name="anchor" class="form-control">
+                                    <option value="">@localizer["WholeProtocolOption"]</option>
+                                    @foreach (var anchor in Model.Outline)
+                                    {
+                                        <option value="@anchor.Id">@anchor.Text</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required" for="commentBody">@localizer["ReviewCommentLabel"]</label>
+                                <textarea id="commentBody" name="body" class="form-control" rows="3" maxlength="@ProtocolComment.BodyMaxLength" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-default"><i class="fa fa-comment" aria-hidden="true"></i> @localizer["AddCommentButton"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-list-ol" aria-hidden="true"></i> @localizer["ApprovalStepsHeader"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Steps.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NotSubmittedYet"]</p>
+                    }
+                    <ul class="rgw-journey">
+                        @foreach (var step in Model.Steps)
+                        {
+                            <li>
+                                <span>
+                                    @(step.StepOrder). @(!string.IsNullOrEmpty(step.ApproverUserId) ? Name(step.ApproverUserId) : step.ApproverRoleId.HasValue && Model.Roles.TryGetValue(step.ApproverRoleId.Value, out var role) ? role : localizer["AnyApproverLabel"].Value)
+                                </span>
+                                <small>
+                                    @switch ((ProtocolApprovalDecisions)step.Decision)
+                                    {
+                                        case ProtocolApprovalDecisions.Approved:
+                                            <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ApprovedLabel"]</span> @Name(step.DecidedByUserId)
+                                            break;
+                                        case ProtocolApprovalDecisions.Rejected:
+                                            <span class="label label-danger"><i class="fa fa-times" aria-hidden="true"></i> @localizer["RejectedLabel"]</span> @Name(step.DecidedByUserId)
+                                            break;
+                                        case ProtocolApprovalDecisions.Withdrawn:
+                                            <span class="label label-default"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["WithdrawnLabel"]</span>
+                                            break;
+                                        default:
+                                            <span class="label label-warning"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @localizer["PendingLabel"]</span>
+                                            break;
+                                    }
+                                </small>
+                            </li>
+                            @if (!string.IsNullOrEmpty(step.Comment))
+                            {
+                                <li class="small text-muted" style="border-bottom: 0;">@step.Comment</li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            @if (Model.CanDecide && Model.Panel != null)
+            {
+                <partial name="_SignaturePanel" model="Model.Panel" />
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-times-circle" aria-hidden="true"></i> @localizer["RejectHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="Protocols" asp-action="Reject" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@v.ProtocolVersionId" />
+                            <div class="form-group">
+                                <label class="control-label required" for="rejectComment">@localizer["RejectReasonLabel"]</label>
+                                <textarea id="rejectComment" name="comment" class="form-control" rows="2" maxlength="2000" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i> @localizer["RejectButton"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (Model.CanPublish)
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["PublishHeader"]</h5></div>
+                    <div class="ibox-content">
+                        @if (v.EffectiveOn.HasValue)
+                        {
+                            <p class="text-info"><i class="fa fa-calendar" aria-hidden="true"></i> @string.Format(localizer["ScheduledNotice"].Value, v.Label, departmentTime.Format(v.EffectiveOn))</p>
+                        }
+                        <form method="post" asp-controller="Protocols" asp-action="Publish" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@v.ProtocolVersionId" />
+                            <fieldset class="form-group">
+                                <legend class="control-label" style="font-size: 13px; border: 0; margin-bottom: 4px;">@localizer["VersionKindLabel"]</legend>
+                                <label class="radio-inline"><input type="radio" name="major" value="false" @(Model.Current != null ? "checked" : "") /> @localizer["MinorVersionOption"]</label>
+                                <label class="radio-inline"><input type="radio" name="major" value="true" @(Model.Current == null ? "checked" : "") /> @localizer["MajorVersionOption"]</label>
+                            </fieldset>
+                            <div class="form-group">
+                                <label class="control-label required" for="publishSummary">@localizer["ChangeSummaryLabel"]</label>
+                                <textarea id="publishSummary" name="changeSummary" class="form-control" rows="3" maxlength="@ProtocolVersion.ChangeSummaryMaxLength" required>@v.ChangeSummary</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="publishEffective">@localizer["EffectiveOnLabel"]</label>
+                                <input id="publishEffective" name="effectiveOn" type="datetime-local" class="form-control" aria-describedby="EffectiveHelp" />
+                                <span id="EffectiveHelp" class="help-block">@string.Format(localizer["EffectiveOnHelp"].Value, Model.TimeZoneName)</span>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="publishExpires">@localizer["ExpiresOnLabel"]</label>
+                                <input id="publishExpires" name="expiresOn" type="datetime-local" class="form-control" />
+                            </div>
+                            <button type="submit" class="btn btn-success"><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["PublishButton"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (Model.CanWithdraw)
+            {
+                <form method="post" asp-controller="Protocols" asp-action="Withdraw" asp-route-area="User" class="m-b-md">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                    <input type="hidden" name="versionId" value="@v.ProtocolVersionId" />
+                    <button type="submit" class="btn btn-default"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["WithdrawButton"]</button>
+                </form>
+            }
+
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["SignaturesTab"]</h5></div>
+                <div class="ibox-content">
+                    <partial name="_SignaturesList" model="Model.Signatures" />
+                </div>
+            </div>
+            <a class="btn btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToProtocolButton"]</a>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts
+{
+    <script src="~/js/app/common/passkeys/resgrid.passkeys.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/signatures/resgrid.signatures.js" asp-append-version="true"></script>
+}

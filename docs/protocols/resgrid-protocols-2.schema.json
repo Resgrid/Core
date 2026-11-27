@@ -1,0 +1,215 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://resgrid.com/schemas/resgrid-protocols-2.schema.json",
+  "title": "Resgrid protocols open format",
+  "description": "Protocols exported from (and imported into) a Resgrid protocol library. Version 2 adds optional fields to version 1; a version 1 file is a valid version 2 file with version set to 1. See docs/protocols/open-format.md.",
+  "type": "object",
+  "required": ["format", "version", "protocols"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "format": { "const": "resgrid-protocols" },
+    "version": { "type": "integer", "enum": [1, 2] },
+    "exportedOn": { "type": "string", "format": "date-time" },
+    "set": { "$ref": "#/$defs/set" },
+    "protocols": { "type": "array", "maxItems": 500, "items": { "$ref": "#/$defs/protocol" } }
+  },
+  "$defs": {
+    "set": {
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "key": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "publisher": { "type": "string" },
+        "license": { "type": "string", "description": "SPDX licence identifier, e.g. CC-BY-4.0" },
+        "licenseUrl": { "type": "string", "format": "uri" },
+        "setVersion": { "type": "string" }
+      }
+    },
+    "protocol": {
+      "type": "object",
+      "required": ["name", "code"],
+      "properties": {
+        "code": { "type": "string", "maxLength": 16 },
+        "name": { "type": "string", "maxLength": 100 },
+        "kind": { "enum": ["Dispatch", "Sog", "ClinicalGuideline", "Policy", "Procedure", "Reference"] },
+        "number": { "type": ["string", "null"], "maxLength": 32 },
+        "category": { "type": ["string", "null"], "description": "Matched to the importing department's categories by name" },
+        "tags": { "type": ["string", "null"] },
+        "description": { "type": ["string", "null"] },
+        "minimumWeight": { "type": "integer", "minimum": 0, "maximum": 1000 },
+        "requiresAcknowledgment": { "type": "boolean" },
+        "reviewIntervalDays": { "type": ["integer", "null"] },
+        "excludeFromAi": { "type": "boolean" },
+        "isLicensedContent": { "type": "boolean" },
+        "versionLabel": { "type": ["string", "null"] },
+        "content": { "$ref": "#/$defs/content" },
+        "triggers": { "type": "array", "items": { "$ref": "#/$defs/trigger" } },
+        "questions": { "type": "array", "items": { "$ref": "#/$defs/question" } },
+        "audience": { "type": "array", "items": { "$ref": "#/$defs/audience" } },
+        "attribution": { "$ref": "#/$defs/attribution" },
+        "locale": { "type": "string", "description": "BCP 47 language of the content" },
+        "effectiveOn": { "type": "string", "format": "date-time" },
+        "contentHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "history": { "type": "array", "items": { "$ref": "#/$defs/historyVersion" } },
+        "translations": { "type": "array", "items": { "$ref": "#/$defs/translation" } },
+        "attachments": { "type": "array", "items": { "$ref": "#/$defs/attachment" } }
+      }
+    },
+    "content": {
+      "type": "object",
+      "required": ["blocks"],
+      "properties": {
+        "schema": { "type": "integer", "enum": [1, 2], "description": "1: one html block (P1); 2: structured blocks (P3)" },
+        "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } },
+        "anchors": { "type": "array", "items": { "$ref": "#/$defs/anchor" } },
+        "graph": { "$ref": "#/$defs/graph" }
+      }
+    },
+    "block": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": { "enum": ["html", "heading", "paragraph", "steps", "caution", "warning", "gate", "table", "image", "video", "attachment", "link", "medication", "variants"] },
+        "key": { "type": "string", "pattern": "^[a-z0-9]{1,24}$" },
+        "html": { "type": "string", "description": "Sanitized rich text" },
+        "text": { "type": "string" },
+        "level": { "type": "integer", "minimum": 2, "maximum": 4 },
+        "title": { "type": "string" },
+        "items": { "type": "array", "items": { "type": "object", "properties": { "key": { "type": "string" }, "html": { "type": "string" } } } },
+        "rows": { "type": "array", "items": { "type": "array", "items": { "type": "string" } } },
+        "headerRow": { "type": "boolean" },
+        "url": { "type": "string", "format": "uri" },
+        "attachmentId": { "type": "integer" },
+        "alt": { "type": "string" },
+        "linkKind": { "enum": ["protocol", "poi", "inventory", "checklist", "training", "url"] },
+        "refId": { "type": "string" },
+        "label": { "type": "string" },
+        "contact": { "type": "string" },
+        "medication": { "$ref": "#/$defs/medication" },
+        "variants": { "type": "array", "items": { "type": "object", "properties": { "key": { "type": "string" }, "label": { "type": "string" }, "blocks": { "type": "array", "items": { "$ref": "#/$defs/block" } } } } },
+        "scopes": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "medication": {
+      "type": "object",
+      "description": "Doses are text, shown exactly as authored; nothing computes a dose",
+      "properties": {
+        "drug": { "type": "string" },
+        "indication": { "type": "string" },
+        "concentration": { "type": "string" },
+        "dosePerKg": { "type": "string" },
+        "maxSingleDose": { "type": "string" },
+        "maxTotalDose": { "type": "string" },
+        "route": { "type": "string" },
+        "repeatInterval": { "type": "string" },
+        "inventoryItemId": { "type": "string" },
+        "inventoryItemName": { "type": "string" },
+        "notes": { "type": "string" }
+      }
+    },
+    "anchor": {
+      "type": "object",
+      "properties": { "id": { "type": "string" }, "text": { "type": "string" }, "level": { "type": "integer" }, "block": { "type": "string" } }
+    },
+    "graph": {
+      "type": "object",
+      "description": "The decision graph of a Dispatch protocol (P4 case flow)",
+      "properties": {
+        "nodes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["key"],
+            "properties": {
+              "key": { "type": "string" },
+              "root": { "type": "boolean" },
+              "kind": { "type": "integer" },
+              "stage": { "type": "integer" },
+              "label": { "type": "string" },
+              "text": { "type": "string" },
+              "questionType": { "type": ["integer", "null"] },
+              "answers": { "type": "array", "items": { "type": "object", "properties": { "key": { "type": "string" }, "label": { "type": "string" }, "next": { "type": "string" }, "min": { "type": ["number", "null"] }, "max": { "type": ["number", "null"] } } } },
+              "next": { "type": "string" },
+              "speak": { "type": "boolean" },
+              "caller": { "type": "boolean" },
+              "determinant": { "type": "string" },
+              "priority": { "type": ["integer", "null"], "description": "The exporting department's priority id; informational" },
+              "priorityName": { "type": "string" },
+              "response": { "type": "string" },
+              "postDispatch": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "trigger": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "integer" },
+        "priority": { "type": ["string", "null"], "description": "Priority name, matched by name" },
+        "callType": { "type": ["string", "null"], "description": "Call type name, matched by name" },
+        "startsOn": { "type": ["string", "null"], "format": "date-time" },
+        "endsOn": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "question": {
+      "type": "object",
+      "properties": {
+        "question": { "type": "string" },
+        "answers": { "type": "array", "items": { "type": "object", "properties": { "answer": { "type": "string" }, "weight": { "type": "integer" } } } }
+      }
+    },
+    "audience": {
+      "type": "object",
+      "properties": {
+        "kind": { "enum": ["Everyone", "Group", "Role", "CertificationType", "UnitType", "Shift"] },
+        "ref": { "type": "string", "description": "Group, role or shift name, matched by name" }
+      }
+    },
+    "attribution": {
+      "type": "object",
+      "required": ["source"],
+      "properties": {
+        "source": { "type": "string" },
+        "author": { "type": "string" },
+        "license": { "type": "string" },
+        "licenseUrl": { "type": "string", "format": "uri" },
+        "sourceVersion": { "type": "string" }
+      }
+    },
+    "historyVersion": {
+      "type": "object",
+      "properties": {
+        "label": { "type": ["string", "null"] },
+        "status": { "enum": ["Published", "Superseded", "Retired"] },
+        "effectiveOn": { "type": "string", "format": "date-time" },
+        "supersededOn": { "type": "string", "format": "date-time" },
+        "changeSummary": { "type": "string" },
+        "contentHash": { "type": "string" }
+      }
+    },
+    "translation": {
+      "type": "object",
+      "required": ["locale", "content"],
+      "properties": {
+        "locale": { "type": "string" },
+        "content": { "$ref": "#/$defs/content" },
+        "contentHash": { "type": "string" },
+        "sourceContentHash": { "type": "string" }
+      }
+    },
+    "attachment": {
+      "type": "object",
+      "required": ["kind", "fileName"],
+      "properties": {
+        "kind": { "enum": ["attachment", "document"] },
+        "fileName": { "type": "string" },
+        "contentType": { "type": "string" },
+        "size": { "type": ["integer", "null"] },
+        "sha256": { "type": "string" }
+      }
+    }
+  }
+}

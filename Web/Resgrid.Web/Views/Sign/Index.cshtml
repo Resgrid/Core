@@ -1,0 +1,106 @@
+@using Resgrid.Model
+@model Resgrid.Model.SigningPageState
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    The Resgrid signing page (e-Signature S2) for an outside signer: landing → consent to do business electronically (text
+    version esign-consent/1; counsel review is owed, plan §25.5) → a Resgrid one-time code → the embedded e-sign platform signer
+    (only now does its URL exist) → done. Department branding wraps it; nothing here comes from the platform.
+*@
+@{
+    Layout = "_RecoveryLayout";
+    ViewData["Title"] = signatureText["SigningPageTitle"].Value;
+    var linkToken = ViewData["LinkToken"] as string;
+    var notice = ViewData["Notice"] as string;
+}
+
+<div class="rg-signing-page" style="background:#fff;border-radius:6px;padding:24px;box-shadow:0 1px 3px rgba(0,0,0,.15)">
+    <header style="border-bottom:1px solid #ddd;margin-bottom:16px;padding-bottom:8px">
+        <h1 style="font-size:22px;margin:0">@(Model.DepartmentName ?? signatureText["SigningPageTitle"].Value)</h1>
+        @if (!string.IsNullOrEmpty(Model.Title))
+        {
+            <p class="text-muted" style="margin:4px 0 0">@Model.Title</p>
+        }
+    </header>
+
+    @if (!string.IsNullOrEmpty(notice))
+    {
+        <div class="alert alert-warning" role="alert">@notice</div>
+    }
+
+    @switch (Model.Step)
+    {
+        case SigningPageSteps.Landing:
+            <p>@string.Format(signatureText["LandingIntro"].Value, Model.SignerName, Model.DepartmentName)</p>
+            <p class="text-muted small">@string.Format(signatureText["LandingExpires"].Value, Model.ExpiresOn.ToString("yyyy-MM-dd HH:mm") + " UTC")</p>
+            <form method="post" action="/Sign/@linkToken">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary btn-lg">@signatureText["ContinueButton"]</button>
+            </form>
+            break;
+
+        case SigningPageSteps.Consent:
+            <h2 style="font-size:18px">@signatureText["ConsentHeading"]</h2>
+            <div class="panel panel-default"><div class="panel-body" style="max-height:240px;overflow:auto">@(ViewData["ConsentText"] as string)</div></div>
+            <form method="post" action="/Sign/Session/Consent">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="consentVersion" value="@SignatureTokens.ConsentTextVersion" />
+                <div class="checkbox"><label><input type="checkbox" name="agree" value="true" required /> @signatureText["ConsentCheckbox"]</label></div>
+                <p class="text-muted small">@string.Format(signatureText["ConsentCodeNote"].Value, Model.ContactMasked)</p>
+                <button type="submit" class="btn btn-primary">@signatureText["ConsentButton"]</button>
+            </form>
+            break;
+
+        case SigningPageSteps.Code:
+            <h2 style="font-size:18px">@signatureText["CodeHeading"]</h2>
+            <p>@string.Format(signatureText[Model.OtpChannel == SignatureSignerAuthMethods.SmsOtp ? "CodeSentSms" : "CodeSentEmail"].Value, Model.ContactMasked)</p>
+            @if (Model.CodeSent)
+            {
+                <form method="post" action="/Sign/Session/Verify" autocomplete="off">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label class="control-label" for="rg-sign-code">@signatureText["CodeLabel"]</label>
+                        <input class="form-control input-lg" id="rg-sign-code" name="code" inputmode="numeric" pattern="[0-9 ]{6,8}" maxlength="8" autocomplete="one-time-code" required style="max-width:220px;letter-spacing:4px" />
+                        <span class="help-block small">@string.Format(signatureText["CodeAttemptsLeft"].Value, Model.AttemptsLeft)</span>
+                    </div>
+                    <button type="submit" class="btn btn-primary">@signatureText["VerifyCodeButton"]</button>
+                </form>
+            }
+            <form method="post" action="/Sign/Session/Code" class="m-t-sm">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default btn-sm">@(Model.CodeSent ? signatureText["ResendCodeButton"] : signatureText["SendCodeButton"])</button>
+            </form>
+            break;
+
+        case SigningPageSteps.Sign:
+            <p><strong>@signatureText["StatementLabel"]</strong></p>
+            <blockquote style="font-size:14px">@Model.StatementText</blockquote>
+            <p class="text-muted small">@signatureText["ContentCodeLabel"] <span style="font-family:monospace">@SignaturePolicy.ShortCode(Model.ArtifactSha256)</span></p>
+            @if (!string.IsNullOrEmpty(Model.EmbedUrl))
+            {
+                <iframe id="rg-sign-embed" src="@Model.EmbedUrl" data-origin="@Model.EmbedOrigin" title="@signatureText["EmbedFrameTitle"]"
+                        style="width:100%;height:720px;border:1px solid #ccc;border-radius:4px" referrerpolicy="no-referrer"
+                        sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="status">@signatureText["EmbedUnavailable"]</div>
+            }
+            <form method="post" action="/Sign/Session/Done" id="rg-sign-done" class="m-t-sm">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default">@signatureText["FinishedButton"]</button>
+            </form>
+            break;
+
+        case SigningPageSteps.Done:
+            <div class="alert alert-success" role="status"><strong>@signatureText["DoneHeading"]</strong> @signatureText["DoneText"]</div>
+            break;
+
+        default:
+            <div class="alert alert-info" role="status">@signatureText["ClosedText"]</div>
+            break;
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/app/internal/signatures/resgrid.signing.js" asp-append-version="true"></script>
+}

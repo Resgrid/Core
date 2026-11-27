@@ -1,0 +1,54 @@
+@model Resgrid.Web.ViewComponents.LmsSeatPanelView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@*
+    The LMS seat counter and the bulk switch by group on the personnel list (LmsSeatSummaryViewComponent; §17.4 seat rules).
+    Department admins only. Enabling a group stops at the purchased seats and says how many members were refused.
+*@
+@{
+    var summary = Model.Summary;
+    var purchased = Model.Entitled ? summary.PurchasedSeats : 0;
+}
+<div class="ibox float-e-margins" id="lms-seats">
+    <div class="ibox-title"><h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @addonLocalizer["LmsSeatBulkHeading"]</h5></div>
+    <div class="ibox-content">
+        @if (!string.IsNullOrWhiteSpace(Model.Message))
+        {
+            <div class="alert @(Model.MessageKind == "success" ? "alert-success" : "alert-warning")" role="status">
+                @Model.Message
+                @if (Model.OfferPack)
+                {
+                    <a asp-controller="LmsBilling" asp-action="Index" asp-route-area="User">@addonLocalizer["LmsAddPack"]</a>
+                }
+            </div>
+        }
+        <p>
+            <strong>@string.Format(addonLocalizer["LmsSeatCounter"].Value, summary.EnabledSeats, purchased)</strong>
+            @if (!Model.Entitled)
+            {
+                <span class="text-muted">@addonLocalizer["LmsSeatAddonInactive"]</span>
+            }
+            @if (summary.DormantSeats > 0)
+            {
+                <br /><span class="text-muted small">@string.Format(addonLocalizer["LmsSeatDormant"].Value, summary.DormantSeats)</span>
+            }
+        </p>
+        @if (Model.Groups.Count > 0)
+        {
+            <form method="post" asp-controller="LmsSeats" asp-action="SetGroup" asp-route-area="User" class="form-inline">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label for="lms-seat-group">@addonLocalizer["LmsSeatBulkGroup"]</label>
+                    <select id="lms-seat-group" name="groupId" class="form-control input-sm">
+                        @foreach (var group in Model.Groups)
+                        {
+                            <option value="@group.DepartmentGroupId">@group.Name</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" name="enabled" value="true" class="btn btn-primary btn-sm"><i class="fa fa-toggle-on" aria-hidden="true"></i> @addonLocalizer["LmsSeatBulkEnable"]</button>
+                <button type="submit" name="enabled" value="false" class="btn btn-default btn-sm"><i class="fa fa-toggle-off" aria-hidden="true"></i> @addonLocalizer["LmsSeatBulkDisable"]</button>
+            </form>
+        }
+        <p class="text-muted small m-t-sm m-b-none">@addonLocalizer["LmsBillingFreeNote"] <a asp-controller="LmsBilling" asp-action="Index" asp-route-area="User">@addonLocalizer["LmsManagePacks"]</a></p>
+    </div>
+</div>

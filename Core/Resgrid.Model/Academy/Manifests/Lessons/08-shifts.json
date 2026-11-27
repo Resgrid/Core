@@ -1,0 +1,209 @@
+{
+  "schema": 1,
+  "id": "08-shifts",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Shifts",
+  "minutes": 2.5,
+  "walkthrough": false,
+  "audience": [
+    "member"
+  ],
+  "visibility": [
+    "module:Shifts"
+  ],
+  "pages": [
+    "Shifts",
+    "Workshifts"
+  ],
+  "adminAssist": {
+    "areas": [
+      "shifts"
+    ],
+    "capabilities": [
+      "shifts",
+      "calendar",
+      "new-calendar-item",
+      "workshifts",
+      "shift-staffing",
+      "dispatcher-desk"
+    ]
+  },
+  "media": {
+    "video": "media/08-shifts.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/08-shifts.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Plan coverage and keep dispatch aligned",
+    "ar": "خطط للتغطية وأبقِ مركز الإرسال على اطلاع",
+    "de": "Besetzung planen und die Leitstelle auf Stand halten",
+    "el": "Σχεδιάστε την κάλυψη και κρατήστε ενήμερη τη διασπορά",
+    "es": "Planificar la cobertura y mantener informada a la central",
+    "fr": "Planifier la couverture et tenir le centre d’alerte informé",
+    "it": "Pianificare la copertura e tenere allineata la centrale",
+    "pl": "Planuj obsadę i informuj dyspozytornię",
+    "sv": "Planera bemanningen och håll larmcentralen uppdaterad",
+    "uk": "Плануйте покриття та тримайте диспетчерів в курсі"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What are shifts for?",
+        "ar": "ما الغرض من المناوبات؟",
+        "de": "Wozu dienen Schichten?",
+        "el": "Σε τι χρησιμεύουν οι βάρδιες;",
+        "es": "¿Para qué sirven los turnos?",
+        "fr": "À quoi servent les gardes ?",
+        "it": "A che cosa servono i turni?",
+        "pl": "Do czego służą zmiany?",
+        "sv": "Vad är pass till för?",
+        "uk": "Для чого потрібні зміни?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Tracking fuel use",
+            "ar": "تتبع استهلاك الوقود",
+            "de": "Kraftstoffverbrauch erfassen",
+            "el": "Παρακολούθηση κατανάλωσης καυσίμου",
+            "es": "Registrar el consumo de combustible",
+            "fr": "Suivre la consommation de carburant",
+            "it": "Tracciare il consumo di carburante",
+            "pl": "Śledzenie zużycia paliwa",
+            "sv": "Följa bränsleförbrukning",
+            "uk": "Облік пального"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Storing incident photos",
+            "ar": "تخزين صور الحوادث",
+            "de": "Einsatzfotos speichern",
+            "el": "Αποθήκευση φωτογραφιών συμβάντων",
+            "es": "Guardar fotos de incidentes",
+            "fr": "Stocker les photos d’intervention",
+            "it": "Archiviare le foto degli interventi",
+            "pl": "Przechowywanie zdjęć ze zdarzeń",
+            "sv": "Lagra händelsefoton",
+            "uk": "Зберігання фото подій"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Planning who is on duty and when",
+            "ar": "تخطيط من يكون في الخدمة ومتى",
+            "de": "Planen, wer wann Dienst hat",
+            "el": "Σχεδιασμός του ποιος είναι σε υπηρεσία και πότε",
+            "es": "Planificar quién está de servicio y cuándo",
+            "fr": "Planifier qui est de service et quand",
+            "it": "Pianificare chi è in servizio e quando",
+            "pl": "Planowanie, kto i kiedy pełni służbę",
+            "sv": "Planera vem som är i tjänst och när",
+            "uk": "Планування, хто і коли чергує"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "How do shifts help dispatch?",
+        "ar": "كيف تساعد المناوبات مركز الإرسال؟",
+        "de": "Wie helfen Schichten der Leitstelle?",
+        "el": "Πώς βοηθούν οι βάρδιες τη διασπορά;",
+        "es": "¿Cómo ayudan los turnos a la central?",
+        "fr": "Comment les gardes aident-elles le centre d’alerte ?",
+        "it": "In che modo i turni aiutano la centrale?",
+        "pl": "Jak zmiany pomagają dyspozytorni?",
+        "sv": "Hur hjälper pass larmcentralen?",
+        "uk": "Як зміни допомагають диспетчерам?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Dispatch knows who is on duty right now",
+            "ar": "يعرف مركز الإرسال من في الخدمة الآن",
+            "de": "Die Leitstelle weiß, wer gerade Dienst hat",
+            "el": "Η διασπορά ξέρει ποιος είναι σε υπηρεσία τώρα",
+            "es": "La central sabe quién está de servicio ahora",
+            "fr": "Le centre d’alerte sait qui est de service maintenant",
+            "it": "La centrale sa chi è in servizio in questo momento",
+            "pl": "Dyspozytornia wie, kto teraz pełni służbę",
+            "sv": "Larmcentralen vet vem som är i tjänst just nu",
+            "uk": "Диспетчер знає, хто чергує саме зараз"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "They replace calls",
+            "ar": "تحل محل البلاغات",
+            "de": "Sie ersetzen Einsätze",
+            "el": "Αντικαθιστούν τις κλήσεις",
+            "es": "Sustituyen a las llamadas",
+            "fr": "Elles remplacent les interventions",
+            "it": "Sostituiscono le chiamate",
+            "pl": "Zastępują zgłoszenia",
+            "sv": "De ersätter larm",
+            "uk": "Вони замінюють виклики"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "They hide members from alerts",
+            "ar": "تخفي الأعضاء عن التنبيهات",
+            "de": "Sie verbergen Mitglieder vor Alarmen",
+            "el": "Κρύβουν μέλη από τις ειδοποιήσεις",
+            "es": "Ocultan miembros de las alertas",
+            "fr": "Elles masquent des membres des alertes",
+            "it": "Nascondono i membri dagli allarmi",
+            "pl": "Ukrywają członków przed alarmami",
+            "sv": "De döljer medlemmar från larm",
+            "uk": "Вони приховують учасників від сповіщень"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Members can sign up for or trade shifts where the department allows it.",
+        "ar": "يمكن للأعضاء التسجيل في المناوبات أو تبادلها حيث تسمح الإدارة.",
+        "de": "Mitglieder können sich für Schichten eintragen oder sie tauschen, wo die Organisation es erlaubt.",
+        "el": "Τα μέλη μπορούν να δηλώνουν ή να ανταλλάσσουν βάρδιες όπου το επιτρέπει η υπηρεσία.",
+        "es": "Los miembros pueden apuntarse a turnos o cambiarlos donde el departamento lo permita.",
+        "fr": "Les membres peuvent s’inscrire à des gardes ou les échanger si le service le permet.",
+        "it": "I membri possono iscriversi ai turni o scambiarli dove il dipartimento lo consente.",
+        "pl": "Członkowie mogą zapisywać się na zmiany lub się nimi wymieniać, jeśli jednostka na to pozwala.",
+        "sv": "Medlemmar kan anmäla sig till eller byta pass där organisationen tillåter det.",
+        "uk": "Учасники можуть записуватися на зміни чи обмінюватися ними, якщо підрозділ це дозволяє."
+      }
+    }
+  ]
+}

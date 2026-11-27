@@ -28,6 +28,9 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		/// <summary>True when the department's provider can confirm who this is instead (Web SSO is set up for this department).</summary>
 		public bool SsoAvailable { get; set; }
 
+		/// <summary>The department step-up area this confirmation serves (a wording hint only; the area guard decides).</summary>
+		public string StepUpArea { get; set; }
+
 		[Required, DataType(DataType.Password)]
 		[Display(Name = "Password")]
 		public string Password { get; set; }

@@ -191,7 +191,8 @@
     <value>ترسل إشعارات الرسائل النصية والبريد الإلكتروني والدفع والصوت محتوى عامًا افتراضيًا («يتوفر إرسال محمي — سجّل الدخول إلى Resgrid»).</value>
   </data>
   <data name="Step1NotCompliance" xml:space="preserve">
-    <value>حماية البيانات المتقدمة وحدها ليست امتثالًا لـ HIPAA أو ePCR. إنها أحد الضوابط ضمن برنامج امتثال تظل مسؤوليته على عاتق جهتك.</value>
+    <value>حماية البيانات المتقدمة وحدها ليست امتثالًا لـ HIPAA أو لغيره من لوائح البيانات الصحية. إنها أحد الضوابط ضمن برنامج امتثال تظل مسؤوليته على عاتق جهتك.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step2Header" xml:space="preserve">
     <value>الخطوة 2 من 6 — الإقرارات</value>
@@ -230,7 +231,8 @@
     <value>أفهم أن دعم Resgrid لا يمكنه قراءة القيم المحمية دون تصريح دعم صريح ومُدقَّق ومعتمد من الإدارة، وأن فقدان المفاتيح لا يمكن استرداده إلا عبر عملية الاسترداد الموثقة.</value>
   </data>
   <data name="AckNotHipaaCompliance" xml:space="preserve">
-    <value>أفهم أن حماية البيانات المتقدمة وحدها ليست امتثالًا لـ HIPAA/ePCR.</value>
+    <value>أفهم أن حماية البيانات المتقدمة وحدها ليست امتثالًا لـ HIPAA أو لغيره من لوائح البيانات الصحية.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step3Header" xml:space="preserve">
     <value>الخطوة 3 من 6 — الفحوصات التمهيدية</value>

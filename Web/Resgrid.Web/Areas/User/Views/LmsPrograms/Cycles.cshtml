@@ -1,0 +1,105 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsCyclesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Certification cycle rules (§13a.1): per person-scoped certification type, auto-renew (the next cycle starts by itself once the
+    renewal hours are met) and alerts to supervisors, admins and named members on completion, renewal, approaching expiry and expiry.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Prg.CyclesTitle"];
+    ViewData["Title"] = localizer["Prg.CyclesTitle"].Value;
+    ViewData["Subtitle"] = localizer["Prg.CyclesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.Types.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoCertificationTypes"]</p>
+    }
+    @foreach (var type in Model.Types.OrderBy(t => t.Type))
+    {
+        var rule = Model.Rules.TryGetValue(type.DepartmentCertificationTypeId, out var found) ? found : null;
+        var canRenew = LmsCertificationCycleMath.CanAutoRenew(type);
+        var named = new HashSet<string>(rule?.NamedRecipients() ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5><i class="fa fa-certificate" aria-hidden="true"></i> @type.Type</h5>
+                <div class="ibox-tools">
+                    @if (rule != null)
+                    {
+                        <span class="label label-primary">@localizer["Prg.AutoRenew." + (LmsAutoRenewModes)rule.AutoRenewMode]</span>
+                    }
+                </div>
+            </div>
+            <div class="ibox-content">
+                <p class="text-muted">
+                    @(type.RenewalCreditHoursRequired.HasValue ? string.Format(System.Globalization.CultureInfo.CurrentCulture, localizer["Prg.RenewalHours"].Value, type.RenewalCreditHoursRequired.Value.ToString("0.##", System.Globalization.CultureInfo.CurrentCulture)) : localizer["Prg.NoRenewalHours"].Value)
+                    @(type.DefaultValidityMonths.HasValue ? " · " + string.Format(localizer["Prg.ValidityMonths"].Value, type.DefaultValidityMonths.Value) : string.Empty)
+                </p>
+                <form method="post" asp-controller="LmsPrograms" asp-action="SaveCycleRule" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="TypeId" value="@type.DepartmentCertificationTypeId" />
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="renew-@type.DepartmentCertificationTypeId">@localizer["Prg.AutoRenew"]</label>
+                            <select id="renew-@type.DepartmentCertificationTypeId" name="AutoRenewMode" class="form-control">
+                                @foreach (LmsAutoRenewModes mode in Enum.GetValues(typeof(LmsAutoRenewModes)))
+                                {
+                                    if (mode != LmsAutoRenewModes.Off && !canRenew) { continue; }
+                                    <option value="@((int)mode)" selected="@(rule?.AutoRenewMode == (int)mode)">@localizer["Prg.AutoRenew." + mode]</option>
+                                }
+                            </select>
+                            @if (!canRenew) {<span class="help-block">@localizer["lms_program_auto_renew_needs_hours"]</span>}
+                        </div>
+                        <div class="form-group">
+                            <label for="lead-@type.DepartmentCertificationTypeId">@localizer["Prg.AlertLeadDays"]</label>
+                            <input id="lead-@type.DepartmentCertificationTypeId" name="AlertLeadDays" class="form-control" maxlength="100" value="@rule?.AlertLeadDaysCsv" placeholder="30,7" />
+                        </div>
+                    </div>
+                    <div class="rgw-builder-toggles">
+                        <label class="checkbox-inline"><input type="checkbox" name="AlertOnCompletion" value="true" checked="@(rule?.AlertOnCompletion == true)" /> @localizer["Prg.AlertOnCompletion"]</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="AlertOnRenewal" value="true" checked="@(rule?.AlertOnRenewal == true)" /> @localizer["Prg.AlertOnRenewal"]</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="AlertOnExpired" value="true" checked="@(rule?.AlertOnExpired == true)" /> @localizer["Prg.AlertOnExpired"]</label>
+                    </div>
+                    <div class="rgw-builder-toggles">
+                        <label class="checkbox-inline"><input type="checkbox" name="NotifySupervisors" value="true" checked="@(rule?.NotifySupervisors == true)" /> @localizer["Prg.NotifySupervisors"]</label>
+                        <label class="checkbox-inline"><input type="checkbox" name="NotifyAdmins" value="true" checked="@(rule?.NotifyAdmins == true)" /> @localizer["Prg.NotifyAdmins"]</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="named-@type.DepartmentCertificationTypeId">@localizer["Prg.NamedRecipients"]</label>
+                        <select id="named-@type.DepartmentCertificationTypeId" name="Named" multiple="multiple" class="form-control" size="4">
+                            @foreach (var member in Model.Members)
+                            {
+                                <option value="@member.Key" selected="@named.Contains(member.Key)">@member.Value</option>
+                            }
+                        </select>
+                    </div>
+                    @if (Model.CanAuthor)
+                    {
+                        <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Prg.Save"]</button>
+                    }
+                </form>
+                @if (rule != null)
+                {
+                    <form method="post" asp-controller="LmsPrograms" asp-action="DeleteCycleRule" asp-route-area="User" class="m-t-xs">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@rule.LmsCertificationCycleRuleId" />
+                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Prg.RemoveRule"]</button>
+                    </form>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

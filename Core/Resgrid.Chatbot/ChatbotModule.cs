@@ -77,6 +77,10 @@ namespace Resgrid.Chatbot
 				.As<IChatbotConversationalFallback>()
 				.InstancePerLifetimeScope();
 
+			// K1: a question no intent matched goes to the department's knowledge answers first (when it has Ai.Knowledge), then to the
+			// conversational fallback above. Admin Assist keeps its own routing.
+			builder.RegisterDecorator<KnowledgeChatbotFallback, IChatbotConversationalFallback>();
+
 			builder.RegisterType<ChatbotRateLimiter>()
 				.As<IChatbotRateLimiter>()
 				.SingleInstance();

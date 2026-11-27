@@ -4,6 +4,7 @@
 @using Resgrid.Web.Helpers
 @using Microsoft.Extensions.Localization
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolsLocalizer
 @model Resgrid.Web.Areas.User.Models.Dispatch.CallExportView
 @{
     Layout = null;
@@ -557,6 +558,57 @@
                 }
             </div>
         </div>
+        @{
+            // Protocols P4: each protocol's case as recorded on the call (the print/export section).
+            var protocolCases = (Model.Call.Protocols ?? new List<CallProtocol>()).Where(p => p != null && !p.IsRemoved)
+                .Select(p => new { Row = p, Case = CallProtocolCase.Parse(p.CaseJson) }).Where(p => p.Case != null).ToList();
+        }
+        @if (protocolCases.Any())
+        {
+        <div class="row" style="page-break-before: auto;">
+            <div class="col-xs-12">
+                <h3>@protocolsLocalizer["CaseExportSection"]</h3>
+                @foreach (var item in protocolCases)
+                {
+                    <h4>@item.Case.ProtocolCode @item.Case.ProtocolName</h4>
+                    <p>
+                        <strong>@protocolsLocalizer["GraphLabelDeterminant"]:</strong> @(item.Case.Determinant ?? "-")
+                        @if (item.Case.Overridden)
+                        {
+                            <span>(@string.Format(protocolsLocalizer["CaseOverrideFrom"].Value, item.Case.ComputedDeterminant ?? "-", item.Case.OverrideReason))</span>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(item.Case.SuggestedPriorityName))
+                        {
+                            <span> · <strong>@protocolsLocalizer["GraphLabelPriority"]:</strong> @item.Case.SuggestedPriorityName</span>
+                        }
+                        @if (item.Case.Source == (int)CallProtocolSources.Ai)
+                        {
+                            <span> · @protocolsLocalizer["CaseSourceAi"]</span>
+                        }
+                    </p>
+                    <table class="table table-bordered table-condensed">
+                        <tbody>
+                            @foreach (var step in item.Case.Steps.Where(s => s.Kind != (int)ProtocolDecisionNodeKinds.Outcome))
+                            {
+                                <tr>
+                                    <td>@(step.Kind == (int)ProtocolDecisionNodeKinds.Instruction ? protocolsLocalizer["GraphLabelInstruction"].Value : step.Text)</td>
+                                    <td>@(step.Kind == (int)ProtocolDecisionNodeKinds.Instruction ? step.Text : step.Answer)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    @if (!string.IsNullOrWhiteSpace(item.Case.PostDispatch))
+                    {
+                        <p><strong>@protocolsLocalizer["GraphLabelPostDispatch"]:</strong> @item.Case.PostDispatch</p>
+                    }
+                    @foreach (var message in item.Case.CallerMessages)
+                    {
+                        <p class="small">@protocolsLocalizer["CaseCallerTexts"]: @message.SentOn.ToString("u") · @message.Text</p>
+                    }
+                }
+            </div>
+        </div>
+        }
         @if (Model.Call.CheckInTimersEnabled && Model.TimerConfigs != null && Model.TimerConfigs.Any())
         {
         <div class="row" style="page-break-before: auto;">

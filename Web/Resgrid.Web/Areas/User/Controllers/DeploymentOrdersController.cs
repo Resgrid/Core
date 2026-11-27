@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Localization;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.Records;
@@ -36,10 +37,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentGroupsService _groups;
 		private readonly IUnitsService _units;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> _localizer;
+		private readonly IRecordDeploymentPartnerService _partners;
 
 		public DeploymentOrdersController(IRecordDeploymentsService deployments, IDeploymentService operations, IFeatureToggleService flags, IRecordsCutoverService cutover, IDepartmentsService departments, IDepartmentGroupsService groups, IUnitsService units,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer, IRecordDeploymentPartnerService partners)
 		{
+			_partners = partners;
 			_deployments = deployments;
 			_operations = operations;
 			_flags = flags;
@@ -249,12 +252,52 @@ namespace Resgrid.Web.Areas.User.Controllers
 			catch (UnauthorizedAccessException) { return Forbid(); }
 		}
 
+		/// <summary>Round 10 A3: names (or clears) the linked partner department the order is filled for; accepted fills then ask it to accept them (L2).</summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> SetPartner(string id, int? departmentLinkId, CancellationToken cancellationToken)
+		{
+			var error = await _partners.SetPartnerAsync(DepartmentId, UserId, id, departmentLinkId, cancellationToken);
+			if (error == RecordDeploymentPartnerErrors.NotFound) return NotFound();
+			if (error == RecordDeploymentPartnerErrors.NotAuthorized) return Forbid();
+			if (error == RecordDeploymentPartnerErrors.None) TempData["RecordsMessage"] = _localizer["DeploymentPartnerSaved"].Value;
+			else TempData["RecordsError"] = _localizer["DeploymentPartnerError" + error].Value;
+			return RedirectToAction("Details", new { id });
+		}
+
+		/// <summary>Round 10 A3: asks the partner again for an accepted fill whose earlier request was declined or lapsed.</summary>
+		[HttpPost, ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Record_Create)]
+		public async Task<IActionResult> RequestPartner(string id, string fillId, CancellationToken cancellationToken)
+		{
+			RecordDeploymentAggregate aggregate;
+			try { aggregate = await _deployments.GetAsync(DepartmentId, UserId, id); }
+			catch (UnauthorizedAccessException) { return Forbid(); }
+			if (aggregate == null || !aggregate.Fills.Any(f => f.RmsExternalOrderFillId == fillId) || !ClaimsAuthorizationHelper.CanCreateRecord()) return NotFound();
+			var fill = await _partners.RequestAsync(DepartmentId, fillId, UserId, cancellationToken);
+			if (fill?.PartnerSignStatus == (int)RmsDeploymentPartnerSignStatuses.Requested) TempData["RecordsMessage"] = _localizer["DeploymentPartnerRequested"].Value;
+			else TempData["RecordsError"] = _localizer["DeploymentPartnerErrorNotLinked"].Value;
+			return RedirectToAction("Details", new { id });
+		}
+
 		private async Task<RecordDeploymentDetailsView> BuildDetailsAsync(string id)
 		{
 			RecordDeploymentAggregate aggregate;
 			try { aggregate = await _deployments.GetAsync(DepartmentId, UserId, id); }
 			catch (UnauthorizedAccessException) { return null; }
 			if (aggregate == null) return null;
+			// The partner's decision is read from its signature request (signed, declined, expired or voided since the last look).
+			foreach (var fill in aggregate.Fills.Where(f => f.PartnerSignStatus == (int)RmsDeploymentPartnerSignStatuses.Requested).ToList())
+				await _partners.RefreshAsync(fill);
+			var partnerLinks = new List<SelectListItem>();
+			foreach (var link in await _partners.GetPartnerLinksAsync(DepartmentId) ?? new List<DepartmentLink>())
+			{
+				var other = DepartmentLinkSharing.GetOtherDepartmentId(link, DepartmentId) ?? 0;
+				var name = other > 0 ? (await _departments.GetDepartmentByIdAsync(other, false))?.Name : null;
+				if (!string.IsNullOrWhiteSpace(name))
+					partnerLinks.Add(new SelectListItem { Value = link.DepartmentLinkId.ToString(), Text = name, Selected = aggregate.Order.PartnerDepartmentLinkId == link.DepartmentLinkId });
+			}
+			var partnerName = aggregate.Order.PartnerDepartmentId.HasValue ? (await _departments.GetDepartmentByIdAsync(aggregate.Order.PartnerDepartmentId.Value, false))?.Name : null;
 			// Existing fills are labelled from every member's name; the new-fill picker offers active members only.
 			var names = await _departments.GetAllPersonnelNamesForDepartmentAsync(DepartmentId) ?? new List<PersonName>();
 			var selectable = await _departments.GetSelectablePersonnelNamesAsync(DepartmentId) ?? new List<PersonName>();
@@ -266,7 +309,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ProvenanceStatement = _localizer["DeploymentsIntro"].Value,
 				OperationalDeploymentId = (await _operations.GetDeploymentByExternalOrderIdAsync(id, DepartmentId))?.DeploymentId,
 				Personnel = selectable.OrderBy(n => n.Name).Select(n => new SelectListItem { Value = n.UserId, Text = n.Name }).ToList(),
-				AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList()
+				AvailableUnits = units.OrderBy(u => u.Name).Select(u => new SelectListItem { Value = u.UnitId.ToString(), Text = u.Name }).ToList(),
+				PartnerLinks = partnerLinks.OrderBy(l => l.Text).ToList(),
+				PartnerName = partnerName
 			};
 		}
 

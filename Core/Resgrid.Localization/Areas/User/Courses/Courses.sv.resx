@@ -1,0 +1,2381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Academy.CategoryDescription" xml:space="preserve">
+    <value>Lektioner från Resgrid Akademi (ingen vidareutbildningspoäng).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Academy.CategoryName" xml:space="preserve">
+    <value>Systemutbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyBadge" xml:space="preserve">
+    <value>Akademi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyCompletedTile" xml:space="preserve">
+    <value>Slutförda av dig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyIntro" xml:space="preserve">
+    <value>Korta lektioner om alla delar av Resgrid, kostnadsfria för varje organisation. Varje lektion har en snabb kontroll och räknas i ditt utbildningsintyg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyLessonsHeader" xml:space="preserve">
+    <value>Lektioner och genomgångar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyLessonsTile" xml:space="preserve">
+    <value>Tillgängliga lektioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademySiteLink" xml:space="preserve">
+    <value>Öppna academy.resgrid.com</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyTitle" xml:space="preserve">
+    <value>Resgrid Akademi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Åtgärder</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddLessonLabel" xml:space="preserve">
+    <value>Lägg till en lektion:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddModuleButton" xml:space="preserve">
+    <value>Lägg till modul</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Att skapa och tilldela kurser kräver LMS-tillägget. Resgrid Akademi är kostnadsfri för alla.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddOwnerButton" xml:space="preserve">
+    <value>Lägg till ansvarig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiCaptionsNote" xml:space="preserve">
+    <value>Automatisk textning kommer med Enhanced AI; ladda tills vidare upp en WebVTT-fil.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnswerKeyCopy" xml:space="preserve">
+    <value>Exemplar med facit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnswersHiddenNote" xml:space="preserve">
+    <value>Svaren på den här bedömningen visas inte efter ett försök.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalHeader" xml:space="preserve">
+    <value>Godkänn den här versionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalRoundFormat" xml:space="preserve">
+    <value>Omgång {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Godkännanden och signaturer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Godkänd och signerad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveSignButton" xml:space="preserve">
+    <value>Godkänn och signera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveStepUpHelp" xml:space="preserve">
+    <value>Du bekräftar din identitet igen före signeringen; signaturen gäller exakt den här versionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssessmentHelp" xml:space="preserve">
+    <value>Frågorna dras och rättas på servern; facit når aldrig webbläsaren eller apparna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssessmentPassed" xml:space="preserve">
+    <value>Du har klarat den här bedömningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssessmentTitle" xml:space="preserve">
+    <value>Bedömning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignButton" xml:space="preserve">
+    <value>Tilldela</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedMessage" xml:space="preserve">
+    <value>Tilldelad till {0} medlemmar ({1} hade den redan, {2} kunde inte tilldelas).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignHeader" xml:space="preserve">
+    <value>Tilldela kursen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignLessonHeader" xml:space="preserve">
+    <value>Tilldela lektionen ”{0}”</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignPathButton" xml:space="preserve">
+    <value>Tilldela väg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignPathHeader" xml:space="preserve">
+    <value>Tilldela rollvägen ”{0}”</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Tilldela till</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Tillåtna försök (0 = obegränsat)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttemptsAllowedFormat" xml:space="preserve">
+    <value>{0} försök tillåtna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttemptsTile" xml:space="preserve">
+    <value>Avslutade försök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttemptsUnlimited" xml:space="preserve">
+    <value>Obegränsat antal försök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Be deltagaren bekräfta att hen gör den själv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>Jag gör den här bedömningen själv.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceCurrentFormat" xml:space="preserve">
+    <value>{0} målgruppsregler är sparade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceHeader" xml:space="preserve">
+    <value>Vem som ser den i katalogen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Välj ingen för hela organisationen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableOfflineLabel" xml:space="preserve">
+    <value>Tillgänglig offline (Omni får spara en kopia per enhet)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AverageRatingFormat" xml:space="preserve">
+    <value>Medelbetyg: {0} av 5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AwaitingGradeBadge" xml:space="preserve">
+    <value>Väntar på bedömning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToAcademy" xml:space="preserve">
+    <value>Tillbaka till akademin</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToCourse" xml:space="preserve">
+    <value>Tillbaka till kursen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToCourseDetail" xml:space="preserve">
+    <value>Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BankLabel" xml:space="preserve">
+    <value>Frågebank</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BanksIntro" xml:space="preserve">
+    <value>Frågepooler som dras slumpmässigt för varje försök. Delade banker är öppna för alla kursförfattare, privata bara för ägaren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BanksTitle" xml:space="preserve">
+    <value>Frågebanker</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BrowseAcademyLink" xml:space="preserve">
+    <value>Bläddra i Resgrid Academy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BuilderTitle" xml:space="preserve">
+    <value>Kursbyggare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Avbryt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaptionsFileLabel" xml:space="preserve">
+    <value>WebVTT-fil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaptionsLabelLabel" xml:space="preserve">
+    <value>Textningens etikett</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaptionsLocaleLabel" xml:space="preserve">
+    <value>Textningsspråk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CatalogFieldsHeader" xml:space="preserve">
+    <value>Kursuppgifter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Kurser du kan gå med i</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Utbildningskategori</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CeDisclaimer" xml:space="preserve">
+    <value>Resgrid ackrediterar inte vidareutbildning: leverantör och nummer sparas som du anger dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CeNumberLabel" xml:space="preserve">
+    <value>Kursnummer för vidareutbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>Leverantör av vidareutbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificateTemplateLabel" xml:space="preserve">
+    <value>Certifikatmall</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Vad som ändrats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseAllHelp" xml:space="preserve">
+    <value>Välj alla som stämmer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseMember" xml:space="preserve">
+    <value>Välj en medlem…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Välj…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Kurskod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Kommentar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedBadge" xml:space="preserve">
+    <value>Klar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Slutförd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedHeader" xml:space="preserve">
+    <value>Slutförda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedOfFormat" xml:space="preserve">
+    <value>{0} av {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentHelp" xml:space="preserve">
+    <value>Formaterad text (HTML). Den rensas när den sparas; inbäddningar från YouTube, Vimeo och Google Docs är tillåtna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentLabel" xml:space="preserve">
+    <value>Lektionens innehåll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CooldownFormat" xml:space="preserve">
+    <value>Vänta {0} h mellan försök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CooldownLabel" xml:space="preserve">
+    <value>Timmar mellan försök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>rätt svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Rätt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectOrderLabel" xml:space="preserve">
+    <value>Rätt ordning:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseColumn" xml:space="preserve">
+    <value>Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseCompletedMessage" xml:space="preserve">
+    <value>Kursen är slutförd. Den finns i ditt utbildningsintyg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CoursesHeader" xml:space="preserve">
+    <value>Kurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateBankButton" xml:space="preserve">
+    <value>Skapa bank</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateCourseButton" xml:space="preserve">
+    <value>Skapa kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewEndedMessage" xml:space="preserve">
+    <value>Den här gruppvisningen har avslutats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewQrAlt" xml:space="preserve">
+    <value>Kod för gruppvisning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewQrRotates" xml:space="preserve">
+    <value>Koden byts var 30:e sekund, så ett foto av den slutar fungera.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewScanConfirm" xml:space="preserve">
+    <value>Markera dig som närvarande vid den här gruppvisningen? Lektionen som visas räknas som sedd; därefter gör du eventuellt quiz i din egen telefon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewScanInstruction" xml:space="preserve">
+    <value>Skanna koden med din egen telefon för att markeras som närvarande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewViewingTitle" xml:space="preserve">
+    <value>Gruppvisning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DateLine" xml:space="preserve">
+    <value>Datum:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decision.Approved" xml:space="preserve">
+    <value>godkänt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decision.Pending" xml:space="preserve">
+    <value>väntar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decision.Rejected" xml:space="preserve">
+    <value>återsänt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decision.Withdrawn" xml:space="preserve">
+    <value>tillbakadraget</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Radera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Raderat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteLessonConfirm" xml:space="preserve">
+    <value>Ta bort lektionen?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteModuleConfirm" xml:space="preserve">
+    <value>Ta bort modulen och dess lektioner?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DifficultyColumn" xml:space="preserve">
+    <value>Svårighet (p)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DifficultyHelp" xml:space="preserve">
+    <value>Andel rätta svar: högre är lättare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscardButton" xml:space="preserve">
+    <value>Kasta utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscardConfirm" xml:space="preserve">
+    <value>Kasta utkastet? Det har aldrig skickats in, så inget sparas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscardedMessage" xml:space="preserve">
+    <value>Utkastet kastades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscriminationColumn" xml:space="preserve">
+    <value>Diskriminering (D)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscriminationHelp" xml:space="preserve">
+    <value>Andel rätt bland de bästa 27 % av försöken minus de sämsta 27 %: under 0,2 är värt en titt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentNameLabel" xml:space="preserve">
+    <value>Dokumentnamn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentUrlLabel" xml:space="preserve">
+    <value>Länk till dokumentet (https)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawCountLabel" xml:space="preserve">
+    <value>Frågor per försök (0 = alla)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawTagsLabel" xml:space="preserve">
+    <value>Bara frågor med taggen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Förfaller</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Valfritt. Slutet av den dagen i organisationens tidszon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>Förfallodatum</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueFormat" xml:space="preserve">
+    <value>Förfaller {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Redigera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Redigera utkastet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditQuestionHeader" xml:space="preserve">
+    <value>Redigera fråga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndCrewViewingButton" xml:space="preserve">
+    <value>Avsluta visningen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Anmäl dig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrolledColumn" xml:space="preserve">
+    <value>Anmälda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Du är anmäld.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentsHeader" xml:space="preserve">
+    <value>Anmälningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentStatus.Completed" xml:space="preserve">
+    <value>Slutförd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentStatus.InProgress" xml:space="preserve">
+    <value>Pågår</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentStatus.NotStarted" xml:space="preserve">
+    <value>Inte påbörjad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentStatus.Withdrawn" xml:space="preserve">
+    <value>Borttagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Det här kräver LMS-tillägget.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.AlreadySubmitted" xml:space="preserve">
+    <value>Detta har redan lämnats in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.AttemptLimitReached" xml:space="preserve">
+    <value>Du har använt alla tillåtna försök.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.CodeExpired" xml:space="preserve">
+    <value>Koden har ändrats. Skanna koden på skärmen igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.CooldownActive" xml:space="preserve">
+    <value>Vänta innan du försöker igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.FileTooLarge" xml:space="preserve">
+    <value>Filen är för stor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Viss information saknas eller är ogiltig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.LapseWindowEnded" xml:space="preserve">
+    <value>LMS-tillägget har upphört och tiden för att slutföra kursen har gått ut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.LessonLocked" xml:space="preserve">
+    <value>Slutför de tidigare lektionerna först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.MediaUnavailable" xml:space="preserve">
+    <value>Videolagringen är inte tillgänglig just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Klart.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotAuthorized" xml:space="preserve">
+    <value>Du har inte behörighet att göra det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotDraft" xml:space="preserve">
+    <value>Bara ett utkast kan ändras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotEntitled" xml:space="preserve">
+    <value>Lektionen gäller en modul eller ett tillägg som din organisation inte har.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotFound" xml:space="preserve">
+    <value>Objektet hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.RequirementNotMet" xml:space="preserve">
+    <value>Det här steget är inte klart än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.ResponseRequired" xml:space="preserve">
+    <value>Svara på uppgiften (eller bifoga den begärda filen) för att slutföra lektionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.SeatTimeNotMet" xml:space="preserve">
+    <value>Ägna lite mer tid åt lektionen innan du slutför den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.StaleCopy" xml:space="preserve">
+    <value>Någon annan har ändrat detta sedan du öppnade det. Ladda om och försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.TimeExpired" xml:space="preserve">
+    <value>Tiden för försöket har tagit slut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.UnsupportedFile" xml:space="preserve">
+    <value>Den filtypen accepteras inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EveryoneOption" xml:space="preserve">
+    <value>Alla i organisationen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiredBadge" xml:space="preserve">
+    <value>Tiden tog slut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Förklaring (visas efter försöket; modellsvar för kortsvar)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailedBadge" xml:space="preserve">
+    <value>Ej godkänd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FileColumn" xml:space="preserve">
+    <value>Fil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FileRequestHelp" xml:space="preserve">
+    <value>PDF, bild, text, Word eller Excel, upp till 10 MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FileRequestLabel" xml:space="preserve">
+    <value>Filbegäran (valfri)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FingerprintFormat" xml:space="preserve">
+    <value>fingeravtryck {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FreeResponseLabel" xml:space="preserve">
+    <value>Uppgift med fritt svar (valfri)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GradedMessage" xml:space="preserve">
+    <value>Bedömningen sparades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraderNotesLabel" xml:space="preserve">
+    <value>Bedömarens anteckningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GradingEmpty" xml:space="preserve">
+    <value>Inget väntar på bedömning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GradingIntro" xml:space="preserve">
+    <value>Kortsvar som väntar på bedömning. Ingen bedömer sitt eget försök.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GradingTitle" xml:space="preserve">
+    <value>Bedömningskö</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupsLabel" xml:space="preserve">
+    <value>Grupper</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HostedVideoLabel" xml:space="preserve">
+    <value>Uppladdad video</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursFormat" xml:space="preserve">
+    <value>{0} timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Tillgodoräknade timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImageUrlLabel" xml:space="preserve">
+    <value>Bildlänk (https, valfri)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IncludedTile" xml:space="preserve">
+    <value>Ingår</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IncorrectLabel" xml:space="preserve">
+    <value>Fel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InForceFormat" xml:space="preserve">
+    <value>Version {0} gäller</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InProgressBadge" xml:space="preserve">
+    <value>Pågår</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>Tilldelade och pågående</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssuesCertificationLabel" xml:space="preserve">
+    <value>Slutförande utfärdar eller förnyar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAnalysisFootnote" xml:space="preserve">
+    <value>Diskriminering kräver minst 10 avslutade försök. Försök som väntar på bedömning räknas inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAnalysisIntro" xml:space="preserve">
+    <value>Hur varje fråga fungerade i avslutade försök.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAnalysisTitle" xml:space="preserve">
+    <value>Uppgiftsanalys</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Assessment" xml:space="preserve">
+    <value>Bedömning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Blocks" xml:space="preserve">
+    <value>Läsning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Cmi5" xml:space="preserve">
+    <value>cmi5-paket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Document" xml:space="preserve">
+    <value>Dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.LiveSession" xml:space="preserve">
+    <value>Direktsession</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.ProtocolVersion" xml:space="preserve">
+    <value>Protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Scorm" xml:space="preserve">
+    <value>SCORM-paket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Survey" xml:space="preserve">
+    <value>Kursutvärdering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Video" xml:space="preserve">
+    <value>Videolektion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>LMS-tillägget har upphört: kurser och register kan fortfarande läsas, tilldelade kurser är öppna till förfallodagen (eller 30 dagar), lagrad video är skrivskyddad i 90 dagar och nya kurser eller tilldelningar kräver tillägget igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LengthColumn" xml:space="preserve">
+    <value>Längd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonBadge" xml:space="preserve">
+    <value>Lektion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonColumn" xml:space="preserve">
+    <value>Lektion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonCompletedMessage" xml:space="preserve">
+    <value>Lektionen är klar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonDoneLabel" xml:space="preserve">
+    <value>Du har slutfört den här lektionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Din organisations kurser: skapa, godkänn, publicera, tilldela och följ upp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Kursbibliotek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.AlreadyDecided" xml:space="preserve">
+    <value>Steget är redan avgjort, eller så har du redan godkänt den här omgången.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.ArtifactChanged" xml:space="preserve">
+    <value>Versionen ändrades efter att den skickades in eller signerades; skicka in den igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.ChangeSummaryRequired" xml:space="preserve">
+    <value>Beskriv vad som ändrats innan du publicerar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.DraftExists" xml:space="preserve">
+    <value>Ett utkast är redan öppet för kursen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.EffectiveDateInPast" xml:space="preserve">
+    <value>Ikraftträdandedatumet har passerat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.EmptyContent" xml:space="preserve">
+    <value>Lägg till minst en lektion innan du skickar in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.InvalidInput" xml:space="preserve">
+    <value>Viss information saknas eller är ogiltig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.None" xml:space="preserve">
+    <value>Klart.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotApproved" xml:space="preserve">
+    <value>Bara en godkänd version kan publiceras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotAuthorized" xml:space="preserve">
+    <value>Du har inte behörighet att göra det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotDraft" xml:space="preserve">
+    <value>Bara ett utkast kan skickas in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotFound" xml:space="preserve">
+    <value>Versionen hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotInReview" xml:space="preserve">
+    <value>Den här versionen väntar inte på godkännande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotPublished" xml:space="preserve">
+    <value>Inget är publicerat än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.OpenComments" xml:space="preserve">
+    <value>Lös de öppna granskningskommentarerna först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.PasskeyRequired" xml:space="preserve">
+    <value>Din organisation kräver en nyckel för den här signaturen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.RetentionProtected" xml:space="preserve">
+    <value>En version som skickats in sparas och kan inte kastas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.SignatureRequired" xml:space="preserve">
+    <value>Bekräfta din identitet för att signera godkännandet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.StaleCopy" xml:space="preserve">
+    <value>Någon annan har ändrat detta sedan du öppnade det. Ladda om och försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockedBadge" xml:space="preserve">
+    <value>låst tills de tidigare lektionerna är klara</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MajorPolicyLabel" xml:space="preserve">
+    <value>Vid en större version</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Större version: välj vad som händer med dem som slutfört den</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MarkCompleteButton" xml:space="preserve">
+    <value>Markera som klar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MarkPresentButton" xml:space="preserve">
+    <value>Jag är här</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaNotConfigured" xml:space="preserve">
+    <value>Videolagring är inte konfigurerad i den här installationen, så videor kan inte laddas upp. Länkar till YouTube och Vimeo fungerar fortfarande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Archived" xml:space="preserve">
+    <value>Arkiverad (tillägget har upphört)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Failed" xml:space="preserve">
+    <value>Kunde inte bearbetas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Queued" xml:space="preserve">
+    <value>Väntar på bearbetning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Ready" xml:space="preserve">
+    <value>Klar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Transcoding" xml:space="preserve">
+    <value>Bearbetas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Uploading" xml:space="preserve">
+    <value>Laddas upp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Medlemmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinimumSeatLabel" xml:space="preserve">
+    <value>Minsta tid på lektionen (sekunder)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Mindre version: slutföranden står kvar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} minuter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModelAnswerLabel" xml:space="preserve">
+    <value>Modellsvar:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleLabel" xml:space="preserve">
+    <value>Modul</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleNumberFormat" xml:space="preserve">
+    <value>Modul {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleTitleLabel" xml:space="preserve">
+    <value>Modulrubrik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoveUpButton" xml:space="preserve">
+    <value>Flytta upp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCoursesIntro" xml:space="preserve">
+    <value>Kurser som tilldelats dig, Resgrid Academy och kurser du kan gå med i.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCoursesTitle" xml:space="preserve">
+    <value>Mina kurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Benämning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NameLine" xml:space="preserve">
+    <value>Namn:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewBankHeader" xml:space="preserve">
+    <value>Ny frågebank</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewCourseHeader" xml:space="preserve">
+    <value>Ny kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewLessonFormat" xml:space="preserve">
+    <value>Ny lektion: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewQuestionHeader" xml:space="preserve">
+    <value>Ny fråga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Påbörja en ny version</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextAttemptFormat" xml:space="preserve">
+    <value>Nästa försök från {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Nästa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextUpLabel" xml:space="preserve">
+    <value>Nästa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoBanks" xml:space="preserve">
+    <value>Inga frågebanker än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Inga kurser än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Ingen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoOpenCourses" xml:space="preserve">
+    <value>Du har inga öppna kurser.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingToPlay" xml:space="preserve">
+    <value>Den här kursen har inga lektioner att visa.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseAssigned" xml:space="preserve">
+    <value>Du har tilldelats kursen "{0}". Öppna den: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseAssigned.Title" xml:space="preserve">
+    <value>Ny kurs tilldelad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseNewVersion" xml:space="preserve">
+    <value>En ny större version ({1}) av kursen "{0}" som du slutfört har publicerats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseNewVersion.Title" xml:space="preserve">
+    <value>Kursen uppdaterad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseReassigned" xml:space="preserve">
+    <value>Kursen "{0}" har en ny större version ({1}) och har tilldelats dig igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseReassigned.Title" xml:space="preserve">
+    <value>Kursen tilldelad igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.InProgressReminder" xml:space="preserve">
+    <value>Du har inte slutfört kursen "{0}". Fortsätt där du slutade: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.InProgressReminder.Title" xml:space="preserve">
+    <value>Kurspåminnelse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotStartedBadge" xml:space="preserve">
+    <value>Inte påbörjad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OfflineCapLabel" xml:space="preserve">
+    <value>Storleksgräns offline (MB)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OfflineExpiryLabel" xml:space="preserve">
+    <value>Offlinekopian sparas i (dagar)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Öppna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Öppna dokumentet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionalBadge" xml:space="preserve">
+    <value>valfri</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionCountsColumn" xml:space="preserve">
+    <value>Valda alternativ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionNumberFormat" xml:space="preserve">
+    <value>Alternativ {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionsHelp" xml:space="preserve">
+    <value>Kryssa i rätt alternativ. För ordning, lista dem i rätt ordning. Sant/falskt använder de två första. Kortsvar behöver inga alternativ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionsLabel" xml:space="preserve">
+    <value>Svarsalternativ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OrderHelp" xml:space="preserve">
+    <value>Sätt posterna i rätt ordning: välj den första, sedan den andra och så vidare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutlineLabel" xml:space="preserve">
+    <value>Kursöversikt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>försenad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverIncludedNote" xml:space="preserve">
+    <value>Lagringen överstiger den inkluderade mängden. Inget debiteras för detta i dag; överväg att ta bort gamla videor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverviewLabel" xml:space="preserve">
+    <value>Översikt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnersHeader" xml:space="preserve">
+    <value>Kursansvariga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PassedBadge" xml:space="preserve">
+    <value>Godkänd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PassMarkFormat" xml:space="preserve">
+    <value>Godkäntgräns {0} %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PassMarkLabel" xml:space="preserve">
+    <value>Godkäntgräns</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PassRateTile" xml:space="preserve">
+    <value>Andel godkända</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathLessonsFormat" xml:space="preserve">
+    <value>{0} lektioner · {1} slutförda av dig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathNobodyAssigned" xml:space="preserve">
+    <value>Ingen har tilldelats den här vägen ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathProgressButton" xml:space="preserve">
+    <value>Framsteg ({0} tilldelade)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathProgressIntro" xml:space="preserve">
+    <value>Varje tilldelad medlems framsteg genom vägens lektioner.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PlaybackSpeedLabel" xml:space="preserve">
+    <value>Uppspelningshastighet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PlayerTitle" xml:space="preserve">
+    <value>Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PointsAwardedFormat" xml:space="preserve">
+    <value>Tilldelade poäng (av {0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PointsLabel" xml:space="preserve">
+    <value>Poäng</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PointsShort" xml:space="preserve">
+    <value>p</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Policy.Nothing" xml:space="preserve">
+    <value>Inget: slutföranden står kvar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Policy.Notify" xml:space="preserve">
+    <value>Meddela dem som slutfört den</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Policy.Reassign" xml:space="preserve">
+    <value>Tilldela den igen till dem som slutfört den</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>Närvarande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PresentMessage" xml:space="preserve">
+    <value>Du är markerad som närvarande. Fortsätt med nästa lektion på din telefon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreTestLabel" xml:space="preserve">
+    <value>Förtest (godkänt slutför kursen)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreTestNote" xml:space="preserve">
+    <value>Förtest: klarar du det är hela kursen slutförd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>Föregående</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintHint" xml:space="preserve">
+    <value>Använd webbläsarens utskriftsfunktion för att skriva ut provet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintKeyButton" xml:space="preserve">
+    <value>Med facit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintTestButton" xml:space="preserve">
+    <value>Utskrivbart prov</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivateBadge" xml:space="preserve">
+    <value>Privat bank</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProgressColumn" xml:space="preserve">
+    <value>Framsteg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProgressHonest" xml:space="preserve">
+    <value>{0} % av de obligatoriska lektionerna är klara</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProgressLabel" xml:space="preserve">
+    <value>Framsteg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolUnavailable" xml:space="preserve">
+    <value>Den här protokollversionen är inte längre tillgänglig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersionFormat" xml:space="preserve">
+    <value>Protokollversion {0}, så som den publicerades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersionHelp" xml:space="preserve">
+    <value>Lektionen visar den här versionen så som den publicerades, även om protokollet ändras senare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersionLabel" xml:space="preserve">
+    <value>Protokollversion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishBeforeAssign" xml:space="preserve">
+    <value>Publicera en version innan du tilldelar kursen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Publicera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedColumn" xml:space="preserve">
+    <value>Publicerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Versionen är publicerad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Publicera den här versionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishHelp" xml:space="preserve">
+    <value>Den som är mitt i kursen behåller den version hen påbörjade; den som inte börjat flyttas till den här.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>Fråga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.MultiChoice" xml:space="preserve">
+    <value>Flera val</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.Ordering" xml:space="preserve">
+    <value>Sätt i ordning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.ShortAnswer" xml:space="preserve">
+    <value>Kortsvar (bedöms manuellt)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.SingleChoice" xml:space="preserve">
+    <value>Ett val</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.TrueFalse" xml:space="preserve">
+    <value>Sant eller falskt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKindLabel" xml:space="preserve">
+    <value>Frågetyp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionNumberFormat" xml:space="preserve">
+    <value>Fråga {0} av {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionsCountFormat" xml:space="preserve">
+    <value>{0} frågor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionTextLabel" xml:space="preserve">
+    <value>Fråga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RandomizeLabel" xml:space="preserve">
+    <value>Blanda svarsordningen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RatingHelp" xml:space="preserve">
+    <value>1 är dåligt, 5 är utmärkt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReassignDaysLabel" xml:space="preserve">
+    <value>Dagar att slutföra vid ny tilldelning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Skicka tillbaka till utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Versionen skickades tillbaka till utkast.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Skäl till återsändning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Ta bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RenameButton" xml:space="preserve">
+    <value>Byt namn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Krävs för att slutföra kursen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiredWatchLabel" xml:space="preserve">
+    <value>Titta på minst (%)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResponsesColumn" xml:space="preserve">
+    <value>Svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResponsesFormat" xml:space="preserve">
+    <value>{0} anonyma svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>Resultat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultTitle" xml:space="preserve">
+    <value>Resultat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResumeAttemptButton" xml:space="preserve">
+    <value>Fortsätt ditt försök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResumeButton" xml:space="preserve">
+    <value>Fortsätt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetakeButton" xml:space="preserve">
+    <value>Försök igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Avveckla</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Avveckla kursen? Den försvinner ur katalogen; redan anmälda medlemmar kan fortfarande slutföra den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetiredBadge" xml:space="preserve">
+    <value>avvecklad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>Kursen avvecklades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetiredQuestionMessage" xml:space="preserve">
+    <value>Frågan avvecklades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetireQuestionConfirm" xml:space="preserve">
+    <value>Avveckla frågan? Försök som drog den behåller sin kopia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Granska</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewQueueHeader" xml:space="preserve">
+    <value>Väntar på godkännande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RightAssign" xml:space="preserve">
+    <value>tilldela</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RightEdit" xml:space="preserve">
+    <value>redigera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RightReport" xml:space="preserve">
+    <value>rapporter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RightsColumn" xml:space="preserve">
+    <value>Rättigheter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RolePathsHeader" xml:space="preserve">
+    <value>Rollvägar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RolePathsIntro" xml:space="preserve">
+    <value>Ordnade listor med akademilektioner för en roll. Att tilldela en väg tilldelar varje lektion i den som din organisation har.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Roller</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Spara</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Sparat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveGradeButton" xml:space="preserve">
+    <value>Spara bedömning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveLessonButton" xml:space="preserve">
+    <value>Spara lektion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>Poäng</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatTimeRequirement" xml:space="preserve">
+    <value>Den här lektionen kräver minst {0} min (du har {1} min).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SelfEnrollLabel" xml:space="preserve">
+    <value>Medlemmar får anmäla sig själva i katalogen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBadge" xml:space="preserve">
+    <value>Delad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBankLabel" xml:space="preserve">
+    <value>Delad med alla kursförfattare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingColumn" xml:space="preserve">
+    <value>Delning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswers.AfterPassing" xml:space="preserve">
+    <value>Facit, när det är godkänt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswers.Always" xml:space="preserve">
+    <value>Facit efter varje försök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswers.CorrectnessOnly" xml:space="preserve">
+    <value>Vilka svar som var rätt, utan facit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswers.Never" xml:space="preserve">
+    <value>Bara poäng</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswersLabel" xml:space="preserve">
+    <value>Visa svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.ArtifactChanged" xml:space="preserve">
+    <value>versionen ändrades efter signeringen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.SubjectMissing" xml:space="preserve">
+    <value>versionen finns inte längre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Valid" xml:space="preserve">
+    <value>stämmer med den här versionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Voided" xml:space="preserve">
+    <value>makulerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SizeColumn" xml:space="preserve">
+    <value>Storlek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StandardOption" xml:space="preserve">
+    <value>Standardmall</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartAssessmentButton" xml:space="preserve">
+    <value>Starta bedömningen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartButton" xml:space="preserve">
+    <value>Börja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartCrewViewingButton" xml:space="preserve">
+    <value>Titta tillsammans (gruppvisning)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Läge</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StorageIntro" xml:space="preserve">
+    <value>Video som lagras för din organisation, jämfört med de 100 GB som LMS-tillägget ingår med.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StorageTitle" xml:space="preserve">
+    <value>Videolagring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitAttemptButton" xml:space="preserve">
+    <value>Lämna in svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitConfirm" xml:space="preserve">
+    <value>Skicka dina svar? Du kan inte ändra dem efteråt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Skicka för godkännande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitSurveyButton" xml:space="preserve">
+    <value>Skicka svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Inlämnad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Versionen skickades för godkännande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Sammanfattning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyAnonymous" xml:space="preserve">
+    <value>Dina svar är anonyma: befäl ser bara summor, från tre svar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyFormatHelp" xml:space="preserve">
+    <value>En per rad: "rating: text", "text: text" eller "choice: text | alternativ | alternativ".</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyQuestionsLabel" xml:space="preserve">
+    <value>Enkätfrågor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyResultsTitle" xml:space="preserve">
+    <value>Kursutvärdering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyThanksMessage" xml:space="preserve">
+    <value>Tack, dina svar sparades anonymt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyTooFew" xml:space="preserve">
+    <value>Resultaten visas från {0} svar, så att inget svar kan spåras till en medlem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Taggar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TestedOutBadge" xml:space="preserve">
+    <value>Godkänd via förtest</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimeLimitFormat" xml:space="preserve">
+    <value>Tidsgräns {0} min</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimeLimitLabel" xml:space="preserve">
+    <value>Tidsgräns (minuter, 0 = ingen)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimeRemainingFormat" xml:space="preserve">
+    <value>{0} min kvar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Rubrik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TooFewAttempts" xml:space="preserve">
+    <value>för få försök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranscriptHeader" xml:space="preserve">
+    <value>Transkription</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranscriptLink" xml:space="preserve">
+    <value>Utbildningsintyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadButton" xml:space="preserve">
+    <value>Ladda upp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadCaptionsButton" xml:space="preserve">
+    <value>Ladda upp textning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Uppladdad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadedMessage" xml:space="preserve">
+    <value>Uppladdat. Videor bearbetas i bakgrunden och spelas när de är klara.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadVideoLabel" xml:space="preserve">
+    <value>Ladda upp en video</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsedTile" xml:space="preserve">
+    <value>Använt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Utgåva</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabelFormat" xml:space="preserve">
+    <value>Version {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionSettingsHeader" xml:space="preserve">
+    <value>Versionsinställningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>Utgåvor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>Godkänd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>Utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>Granskas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>Äldre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>Publicerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>Avvecklad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>Ersatt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoHelp" xml:space="preserve">
+    <value>Länkar till YouTube och Vimeo fungerar överallt. Uppladdad video ingår i LMS-tillägget: den omkodas till HLS och strömmas via signerade länkar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoSource.Embed" xml:space="preserve">
+    <value>YouTube eller Vimeo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoSource.Hosted" xml:space="preserve">
+    <value>Uppladdad (LMS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoSourceLabel" xml:space="preserve">
+    <value>Videokälla</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideosTile" xml:space="preserve">
+    <value>Videor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoUnavailable" xml:space="preserve">
+    <value>Den här videon är inte tillgänglig just nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoUrlLabel" xml:space="preserve">
+    <value>Länk till YouTube eller Vimeo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WalkthroughBadge" xml:space="preserve">
+    <value>Genomgång</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WatchAgainButton" xml:space="preserve">
+    <value>Se igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WatchRequirement" xml:space="preserve">
+    <value>Titta på minst {0} % (du har sett {1} %).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Ta bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Ta bort medlemmen från kursen? Framstegen sparas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawDraftButton" xml:space="preserve">
+    <value>Tillbaka till utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnDraftMessage" xml:space="preserve">
+    <value>Versionen är ett utkast igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Medlemmen togs bort från kursen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourAnswerLabel" xml:space="preserve">
+    <value>ditt svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourAttemptsHeader" xml:space="preserve">
+    <value>Dina försök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidNothingAccepted" xml:space="preserve">
+    <value>Inget godkändes.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidBankNameFormat" xml:space="preserve">
+    <value>Utkast till frågor: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidBankDescription" xml:space="preserve">
+    <value>Frågor som godkänts från utkasthjälpen. Granska dem innan du använder dem i ett prov.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidQuestionsSaved" xml:space="preserve">
+    <value>{0} fråga/frågor har lagts till i banken "{1}".</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidOpenBank" xml:space="preserve">
+    <value>Öppna banken</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidOutlineSaved" xml:space="preserve">
+    <value>{0} modul(er) har lagts till i utkastet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.MicroLearning" xml:space="preserve">
+    <value>Veckans protokollfråga ({0}) är klar. Svara under Protokoll, Mina bekräftelser, Veckans frågor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.MicroLearning.Title" xml:space="preserve">
+    <value>Veckans protokollfråga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.TabsLabel" xml:space="preserve">
+    <value>Delar av kursbiblioteket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersTab" xml:space="preserve">
+    <value>Startkurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTab" xml:space="preserve">
+    <value>Utkast med AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotEntitled" xml:space="preserve">
+    <value>För att skapa utkast till kurser och övningskort krävs Enhanced AI med kunskapssvar och LMS-tillägget.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotAllowed" xml:space="preserve">
+    <value>Du behöver Hantera kurser (eller redigeringsrätt för kursen) och åtkomst till källan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotFound" xml:space="preserve">
+    <value>Källan eller kursen hittades inte eller är inte publicerad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Excluded" xml:space="preserve">
+    <value>Protokollet är markerat ”ingen AI” eller är licensierat innehåll och skickas därför aldrig till en modell.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.KeptLocal" xml:space="preserve">
+    <value>Advanced Data Protection håller avdelningens innehåll lokalt, så inget kan skapas som utkast.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NoContent" xml:space="preserve">
+    <value>Ingen läsbar text hittades i källan (en skannad PDF saknar textlager).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Unconfigured" xml:space="preserve">
+    <value>AI-modellen är inte konfigurerad i det här systemet. Kontakta er Resgrid-operatör.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Unavailable" xml:space="preserve">
+    <value>AI-modellen är inte tillgänglig just nu. Försök igen om några minuter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Busy" xml:space="preserve">
+    <value>AI-modellen är upptagen. Försök igen om en minut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Avdelningens Enhanced AI-kvot för den här månaden är förbrukad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Refused" xml:space="preserve">
+    <value>Utkastet avvisades: inget av det som skrevs kunde kontrolleras mot de citerade avsnitten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Invalid" xml:space="preserve">
+    <value>Begäran var ogiltig. Kontrollera filtypen (PDF, DOCX eller TXT) och storleken.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotSaved" xml:space="preserve">
+    <value>Utkastet kunde inte sparas som en kurs. Inget behölls.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Drafted" xml:space="preserve">
+    <value>Utkastet är klart.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Created" xml:space="preserve">
+    <value>Klart.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterCloned" xml:space="preserve">
+    <value>Startkursen kopierades som utkast: {0} lektioner och {1} frågor. Anpassa den och skicka den sedan för godkännande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Drafted" xml:space="preserve">
+    <value>Kursutkast skapat med {0} moduler, {1} lektioner och {2} frågor. Kontrollera varje lektion mot dess citerade avsnitt och skicka sedan för godkännande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftDropped" xml:space="preserve">
+    <value>{0} utkastdelar utelämnades eftersom de inte citerade något avsnitt eller innehöll ett tal som inte finns i källan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTruncated" xml:space="preserve">
+    <value>Källan var lång, så bara dess första avsnitt användes.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsDropped" xml:space="preserve">
+    <value>{0} utkastkort utelämnades eftersom de innehöll ett tal som inte finns i deras avsnitt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsAccepted" xml:space="preserve">
+    <value>{0} kort har lagts till.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardSaved" xml:space="preserve">
+    <value>Kortet sparades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardReviewed" xml:space="preserve">
+    <value>Kortet kontrollerades mot den gällande versionen och visas igen för deltagarna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardRemoved" xml:space="preserve">
+    <value>Kortet togs bort.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftOverviewNote" xml:space="preserve">
+    <value>Utkast skapat med Enhanced AI från {0}. Kontrollera varje lektion mot avsnittet den citerar innan du skickar in kursen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTag" xml:space="preserve">
+    <value>ai-utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftBankName" xml:space="preserve">
+    <value>{0} – utkast till frågor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftBankDescription" xml:space="preserve">
+    <value>Frågor skapade med Enhanced AI från kursens källa. Granska dem innan du använder dem i ett prov.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CheckModuleTitle" xml:space="preserve">
+    <value>Kontrollera din förståelse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CheckLessonTitle" xml:space="preserve">
+    <value>Kursprov</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.KeyPoints" xml:space="preserve">
+    <value>Nyckelpunkter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FromTheSource" xml:space="preserve">
+    <value>Ur källan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CitedLabel" xml:space="preserve">
+    <value>Källa:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftAttribution" xml:space="preserve">
+    <value>Utkast skapat med Enhanced AI från {0}; innehåll från avdelningens egen källa.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterAttribution" xml:space="preserve">
+    <value>Bygger på Resgrids startkurs ”{0}” (revision {1}). Alla Resgrid-avdelningar får fritt använda och anpassa Resgrids startinnehåll; det ger ingen ackreditering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterBankName" xml:space="preserve">
+    <value>{0} – kontrollfrågor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersTitle" xml:space="preserve">
+    <value>Startkurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersIntro" xml:space="preserve">
+    <value>Kurser skrivna av Resgrid att utgå från. Kopiera en till avdelningen som utkast, anpassa den och publicera den via ert vanliga godkännande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.AuthorNeeded" xml:space="preserve">
+    <value>För att kopiera en startkurs krävs Hantera kurser och ett aktivt LMS-tillägg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersLicence" xml:space="preserve">
+    <value>Startkurserna är Resgrids egna texter på enkelt språk: ingen standardtext och ingen ackreditering. Din kopia behåller källangivelsen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterFacts" xml:space="preserve">
+    <value>{0} moduler · {1} lektioner · {2} timmar · revision {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.LicenceResgridStarter" xml:space="preserve">
+    <value>Resgrids startlicens: fri att använda och anpassa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CloneButton" xml:space="preserve">
+    <value>Kopiera som utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PartnerHeader" xml:space="preserve">
+    <value>Partnerinnehåll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PartnerIntro" xml:space="preserve">
+    <value>Ackrediterad fortbildning stannar hos partnern som har ackrediteringen. Resgrid startar den och registrerar slutförandet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PartnerComing" xml:space="preserve">
+    <value>Kommer med stödet för standarder (LTI, SCORM och cmi5).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.resgrid-onboarding.Title" xml:space="preserve">
+    <value>Kom igång med Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.resgrid-onboarding.Summary" xml:space="preserve">
+    <value>En ny medlems första kurs: konto, status och bemanning, att svara på larm, meddelanden, kalender och utbildning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.incident-safety-basics.Title" xml:space="preserve">
+    <value>Grunderna i säkerhet vid insats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.incident-safety-basics.Summary" xml:space="preserve">
+    <value>Säkerhetsvanor för varje insats: lägesuppfattning, skyddsutrustning, personalkontroll och återhämtning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.hazmat-awareness-outline.Title" xml:space="preserve">
+    <value>Medvetenhet om farliga ämnen (disposition)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.hazmat-awareness-outline.Summary" xml:space="preserve">
+    <value>En disposition att fylla med era rutiner: känna igen, spärra av och hindra tillträde, larma, skydda dig själv.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.driver-evo-basics.Title" xml:space="preserve">
+    <value>Grunderna i att köra utryckningsfordon</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.driver-evo-basics.Summary" xml:space="preserve">
+    <value>Fordonskontroll, utryckningskörning, korsningar och backning med backvakt. Kombinera med en praktisk övning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-ce-lti.Title" xml:space="preserve">
+    <value>Fortbildning från partner (LTI 1.3)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-ce-lti.Summary" xml:space="preserve">
+    <value>Ackrediterade kurser från en innehållspartner som startas från Resgrid; slutföranden förs in i utbildningsregistret.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-packages-scorm.Title" xml:space="preserve">
+    <value>Kurspaket från partner (SCORM / cmi5)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-packages-scorm.Summary" xml:space="preserve">
+    <value>Paket köpta från en partner eller exporterade från ett annat lärsystem, uppspelade i en isolerad spelare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTitle" xml:space="preserve">
+    <value>Skapa ett kursutkast med AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftIntro" xml:space="preserve">
+    <value>Gör om ett publicerat protokoll eller ett rutindokument till ett kursutkast. Varje lektion anger sin källa; inget publiceras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftNeeds" xml:space="preserve">
+    <value>Kursutkast kräver Enhanced AI med kunskapssvar, LMS-tillägget och Hantera kurser.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftHeader" xml:space="preserve">
+    <value>Skapa kursutkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Drafting" xml:space="preserve">
+    <value>Skapar utkast … det kan ta en minut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceLegend" xml:space="preserve">
+    <value>Skapa utkast från</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceProtocol" xml:space="preserve">
+    <value>Ett publicerat protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceDocument" xml:space="preserve">
+    <value>Ett rutindokument (PDF, DOCX eller TXT)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ProtocolLabel" xml:space="preserve">
+    <value>Protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NoProtocols" xml:space="preserve">
+    <value>Inget publicerat protokoll som du skriver kan användas med AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ProtocolHelp" xml:space="preserve">
+    <value>Den gällande versionen används. Protokoll markerade ”ingen AI” och licensierat innehåll visas inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DocumentLabel" xml:space="preserve">
+    <value>Rutindokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DocumentHelp" xml:space="preserve">
+    <value>Upp till {0} MB. Bara texten läses; filen sparas inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.TitleLabel" xml:space="preserve">
+    <value>Kurstitel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.TitleHelp" xml:space="preserve">
+    <value>Lämna tomt för att använda den föreslagna titeln.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.QuestionsLabel" xml:space="preserve">
+    <value>Antal quizfrågor att skapa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftButton" xml:space="preserve">
+    <value>Skapa utkastet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.HowItWorks" xml:space="preserve">
+    <value>Så fungerar utkasten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Draft" xml:space="preserve">
+    <value>Resultatet är ett nytt kursutkast. Du redigerar det och skickar det via det vanliga godkännandet; inget publiceras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Citations" xml:space="preserve">
+    <value>Varje lektion citerar avsnitten den skrevs från och visar deras text som källan skrev den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Numbers" xml:space="preserve">
+    <value>Varje tal som AI skriver måste finnas i de citerade avsnitten; ingen dos eller takt beräknas någonsin.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.NoAi" xml:space="preserve">
+    <value>Protokoll markerade ”ingen AI”, licensierat innehåll och avdelningar med Advanced Data Protection skickas aldrig till en modell.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Logged" xml:space="preserve">
+    <value>Varje utkast loggas med modell och promptversion.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsTitle" xml:space="preserve">
+    <value>Övningskort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsTitleFormat" xml:space="preserve">
+    <value>Övningskort: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsIntro" xml:space="preserve">
+    <value>Övningskort som deltagarna ser i kursspelaren. Korten flaggas för granskning när källan ändras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsActive" xml:space="preserve">
+    <value>Visas för deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsFlagged" xml:space="preserve">
+    <value>Behöver granskas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NoCardSources" xml:space="preserve">
+    <value>Publicera kursen (eller skapa den från ett protokoll) för att skapa övningskort från den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.AcceptCardsButton" xml:space="preserve">
+    <value>Lägg till markerade kort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NothingTicked" xml:space="preserve">
+    <value>Markera minst ett kort att lägga till.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardSourceFormat" xml:space="preserve">
+    <value>Skapade från {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftCardsHeader" xml:space="preserve">
+    <value>Skapa övningskort med AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardSourceLabel" xml:space="preserve">
+    <value>Källa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ThisCourse" xml:space="preserve">
+    <value>Den här kursen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardCountLabel" xml:space="preserve">
+    <value>Kort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftCardsButton" xml:space="preserve">
+    <value>Skapa kort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsRule" xml:space="preserve">
+    <value>Varje kort citerar ett avsnitt, och varje tal på kortet måste finnas i det avsnittet. Övningen bedöms eller registreras aldrig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsHeader" xml:space="preserve">
+    <value>Kort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NoCards" xml:space="preserve">
+    <value>Inga övningskort ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FrontColumn" xml:space="preserve">
+    <value>Framsida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.BackColumn" xml:space="preserve">
+    <value>Baksida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceColumn" xml:space="preserve">
+    <value>Källa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SaveCardButton" xml:space="preserve">
+    <value>Spara kort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardActive" xml:space="preserve">
+    <value>Aktivt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardNeedsReview" xml:space="preserve">
+    <value>Behöver granskas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlagUnavailable" xml:space="preserve">
+    <value>Källan kan inte längre läsas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlagSuperseded" xml:space="preserve">
+    <value>En nyare version av källan gäller.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ReviewCardButton" xml:space="preserve">
+    <value>Markera som granskat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.EditCardButton" xml:space="preserve">
+    <value>Redigera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.RemoveCardConfirm" xml:space="preserve">
+    <value>Ta bort det här kortet?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.RemoveCardButton" xml:space="preserve">
+    <value>Ta bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginAiHeader" xml:space="preserve">
+    <value>Utkast med AI från</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginAiCheck" xml:space="preserve">
+    <value>Kontrollera varje lektion mot avsnittet den citerar innan du skickar kursen för godkännande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginCitationsFormat" xml:space="preserve">
+    <value>Citat för {0} utkastlektioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginStarterHeader" xml:space="preserve">
+    <value>Startkurs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginLicenceFormat" xml:space="preserve">
+    <value>Licens: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeCardFormat" xml:space="preserve">
+    <value>{0} av {1} kort kan du</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeDone" xml:space="preserve">
+    <value>Du kan alla kort för stunden. Kom tillbaka senare eller börja om.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeSource" xml:space="preserve">
+    <value>Ur:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeHeader" xml:space="preserve">
+    <value>Övningskort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeIntro" xml:space="preserve">
+    <value>Bara övning: inget här bedöms eller förs in i ditt utbildningsregister.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeShow" xml:space="preserve">
+    <value>Visa svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeAgain" xml:space="preserve">
+    <value>Igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeKnown" xml:space="preserve">
+    <value>Jag kunde det</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeRestart" xml:space="preserve">
+    <value>Börja om</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsButton" xml:space="preserve">
+    <value>Övningskort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.LtiLink" xml:space="preserve">
+    <value>LTI-verktyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterSuggested" xml:space="preserve">
+    <value>Föreslås för er organisation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotLicensed" xml:space="preserve">
+    <value>Du behöver en LMS-plats för detta. Be din administratör att aktivera LMS åt dig. Akademin och dina utbildningsposter finns kvar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedNotLicensedMessage" xml:space="preserve">
+    <value>{0} av dem har ingen LMS-plats och skrevs inte in; aktivera LMS för dem och tilldela sedan igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

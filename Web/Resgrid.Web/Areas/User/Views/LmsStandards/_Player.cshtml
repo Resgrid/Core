@@ -1,0 +1,79 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsStandards
+@model LmsStandardsPlayerView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsStandards.LmsStandards> localizer
+@*
+    The player of a standards lesson. SCORM / cmi5: the package runs in a sandboxed frame with an opaque origin (no allow-same-origin: it can
+    reach neither Resgrid's pages nor its cookies) from /lms-content/{launch token}/; it reports through the token only. LTI: the tool opens in
+    a new window through the OIDC launch. The lesson completes when its runtime reports it (never by a button).
+*@
+@{
+    var lesson = Model.Lesson;
+    var registration = Model.Registration;
+}
+<div class="lms-standards-player">
+    @if (Model.Completed)
+    {
+        <p class="text-navy"><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["Std.Player.Completed"]</p>
+    }
+    @if (lesson.Kind == (int)LmsLessonKinds.LtiLink)
+    {
+        @if (Model.Error != LmsErrors.None)
+        {
+            <div class="alert alert-warning"><i class="fa fa-plug" aria-hidden="true"></i> @localizer["Std.Error." + Model.Error]</div>
+        }
+        else
+        {
+            <p>@string.Format(localizer["Std.Player.LtiIntro"].Value, Model.Tool?.Name)</p>
+            <a class="btn btn-primary" target="_blank" rel="noopener" asp-controller="LmsStandards" asp-action="Launch" asp-route-area="User" asp-route-id="@Model.EnrollmentId" asp-route-lesson="@lesson.LmsLessonId">
+                <i class="fa fa-external-link" aria-hidden="true"></i> @localizer["Std.Player.LaunchTool"]
+            </a>
+            <p class="help-block">@(Model.Tool?.AllowGradePassback == true ? localizer["Std.Player.LtiScoreHelp"] : localizer["Std.Player.LtiOpenHelp"])</p>
+        }
+    }
+    else if (Model.Error != LmsErrors.None || Model.Launch == null || !Model.Launch.Succeeded)
+    {
+        <div class="alert alert-warning"><i class="fa fa-archive" aria-hidden="true"></i> @localizer["Std.Error." + Model.Error]</div>
+    }
+    else
+    {
+        var launch = Model.Launch;
+        @if (launch.Items.Count > 1)
+        {
+            <nav class="m-b-sm" aria-label="@localizer["Std.Player.Items"]">
+                <ul class="rgw-journey">
+                    @foreach (var item in launch.Items)
+                    {
+                        <li class="@(item.Identifier == launch.Item.Identifier ? "active" : "")">
+                            <a asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@Model.EnrollmentId" asp-route-lesson="@lesson.LmsLessonId" asp-route-item="@item.Identifier"
+                               aria-current="@(item.Identifier == launch.Item.Identifier ? "page" : "false")">@item.Title</a>
+                            @if (launch.SatisfiedItems.Contains(item.Identifier))
+                            {
+                                <span class="text-navy"><i class="fa fa-check" aria-hidden="true"></i><span class="sr-only">@localizer["Std.Player.Done"]</span></span>
+                            }
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+        <div class="embed-responsive embed-responsive-16by9 lms-standards-frame">
+            <iframe class="embed-responsive-item" src="@launch.Url" title="@lesson.Title" sandbox="allow-scripts allow-forms allow-popups allow-modals allow-downloads"
+                    allow="fullscreen; autoplay" allowfullscreen referrerpolicy="no-referrer" loading="eager"></iframe>
+        </div>
+        <p class="help-block m-t-xs"><i class="fa fa-shield" aria-hidden="true"></i> @localizer["Std.Player.Sandboxed"]</p>
+    }
+
+    @if (registration != null)
+    {
+        <dl class="dl-horizontal m-t-sm">
+            <dt>@localizer["Std.Player.Status"]</dt><dd>@(registration.Satisfied ? localizer["Std.Player.Satisfied"] : localizer["Std.Player.NotSatisfied"])</dd>
+            @if (registration.ScorePercent.HasValue)
+            {
+                <dt>@localizer["Std.Player.Score"]</dt><dd>@registration.ScorePercent.Value.ToString("0.##")%</dd>
+            }
+        </dl>
+    }
+    <a class="btn btn-white btn-sm" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@Model.EnrollmentId" asp-route-lesson="@lesson.LmsLessonId">
+        <i class="fa fa-refresh" aria-hidden="true"></i> @localizer["Std.Player.Refresh"]
+    </a>
+</div>

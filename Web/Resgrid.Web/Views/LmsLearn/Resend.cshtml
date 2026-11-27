@@ -1,0 +1,28 @@
+@model Resgrid.Web.Models.LmsLearn.LmsLearnResendModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    Round 7B: the e-mail confirmation link or the invitation sent again. Anonymous and it e-mails something, so it carries the Account/Register
+    reCAPTCHA standard (_Captcha) and the per-address limit; the page says the same thing whatever the address.
+*@
+@{
+    ViewData["Title"] = localizer["Portal.Resend"].Value;
+    var key = ViewData["PortalKey"] as string;
+}
+<div class="rgl-panel" style="max-width: 480px; margin: 0 auto;">
+    <h2><i class="fa fa-envelope" aria-hidden="true"></i> @localizer["Portal.Resend"]</h2>
+    <p class="text-muted">@localizer["Portal.ResendHelp"]</p>
+    <form method="post" action="~/Learn/@key/Resend" data-submit-once>
+        @Html.AntiForgeryToken()
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+        <div class="form-group">
+            <label asp-for="Email">@localizer["Email"]</label>
+            <input asp-for="Email" class="form-control" type="email" autocomplete="email" required />
+        </div>
+        <partial name="_Captcha" model="Model.SiteKey" />
+        <button type="submit" class="btn btn-rgl"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["Portal.ResendSend"]</button>
+    </form>
+</div>
+@section Scripts {
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="~/js/app/public/resgrid.recaptcha-field.js" asp-append-version="true"></script>
+}

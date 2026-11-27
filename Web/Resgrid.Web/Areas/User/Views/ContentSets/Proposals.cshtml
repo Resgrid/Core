@@ -1,0 +1,81 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetProposalsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3: proposals linked departments made to the department's set items (managers answer: taken into the next draft, or declined with
+    a reason), and the proposals the department's members sent upstream with the publishers' answers.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["ProposalsTab"];
+    ViewData["Title"] = text["ProposalsTab"].Value;
+    ViewData["Subtitle"] = text["ProposalsIntro"].Value;
+    ViewData["SetSection"] = "Proposals";
+    var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.CanManage)
+    {
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-inbox" aria-hidden="true"></i> @text["ReceivedHeader"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.Received.Count == 0)
+                {
+                    <p class="text-muted">@text["NoProposals"]</p>
+                }
+                @foreach (var view in Model.Received)
+                {
+                    var proposal = view.Proposal;
+                    <div class="rgw-card" style="margin-bottom: 12px;">
+                        <h4>@view.ItemTitle <small>@view.SetName</small> <span class="label label-default">@text["ProposalStatus" + (ContentSetProposalStatuses)proposal.Status]</span></h4>
+                        <p class="small text-muted">@proposal.SubscriberName · @proposal.AuthorName · @time.Format(proposal.CreatedOn) @(string.IsNullOrEmpty(proposal.Anchor) ? null : "· " + proposal.Anchor)</p>
+                        <p style="white-space: pre-wrap;">@proposal.Body</p>
+                        @if (proposal.Status == (int)ContentSetProposalStatuses.Open)
+                        {
+                            <form method="post" asp-action="Respond" asp-route-area="User">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@proposal.ContentSetProposalId" />
+                                <div class="form-group">
+                                    <label class="control-label" for="response-@proposal.ContentSetProposalId">@text["ResponseLabel"]</label>
+                                    <textarea id="response-@proposal.ContentSetProposalId" name="response" class="form-control" rows="2" maxlength="@ContentSetProposal.BodyMaxLength"></textarea>
+                                </div>
+                                <button type="submit" name="accept" value="true" class="btn btn-xs btn-primary">@text["AcceptProposalButton"]</button>
+                                <button type="submit" name="accept" value="false" class="btn btn-xs btn-white">@text["DeclineProposalButton"]</button>
+                            </form>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(proposal.ResponseBody))
+                        {
+                            <blockquote class="small">@proposal.ResponseBody</blockquote>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @text["SentHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Sent.Count == 0)
+            {
+                <p class="text-muted">@text["NoProposals"]</p>
+            }
+            @foreach (var view in Model.Sent)
+            {
+                var proposal = view.Proposal;
+                <div class="rgw-card" style="margin-bottom: 12px;">
+                    <h4>@view.ItemTitle <small>@view.SetName</small> <span class="label label-default">@text["ProposalStatus" + (ContentSetProposalStatuses)proposal.Status]</span></h4>
+                    <p class="small text-muted">@proposal.AuthorName · @time.Format(proposal.CreatedOn)</p>
+                    <p style="white-space: pre-wrap;">@proposal.Body</p>
+                    @if (!string.IsNullOrWhiteSpace(proposal.ResponseBody))
+                    {
+                        <blockquote class="small">@proposal.ResponseBody</blockquote>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

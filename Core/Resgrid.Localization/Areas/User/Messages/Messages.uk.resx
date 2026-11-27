@@ -179,4 +179,76 @@
   <data name="NotAttending" xml:space="preserve">
     <value>Не відвідаю</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>За сертифікатом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>Нікого за сертифікатом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>Стан сертифіката</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>прострочений</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>спливає протягом указаної кількості днів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>ніколи не отримували</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>Дні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>Додає активних учасників, сертифікат яких відповідає умові, разом з одержувачами, вибраними вище.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>Жоден учасник не відповідає вибраному стану сертифіката.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>Учасники заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>Без заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>Статус у списку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>Записані</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>Присутні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>Відсутні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>У листі очікування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>Додає до одержувачів активних учасників заняття з цим статусом.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>У списку цього заняття немає нікого з таким статусом.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

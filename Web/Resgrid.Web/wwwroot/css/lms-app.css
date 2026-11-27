@@ -1,0 +1,166 @@
+/* Round 10 A8: the in-app lesson launch page (/lms-app/...): no site chrome, full height, safe areas, readable on a phone. */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #f3f3f4;
+    color: #2f4050;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.4;
+}
+
+.rg-lms-app {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    box-sizing: border-box;
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) env(safe-area-inset-bottom, 0) env(safe-area-inset-left, 0);
+}
+
+.rg-lms-app__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 12px;
+    padding: 10px 14px;
+    background: #ffffff;
+    border-bottom: 1px solid #e7eaec;
+}
+
+.rg-lms-app__title {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.rg-lms-app__status {
+    margin: 0;
+    font-size: 14px;
+    color: #676a6c;
+}
+
+.rg-lms-app__items ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 8px 14px;
+    list-style: none;
+    background: #ffffff;
+    border-bottom: 1px solid #e7eaec;
+}
+
+.rg-lms-app__items form {
+    margin: 0;
+}
+
+.rg-lms-app__item {
+    min-height: 40px;
+    padding: 6px 12px;
+    border: 1px solid #d2d6da;
+    border-radius: 4px;
+    background: #ffffff;
+    color: inherit;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.rg-lms-app__item--current {
+    border-color: #1ab394;
+    background: #e8f7f3;
+    font-weight: 600;
+}
+
+.rg-lms-app__done {
+    color: #1a7f66;
+}
+
+.rg-lms-app__frame {
+    flex: 1 1 auto;
+    display: flex;
+    min-height: 60vh;
+    background: #ffffff;
+}
+
+.rg-lms-app__frame iframe {
+    flex: 1 1 auto;
+    width: 100%;
+    min-height: 60vh;
+    border: 0;
+}
+
+.rg-lms-app__lti,
+.rg-lms-app__notice {
+    margin: 16px 14px;
+    padding: 16px;
+    background: #ffffff;
+    border: 1px solid #e7eaec;
+    border-radius: 4px;
+}
+
+.rg-lms-app__lti p,
+.rg-lms-app__notice p {
+    margin: 0 0 12px 0;
+}
+
+.rg-lms-app__button {
+    min-height: 44px;
+    padding: 10px 18px;
+    border: 0;
+    border-radius: 4px;
+    background: #1ab394;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.rg-lms-app__help {
+    font-size: 14px;
+    color: #676a6c;
+}
+
+.rg-lms-app__offline {
+    margin: 0;
+    padding: 10px 14px;
+    background: #f8ac59;
+    color: #2f4050;
+    font-size: 14px;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+@media (prefers-color-scheme: dark) {
+    html, body {
+        background: #1c1f24;
+        color: #e6e6e6;
+    }
+
+    .rg-lms-app__bar,
+    .rg-lms-app__items ul,
+    .rg-lms-app__lti,
+    .rg-lms-app__notice {
+        background: #262a30;
+        border-color: #3a3f46;
+    }
+
+    .rg-lms-app__status,
+    .rg-lms-app__help {
+        color: #b5b9be;
+    }
+
+    .rg-lms-app__item {
+        background: #262a30;
+        border-color: #4a5058;
+    }
+
+    .rg-lms-app__item--current {
+        background: #1d3b34;
+    }
+}

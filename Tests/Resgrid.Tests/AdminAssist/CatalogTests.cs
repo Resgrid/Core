@@ -57,7 +57,10 @@ namespace Resgrid.Tests.AdminAssist
 				typeof(UnitStatusThresholds), typeof(UnitStatusThreshold), typeof(NewCallFieldPolicy), typeof(NewCallFieldRule), typeof(GroupDispatchScopeConfig),
 				typeof(DispatchRecommendationConfig), typeof(RecordsNumberingConfig), typeof(RecordsNumberingFloor), typeof(RecordsNumberingPrefix), typeof(RecordsSearchConfig), typeof(RecordsRetentionPolicy),
 				typeof(RecordsRetentionOverride), typeof(RecordsRetentionPolicyVersion), typeof(RecordsDisclosureConfig), typeof(CallNumberingConfig),
-				typeof(DocumentNumberingConfig), typeof(DocumentNumberPattern), typeof(DepartmentTerminologyConfig), typeof(DepartmentTermOverride), typeof(Resgrid.Model.Onboarding.DepartmentImportConfig) })
+				typeof(DocumentNumberingConfig), typeof(DocumentNumberPattern), typeof(DepartmentTerminologyConfig), typeof(DepartmentTermOverride), typeof(Resgrid.Model.Onboarding.DepartmentImportConfig),
+				typeof(ProtocolLibrarySettings), typeof(ProtocolKindRetention), typeof(TrainingRecordSettings), typeof(WellnessSettings), typeof(KnowledgeSettings), typeof(Resgrid.Model.Lms.LmsProgramSettings), typeof(LearningRequirementSettings), typeof(Resgrid.Model.Lms.LmsSkillSettings),
+				typeof(Resgrid.Model.Lms.LmsCeReportingSettings), typeof(Resgrid.Model.Lms.LmsCeColumnMap), typeof(Resgrid.Model.Lms.LmsCeColumn), typeof(Resgrid.Model.Lms.LmsStandardsSettings),
+				typeof(Resgrid.Model.Security.DepartmentStepUpPolicy), typeof(Resgrid.Model.Security.StepUpAreaSetting) })
 			{
 				var fields = type.GetProperties().Where(p => p.GetCustomAttribute<ProtoBuf.ProtoMemberAttribute>() != null).Select(p => type.Name + "." + p.Name);
 				Assert.That(Catalog.Settings.Where(s => s.Binding.StartsWith(type.Name + ".")).Select(s => s.Binding), Is.EquivalentTo(fields));

@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptCardsButton" xml:space="preserve">
+    <value>الاحتفاظ بالبطاقات المحددة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>الإجراءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackColumn" xml:space="preserve">
+    <value>الإجابة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToProtocol" xml:space="preserve">
+    <value>العودة إلى البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>إلغاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardActive" xml:space="preserve">
+    <value>معروضة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardCountLabel" xml:space="preserve">
+    <value>عدد البطاقات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardNeedsReview" xml:space="preserve">
+    <value>تحتاج إلى مراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardRemoved" xml:space="preserve">
+    <value>تمت إزالة البطاقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardReviewed" xml:space="preserve">
+    <value>تم التحقق من البطاقة مقابل النسخة السارية وعادت للظهور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardSaved" xml:space="preserve">
+    <value>تم حفظ البطاقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardSourceFormat" xml:space="preserve">
+    <value>مصاغة من {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsAccepted" xml:space="preserve">
+    <value>تم حفظ {0} بطاقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsActive" xml:space="preserve">
+    <value>معروضة للأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsDropped" xml:space="preserve">
+    <value>تم استبعاد {0} من البطاقات المصاغة لأنها لا تطابق البروتوكول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsFlagged" xml:space="preserve">
+    <value>تحتاج إلى مراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsHeader" xml:space="preserve">
+    <value>البطاقات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsRule" xml:space="preserve">
+    <value>تستشهد كل بطاقة بقسم واحد من النسخة السارية ولا يجوز أن تستخدم إلا الأرقام المكتوبة فيه. وعند سريان نسخة أحدث، تُخفى البطاقات حتى تراجعها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CitedLabel" xml:space="preserve">
+    <value>المصدر:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>الإجابة الصحيحة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateTrainingButton" xml:space="preserve">
+    <value>إنشاء مسودة التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftAgainButton" xml:space="preserve">
+    <value>إعادة الصياغة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftCardsButton" xml:space="preserve">
+    <value>صياغة البطاقات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftCardsHeader" xml:space="preserve">
+    <value>صياغة بطاقات بالذكاء الاصطناعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTrainingButton" xml:space="preserve">
+    <value>صياغة التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTrainingLink" xml:space="preserve">
+    <value>صياغة تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTranslationButton" xml:space="preserve">
+    <value>صياغة الترجمة بالذكاء الاصطناعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTranslationHelp" xml:space="preserve">
+    <value>يملأ الحقول التي لا تزال بنص المصدر. تبقى الجرعات والروابط والبنية كما في المصدر؛ وأنت تراجع وتحفظ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftedFromFormat" xml:space="preserve">
+    <value>مصاغ من {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Drafting" xml:space="preserve">
+    <value>جارٍ الصياغة بالذكاء الاصطناعي. قد يستغرق ذلك دقيقة...</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditCardButton" xml:space="preserve">
+    <value>تعديل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>الشرح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExplanationNotSavedNote" xml:space="preserve">
+    <value>تساعدك الشروح على مراجعة كل سؤال؛ ويحتفظ اختبار التدريب بالأسئلة والإجابات فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagSuperseded" xml:space="preserve">
+    <value>توجد نسخة أحدث سارية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagUnavailable" xml:space="preserve">
+    <value>لم يعد من الممكن قراءة قسمها</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsButton" xml:space="preserve">
+    <value>بطاقات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsIntro" xml:space="preserve">
+    <value>بطاقات صاغها Enhanced AI من النسخة السارية. يتدرّب عليها الأعضاء الذين يمكنهم قراءة هذا البروتوكول في صفحته؛ ولا يُقيَّم أو يُسجَّل أي شيء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsTitle" xml:space="preserve">
+    <value>بطاقات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsTitleFormat" xml:space="preserve">
+    <value>بطاقات التدريب: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FrontColumn" xml:space="preserve">
+    <value>السؤال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KeyPointsLabel" xml:space="preserve">
+    <value>النقاط الرئيسية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCards" xml:space="preserve">
+    <value>لا توجد بطاقات بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoQuestions" xml:space="preserve">
+    <value>لم تتم صياغة أي أسئلة للاختبار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingTicked" xml:space="preserve">
+    <value>حدّد بطاقة واحدة على الأقل للاحتفاظ بها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.BudgetExhausted" xml:space="preserve">
+    <value>نفدت ميزانية Enhanced AI الشهرية لإدارتك. وتتجدد في بداية الشهر القادم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Busy" xml:space="preserve">
+    <value>الذكاء الاصطناعي مشغول بأعمال أخرى. حاول مرة أخرى بعد دقيقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Excluded" xml:space="preserve">
+    <value>هذا البروتوكول معلَّم بعبارة "بدون ذكاء اصطناعي" أو أنه محتوى مرخّص، لذلك لا يُرسل أبدًا إلى الذكاء الاصطناعي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Invalid" xml:space="preserve">
+    <value>لم يكن هذا الطلب صالحًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.KeptLocal" xml:space="preserve">
+    <value>تستخدم إدارتك Advanced Data Protection، لذا يبقى محتواها محليًا ولا تتوفر مسودات الذكاء الاصطناعي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NoContent" xml:space="preserve">
+    <value>لا يوجد نص للعمل عليه (نسخة فارغة أو مستند ممسوح ضوئيًا)، أو لم يتبقَّ شيء للترجمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotAllowed" xml:space="preserve">
+    <value>يمكن لمؤلفي البروتوكولات والمعتمدين فقط استخدام هذا. وتتطلب مسودة التدريب أيضًا صلاحية إنشاء التدريبات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotDraft" xml:space="preserve">
+    <value>يمكن صياغة مسودة ترجمة لنسخة مقفلة فقط باستخدام الذكاء الاصطناعي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotEntitled" xml:space="preserve">
+    <value>تتطلب بطاقات التدريب ومسودات التدريب ومسودات الترجمة الإضافة Enhanced AI مع تفعيل إجابات المعرفة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotFound" xml:space="preserve">
+    <value>لا يحتوي هذا البروتوكول على نسخة منشورة سارية يمكنك فتحها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotSaved" xml:space="preserve">
+    <value>تعذّر إنشاء التدريب. لم يُحفظ شيء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Refused" xml:space="preserve">
+    <value>لم تجتز مسودة الذكاء الاصطناعي عمليات التحقق (يجب أن يستشهد كل عنصر بالبروتوكول وأن يستخدم أرقامه فقط)، لذا لم يُحفظ شيء. حاول مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Stale" xml:space="preserve">
+    <value>تغيّر البروتوكول منذ كتابة هذه المسودة. أنشئ مسودة جديدة من النسخة السارية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Unavailable" xml:space="preserve">
+    <value>لا يستجيب الذكاء الاصطناعي حاليًا. حاول مرة أخرى بعد بضع دقائق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Unconfigured" xml:space="preserve">
+    <value>لم يتم إعداد الذكاء الاصطناعي لنظامك بعد. اسأل مشغّل النظام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>مرة أخرى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeCardFormat" xml:space="preserve">
+    <value>{0} من {1} معروفة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeDone" xml:space="preserve">
+    <value>أنت تعرف كل البطاقات حاليًا. ابدأ من جديد للتدرّب مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>بطاقات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeIntro" xml:space="preserve">
+    <value>أسئلة قصيرة من هذا البروتوكول. يبقى تقدّمك في هذا المتصفح ولا يُسجَّل أبدًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeKnown" xml:space="preserve">
+    <value>كنت أعرفها</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeRestart" xml:space="preserve">
+    <value>البدء من جديد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeShow" xml:space="preserve">
+    <value>إظهار الإجابة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeSource" xml:space="preserve">
+    <value>من:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionCountLabel" xml:space="preserve">
+    <value>عدد أسئلة الاختبار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionsHeaderFormat" xml:space="preserve">
+    <value>الاختبار ({0} أسئلة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveCardButton" xml:space="preserve">
+    <value>إزالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveCardConfirm" xml:space="preserve">
+    <value>هل تريد إزالة هذه البطاقة؟</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewCardButton" xml:space="preserve">
+    <value>التحقق مقابل النسخة السارية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveCardButton" xml:space="preserve">
+    <value>حفظ البطاقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SectionTextNote" xml:space="preserve">
+    <value>سيقتبس التدريب هنا الأقسام المستشهد بها كما كتبها البروتوكول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceColumn" xml:space="preserve">
+    <value>القسم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>الحالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCitedLabel" xml:space="preserve">
+    <value>المصدر:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCreateNote" xml:space="preserve">
+    <value>يُنشأ التدريب كمسودة: لا يُسند إلى أحد ولا يراه الأعضاء حتى تسنده.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCreatedMessage" xml:space="preserve">
+    <value>تم إنشاء مسودة تدريب من البروتوكول. لم يتم إسنادها بعد: راجعها، ثم أسندها أو استخدمها لاختبار الإقرار بالبروتوكول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftAckNote" xml:space="preserve">
+    <value>يمكن أن يدعم التدريب الذي يُنشأ هنا الإقرار المشروط باختبار لهذا البروتوكول: اختره في إعدادات الإقرار الخاصة بالبروتوكول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftHeader" xml:space="preserve">
+    <value>الصياغة بالذكاء الاصطناعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftIntro" xml:space="preserve">
+    <value>يصوغ Enhanced AI تدريبًا واختبارًا من النسخة السارية. وتراجعه قبل إنشاء أي شيء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftNote" xml:space="preserve">
+    <value>صيغ باستخدام Enhanced AI من {0}. يقتبس كل جزء البروتوكول كما هو مكتوب؛ راجع التدريب قبل إسناده.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftRule" xml:space="preserve">
+    <value>يستشهد كل جزء بالأقسام التي يعلّمها ولا يجوز أن يستخدم إلا الأرقام المكتوبة فيها؛ ويقتبس التدريب المُنشأ تلك الأقسام كما هي، فلا تظهر الجرعات إلا كما يذكرها البروتوكول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftTitle" xml:space="preserve">
+    <value>صياغة تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftTitleFormat" xml:space="preserve">
+    <value>صياغة تدريب: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDropped" xml:space="preserve">
+    <value>تم استبعاد {0} من العناصر المصاغة لأنها لا تطابق البروتوكول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingFromTheProtocol" xml:space="preserve">
+    <value>من البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingKeyPoints" xml:space="preserve">
+    <value>النقاط الرئيسية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingNameLabel" xml:space="preserve">
+    <value>اسم التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingPreviewHeader" xml:space="preserve">
+    <value>مراجعة المسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingTruncated" xml:space="preserve">
+    <value>البروتوكول أطول مما تقرأه مسودة واحدة؛ لذلك استُخدمت أقسامه الأولى فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationDraftedNotice" xml:space="preserve">
+    <value>صاغ الذكاء الاصطناعي {0} حقلًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationDroppedNotice" xml:space="preserve">
+    <value>رُفض {0} من الحقول المصاغة لأن رقمًا أو رابطًا أو تنسيقًا قد تغيّر، وتحتفظ بنصها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationRemainingNotice" xml:space="preserve">
+    <value>لا يزال {0} حقلًا بنص المصدر؛ أعد الصياغة للمتابعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationReviewNotice" xml:space="preserve">
+    <value>راجع النص أدناه واحفظ المسودة: لم تُحفظ بعد ولا تزال تحتاج إلى اعتماد. تبقى الجرعات والروابط والبنية دائمًا كما في المصدر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>النسخة {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

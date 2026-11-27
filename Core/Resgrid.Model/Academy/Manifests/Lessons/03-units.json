@@ -1,0 +1,208 @@
+{
+  "schema": 1,
+  "id": "03-units",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Units",
+  "minutes": 2.4,
+  "walkthrough": false,
+  "audience": [
+    "dispatcher",
+    "administrator",
+    "logistics"
+  ],
+  "visibility": [],
+  "pages": [
+    "Units",
+    "UnitTracking"
+  ],
+  "adminAssist": {
+    "areas": [
+      "units"
+    ],
+    "capabilities": [
+      "units",
+      "unit-types",
+      "hardware-tracking",
+      "new-unit",
+      "unit-staffing"
+    ]
+  },
+  "media": {
+    "video": "media/03-units.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/03-units.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Represent apparatus, crews, and GPS devices",
+    "ar": "مثّل المركبات والطواقم وأجهزة GPS",
+    "de": "Fahrzeuge, Besatzungen und GPS-Geräte abbilden",
+    "el": "Αναπαραστήστε οχήματα, πληρώματα και συσκευές GPS",
+    "es": "Representar vehículos, dotaciones y dispositivos GPS",
+    "fr": "Représenter engins, équipages et balises GPS",
+    "it": "Rappresentare mezzi, equipaggi e dispositivi GPS",
+    "pl": "Odwzoruj pojazdy, obsady i urządzenia GPS",
+    "sv": "Visa fordon, besättningar och GPS-enheter",
+    "uk": "Відобразіть техніку, екіпажі та GPS-пристрої"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What is a unit in Resgrid?",
+        "ar": "ما الوحدة في Resgrid؟",
+        "de": "Was ist eine Einheit in Resgrid?",
+        "el": "Τι είναι μια μονάδα στο Resgrid;",
+        "es": "¿Qué es una unidad en Resgrid?",
+        "fr": "Qu’est-ce qu’une unité dans Resgrid ?",
+        "it": "Che cos’è un mezzo (unità) in Resgrid?",
+        "pl": "Czym jest jednostka (pojazd) w Resgrid?",
+        "sv": "Vad är en enhet i Resgrid?",
+        "uk": "Що таке підрозділ (одиниця техніки) в Resgrid?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "A unit of measure for hours",
+            "ar": "وحدة قياس للساعات",
+            "de": "Eine Maßeinheit für Stunden",
+            "el": "Μονάδα μέτρησης ωρών",
+            "es": "Una unidad de medida de horas",
+            "fr": "Une unité de mesure des heures",
+            "it": "Un’unità di misura delle ore",
+            "pl": "Jednostka miary godzin",
+            "sv": "En måttenhet för timmar",
+            "uk": "Одиниця виміру годин"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "An apparatus or team that responds to calls",
+            "ar": "مركبة أو فريق يستجيب للبلاغات",
+            "de": "Ein Fahrzeug oder Team, das zu Einsätzen ausrückt",
+            "el": "Ένα όχημα ή ομάδα που ανταποκρίνεται σε κλήσεις",
+            "es": "Un vehículo o equipo que responde a las llamadas",
+            "fr": "Un engin ou une équipe qui intervient sur les appels",
+            "it": "Un mezzo o una squadra che risponde alle chiamate",
+            "pl": "Pojazd lub zespół reagujący na zgłoszenia",
+            "sv": "Ett fordon eller team som rycker ut på larm",
+            "uk": "Техніка чи команда, що реагує на виклики"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "A billing invoice",
+            "ar": "فاتورة",
+            "de": "Eine Rechnung",
+            "el": "Ένα τιμολόγιο",
+            "es": "Una factura",
+            "fr": "Une facture",
+            "it": "Una fattura",
+            "pl": "Faktura",
+            "sv": "En faktura",
+            "uk": "Рахунок-фактура"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What does a unit's status tell dispatch?",
+        "ar": "ماذا تخبر حالة الوحدة مركز الإرسال؟",
+        "de": "Was sagt der Status einer Einheit der Leitstelle?",
+        "el": "Τι λέει στη διασπορά η κατάσταση μιας μονάδας;",
+        "es": "¿Qué indica a la central el estado de una unidad?",
+        "fr": "Qu’indique au centre d’alerte le statut d’une unité ?",
+        "it": "Che cosa dice alla centrale lo stato di un mezzo?",
+        "pl": "Co status jednostki mówi dyspozytorni?",
+        "sv": "Vad berättar en enhets status för larmcentralen?",
+        "uk": "Що повідомляє диспетчеру статус підрозділу?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Its purchase price",
+            "ar": "سعر شرائها",
+            "de": "Ihren Kaufpreis",
+            "el": "Την τιμή αγοράς της",
+            "es": "Su precio de compra",
+            "fr": "Son prix d’achat",
+            "it": "Il prezzo di acquisto",
+            "pl": "Cenę zakupu",
+            "sv": "Dess inköpspris",
+            "uk": "Ціну придбання"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Its paint colour",
+            "ar": "لون طلائها",
+            "de": "Ihre Lackfarbe",
+            "el": "Το χρώμα της",
+            "es": "Su color de pintura",
+            "fr": "Sa couleur de peinture",
+            "it": "Il colore della vernice",
+            "pl": "Kolor lakieru",
+            "sv": "Dess lackfärg",
+            "uk": "Колір фарби"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Whether it is available, responding or on scene",
+            "ar": "هل هي متاحة أو في الطريق أو في الموقع",
+            "de": "Ob sie verfügbar ist, anfährt oder vor Ort ist",
+            "el": "Αν είναι διαθέσιμη, σε κίνηση ή στο σημείο",
+            "es": "Si está disponible, en camino o en el lugar",
+            "fr": "Si elle est disponible, en route ou sur les lieux",
+            "it": "Se è disponibile, in arrivo o sul posto",
+            "pl": "Czy jest dostępna, w drodze czy na miejscu",
+            "sv": "Om den är tillgänglig, på väg eller på plats",
+            "uk": "Чи він доступний, у дорозі чи на місці"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Units can share their location from a GPS device or an app.",
+        "ar": "يمكن للوحدات مشاركة موقعها من جهاز GPS أو تطبيق.",
+        "de": "Einheiten können ihren Standort über ein GPS-Gerät oder eine App übermitteln.",
+        "el": "Οι μονάδες μπορούν να μοιράζονται τη θέση τους από συσκευή GPS ή εφαρμογή.",
+        "es": "Las unidades pueden compartir su ubicación desde un dispositivo GPS o una aplicación.",
+        "fr": "Les unités peuvent partager leur position depuis une balise GPS ou une application.",
+        "it": "I mezzi possono condividere la posizione da un dispositivo GPS o da un’app.",
+        "pl": "Jednostki mogą udostępniać lokalizację z urządzenia GPS lub aplikacji.",
+        "sv": "Enheter kan dela sin position från en GPS-enhet eller en app.",
+        "uk": "Підрозділи можуть передавати місцезнаходження з GPS-пристрою або застосунку."
+      }
+    }
+  ]
+}

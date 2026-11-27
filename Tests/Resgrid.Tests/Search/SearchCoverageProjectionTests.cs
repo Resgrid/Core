@@ -97,7 +97,7 @@ namespace Resgrid.Tests.Search
 			_members = new Mock<IDepartmentMembersRepository>();
 			_hazards = new Mock<IRmsOccupancyHazardsRepository>();
 
-			_service = new SearchProjectionService(_projections.Object, _protection.Object, null, null, _addresses.Object, _contactNotes.Object,
+			_service = new SearchProjectionService(_projections.Object, _protection.Object, Mock.Of<Resgrid.Model.Repositories.IProtocolVersionTranslationsRepository>(), null, null, _addresses.Object, _contactNotes.Object,
 				_categories.Object, _roles.Object, _groupMembers.Object, _groups.Object, _sensitive.Object, _udfDefinitions.Object, _udfFields.Object,
 				_udfValues.Object, _calls.Object, null, null, _profiles.Object, _members.Object, null, null, _hazards.Object);
 		}
@@ -236,7 +236,7 @@ namespace Resgrid.Tests.Search
 		[Test]
 		public async Task Reference_families_project_names_codes_and_their_own_pages()
 		{
-			var protocol = await _service.BuildProtocolAsync(new DispatchProtocol { DispatchProtocolId = 1, DepartmentId = Dept, Name = "Commercial Fire Alarm", Code = "CFA", ProtocolText = "<b>Stage</b> until keyholder arrives" });
+			var protocol = await _service.BuildProtocolAsync(new DispatchProtocol { DispatchProtocolId = 1, Status = (int)ProtocolStatuses.Published, CurrentVersionId = 1000, DepartmentId = Dept, Name = "Commercial Fire Alarm", Code = "CFA", ProtocolText = "<b>Stage</b> until keyholder arrives" });
 			var training = await _service.BuildTrainingAsync(new Training { TrainingId = 2, DepartmentId = Dept, Name = "Hazmat Awareness", TrainingText = "Placard identification" });
 			var shift = await _service.BuildShiftAsync(new Shift { ShiftId = 3, DepartmentId = Dept, Name = "B Shift", Code = "B", StartTime = "07:00", EndTime = "07:00" });
 			var group = await _service.BuildGroupAsync(new DepartmentGroup { DepartmentGroupId = 4, DepartmentId = Dept, Name = "Station 4", Type = (int)DepartmentGroupTypes.Station, AddressId = 11 });

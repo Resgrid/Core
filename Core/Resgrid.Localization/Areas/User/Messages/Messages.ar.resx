@@ -237,4 +237,76 @@
   <data name="NotAttending" xml:space="preserve">
     <value>لن أحضر</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>حسب الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>لا أحد حسب الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>حالة الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>انتهت صلاحيتها</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>تنتهي خلال الأيام المحددة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>لم يحملها قط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>الأيام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>يضيف الأعضاء النشطين الذين تطابق شهاداتهم، إلى جانب المستلمين المختارين أعلاه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>لا يوجد عضو يطابق حالة الشهادة التي اخترتها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>قائمة الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>بدون دورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>حالة القائمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>المسجّلون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>الحاضرون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>الغائبون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>على قائمة الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>يضيف الأعضاء النشطين في الدورة بحالة القائمة هذه إلى المستلمين أعلاه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>لا أحد على قائمة تلك الدورة بهذه الحالة.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

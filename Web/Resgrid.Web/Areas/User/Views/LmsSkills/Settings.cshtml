@@ -1,0 +1,65 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsSkillSettingsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    Skill settings (setting 146): how evaluation and task book notices are delivered (immediately, or a daily or weekly digest at a
+    department-local hour) and who receives them (the evaluated members and trainees, the department admins).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Skl.SettingsTitle"];
+    ViewData["Title"] = localizer["Skl.SettingsTitle"].Value;
+    ViewData["Subtitle"] = localizer["Skl.SettingsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var settings = Model.Settings;
+    var days = System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.DayNames;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form asp-controller="LmsSkills" asp-action="Settings" asp-route-area="User" method="post" class="ibox">
+        @Html.AntiForgeryToken()
+        <div class="ibox-content">
+            <div class="row">
+                <div class="col-sm-4 form-group">
+                    <label for="DigestMode">@localizer["Skl.DigestMode"]</label>
+                    <select id="DigestMode" name="digestMode" class="form-control">
+                        @foreach (LmsSkillDigestModes mode in Enum.GetValues(typeof(LmsSkillDigestModes)))
+                        {
+                            <option value="@((int)mode)" selected="@(settings.DigestMode == (int)mode)">@localizer["Skl.Digest." + mode]</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-4 form-group">
+                    <label for="DigestHour">@localizer["Skl.DigestHour"]</label>
+                    <select id="DigestHour" name="digestHour" class="form-control">
+                        @for (var hour = 0; hour < 24; hour++)
+                        {
+                            <option value="@hour" selected="@(settings.DigestHour == hour)">@hour.ToString("00"):00</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-4 form-group">
+                    <label for="DigestWeekday">@localizer["Skl.DigestWeekday"]</label>
+                    <select id="DigestWeekday" name="digestWeekday" class="form-control">
+                        @for (var day = 0; day < 7; day++)
+                        {
+                            <option value="@day" selected="@(settings.DigestWeekday == day)">@days[day]</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="checkbox"><label><input id="NotifyMembers" type="checkbox" name="notifyMembers" value="true" checked="@settings.NotifyMembers" /> @localizer["Skl.NotifyMembers"]</label></div>
+            <div class="checkbox"><label><input id="NotifyOfficers" type="checkbox" name="notifyOfficers" value="true" checked="@settings.NotifyOfficers" /> @localizer["Skl.NotifyOfficers"]</label></div>
+            <p class="help-block">@localizer["Skl.SettingsHelp"]</p>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Skl.Save"]</button>
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

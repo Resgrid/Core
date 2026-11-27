@@ -62,7 +62,7 @@ namespace Resgrid.Tests.Security
 			ssoConfigs.Setup(r => r.GetAllByDepartmentIdAsync(DepartmentId)).ReturnsAsync(() => new[] { _ssoConfig });
 			adp.Issuer = new AdpStepUpService(adp.Grants, protection.Object, _policyService, _evidenceService, _passkeys.Object, _approvals.Object, _broker.Object,
 				_sso.Object, new MfaCredentialStateService(_passkeyRows, sessionRows, ssoConfigs.Object, TimeProvider.System), _activity.Object,
-				Mock.Of<IAdpAuditRepository>(), _gates.Object, TimeProvider.System);
+				Mock.Of<IAdpAuditRepository>(), _gates.Object, TimeProvider.System, Resgrid.Tests.Security.StepUpTestPolicies.Strict());
 			return adp;
 		}
 

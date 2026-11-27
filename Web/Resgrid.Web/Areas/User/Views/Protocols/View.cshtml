@@ -1,272 +1,641 @@
 @using Resgrid.Model
 @using Resgrid.Framework
-@model Resgrid.WebCore.Areas.User.Models.Protocols.ViewProtocolModel
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolDetailModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signaturePdfText
+@inject Resgrid.Model.Services.IProtocolTranslationService translationService
+@inject Resgrid.Model.Services.IAiKnowledgeService knowledgeService
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> sharingText
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolAi.ProtocolAi> protocolAiText
 @{
-  ViewBag.Title = "Resgrid | " + localizer["ViewProtocolHeader"];
+    var departmentTime = DepartmentTime.From(ViewData);
+    var p = Model.Protocol;
+    var shown = Model.Shown;
+    // P3: the reader's language (or ?lang=) picks an approved translation of the shown version; otherwise the source, the department's language.
+    var requestedLang = Context.Request.Query["lang"].ToString();
+    var localized = shown != null && !shown.IsDocument
+        ? await translationService.GetLocalizedAsync(ClaimsAuthorizationHelper.GetDepartmentId(), shown, string.IsNullOrWhiteSpace(requestedLang) ? System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName : requestedLang)
+        : null;
+    var outline = localized?.Translation != null ? ProtocolContentDocument.OutlineFor(localized.ContentJson, localized.ContentHtml) : Model.Outline;
+    string dosingToolUrl = null;
+    try { dosingToolUrl = (await knowledgeService.GetSettingsAsync(ClaimsAuthorizationHelper.GetDepartmentId()))?.DosingToolUrl; } catch (Exception) { dosingToolUrl = null; }
+    // Round 7A: the protocol AI tools (practice cards, a training draft) need only Enhanced AI with knowledge answers, never the LMS; shown for a
+    // published protocol allowed to AI. The services check every gate again and fail closed.
+    var aiTools = false;
+    if (!Model.Preview && !p.IsDeleted && p.IsPublished && ProtocolLicensing.CanUseForAi(p))
+    {
+        try { aiTools = await knowledgeService.IsEntitledAsync(ClaimsAuthorizationHelper.GetDepartmentId()); } catch (Exception) { aiTools = false; }
+    }
+    ViewBag.Title = "Resgrid | " + p.Name;
+    ViewData["Title"] = p.Name;
+    ViewData["Subtitle"] = p.Code + (string.IsNullOrEmpty(p.Number) ? "" : " · " + p.Number) + " · " + ProtocolDisplay.KindName(p.Kind, localizer);
+    ViewData["Section"] = "Library";
+    ViewData["IsManager"] = Model.IsManager;
+
+    var pill = Model.StatusKey switch
+    {
+        "published" => ("label-primary", "fa-check", localizer["StatusPublished"].Value),
+        "review" => ("label-warning", "fa-hourglass-half", localizer["StatusInReview"].Value),
+        "approved" => ("label-info", "fa-thumbs-up", localizer["StatusApproved"].Value),
+        "scheduled" => ("label-info", "fa-calendar", localizer["StatusScheduled"].Value),
+        "retired" => ("label-default", "fa-archive", localizer["StatusRetired"].Value),
+        "disabled" => ("label-default", "fa-pause", localizer["DisabledLabel"].Value),
+        "deleted" => ("label-danger", "fa-trash", localizer["DeletedLabel"].Value),
+        _ => ("label-default", "fa-pencil", localizer["StatusDraft"].Value)
+    };
+    ViewData["TitleStatus"] = pill.Item3;
+    ViewData["TitleStatusCss"] = pill.Item1;
+    ViewData["TitleStatusIcon"] = pill.Item2;
+
+    var showingOther = shown != null && Model.Current != null && shown.ProtocolVersionId != Model.Current.ProtocolVersionId;
+    var now = DateTime.UtcNow;
+    var reviewOverdue = p.IsPublished && p.NextReviewOn.HasValue && p.NextReviewOn.Value <= now;
+    var reviewSoon = p.IsPublished && p.NextReviewOn.HasValue && !reviewOverdue && p.NextReviewOn.Value <= now.AddDays(30);
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="Protocols" asp-action="Index" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["ProtocolsLabel"]</a>
+        @if (!Model.Preview)
+        {
+            <form method="post" action="@Url.Action("Favorite", "Protocols", new { area = "User", id = p.DispatchProtocolId, favorite = !Model.IsFavorite, returnTo = "view" })">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default"><i class="fa @(Model.IsFavorite ? "fa-star text-warning" : "fa-star-o")" aria-hidden="true"></i> @(Model.IsFavorite ? localizer["UnfavoriteButton"] : localizer["FavoriteButton"])</button>
+            </form>
+            <a class="btn btn-default" asp-controller="ProtocolTools" asp-action="Print" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-versionId="@shown?.ProtocolVersionId" asp-route-lang="@localized?.Locale" target="_blank" rel="noopener"><i class="fa fa-print" aria-hidden="true"></i> @localizer["PrintViewButton"]</a>
+            <a class="btn btn-default" asp-controller="ProtocolTools" asp-action="Qr" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-qrcode" aria-hidden="true"></i> @localizer["QrCodeButton"]</a>
+        }
+        @if (!Model.Preview && Model.IsManager && shown != null && !shown.IsDocument && !ProtocolLifecycle.IsContentEditable(shown.Status) && shown.Status != (int)ProtocolVersionStatuses.Legacy)
+        {
+            <a class="btn btn-default" asp-controller="ProtocolTools" asp-action="Translations" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-versionId="@shown.ProtocolVersionId"><i class="fa fa-language" aria-hidden="true"></i> @localizer["TranslationsButton"]</a>
+        }
+        @if (aiTools && (Model.CanAuthor || Model.CanApprove))
+        {
+            <a class="btn btn-default" asp-controller="ProtocolAi" asp-action="Flashcards" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-clone" aria-hidden="true"></i> @protocolAiText["FlashcardsButton"]</a>
+            @if (ClaimsAuthorizationHelper.CanCreateTraining())
+            {
+                <a class="btn btn-default" asp-controller="ProtocolAi" asp-action="DraftTraining" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @protocolAiText["DraftTrainingLink"]</a>
+            }
+        }
+        @if (Model.CanModify && !p.IsBulletin)
+        {
+            <a class="btn btn-default" asp-controller="ProtocolDocuments" asp-action="Upload" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["UploadNewVersionButton"]</a>
+        }
+        @if (!Model.Preview && Model.IsManager && !p.IsDeleted)
+        {
+            <a class="btn btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Compliance" asp-route-area="User" asp-route-protocolId="@p.DispatchProtocolId"><i class="fa fa-th" aria-hidden="true"></i> @localizer["ComplianceTab"]</a>
+            <a class="btn btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Settings" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-cog" aria-hidden="true"></i> @localizer["AckSettingsButton"]</a>
+        }
+        @if (Model.CanModify && !p.IsBulletin)
+        {
+            @if (Model.Open == null)
+            {
+                <form method="post" action="@Url.Action("StartDraft", "Protocols", new { area = "User", id = p.DispatchProtocolId })">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-code-fork" aria-hidden="true"></i> @localizer["NewVersionButton"]</button>
+                </form>
+            }
+            <a class="btn btn-primary" asp-controller="Protocols" asp-action="Edit" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditButton"]</a>
+            <form method="post" action="@Url.Action("Copy", "Protocols", new { area = "User", id = p.DispatchProtocolId })">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["CopyButton"]</button>
+            </form>
+            @if (!p.IsDeleted && p.Status != (int)ProtocolStatuses.Retired)
+            {
+                <form method="post" action="@Url.Action("SetDisabled", "Protocols", new { area = "User", id = p.DispatchProtocolId, disabled = !p.IsDisabled })">
+                    @Html.AntiForgeryToken()
+                    @if (p.IsDisabled)
+                    {
+                        <button type="submit" class="btn btn-success"><i class="fa fa-play" aria-hidden="true"></i> @localizer["EnableButton"]</button>
+                    }
+                    else
+                    {
+                        <button type="submit" class="btn btn-warning"><i class="fa fa-pause" aria-hidden="true"></i> @localizer["DisableButton"]</button>
+                    }
+                </form>
+            }
+        }
+        @if (Model.CanApprove && p.IsPublished && !p.IsDeleted)
+        {
+            <form method="post" action="@Url.Action("Retire", "Protocols", new { area = "User", id = p.DispatchProtocolId })">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default" data-confirm="@localizer["RetireConfirm"] @p.Name ?"><i class="fa fa-archive" aria-hidden="true"></i> @localizer["RetireButton"]</button>
+            </form>
+        }
+        @if (Model.CanDelete)
+        {
+            <form method="post" action="@Url.Action("Delete", "Protocols", new { area = "User", id = p.DispatchProtocolId })">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger" data-confirm="@localizer["DeleteProtocolConfirm"] @p.Name ?"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["DeleteButton"]</button>
+            </form>
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>@localizer["ViewProtocolHeader"]</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
-      </li>
-      <li>
-        <a asp-controller="Protocols" asp-action="Index" asp-route-area="User">@localizer["ProtocolsLabel"]</a>
-      </li>
-      <li class="active">
-        <strong>@localizer["ViewProtocolHeader"]</strong>
-      </li>
-    </ol>
-  </div>
-</div>
+@await Html.PartialAsync("_Shell")
 
-<div class="row">
-  <div class="col-lg-12">
-    <div class="wrapper wrapper-content animated fadeInUp">
-      <div class="ibox">
-        <div class="ibox-content">
-          <div class="row">
-            <div class="col-lg-12">
-              <div class="m-b-md">
-                <h2>@Model.Protocol.Name</h2>
-              </div>
-              <dl class="dl-horizontal" style="margin-bottom: 0px;">
-                <dt>@localizer["StatusLabel"]</dt>
-                <dd>
-                  @if (Model.Protocol.IsDisabled == false)
-				  {
-                    <span style="display: block; color: green;">@localizer["ActiveLabel"]</span>
-				  }
-				  else
-				  {
-                    <span style="display: block; color: black;">@localizer["DisabledLabel"]</span>
-				  }
-                </dd>
-              </dl>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-lg-5">
-              <dl class="dl-horizontal">
-                <dt>@localizer["CodeLabel"]</dt>
-                <dd>@Model.Protocol.Code</dd>
-                <dt>@localizer["TypeLabel"]</dt>
-                <dd>
-                  <span style="display: block;">@localizer["DispatchProtocolLabel"]</span>
-                </dd>
-              </dl>
-            </div>
-            <div class="col-lg-7" id="cluster_info">
-              <dl class="dl-horizontal">
-                <dt>@localizer["CreatedByLabel"]</dt>
-                <dd>@(await UserHelper.GetFullNameForUser(Model.Protocol.CreatedByUserId))</dd>
-                <dt>@localizer["CreatedOnLabel"]</dt>
-                <dd>@Model.Protocol.CreatedOn.TimeConverterToString(Model.Department)</dd>
-                <dt>@localizer["WeightLabel"]</dt>
-                <dd>@Model.Protocol.MinimumWeight</dd>
-              </dl>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-lg-12">
-              <dl class="dl-horizontal">
-                <dt>@localizer["DescriptionDtLabel"]</dt>
-                <dd>
-                  @Html.SanitizedHtml(Model.Protocol.Description)
-                </dd>
-              </dl>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-lg-12">
-              <dl class="dl-horizontal">
-                <dt>@localizer["ProtocolTextDtLabel"]</dt>
-                <dd>
-                  @Html.SanitizedHtml(Model.Protocol.ProtocolText)
-                </dd>
-              </dl>
-            </div>
-          </div>
-          <div class="row m-t-sm">
-            <div class="col-lg-12">
-              <div class="panel blank-panel">
-                <div class="panel-heading">
-                  <div class="panel-options">
-                    <ul class="nav nav-tabs">
-                      <li class="active"><a href="#tab-1" data-toggle="tab" aria-expanded="true">@localizer["TriggersTab"]</a></li>
-                      <li class=""><a href="#tab-2" data-toggle="tab" aria-expanded="false">@localizer["AttachmentsTab"]</a></li>
-                      <li class=""><a href="#tab-3" data-toggle="tab" aria-expanded="false">@localizer["QuestionsTab"]</a></li>
-                    </ul>
-                  </div>
-                </div>
-                <div class="panel-body">
-                  <div class="tab-content">
-                    <div class="tab-pane active" id="tab-1">
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th>@localizer["TriggerTypeColumn"]</th>
-                            <th>@localizer["TriggerStartsOnColumn"]</th>
-                            <th>@localizer["TriggerEndsOnColumn"]</th>
-                            <th>@localizer["TriggerPriorityColumn"]</th>
-                            <th>@localizer["TriggerCallTypeColumn"]</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @foreach (var t in Model.Protocol.Triggers)
-						  {
-                            <tr>
-                              <td>
-                                @if (t.Type == 0)
-								{
-                                  <span>@localizer["CallPriorityTrigger"]</span>
-								}
-								else if (t.Type == 1)
-								{
-                                  <span>@localizer["CallTypeTrigger"]</span>
-								}
-								else if (t.Type == 2)
-								{
-                                  <span>@localizer["CallPriorityAndTypeTrigger"]</span>
-								}
-                              </td>
-                              <td>
-                                @if (!t.StartsOn.HasValue)
-								{
-                                  <span>@localizer["NoStartDate"]</span>
-								}
-								else
-								{
-                                  <span>@t.StartsOn.Value.TimeConverterToString(Model.Department)</span>
-								}
-                              </td>
-                              <td>
-                                @if (!t.EndsOn.HasValue)
-								{
-                                  <span>@localizer["NoEndDate"]</span>
-								}
-								else
-								{
-                                  <span>@t.EndsOn.Value.TimeConverterToString(Model.Department)</span>
-								}
-                              </td>
-                              <td>
-                                @if (t.Priority.HasValue && (t.Type == 2 || t.Type == 0))
-								{
-                                <span>@(await CallPriorityHelper.CallPriorityToString(Model.Department.DepartmentId, t.Priority.Value))</span>
-								}
-								else
-								{
-                                  <span>@localizer["NotApplicableLabel"]</span>
-								}
-                              </td>
-                              <td>
-                                @if (t.Type == 2 || t.Type == 1)
-								{
-                                  <span>@t.CallType</span>
-								}
-								else
-								{
-                                  <span>@localizer["NotApplicableLabel"]</span>
-								}
-                              </td>
-                            </tr>
-						  }
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="tab-pane" id="tab-2">
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th>@localizer["FileNameColumn"]</th>
-                            <th>@localizer["FileTypeColumn"]</th>
-                            <th>@localizer["SizeColumn"]</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @foreach (var a in Model.Protocol.Attachments)
-                          {
-                            <tr>
-                              <td>
-                                <span>@a.FileName</span>
-                              </td>
-                              <td>
-                                <span>@a.FileType</span>
-                              </td>
-                              <td>
-                                @if (a.Data != null && a.Data.Length > 0)
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    @if (Model.Preview)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["PreviewAsMemberNotice"]</div>
+    }
+    @if (p.IsDeleted)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-archive" aria-hidden="true"></i> @localizer["DeletedProtocolNotice"]</div>
+    }
+    else if (p.IsDisabled)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-pause" aria-hidden="true"></i> @localizer["DisabledProtocolNotice"]</div>
+    }
+
+    @if (Model.IsManager && Model.Open != null)
+    {
+        <div class="rgw-next-action" role="status">
+            <i class="fa fa-info-circle" aria-hidden="true"></i>
+            @string.Format(localizer["OpenVersionCallout"].Value, ProtocolDisplay.VersionStatusName(Model.Open.Status, localizer))
+            @if (Model.Open.Status == (int)ProtocolVersionStatuses.Draft)
+            {
+                <a class="btn btn-xs btn-primary" asp-controller="Protocols" asp-action="Edit" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditDraftButton"]</a>
+                <a class="btn btn-xs btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-versionId="@Model.Open.ProtocolVersionId" asp-route-preview="true"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["PreviewAsMemberButton"]</a>
+            }
+            else
+            {
+                <a class="btn btn-xs btn-primary" asp-controller="Protocols" asp-action="Review" asp-route-area="User" asp-route-id="@Model.Open.ProtocolVersionId"><i class="fa fa-check-square-o" aria-hidden="true"></i> @localizer["OpenReviewButton"]</a>
+            }
+        </div>
+    }
+    else if (reviewOverdue || reviewSoon)
+    {
+        <div class="rgw-next-action" role="status">
+            <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+            @(reviewOverdue ? string.Format(localizer["ReviewOverdueCallout"].Value, departmentTime.Date(p.NextReviewOn)) : string.Format(localizer["ReviewDueCallout"].Value, departmentTime.Date(p.NextReviewOn)))
+        </div>
+    }
+
+    @if (!Model.Preview && !p.IsDeleted)
+    {
+        @* P2: the member's outstanding acknowledgment of this protocol, with read-and-sign. *@
+        @await Component.InvokeAsync("ProtocolAcknowledgmentPrompt", new { protocolId = p.DispatchProtocolId })
+        @* Round 10 A3: a copy managed by a subscribed protocol set (publisher, lock, customize, propose a change). *@
+        @await Component.InvokeAsync("ContentSetCopyBanner", new { kind = (int)Resgrid.Model.ContentSetItemKinds.Protocol, localId = p.DispatchProtocolId })
+    }
+
+    <div class="row">
+        <div class="col-md-3 hidden-print">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-list-ul" aria-hidden="true"></i> @localizer["OutlineHeader"]</h5></div>
+                <div class="ibox-content">
+                    @if (outline.Count == 0)
+                    {
+                        <p class="text-muted small">@localizer["NoOutline"]</p>
+                    }
+                    else
+                    {
+                        <nav aria-label="@localizer["OutlineHeader"]">
+                            <ul class="list-unstyled">
+                                @foreach (var anchor in outline)
                                 {
-                                  <span>@((long)a.Data.Length).GetSizeInMemory()</span>
+                                    <li style="padding-left: @((anchor.Level - 1) * 12)px"><a href="#@anchor.Id">@anchor.Text</a></li>
+                                }
+                            </ul>
+                        </nav>
+                    }
+                </div>
+            </div>
+            @if (!Model.Preview && !p.IsDeleted && p.IsPublished)
+            {
+                @await Html.PartialAsync("_KnowledgeAsk", new Resgrid.Web.Areas.User.Models.Knowledge.KnowledgeAskPanelModel { Surface = (int)KnowledgeAskSurfaces.Protocol, ScopeKind = (int)KnowledgeSourceKinds.Protocol, ScopeItemId = p.DispatchProtocolId.ToString(System.Globalization.CultureInfo.InvariantCulture), PanelId = "kask-protocol" })
+                @* K3 tutor: scenario practice from the version in force (never for a protocol marked "no AI" or licensed content). *@
+                if (!p.ExcludeFromAi && !p.IsLicensedContent)
+                {
+                    @await Html.PartialAsync("_KnowledgePractice", new Resgrid.Web.Areas.User.Models.Knowledge.KnowledgePracticePanelModel { ProtocolId = p.DispatchProtocolId, PanelId = "kpractice-protocol" })
+                }
+            }
+            @if (aiTools)
+            {
+                @* Round 7A: practice cards (Enhanced AI only), hidden until the deck has cards; practice is never recorded. *@
+                @await Html.PartialAsync("_ProtocolPracticeCards", new ProtocolPracticeCardsPanelModel { ProtocolId = p.DispatchProtocolId, DeckUrl = Url.Action("Deck", "ProtocolAi", new { area = "User", id = p.DispatchProtocolId }) })
+            }
+        </div>
+        <div class="col-md-6">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>@localizer["ProtocolTextDtLabel"]</h5>
+                    <div class="ibox-tools">
+                        @if (shown != null)
+                        {
+                            <span class="label @(shown.Status == (int)ProtocolVersionStatuses.Published ? "label-primary" : "label-default")">@ProtocolDisplay.VersionLabel(shown, localizer)</span>
+                        }
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    @if (Model.Versions.Count > 1)
+                    {
+                        <form method="get" class="rgw-toolbar hidden-print" asp-controller="Protocols" asp-action="View" asp-route-area="User">
+                            <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                            <label class="control-label" for="versionSelect">@localizer["VersionLabel"]</label>
+                            <select id="versionSelect" name="versionId" class="form-control" style="max-width: 280px;" onchange="this.form.submit()">
+                                @foreach (var v in Model.Versions)
+                                {
+                                    <option value="@v.ProtocolVersionId" selected="@(shown?.ProtocolVersionId == v.ProtocolVersionId)">@ProtocolDisplay.VersionLabel(v, localizer) · @ProtocolDisplay.VersionStatusName(v.Status, localizer)@(v.EffectiveOn.HasValue ? " · " + departmentTime.Date(v.EffectiveOn) : "")</option>
+                                }
+                            </select>
+                            <noscript><button type="submit" class="btn btn-default"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ShowButton"]</button></noscript>
+                        </form>
+                    }
+                    @if (showingOther)
+                    {
+                        <div class="alert alert-warning" role="status"><i class="fa fa-history" aria-hidden="true"></i> @string.Format(localizer["NotCurrentVersionNotice"].Value, ProtocolDisplay.VersionLabel(shown, localizer), ProtocolDisplay.VersionLabel(Model.Current, localizer))</div>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(p.Description))
+                    {
+                        <div class="m-b-md text-muted">@Html.SanitizedHtml(p.Description)</div>
+                    }
+                    @{ var text = localized?.ContentHtml ?? shown?.ContentHtml ?? (shown == null ? p.ProtocolText : null); }
+                    @if (localized != null && localized.AvailableLocales.Count > 1)
+                    {
+                        <form method="get" class="rgw-toolbar hidden-print" asp-controller="Protocols" asp-action="View" asp-route-area="User">
+                            <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                            <input type="hidden" name="versionId" value="@shown?.ProtocolVersionId" />
+                            <label class="control-label" for="langSelect"><i class="fa fa-language" aria-hidden="true"></i> @localizer["ContentLanguageLabel"]</label>
+                            <select id="langSelect" name="lang" class="form-control" style="max-width: 200px;" onchange="this.form.submit()">
+                                @foreach (var locale in localized.AvailableLocales)
+                                {
+                                    <option value="@locale" selected="@(string.Equals(locale, localized.Locale, StringComparison.OrdinalIgnoreCase))">@ProtocolDisplay.LanguageName(locale)</option>
+                                }
+                            </select>
+                            <noscript><button type="submit" class="btn btn-default"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ShowButton"]</button></noscript>
+                        </form>
+                    }
+                    @if (localized != null && localized.Translation != null)
+                    {
+                        <p class="text-muted small hidden-print"><i class="fa fa-language" aria-hidden="true"></i> @string.Format(localizer["TranslationShownNotice"].Value, ProtocolDisplay.LanguageName(localized.Locale))</p>
+                    }
+                    else if (localized != null && localized.IsFallback)
+                    {
+                        <p class="text-muted small hidden-print"><i class="fa fa-language" aria-hidden="true"></i> @localizer["TranslationFallbackNotice"]</p>
+                    }
+                    @if (shown != null && shown.IsDocument)
+                    {
+                        @* P1 R-P5: a document-backed version reads as its file, with the extracted text below it. *@
+                        @await Component.InvokeAsync("ProtocolDocumentContent", new { versionId = shown.ProtocolVersionId, title = p.Name, protocolId = p.DispatchProtocolId, showUpload = Model.CanModify && !p.IsBulletin })
+                    }
+                    else if (string.IsNullOrWhiteSpace(text))
+                    {
+                        <p class="text-muted">@localizer["NoProtocolText"]</p>
+                    }
+                    else
+                    {
+                        <div class="protocol-content rgp-reader">@Html.ProtocolContent(text, dosingToolUrl, localizer["DosingToolLinkText"].Value)</div>
+                    }
+                    @if (shown != null && !string.IsNullOrEmpty(shown.ChangeSummary))
+                    {
+                        <div class="m-t-md small text-muted"><strong>@localizer["ChangeSummaryLabel"]:</strong> @shown.ChangeSummary</div>
+                    }
+                    @if (ViewData["Attribution"] is ContentAttribution attribution)
+                    {
+                        @* P5: attribution kept from the template library, the community exchange or an attributed file. *@
+                        <div class="m-t-sm small text-muted rgx-attribution">
+                            <i class="fa fa-copyright" aria-hidden="true"></i> @sharingText["AttributionSource"] @attribution.SourceName
+                            @if (!string.IsNullOrWhiteSpace(attribution.Author)) { <span> · @attribution.Author</span> }
+                            @if (!string.IsNullOrWhiteSpace(attribution.License))
+                            {
+                                <span> · @sharingText["AttributionLicense"] </span>
+                                @if (!string.IsNullOrWhiteSpace(ContentLicenses.SafeUrl(attribution.LicenseUrl)))
+                                {
+                                    <a href="@ContentLicenses.SafeUrl(attribution.LicenseUrl)" target="_blank" rel="license noopener noreferrer nofollow">@attribution.License</a>
                                 }
                                 else
                                 {
-                                  <span>0</span>
+                                    <span>@attribution.License</span>
                                 }
-                              </td>
-                            </tr>
-                          }
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="tab-pane" id="tab-3">
-                      <table class="table table-striped">
-                        <thead>
-                          <tr>
-                            <th>@localizer["QuestionColumn"]</th>
-                            <th>@localizer["AnswersColumn"]</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @foreach (var q in Model.Protocol.Questions)
-                          {
-                            <tr>
-                              <td style="width:450px;">
-                                <span>@q.Question</span>
-                              </td>
-                              <td>
-                                <table class="table table-striped">
-                                  <thead>
-                                    <tr>
-                                      <th>@localizer["WeightColumn"]</th>
-                                      <th>@localizer["AnswerColumn"]</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                                    @foreach (var a in q.Answers)
-                                    {
-                                      <tr>
-                                        <td>
-                                          <span>@a.Weight</span>
-                                        </td>
-                                        <td>
-                                          <span>@a.Answer</span>
-                                        </td>
-                                      </tr>
-                                    }
-                                  </tbody>
-                                </table>
-                              </td>
-                            </tr>
-                          }
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(attribution.SourceVersion)) { <span> · @string.Format(sharingText["PublicVersion"].Value, attribution.SourceVersion)</span> }
+                        </div>
+                    }
                 </div>
-              </div>
             </div>
-          </div>
+
+            @if (!Model.Preview && !p.IsDeleted && p.IsPublished)
+            {
+                <div class="ibox hidden-print">
+                    <div class="ibox-title"><h5><i class="fa fa-comments-o" aria-hidden="true"></i> @localizer["SuggestHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted small">@localizer["SuggestHelp"]</p>
+                        <form method="post" asp-controller="Protocols" asp-action="Comment" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                            <input type="hidden" name="versionId" value="@shown?.ProtocolVersionId" />
+                            <div class="rgw-grid">
+                                <div class="form-group">
+                                    <label class="control-label" for="suggestKind">@localizer["SuggestKindLabel"]</label>
+                                    <select id="suggestKind" name="kind" class="form-control">
+                                        <option value="@((int)ProtocolCommentKinds.Suggestion)">@localizer["SuggestionOption"]</option>
+                                        <option value="@((int)ProtocolCommentKinds.Question)">@localizer["QuestionOption"]</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label" for="suggestAnchor">@localizer["SectionLabel"]</label>
+                                    <select id="suggestAnchor" name="anchor" class="form-control">
+                                        <option value="">@localizer["WholeProtocolOption"]</option>
+                                        @foreach (var anchor in Model.Outline)
+                                        {
+                                            <option value="@anchor.Id">@anchor.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label required" for="suggestBody">@localizer["MessageLabel"]</label>
+                                <textarea id="suggestBody" name="body" class="form-control" rows="3" maxlength="@ProtocolComment.BodyMaxLength" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["SendSuggestionButton"]</button>
+                        </form>
+                        @if (Model.Threads.Count > 0)
+                        {
+                            <h4 class="m-t-md">@localizer["ThreadsHeader"]</h4>
+                            <ul class="list-unstyled">
+                                @foreach (var c in Model.Threads.Where(x => !x.ParentCommentId.HasValue).OrderByDescending(x => x.CreatedOn))
+                                {
+                                    <li class="m-b-sm">
+                                        <div>
+                                            <span class="label @(c.Kind == (int)ProtocolCommentKinds.Question ? "label-info" : "label-default")"><i class="fa @(c.Kind == (int)ProtocolCommentKinds.Question ? "fa-question" : "fa-lightbulb-o")" aria-hidden="true"></i> @(c.Kind == (int)ProtocolCommentKinds.Question ? localizer["QuestionOption"] : localizer["SuggestionOption"])</span>
+                                            <strong>@(Model.Names.TryGetValue(c.AuthorUserId ?? "", out var author) ? author : c.AuthorUserId)</strong>
+                                            <small class="text-muted">@departmentTime.Format(c.CreatedOn)@if (!string.IsNullOrEmpty(c.Anchor)) { <text> · <a href="#@c.Anchor">@localizer["SectionLabel"]</a></text> }</small>
+                                            @if (c.ResolvedOn.HasValue)
+                                            {
+                                                <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ResolvedLabel"]</span>
+                                            }
+                                        </div>
+                                        <div style="white-space: pre-wrap">@c.Body</div>
+                                        @foreach (var reply in Model.Threads.Where(x => x.ParentCommentId == c.ProtocolCommentId).OrderBy(x => x.CreatedOn))
+                                        {
+                                            <div class="m-l-md small"><strong>@(Model.Names.TryGetValue(reply.AuthorUserId ?? "", out var replier) ? replier : reply.AuthorUserId)</strong>: <span style="white-space: pre-wrap">@reply.Body</span></div>
+                                        }
+                                        @if (!c.ResolvedOn.HasValue)
+                                        {
+                                            <form method="post" asp-controller="Protocols" asp-action="Comment" asp-route-area="User" class="m-l-md m-t-xs">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                                                <input type="hidden" name="parentId" value="@c.ProtocolCommentId" />
+                                                <input type="hidden" name="kind" value="@((int)ProtocolCommentKinds.Reply)" />
+                                                <label class="sr-only" for="reply-@c.ProtocolCommentId">@localizer["ReplyLabel"]</label>
+                                                <input id="reply-@c.ProtocolCommentId" name="body" class="form-control input-sm" maxlength="@ProtocolComment.BodyMaxLength" placeholder="@localizer["ReplyLabel"]" required />
+                                                <button type="submit" class="btn btn-xs btn-default m-t-xs"><i class="fa fa-reply" aria-hidden="true"></i> @localizer["ReplyButton"]</button>
+                                            </form>
+                                            @if (Model.IsManager || string.Equals(c.AuthorUserId, ClaimsAuthorizationHelper.GetUserId(), StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <form method="post" asp-controller="Protocols" asp-action="ResolveComment" asp-route-area="User" class="m-l-md">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                                                    <input type="hidden" name="commentId" value="@c.ProtocolCommentId" />
+                                                    <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ResolveButton"]</button>
+                                                </form>
+                                            }
+                                        }
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            }
         </div>
-      </div>
+        <div class="col-md-3">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["DetailsHeader"]</h5></div>
+                <div class="ibox-content">
+                    <dl class="rgw-review">
+                        <div class="rgw-review-row"><dt>@localizer["CodeLabel"]</dt><dd><span class="rgw-mono">@p.Code</span></dd></div>
+                        @if (!string.IsNullOrEmpty(p.Number))
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["NumberLabel"]</dt><dd>@p.Number</dd></div>
+                        }
+                        <div class="rgw-review-row"><dt>@localizer["KindLabel"]</dt><dd>@ProtocolDisplay.KindName(p.Kind, localizer)</dd></div>
+                        @if (!string.IsNullOrEmpty(Model.CategoryName))
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["CategoryLabel"]</dt><dd>@Model.CategoryName</dd></div>
+                        }
+                        <div class="rgw-review-row"><dt>@localizer["OwnerLabel"]</dt><dd>@(Model.Names.TryGetValue(p.OwnerUserId ?? "", out var ownerName) ? ownerName : p.OwnerUserId)</dd></div>
+                        <div class="rgw-review-row"><dt>@localizer["AudienceLabel"]</dt><dd>@string.Join(", ", Model.AudienceLabels)</dd></div>
+                        @if (Model.Current != null)
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["InForceLabel"]</dt><dd>v@(Model.Current.Label) · @departmentTime.Format(Model.Current.EffectiveOn)</dd></div>
+                            @if (Model.Current.ExpiresOn.HasValue)
+                            {
+                                <div class="rgw-review-row"><dt>@localizer["ExpiresLabel"]</dt><dd>@departmentTime.Format(Model.Current.ExpiresOn)</dd></div>
+                            }
+                            <div class="rgw-review-row"><dt>@localizer["AcknowledgmentLabel"]</dt><dd>@(Model.Current.RequiresAcknowledgment ? localizer["RequiredLabel"] : localizer["NotRequiredLabel"])</dd></div>
+                        }
+                        <div class="rgw-review-row"><dt>@localizer["ReviewDueLabel"]</dt><dd class="@(reviewOverdue ? "text-danger" : reviewSoon ? "text-warning" : "")">@(p.NextReviewOn.HasValue ? departmentTime.Date(p.NextReviewOn) : localizer["NoReviewCycle"].Value)</dd></div>
+                        @if (p.LastReviewedOn.HasValue)
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["LastReviewedLabel"]</dt><dd>@departmentTime.Date(p.LastReviewedOn)</dd></div>
+                        }
+                        @if (!string.IsNullOrEmpty(p.Tags))
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["TagsLabel"]</dt><dd>@p.Tags</dd></div>
+                        }
+                        <div class="rgw-review-row"><dt>@localizer["UsedOnCallsColumn"]</dt><dd>@Model.CallsLast30Days</dd></div>
+                        @if (p.ExcludeFromAi)
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["AiLabel"]</dt><dd><i class="fa fa-ban" aria-hidden="true"></i> @localizer["ExcludedFromAi"]</dd></div>
+                        }
+                        @if (p.IsLicensedContent)
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["LicenseLabel"]</dt><dd><i class="fa fa-copyright" aria-hidden="true"></i> @localizer["LicensedContentLabel"]</dd></div>
+                        }
+                        @if (p.LegalHold)
+                        {
+                            <div class="rgw-review-row"><dt>@localizer["LegalHoldLabel"]</dt><dd><i class="fa fa-gavel" aria-hidden="true"></i> @localizer["OnHoldLabel"]</dd></div>
+                        }
+                    </dl>
+                </div>
+            </div>
+            @if (Model.ReviewPanel != null)
+            {
+                <partial name="_SignaturePanel" model="Model.ReviewPanel" />
+            }
+        </div>
     </div>
-  </div>
+
+    <div class="ibox hidden-print">
+        <div class="ibox-content">
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="active"><a href="#protocol-versions" data-toggle="tab" role="tab" aria-controls="protocol-versions"><i class="fa fa-history" aria-hidden="true"></i> @localizer["VersionsTab"] (@Model.Versions.Count)</a></li>
+                @if (ProtocolKindRules.TriggersApply(p.Kind) || p.Triggers.Count > 0)
+                {
+                    <li><a href="#protocol-triggers" data-toggle="tab" role="tab" aria-controls="protocol-triggers"><i class="fa fa-bolt" aria-hidden="true"></i> @localizer["TriggersTab"] (@p.Triggers.Count)</a></li>
+                    <li><a href="#protocol-questions" data-toggle="tab" role="tab" aria-controls="protocol-questions"><i class="fa fa-question-circle" aria-hidden="true"></i> @localizer["QuestionsTab"] (@p.Questions.Count)</a></li>
+                }
+                <li><a href="#protocol-attachments" data-toggle="tab" role="tab" aria-controls="protocol-attachments"><i class="fa fa-paperclip" aria-hidden="true"></i> @localizer["AttachmentsTab"] (@p.Attachments.Count)</a></li>
+                @if (Model.IsManager)
+                {
+                    <li><a href="#protocol-usage" data-toggle="tab" role="tab" aria-controls="protocol-usage"><i class="fa fa-phone" aria-hidden="true"></i> @localizer["UsageTab"]</a></li>
+                }
+                <li><a href="#protocol-signatures" data-toggle="tab" role="tab" aria-controls="protocol-signatures"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["SignaturesTab"] (@Model.Signatures.Items.Count)</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="protocol-versions" role="tabpanel">
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["VersionColumn"]</th>
+                                    <th>@localizer["StatusLabel"]</th>
+                                    <th>@localizer["EffectiveColumn"]</th>
+                                    <th>@localizer["ChangeSummaryLabel"]</th>
+                                    @if (Model.IsManager)
+                                    {
+                                        <th>@localizer["CallsColumn"]</th>
+                                    }
+                                    <th class="rgw-row-actions">@commonLocalizer["Action"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var v in Model.Versions)
+                                {
+                                    <tr>
+                                        <td>@ProtocolDisplay.VersionLabel(v, localizer)</td>
+                                        <td>@ProtocolDisplay.VersionStatusName(v.Status, localizer)</td>
+                                        <td>@departmentTime.Format(v.EffectiveOn)</td>
+                                        <td>@v.ChangeSummary</td>
+                                        @if (Model.IsManager)
+                                        {
+                                            <td>@(Model.CallsByVersion.TryGetValue(v.ProtocolVersionId, out var vc) ? vc : 0)</td>
+                                        }
+                                        <td class="rgw-row-actions">
+                                            <a class="btn btn-xs btn-info" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-versionId="@v.ProtocolVersionId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ShowButton"]</a>
+                                            <a class="btn btn-xs btn-default" asp-controller="Protocols" asp-action="Compare" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-to="@v.ProtocolVersionId"><i class="fa fa-exchange" aria-hidden="true"></i> @localizer["CompareButton"]</a>
+                                            <a class="btn btn-xs btn-default" asp-controller="SealedDocuments" asp-action="ProtocolVersion" asp-route-area="User" asp-route-protocolId="@p.DispatchProtocolId" asp-route-versionId="@v.ProtocolVersionId"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @signaturePdfText["ProtocolPdfButton"]</a>
+                                            @if (Model.IsManager && (v.Status == (int)ProtocolVersionStatuses.InReview || v.Status == (int)ProtocolVersionStatuses.Approved))
+                                            {
+                                                <a class="btn btn-xs btn-primary" asp-controller="Protocols" asp-action="Review" asp-route-area="User" asp-route-id="@v.ProtocolVersionId"><i class="fa fa-check-square-o" aria-hidden="true"></i> @localizer["OpenReviewButton"]</a>
+                                            }
+                                            @if (Model.CanModify && v.Status == (int)ProtocolVersionStatuses.Draft)
+                                            {
+                                                <form method="post" action="@Url.Action("DiscardDraft", "Protocols", new { area = "User", id = p.DispatchProtocolId, versionId = v.ProtocolVersionId })">
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["DiscardDraftConfirm"]"><i class="fa fa-times" aria-hidden="true"></i> @localizer["DiscardDraftButton"]</button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="tab-pane" id="protocol-triggers" role="tabpanel">
+                    @if (p.Triggers.Count == 0)
+                    {
+                        <p class="text-muted m-t-sm">@localizer["NoTriggersHelp"]</p>
+                    }
+                    else
+                    {
+                        <ul class="m-t-sm">
+                            @foreach (var line in Model.TriggerLines)
+                            {
+                                <li>@line</li>
+                            }
+                        </ul>
+                    }
+                </div>
+                <div class="tab-pane" id="protocol-questions" role="tabpanel">
+                    @if (p.Questions.Count == 0)
+                    {
+                        <p class="text-muted m-t-sm">@localizer["NoQuestionsHelp"]</p>
+                    }
+                    else
+                    {
+                        <p class="text-muted m-t-sm">@string.Format(localizer["MinimumWeightHelp"].Value, p.MinimumWeight)</p>
+                        <ol class="m-t-sm">
+                            @foreach (var q in p.Questions.OrderBy(x => x.DispatchProtocolQuestionId))
+                            {
+                                <li class="m-b-sm">
+                                    <strong>@q.Question</strong>
+                                    <ul class="list-unstyled m-l-md">
+                                        @foreach (var a in (q.Answers ?? new List<DispatchProtocolQuestionAnswer>()).OrderBy(x => x.DispatchProtocolQuestionAnswerId))
+                                        {
+                                            <li>@a.Answer <span class="text-muted">(@localizer["WeightColumn"]: @a.Weight)</span></li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ol>
+                    }
+                </div>
+                <div class="tab-pane" id="protocol-attachments" role="tabpanel">
+                    @if (p.Attachments.Count == 0)
+                    {
+                        <p class="text-muted m-t-sm">@localizer["NoAttachments"]</p>
+                    }
+                    else
+                    {
+                        <ul class="m-t-sm list-unstyled">
+                            @foreach (var a in p.Attachments)
+                            {
+                                <li><a asp-controller="Protocols" asp-action="GetProtocolAttachment" asp-route-area="User" asp-route-protocolAttachmentId="@a.DispatchProtocolAttachmentId"><i class="fa fa-download" aria-hidden="true"></i> @a.FileName</a> <span class="text-muted">(@((a.Size ?? 0).GetSizeInMemory()))</span></li>
+                            }
+                        </ul>
+                    }
+                </div>
+                @if (Model.IsManager)
+                {
+                    <div class="tab-pane" id="protocol-usage" role="tabpanel">
+                        <p class="text-muted m-t-sm">@string.Format(localizer["UsageHelp"].Value, Model.CallsLast30Days)</p>
+                        @if (Model.RecentCalls.Count == 0)
+                        {
+                            <p class="text-muted">@localizer["NoCallsYet"]</p>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-striped rgw-table">
+                                    <thead><tr><th>@localizer["CallColumn"]</th><th>@localizer["LoggedColumn"]</th><th>@localizer["VersionColumn"]</th></tr></thead>
+                                    <tbody>
+                                        @foreach (var call in Model.RecentCalls)
+                                        {
+                                            <tr>
+                                                <td><a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@call.CallId">@call.Number</a> @call.Name @if (call.RemovedOn.HasValue) { <span class="label label-default">@localizer["RemovedFromCallLabel"]</span> }</td>
+                                                <td>@departmentTime.Format(call.LoggedOn)</td>
+                                                <td>@(call.ProtocolVersionId.HasValue ? ProtocolDisplay.VersionLabel(Model.Versions.FirstOrDefault(v => v.ProtocolVersionId == call.ProtocolVersionId.Value), localizer) : "")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                }
+                <div class="tab-pane" id="protocol-signatures" role="tabpanel">
+                    <partial name="_SignaturesList" model="Model.Signatures" />
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/protocol-content.css" asp-append-version="true" />
+}
 
 @section Scripts
 {
-
+    <script src="~/js/app/common/passkeys/resgrid.passkeys.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/signatures/resgrid.signatures.js" asp-append-version="true"></script>
+    @if (aiTools)
+    {
+        <script src="~/js/app/internal/protocols/resgrid.protocols.cards.js" asp-append-version="true"></script>
+    }
 }

@@ -1,0 +1,87 @@
+@model System.Collections.Generic.List<Resgrid.Model.Services.MutualAidCountersignItem>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Links.Links> localizer
+@*
+    Round 10 A3: mutual-aid agreements linked departments ask this department to countersign. Their own approval chain approved and sealed the
+    agreement; any department admin here countersigns it at L2 on the signing page, against the same content hash. Below them, Records deployment
+    fills a linked department sends for this department, which an admin here accepts at L2 (the assignment's partner acceptance).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["PartnerAgreementsLink"];
+    var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+    var deployments = ViewData["Deployments"] as System.Collections.Generic.List<Resgrid.Model.Services.RecordDeploymentPartnerItem> ?? new System.Collections.Generic.List<Resgrid.Model.Services.RecordDeploymentPartnerItem>();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-8">
+    <h2>@localizer["PartnerAgreementsLink"]</h2>
+    <ol class="breadcrumb">
+      <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a></li>
+      <li><a asp-controller="Links" asp-action="Index" asp-route-area="User">@localizer["DepartmentLinks"]</a></li>
+      <li class="active"><strong>@localizer["PartnerAgreementsLink"]</strong></li>
+    </ol>
+    <small class="text-muted">@localizer["PartnerAgreementsIntro"]</small>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox">
+    <div class="ibox-content">
+      @if (Model.Count == 0)
+      {
+        <p class="text-muted">@localizer["NoPartnerAgreements"]</p>
+      }
+      else
+      {
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead><tr><th>@localizer["AgreementTitle"]</th><th>@localizer["AgreementFrom"]</th><th>@localizer["AgreementRequested"]</th><th></th></tr></thead>
+            <tbody>
+              @foreach (var item in Model)
+              {
+                <tr>
+                  <td>@item.Agreement.Title</td>
+                  <td>@item.OriginDepartmentName</td>
+                  <td>@time.Format(item.Agreement.CountersignRequestedOn)</td>
+                  <td>
+                    @if (item.Request != null)
+                    {
+                      <a class="btn btn-xs btn-primary" asp-controller="Signatures" asp-action="Step" asp-route-area="User" asp-route-id="@item.Request.SignatureRequestId">@localizer["CountersignButton"]</a>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+  <div class="ibox">
+    <div class="ibox-title"><h5>@localizer["PartnerDeploymentsTitle"]</h5></div>
+    <div class="ibox-content">
+      @if (deployments.Count == 0)
+      {
+        <p class="text-muted">@localizer["NoPartnerDeployments"]</p>
+      }
+      else
+      {
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead><tr><th>@localizer["PartnerDeploymentAssignment"]</th><th>@localizer["AgreementFrom"]</th><th>@localizer["AgreementRequested"]</th><th></th></tr></thead>
+            <tbody>
+              @foreach (var item in deployments)
+              {
+                <tr>
+                  <td>@item.Title</td>
+                  <td>@item.OriginDepartmentName</td>
+                  <td>@time.Format(item.RequestedOn)</td>
+                  <td><a class="btn btn-xs btn-primary" asp-controller="Signatures" asp-action="Step" asp-route-area="User" asp-route-id="@item.SignatureRequestId">@localizer["PartnerDeploymentAccept"]</a></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

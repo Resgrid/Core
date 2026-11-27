@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.2.0" />
+    <PackageReference Include="AWSSDK.S3" Version="3.7.414.5" />
     <PackageReference Include="NReco.PdfGenerator.LT" Version="1.2.1" />
     <PackageReference Include="RestSharp" Version="112.1.0" />
   </ItemGroup>

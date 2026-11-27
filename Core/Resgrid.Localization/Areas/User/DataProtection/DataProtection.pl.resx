@@ -191,7 +191,8 @@
     <value>Powiadomienia SMS, e-mail, push i głosowe domyślnie wysyłają treść ogólną („Dostępne jest chronione zgłoszenie — zaloguj się do Resgrid”).</value>
   </data>
   <data name="Step1NotCompliance" xml:space="preserve">
-    <value>Sama zaawansowana ochrona danych nie oznacza zgodności z HIPAA ani ePCR. To jeden element programu zgodności, za który nadal odpowiada Twoja organizacja.</value>
+    <value>Sama zaawansowana ochrona danych nie oznacza zgodności z HIPAA ani z innymi przepisami dotyczącymi danych o zdrowiu. To jeden element programu zgodności, za który nadal odpowiada Twoja organizacja.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step2Header" xml:space="preserve">
     <value>Krok 2 z 6 — potwierdzenia</value>
@@ -230,7 +231,8 @@
     <value>Rozumiem, że wsparcie Resgrid nie może odczytać chronionych wartości bez wyraźnego, audytowanego i zatwierdzonego przez departament zezwolenia, a utrata kluczy jest odwracalna tylko przez udokumentowany proces odzyskiwania.</value>
   </data>
   <data name="AckNotHipaaCompliance" xml:space="preserve">
-    <value>Rozumiem, że sama zaawansowana ochrona danych nie oznacza zgodności z HIPAA/ePCR.</value>
+    <value>Rozumiem, że sama zaawansowana ochrona danych nie oznacza zgodności z HIPAA ani z innymi przepisami dotyczącymi danych o zdrowiu.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step3Header" xml:space="preserve">
     <value>Krok 3 z 6 — kontrole wstępne</value>

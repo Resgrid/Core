@@ -1,0 +1,64 @@
+@using Resgrid.Web.Areas.User.Models.Courses
+@model BanksModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* Question banks (T2 item 4): department-shared or private to their owner. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["BanksTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = localizer["BanksTitle"].Value;
+    ViewData["Subtitle"] = localizer["BanksIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @localizer["NewBankHeader"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="Courses" asp-action="SaveBank" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="0" />
+                    <div class="rgw-grid">
+                        <div class="form-group"><label for="b-name">@localizer["NameLabel"]</label><input id="b-name" name="name" class="form-control" maxlength="250" required /></div>
+                        <div class="form-group"><label for="b-tags">@localizer["TagsLabel"]</label><input id="b-tags" name="tags" class="form-control" maxlength="500" /></div>
+                    </div>
+                    <div class="checkbox"><label><input type="checkbox" name="isShared" value="true" checked /> @localizer["SharedBankLabel"]</label></div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["CreateBankButton"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (Model.Banks.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoBanks"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped rgw-table">
+                <thead><tr><th>@localizer["NameLabel"]</th><th>@localizer["SharingColumn"]</th><th>@localizer["TagsLabel"]</th><th class="rgw-row-actions">@localizer["ActionsColumn"]</th></tr></thead>
+                <tbody>
+                    @foreach (var bank in Model.Banks)
+                    {
+                        <tr>
+                            <td><a asp-controller="Courses" asp-action="Bank" asp-route-area="User" asp-route-id="@bank.LmsQuestionBankId">@bank.Name</a></td>
+                            <td>@(bank.IsShared ? localizer["SharedBadge"] : localizer["PrivateBadge"])</td>
+                            <td>@bank.Tags</td>
+                            <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="Bank" asp-route-area="User" asp-route-id="@bank.LmsQuestionBankId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["OpenButton"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

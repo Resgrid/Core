@@ -1,0 +1,1149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HealthRecordsTab" xml:space="preserve">
+    <value>Dossiers de santé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearancesTab" xml:space="preserve">
+    <value>Aptitude médicale</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaTab" xml:space="preserve">
+    <value>Registre OSHA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HealthRecordsTitle" xml:space="preserve">
+    <value>Dossiers de santé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HealthRecordsIntro" xml:space="preserve">
+    <value>Vos cas d'exposition, blessures, statut de service et aptitude médicale. Seuls vous et les responsables santé de votre service les voient.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportExposureButton" xml:space="preserve">
+    <value>Signaler une exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportInjuryButton" xml:space="preserve">
+    <value>Signaler une blessure</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DutyStatusLabel" xml:space="preserve">
+    <value>Statut de service</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpectedReturnLabel" xml:space="preserve">
+    <value>Retour prévu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceStatusLabel" xml:space="preserve">
+    <value>Aptitude médicale</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoClearance" xml:space="preserve">
+    <value>Aucune enregistrée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ValidUntilLabel" xml:space="preserve">
+    <value>Prochaine évaluation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenCasesLabel" xml:space="preserve">
+    <value>Cas d'exposition ouverts</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenInjuriesLabel" xml:space="preserve">
+    <value>Blessures ouvertes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenCasesHeader" xml:space="preserve">
+    <value>Cas d'exposition ouverts (référent désigné)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoOpenCases" xml:space="preserve">
+    <value>Aucun cas d'exposition n'est ouvert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Date</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RouteColumn" xml:space="preserve">
+    <value>Mode d'exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StageColumn" xml:space="preserve">
+    <value>Étape</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Ouvrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotificationOverdue" xml:space="preserve">
+    <value>Réponse en retard</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenInjuriesHeader" xml:space="preserve">
+    <value>Blessures en cours</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoOpenInjuries" xml:space="preserve">
+    <value>Aucune blessure en cours.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseNumberColumn" xml:space="preserve">
+    <value>N° de cas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCasesHeader" xml:space="preserve">
+    <value>Mes cas d'exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCasesSelf" xml:space="preserve">
+    <value>Vous n'avez aucun cas d'exposition. Signalez ici une exposition à des agents pathogènes transmissibles par le sang ou à une maladie infectieuse, ou depuis une entrée d'exposition.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyInjuriesHeader" xml:space="preserve">
+    <value>Mes blessures</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoInjuriesSelf" xml:space="preserve">
+    <value>Aucune blessure n'est enregistrée pour vous.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>État</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DutyBoardHeader" xml:space="preserve">
+    <value>Tableau des statuts de service</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DutyBoardHelp" xml:space="preserve">
+    <value>Membres en service restreint, hors service ou sans aptitude complète. Seul le statut est affiché, jamais la raison.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDutyBoard" xml:space="preserve">
+    <value>Toutes les personnes que vous encadrez sont en service complet et aptes.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SinceLabel" xml:space="preserve">
+    <value>Depuis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivacyNote" xml:space="preserve">
+    <value>Ces dossiers sont restreints : vous, le référent désigné et les responsables bien-être les voyez. Les administrateurs et encadrants ne voient que le statut de service, jamais les détails médicaux. Ils ne sont jamais recherchables ni utilisés par l'IA.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Duty.FullDuty" xml:space="preserve">
+    <value>Service complet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Duty.RestrictedDuty" xml:space="preserve">
+    <value>Service restreint</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Duty.OffDuty" xml:space="preserve">
+    <value>Hors service</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Clearance.Cleared" xml:space="preserve">
+    <value>Apte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Clearance.ClearedWithRestrictions" xml:space="preserve">
+    <value>Apte avec restrictions</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Clearance.NotCleared" xml:space="preserve">
+    <value>Inapte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryState.Open" xml:space="preserve">
+    <value>En cours</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryState.Cleared" xml:space="preserve">
+    <value>Retour en service</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryState.Voided" xml:space="preserve">
+    <value>Enregistrée par erreur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.Reported" xml:space="preserve">
+    <value>Signalé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.SourceFollowUpRequested" xml:space="preserve">
+    <value>Suivi de la source demandé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.NotificationRequested" xml:space="preserve">
+    <value>Notification demandée (Ryan White)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.NotificationReceived" xml:space="preserve">
+    <value>Notification reçue</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.FollowUp" xml:space="preserve">
+    <value>Suivi post-exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.Closed" xml:space="preserve">
+    <value>Clôturé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.Withdrawn" xml:space="preserve">
+    <value>Enregistré par erreur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.Percutaneous" xml:space="preserve">
+    <value>Piqûre ou coupure par objet tranchant</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.MucousMembrane" xml:space="preserve">
+    <value>Projection dans les yeux, le nez ou la bouche</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.NonIntactSkin" xml:space="preserve">
+    <value>Contact avec une peau lésée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.Airborne" xml:space="preserve">
+    <value>Maladie infectieuse aéroportée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.Other" xml:space="preserve">
+    <value>Autre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseTitle" xml:space="preserve">
+    <value>Cas d'exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseIntro" xml:space="preserve">
+    <value>Une exposition à des agents pathogènes transmissibles par le sang ou à une maladie infectieuse, du signalement à la clôture. Le référent désigné la fait avancer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>Certains détails sont protégés et masqués sans autorisation Données protégées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotificationOverdueHelp" xml:space="preserve">
+    <value>L'établissement médical n'a pas répondu à la demande de notification sous 48 heures. Relancez-le ou commencez quand même le suivi post-exposition.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFactsHeader" xml:space="preserve">
+    <value>L'exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OccurredLabel" xml:space="preserve">
+    <value>Survenue le</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallLabel" xml:space="preserve">
+    <value>Intervention</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportedLabel" xml:space="preserve">
+    <value>Signalé le</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceFacilityLabel" xml:space="preserve">
+    <value>Établissement médical d'accueil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotificationDueLabel" xml:space="preserve">
+    <value>Réponse attendue</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPatientIdentityNote" xml:space="preserve">
+    <value>N'indiquez jamais le nom ni le numéro de dossier du patient source. Le cas renvoie à l'intervention ; l'établissement d'accueil identifie la source à partir de celle-ci.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BbpTrainingHeader" xml:space="preserve">
+    <value>Formation aux agents pathogènes transmissibles par le sang</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Expire le</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.NotTracked" xml:space="preserve">
+    <value>Non suivie par le service</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.Current" xml:space="preserve">
+    <value>À jour</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.ExpiringSoon" xml:space="preserve">
+    <value>Expire bientôt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.Expired" xml:space="preserve">
+    <value>Expirée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.None" xml:space="preserve">
+    <value>Aucun enregistrement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordInjuryButton" xml:space="preserve">
+    <value>Enregistrer comme blessure</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordInjuryHelp" xml:space="preserve">
+    <value>Une piqûre ou coupure contaminée par du sang est un cas confidentiel à consigner selon l'OSHA. Enregistrez-la comme blessure pour qu'elle figure au registre OSHA sans le nom du membre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextStepHeader" xml:space="preserve">
+    <value>Étape suivante</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextStepHelp" xml:space="preserve">
+    <value>Indiquez quand l'étape a eu lieu et vos notes, puis choisissez l'étape. L'établissement d'accueil est requis pour demander le suivi de la source.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepDateLabel" xml:space="preserve">
+    <value>Quand (vide = maintenant)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepNotesLabel" xml:space="preserve">
+    <value>Notes pour cette étape</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>Protégé : seuls le membre et les responsables le lisent.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoveToFormat" xml:space="preserve">
+    <value>Passer à : {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotesHeader" xml:space="preserve">
+    <value>Notes protégées</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceFollowUpNotesLabel" xml:space="preserve">
+    <value>Suivi de la source</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotificationResponseLabel" xml:space="preserve">
+    <value>Réponse à la notification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MedicalNotesLabel" xml:space="preserve">
+    <value>Notes de tests et de traitement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClosureNotesLabel" xml:space="preserve">
+    <value>Notes de clôture</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Enregistrer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>Masqué (protégé)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpsHeader" xml:space="preserve">
+    <value>Tâches de suivi post-exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoFollowUps" xml:space="preserve">
+    <value>Aucune tâche de suivi pour l'instant.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>Tâche</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>Attribuée à</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Échéance</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>Fait</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Annuler</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>Ajouter une tâche</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>Une tâche n'indique que son type, jamais un résultat ; elle va au membre ou à un référent désigné.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.baseline_testing" xml:space="preserve">
+    <value>Tests de référence</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.prophylaxis_review" xml:space="preserve">
+    <value>Évaluation de la prophylaxie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.six_week_test" xml:space="preserve">
+    <value>Test à six semaines</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.three_month_test" xml:space="preserve">
+    <value>Test à trois mois</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.six_month_test" xml:space="preserve">
+    <value>Test à six mois</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.counselling" xml:space="preserve">
+    <value>Accompagnement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>Autre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>Ouverte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>Prise en compte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>Faite</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>Annulée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportExposureTitle" xml:space="preserve">
+    <value>Signaler une exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportExposureIntro" xml:space="preserve">
+    <value>Une exposition à des agents pathogènes transmissibles par le sang ou à une maladie infectieuse. Le référent désigné est prévenu immédiatement et prend le relais.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExistingEntryLabel" xml:space="preserve">
+    <value>À partir d'une de vos entrées d'exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExistingEntryHelp" xml:space="preserve">
+    <value>Choisissez une entrée déjà saisie ou laissez vide pour une nouvelle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewEntryOption" xml:space="preserve">
+    <value>Une nouvelle exposition</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>Aucune intervention</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>Ce qui s'est passé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>Équipements de protection portés</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitReportButton" xml:space="preserve">
+    <value>Envoyer le signalement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportInjuryTitle" xml:space="preserve">
+    <value>Signaler une blessure</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryTitle" xml:space="preserve">
+    <value>Blessure</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryIntro" xml:space="preserve">
+    <value>Ce qui s'est passé, le statut de service avec ses dates, les restrictions et l'autorisation de reprise. Les encadrants ne voient que le statut de service.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReturnedOnLabel" xml:space="preserve">
+    <value>Retour en service complet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedCaseLabel" xml:space="preserve">
+    <value>Ouvrir le cas d'exposition à l'origine de cette blessure</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>Ce qui s'est passé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Lieu de l'événement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="JobTitleLabel" xml:space="preserve">
+    <value>Fonction</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Ce que faisait le membre et ce qui s'est passé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryDetailsLabel" xml:space="preserve">
+    <value>La blessure, la partie du corps et la cause</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TreatmentLabel" xml:space="preserve">
+    <value>Médecin, établissement et traitement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaHeader" xml:space="preserve">
+    <value>Classification OSHA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaHelp" xml:space="preserve">
+    <value>Un cas à consigner figure au registre OSHA 300 de l'année et reçoit un rapport 301. Les jours sont calculés à partir de l'historique du statut de service.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaTypeLabel" xml:space="preserve">
+    <value>Type de blessure ou de maladie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiedOnLabel" xml:space="preserve">
+    <value>Date du décès</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordableLabel" xml:space="preserve">
+    <value>Cas à consigner selon l'OSHA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivacyCaseLabel" xml:space="preserve">
+    <value>Cas confidentiel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivacyCaseHelp" xml:space="preserve">
+    <value>Le nom est masqué dans le registre 300 (29 CFR 1904.29(b)).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EmergencyRoomLabel" xml:space="preserve">
+    <value>Soigné aux urgences</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HospitalizedLabel" xml:space="preserve">
+    <value>Hospitalisé une nuit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaOfficerOnlyNote" xml:space="preserve">
+    <value>Les responsables santé de votre service examinent le signalement et complètent la classification OSHA.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DutyHistoryHeader" xml:space="preserve">
+    <value>Historique du statut de service</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RestrictionsLabel" xml:space="preserve">
+    <value>Restrictions médicales</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPeriods" xml:space="preserve">
+    <value>Service complet tout du long.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromColumn" xml:space="preserve">
+    <value>Du</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToColumn" xml:space="preserve">
+    <value>Jusqu'au</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OngoingLabel" xml:space="preserve">
+    <value>En cours</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDutyStatusHeader" xml:space="preserve">
+    <value>Service restreint ou hors service</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RestrictionsHelp" xml:space="preserve">
+    <value>Protégé. Les encadrants voient seulement que le membre est en service restreint.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDutyStatusButton" xml:space="preserve">
+    <value>Définir le statut de service</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReturnHeader" xml:space="preserve">
+    <value>Reprise du service</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReturnHelp" xml:space="preserve">
+    <value>L'autorisation de reprise en service complet clôt les périodes de service liées à la blessure.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceNotesLabel" xml:space="preserve">
+    <value>Notes d'autorisation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearReturnButton" xml:space="preserve">
+    <value>Autoriser la reprise complète</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidInjuryButton" xml:space="preserve">
+    <value>Enregistrée par erreur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidInjuryHelp" xml:space="preserve">
+    <value>L'enregistrement est conservé pendant sa durée de conservation et quitte le registre OSHA.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearancesTitle" xml:space="preserve">
+    <value>Aptitude médicale (NFPA 1582)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearancesIntro" xml:space="preserve">
+    <value>Évaluations de médecine du travail avec leur statut de restriction. Les responsables et la planification voient le statut ; le détail des restrictions est protégé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceTypeMissingNote" xml:space="preserve">
+    <value>Désignez dans les paramètres bien-être un type de certification pour l'aptitude médicale (modèle "Medical Clearance (NFPA 1582)") afin d'enregistrer aussi chaque évaluation comme certification.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CurrentClearancesHeader" xml:space="preserve">
+    <value>Aptitude actuelle par membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoClearances" xml:space="preserve">
+    <value>Aucune aptitude enregistrée pour l'instant.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EvaluatedOnLabel" xml:space="preserve">
+    <value>Évalué le</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HistoryButton" xml:space="preserve">
+    <value>Historique</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordClearanceHeader" xml:space="preserve">
+    <value>Enregistrer une évaluation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RestrictionDetailLabel" xml:space="preserve">
+    <value>Restrictions et motifs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceDetailHelp" xml:space="preserve">
+    <value>Protégé (ADP). Les responsables et la planification ne voient que Apte, Apte avec restrictions ou Inapte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordClearanceButton" xml:space="preserve">
+    <value>Enregistrer l'évaluation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HistoryHeaderFormat" xml:space="preserve">
+    <value>Historique d'aptitude : {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidedLabel" xml:space="preserve">
+    <value>Annulée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Annuler l'entrée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HealthSettingsHeader" xml:space="preserve">
+    <value>Cas d'exposition, blessures et aptitude médicale</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerRoleLabel" xml:space="preserve">
+    <value>Rôle du référent désigné</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerRoleHelp" xml:space="preserve">
+    <value>Les membres de ce rôle reçoivent les signalements d'exposition aux agents pathogènes transmissibles par le sang et aux maladies infectieuses (Ryan White partie G) et gèrent les cas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SameAsWellnessOfficerOption" xml:space="preserve">
+    <value>Le rôle de responsable bien-être</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BbpTrainingTypeLabel" xml:space="preserve">
+    <value>Certification de formation aux agents pathogènes transmissibles par le sang</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BbpTrainingTypeHelp" xml:space="preserve">
+    <value>Chaque cas d'exposition affiche le statut actuel du membre pour cette formation annuelle (OSHA 1910.1030).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceTypeLabel" xml:space="preserve">
+    <value>Certification d'aptitude médicale</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceTypeHelp" xml:space="preserve">
+    <value>Chaque évaluation NFPA 1582 est aussi enregistrée comme certification de ce type ; Inapte la suspend.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryRetentionYearsLabel" xml:space="preserve">
+    <value>Conserver les dossiers de blessures (années)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryRetentionYearsHelp" xml:space="preserve">
+    <value>Après la fin de l'année de la blessure : au moins 5 (OSHA 1904.33). Les cas d'exposition et les aptitudes suivent la conservation de 30 ans des expositions.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaTitle" xml:space="preserve">
+    <value>OSHA 300 et 301</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaIntro" xml:space="preserve">
+    <value>Le registre annuel des blessures à consigner et les rapports d'incident, établis à partir des dossiers de blessures. Les cas confidentiels apparaissent sans nom.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Afficher</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Export300Csv" xml:space="preserve">
+    <value>Registre 300 (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Export300Pdf" xml:space="preserve">
+    <value>Registre 300 (PDF)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Export301Csv" xml:space="preserve">
+    <value>Rapports 301 (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Export301Pdf" xml:space="preserve">
+    <value>Rapports 301 (PDF)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCasesOnLog" xml:space="preserve">
+    <value>Aucun cas à consigner cette année.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivacyMaskNote" xml:space="preserve">
+    <value>Un cas confidentiel affiche « Cas confidentiel » à la place du nom, ici et dans chaque export du registre 300.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeColumn" xml:space="preserve">
+    <value>Gravité</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Death" xml:space="preserve">
+    <value>Décès</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.DaysAwayFromWork" xml:space="preserve">
+    <value>Jours d'arrêt de travail</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.JobTransferOrRestriction" xml:space="preserve">
+    <value>Mutation ou restriction</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.OtherRecordable" xml:space="preserve">
+    <value>Autre cas à consigner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.LogTitle" xml:space="preserve">
+    <value>Registre des blessures et maladies liées au travail (format du formulaire OSHA 300)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.ReportTitle" xml:space="preserve">
+    <value>Rapport d'incident de blessure ou de maladie (format du formulaire OSHA 301)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Establishment" xml:space="preserve">
+    <value>Établissement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Year" xml:space="preserve">
+    <value>Année</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.CaseNumber" xml:space="preserve">
+    <value>N° de cas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.EmployeeName" xml:space="preserve">
+    <value>Nom du salarié</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.JobTitle" xml:space="preserve">
+    <value>Fonction</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DateOfInjury" xml:space="preserve">
+    <value>Date de la blessure ou du début de la maladie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Where" xml:space="preserve">
+    <value>Lieu de l'événement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Description" xml:space="preserve">
+    <value>Blessure ou maladie, parties du corps touchées et objet ou substance</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Death" xml:space="preserve">
+    <value>Décès</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DaysAwayCase" xml:space="preserve">
+    <value>Jours d'arrêt de travail</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.RestrictedCase" xml:space="preserve">
+    <value>Mutation ou restriction</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.OtherRecordable" xml:space="preserve">
+    <value>Autre cas à consigner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DaysAway" xml:space="preserve">
+    <value>Arrêt de travail (jours)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DaysRestricted" xml:space="preserve">
+    <value>En mutation ou restriction (jours)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.Injury" xml:space="preserve">
+    <value>Blessure</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.SkinDisorder" xml:space="preserve">
+    <value>Affection cutanée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.RespiratoryCondition" xml:space="preserve">
+    <value>Affection respiratoire</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.Poisoning" xml:space="preserve">
+    <value>Intoxication</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.HearingLoss" xml:space="preserve">
+    <value>Perte auditive</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.AllOtherIllnesses" xml:space="preserve">
+    <value>Toutes autres maladies</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Totals" xml:space="preserve">
+    <value>Totaux</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.TimeOfEvent" xml:space="preserve">
+    <value>Heure de l'événement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.WhatHappened" xml:space="preserve">
+    <value>Que faisait le salarié et que s'est-il passé ?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.InjuryDetails" xml:space="preserve">
+    <value>Quelle était la blessure ou la maladie, et qu'est-ce qui l'a causée ?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Treatment" xml:space="preserve">
+    <value>Médecin, établissement et traitement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.EmergencyRoom" xml:space="preserve">
+    <value>Soigné aux urgences</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Hospitalized" xml:space="preserve">
+    <value>Hospitalisé une nuit en tant que patient</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DateOfDeath" xml:space="preserve">
+    <value>Date du décès</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.PrivacyCase" xml:space="preserve">
+    <value>Cas confidentiel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.PrivacyCaseName" xml:space="preserve">
+    <value>Cas confidentiel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.EmployeeDetailsNote" xml:space="preserve">
+    <value>L'adresse, la date de naissance, la date d'embauche et le sexe du salarié sont complétés depuis le dossier du personnel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Withheld" xml:space="preserve">
+    <value>Masqué (protégé)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Yes" xml:space="preserve">
+    <value>Oui</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.No" xml:space="preserve">
+    <value>Non</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Retention" xml:space="preserve">
+    <value>Conservez ces registres cinq ans après la fin de l'année qu'ils couvrent (29 CFR 1904.33).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Generated" xml:space="preserve">
+    <value>Généré le {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.ExposureReported" xml:space="preserve">
+    <value>L'exposition a été signalée et le référent désigné a été prévenu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.CaseMoved" xml:space="preserve">
+    <value>Le cas est passé à l'étape suivante.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>Enregistré.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>La tâche de suivi a été ajoutée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>La tâche de suivi est faite.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>La tâche de suivi a été annulée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.InjuryReported" xml:space="preserve">
+    <value>La blessure a été signalée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.DutyStatusSaved" xml:space="preserve">
+    <value>Le statut de service a été défini.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.ReturnedToDuty" xml:space="preserve">
+    <value>Le membre est autorisé à reprendre un service complet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.InjuryVoided" xml:space="preserve">
+    <value>La blessure est marquée comme enregistrée par erreur.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.ClearanceRecorded" xml:space="preserve">
+    <value>L'évaluation a été enregistrée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.ClearanceVoided" xml:space="preserve">
+    <value>L'évaluation a été annulée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>Impossible d'enregistrer. Vérifiez le formulaire et réessayez.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>Vous n'avez pas l'autorisation de le faire.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>L'export n'a pas pu être produit. Réessayez plus tard.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>Saisissez une date valide (pas dans le futur).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>Cette personne n'est pas membre actuel du service.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.route_required" xml:space="preserve">
+    <value>Choisissez le mode d'exposition.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.entry_not_bloodborne" xml:space="preserve">
+    <value>Un cas ne peut suivre qu'une entrée confirmée d'exposition aux agents pathogènes transmissibles par le sang (ou autre).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.case_exists" xml:space="preserve">
+    <value>Cette entrée a déjà un cas ouvert.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>Cette intervention est introuvable dans ce service.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.case_changed" xml:space="preserve">
+    <value>Quelqu'un d'autre a modifié ce cas. Rechargez-le et réessayez.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.stage_not_allowed" xml:space="preserve">
+    <value>Le cas ne peut pas passer à cette étape depuis l'étape actuelle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.facility_required" xml:space="preserve">
+    <value>Indiquez l'établissement médical d'accueil pour demander le suivi de la source.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.follow_ups_open" xml:space="preserve">
+    <value>Terminez ou annulez les tâches de suivi ouvertes avant de clôturer le cas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.case_closed" xml:space="preserve">
+    <value>Ce cas est clôturé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>Une tâche va au membre exposé ou à un référent désigné.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.duty_status_required" xml:space="preserve">
+    <value>Choisissez service restreint ou hors service.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.return_date_invalid" xml:space="preserve">
+    <value>Le retour prévu doit être postérieur à la date de début.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.date_before_current_status" xml:space="preserve">
+    <value>Cette date précède le début du statut de service actuel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.injury_not_open" xml:space="preserve">
+    <value>Seule une blessure en cours peut faire l'objet d'une reprise.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.clearance_status_required" xml:space="preserve">
+    <value>Choisissez le statut d'aptitude.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.valid_until_invalid" xml:space="preserve">
+    <value>La prochaine évaluation doit être postérieure à la date d'évaluation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.injury_changed" xml:space="preserve">
+    <value>Quelqu'un d'autre a modifié cette blessure. Rechargez-la et réessayez.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>Les détails protégés n'ont pas pu être enregistrés pour l'instant. Réessayez plus tard.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerCertificationLabel" xml:space="preserve">
+    <value>Certification du référent désigné</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerCertificationHelp" xml:space="preserve">
+    <value>Facultatif. L'un de vos types de certification, par exemple issu du modèle Référent désigné pour le contrôle des expositions. Sans rôle de référent désigné, le rôle de responsable du bien-être et sa certification s'en chargent.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>Ajouter ou modifier des dossiers de bien-être nécessite le module Workforce Pro. Les dossiers existants restent consultables.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>Workforce Pro n’est pas activé pour ce membre, ses dossiers sont donc en lecture seule.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>Le bien-être des membres n’est pas disponible pour cette organisation.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

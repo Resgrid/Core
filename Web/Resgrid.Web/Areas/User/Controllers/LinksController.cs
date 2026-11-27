@@ -1,4 +1,8 @@
 using System;
+using Resgrid.Localization.Areas.User.Signatures;
+using Resgrid.Web.Attributes;
+using Resgrid.Framework;
+using System.Globalization;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
@@ -12,13 +16,17 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model.Helpers;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.Units;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
-	// Department links are scoped to the caller's department claim on every action.
+	// Department links are scoped to the caller's department claim on every action. Creating, enabling, disabling
+	// and deleting a link are department-admin actions (Department_Update, the claim the Index page checks before
+	// showing those buttons), and every write is an antiforgery-validated POST.
 	[Area("User")]
 	[Authorize]
+	[DepartmentLocalTime]
 	public class LinksController : SecureBaseController
 	{
 		#region Private Members and Constructors
@@ -35,12 +43,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IMappingService _mappingService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
+		private readonly ILinkedProtocolService _linkedProtocols;
+		private readonly IMutualAidCountersignService _countersign;
+		private readonly IRecordDeploymentPartnerService _deploymentPartners;
+		private readonly ISignatureService _signatures;
 
 		public LinksController(IDepartmentLinksService departmentLinksService, IDepartmentsService departmentsService, IEmailService emailService,
 			ICallsService callsService, IUnitsService unitsService, IActionLogsService actionLogsService, IDepartmentGroupsService departmentGroupsService,
 			IUserStateService userStateService, IPersonnelRolesService personnelRolesService, ILimitsService limitsService, IMappingService mappingService,
-			IDepartmentSettingsService departmentSettingsService, IStringLocalizer<Resgrid.Localization.Common> localizer)
+			IDepartmentSettingsService departmentSettingsService, IStringLocalizer<Resgrid.Localization.Common> localizer, ILinkedProtocolService linkedProtocols,
+			IMutualAidCountersignService countersign, IRecordDeploymentPartnerService deploymentPartners, ISignatureService signatures)
 		{
+			_deploymentPartners = deploymentPartners;
+			_signatures = signatures;
+			_linkedProtocols = linkedProtocols;
+			_countersign = countersign;
 			_departmentLinksService = departmentLinksService;
 			_departmentsService = departmentsService;
 			_emailService = emailService;
@@ -73,6 +90,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> New()
 		{
 			var model = new NewLinksView();
@@ -82,6 +100,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> New(NewLinksView model, CancellationToken cancellationToken)
 		{
 			if (!await _limitsService.CanDepartmentUseLinksAsync(DepartmentId))
@@ -110,24 +130,72 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
-			model.Link.DepartmentId = DepartmentId;
-			model.Link.LinkedDepartmentId = linkedDepartment.DepartmentId;
-			model.Link.LinkEnabled = false;
-			model.Link.LinkCreated = DateTime.UtcNow;
+			// Build the link from the fields the creator may choose: what IT shares and its color. The posted row id and
+			// the linked department's share flags are never bound from the form — a posted id would overwrite another
+			// department's link, and posted LinkedDepartmentShare* flags would grant the creator the other side's data.
+			var posted = model.Link ?? new DepartmentLink();
+			var link = new DepartmentLink
+			{
+				DepartmentId = DepartmentId,
+				LinkedDepartmentId = linkedDepartment.DepartmentId,
+				DepartmentColor = posted.DepartmentColor,
+				DepartmentShareCalls = posted.DepartmentShareCalls,
+				DepartmentShareUnits = posted.DepartmentShareUnits,
+				DepartmentSharePersonnel = posted.DepartmentSharePersonnel,
+				DepartmentShareOrders = posted.DepartmentShareOrders,
+				DepartmentShareProtocols = posted.DepartmentShareProtocols,
+				DepartmentShareTraining = posted.DepartmentShareTraining,
+				LinkEnabled = false,
+				LinkCreated = DateTime.UtcNow
+			};
 
-			await _departmentLinksService.SaveAsync(model.Link, cancellationToken);
-			await _emailService.SendNewDepartmentLinkMailAsync(model.Link);
+			await _departmentLinksService.SaveAsync(link, cancellationToken);
+			await _emailService.SendNewDepartmentLinkMailAsync(link);
 
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
+		/// <summary>
+		/// Accepting a link is an L2 signature by the accepting department's admin (round 10 A3, e-Sign §20 "Department Links"): the step-up the
+		/// action required is this session's proof, and the signature binds to the link's parties and sharing as accepted. Refused, nothing changes.
+		/// </summary>
+		private async Task<bool> SignAcceptanceAsync(DepartmentLink link, CancellationToken cancellationToken)
+		{
+			var creator = (await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId, false))?.Name ?? link.DepartmentId.ToString(CultureInfo.InvariantCulture);
+			var hash = SignaturePolicy.HashArtifact(DepartmentLinkSharing.AcceptanceCanonical(link));
+			string ip;
+			try { ip = IpAddressHelper.GetRequestIP(Request, true); }
+			catch (Exception) { ip = HttpContext?.Connection?.RemoteIpAddress?.ToString(); }
+			var proof = SignatureProof.SessionOnly(UserId, ip, Request?.Headers["User-Agent"].ToString());
+			proof.StepUpVerifiedOnUtc = HttpContext?.Items["mfa_verified_at"] as DateTime?;
+			var signed = await _signatures.SignAsync(new SignatureRequest
+			{
+				DepartmentId = DepartmentId,
+				Use = SignatureUse.DepartmentLinkAcceptance,
+				SubjectId = link.DepartmentLinkId.ToString(CultureInfo.InvariantCulture),
+				RevisionId = "link-" + link.DepartmentLinkId.ToString(CultureInfo.InvariantCulture),
+				ArtifactSha256 = hash,
+				StatementText = SignatureTexts.Get("StatementDepartmentLinkAcceptance", CultureInfo.CurrentUICulture.Name, creator, SignaturePolicy.ShortCode(hash))
+			}, proof, cancellationToken);
+			if (signed?.Succeeded == true)
+				return true;
+			Logging.LogError($"Department link {link.DepartmentLinkId} was not accepted: its signature was refused ({signed?.Outcome}).");
+			return false;
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		[RequiresRecentTwoFactor(RequireForOperation = true)]
 		public async Task<IActionResult> EnableLink(int linkId, CancellationToken cancellationToken)
 		{
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
-			if (link.LinkedDepartmentId != DepartmentId)
+			// Only the linked department accepts a link. An unknown id answers the same as another department's link.
+			if (!IsLinkedDepartment(link))
 				return Unauthorized();
+			if (!await SignAcceptanceAsync(link, cancellationToken))
+				return RedirectToAction("Index");
 
 			link.LinkEnabled = true;
 			link.LinkAccepted = DateTime.UtcNow;
@@ -137,28 +205,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
-		public async Task<IActionResult> DisableLink(int linkId, CancellationToken cancellationToke)
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DisableLink(int linkId, CancellationToken cancellationToken)
 		{
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
-			if (link.LinkedDepartmentId != DepartmentId)
+			// Only the linked department turns its acceptance off; the creating department ends a link by deleting it.
+			if (!IsLinkedDepartment(link))
 				return Unauthorized();
 
 			link.LinkEnabled = false;
 			link.LinkAccepted = null;
 
-			await _departmentLinksService.SaveAsync(link, cancellationToke);
+			await _departmentLinksService.SaveAsync(link, cancellationToken);
 
 			return RedirectToAction("Index");
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Enable(int linkId)
 		{
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
-			if (link.LinkedDepartmentId != DepartmentId)
+			if (!IsLinkedDepartment(link))
 				return Unauthorized();
 
 			var model = new NewLinksView();
@@ -169,12 +241,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		[RequiresRecentTwoFactor(RequireForOperation = true)]
 		public async Task<IActionResult> Enable(NewLinksView model, CancellationToken cancellationToken)
 		{
+			if (model?.Link == null)
+				return Unauthorized();
+
 			var link = await _departmentLinksService.GetLinkByIdAsync(model.Link.DepartmentLinkId);
 
-			if (link.LinkedDepartmentId != DepartmentId)
+			if (!IsLinkedDepartment(link))
 				return Unauthorized();
+			if (!await SignAcceptanceAsync(link, cancellationToken))
+				return RedirectToAction("Index");
 
 			link.DepartmentColor = model.Link.DepartmentColor;
 			link.LinkEnabled = true;
@@ -185,12 +265,91 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		[HttpGet]
-		public async Task<IActionResult> DeleteLink(int linkId)
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DeleteLink(int linkId, CancellationToken cancellationToken)
 		{
+			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
+			// Either side may end a link: the creating department revokes what it shares, the linked department drops it.
+			if (link == null || (link.DepartmentId != DepartmentId && link.LinkedDepartmentId != DepartmentId))
+				return Unauthorized();
+
+			await _departmentLinksService.DeleteLinkAsync(link, cancellationToken);
 
 			return RedirectToAction("Index");
+		}
+
+		private bool IsLinkedDepartment(DepartmentLink link)
+		{
+			return link != null && link.LinkedDepartmentId == DepartmentId;
+		}
+
+		// Round 10 A3: each side sets what IT shares (calls, units, personnel, orders, protocols, training); it never changes what the other side
+		// shares with it. A reduction rotates the share epochs and stops set subscriptions, sponsorships and countersignatures over the link.
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Sharing(int linkId)
+		{
+			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
+			if (!DepartmentLinkSharing.IsParty(link, DepartmentId))
+				return Unauthorized();
+
+			return View(new LinkSharingView
+			{
+				Link = link,
+				IsCreator = link.DepartmentId == DepartmentId,
+				OtherDepartmentName = link.DepartmentId == DepartmentId ? link.LinkedDepartment?.Name : link.Department?.Name,
+				Calls = DepartmentLinkSharing.SideShares(link, DepartmentId, DepartmentLinkShareTypes.Calls),
+				Units = DepartmentLinkSharing.SideShares(link, DepartmentId, DepartmentLinkShareTypes.Units),
+				Personnel = DepartmentLinkSharing.SideShares(link, DepartmentId, DepartmentLinkShareTypes.Personnel),
+				Orders = DepartmentLinkSharing.SideShares(link, DepartmentId, DepartmentLinkShareTypes.Orders),
+				Protocols = DepartmentLinkSharing.SideShares(link, DepartmentId, DepartmentLinkShareTypes.Protocols),
+				Training = DepartmentLinkSharing.SideShares(link, DepartmentId, DepartmentLinkShareTypes.Training)
+			});
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Sharing(int linkId, bool calls, bool units, bool personnel, bool orders, bool protocols, bool training, CancellationToken cancellationToken)
+		{
+			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
+			if (!DepartmentLinkSharing.SetSideShares(link, DepartmentId, calls, units, personnel, orders, protocols, training))
+				return Unauthorized();
+
+			await _departmentLinksService.SaveAsync(link, cancellationToken);
+			return RedirectToAction("Index");
+		}
+
+		// Protocols P5 "Linked departments": the other side's published protocols, read-only, only over a link that shares Protocols toward us.
+		[HttpGet]
+		public async Task<IActionResult> Protocols(int linkId)
+		{
+			var list = await _linkedProtocols.GetSharedProtocolsAsync(DepartmentId, linkId);
+			if (list == null)
+				return Unauthorized();
+			return View(list);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> Protocol(int linkId, int id)
+		{
+			var page = await _linkedProtocols.GetSharedProtocolAsync(DepartmentId, linkId, id);
+			if (page == null)
+				return Unauthorized();
+			return View(page);
+		}
+
+		// Mutual-aid agreements linked departments ask this department to countersign (department admins sign them on the signing page).
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> Agreements()
+		{
+			// Round 10 A3: the partner's queue over its links: agreements to countersign and deployment fills to accept (both L2).
+			ViewData["Deployments"] = await _deploymentPartners.GetAwaitingAsync(DepartmentId) ?? new List<RecordDeploymentPartnerItem>();
+			return View(await _countersign.GetAwaitingAsync(DepartmentId));
 		}
 
 		[HttpGet]
@@ -199,7 +358,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new LinkDataView();
 			model.Link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
-			if (model.Link.DepartmentId != DepartmentId && model.Link.LinkedDepartmentId != DepartmentId)
+			if (!DepartmentLinkSharing.IsParty(model.Link, DepartmentId))
 				return Unauthorized();
 
 			return View(model);
@@ -212,15 +371,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			List<CallListJson> callsJson = new List<CallListJson>();
 
-			if (link.DepartmentId != DepartmentId && link.LinkedDepartmentId != DepartmentId)
+			if (!DepartmentLinkSharing.IsParty(link, DepartmentId))
 				return Unauthorized();
 
-			if (link.LinkEnabled && link.DepartmentShareCalls)
+			var sharedDepartmentId = DepartmentLinkSharing.GetSharedDepartmentId(link, DepartmentId, DepartmentLinkShareTypes.Calls);
+
+			if (sharedDepartmentId.HasValue)
 			{
-				var calls = (await _callsService.GetActiveCallsByDepartmentAsync(link.DepartmentId)).OrderByDescending(x => x.LoggedOn);
-				var department = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId, false);
+				var sourceDepartmentId = sharedDepartmentId.Value;
+				var calls = (await _callsService.GetActiveCallsByDepartmentAsync(sourceDepartmentId)).OrderByDescending(x => x.LoggedOn);
+				var department = await _departmentsService.GetDepartmentByIdAsync(sourceDepartmentId, false);
 				// Read with the sharing department's pattern: these are its numbers, not the viewer's.
-				var numberSort = CallNumberFormat.SortKeys(CallNumberFormat.EffectivePattern(await _departmentSettingsService.GetCallNumberingConfigAsync(link.DepartmentId)));
+				var numberSort = CallNumberFormat.SortKeys(CallNumberFormat.EffectivePattern(await _departmentSettingsService.GetCallNumberingConfigAsync(sourceDepartmentId)));
 
 				foreach (var call in calls)
 				{
@@ -237,13 +399,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					callJson.State = _callsService.CallStateToString((CallStates) call.State);
 					callJson.StateColor = _callsService.CallStateToColor((CallStates) call.State);
 					callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
-					callJson.Priority = await _callsService.CallPriorityToStringAsync(call.Priority, link.DepartmentId);
-					callJson.Color = await _callsService.CallPriorityToColorAsync(call.Priority, link.DepartmentId);
+					callJson.Priority = await _callsService.CallPriorityToStringAsync(call.Priority, sourceDepartmentId);
+					callJson.Color = await _callsService.CallPriorityToColorAsync(call.Priority, sourceDepartmentId);
 
-					if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || call.ReportingUserId == UserId)
-						callJson.CanDeleteCall = true;
-					else
-						callJson.CanDeleteCall = false;
+					// Always the other department's call: being an admin of your own department grants nothing here.
+					callJson.CanDeleteCall = false;
 
 					callsJson.Add(callJson);
 				}
@@ -257,14 +417,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
-			if (link.DepartmentId != DepartmentId && link.LinkedDepartmentId != DepartmentId)
+			if (!DepartmentLinkSharing.IsParty(link, DepartmentId))
 				return Unauthorized();
 
 			List<UnitForListJson> unitsJson = new List<UnitForListJson>();
 
-			var units = await _unitsService.GetUnitsForDepartmentAsync(link.DepartmentId);
-			var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(link.DepartmentId);
-			var department = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId, false);
+			// Only units the other side shares toward this department, over an enabled link.
+			var sharedDepartmentId = DepartmentLinkSharing.GetSharedDepartmentId(link, DepartmentId, DepartmentLinkShareTypes.Units);
+			if (!sharedDepartmentId.HasValue)
+				return Json(unitsJson);
+
+			var sourceDepartmentId = sharedDepartmentId.Value;
+			var units = await _unitsService.GetUnitsForDepartmentAsync(sourceDepartmentId);
+			var states = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(sourceDepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(sourceDepartmentId, false);
 
 			foreach (var unit in units)
 			{
@@ -300,20 +466,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
-			if (link.DepartmentId != DepartmentId && link.LinkedDepartmentId != DepartmentId)
+			if (!DepartmentLinkSharing.IsParty(link, DepartmentId))
 				return Unauthorized();
 
-			var department = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId);
-			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(link.DepartmentId);
-			var lastUserActionlogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(link.DepartmentId);
-			var departmentGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(link.DepartmentId);
+			// Only personnel the other side shares toward this department, over an enabled link.
+			var sharedDepartmentId = DepartmentLinkSharing.GetSharedDepartmentId(link, DepartmentId, DepartmentLinkShareTypes.Personnel);
+			if (!sharedDepartmentId.HasValue)
+				return Json(new List<Models.BigBoardX.PersonnelViewModel>());
 
-			var lastUserStates = await _userStateService.GetLatestStatesForDepartmentAsync(link.DepartmentId);
-			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(link.DepartmentId);
+			var sourceDepartmentId = sharedDepartmentId.Value;
+			var department = await _departmentsService.GetDepartmentByIdAsync(sourceDepartmentId);
+			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(sourceDepartmentId);
+			var lastUserActionlogs = await _actionLogsService.GetAllActionLogsForDepartmentAsync(sourceDepartmentId);
+			var departmentGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(sourceDepartmentId);
 
-			var calls = await _callsService.GetActiveCallsByDepartmentAsync(link.DepartmentId);
-			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(link.DepartmentId);
-			var pois = await _mappingService.GetPOIsForDepartmentAsync(link.DepartmentId);
+			var lastUserStates = await _userStateService.GetLatestStatesForDepartmentAsync(sourceDepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(sourceDepartmentId);
+
+			var calls = await _callsService.GetActiveCallsByDepartmentAsync(sourceDepartmentId);
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(sourceDepartmentId);
+			var pois = await _mappingService.GetPOIsForDepartmentAsync(sourceDepartmentId);
 
 			var names = new Dictionary<string, string>();
 
@@ -361,8 +533,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//var mu = Membership.GetUser(u.User.UserId);
 				var al = lastUserActionlogs.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
 				var us = userStates.Where(x => x.UserId == u.User.UserId).FirstOrDefault();
-				u.Roles.AddRange(await _personnelRolesService.GetRolesForUserAsync(u.User.UserId, DepartmentId));
-				var group = await _departmentGroupsService.GetGroupForUserAsync(u.User.UserId, DepartmentId);
+				// The listed people belong to the sharing department, so their roles and group are looked up there.
+				u.Roles.AddRange(await _personnelRolesService.GetRolesForUserAsync(u.User.UserId, sourceDepartmentId));
+				var group = await _departmentGroupsService.GetGroupForUserAsync(u.User.UserId, sourceDepartmentId);
 
 				string callNumber = "";
 				if ((al != null && al.ActionTypeId == (int)ActionTypes.RespondingToScene) || (al != null && al.DestinationType.ToDestinationEntityType() == DestinationEntityTypes.Call))

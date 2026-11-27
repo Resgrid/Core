@@ -1,0 +1,1049 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetsHeader" xml:space="preserve">
+    <value>Κοινόχρηστα σύνολα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinksCrumb" xml:space="preserve">
+    <value>Συνδέσεις τμημάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsTab" xml:space="preserve">
+    <value>Σύνολα πρωτοκόλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsTab" xml:space="preserve">
+    <value>Σύνολα μαθημάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxTab" xml:space="preserve">
+    <value>Εισερχόμενα ενημερώσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalsTab" xml:space="preserve">
+    <value>Προτάσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipsTab" xml:space="preserve">
+    <value>Χορηγίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Ρυθμίσεις συνόλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsIntro" xml:space="preserve">
+    <value>Δημοσιεύστε πρωτόκολλα ως σύνολο σε συνδεδεμένα τμήματα ή εγγραφείτε στα σύνολα που δημοσιεύουν τα συνδεδεμένα τμήματα. Το κλειδωμένο περιεχόμενο ακολουθεί τον εκδότη· τα προσαρμόσιμα μπλοκ διατηρούν τις αλλαγές σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsIntro" xml:space="preserve">
+    <value>Δημοσιεύστε μαθήματα και εκπαιδεύσεις ως σύνολο σε συνδεδεμένα τμήματα ή εγγραφείτε στα δικά τους. Οι ολοκληρώσεις παραμένουν στο προσωπικό αρχείο κάθε μέλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedHeader" xml:space="preserve">
+    <value>Σύνολα που δημοσιεύει το τμήμα σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedIntro" xml:space="preserve">
+    <value>Τα συνδεδεμένα τμήματα με τα οποία μοιράζεστε αυτό το είδος περιεχομένου μπορούν να εγγραφούν. Κάθε νέα έκδοση που δημοσιεύετε φτάνει στα εισερχόμενα ενημερώσεών τους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSet" xml:space="preserve">
+    <value>Σύνολο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnItems" xml:space="preserve">
+    <value>Στοιχεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSubscribers" xml:space="preserve">
+    <value>Συνδρομητές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnPublisher" xml:space="preserve">
+    <value>Εκδότης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnItem" xml:space="preserve">
+    <value>Στοιχείο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnVersion" xml:space="preserve">
+    <value>Έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnEffective" xml:space="preserve">
+    <value>Ισχύει από</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnDeadline" xml:space="preserve">
+    <value>Προθεσμία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSponsor" xml:space="preserve">
+    <value>Χορηγός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSponsored" xml:space="preserve">
+    <value>Χορηγούμενο τμήμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSeats" xml:space="preserve">
+    <value>Θέσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Αρχειοθετημένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLive" xml:space="preserve">
+    <value>Ενεργό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSubscribed" xml:space="preserve">
+    <value>Με συνδρομή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSuspended" xml:space="preserve">
+    <value>Σε αναστολή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>Χωρίς συνδρομή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetNameLabel" xml:space="preserve">
+    <value>Όνομα συνόλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDescriptionLabel" xml:space="preserve">
+    <value>Περιγραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewSetButton" xml:space="preserve">
+    <value>Νέο σύνολο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableHeader" xml:space="preserve">
+    <value>Σύνολα κοινοποιημένα στο τμήμα σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableIntroProtocols" xml:space="preserve">
+    <value>Σύνολα συνδεδεμένων τμημάτων που μοιράζονται πρωτόκολλα με το τμήμα σας μέσω μιας Σύνδεσης τμημάτων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableIntroTraining" xml:space="preserve">
+    <value>Σύνολα συνδεδεμένων τμημάτων που μοιράζονται εκπαίδευση με το τμήμα σας μέσω μιας Σύνδεσης τμημάτων. Τα μαθήματα απαιτούν το δικό σας πρόσθετο LMS ή τη χορηγία του εκδότη· οι εκπαιδεύσεις όχι.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAvailable" xml:space="preserve">
+    <value>Κανένα συνδεδεμένο τμήμα δεν μοιράζεται ακόμη σύνολο αυτού του είδους με το τμήμα σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredLabel" xml:space="preserve">
+    <value>Με χορηγία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionsHeader" xml:space="preserve">
+    <value>Οι συνδρομές σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSubscriptions" xml:space="preserve">
+    <value>Το τμήμα σας δεν έχει εγγραφεί σε σύνολο αυτού του είδους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribedOn" xml:space="preserve">
+    <value>Συνδρομή από</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenUpdatesCount" xml:space="preserve">
+    <value>Ενημερώσεις σε αναμονή: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SuspendedHelp" xml:space="preserve">
+    <value>Η σύνδεση δεν μοιράζεται πλέον αυτό το περιεχόμενο, οπότε δεν φτάνει τίποτα νέο. Τα αντίγραφά σας παραμένουν ως έχουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalChangesLabel" xml:space="preserve">
+    <value>Τοπικές αλλαγές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeButton" xml:space="preserve">
+    <value>Προσαρμογή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeButton" xml:space="preserve">
+    <value>Πρόταση αλλαγής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptOn" xml:space="preserve">
+    <value>Αυτόματη αποδοχή ενημερώσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptOff" xml:space="preserve">
+    <value>Διακοπή αυτόματης αποδοχής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SyncButton" xml:space="preserve">
+    <value>Λήψη στοιχείων που λείπουν</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnsubscribeButton" xml:space="preserve">
+    <value>Ακύρωση συνδρομής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnsubscribeConfirm" xml:space="preserve">
+    <value>Ακύρωση συνδρομής; Τα αντίγραφα παραμένουν στο τμήμα σας ως δικό σας περιεχόμενο και δεν θα φτάνουν άλλες ενημερώσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusActive" xml:space="preserve">
+    <value>Ενεργή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusSuspended" xml:space="preserve">
+    <value>Σε αναστολή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusEnded" xml:space="preserve">
+    <value>Έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeLocked" xml:space="preserve">
+    <value>Κλειδωμένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeCustomizableBlocks" xml:space="preserve">
+    <value>Προσαρμόσιμα μπλοκ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeOpen" xml:space="preserve">
+    <value>Ανοιχτό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetIntro" xml:space="preserve">
+    <value>Τι λαμβάνουν τα συνδεδεμένα τμήματα, πόσο μπορούν να αλλάξουν κάθε στοιχείο και ποιος έχει εγγραφεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchivedHelp" xml:space="preserve">
+    <value>Αυτό το σύνολο είναι αρχειοθετημένο: δεν δέχεται νέους συνδρομητές και δεν στέλνει άλλες ενημερώσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDetailsHeader" xml:space="preserve">
+    <value>Λεπτομέρειες συνόλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysLabel" xml:space="preserve">
+    <value>Ημέρες αναβολής κλειδωμένης ενημέρωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysHelp" xml:space="preserve">
+    <value>Οι συνδρομητές μπορούν να αναβάλουν μια ενημέρωση κλειδωμένου περιεχομένου έως τόσες ημέρες μετά την ημερομηνία έναρξης ισχύος της· μετά από αυτό, τίθεται σε ισχύ στην επόμενη ώρα ενημέρωσής τους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Αποθήκευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>Αρχειοθέτηση συνόλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>Αρχειοθέτηση αυτού του συνόλου; Οι συνδρομές λήγουν και οι συνδρομητές κρατούν τα αντίγραφά τους ως δικό τους περιεχόμενο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribersHeader" xml:space="preserve">
+    <value>Τμήματα με συνδρομή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSubscribers" xml:space="preserve">
+    <value>Κανένα τμήμα δεν έχει εγγραφεί ακόμη σε αυτό το σύνολο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Αφαίρεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveSubscriberConfirm" xml:space="preserve">
+    <value>Λήξη της συνδρομής αυτού του τμήματος; Κρατά τα αντίγραφά του ως δικό του περιεχόμενο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenProposalsCount" xml:space="preserve">
+    <value>Ανοιχτές προτάσεις: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>Στοιχεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModesHelp" xml:space="preserve">
+    <value>Κλειδωμένο: οι συνδρομητές μπορούν μόνο να αναβάλουν τις ενημερώσεις έως την προθεσμία. Προσαρμόσιμα μπλοκ: οι συνδρομητές μπορούν να αντικαταστήσουν τα μπλοκ που επιλέγετε (τοπικούς αριθμούς τηλεφώνου, προορισμούς, πόρους) και να προσθέσουν δικά τους μπλοκ στο τέλος. Ανοιχτό: οι συνδρομητές μπορούν να αλλάξουν οτιδήποτε και να απορρίψουν ενημερώσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>Αυτό το σύνολο δεν έχει ακόμη στοιχεία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsItemLabel" xml:space="preserve">
+    <value>Στοιχείο LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeLabel" xml:space="preserve">
+    <value>Κλείδωμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizableBlocksLabel" xml:space="preserve">
+    <value>Μπλοκ που μπορούν να αντικαταστήσουν οι συνδρομητές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveItemConfirm" xml:space="preserve">
+    <value>Αφαίρεση αυτού του στοιχείου από το σύνολο; Οι συνδρομητές κρατούν τα αντίγραφά τους ως δικό τους περιεχόμενο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemHeader" xml:space="preserve">
+    <value>Προσθήκη στοιχείου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemLabel" xml:space="preserve">
+    <value>Στοιχείο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseItem" xml:space="preserve">
+    <value>Επιλέξτε…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemHelp" xml:space="preserve">
+    <value>Τα τμήματα που έχουν ήδη εγγραφεί λαμβάνουν το στοιχείο στα εισερχόμενα ενημερώσεών τους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemButton" xml:space="preserve">
+    <value>Προσθήκη στο σύνολο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableSubtitle" xml:space="preserve">
+    <value>Δημοσιεύτηκε από {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysSummary" xml:space="preserve">
+    <value>Οι ενημερώσεις κλειδωμένου περιεχομένου μπορούν να αναβληθούν έως {0} ημέρες μετά την ημερομηνία έναρξης ισχύος τους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredBy" xml:space="preserve">
+    <value>Χορηγός των θέσεων LMS του τμήματός σας: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsReady" xml:space="preserve">
+    <value>Το τμήμα σας μπορεί να λαμβάνει τα μαθήματα αυτού του συνόλου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsNeeded" xml:space="preserve">
+    <value>Τα μαθήματα αυτού του συνόλου απαιτούν το πρόσθετο LMS ή τη χορηγία του εκδότη. Οι εκπαιδεύσεις λαμβάνονται και χωρίς αυτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YouCanChange" xml:space="preserve">
+    <value>Μπορείτε να αλλάξετε:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptLabel" xml:space="preserve">
+    <value>Αυτόματη αποδοχή ενημερώσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptHelp" xml:space="preserve">
+    <value>Οι ενημερώσεις τίθενται σε ισχύ στην ώρα ενημέρωσης του τμήματός σας κατά ή μετά την ημερομηνία έναρξης ισχύος τους, χωρίς απόφαση στα εισερχόμενα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribeConfirm" xml:space="preserve">
+    <value>Εγγραφή; Κάθε στοιχείο αντιγράφεται τώρα στο τμήμα σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribeButton" xml:space="preserve">
+    <value>Εγγραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ManagersSubscribe" xml:space="preserve">
+    <value>Μπορούν να εγγραφούν μέλη με το δικαίωμα «Διαχείριση συνόλων περιεχομένου».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxIntro" xml:space="preserve">
+    <value>Νέες εκδόσεις από τα σύνολα στα οποία έχει εγγραφεί το τμήμα σας. Οι ενημερώσεις που γίνονται αποδεκτές τίθενται σε ισχύ στην ώρα ενημέρωσής σας, ποτέ αιφνιδιαστικά στη μέση μιας βάρδιας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowOpen" xml:space="preserve">
+    <value>Εμφάνιση ενημερώσεων σε αναμονή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Εμφάνιση όλων των ενημερώσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxEmpty" xml:space="preserve">
+    <value>Δεν υπάρχουν ενημερώσεις σε αναμονή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewItemLabel" xml:space="preserve">
+    <value>Νέο στοιχείο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDeadline" xml:space="preserve">
+    <value>Καμία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusPending" xml:space="preserve">
+    <value>Αναμένει απόφαση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusScheduled" xml:space="preserve">
+    <value>Προγραμματισμένη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusApplied" xml:space="preserve">
+    <value>Σε ισχύ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusDeferred" xml:space="preserve">
+    <value>Σε αναβολή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusDeclined" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusSuperseded" xml:space="preserve">
+    <value>Αντικαταστάθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η εφαρμογή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateSubtitle" xml:space="preserve">
+    <value>{0}, {1}, έκδοση {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyOnLabel" xml:space="preserve">
+    <value>Τίθεται σε ισχύ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AppliedOnLabel" xml:space="preserve">
+    <value>Τέθηκε σε ισχύ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureLabel" xml:space="preserve">
+    <value>Πρόβλημα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Τι άλλαξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DroppedChangesHelp" xml:space="preserve">
+    <value>Ο εκδότης αφαίρεσε ή κλείδωσε μπλοκ που είχατε αλλάξει· αυτές οι τοπικές αλλαγές δεν χρησιμοποιούνται πλέον:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHeader" xml:space="preserve">
+    <value>Απόφαση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyOnHelp" xml:space="preserve">
+    <value>Προτείνεται: η επόμενη ώρα ενημέρωσης του τμήματός σας κατά ή μετά την ημερομηνία έναρξης ισχύος του εκδότη. Ποτέ νωρίτερα από την ημερομηνία έναρξης ισχύος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Αποδοχή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferUntilLabel" xml:space="preserve">
+    <value>Αναβολή έως</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferLockedHelp" xml:space="preserve">
+    <value>Το κλειδωμένο περιεχόμενο δεν μπορεί να αναβληθεί πέρα από την προθεσμία του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferButton" xml:space="preserve">
+    <value>Αναβολή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineConfirm" xml:space="preserve">
+    <value>Απόρριψη αυτής της ενημέρωσης; Το τμήμα σας παραμένει στην τρέχουσα έκδοσή του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Απόρριψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockedCannotDeclineHelp" xml:space="preserve">
+    <value>Το κλειδωμένο περιεχόμενο δεν μπορεί να απορριφθεί, μόνο να αναβληθεί έως την προθεσμία του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RedlineHeader" xml:space="preserve">
+    <value>Αλλαγές σε σχέση με την έκδοσή σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewItemHelp" xml:space="preserve">
+    <value>Αυτό το στοιχείο είναι νέο για το τμήμα σας: με την αποδοχή αντιγράφεται σε αυτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeIntro" xml:space="preserve">
+    <value>Αντικαταστήστε τα μπλοκ που ο εκδότης άφησε προσαρμόσιμα και προσθέστε δικά σας μπλοκ στο τέλος. Οι αλλαγές σας τίθενται σε ισχύ αμέσως και διατηρούνται σε κάθε μεταγενέστερη ενημέρωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockCustomizable" xml:space="preserve">
+    <value>Προσαρμόσιμο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLocked" xml:space="preserve">
+    <value>Κλειδωμένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalVersionLabel" xml:space="preserve">
+    <value>Η δική σας έκδοση αυτού του μπλοκ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalVersionHelp" xml:space="preserve">
+    <value>Αφήστε το κενό για να χρησιμοποιηθεί το κείμενο του εκδότη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdditionsHeader" xml:space="preserve">
+    <value>Οι προσθήκες σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdditionsHelp" xml:space="preserve">
+    <value>Δικά σας μπλοκ, που εμφανίζονται μετά το περιεχόμενο του εκδότη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeConfirm" xml:space="preserve">
+    <value>Αποθήκευση και άμεση θέση των αλλαγών σας σε ισχύ;</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeSaveButton" xml:space="preserve">
+    <value>Αποθήκευση αλλαγών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeHeader" xml:space="preserve">
+    <value>Πρόταση αλλαγής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeSubtitle" xml:space="preserve">
+    <value>Προς {1}, σχετικά με {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalSectionLabel" xml:space="preserve">
+    <value>Ενότητα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalSectionHelp" xml:space="preserve">
+    <value>Προαιρετικό: η επικεφαλίδα ή το μπλοκ που αφορά η πρότασή σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalBodyLabel" xml:space="preserve">
+    <value>Η πρότασή σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalBodyHelp" xml:space="preserve">
+    <value>Ο εκδότης βλέπει το όνομά σας, το τμήμα σας και αυτό το κείμενο στο επόμενο προσχέδιό του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeSendButton" xml:space="preserve">
+    <value>Αποστολή πρότασης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalsIntro" xml:space="preserve">
+    <value>Αλλαγές που πρότειναν συνδεδεμένα τμήματα για τα σύνολά σας και οι προτάσεις που έστειλαν τα μέλη σας στους εκδότες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReceivedHeader" xml:space="preserve">
+    <value>Προτάσεις προς το τμήμα σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SentHeader" xml:space="preserve">
+    <value>Προτάσεις από το τμήμα σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoProposals" xml:space="preserve">
+    <value>Δεν υπάρχουν προτάσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResponseLabel" xml:space="preserve">
+    <value>Απάντηση (απαιτείται για απόρριψη)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptProposalButton" xml:space="preserve">
+    <value>Ενσωμάτωση στο επόμενο προσχέδιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineProposalButton" xml:space="preserve">
+    <value>Απόρριψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusOpen" xml:space="preserve">
+    <value>Ανοιχτή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusAccepted" xml:space="preserve">
+    <value>Ενσωματώθηκε στο επόμενο προσχέδιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusDeclined" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusWithdrawn" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipsIntro" xml:space="preserve">
+    <value>Ένα τμήμα με το πρόσθετο LMS μπορεί να πληρώνει για τα μέλη ενός συνδεδεμένου τμήματος με ενεργοποιημένο LMS. Αυτά προσμετρώνται στα πακέτα του χορηγού και παρακολουθούν μόνο τα σύνολα μαθημάτων του χορηγού.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredCapacity" xml:space="preserve">
+    <value>Διαθέσιμες θέσεις για το τμήμα σας: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSponsorships" xml:space="preserve">
+    <value>Το τμήμα σας ούτε παρέχει ούτε λαμβάνει χορηγία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipActive" xml:space="preserve">
+    <value>Ενεργή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipLinkLapsed" xml:space="preserve">
+    <value>Η σύνδεση δεν μοιράζεται πλέον εκπαίδευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndNone" xml:space="preserve">
+    <value>Έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndEndedBySponsor" xml:space="preserve">
+    <value>Τερματίστηκε από τον χορηγό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndDeclinedBySponsored" xml:space="preserve">
+    <value>Απορρίφθηκε από το χορηγούμενο τμήμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndLinkRevoked" xml:space="preserve">
+    <value>Έληξε: η σύνδεση σταμάτησε να μοιράζεται εκπαίδευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatLimitLabel" xml:space="preserve">
+    <value>Όριο θέσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndSponsorshipConfirm" xml:space="preserve">
+    <value>Τερματισμός αυτής της χορηγίας; Τα μαθήματα που έχουν ήδη ανατεθεί παραμένουν διαθέσιμα σύμφωνα με τους συνήθεις κανόνες λήξης και έπειτα σταματούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndSponsorshipButton" xml:space="preserve">
+    <value>Τερματισμός χορηγίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineSponsorshipButton" xml:space="preserve">
+    <value>Απόρριψη χορηγίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorHeader" xml:space="preserve">
+    <value>Χορηγία σε συνδεδεμένο τμήμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorHelp" xml:space="preserve">
+    <value>Τα μέλη του με ενεργοποιημένο LMS προσμετρώνται στα πακέτα σας (τα δικά σας μέλη έχουν προτεραιότητα). Δεν χρειάζεται δικό του πρόσθετο και μπορεί να έχει το δωρεάν πρόγραμμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSponsorable" xml:space="preserve">
+    <value>Μοιραστείτε εκπαίδευση με ένα συνδεδεμένο τμήμα μέσω της Σύνδεσης τμημάτων του για να του παρέχετε χορηγία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatLimitHelp" xml:space="preserve">
+    <value>Προαιρετικό: ο μέγιστος αριθμός θέσεων που μπορεί να χρησιμοποιήσει το τμήμα. Κενό: όσες έχουν ελεύθερες τα πακέτα σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorConfirm" xml:space="preserve">
+    <value>Έναρξη πληρωμής για τις θέσεις LMS αυτού του τμήματος;</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorButton" xml:space="preserve">
+    <value>Χορηγία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Πότε τίθενται σε ισχύ οι ενημερώσεις που έγιναν αποδεκτές και ποιος ειδοποιείται για νέες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateTimeLabel" xml:space="preserve">
+    <value>Ώρα ενημέρωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateTimeHelp" xml:space="preserve">
+    <value>Οι αποδεκτές ενημερώσεις τίθενται σε ισχύ σε αυτή την τοπική ώρα κατά ή μετά την ημερομηνία έναρξης ισχύος τους (για παράδειγμα στην αλλαγή βάρδιας σας).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyManagersLabel" xml:space="preserve">
+    <value>Ειδοποίηση των διαχειριστών του τμήματος όταν φτάνει μια ενημέρωση ή απαντάται μια πρόταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CopyBanner" xml:space="preserve">
+    <value>Από {0}, σύνολο {1}, έκδοση {2}. Οι αλλαγές έρχονται μέσω του συνόλου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Customized" xml:space="preserve">
+    <value>Οι αλλαγές σας είναι σε ισχύ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAdded" xml:space="preserve">
+    <value>Το στοιχείο προστέθηκε στο σύνολο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemRemoved" xml:space="preserve">
+    <value>Το στοιχείο αφαιρέθηκε από το σύνολο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemSaved" xml:space="preserve">
+    <value>Το στοιχείο αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalAnswered" xml:space="preserve">
+    <value>Δόθηκε απάντηση στην πρόταση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Proposed" xml:space="preserve">
+    <value>Η πρότασή σας στάλθηκε στον εκδότη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetArchived" xml:space="preserve">
+    <value>Το σύνολο αρχειοθετήθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetSaved" xml:space="preserve">
+    <value>Το σύνολο αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις αποθηκεύτηκαν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEnded" xml:space="preserve">
+    <value>Η χορηγία έληξε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipSaved" xml:space="preserve">
+    <value>Η χορηγία αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipStarted" xml:space="preserve">
+    <value>Η χορηγία ξεκίνησε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Subscribed" xml:space="preserve">
+    <value>Η εγγραφή ολοκληρώθηκε. Τα στοιχεία αντιγράφηκαν στο τμήμα σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribedWithSkipped" xml:space="preserve">
+    <value>Ορισμένα στοιχεία δεν αντιγράφηκαν:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriberRemoved" xml:space="preserve">
+    <value>Η συνδρομή τερματίστηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionSaved" xml:space="preserve">
+    <value>Η συνδρομή αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Synced" xml:space="preserve">
+    <value>Τα στοιχεία που έλειπαν αντιγράφηκαν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Unsubscribed" xml:space="preserve">
+    <value>Η συνδρομή ακυρώθηκε. Τα αντίγραφα αποτελούν πλέον δικό περιεχόμενο του τμήματός σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateApplied" xml:space="preserve">
+    <value>Η ενημέρωση είναι σε ισχύ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateScheduled" xml:space="preserve">
+    <value>Η ενημέρωση προγραμματίστηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateDeclined" xml:space="preserve">
+    <value>Η ενημέρωση απορρίφθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateDeferred" xml:space="preserve">
+    <value>Η ενημέρωση αναβλήθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNone" xml:space="preserve">
+    <value>Ολοκληρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotFound" xml:space="preserve">
+    <value>Δεν βρέθηκε αυτό το σύνολο, στοιχείο ή ενημέρωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotAuthorized" xml:space="preserve">
+    <value>Χρειάζεστε το δικαίωμα «Διαχείριση συνόλων περιεχομένου».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorInvalidInput" xml:space="preserve">
+    <value>Ελέγξτε τα στοιχεία που εισαγάγατε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotShared" xml:space="preserve">
+    <value>Καμία ενεργή Σύνδεση τμημάτων δεν μοιράζεται αυτό το περιεχόμενο με το τμήμα σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorAlreadySubscribed" xml:space="preserve">
+    <value>Το τμήμα σας έχει ήδη εγγραφεί σε αυτό το σύνολο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorItemNotShareable" xml:space="preserve">
+    <value>Αυτό το στοιχείο δεν μπορεί να κοινοποιηθεί σε σύνολο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorDuplicateItem" xml:space="preserve">
+    <value>Το στοιχείο υπάρχει ήδη στο σύνολο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotPending" xml:space="preserve">
+    <value>Αυτή η ενημέρωση δεν αναμένει πλέον απόφαση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorLockedCannotDecline" xml:space="preserve">
+    <value>Το κλειδωμένο περιεχόμενο δεν μπορεί να απορριφθεί, μόνο να αναβληθεί έως την προθεσμία του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorDateOutOfRange" xml:space="preserve">
+    <value>Η ημερομηνία είναι εκτός των ορίων που επιτρέπει ο εκδότης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorBlockLocked" xml:space="preserve">
+    <value>Ο εκδότης κλείδωσε αυτό το μπλοκ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNeedsLms" xml:space="preserve">
+    <value>Το τμήμα σας χρειάζεται το πρόσθετο LMS ή τη χορηγία του εκδότη για αυτό το στοιχείο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorOwnSet" xml:space="preserve">
+    <value>Ένα τμήμα δεν μπορεί να εγγραφεί στο δικό του σύνολο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_published" xml:space="preserve">
+    <value>δεν έχει δημοσιευτεί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_licensed" xml:space="preserve">
+    <value>περιεχόμενο με άδεια χρήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_disabled" xml:space="preserve">
+    <value>απενεργοποιημένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_document" xml:space="preserve">
+    <value>μεταφορτωμένο έγγραφο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lesson_kinds" xml:space="preserve">
+    <value>διδακτικές ενότητες με ζωντανή συνεδρία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_archived" xml:space="preserve">
+    <value>αρχειοθετημένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_found" xml:space="preserve">
+    <value>δεν βρέθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lms" xml:space="preserve">
+    <value>απαιτεί το πρόσθετο LMS ή χορηγία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_shared" xml:space="preserve">
+    <value>η σύνδεση δεν το μοιράζεται πλέον</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_error" xml:space="preserve">
+    <value>παρουσιάστηκε σφάλμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_save" xml:space="preserve">
+    <value>δεν ήταν δυνατή η αποθήκευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNone" xml:space="preserve">
+    <value>Ολοκληρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotAuthorized" xml:space="preserve">
+    <value>Χρειάζεστε το δικαίωμα «Διαχείριση συνόλων περιεχομένου».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotFound" xml:space="preserve">
+    <value>Δεν βρέθηκε αυτή η χορηγία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotShared" xml:space="preserve">
+    <value>Μοιραστείτε πρώτα εκπαίδευση με αυτό το τμήμα μέσω μιας ενεργής Σύνδεσης τμημάτων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorSponsorNeedsLms" xml:space="preserve">
+    <value>Το τμήμα σας χρειάζεται ενεργό πρόσθετο LMS για να παρέχει χορηγία σε θέσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorAlreadySponsored" xml:space="preserve">
+    <value>Το τμήμα σας παρέχει ήδη χορηγία σε αυτό το τμήμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorInvalidInput" xml:space="preserve">
+    <value>Ελέγξτε τα στοιχεία που εισαγάγατε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.UpdateArrived.Title" xml:space="preserve">
+    <value>Ενημέρωση συνόλου σε αναμονή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.UpdateArrived.Body" xml:space="preserve">
+    <value>Δημοσιεύτηκε νέα έκδοση για {1} στο σύνολο {0} από {2}. Ελέγξτε τη στα εισερχόμενα ενημερώσεων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalReceived.Title" xml:space="preserve">
+    <value>Προτάθηκε αλλαγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalReceived.Body" xml:space="preserve">
+    <value>Προτάθηκε αλλαγή για {1} στο σύνολό σας {0} από {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalAnswered.Title" xml:space="preserve">
+    <value>Απάντηση σε πρόταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalAnswered.Body" xml:space="preserve">
+    <value>Δόθηκε απάντηση από {2} στην πρότασή σας για {1} στο σύνολο {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipStarted.Title" xml:space="preserve">
+    <value>Θέσεις LMS με χορηγία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipStarted.Body" xml:space="preserve">
+    <value>Από τώρα, χορηγός των θέσεων LMS του τμήματός σας για τα δικά του σύνολα μαθημάτων είναι {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipEnded.Title" xml:space="preserve">
+    <value>Η χορηγία LMS έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipEnded.Body" xml:space="preserve">
+    <value>Η χορηγία των θέσεων LMS του τμήματός σας από {2} έληξε. Τα μαθήματα που έχουν ήδη ανατεθεί παραμένουν διαθέσιμα σύμφωνα με τους συνήθεις κανόνες λήξης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyAdminsLabel" xml:space="preserve">
+    <value>Ειδοποίηση των διαχειριστών του τμήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyRolesLabel" xml:space="preserve">
+    <value>Ειδοποίηση και των μελών αυτών των ρόλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyRolesHelp" xml:space="preserve">
+    <value>Τα μέλη των επιλεγμένων ρόλων λαμβάνουν τις ίδιες ειδοποιήσεις με τους διαχειριστές: άφιξη ενημερώσεων, απαντήσεις σε προτάσεις, αλλαγές χορηγίας και εργαλεία LTI προς εγγραφή. Οι ειδοποιήσεις χορηγίας και LTI φτάνουν πάντα σε κάποιον: αν δεν επιλεγεί κανείς, τις λαμβάνουν οι διαχειριστές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ToolRegistration.Title" xml:space="preserve">
+    <value>Ένα εργαλείο LTI χρειάζεται εγγραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ToolRegistration.Body" xml:space="preserve">
+    <value>Ένα μάθημα στο σύνολο {0} από {2} χρησιμοποιεί το εργαλείο LTI {1}. Εγγράψτε τον οργανισμό σας στον προμηθευτή του εργαλείου και ενεργοποιήστε το εργαλείο· μέχρι τότε οι διδακτικές του ενότητες δεν θα ανοίγουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_media_not_ready" xml:space="preserve">
+    <value>ένα φιλοξενούμενο βίντεο δεν είναι έτοιμο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_package_not_ready" xml:space="preserve">
+    <value>ένα πακέτο SCORM ή cmi5 δεν είναι έτοιμο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lti_tool_missing" xml:space="preserve">
+    <value>ένα εργαλείο LTI αφαιρέθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_path_steps" xml:space="preserve">
+    <value>το μάθημα ή η εκπαίδευση ενός βήματος δεν περιλαμβάνεται στο σύνολο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_path_step_missing" xml:space="preserve">
+    <value>το μάθημα ή η εκπαίδευση ενός βήματος δεν έχει αντιγραφεί ακόμη</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

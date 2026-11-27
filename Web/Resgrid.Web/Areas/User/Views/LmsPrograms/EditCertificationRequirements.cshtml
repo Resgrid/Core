@@ -1,0 +1,153 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsCertRequirementEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Round 9A: one certification type's requirement set. Every item must be completed inside the cycle window (the type's validity rule) to
+    issue or renew the certification: an LMS course, a course set or series (a learning path), a training, a supervised practical (a training
+    or course whose completion an authorized instructor recorded), passed skill evaluations of a sheet code, or CE hours of a category.
+*@
+@{
+    var title = string.Format(localizer["CertReq.EditTitle"].Value, Model.Type.Type);
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["CertReq.EditIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var input = Model.Input;
+    var rows = input.Items.Concat(Enumerable.Range(0, Model.BlankRows).Select(_ => new LmsCertificationRequirementItemInput { Kind = -1 })).ToList();
+    var targetKinds = new[] { LmsRequirementKinds.Course, LmsRequirementKinds.Training, LmsRequirementKinds.CategoryHours, LmsRequirementKinds.Path };
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <form id="lms-cert-requirements-form" method="post" asp-controller="LmsPrograms" asp-action="SaveCertificationRequirements" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="DepartmentCertificationTypeId" value="@Model.Type.DepartmentCertificationTypeId" />
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-certificate" aria-hidden="true"></i> @Model.Type.Type</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-builder-toggles">
+                    <label class="checkbox-inline"><input type="checkbox" name="IsActive" value="true" checked="@input.IsActive" /><input type="hidden" name="IsActive" value="false" /> @localizer["CertReq.IsActive"]</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="IssueToNonHolders" value="true" checked="@input.IssueToNonHolders" /><input type="hidden" name="IssueToNonHolders" value="false" /> @localizer["CertReq.IssueToNonHolders"]</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="RenewHolders" value="true" checked="@input.RenewHolders" /><input type="hidden" name="RenewHolders" value="false" /> @localizer["CertReq.RenewHolders"]</label>
+                    <label class="checkbox-inline"><input type="checkbox" name="NotifyMembers" value="true" checked="@input.NotifyMembers" /><input type="hidden" name="NotifyMembers" value="false" /> @localizer["CertReq.NotifyMembers"]</label>
+                </div>
+                <div class="form-group">
+                    <label for="DueSoonDays">@localizer["CertReq.DueSoonDays"]</label>
+                    <input id="DueSoonDays" name="DueSoonDays" type="number" class="form-control" min="0" max="@LmsCertificationRequirementSet.MaxDueSoonDays" value="@input.DueSoonDays" aria-describedby="due-soon-help" style="max-width: 10em;" />
+                    <span class="help-block" id="due-soon-help">@localizer["CertReq.DueSoonDaysHelp"]</span>
+                </div>
+                <p class="text-muted"><i class="fa fa-calendar" aria-hidden="true"></i> @localizer["CertReq.WindowNote"]</p>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-list-ol" aria-hidden="true"></i> @localizer["CertReq.Items"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["CertReq.ItemsIntro"]</p>
+                @for (var i = 0; i < rows.Count; i++)
+                {
+                    var item = rows[i];
+                    var prefix = "Items[" + i.ToString(CultureInfo.InvariantCulture) + "]";
+                    <fieldset class="rgw-builder-row" data-item-row>
+                        <legend class="sr-only">@string.Format(localizer["CertReq.ItemLegend"].Value, i + 1)</legend>
+                        <div class="row">
+                            <div class="col-sm-3 form-group">
+                                <label for="kind-@i">@localizer["CertReq.ItemKind"]</label>
+                                <select id="kind-@i" name="@(prefix).Kind" class="form-control" data-item-kind>
+                                    <option value="-1" selected="@(item.Kind < 0)">@localizer["CertReq.ItemNone"]</option>
+                                    @foreach (LmsRequirementKinds kind in Enum.GetValues(typeof(LmsRequirementKinds)))
+                                    {
+                                        <option value="@((int)kind)" selected="@(item.Kind == (int)kind)">@localizer["CertReq.Kind." + kind]</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-sm-4 form-group" data-for-kinds="0,1,2,3">
+                                <label for="target-@i">@localizer["CertReq.ItemTarget"]</label>
+                                <select id="target-@i" name="@(prefix).TargetRefId" class="form-control" data-item-target>
+                                    <option value="">@localizer["CertReq.ItemChoose"]</option>
+                                    @foreach (var kind in targetKinds)
+                                    {
+                                        <optgroup label="@localizer["CertReq.Kind." + kind]" data-kind="@((int)kind)">
+                                            @foreach (var option in Model.Options.Where(o => o.Kind == (int)kind))
+                                            {
+                                                <option value="@option.Id" selected="@(item.Kind == (int)kind && item.TargetRefId == option.Id)">@option.Name</option>
+                                            }
+                                        </optgroup>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-sm-2 form-group" data-for-kinds="2">
+                                <label for="hours-@i">@localizer["CertReq.ItemHours"]</label>
+                                <input id="hours-@i" name="@(prefix).RequiredHours" type="number" class="form-control" min="0.5" max="9999" step="0.5" value="@item.RequiredHours?.ToString(CultureInfo.InvariantCulture)" />
+                            </div>
+                            <div class="col-sm-3 form-group" data-for-kinds="4">
+                                <label for="code-@i">@localizer["CertReq.ItemCode"]</label>
+                                <input id="code-@i" name="@(prefix).TargetCode" type="text" class="form-control" maxlength="100" value="@item.TargetCode" />
+                            </div>
+                            <div class="col-sm-2 form-group" data-for-kinds="4">
+                                <label for="count-@i">@localizer["CertReq.ItemCount"]</label>
+                                <input id="count-@i" name="@(prefix).RequiredCount" type="number" class="form-control" min="1" max="100" value="@(item.RequiredCount ?? 1)" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5 form-group">
+                                <label for="label-@i">@localizer["CertReq.ItemLabel"]</label>
+                                <input id="label-@i" name="@(prefix).Label" type="text" class="form-control" maxlength="@LmsCertificationRequirementItem.MaxLabelLength" value="@item.Label" placeholder="@localizer["CertReq.ItemLabelPlaceholder"]" />
+                            </div>
+                            <div class="col-sm-7 form-group" data-for-kinds="0,1">
+                                <div class="checkbox m-t-lg">
+                                    <label>
+                                        <input type="checkbox" name="@(prefix).RequireRecordedByInstructor" value="true" checked="@item.RequireRecordedByInstructor" /><input type="hidden" name="@(prefix).RequireRecordedByInstructor" value="false" />
+                                        @localizer["CertReq.ItemPractical"]
+                                    </label>
+                                    <span class="help-block m-b-none">@localizer["CertReq.ItemPracticalHelp"]</span>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                }
+                @if (rows.Count >= LmsCertificationRequirementSet.MaxItems)
+                {
+                    <p class="text-muted">@string.Format(localizer["CertReq.MaxItems"].Value, LmsCertificationRequirementSet.MaxItems)</p>
+                }
+                else
+                {
+                    <p class="text-muted"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["CertReq.MoreRowsNote"]</p>
+                }
+            </div>
+        </div>
+
+        <div class="rgw-toolbar">
+            <a class="btn btn-white" asp-controller="LmsPrograms" asp-action="CertificationRequirements" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["CertReq.Back"]</a>
+            @if (Model.CanAuthor)
+            {
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Prg.Save"]</button>
+            }
+        </div>
+    </form>
+
+    @if (Model.Set != null && Model.CanManageCertifications)
+    {
+        <form method="post" asp-controller="LmsPrograms" asp-action="DeleteCertificationRequirements" asp-route-area="User" class="m-t-md" data-confirm="@localizer["CertReq.DeleteConfirm"]">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="typeId" value="@Model.Type.DepartmentCertificationTypeId" />
+            <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-times" aria-hidden="true"></i> @localizer["CertReq.Delete"]</button>
+        </form>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.certrequirements.js" asp-append-version="true"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

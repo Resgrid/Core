@@ -115,4 +115,204 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>Код партнера/акаунта збережено для вашого підрозділу.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Цей код партнера/акаунта недійсний або більше не активний.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Ваш підрозділ уже має код партнера/акаунта. Зв'яжіться з нами, якщо його потрібно змінити.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsTagline" xml:space="preserve"><value>Курси, офіційні звіти про навчання та сертифікати, які можна перевірити</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>Курси з уроками, банками запитань і тестами</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>Відеоуроки на нашому хостингу, 100 ГБ на підрозділ включено</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>Офіційні звіти про навчання ISO FSRS і NREMT NCCP</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>Сертифікати з кодом перевірки, QR-кодом і публічною сторінкою перевірки, за вашим власним шаблоном</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>Місця лише для учасників, яких ви ввімкнете; усі зберігають безкоштовне навчання</value><comment>machine-translated</comment></data>
+  <data name="LmsNote" xml:space="preserve"><value>Ціна за пакет на 25 учасників, ступінчаста: перші 4 пакети за повною ціною, далі дешевше. Оплата щомісяця за підрозділ; без пробного періоду. Потрібен платний план Resgrid.</value><comment>machine-translated</comment></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>за пакет на {0} учасників</value><comment>machine-translated</comment></data>
+  <data name="PackTierLine" xml:space="preserve"><value>Пакети {0}–{1}: {2} за пакет</value><comment>machine-translated</comment></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>Пакети від {0}: {1} за пакет</value><comment>machine-translated</comment></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>LMS продається разом із платним планом Resgrid. Спершу виберіть план на сторінці підписки.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Кожен пакет охоплює 25 учасників. Ціни на пакети ступінчасті: кожен пакет оплачується за ціною власного рівня, тож додавання пакетів ніколи не робить попередні дешевшими чи дорожчими. Оплата щомісяця; без пробного періоду й без річного терміну.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Додані пакети оплачуються одразу, пропорційно до дати оплати. Вилучення пакетів діє з наступної дати оплати і лише до кількості учасників з увімкненим LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Учасники без увімкненого LMS зберігають безкоштовний модуль «Навчання», свій перелік навчання та Academy. Інструкторам, оцінювачам і офіцерам місце не потрібне.</value><comment>machine-translated</comment></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>Керувати місцями LMS на сторінці персоналу</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>Пакети додано. Пропорційну плату за решту цього розрахункового періоду виставлено в рахунку.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>Зменшення кількості пакетів заплановано на наступну дату оплати. Ваші місця зберігаються до того часу.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Тоді місць було б менше, ніж учасників з увімкненим LMS. Спершу вимкніть учасників на сторінці персоналу.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>Не вдалося змінити кількість пакетів, і нічого не було стягнуто. Спробуйте ще раз або зв'яжіться з нами.</value><comment>machine-translated</comment></data>
+  <data name="PacksHeading" xml:space="preserve"><value>Пакети та місця</value><comment>machine-translated</comment></data>
+  <data name="PacksInForce" xml:space="preserve"><value>Пакетів: {0}, місць: {1}, зайнято: {2}</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>Ціна наступного місяця: {0}</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Наступний місяць</value><comment>machine-translated</comment></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>З {0}: пакетів — {1}.</value><comment>machine-translated</comment></data>
+  <data name="PacksLabel" xml:space="preserve"><value>Пакети</value><comment>machine-translated</comment></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>Оновити пакети</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>Пакетів: {0} (місць: {1}): {2} на місяць.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>Пакетів: {0} (місць: {1}): {2} на місяць відтепер. Зараз буде стягнуто приблизно {3} за решту цього розрахункового періоду.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>Пакетів: {0} (місць: {1}): {2} на місяць з {3}. Нічого не повертається, а ваші місця зберігаються до того часу.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>Саме стільки пакетів у вас зараз.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Для учасників з увімкненим LMS потрібно щонайменше {0} пакетів. Спершу вимкніть деяких на сторінці персоналу.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>Виберіть від {0} до {1} пакетів.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>Не вдалося показати ціну. Спробуйте ще раз.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>Місце LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>LMS увімкнено</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Цього учасника можна навчати через курси та вимоги LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>LMS не ввімкнено</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Цей учасник зберігає безкоштовний модуль «Навчання», свій перелік навчання та Academy.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Без ліцензії</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>Зайнято місць: {0} з {1}</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>Увімкнути LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>Вимкнути LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>Усі місця ({0}) зайнято. Пакетів додати: {1}.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>Місце LMS може мати лише активний учасник; видалені, вимкнені та приховані учасники — ні.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Ваш підрозділ не має активного доповнення LMS, тому жодному учаснику не можна ввімкнути LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>Не вдалося змінити місце LMS. Спробуйте ще раз.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>Місце LMS оновлено.</value><comment>machine-translated</comment></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>Додати пакет</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>Місця LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Група</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Увімкнути групу</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Вимкнути групу</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>Змінено: {0}, уже встановлено: {1}, пропущено як неактивних: {2}, відхилено через брак місць: {3}.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>Місць, що належать неактивним учасникам і не враховуються: {0}.</value><comment>machine-translated</comment></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>Керувати пакетами</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>Пакети та місця LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Ваш підрозділ не придбав доповнення LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>Дію доповнення LMS завершено. Записи, сертифікати та переліки навчання залишаються доступними, їх можна експортувати.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>Платіж не пройшов. LMS працюватиме до {0}, поки платіж повторюється.</value><comment>machine-translated</comment></data>
+  <data name="EnhancedAiFeature7" xml:space="preserve">
+    <value>Чернетки протоколів і навчань, переклади, картки та практика</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnhancedAiFeature8" xml:space="preserve">
+    <value>Чернетки курсів, тьютор і картки курсів із доповненням LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTitle" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTagline" xml:space="preserve">
+    <value>Записи про добробут членів і впливи на робочому місці — для обраних вами членів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature1" xml:space="preserve">
+    <value>Журнал впливів канцерогенів, патогенів, що передаються через кров, небезпечних речовин і критичних інцидентів, із записами, запропонованими після позначеного виклику</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature2" xml:space="preserve">
+    <value>Випадки впливу з процесом для призначеної відповідальної особи та подальшим спостереженням</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature3" xml:space="preserve">
+    <value>Травми зі статусом служби, поверненням до служби та експортом журналу травм</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature4" xml:space="preserve">
+    <value>Медичні допуски зі статусом обмежень і ролі з добробуту, які називає ваша організація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature5" xml:space="preserve">
+    <value>Місця лише для членів, яким ви ввімкнете доступ; записи лишаються доступними для перегляду, якщо ви припините</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProNote" xml:space="preserve">
+    <value>Ціна за пакет на 25 членів, ступінчаста: перші 4 пакети за повною ціною, далі дешевше. Оплата щомісяця за підрозділ; без плати за налаштування. Потрібен платний план Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProRequiresPaidPlan" xml:space="preserve">
+    <value>Workforce Pro продається разом із платним планом Resgrid. Спершу виберіть план на сторінці підписки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingPacksNote" xml:space="preserve">
+    <value>Кожен пакет розрахований на 25 членів. Пакети мають ступінчасті ціни: кожен пакет оплачується за ціною свого рівня, тож додавання пакетів ніколи не робить попередні дешевшими чи дорожчими. Оплата щомісяця; без плати за налаштування і без річного терміну.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingSeatsNote" xml:space="preserve">
+    <value>Додані пакети оплачуються одразу, пропорційно до дати оплати. Вилучення пакетів діє з наступної дати оплати і лише до кількості членів, яким увімкнено Workforce Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingFreeNote" xml:space="preserve">
+    <value>Місця потрібні для членів, чиї записи ви ведете; відповідальні особи й керівники, які діють щодо інших, потребують свого дозволу, а не місця. Якщо доповнення завершиться, наявні записи лишаться доступними для перегляду й експорту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProManageSeats" xml:space="preserve">
+    <value>Керувати місцями Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsTitle" xml:space="preserve">
+    <value>Місця Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsIntro" xml:space="preserve">
+    <value>Увімкніть Workforce Pro для членів, чиї записи про добробут і впливи на робочому місці веде ваша організація. Вимкнення члена ніколи не видаляє записів: його записи стають лише для перегляду.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatCounter" xml:space="preserve">
+    <value>Використано {0} з {1} місць, вільно {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatMember" xml:space="preserve">
+    <value>Член</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatState" xml:space="preserve">
+    <value>Місце Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOn" xml:space="preserve">
+    <value>Увімкнено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOff" xml:space="preserve">
+    <value>Вимкнено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotLicensed" xml:space="preserve">
+    <value>Увімкнено, без ліцензії</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatEnable" xml:space="preserve">
+    <value>Увімкнути</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDisable" xml:space="preserve">
+    <value>Вимкнути</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsFull" xml:space="preserve">
+    <value>Усі {0} місць використано. Пакетів додати: {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotActive" xml:space="preserve">
+    <value>Лише активні члени можуть мати місце Workforce Pro; видалені, вимкнені та приховані — ні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatAddonInactive" xml:space="preserve">
+    <value>Ваша організація не має активного доповнення Workforce Pro, тож його не можна ввімкнути нікому. Наявні записи лишаються лише для перегляду.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatFailed" xml:space="preserve">
+    <value>Не вдалося змінити місце Workforce Pro. Спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatSaved" xml:space="preserve">
+    <value>Місце Workforce Pro оновлено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDormant" xml:space="preserve">
+    <value>{0} місць належать членам, які вже не активні, і не враховуються.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProAddPack" xml:space="preserve">
+    <value>Додати пакет</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsNotPurchased" xml:space="preserve">
+    <value>Ваша організація зараз не має доповнення Workforce Pro. Наявні записи про добробут лишаються доступними для перегляду; придбайте пакети, щоб додавати або змінювати записи.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsGrace" xml:space="preserve">
+    <value>Платіж не вдався. Workforce Pro працює до {0}, поки платіж повторюється.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsBilling" xml:space="preserve">
+    <value>Придбати або змінити пакети</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

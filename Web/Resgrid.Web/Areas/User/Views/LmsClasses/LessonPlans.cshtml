@@ -1,0 +1,78 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsLessonPlansView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@* Lesson plans (§13 T4 item 5, R-C6): the department's plans and Resgrid's starter plans (structure and checklists only). *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["LessonPlansTitle"];
+    ViewData["Title"] = localizer["LessonPlansTitle"].Value;
+    ViewData["Subtitle"] = localizer["LessonPlansIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.Plans.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoLessonPlans"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Col.Title"]</th><th>@localizer["Col.Published"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var plan in Model.Plans)
+                    {
+                        <tr>
+                            <td>@plan.Title@if (!string.IsNullOrWhiteSpace(plan.StarterKey)) {<span class="rgw-sub">@localizer["FromStarter"]</span>}</td>
+                            <td>@(plan.CurrentVersionId.HasValue ? localizer["Yes"] : localizer["DraftOnly"])</td>
+                            <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="LmsClasses" asp-action="LessonPlan" asp-route-area="User" asp-route-id="@plan.LmsLessonPlanId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Open"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @localizer["NewLessonPlan"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="LmsClasses" asp-action="CreateLessonPlan" asp-route-area="User" class="form-inline">
+                    @Html.AntiForgeryToken()
+                    <label for="lp-title" class="sr-only">@localizer["Col.Title"]</label>
+                    <input id="lp-title" name="title" class="form-control" maxlength="250" placeholder="@localizer["Col.Title"]" required />
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Create"]</button>
+                </form>
+            </div>
+        </div>
+
+        <h3><i class="fa fa-star-o" aria-hidden="true"></i> @localizer["StartersHeader"]</h3>
+        <p class="text-muted">@localizer["StartersIntro"]</p>
+        <div class="rgw-card-grid">
+            @foreach (var starter in Model.Starters)
+            {
+                <div class="rgw-card">
+                    <h4>@localizer["Starter." + starter.Key]</h4>
+                    <p class="rgw-card-meta">@localizer["Starter." + starter.Key + ".Help"]</p>
+                    <form method="post" asp-controller="LmsClasses" asp-action="CreateLessonPlan" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="starter" value="@starter.Key" />
+                        <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-copy" aria-hidden="true"></i> @localizer["UseStarter"]</button>
+                    </form>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

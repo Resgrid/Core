@@ -1,0 +1,154 @@
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsRequirementsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@* Trainings → Programs → Requirements (or Onboarding): each requirement with what it asks, who, how often and how its members stand. *@
+@{
+    var onboarding = Model.OnboardingOnly;
+    ViewBag.Title = "Resgrid | " + localizer[onboarding ? "OnboardingTitle" : "RequirementsTitle"];
+    ViewData["Title"] = localizer[onboarding ? "OnboardingTitle" : "RequirementsTitle"].Value;
+    ViewData["Subtitle"] = localizer[onboarding ? "OnboardingIntro" : "RequirementsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["Scope"] = Model.Scope;
+    ViewData["Sub"] = onboarding ? "Onboarding" : "Requirements";
+    ViewData["CanManage"] = Model.Actor?.MayManage == true;
+    ViewData["CanPaths"] = Model.Actor?.MayAssignAcademy == true;
+    ViewData["Paused"] = Model.Paused;
+
+    string Recurrence(LmsRequirement r) => (LmsRequirementRecurrences)r.Recurrence switch
+    {
+        LmsRequirementRecurrences.RollingMonths => string.Format(localizer["RecurrenceRolling"].Value, r.IntervalMonths),
+        LmsRequirementRecurrences.CalendarYear => localizer["RecurrenceCalendarYear"].Value,
+        _ => localizer["RecurrenceOneTime"].Value
+    };
+    string Audience(LmsRequirementRow row)
+    {
+        if (row.Audience.Any(a => a.Kind == (int)ContentAudienceKinds.Everyone))
+            return localizer["Everyone"].Value;
+        var names = row.Audience.Select(a => Model.AudienceNames.TryGetValue(a.Kind + ":" + a.RefId, out var name) ? name
+            : a.Kind == (int)ContentAudienceKinds.User ? localizer["AudienceMember"].Value : localizer["AudienceOther"].Value).ToList();
+        return names.Count <= 3 ? string.Join(", ", names) : string.Join(", ", names.Take(3)) + " " + string.Format(localizer["AndMoreFormat"].Value, names.Count - 3);
+    }
+    var states = new[] { LmsRequirementStates.Overdue, LmsRequirementStates.AtRisk, LmsRequirementStates.Pending, LmsRequirementStates.Compliant, LmsRequirementStates.Exempt,
+        LmsRequirementStates.OnLeave, LmsRequirementStates.NotLicensed };
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-success" asp-controller="LmsRequirements" asp-action="Requirement" asp-route-area="User" asp-route-onboarding="@onboarding"><i class="fa fa-plus" aria-hidden="true"></i> @localizer[onboarding ? "NewOnboarding" : "NewRequirement"]</a>
+    </text>;
+    ViewData["HeaderActions"] = Model.CanEdit ? headerActions : null;
+}
+
+@await Html.PartialAsync("_Heading")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.CanEdit && !Model.Paused)
+    {
+        <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["AddonNotice"]</div>
+    }
+
+    @if (Model.Rows.Count == 0)
+    {
+        <div class="text-center m-t-lg m-b-lg">
+            <i class="fa fa-list-ul fa-3x text-muted" aria-hidden="true"></i>
+            <h4 class="m-t-sm">@localizer[onboarding ? "NoOnboarding" : "NoRequirements"]</h4>
+        </div>
+    }
+    else
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@localizer["ColRequirement"]</th>
+                                <th scope="col">@localizer["ColWhat"]</th>
+                                <th scope="col">@localizer["ColWho"]</th>
+                                <th scope="col">@localizer["ColHowOften"]</th>
+                                <th scope="col">@localizer["ColMembers"]</th>
+                                <th scope="col"><span class="sr-only">@localizer["ColActions"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.Rows)
+                            {
+                                var r = row.Requirement;
+                                <tr>
+                                    <td>
+                                        <strong>@r.Name</strong>
+                                        @if (!r.IsActive)
+                                        {
+                                            <span class="label label-default">@localizer["Inactive"]</span>
+                                        }
+                                        @if (r.EnforcementEnabled)
+                                        {
+                                            <span class="label label-danger"><i class="fa fa-shield" aria-hidden="true"></i> @localizer["Enforcing"]</span>
+                                        }
+                                        @if (r.AutoAssign)
+                                        {
+                                            <span class="label label-info"><i class="fa fa-magic" aria-hidden="true"></i> @localizer["AutoAssigns"]</span>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(r.Description))
+                                        {
+                                            <div class="rgw-sub">@r.Description</div>
+                                        }
+                                    </td>
+                                    <td>
+                                        @localizer["Kind." + (LmsRequirementKinds)r.Kind]
+                                        <div class="rgw-sub">
+                                            @row.TargetName
+                                            @if (r.Kind == (int)LmsRequirementKinds.CategoryHours)
+                                            {
+                                                <text>· @string.Format(localizer["HoursFormat"].Value, r.RequiredHours)</text>
+                                            }
+                                            @if (r.Kind == (int)LmsRequirementKinds.Evaluations)
+                                            {
+                                                <text>· @string.Format(localizer["CountFormat"].Value, r.RequiredCount)</text>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>@Audience(row)</td>
+                                    <td>
+                                        @Recurrence(r)
+                                        <div class="rgw-sub">@string.Format(localizer["DueDaysFormat"].Value, r.DueDays)</div>
+                                    </td>
+                                    <td>
+                                        @foreach (var state in states.Where(s => row.Counts.ContainsKey(s)))
+                                        {
+                                            <a asp-controller="LmsRequirements" asp-action="Compliance" asp-route-area="User" asp-route-requirementId="@r.LmsRequirementId" asp-route-state="@((int)state)" class="text-inherit">
+                                                @await Html.PartialAsync("_StatePill", state) @row.Counts[state]
+                                            </a>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs btn-white" asp-controller="LmsRequirements" asp-action="Compliance" asp-route-area="User" asp-route-requirementId="@r.LmsRequirementId"><i class="fa fa-th" aria-hidden="true"></i> @localizer["SubCompliance"]</a>
+                                        @if (Model.CanEdit)
+                                        {
+                                            <a class="btn btn-xs btn-white" asp-controller="LmsRequirements" asp-action="Requirement" asp-route-area="User" asp-route-id="@r.LmsRequirementId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Edit"]</a>
+                                            <form method="post" asp-controller="LmsRequirements" asp-action="DeleteRequirement" asp-route-area="User" class="inline" data-confirm="@localizer["ConfirmDelete"]">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@r.LmsRequirementId" />
+                                                <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Delete"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.programs.js" asp-append-version="true"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

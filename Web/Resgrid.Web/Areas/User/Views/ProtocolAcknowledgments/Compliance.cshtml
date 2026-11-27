@@ -1,0 +1,156 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolComplianceModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The acknowledgment compliance grid (P2, free): without a protocol, one line per protocol in force that needs acknowledgment; with
+    one, a line per person for the chosen version, filterable by group. CSV and PDF exports are free; the standards report is LMS.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    var grid = Model.Grid;
+    ViewBag.Title = "Resgrid | " + localizer["ComplianceTab"];
+    ViewData["Title"] = localizer["ComplianceTab"].Value;
+    ViewData["Subtitle"] = localizer["ComplianceIntro"].Value;
+    var csv = Url.Action("ComplianceCsv", "ProtocolAcknowledgments", new { area = "User", protocolId = grid.Protocol?.DispatchProtocolId, versionId = grid.Version?.ProtocolVersionId, groupId = grid.GroupId });
+    var pdf = Url.Action("CompliancePdf", "ProtocolAcknowledgments", new { area = "User", protocolId = grid.Protocol?.DispatchProtocolId, versionId = grid.Version?.ProtocolVersionId, groupId = grid.GroupId });
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" href="@csv"><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer["ExportCsvButton"]</a>
+        <a class="btn btn-default" href="@pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["ExportPdfButton"]</a>
+        <a class="btn btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Standards" asp-route-area="User"><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["StandardsReportButton"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+    string StateLabel(string key) => localizer["AckState_" + key].Value;
+    string StateCss(string key) => key switch { "acknowledged" => "label-primary", "overdue" => "label-danger", "awaiting_quiz" => "label-info", "open" => "label-warning", _ => "label-default" };
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+
+    <form method="get" class="rgw-toolbar" asp-controller="ProtocolAcknowledgments" asp-action="Compliance" asp-route-area="User">
+        <div class="rgw-filter">
+            <label class="control-label" for="protocolId">@localizer["ProtocolsLabel"]</label>
+            <select id="protocolId" name="protocolId" class="form-control">
+                <option value="">@localizer["AllProtocolsOption"]</option>
+                @foreach (var protocol in Model.Protocols)
+                {
+                    <option value="@protocol.DispatchProtocolId" selected="@(grid.Protocol?.DispatchProtocolId == protocol.DispatchProtocolId)">@protocol.Code · @protocol.Name</option>
+                }
+            </select>
+        </div>
+        @if (grid.Protocol != null && grid.Versions.Count > 1)
+        {
+            <div class="rgw-filter">
+                <label class="control-label" for="versionId">@localizer["VersionLabel"]</label>
+                <select id="versionId" name="versionId" class="form-control">
+                    @foreach (var version in grid.Versions)
+                    {
+                        <option value="@version.ProtocolVersionId" selected="@(grid.Version?.ProtocolVersionId == version.ProtocolVersionId)">v@(version.Label)</option>
+                    }
+                </select>
+            </div>
+        }
+        <div class="rgw-filter">
+            <label class="control-label" for="groupId">@localizer["GroupLabel"]</label>
+            <select id="groupId" name="groupId" class="form-control">
+                <option value="">@localizer["AllGroupsOption"]</option>
+                @foreach (var group in Model.Groups)
+                {
+                    <option value="@group.DepartmentGroupId" selected="@(grid.GroupId == group.DepartmentGroupId)">@group.Name</option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["FilterButton"]</button>
+    </form>
+
+    @if (grid.Protocol == null)
+    {
+        <div class="ibox">
+            <div class="ibox-content">
+                @if (grid.Summaries.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoAcknowledgmentsYet"]</p>
+                }
+                else
+                {
+                    <table class="table rgw-table">
+                        <thead><tr><th scope="col">@localizer["ProtocolsLabel"]</th><th scope="col">@localizer["VersionLabel"]</th><th scope="col">@localizer["AcknowledgedLabel"]</th><th scope="col">@localizer["OverdueLabel"]</th><th scope="col"><span class="sr-only">@localizer["ActionsLabel"]</span></th></tr></thead>
+                        <tbody>
+                            @foreach (var s in grid.Summaries)
+                            {
+                                <tr>
+                                    <td><a asp-controller="ProtocolAcknowledgments" asp-action="Compliance" asp-route-area="User" asp-route-protocolId="@s.ProtocolId" asp-route-groupId="@grid.GroupId">@s.Code · @s.Name</a>
+                                        @if (!string.IsNullOrEmpty(s.StandardsTags)) { <div class="rgw-sub"><i class="fa fa-certificate" aria-hidden="true"></i> @s.StandardsTags</div> }
+                                    </td>
+                                    <td>v@(s.VersionLabel)</td>
+                                    <td style="min-width: 160px;">
+                                        <div class="rgw-progress-honest" role="progressbar" aria-valuemin="0" aria-valuemax="@s.Assigned" aria-valuenow="@s.Acknowledged" aria-label="@localizer["AcknowledgedLabel"]">
+                                            <div class="progress m-b-none"><div class="progress-bar" style="width: @(s.Percent)%"></div></div>
+                                            <span class="small">@s.Acknowledged / @s.Assigned (@s.Percent%)</span>
+                                        </div>
+                                    </td>
+                                    <td class="@(s.Overdue > 0 ? "text-danger" : "")">@s.Overdue</td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-xs btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Settings" asp-route-area="User" asp-route-id="@s.ProtocolId"><i class="fa fa-cog" aria-hidden="true"></i> @localizer["AckSettingsButton"]</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="ibox">
+            <div class="ibox-title">
+                <h5>@grid.Protocol.Code · @grid.Protocol.Name @(grid.Version != null ? "· v" + grid.Version.Label : "")</h5>
+                <div class="ibox-tools">
+                    <a class="btn btn-xs btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Settings" asp-route-area="User" asp-route-id="@grid.Protocol.DispatchProtocolId"><i class="fa fa-cog" aria-hidden="true"></i> @localizer["AckSettingsButton"]</a>
+                </div>
+            </div>
+            <div class="ibox-content">
+                @if (grid.Version == null)
+                {
+                    <p class="text-muted">@localizer["NoAcknowledgmentVersion"]</p>
+                }
+                else if (grid.Rows.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoAcknowledgmentsYet"]</p>
+                }
+                else
+                {
+                    <table class="table rgw-table">
+                        <thead><tr><th scope="col">@localizer["MemberLabel"]</th><th scope="col">@localizer["GroupLabel"]</th><th scope="col">@localizer["StateLabel"]</th><th scope="col">@localizer["DueLabel"]</th><th scope="col">@localizer["SignedLabel"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var r in grid.Rows)
+                            {
+                                <tr>
+                                    <td>@r.Name
+                                        @if (r.Acknowledgment.Source == (int)ProtocolAcknowledgmentSources.AudienceEntry) { <div class="rgw-sub">@localizer["AckSourceAudienceEntry"]</div> }
+                                        @if (r.Acknowledgment.Source == (int)ProtocolAcknowledgmentSources.CarriedForward) { <div class="rgw-sub">@localizer["AckCarriedForwardLabel"]</div> }
+                                    </td>
+                                    <td>@r.GroupName</td>
+                                    <td><span class="label @StateCss(r.StateKey)">@StateLabel(r.StateKey)</span></td>
+                                    <td>@departmentTime.Date(r.Acknowledgment.DueOn)</td>
+                                    <td>@departmentTime.Format(r.Acknowledgment.SignedOn)@if (r.Acknowledgment.ViaOffline) { <div class="rgw-sub"><i class="fa fa-wifi" aria-hidden="true"></i> @localizer["AckOfflineLabel"]</div> }</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

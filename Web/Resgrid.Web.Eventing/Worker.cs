@@ -10,6 +10,7 @@ using Resgrid.Web.Services.Models;
 using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Web.Eventing.Hubs.Models;
+using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
@@ -166,6 +167,8 @@ namespace Resgrid.Web.Eventing
 
 			if (group != null)
 				await group.SendAsync("personnelStatusUpdated", id);
+
+			await SendToLinkSubscribersAsync(departmentId, DepartmentLinkShareTypes.Personnel, "personnelStatusUpdated", id);
 		}
 
 		public async Task PersonnelStaffingUpdated(int departmentId, string id)
@@ -176,6 +179,8 @@ namespace Resgrid.Web.Eventing
 
 			if (group != null)
 				await group.SendAsync("personnelStaffingUpdated", id);
+
+			await SendToLinkSubscribersAsync(departmentId, DepartmentLinkShareTypes.Personnel, "personnelStaffingUpdated", id);
 		}
 
 		public async Task UnitStatusUpdated(int departmentId, string id)
@@ -186,6 +191,8 @@ namespace Resgrid.Web.Eventing
 
 			if (group != null)
 				await group.SendAsync("unitStatusUpdated", id);
+
+			await SendToLinkSubscribersAsync(departmentId, DepartmentLinkShareTypes.Units, "unitStatusUpdated", id);
 		}
 
 		public async Task CallsUpdated(int departmentId, string id)
@@ -196,6 +203,8 @@ namespace Resgrid.Web.Eventing
 
 			if (group != null)
 				await group.SendAsync("callsUpdated", id);
+
+			await SendToLinkSubscribersAsync(departmentId, DepartmentLinkShareTypes.Calls, "callsUpdated", id);
 		}
 
 		public async Task IncidentCommandUpdated(int departmentId, string id)
@@ -246,6 +255,8 @@ namespace Resgrid.Web.Eventing
 
 			if (group != null)
 				await group.SendAsync("callAdded", id);
+
+			await SendToLinkSubscribersAsync(departmentId, DepartmentLinkShareTypes.Calls, "callAdded", id);
 		}
 
 		public async Task CallClosed(int departmentId, string id)
@@ -256,6 +267,32 @@ namespace Resgrid.Web.Eventing
 
 			if (group != null)
 				await group.SendAsync("callClosed", id);
+
+			await SendToLinkSubscribersAsync(departmentId, DepartmentLinkShareTypes.Calls, "callClosed", id);
+		}
+
+		/// <summary>
+		/// Department-link subscribers are not in the department's own group (which carries all of its traffic); they sit
+		/// in one group per kind of shared data, so each event is also sent to the matching share group — the one in the
+		/// department's current access epoch, so subscriptions stranded by a disabled, deleted or narrowed link get nothing.
+		/// </summary>
+		private async Task SendToLinkSubscribersAsync(int departmentId, DepartmentLinkShareTypes shareType, string method, string id)
+		{
+			try
+			{
+				using var scope = _serviceProvider.CreateScope();
+				var departmentLinksService = scope.ServiceProvider.GetRequiredService<IDepartmentLinksService>();
+
+				// Null when no epoch exists (nobody subscribed) or the cache is unavailable: send nothing to link subscribers.
+				var shareGroup = await departmentLinksService.GetShareGroupNameAsync(departmentId, shareType);
+				if (shareGroup != null)
+					await _eventingHub.Clients.Group(shareGroup).SendAsync(method, id);
+			}
+			catch (Exception ex)
+			{
+				// The department's own group already has the event; a link fan-out failure must not fail it.
+				Resgrid.Framework.Logging.LogException(ex, $"Failed to send {method} for department {departmentId} to its department link subscribers.");
+			}
 		}
 
 		public async Task PersonnelLocationUpdated(int departmentId, PersonnelLocationUpdatedEvent update)

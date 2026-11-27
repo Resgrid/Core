@@ -1,0 +1,32 @@
+@model Resgrid.Web.Models.LmsLearn.LmsLearnUnsubscribeModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    Round 7B: the class-reminder unsubscribe link of a learner e-mail. Opening the link only shows this page (a mail scanner's preview never
+    unsubscribes); the button posts the link's key. Only reminders stop: e-mails about the learner's own place (confirmed, waitlisted,
+    promoted, changed, cancelled) still go out. Reminders can be turned on again under My learning.
+*@
+@{
+    ViewData["Title"] = localizer["Portal.Unsubscribe"].Value;
+    var key = ViewData["PortalKey"] as string;
+}
+<div class="rgl-panel" style="max-width: 560px; margin: 0 auto;">
+    <h2><i class="fa fa-bell-slash" aria-hidden="true"></i> @localizer["Portal.Unsubscribe"]</h2>
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-warning" role="alert">@Model.Error</div>
+    }
+    else if (Model.Done)
+    {
+        <div class="alert alert-success" role="status">@localizer["Portal.UnsubscribeDone"]</div>
+    }
+    else
+    {
+        <p>@localizer["Portal.UnsubscribeHelp"]</p>
+        <form method="post" action="~/Learn/@key/Unsubscribe" data-submit-once>
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Key" value="@Model.Key" />
+            <button type="submit" class="btn btn-rgl"><i class="fa fa-bell-slash" aria-hidden="true"></i> @localizer["Portal.UnsubscribeConfirm"]</button>
+        </form>
+    }
+    <p class="m-t"><a href="~/Learn/@key"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Portal.Back"]</a></p>
+</div>

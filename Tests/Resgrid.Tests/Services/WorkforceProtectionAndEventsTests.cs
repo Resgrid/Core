@@ -46,9 +46,16 @@ namespace Resgrid.Tests.Services
 		public void Catalog_27_keeps_only_internal_fields_and_binds_no_customer_facing_table()
 		{
 			var catalog = new ProtectedFieldCatalog();
-			catalog.Version.Should().Be(36, "Phase D rides 26, the completion pass 27, Phase E 28, the Protected Workflows subject identifiers 29 " +
+			catalog.Version.Should().Be(39, "Phase D rides 26, the completion pass 27, Phase E 28, the Protected Workflows subject identifiers 29 " +
 				"(nothing on 26-29 is deployed yet), Admin Assist findings and dispatch traces 30, shared AI generations 31, Admin Assist " +
-				"diagnostic runs 32, Admin Assist change plans 33 (registry §4G, §4I) and the Incident Back Office 34-36 (registry §4C)");
+				"diagnostic runs 32, Admin Assist change plans 33 (registry §4G, §4I), the Incident Back Office 34-36 (registry §4C), member wellness WL0 37 and WL1 38, " +
+				"and the Protocols + Training/LMS copies of protected values 39 (round 8)");
+			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 39).Select(f => f.FieldId).Should().BeEquivalentTo(
+				Resgrid.Model.ContentProtectedFields.All().Select(f => f.Table.ToLowerInvariant() + "." + f.Column.ToLowerInvariant()));
+			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 38).Select(f => f.FieldId).Should().BeEquivalentTo(
+				Resgrid.Model.MemberHealthProtectedFields.All().Select(f => f.Table.ToLowerInvariant() + "." + f.Column.ToLowerInvariant()));
+			catalog.GetAll().Where(f => f.AddedInCatalogVersion == 37).Select(f => f.FieldId).Should().BeEquivalentTo(
+				Resgrid.Model.WellnessProtectedFields.All().Select(f => f.Table.ToLowerInvariant() + "." + f.Column.ToLowerInvariant()));
 			foreach (var version in new[] { 34, 35, 36 })
 				catalog.GetAll().Where(f => f.AddedInCatalogVersion == version).Select(f => f.FieldId).Should().BeEquivalentTo(
 					Resgrid.Model.IncidentLogistics.IncidentBackOfficeProtectedFields.All().Where(f => f.CatalogVersion == version)
@@ -140,7 +147,7 @@ namespace Resgrid.Tests.Services
 			var protectedRead = new Mock<IProtectedReadService>(MockBehavior.Strict);
 			var service = new InvoicingService(new Mock<ICustomerBillingProfileRepository>().Object, new Mock<IRateCardRepository>().Object, new Mock<IRateCardItemRepository>().Object, invoices.Object, lines.Object, payments.Object,
 				new Mock<IInvoiceNumberSequenceRepository>().Object, identities.Object, new Mock<IContactsService>().Object, new Mock<ICallsService>().Object, new Mock<IUnitsService>().Object,
-				new Mock<IDomainEventOutboxService>().Object, new Mock<IEventAggregator>().Object, new Mock<IPdfProvider>().Object, new Mock<IEmailService>().Object, new Mock<IDepartmentsService>().Object, new Mock<IAddressService>().Object, null,
+				new Mock<IDomainEventOutboxService>().Object, new Mock<IEventAggregator>().Object, new Mock<IPdfProvider>().Object, new Mock<IEmailService>().Object, new Mock<IDepartmentsService>().Object, new Mock<IAddressService>().Object, null, Mock.Of<IApprovalGateService>(g => g.CheckAsync(It.IsAny<int>(), It.IsAny<SignatureSubjectKinds>(), It.IsAny<string>()) == Task.FromResult(new Resgrid.Model.Approvals.ApprovalGateResult())),
 				null, new Lazy<IProtectedReadService>(() => protectedRead.Object));
 
 			// Edits line-a's text, keeps line-b, adds a new line: the customer reads every description on the invoice, so they are stored as typed.

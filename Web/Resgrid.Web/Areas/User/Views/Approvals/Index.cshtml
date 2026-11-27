@@ -1,0 +1,130 @@
+@using Resgrid.Model
+@using Resgrid.Model.Approvals
+@model Resgrid.Web.Areas.User.Models.Approvals.ApprovalsInboxView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    My approvals (e-Signature S4): the requests whose step is waiting for the member (escalated ones first), the pending requests the
+    member submitted (all of them for department admins), and where to submit a subject for approval.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + approvalText["MyApprovalsTitle"];
+    ViewData["Title"] = approvalText["MyApprovalsTitle"].Value;
+    ViewData["Subtitle"] = approvalText["MyApprovalsIntro"].Value;
+    ViewData["Section"] = "Index";
+    ViewData["Message"] = Model.Message;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Approvals/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Items.Count == 0)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-check-circle text-success" aria-hidden="true"></i> @approvalText["NothingToApprove"]</div>
+    }
+    else
+    {
+        <div class="rgw-next-action" role="region" aria-label="@approvalText["PendingApprovalsHeader"]">
+            <strong><i class="fa fa-arrow-circle-right" aria-hidden="true"></i> @approvalText["NextApprovalLabel"]</strong>
+            <div class="m-t-xs">
+                <a asp-area="User" asp-controller="Approvals" asp-action="Detail" asp-route-id="@Model.Items[0].ApprovalRequestId">@Model.Items[0].Title</a>
+                <span class="rgw-progress-honest">@string.Format(approvalText["DueByLabel"].Value, Model.Items[0].ExpiresOn.ToString("yyyy-MM-dd"))</span>
+            </div>
+        </div>
+    }
+
+    <div class="rgw-stat-tiles">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@approvalText["WaitingForMeLabel"]</div><div class="rgw-stat-value">@Model.Items.Count</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@approvalText["EscalatedLabel"]</div><div class="rgw-stat-value">@Model.Items.Count(i => i.Escalated)</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@approvalText["PendingSubmittedLabel"]</div><div class="rgw-stat-value">@Model.Pending.Count</div></div>
+    </div>
+
+    @if (Model.Items.Count > 0)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-check-square-o" aria-hidden="true"></i> @approvalText["PendingApprovalsHeader"] (@Model.Items.Count)</h5></div>
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@approvalText["SubjectColumn"]</th>
+                                <th scope="col">@approvalText["AmountColumn"]</th>
+                                <th scope="col">@approvalText["StepColumn"]</th>
+                                <th scope="col">@approvalText["DueColumn"]</th>
+                                <th scope="col"><span class="sr-only">@approvalText["ActionsColumn"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@item.Title<div class="rgw-sub">@approvalText["Kind" + (SignatureSubjectKinds)item.SubjectKind] · <span class="rgw-mono">@item.ContentCode</span></div></td>
+                                    <td>@ApprovalRouting.AmountText(item.Amount, item.Currency)</td>
+                                    <td>@item.StepLabel @if (item.Escalated) { <span class="label label-warning">@approvalText["EscalatedLabel"]</span> }</td>
+                                    <td>@item.ExpiresOn.ToString("yyyy-MM-dd")</td>
+                                    <td class="rgw-row-actions"><a class="btn btn-primary btn-xs" asp-area="User" asp-controller="Approvals" asp-action="Detail" asp-route-id="@item.ApprovalRequestId"><i class="fa fa-eye" aria-hidden="true"></i> @approvalText["ReviewButton"]</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-hourglass-half" aria-hidden="true"></i> @(Model.IsAdmin ? approvalText["PendingInDepartmentHeader"] : approvalText["MySubmissionsHeader"]) (@Model.Pending.Count)</h5></div>
+        <div class="ibox-content">
+            @if (Model.Pending.Count == 0)
+            {
+                <p class="text-muted">@approvalText["NoPendingSubmissions"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@approvalText["SubjectColumn"]</th>
+                                <th scope="col">@approvalText["AmountColumn"]</th>
+                                <th scope="col">@approvalText["SubmittedColumn"]</th>
+                                <th scope="col"><span class="sr-only">@approvalText["ActionsColumn"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var request in Model.Pending)
+                            {
+                                <tr>
+                                    <td>@request.Title<div class="rgw-sub">@approvalText["Kind" + (SignatureSubjectKinds)request.SubjectKind]</div></td>
+                                    <td>@ApprovalRouting.AmountText(request.Amount, request.Currency)</td>
+                                    <td>@request.SubmittedOn.ToString("yyyy-MM-dd HH:mm") UTC</td>
+                                    <td class="rgw-row-actions"><a class="btn btn-default btn-xs" asp-area="User" asp-controller="Approvals" asp-action="Detail" asp-route-id="@request.ApprovalRequestId"><i class="fa fa-eye" aria-hidden="true"></i> @approvalText["OpenRequestLink"]</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (Model.Kinds.Count > 0)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-paper-plane" aria-hidden="true"></i> @approvalText["SubmitHeading"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-card-grid">
+                    @foreach (var kind in Model.Kinds)
+                    {
+                        <a class="btn btn-default" asp-area="User" asp-controller="Approvals" asp-action="Submit" asp-route-kind="@((int)kind)"><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @approvalText["Kind" + kind]</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

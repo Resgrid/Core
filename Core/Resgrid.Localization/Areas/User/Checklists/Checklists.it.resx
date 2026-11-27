@@ -117,6 +117,9 @@
   <data name="Author" xml:space="preserve">
     <value>Autore</value>
   </data>
+  <data name="FormerMember" xml:space="preserve">
+    <value>Ex membro</value>
+  </data>
   <data name="Submitted" xml:space="preserve">
     <value>Inviata</value>
   </data>
@@ -716,4 +719,16 @@
   <data name="HelpFieldScheduleName" xml:space="preserve"><value>Compare nell'elenco delle scadenze, quindi rendilo riconoscibile a colpo d'occhio.</value></data>
   <data name="HelpFieldWindowMinutes" xml:space="preserve"><value>Quanto tempo ha la squadra per completare il controllo dopo l'apertura. Oltre, risulta mancato.</value></data>
   <data name="HelpFieldAssignment" xml:space="preserve"><value>L'instradamento automatico invia il controllo a chi detiene il target. Scegli persona, ruolo, gruppo o mezzo per sovrascriverlo.</value></data>
+  <data name="The witness signs at L2 (a fresh step-up or a passkey), bound to the content of the completion" xml:space="preserve">
+    <value>Il testimone firma a L2 (una nuova verifica dell'identità o una passkey), con la firma legata al contenuto del completamento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignatureRequired" xml:space="preserve">
+    <value>Questa lista di controllo deve essere convalidata dalla firma di un testimone. Apri l'esecuzione e firma come testimone.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignatureRefused" xml:space="preserve">
+    <value>La firma del testimone non è stata registrata, quindi la lista di controllo è ancora in attesa del testimone.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

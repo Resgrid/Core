@@ -1,0 +1,883 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AckDetail" xml:space="preserve">
+    <value>{0} of {1} signed, {2} overdue</value>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>All kinds</value>
+  </data>
+  <data name="AlreadyImported" xml:space="preserve">
+    <value>Your department has imported this before.</value>
+  </data>
+  <data name="AnalyticsHeader" xml:space="preserve">
+    <value>Protocol analytics</value>
+  </data>
+  <data name="AnalyticsIntro" xml:space="preserve">
+    <value>How protocols are used on calls, how cases are coded, how long teams spend on them, who has acknowledged them and what people look for and cannot find.</value>
+  </data>
+  <data name="AnalyticsTab" xml:space="preserve">
+    <value>Analytics</value>
+  </data>
+  <data name="AnalyticsTruncated" xml:space="preserve">
+    <value>The period has more than {0} protocol uses on calls; only the newest are counted.</value>
+  </data>
+  <data name="AnalyticsUnavailable" xml:space="preserve">
+    <value>Analytics are available to protocol authors, approvers and department admins.</value>
+  </data>
+  <data name="ApplyButton" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>I confirm we have the right to share this, it holds no licensed content (such as MPDS or IntelliComm) and no personal information.</value>
+  </data>
+  <data name="AttributionLicense" xml:space="preserve">
+    <value>Licence:</value>
+  </data>
+  <data name="AttributionNameHelp" xml:space="preserve">
+    <value>The name every import credits.</value>
+  </data>
+  <data name="AttributionNameLabel" xml:space="preserve">
+    <value>Credit as</value>
+  </data>
+  <data name="AttributionSource" xml:space="preserve">
+    <value>Source:</value>
+  </data>
+  <data name="ChooseItem" xml:space="preserve">
+    <value>Choose…</value>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="ColumnAddress" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="ColumnContributor" xml:space="preserve">
+    <value>Contributor</value>
+  </data>
+  <data name="ColumnCreated" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="ColumnDeterminant" xml:space="preserve">
+    <value>Determinant</value>
+  </data>
+  <data name="ColumnFlags" xml:space="preserve">
+    <value>Findings</value>
+  </data>
+  <data name="ColumnImports" xml:space="preserve">
+    <value>Imports</value>
+  </data>
+  <data name="ColumnKind" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="ColumnLicense" xml:space="preserve">
+    <value>Licence</value>
+  </data>
+  <data name="ColumnListed" xml:space="preserve">
+    <value>Listed</value>
+  </data>
+  <data name="ColumnQuery" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="ColumnRating" xml:space="preserve">
+    <value>Rating</value>
+  </data>
+  <data name="ColumnShown" xml:space="preserve">
+    <value>On the page</value>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ColumnSubmitted" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="ColumnTimes" xml:space="preserve">
+    <value>Times</value>
+  </data>
+  <data name="ColumnTitle" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="ColumnWhere" xml:space="preserve">
+    <value>Where</value>
+  </data>
+  <data name="CommentButton" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="CommentHelp" xml:space="preserve">
+    <value>Plain text. Comments show your department's name, not yours.</value>
+  </data>
+  <data name="CommentHidden" xml:space="preserve">
+    <value>hidden</value>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Add a comment</value>
+  </data>
+  <data name="CommentsHeader" xml:space="preserve">
+    <value>Comments ({0})</value>
+  </data>
+  <data name="CsvAckAssigned" xml:space="preserve">
+    <value>Acknowledgments owed</value>
+  </data>
+  <data name="CsvAckCompliance" xml:space="preserve">
+    <value>Acknowledgment compliance</value>
+  </data>
+  <data name="CsvAckOverdue" xml:space="preserve">
+    <value>Acknowledgments overdue</value>
+  </data>
+  <data name="CsvAckSigned" xml:space="preserve">
+    <value>Acknowledgments signed</value>
+  </data>
+  <data name="CsvButton" xml:space="preserve">
+    <value>CSV</value>
+  </data>
+  <data name="CsvByAi" xml:space="preserve">
+    <value>By AI suggestion</value>
+  </data>
+  <data name="CsvByDispatcher" xml:space="preserve">
+    <value>By dispatcher</value>
+  </data>
+  <data name="CsvByTrigger" xml:space="preserve">
+    <value>By trigger</value>
+  </data>
+  <data name="CsvCalls" xml:space="preserve">
+    <value>Calls</value>
+  </data>
+  <data name="CsvDeterminants" xml:space="preserve">
+    <value>Determinants</value>
+  </data>
+  <data name="CsvMeanMinutes" xml:space="preserve">
+    <value>Mean minutes on protocol</value>
+  </data>
+  <data name="CsvMedianMinutes" xml:space="preserve">
+    <value>Median minutes on protocol</value>
+  </data>
+  <data name="CsvName" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="CsvNumber" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="CsvOverridden" xml:space="preserve">
+    <value>Overridden</value>
+  </data>
+  <data name="CsvOverrideRate" xml:space="preserve">
+    <value>Override rate</value>
+  </data>
+  <data name="CsvRemoved" xml:space="preserve">
+    <value>Removed from calls</value>
+  </data>
+  <data name="CsvTimedCalls" xml:space="preserve">
+    <value>Timed calls</value>
+  </data>
+  <data name="CsvVersions" xml:space="preserve">
+    <value>Calls by version</value>
+  </data>
+  <data name="CsvWithDeterminant" xml:space="preserve">
+    <value>Calls with a determinant</value>
+  </data>
+  <data name="DecideHeader" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="DecideHelp" xml:space="preserve">
+    <value>A note is required to decline; the contributor sees it.</value>
+  </data>
+  <data name="DeterminantsEmpty" xml:space="preserve">
+    <value>No calls were coded with a case flow in this period.</value>
+  </data>
+  <data name="DeterminantsHeader" xml:space="preserve">
+    <value>Determinant distribution</value>
+  </data>
+  <data name="EligibilityAudienceRestricted" xml:space="preserve">
+    <value>Limited to an audience, so never public</value>
+  </data>
+  <data name="EligibilityDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="EligibilityDocumentBacked" xml:space="preserve">
+    <value>Uploaded document versions are not shown publicly</value>
+  </data>
+  <data name="EligibilityEligible" xml:space="preserve">
+    <value>Can be public</value>
+  </data>
+  <data name="EligibilityLicensedContent" xml:space="preserve">
+    <value>Licensed content is never public</value>
+  </data>
+  <data name="EligibilityNotPublished" xml:space="preserve">
+    <value>Not published (drafts are never public)</value>
+  </data>
+  <data name="ExchangeCommentHidden" xml:space="preserve">
+    <value>Comment hidden.</value>
+  </data>
+  <data name="ExchangeCommented" xml:space="preserve">
+    <value>Comment added.</value>
+  </data>
+  <data name="ExchangeCount" xml:space="preserve">
+    <value>{0} listed items</value>
+  </data>
+  <data name="ExchangeEmpty" xml:space="preserve">
+    <value>Nothing matches yet.</value>
+  </data>
+  <data name="ExchangeErrorAttestationRequired" xml:space="preserve">
+    <value>Confirm the statement before you submit.</value>
+  </data>
+  <data name="ExchangeErrorDocumentBacked" xml:space="preserve">
+    <value>A protocol whose content is an uploaded document cannot be shared.</value>
+  </data>
+  <data name="ExchangeErrorImportFailed" xml:space="preserve">
+    <value>The import did not complete. Nothing was created.</value>
+  </data>
+  <data name="ExchangeErrorInvalidInput" xml:space="preserve">
+    <value>Check what you entered and try again.</value>
+  </data>
+  <data name="ExchangeErrorKindUnavailable" xml:space="preserve">
+    <value>This kind of item is not available on this server.</value>
+  </data>
+  <data name="ExchangeErrorLicenseRequired" xml:space="preserve">
+    <value>Choose a licence.</value>
+  </data>
+  <data name="ExchangeErrorLicensedContent" xml:space="preserve">
+    <value>Licensed content (or content marked "no AI" because it is licensed) can never be shared.</value>
+  </data>
+  <data name="ExchangeErrorLmsRequired" xml:space="preserve">
+    <value>This item is an LMS type; importing it needs the LMS add-on.</value>
+  </data>
+  <data name="ExchangeErrorNone" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="ExchangeErrorNotAuthorized" xml:space="preserve">
+    <value>You do not have the rights for this.</value>
+  </data>
+  <data name="ExchangeErrorNotFound" xml:space="preserve">
+    <value>That item could not be found.</value>
+  </data>
+  <data name="ExchangeErrorNotPublished" xml:space="preserve">
+    <value>Only a published version in force can be shared.</value>
+  </data>
+  <data name="ExchangeErrorOwnListing" xml:space="preserve">
+    <value>A department cannot rate its own contribution.</value>
+  </data>
+  <data name="ExchangeErrorPayloadChanged" xml:space="preserve">
+    <value>The item no longer matches what was reviewed; it cannot be imported.</value>
+  </data>
+  <data name="ExchangeErrorWrongStatus" xml:space="preserve">
+    <value>That is not possible while the item is in its current status.</value>
+  </data>
+  <data name="ExchangeFreeNote" xml:space="preserve">
+    <value>The community exchange is free for every department. Imported LMS items (skill sheets, lesson plans) need the LMS add-on to use.</value>
+  </data>
+  <data name="ExchangeHeader" xml:space="preserve">
+    <value>Community exchange</value>
+  </data>
+  <data name="ExchangeImported" xml:space="preserve">
+    <value>Imported. Review it, adapt it and publish it as your own.</value>
+  </data>
+  <data name="ExchangeIntro" xml:space="preserve">
+    <value>Protocols and trainings other departments share, reviewed by Resgrid before they are listed.</value>
+  </data>
+  <data name="ExchangeListed" xml:space="preserve">
+    <value>Listed.</value>
+  </data>
+  <data name="ExchangeRated" xml:space="preserve">
+    <value>Thank you for rating it.</value>
+  </data>
+  <data name="ExchangeRejected" xml:space="preserve">
+    <value>Declined; the contributor sees your note.</value>
+  </data>
+  <data name="ExchangeRemoved" xml:space="preserve">
+    <value>Taken down.</value>
+  </data>
+  <data name="ExchangeSubmitted" xml:space="preserve">
+    <value>Thank you. Your contribution is waiting for review.</value>
+  </data>
+  <data name="ExchangeTab" xml:space="preserve">
+    <value>Community exchange</value>
+  </data>
+  <data name="ExchangeWithdrawn" xml:space="preserve">
+    <value>Withdrawn from the exchange.</value>
+  </data>
+  <data name="ExportCount" xml:space="preserve">
+    <value>{0} protocols in the library.</value>
+  </data>
+  <data name="ExportHeader" xml:space="preserve">
+    <value>Open format and export</value>
+  </data>
+  <data name="ExportHtmlButton" xml:space="preserve">
+    <value>HTML</value>
+  </data>
+  <data name="ExportHtmlHelp" xml:space="preserve">
+    <value>HTML: one self-contained file with the versions in force you can read.</value>
+  </data>
+  <data name="ExportImportHint" xml:space="preserve">
+    <value>Any Resgrid department (or other system) can import the JSON file:</value>
+  </data>
+  <data name="ExportImportLink" xml:space="preserve">
+    <value>Import protocols</value>
+  </data>
+  <data name="ExportIntro" xml:space="preserve">
+    <value>Take your protocols with you: the documented open JSON format, one HTML file, or the PDF book.</value>
+  </data>
+  <data name="ExportJsonButton" xml:space="preserve">
+    <value>Open format (JSON)</value>
+  </data>
+  <data name="ExportJsonHelp" xml:space="preserve">
+    <value>JSON: blocks, version history, decision graph, approved translations and the attachments list (format resgrid-protocols, version 2). Files are listed, not included.</value>
+  </data>
+  <data name="ExportLibraryTitle" xml:space="preserve">
+    <value>Protocol library</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>PDF book</value>
+  </data>
+  <data name="ExportPdfHelp" xml:space="preserve">
+    <value>PDF: the protocol book, sealed when document sealing is set up.</value>
+  </data>
+  <data name="ExportSetLabel" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="ExportTab" xml:space="preserve">
+    <value>Open format</value>
+  </data>
+  <data name="ExportWholeLibrary" xml:space="preserve">
+    <value>The whole library</value>
+  </data>
+  <data name="FlagAttachmentRemoved" xml:space="preserve">
+    <value>Attachment or uploaded image removed</value>
+  </data>
+  <data name="FlagConfigurationRemoved" xml:space="preserve">
+    <value>Triggers, audience and number removed</value>
+  </data>
+  <data name="FlagContactRemoved" xml:space="preserve">
+    <value>Medical control contact removed</value>
+  </data>
+  <data name="FlagDepartmentNameRemoved" xml:space="preserve">
+    <value>Department name replaced with [Department]</value>
+  </data>
+  <data name="FlagEmailRemoved" xml:space="preserve">
+    <value>E-mail address removed</value>
+  </data>
+  <data name="FlagInternalLinkRemoved" xml:space="preserve">
+    <value>Link to the department's own records removed</value>
+  </data>
+  <data name="FlagInventoryLinkRemoved" xml:space="preserve">
+    <value>Inventory link removed from a medication</value>
+  </data>
+  <data name="FlagPhoneNumber" xml:space="preserve">
+    <value>Phone number found (left in place; the reviewer checks it)</value>
+  </data>
+  <data name="FlagsHeader" xml:space="preserve">
+    <value>What was taken out or flagged</value>
+  </data>
+  <data name="FlagsHelp" xml:space="preserve">
+    <value>Department-specific data is taken out before sharing; phone numbers stay and are checked by the reviewer. Change the item in your library if something should not be shared.</value>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="GapsEmpty" xml:space="preserve">
+    <value>No unanswered searches in this period.</value>
+  </data>
+  <data name="GapsHeader" xml:space="preserve">
+    <value>Protocol gaps</value>
+  </data>
+  <data name="GapsHelp" xml:space="preserve">
+    <value>Searches in the protocol library that found nothing: protocols people look for that may not exist yet.</value>
+  </data>
+  <data name="HideCommentButton" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Import a copy</value>
+  </data>
+  <data name="ImportHeader" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Creates a copy in your department as a draft (or a new training) that you can change, with the contributor's attribution kept.</value>
+  </data>
+  <data name="ImportNeedsLms" xml:space="preserve">
+    <value>This is an LMS item: importing it needs the LMS add-on.</value>
+  </data>
+  <data name="ImportNotAllowed" xml:space="preserve">
+    <value>Protocol authors (or training creators, for trainings) can import this.</value>
+  </data>
+  <data name="ItemKindLessonPlan" xml:space="preserve">
+    <value>Lesson plan</value>
+  </data>
+  <data name="ItemKindProtocol" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="ItemKindSkillSheet" xml:space="preserve">
+    <value>Skill sheet</value>
+  </data>
+  <data name="ItemKindTraining" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="ItemLabel" xml:space="preserve">
+    <value>Item</value>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="LicenseHelp" xml:space="preserve">
+    <value>Other departments may use and change your contribution under this licence.</value>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>Licence</value>
+  </data>
+  <data name="License_CC010" xml:space="preserve">
+    <value>CC0 1.0 (public domain)</value>
+  </data>
+  <data name="License_CCBY40" xml:space="preserve">
+    <value>CC BY 4.0 (credit the contributor)</value>
+  </data>
+  <data name="License_CCBYSA40" xml:space="preserve">
+    <value>CC BY-SA 4.0 (credit, share alike)</value>
+  </data>
+  <data name="ListButton" xml:space="preserve">
+    <value>List it</value>
+  </data>
+  <data name="ListingContributed" xml:space="preserve">
+    <value>Contributed by {0} on {1}</value>
+  </data>
+  <data name="ListingStatusListed" xml:space="preserve">
+    <value>Listed</value>
+  </data>
+  <data name="ListingStatusPendingReview" xml:space="preserve">
+    <value>Waiting for review</value>
+  </data>
+  <data name="ListingStatusRejected" xml:space="preserve">
+    <value>Not accepted</value>
+  </data>
+  <data name="ListingStatusRemoved" xml:space="preserve">
+    <value>Taken down</value>
+  </data>
+  <data name="ListingStatusWithdrawn" xml:space="preserve">
+    <value>Withdrawn</value>
+  </data>
+  <data name="ListingVersion" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="MinutesValue" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="MySubmissionsEmpty" xml:space="preserve">
+    <value>Your department has not contributed anything yet.</value>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Our submissions</value>
+  </data>
+  <data name="MySubmissionsIntro" xml:space="preserve">
+    <value>What your department has contributed and where each item stands.</value>
+  </data>
+  <data name="MySubmissionsTab" xml:space="preserve">
+    <value>Our submissions</value>
+  </data>
+  <data name="NoComments" xml:space="preserve">
+    <value>No comments yet.</value>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>Nothing department-specific was found.</value>
+  </data>
+  <data name="NotRated" xml:space="preserve">
+    <value>Not rated</value>
+  </data>
+  <data name="PagingLabel" xml:space="preserve">
+    <value>Pages</value>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>What an import creates</value>
+  </data>
+  <data name="PublicCategoryLabel" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="PublicContentCodeHelp" xml:space="preserve">
+    <value>Content code: matches the printed copy of this version</value>
+  </data>
+  <data name="PublicContents" xml:space="preserve">
+    <value>Contents</value>
+  </data>
+  <data name="PublicCreateButton" xml:space="preserve">
+    <value>Make public</value>
+  </data>
+  <data name="PublicCreateConfirm" xml:space="preserve">
+    <value>Anyone with the address will be able to read this. Continue?</value>
+  </data>
+  <data name="PublicCreated" xml:space="preserve">
+    <value>The public page is live.</value>
+  </data>
+  <data name="PublicDisclaimer" xml:space="preserve">
+    <value>Published by {0}. This is the department's own guidance for its members; it is not medical or legal advice for anyone else.</value>
+  </data>
+  <data name="PublicEffective" xml:space="preserve">
+    <value>In force from {0}</value>
+  </data>
+  <data name="PublicEligibleCount" xml:space="preserve">
+    <value>Protocols that can be public</value>
+  </data>
+  <data name="PublicEmbedAnySite" xml:space="preserve">
+    <value>Any https site can embed it.</value>
+  </data>
+  <data name="PublicEmbedLabel" xml:space="preserve">
+    <value>Allow embedding on other sites</value>
+  </data>
+  <data name="PublicEmbedSites" xml:space="preserve">
+    <value>Embeddable on: {0}</value>
+  </data>
+  <data name="PublicEmbedSnippet" xml:space="preserve">
+    <value>Embed code</value>
+  </data>
+  <data name="PublicErrorAlreadyPublic" xml:space="preserve">
+    <value>There is already a live public page for that.</value>
+  </data>
+  <data name="PublicErrorInvalidOrigins" xml:space="preserve">
+    <value>Embed sites must be https addresses such as https://www.example.org (at most 10).</value>
+  </data>
+  <data name="PublicErrorNone" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="PublicErrorNotAuthorized" xml:space="preserve">
+    <value>Only protocol approvers and department admins manage public pages.</value>
+  </data>
+  <data name="PublicErrorNotEligible" xml:space="preserve">
+    <value>That protocol cannot be made public.</value>
+  </data>
+  <data name="PublicErrorNotFound" xml:space="preserve">
+    <value>That protocol or category could not be found.</value>
+  </data>
+  <data name="PublicErrorTooManyLinks" xml:space="preserve">
+    <value>The department has reached the most public pages it can have; revoke one first.</value>
+  </data>
+  <data name="PublicHeader" xml:space="preserve">
+    <value>Public pages</value>
+  </data>
+  <data name="PublicIntro" xml:space="preserve">
+    <value>Publish a protocol or a category at a public address, optionally embeddable on your website. Revoke it at any time.</value>
+  </data>
+  <data name="PublicKindCurrent" xml:space="preserve">
+    <value>Version in force</value>
+  </data>
+  <data name="PublicKindPinned" xml:space="preserve">
+    <value>This version only</value>
+  </data>
+  <data name="PublicKindSet" xml:space="preserve">
+    <value>Category set</value>
+  </data>
+  <data name="PublicLinksHeader" xml:space="preserve">
+    <value>The department's public pages</value>
+  </data>
+  <data name="PublicLiveCount" xml:space="preserve">
+    <value>Live public pages</value>
+  </data>
+  <data name="PublicNoLinks" xml:space="preserve">
+    <value>Nothing is public.</value>
+  </data>
+  <data name="PublicNotEligibleHeader" xml:space="preserve">
+    <value>Protocols that cannot be public ({0})</value>
+  </data>
+  <data name="PublicNothingPublished" xml:space="preserve">
+    <value>Nothing is published here yet.</value>
+  </data>
+  <data name="PublicOriginsHelp" xml:space="preserve">
+    <value>https addresses, separated by spaces. Leave blank to allow any https site.</value>
+  </data>
+  <data name="PublicOriginsLabel" xml:space="preserve">
+    <value>Sites allowed to embed it</value>
+  </data>
+  <data name="PublicPageTitle" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="PublicPinHelp" xml:space="preserve">
+    <value>When a newer version is published the page says this version is no longer in force. Leave it unticked to always show the version in force.</value>
+  </data>
+  <data name="PublicPinLabel" xml:space="preserve">
+    <value>This version only</value>
+  </data>
+  <data name="PublicPoweredBy" xml:space="preserve">
+    <value>Published with Resgrid</value>
+  </data>
+  <data name="PublicProtocolHeader" xml:space="preserve">
+    <value>Make a protocol public</value>
+  </data>
+  <data name="PublicProtocolLabel" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="PublicRevokeButton" xml:space="preserve">
+    <value>Revoke</value>
+  </data>
+  <data name="PublicRevokeConfirm" xml:space="preserve">
+    <value>Revoke this public page? The address stops working at once.</value>
+  </data>
+  <data name="PublicRevoked" xml:space="preserve">
+    <value>The public page was revoked.</value>
+  </data>
+  <data name="PublicRevokedLabel" xml:space="preserve">
+    <value>Revoked</value>
+  </data>
+  <data name="PublicSetCount" xml:space="preserve">
+    <value>{0} protocols</value>
+  </data>
+  <data name="PublicSetHeader" xml:space="preserve">
+    <value>Make a category public as a set</value>
+  </data>
+  <data name="PublicSetHelp" xml:space="preserve">
+    <value>The page shows every protocol in force in the category and its sub-categories that can be public; others are left out automatically.</value>
+  </data>
+  <data name="PublicShownCount" xml:space="preserve">
+    <value>{0} protocols shown</value>
+  </data>
+  <data name="PublicShownLabel" xml:space="preserve">
+    <value>Shown</value>
+  </data>
+  <data name="PublicSuperseded" xml:space="preserve">
+    <value>This version is no longer in force. Contact the department for the current version.</value>
+  </data>
+  <data name="PublicTab" xml:space="preserve">
+    <value>Public pages</value>
+  </data>
+  <data name="PublicVersion" xml:space="preserve">
+    <value>Version {0}</value>
+  </data>
+  <data name="RateButton" xml:space="preserve">
+    <value>Rate</value>
+  </data>
+  <data name="RateHeader" xml:space="preserve">
+    <value>Rate it</value>
+  </data>
+  <data name="RateLabel" xml:space="preserve">
+    <value>Your rating</value>
+  </data>
+  <data name="RatingValue" xml:space="preserve">
+    <value>{0} of 5 ({1})</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Decline</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Take down</value>
+  </data>
+  <data name="ReviewEmpty" xml:space="preserve">
+    <value>Nothing is waiting for review.</value>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>Review queue</value>
+  </data>
+  <data name="ReviewIntro" xml:space="preserve">
+    <value>Contributions waiting for a Resgrid review, oldest first.</value>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Reviewer's note</value>
+  </data>
+  <data name="ReviewTab" xml:space="preserve">
+    <value>Review queue</value>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Search the exchange</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Search titles, summaries and tags</value>
+  </data>
+  <data name="SharingTab" xml:space="preserve">
+    <value>Sharing</value>
+  </data>
+  <data name="SortImports" xml:space="preserve">
+    <value>Most imported</value>
+  </data>
+  <data name="SortLabel" xml:space="preserve">
+    <value>Sort</value>
+  </data>
+  <data name="SortNewest" xml:space="preserve">
+    <value>Newest</value>
+  </data>
+  <data name="SortRating" xml:space="preserve">
+    <value>Best rated</value>
+  </data>
+  <data name="SourcesDetail" xml:space="preserve">
+    <value>Trigger {0} · dispatcher {1} · AI {2} · removed {3}</value>
+  </data>
+  <data name="StarsOption" xml:space="preserve">
+    <value>{0} of 5</value>
+  </data>
+  <data name="SubmitButton" xml:space="preserve">
+    <value>Submit for review</value>
+  </data>
+  <data name="SubmitChooseHelp" xml:space="preserve">
+    <value>Licensed content, drafts and uploaded-document protocols cannot be shared and are greyed out.</value>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>Contribute to the exchange</value>
+  </data>
+  <data name="SubmitIntro" xml:space="preserve">
+    <value>Share a published protocol or a training with every department. Resgrid reviews each contribution before it is listed.</value>
+  </data>
+  <data name="SubmitStepChoose" xml:space="preserve">
+    <value>1. Choose what to share</value>
+  </data>
+  <data name="SubmitStepPreview" xml:space="preserve">
+    <value>2. What will be shared</value>
+  </data>
+  <data name="SubmitStepSend" xml:space="preserve">
+    <value>3. Licence and submit</value>
+  </data>
+  <data name="SubmitTab" xml:space="preserve">
+    <value>Contribute</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>Library search</value>
+  </data>
+  <data name="SurfaceUnifiedSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="TemplateAuthorsOnly" xml:space="preserve">
+    <value>Protocol authors can clone templates.</value>
+  </data>
+  <data name="TemplateChooseItems" xml:space="preserve">
+    <value>Items to clone</value>
+  </data>
+  <data name="TemplateCloneButton" xml:space="preserve">
+    <value>Clone as drafts</value>
+  </data>
+  <data name="TemplateCloned" xml:space="preserve">
+    <value>{0} drafts created from the template set.</value>
+  </data>
+  <data name="TemplateError_not_authorized" xml:space="preserve">
+    <value>Only protocol authors can clone templates.</value>
+  </data>
+  <data name="TemplateError_not_found" xml:space="preserve">
+    <value>That template set could not be found.</value>
+  </data>
+  <data name="TemplateError_nothing_selected" xml:space="preserve">
+    <value>Choose at least one item to clone.</value>
+  </data>
+  <data name="TemplateError_too_many" xml:space="preserve">
+    <value>Too many items at once.</value>
+  </data>
+  <data name="TemplateError_unknown_format" xml:space="preserve">
+    <value>That template set could not be read.</value>
+  </data>
+  <data name="TemplateMeta" xml:space="preserve">
+    <value>{0} · version {1} · {2} items</value>
+  </data>
+  <data name="TemplateSkipped" xml:space="preserve">
+    <value>{0} could not be created.</value>
+  </data>
+  <data name="TemplatesDisclaimer" xml:space="preserve">
+    <value>Templates are starting points. Check every one against your own policies, law, staffing and medical direction before you publish it. The EMS set has no clinical text: your medical director writes it.</value>
+  </data>
+  <data name="TemplatesHeader" xml:space="preserve">
+    <value>Template library</value>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>Starter sets written by Resgrid. Clone them as drafts, adapt them, then review and publish them as your own.</value>
+  </data>
+  <data name="TemplatesTab" xml:space="preserve">
+    <value>Templates</value>
+  </data>
+  <data name="TileAckCompliance" xml:space="preserve">
+    <value>Acknowledgment compliance</value>
+  </data>
+  <data name="TileAckDetail" xml:space="preserve">
+    <value>{0} of {1} signed</value>
+  </data>
+  <data name="TileCalls" xml:space="preserve">
+    <value>Calls with a protocol</value>
+  </data>
+  <data name="TileGaps" xml:space="preserve">
+    <value>Searches that found nothing</value>
+  </data>
+  <data name="TileGapsDetail" xml:space="preserve">
+    <value>{0} open knowledge gaps</value>
+  </data>
+  <data name="TileMedianTime" xml:space="preserve">
+    <value>Median time on protocol</value>
+  </data>
+  <data name="TileOverrideDetail" xml:space="preserve">
+    <value>{0} of {1} coded calls</value>
+  </data>
+  <data name="TileOverrideRate" xml:space="preserve">
+    <value>Determinant override rate</value>
+  </data>
+  <data name="TimedDetail" xml:space="preserve">
+    <value>{0} timed</value>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="UsageEmpty" xml:space="preserve">
+    <value>No protocols yet.</value>
+  </data>
+  <data name="UsageHeader" xml:space="preserve">
+    <value>Usage by protocol</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Withdraw from the exchange</value>
+  </data>
+  <data name="TemplateSuggested" xml:space="preserve">
+    <value>Suggested for your organization</value>
+  </data>
+</root>

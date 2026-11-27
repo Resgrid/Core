@@ -1576,6 +1576,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				case DocumentNumberKinds.Invoice: return _departmentLocalizer["DocumentNumberKindInvoice"];
 				case DocumentNumberKinds.Bid: return _departmentLocalizer["DocumentNumberKindBid"];
 				case DocumentNumberKinds.TimeReport: return _departmentLocalizer["DocumentNumberKindTimeReport"];
+				case DocumentNumberKinds.Protocol: return _departmentLocalizer["DocumentNumberKindProtocol"];
 				default: return kind;
 			}
 		}

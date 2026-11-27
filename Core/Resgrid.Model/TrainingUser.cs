@@ -35,7 +35,81 @@ namespace Resgrid.Model
 
 		public DateTime? CompletedOn { get; set; }
 
+		/// <summary>
+		/// The score of the member's latest quiz attempt (T-D1: always written, a failed retake included).
+		/// </summary>
 		public double Score { get; set; }
+
+		/// <summary>
+		/// The latest quiz attempt's result, stored when it was taken and never recomputed from the current quiz (T-D2,
+		/// T-D20). Null when the training has no quiz or no attempt was made. <see cref="Complete"/> is true only for a
+		/// finished training: a passed quiz, or a training without a quiz that was opened.
+		/// </summary>
+		public bool? Passed { get; set; }
+
+		/// <summary>When this member was assigned (or re-assigned by a repeat or a material edit), UTC.</summary>
+		public DateTime? AssignedOn { get; set; }
+
+		/// <summary>The member's due moment, UTC: the end of the department-local day (TrainingDueDates).</summary>
+		public DateTime? DueOn { get; set; }
+
+		/// <summary>How the member came to be assigned (<see cref="TrainingAssignmentSources"/>).</summary>
+		public int AssignmentSource { get; set; }
+
+		/// <summary>The assignment notice was sent (or skipped as too old), UTC.</summary>
+		public DateTime? NotifiedOn { get; set; }
+
+		/// <summary>The last due reminder, UTC, and the lead (days) it was sent for: a lead is reminded once.</summary>
+		public DateTime? RemindedOn { get; set; }
+
+		public int? LastReminderLeadDays { get; set; }
+
+		/// <summary>The last overdue notice, UTC (repeating cadence: <see cref="Training.OverdueRepeatDays"/>).</summary>
+		public DateTime? OverdueNotifiedOn { get; set; }
+
+		/// <summary>An officer removed this completed assignee: the completion is kept, the member is no longer tracked.</summary>
+		public DateTime? RemovedOn { get; set; }
+
+		public string RemovedByUserId { get; set; }
+
+		/// <summary>Extension (R-C2): the due date before the first extension, why, who approved it and when.</summary>
+		public DateTime? OriginalDueOn { get; set; }
+
+		public string ExtensionReason { get; set; }
+
+		public string ExtendedByUserId { get; set; }
+
+		public DateTime? ExtendedOn { get; set; }
+
+		/// <summary>Exemption (R-C2): shown as exempt, never as complete; optional expiry, UTC.</summary>
+		public DateTime? ExemptOn { get; set; }
+
+		public string ExemptReason { get; set; }
+
+		public string ExemptByUserId { get; set; }
+
+		public DateTime? ExemptUntil { get; set; }
+
+		/// <summary>Quiz attempts submitted in the current cycle (the attempt limit counts these).</summary>
+		public int AttemptCount { get; set; }
+
+		/// <summary>The assignment cycle: 0 for the first, then one more for each repeat or material re-assignment.</summary>
+		public int Cycle { get; set; }
+
+		/// <summary>
+		/// Round 7B (M0400): <see cref="LearningCompletionMethods"/> of this cycle's completion. RecordedByOther: an instructor recorded it
+		/// (permission 135, the quiz noted as waived); the member's own later attempt does not overwrite it (the first completion stands).
+		/// </summary>
+		public int CompletionMethod { get; set; }
+
+		/// <summary>The TrainingCompletionRecordings row of a recorded completion.</summary>
+		public int? RecordedCompletionId { get; set; }
+
+		/// <summary>True while an exemption is in force.</summary>
+		public bool IsExemptOn(DateTime utcNow) => ExemptOn.HasValue && (!ExemptUntil.HasValue || ExemptUntil.Value > utcNow);
+
+		/// <summary>An assignment the member still has to do: not removed, not complete, not exempt.</summary>
+		public bool IsOpenOn(DateTime utcNow) => !RemovedOn.HasValue && !Complete && !IsExemptOn(utcNow);
 
 		[NotMapped]
 		[JsonIgnore]

@@ -1,0 +1,24 @@
+@model Resgrid.Web.Areas.User.Models.RecordCompletionsPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Round 7B (permission 135): record completions of a baseline training for members who took it together (the assignee list first).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RecordCompletions.Title"].Value;
+    ViewData["Title"] = localizer["RecordCompletions.Title"].Value;
+    ViewData["Subtitle"] = Model.View.TargetName;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <partial name="_RecordCompletions" model="Model" />
+    <p><a asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@Model.View.TargetId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["RecordCompletions.Back"]</a></p>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

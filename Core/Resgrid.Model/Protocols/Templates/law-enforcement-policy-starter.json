@@ -1,0 +1,89 @@
+{
+  "format": "resgrid-protocols",
+  "version": 2,
+  "exportedOn": "2026-11-25T00:00:00Z",
+  "set": {
+    "key": "law-enforcement-policy-starter",
+    "title": "Law enforcement policy starter set",
+    "description": "Three policy structures written by Resgrid for police services and other law enforcement agencies: the use-of-force policy acknowledgment, the duty to intervene and report, and evidence handling. They carry headings and placeholders only: insert your agency's own policy text and the law that applies where you work.",
+    "publisher": "Resgrid",
+    "license": "CC-BY-4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+    "setVersion": "1.0"
+  },
+  "protocols": [
+    {
+      "code": "LE-101",
+      "name": "Use-of-force policy acknowledgment",
+      "kind": "Policy",
+      "tags": "law enforcement,use of force,acknowledgment",
+      "description": "The structure of a use-of-force policy that every sworn member reads and acknowledges each year.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "paragraph", "key": "intro", "html": "<p>This is a structure for your agency's use-of-force policy. Replace each placeholder with your approved policy text before you publish it.</p>" },
+          { "type": "heading", "key": "purpose", "text": "Purpose and scope", "level": 2 },
+          { "type": "paragraph", "key": "purpose-text", "html": "<p>[Insert your agency's purpose statement and who the policy applies to.]</p>" },
+          { "type": "heading", "key": "definitions", "text": "Definitions", "level": 2 },
+          { "type": "paragraph", "key": "definitions-text", "html": "<p>[Insert the definitions your policy and the law where you work use.]</p>" },
+          { "type": "steps", "key": "principles", "title": "Principles to set out in your policy", "items": [
+            { "key": "p1", "html": "<p>De-escalation: when and how members are expected to use it.</p>" },
+            { "key": "p2", "html": "<p>The standard for using force, as your law and policy define it.</p>" },
+            { "key": "p3", "html": "<p>Medical aid after force is used.</p>" },
+            { "key": "p4", "html": "<p>Reporting, supervisory review and investigation.</p>" }
+          ] },
+          { "type": "caution", "key": "law", "title": "Local law comes first", "html": "<p>Your policy must follow the law and the oversight rules where you work. Have it reviewed by your legal adviser before you publish it.</p>" }
+        ]
+      }
+    },
+    {
+      "code": "LE-102",
+      "name": "Duty to intervene and report",
+      "kind": "Policy",
+      "tags": "law enforcement,duty to intervene,reporting",
+      "description": "Members step in to stop misconduct they witness and report it.",
+      "requiresAcknowledgment": true,
+      "reviewIntervalDays": 365,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "expect", "title": "What every member does", "items": [
+            { "key": "e1", "html": "<p>Intervenes, when it is safe to do so, to stop force or conduct that is clearly outside policy or the law.</p>" },
+            { "key": "e2", "html": "<p>Gives or gets medical aid for anyone who needs it.</p>" },
+            { "key": "e3", "html": "<p>Reports what they saw to a supervisor as soon as possible, in the way your policy sets out.</p>" }
+          ] },
+          { "type": "paragraph", "key": "protection", "html": "<p>[Insert your agency's protection against retaliation for members who intervene or report.]</p>" }
+        ]
+      }
+    },
+    {
+      "code": "LE-103",
+      "name": "Evidence handling and chain of custody",
+      "kind": "Procedure",
+      "tags": "law enforcement,evidence,chain of custody",
+      "description": "Collecting, labelling, storing and transferring evidence so its history can always be shown.",
+      "requiresAcknowledgment": false,
+      "reviewIntervalDays": 730,
+      "versionLabel": "1.0",
+      "content": {
+        "schema": 2,
+        "blocks": [
+          { "type": "steps", "key": "collect", "title": "Collect and record", "items": [
+            { "key": "c1", "html": "<p>Photograph or record each item where it was found before it is moved.</p>" },
+            { "key": "c2", "html": "<p>Package and seal each item separately, and label it with the case number, the item number, who collected it, when and where.</p>" },
+            { "key": "c3", "html": "<p>Start the chain-of-custody record at the moment of collection.</p>" }
+          ] },
+          { "type": "steps", "key": "transfer", "title": "Every transfer", "items": [
+            { "key": "t1", "html": "<p>Record who handed the item over, who received it, when, and why.</p>" },
+            { "key": "t2", "html": "<p>Check that the seal is intact; report a broken seal at once.</p>" }
+          ] },
+          { "type": "paragraph", "key": "storage", "html": "<p>[Insert your agency's storage, retention and disposal rules.]</p>" }
+        ]
+      }
+    }
+  ]
+}

@@ -87,6 +87,11 @@ namespace Resgrid.Tests.Security.Audit20261005
 			var constructor = typeof(T).GetConstructors().OrderByDescending(c => c.GetParameters().Length).First();
 			var arguments = constructor.GetParameters().Select(p =>
 			{
+				// An optional concrete-class dependency (UserManager on the protocol editor's passkey signing) cannot be proxied
+				// without its own constructor arguments; these tests never reach it, so it keeps its default.
+				if (!p.ParameterType.IsInterface && p.HasDefaultValue && !_mocks.ContainsKey(p.ParameterType))
+					return p.DefaultValue;
+
 				if (!_mocks.TryGetValue(p.ParameterType, out var mock))
 				{
 					mock = (Mock)Activator.CreateInstance(typeof(Mock<>).MakeGenericType(p.ParameterType));
@@ -218,25 +223,33 @@ namespace Resgrid.Tests.Security.Audit20261005
 		[Test]
 		public async Task Protocols_New_saves_a_new_row_and_drops_posted_child_rows()
 		{
+			// P1: a new protocol is created through the library as a draft (with its first draft version).
 			DispatchProtocol saved = null;
-			M<IProtocolsService>().Setup(x => x.SaveProtocolAsync(It.IsAny<DispatchProtocol>(), It.IsAny<CancellationToken>()))
-				.Callback((DispatchProtocol p, CancellationToken _) => saved = p).ReturnsAsync((DispatchProtocol p, CancellationToken _) => p);
-
-			var model = new NewProtocolModel
-			{
-				Protocol = new DispatchProtocol
+			M<IProtocolLibraryService>().Setup(x => x.CreateAsync(It.IsAny<ProtocolCreateRequest>(), It.IsAny<CancellationToken>()))
+				.Callback((ProtocolCreateRequest r, CancellationToken _) => saved = r.Protocol)
+				.ReturnsAsync((ProtocolCreateRequest r, CancellationToken _) => new ProtocolLifecycleResult
 				{
-					DispatchProtocolId = 66, Name = "Cardiac", Code = "card",
-					Triggers = new List<DispatchProtocolTrigger> { new DispatchProtocolTrigger { DispatchProtocolTriggerId = 9, DispatchProtocolId = 66 } }
-				}
+					Protocol = r.Protocol, Version = new ProtocolVersion { ProtocolVersionId = 1, ContentHtml = r.ContentHtml, RowVersion = 1 }
+				});
+
+			// The editor has no field for the protocol's id; a row id posted for a trigger or question of another protocol must not
+			// make the save update that row by key.
+			var model = new ProtocolEditorModel
+			{
+				Name = "Cardiac", Code = "card",
+				Triggers = new List<ProtocolTriggerInput> { new ProtocolTriggerInput { Key = "t9", Id = 9, Type = (int)ProtocolTriggerTypes.CallType } },
+				Questions = new List<ProtocolQuestionInput> { new ProtocolQuestionInput { Key = "q4", Id = 4, Text = "Breathing?", Answers = new List<ProtocolAnswerInput> { new ProtocolAnswerInput { Key = "a5", Id = 5, Text = "No", Weight = 5 } } } }
 			};
 
-			await Build<ProtocolsController>().New(model, Form(), new List<IFormFile>());
+			var controller = Build<ProtocolsController>();
+			controller.TempData = new Microsoft.AspNetCore.Mvc.ViewFeatures.TempDataDictionary(controller.HttpContext, Mock.Of<Microsoft.AspNetCore.Mvc.ViewFeatures.ITempDataProvider>());
+			await controller.New(model, new List<IFormFile>());
 
 			saved.Should().NotBeNull();
 			saved.DispatchProtocolId.Should().Be(0);
 			saved.DepartmentId.Should().Be(DepartmentId);
-			saved.Triggers.Should().BeNullOrEmpty("the form never posts trigger rows; a posted one would update another protocol's trigger by key");
+			saved.Triggers.Should().OnlyContain(t => t.DispatchProtocolTriggerId == 0, "a posted trigger id would update another protocol's trigger by key");
+			saved.Questions.Should().OnlyContain(q => q.DispatchProtocolQuestionId == 0 && q.Answers.All(a => a.DispatchProtocolQuestionAnswerId == 0));
 		}
 
 		[Test]
@@ -737,7 +750,8 @@ namespace Resgrid.Tests.Security.Audit20261005
 		[TestCase("Calendar", "View.cshtml", "\"RemoveFromEvent\", \"Calendar\"")]
 		[TestCase("Calendar", "View.cshtml", "asp-action=\"DeleteCalendarItem\"")]
 		[TestCase("Calendar", "Types.cshtml", "\"DeleteType\", \"Calendar\"")]
-		[TestCase("Trainings", "Index.cshtml", "\"DeleteTraining\", \"Trainings\"")]
+		[TestCase("Trainings", "Manage.cshtml", "asp-action=\"DeleteTraining\"")]
+		[TestCase("Trainings", "Manage.cshtml", "asp-action=\"Archive\"")]
 		[TestCase("Department", "Types.cshtml", "\"DeleteCallType\", \"Types\"")]
 		[TestCase("Department", "Invites.cshtml", "asp-action=\"DeleteInvite\"")]
 		[TestCase("Department", "Api.cshtml", "\"ProvisionActiveCallRssKey\", \"Department\"")]

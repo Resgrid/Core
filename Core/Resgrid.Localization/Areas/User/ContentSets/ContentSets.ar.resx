@@ -1,0 +1,1049 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetsHeader" xml:space="preserve">
+    <value>المجموعات المشتركة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinksCrumb" xml:space="preserve">
+    <value>روابط الأقسام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsTab" xml:space="preserve">
+    <value>مجموعات البروتوكولات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsTab" xml:space="preserve">
+    <value>مجموعات الدورات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxTab" xml:space="preserve">
+    <value>صندوق التحديثات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalsTab" xml:space="preserve">
+    <value>الاقتراحات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipsTab" xml:space="preserve">
+    <value>الرعايات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>إعدادات المجموعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsIntro" xml:space="preserve">
+    <value>انشروا البروتوكولات كمجموعة للأقسام المرتبطة، أو اشتركوا في المجموعات التي تنشرها الأقسام المرتبطة. يتبع المحتوى المقفل الناشر؛ وتحتفظ الكتل القابلة للتخصيص بتغييراتكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsIntro" xml:space="preserve">
+    <value>انشروا الدورات والتدريبات كمجموعة للأقسام المرتبطة، أو اشتركوا في مجموعاتها. تبقى سجلات الإكمال في السجل الخاص بكل عضو.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedHeader" xml:space="preserve">
+    <value>المجموعات التي ينشرها قسمكم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedIntro" xml:space="preserve">
+    <value>يمكن للأقسام المرتبطة التي تشاركون معها هذا النوع من المحتوى الاشتراك. يصل كل إصدار جديد تنشرونه إلى صندوق التحديثات لديها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSet" xml:space="preserve">
+    <value>المجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnItems" xml:space="preserve">
+    <value>العناصر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSubscribers" xml:space="preserve">
+    <value>المشتركون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>الحالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnPublisher" xml:space="preserve">
+    <value>الناشر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnItem" xml:space="preserve">
+    <value>العنصر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnVersion" xml:space="preserve">
+    <value>الإصدار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnEffective" xml:space="preserve">
+    <value>يسري من</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnDeadline" xml:space="preserve">
+    <value>الموعد النهائي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSponsor" xml:space="preserve">
+    <value>الراعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSponsored" xml:space="preserve">
+    <value>القسم المستفيد من الرعاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSeats" xml:space="preserve">
+    <value>المقاعد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>مؤرشفة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLive" xml:space="preserve">
+    <value>نشطة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSubscribed" xml:space="preserve">
+    <value>مشترك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSuspended" xml:space="preserve">
+    <value>معلّق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>غير مشترك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetNameLabel" xml:space="preserve">
+    <value>اسم المجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDescriptionLabel" xml:space="preserve">
+    <value>الوصف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewSetButton" xml:space="preserve">
+    <value>مجموعة جديدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableHeader" xml:space="preserve">
+    <value>المجموعات المشتركة مع قسمكم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableIntroProtocols" xml:space="preserve">
+    <value>مجموعات الأقسام المرتبطة التي تشارك البروتوكولات مع قسمكم عبر ربط الأقسام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableIntroTraining" xml:space="preserve">
+    <value>مجموعات الأقسام المرتبطة التي تشارك التدريب مع قسمكم عبر ربط الأقسام. تتطلب الدورات إضافة LMS الخاصة بكم أو رعاية الناشر؛ أما التدريبات فلا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAvailable" xml:space="preserve">
+    <value>لا يشارك أي قسم مرتبط مجموعة من هذا النوع مع قسمكم حتى الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredLabel" xml:space="preserve">
+    <value>برعاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionsHeader" xml:space="preserve">
+    <value>اشتراكاتكم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSubscriptions" xml:space="preserve">
+    <value>لم يشترك قسمكم في أي مجموعة من هذا النوع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribedOn" xml:space="preserve">
+    <value>تاريخ الاشتراك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenUpdatesCount" xml:space="preserve">
+    <value>تحديثات في الانتظار: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SuspendedHelp" xml:space="preserve">
+    <value>لم يعد الرابط يشارك هذا المحتوى، لذا لن يصل أي جديد. تبقى نسخكم كما هي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalChangesLabel" xml:space="preserve">
+    <value>التغييرات المحلية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeButton" xml:space="preserve">
+    <value>تخصيص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeButton" xml:space="preserve">
+    <value>اقتراح تغيير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptOn" xml:space="preserve">
+    <value>قبول التحديثات تلقائيًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptOff" xml:space="preserve">
+    <value>إيقاف القبول التلقائي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SyncButton" xml:space="preserve">
+    <value>جلب العناصر الناقصة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnsubscribeButton" xml:space="preserve">
+    <value>إلغاء الاشتراك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnsubscribeConfirm" xml:space="preserve">
+    <value>إلغاء الاشتراك؟ تبقى النسخ في قسمكم كمحتوى خاص بكم ولن تصل تحديثات أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusActive" xml:space="preserve">
+    <value>نشط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusSuspended" xml:space="preserve">
+    <value>معلّق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusEnded" xml:space="preserve">
+    <value>منتهٍ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeLocked" xml:space="preserve">
+    <value>مقفل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeCustomizableBlocks" xml:space="preserve">
+    <value>كتل قابلة للتخصيص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeOpen" xml:space="preserve">
+    <value>مفتوح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetIntro" xml:space="preserve">
+    <value>ما تتلقاه الأقسام المرتبطة، ومدى ما يمكنها تغييره في كل عنصر، ومن يشترك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchivedHelp" xml:space="preserve">
+    <value>هذه المجموعة مؤرشفة: لا تقبل مشتركين جددًا ولا ترسل تحديثات أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDetailsHeader" xml:space="preserve">
+    <value>تفاصيل المجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysLabel" xml:space="preserve">
+    <value>عدد الأيام التي يمكن فيها تأجيل تحديث مقفل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysHelp" xml:space="preserve">
+    <value>يمكن للمشتركين تأجيل تحديث المحتوى المقفل حتى هذا العدد من الأيام بعد تاريخ سريانه؛ وبعد ذلك يدخل حيز التنفيذ في وقت التحديث التالي لديهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>حفظ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>أرشفة المجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>أرشفة هذه المجموعة؟ تنتهي الاشتراكات ويحتفظ المشتركون بنسخهم كمحتوى خاص بهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribersHeader" xml:space="preserve">
+    <value>الأقسام المشتركة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSubscribers" xml:space="preserve">
+    <value>لم يشترك أي قسم في هذه المجموعة بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>إزالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveSubscriberConfirm" xml:space="preserve">
+    <value>إنهاء اشتراك هذا القسم؟ سيحتفظ بنسخه كمحتوى خاص به.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenProposalsCount" xml:space="preserve">
+    <value>اقتراحات مفتوحة: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>العناصر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModesHelp" xml:space="preserve">
+    <value>مقفل: يمكن للمشتركين فقط تأجيل التحديثات حتى الموعد النهائي. كتل قابلة للتخصيص: يمكن للمشتركين استبدال الكتل التي تحددونها (أرقام الهواتف المحلية، والوجهات، والموارد) وإضافة كتلهم الخاصة في النهاية. مفتوح: يمكن للمشتركين تغيير أي شيء ورفض التحديثات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>لا تحتوي هذه المجموعة على عناصر بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsItemLabel" xml:space="preserve">
+    <value>عنصر LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeLabel" xml:space="preserve">
+    <value>القفل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizableBlocksLabel" xml:space="preserve">
+    <value>الكتل التي يمكن للمشتركين استبدالها</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveItemConfirm" xml:space="preserve">
+    <value>إزالة هذا العنصر من المجموعة؟ يحتفظ المشتركون بنسخهم كمحتوى خاص بهم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemHeader" xml:space="preserve">
+    <value>إضافة عنصر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemLabel" xml:space="preserve">
+    <value>العنصر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseItem" xml:space="preserve">
+    <value>اختيار…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemHelp" xml:space="preserve">
+    <value>تتلقى الأقسام المشتركة بالفعل العنصر في صندوق التحديثات لديها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemButton" xml:space="preserve">
+    <value>إضافة إلى المجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableSubtitle" xml:space="preserve">
+    <value>الناشر: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysSummary" xml:space="preserve">
+    <value>يمكن تأجيل تحديثات المحتوى المقفل لمدة تصل إلى {0} يوم بعد تاريخ سريانها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredBy" xml:space="preserve">
+    <value>يرعى {0} مقاعد LMS الخاصة بقسمكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsReady" xml:space="preserve">
+    <value>يمكن لقسمكم تلقي دورات هذه المجموعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsNeeded" xml:space="preserve">
+    <value>تتطلب دورات هذه المجموعة إضافة LMS أو رعاية الناشر. أما التدريبات فتُستلم دونها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YouCanChange" xml:space="preserve">
+    <value>يمكنكم تغيير:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptLabel" xml:space="preserve">
+    <value>قبول التحديثات تلقائيًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptHelp" xml:space="preserve">
+    <value>تدخل التحديثات حيز التنفيذ في وقت التحديث الخاص بقسمكم في تاريخ سريانها أو بعده، دون الحاجة إلى قرار في الصندوق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribeConfirm" xml:space="preserve">
+    <value>الاشتراك؟ سيُنسخ كل عنصر إلى قسمكم الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribeButton" xml:space="preserve">
+    <value>اشتراك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ManagersSubscribe" xml:space="preserve">
+    <value>يمكن للأعضاء الذين لديهم صلاحية «إدارة مجموعات المحتوى» الاشتراك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxIntro" xml:space="preserve">
+    <value>إصدارات جديدة من المجموعات التي يشترك فيها قسمكم. تدخل التحديثات المقبولة حيز التنفيذ في وقت التحديث لديكم، ولا تحدث أبدًا على نحو مفاجئ في منتصف المناوبة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowOpen" xml:space="preserve">
+    <value>عرض التحديثات المنتظرة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>عرض جميع التحديثات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxEmpty" xml:space="preserve">
+    <value>لا توجد تحديثات في الانتظار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewItemLabel" xml:space="preserve">
+    <value>عنصر جديد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDeadline" xml:space="preserve">
+    <value>لا يوجد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusPending" xml:space="preserve">
+    <value>بانتظار قرار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusScheduled" xml:space="preserve">
+    <value>مجدول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusApplied" xml:space="preserve">
+    <value>ساري المفعول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusDeferred" xml:space="preserve">
+    <value>مؤجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusDeclined" xml:space="preserve">
+    <value>مرفوض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusSuperseded" xml:space="preserve">
+    <value>مستبدل بأحدث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusFailed" xml:space="preserve">
+    <value>تعذّر التطبيق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateSubtitle" xml:space="preserve">
+    <value>{0}، {1}، الإصدار {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyOnLabel" xml:space="preserve">
+    <value>يسري في</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AppliedOnLabel" xml:space="preserve">
+    <value>سرى في</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureLabel" xml:space="preserve">
+    <value>المشكلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>ما الذي تغيّر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DroppedChangesHelp" xml:space="preserve">
+    <value>أزال الناشر أو أقفل كتلًا كنتم قد غيّرتموها؛ ولم تعد هذه التغييرات المحلية مستخدمة:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHeader" xml:space="preserve">
+    <value>القرار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyOnHelp" xml:space="preserve">
+    <value>المقترح: وقت التحديث التالي لقسمكم في تاريخ السريان الذي حدده الناشر أو بعده. ولا يكون أبدًا قبل تاريخ السريان.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>قبول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferUntilLabel" xml:space="preserve">
+    <value>تأجيل حتى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferLockedHelp" xml:space="preserve">
+    <value>لا يمكن تأجيل المحتوى المقفل إلى ما بعد موعده النهائي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferButton" xml:space="preserve">
+    <value>تأجيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineConfirm" xml:space="preserve">
+    <value>رفض هذا التحديث؟ سيبقى قسمكم على إصداره الحالي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>رفض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockedCannotDeclineHelp" xml:space="preserve">
+    <value>لا يمكن رفض المحتوى المقفل، بل تأجيله فقط حتى موعده النهائي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RedlineHeader" xml:space="preserve">
+    <value>التغييرات مقارنةً بإصداركم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewItemHelp" xml:space="preserve">
+    <value>هذا العنصر جديد على قسمكم: سيُنسخ إليه عند القبول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeIntro" xml:space="preserve">
+    <value>استبدلوا الكتل التي تركها الناشر قابلة للتخصيص وأضيفوا كتلكم الخاصة في النهاية. تدخل تغييراتكم حيز التنفيذ الآن ويُحتفظ بها في كل تحديث لاحق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockCustomizable" xml:space="preserve">
+    <value>قابل للتخصيص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLocked" xml:space="preserve">
+    <value>مقفل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalVersionLabel" xml:space="preserve">
+    <value>إصداركم من هذه الكتلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalVersionHelp" xml:space="preserve">
+    <value>اتركوه فارغًا لاستخدام نص الناشر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdditionsHeader" xml:space="preserve">
+    <value>كتلكم الإضافية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdditionsHelp" xml:space="preserve">
+    <value>كتل خاصة بكم تُعرض بعد محتوى الناشر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeConfirm" xml:space="preserve">
+    <value>حفظ تغييراتكم وجعلها سارية الآن؟</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeSaveButton" xml:space="preserve">
+    <value>حفظ التغييرات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeHeader" xml:space="preserve">
+    <value>اقتراح تغيير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeSubtitle" xml:space="preserve">
+    <value>إلى {1}، بشأن {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalSectionLabel" xml:space="preserve">
+    <value>الجزء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalSectionHelp" xml:space="preserve">
+    <value>اختياري: العنوان أو الكتلة التي يتعلق بها اقتراحكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalBodyLabel" xml:space="preserve">
+    <value>اقتراحكم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalBodyHelp" xml:space="preserve">
+    <value>سيرى الناشر اسمكم وقسمكم وهذا النص عند إعداد مسودته التالية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeSendButton" xml:space="preserve">
+    <value>إرسال الاقتراح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalsIntro" xml:space="preserve">
+    <value>التغييرات التي اقترحتها الأقسام المرتبطة على مجموعاتكم، والاقتراحات التي أرسلها أعضاؤكم إلى الناشرين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReceivedHeader" xml:space="preserve">
+    <value>اقتراحات إلى قسمكم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SentHeader" xml:space="preserve">
+    <value>اقتراحات من قسمكم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoProposals" xml:space="preserve">
+    <value>لا توجد اقتراحات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResponseLabel" xml:space="preserve">
+    <value>الرد (مطلوب عند الرفض)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptProposalButton" xml:space="preserve">
+    <value>إدراج في المسودة التالية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineProposalButton" xml:space="preserve">
+    <value>رفض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusOpen" xml:space="preserve">
+    <value>مفتوح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusAccepted" xml:space="preserve">
+    <value>أُدرج في المسودة التالية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusDeclined" xml:space="preserve">
+    <value>مرفوض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusWithdrawn" xml:space="preserve">
+    <value>مسحوب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipsIntro" xml:space="preserve">
+    <value>يمكن للقسم الذي لديه إضافة LMS أن يدفع تكلفة أعضاء قسم مرتبط المفعّل لديهم LMS. ويُحتسبون ضمن حزم الراعي ولا يتابعون إلا مجموعات دورات الراعي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredCapacity" xml:space="preserve">
+    <value>المقاعد المتاحة لقسمكم: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSponsorships" xml:space="preserve">
+    <value>لا يقدّم قسمكم أي رعاية ولا يتلقاها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipActive" xml:space="preserve">
+    <value>نشطة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipLinkLapsed" xml:space="preserve">
+    <value>لم يعد الرابط يشارك التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndNone" xml:space="preserve">
+    <value>منتهية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndEndedBySponsor" xml:space="preserve">
+    <value>أنهاها الراعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndDeclinedBySponsored" xml:space="preserve">
+    <value>رفضها القسم المستفيد من الرعاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndLinkRevoked" xml:space="preserve">
+    <value>منتهية: توقف الرابط عن مشاركة التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatLimitLabel" xml:space="preserve">
+    <value>حد المقاعد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndSponsorshipConfirm" xml:space="preserve">
+    <value>إنهاء هذه الرعاية؟ تبقى الدورات المعيّنة مسبقًا متاحة وفق قواعد الانتهاء المعتادة، ثم تتوقف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndSponsorshipButton" xml:space="preserve">
+    <value>إنهاء الرعاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineSponsorshipButton" xml:space="preserve">
+    <value>رفض الرعاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorHeader" xml:space="preserve">
+    <value>رعاية قسم مرتبط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorHelp" xml:space="preserve">
+    <value>يُحتسب أعضاؤه المفعّل لديهم LMS ضمن حزمكم (مع أولوية أعضائكم). ولا يحتاج إلى إضافة خاصة به ويمكن أن يكون على الخطة المجانية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSponsorable" xml:space="preserve">
+    <value>شاركوا التدريب مع قسم مرتبط عبر ربط الأقسام الخاص به لتتمكنوا من رعايته.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatLimitHelp" xml:space="preserve">
+    <value>اختياري: الحد الأقصى للمقاعد التي يمكن للقسم استخدامها. فارغ: ما هو متاح في حزمكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorConfirm" xml:space="preserve">
+    <value>بدء دفع تكلفة مقاعد LMS لهذا القسم؟</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorButton" xml:space="preserve">
+    <value>رعاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>متى تدخل التحديثات المقبولة حيز التنفيذ، ومن يُبلَّغ بالتحديثات الجديدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateTimeLabel" xml:space="preserve">
+    <value>وقت التحديث</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateTimeHelp" xml:space="preserve">
+    <value>تدخل التحديثات المقبولة حيز التنفيذ في هذا الوقت المحلي في تاريخ سريانها أو بعده (مثلًا عند تبديل المناوبة لديكم).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyManagersLabel" xml:space="preserve">
+    <value>إبلاغ مسؤولي القسم عند وصول تحديث أو الرد على اقتراح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CopyBanner" xml:space="preserve">
+    <value>من {0}، المجموعة {1}، الإصدار {2}. تصل التغييرات عبر المجموعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Customized" xml:space="preserve">
+    <value>تغييراتكم سارية المفعول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAdded" xml:space="preserve">
+    <value>أُضيف العنصر إلى المجموعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemRemoved" xml:space="preserve">
+    <value>أُزيل العنصر من المجموعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemSaved" xml:space="preserve">
+    <value>حُفظ العنصر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalAnswered" xml:space="preserve">
+    <value>تم الرد على الاقتراح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Proposed" xml:space="preserve">
+    <value>أُرسل اقتراحكم إلى الناشر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetArchived" xml:space="preserve">
+    <value>أُرشفت المجموعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetSaved" xml:space="preserve">
+    <value>حُفظت المجموعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>حُفظت الإعدادات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEnded" xml:space="preserve">
+    <value>انتهت الرعاية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipSaved" xml:space="preserve">
+    <value>حُفظت الرعاية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipStarted" xml:space="preserve">
+    <value>بدأت الرعاية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Subscribed" xml:space="preserve">
+    <value>تم الاشتراك. نُسخت العناصر إلى قسمكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribedWithSkipped" xml:space="preserve">
+    <value>لم تُنسخ بعض العناصر:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriberRemoved" xml:space="preserve">
+    <value>انتهى الاشتراك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionSaved" xml:space="preserve">
+    <value>حُفظ الاشتراك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Synced" xml:space="preserve">
+    <value>نُسخت العناصر الناقصة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Unsubscribed" xml:space="preserve">
+    <value>أُلغي الاشتراك. أصبحت النسخ الآن محتوى خاصًا بقسمكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateApplied" xml:space="preserve">
+    <value>التحديث ساري المفعول.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateScheduled" xml:space="preserve">
+    <value>جُدول التحديث.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateDeclined" xml:space="preserve">
+    <value>رُفض التحديث.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateDeferred" xml:space="preserve">
+    <value>أُجّل التحديث.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNone" xml:space="preserve">
+    <value>تم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotFound" xml:space="preserve">
+    <value>لم يُعثر على هذه المجموعة أو العنصر أو التحديث.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotAuthorized" xml:space="preserve">
+    <value>تحتاجون إلى صلاحية «إدارة مجموعات المحتوى».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorInvalidInput" xml:space="preserve">
+    <value>يرجى التحقق مما أدخلتموه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotShared" xml:space="preserve">
+    <value>لا يشارك أي ربط أقسام مفعّل هذا المحتوى مع قسمكم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorAlreadySubscribed" xml:space="preserve">
+    <value>قسمكم مشترك بالفعل في هذه المجموعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorItemNotShareable" xml:space="preserve">
+    <value>لا يمكن مشاركة هذا العنصر في مجموعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorDuplicateItem" xml:space="preserve">
+    <value>العنصر موجود بالفعل في المجموعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotPending" xml:space="preserve">
+    <value>لم يعد هذا التحديث بانتظار قرار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorLockedCannotDecline" xml:space="preserve">
+    <value>لا يمكن رفض المحتوى المقفل، بل تأجيله فقط حتى موعده النهائي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorDateOutOfRange" xml:space="preserve">
+    <value>هذا التاريخ خارج النطاق الذي يسمح به الناشر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorBlockLocked" xml:space="preserve">
+    <value>أقفل الناشر هذه الكتلة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNeedsLms" xml:space="preserve">
+    <value>يحتاج قسمكم إلى إضافة LMS أو رعاية الناشر لهذا العنصر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorOwnSet" xml:space="preserve">
+    <value>لا يمكن للقسم الاشتراك في مجموعته الخاصة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_published" xml:space="preserve">
+    <value>غير منشور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_licensed" xml:space="preserve">
+    <value>محتوى مرخّص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_disabled" xml:space="preserve">
+    <value>معطّل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_document" xml:space="preserve">
+    <value>مستند مرفوع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lesson_kinds" xml:space="preserve">
+    <value>دروس الجلسات المباشرة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_archived" xml:space="preserve">
+    <value>مؤرشف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_found" xml:space="preserve">
+    <value>غير موجود</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lms" xml:space="preserve">
+    <value>يتطلب إضافة LMS أو رعاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_shared" xml:space="preserve">
+    <value>لم يعد الرابط يشاركه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_error" xml:space="preserve">
+    <value>حدث خطأ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_save" xml:space="preserve">
+    <value>تعذّر الحفظ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNone" xml:space="preserve">
+    <value>تم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotAuthorized" xml:space="preserve">
+    <value>تحتاجون إلى صلاحية «إدارة مجموعات المحتوى».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotFound" xml:space="preserve">
+    <value>لم يُعثر على هذه الرعاية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotShared" xml:space="preserve">
+    <value>شاركوا التدريب أولًا مع ذلك القسم عبر ربط أقسام مفعّل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorSponsorNeedsLms" xml:space="preserve">
+    <value>يحتاج قسمكم إلى إضافة LMS نشطة لرعاية المقاعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorAlreadySponsored" xml:space="preserve">
+    <value>يرعى قسمكم ذلك القسم بالفعل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorInvalidInput" xml:space="preserve">
+    <value>يرجى التحقق مما أدخلتموه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.UpdateArrived.Title" xml:space="preserve">
+    <value>تحديث مجموعة في الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.UpdateArrived.Body" xml:space="preserve">
+    <value>نشر {2} إصدارًا جديدًا من {1} في المجموعة {0}. راجعوه في صندوق التحديثات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalReceived.Title" xml:space="preserve">
+    <value>تغيير مقترح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalReceived.Body" xml:space="preserve">
+    <value>اقترح {2} تغييرًا على {1} في مجموعتكم {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalAnswered.Title" xml:space="preserve">
+    <value>تم الرد على الاقتراح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalAnswered.Body" xml:space="preserve">
+    <value>ردّ {2} على اقتراحكم بشأن {1} في المجموعة {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipStarted.Title" xml:space="preserve">
+    <value>مقاعد LMS برعاية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipStarted.Body" xml:space="preserve">
+    <value>يرعى {2} الآن مقاعد LMS الخاصة بقسمكم لمجموعات دوراته.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipEnded.Title" xml:space="preserve">
+    <value>انتهت رعاية LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipEnded.Body" xml:space="preserve">
+    <value>لم يعد {2} يرعى مقاعد LMS الخاصة بقسمكم. تبقى الدورات المعيّنة مسبقًا متاحة وفق قواعد الانتهاء المعتادة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyAdminsLabel" xml:space="preserve">
+    <value>إبلاغ مسؤولي القسم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyRolesLabel" xml:space="preserve">
+    <value>إبلاغ أعضاء هذه الأدوار أيضًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyRolesHelp" xml:space="preserve">
+    <value>يتلقى أعضاء الأدوار المختارة الإشعارات نفسها التي يتلقاها المسؤولون: وصول التحديثات، والرد على الاقتراحات، وتغييرات الرعاية، وأدوات LTI التي يلزم تسجيلها. تصل إشعارات الرعاية وLTI دائمًا إلى أحد ما: إذا لم يُختر أحد، يتلقاها المسؤولون.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ToolRegistration.Title" xml:space="preserve">
+    <value>أداة LTI تحتاج إلى تسجيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ToolRegistration.Body" xml:space="preserve">
+    <value>تستخدم دورة في المجموعة {0} من {2} أداة LTI {1}. سجّلوا مؤسستكم لدى مورّد الأداة وفعّلوا الأداة؛ وحتى ذلك الحين لن تُفتح دروسها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_media_not_ready" xml:space="preserve">
+    <value>فيديو مستضاف غير جاهز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_package_not_ready" xml:space="preserve">
+    <value>حزمة SCORM أو cmi5 غير جاهزة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lti_tool_missing" xml:space="preserve">
+    <value>أُزيلت أداة LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_path_steps" xml:space="preserve">
+    <value>دورة إحدى الخطوات أو تدريبها ليس في المجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_path_step_missing" xml:space="preserve">
+    <value>لم تُنسخ دورة إحدى الخطوات أو تدريبها بعد</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

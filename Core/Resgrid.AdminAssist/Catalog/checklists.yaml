@@ -189,6 +189,25 @@
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/checklists/"
+    },
+    {
+      "Id": "checklist-witness-signature",
+      "AreaId": "checklists",
+      "LabelKey": "Feature.checklist-witness-signature",
+      "PurposeKey": "FeaturePurpose.checklist-witness-signature",
+      "ValueKey": "FeatureValue.checklist-witness-signature",
+      "ExampleKey": "FeatureExample.checklist-witness-signature",
+      "AdoptionKey": "FeatureSetup.checklist-witness-signature",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "Checklists",
+        "Action": "Index"
+      },
+      "Requirements": [],
+      "SettingIds": [],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/checklists/witness-signature/"
     }
   ],
   "Rules": [
@@ -280,6 +299,17 @@
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
       "ReviewedOn": "2026-09-24T00:00:00Z"
+    },
+    {
+      "Id": "checklist-witness-signature",
+      "Locale": "en",
+      "TitleKey": "Feature.checklist-witness-signature",
+      "Body": "Checklist witness signature A checklist can require its independent witness to sign at level 2 (a fresh step-up or a passkey) instead of attesting with text alone. Controlled-substance and safety checks get a witness signature bound to the recorded results, included with Checklists at no extra cost. After a drug box check, a second paramedic signs as witness with their passkey before the check counts as complete. Edit the checklist, turn on the independent witness and the witness signature, and publish the new version.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "checklist-witness-signature",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-25T00:00:00Z"
     }
   ]
 }

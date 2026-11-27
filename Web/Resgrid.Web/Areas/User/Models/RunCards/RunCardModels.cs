@@ -115,6 +115,9 @@ namespace Resgrid.Web.Areas.User.Models.RunCards
 
 	public class RunCardDecisionNodeInput
 	{
+		/// <summary>Kind-specific parameters (Protocols P4: a ProtocolOutcome condition's match and determinant).</summary>
+		public string ParametersJson { get; set; }
+
 		public string NodeKey { get; set; }
 		public bool IsRoot { get; set; }
 		public int NodeKind { get; set; }

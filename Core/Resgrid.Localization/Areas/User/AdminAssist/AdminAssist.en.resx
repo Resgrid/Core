@@ -3243,6 +3243,21 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Create Training</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Assign Training</value>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Delete Training</value>
+  </data>
+  <data xml:space="preserve" name="Permission.AuthorProtocols">
+    <value>Author Protocols</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveProtocols">
+    <value>Approve Protocols</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageProtocolAcknowledgments">
+    <value>Manage Protocol Acknowledgments</value>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Create Workflow</value>
   </data>
@@ -3487,7 +3502,34 @@
     <value>Allows creating, editing and deleting shifts and work shifts, and managing sign-ups for every group. Group administrators always manage sign-ups for their own groups. Members signing up — on the web, in the apps or through the chatbot — must follow the shift's rules (no past days, assigned shifts need an assignment, group shifts need the member's group). Everyone can still view shifts. With no saved rule only department administrators may change shifts.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Allows creating, editing and deleting trainings and resetting members' training progress. Everyone can still view and complete trainings. With no saved rule only department administrators may.</value>
+    <value>Allows creating trainings and authoring their content and quiz, including the answer key. Assigning and reporting (Assign Training) and archiving or deleting (Delete Training) are separate rules that follow this one until they are saved. Everyone can still view and complete the trainings assigned or open to them. With no saved rule only department administrators may.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Allows assigning trainings to members, setting due dates, extensions and exemptions, resetting members, and reading the training report and attempt history. Group admins act only on their own group's members. Until saved it follows Create Training.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Allows archiving, restoring and deleting trainings. A training someone completed is archived instead of deleted, so its completions stay on the record. Until saved it follows Create Training.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AuthorProtocols">
+    <value>Allows creating, copying and importing protocols, editing their library fields, triggers, questions and audience, writing drafts and submitting them for approval, disabling protocols and exporting the library. Authors also see drafts, the review queue and every protocol whatever its audience. Approving and publishing need Approve Protocols. With no saved rule only department administrators may.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ApproveProtocols">
+    <value>Allows approving or rejecting submitted protocol versions, publishing them now or on a set date, recording "reviewed, no change", retiring and deleting protocols, placing a protocol's legal hold, and managing categories and their approval steps. Each approval is signed with a fresh step-up or a passkey. With no saved rule only department administrators may.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageCourses">
+    <value>Manage Courses</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageCourses">
+    <value>Allows building courses and question banks, uploading course video, submitting, approving and publishing course versions, assigning courses and reading course results. Each approval is signed with a fresh step-up. Courses are part of the LMS add-on, which is not available yet; Resgrid Academy lessons can be assigned with this permission or Assign Training. With no saved rule only department administrators may.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.GradeAssessments">
+    <value>Grade Assessments</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.GradeAssessments">
+    <value>Allows grading free-text answers waiting in the grading queue and reading assessment item analysis. Nobody grades their own attempt. Part of the LMS add-on, which is not available yet. With no saved rule only department administrators may.</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageProtocolAcknowledgments">
+    <value>Reserved for read-and-sign acknowledgments: who will assign protocols for members to read and sign, exempt members and read the acknowledgment report. Read-and-sign is not available yet, so saving this rule changes nothing today. With no saved rule only department administrators may.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Allows creating, editing and deleting workflows, previewing their conditions, reading step configuration in the apps and API, and seeing the rendered output of workflow runs. With no saved rule only department administrators can change workflows, but every member can open the Workflows page and read definitions; saving Department admins also hides workflows from everyone else. Steps that send a Records export also need Export Records and Manage Record Reports. Free plans are limited in how many workflows they can have.</value>
@@ -8267,5 +8309,1652 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Used when your email format is "Labeled fields". Enter the label your CAD writes in front of each value. Separate alternatives with |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Edit Protocols</value>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Change a protocol's content, triggers and questions in place; calls keep the text they were dispatched with.</value>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Disable Protocols</value>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Stop suggesting and attaching a protocol without deleting it.</value>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Remove a Protocol from a Call</value>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Take a mis-attached protocol off a call with a reason; the record keeps it, marked removed.</value>
+  </data>
+  <data name="Setting.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Protocol Library Settings</value>
+  </data>
+  <data name="SettingHelp.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Department-wide rules on the Protocols Settings page: whether approvals need a passkey and read-and-sign a step-up, the review interval new protocols start with, and how long superseded and retired versions are kept, with a legal hold that stops any deletion. Missing means the standard signature levels, no default interval and every version kept. Only department administrators can change it.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Protocol Library Settings / Require Passkey for Approval</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Approvals and "reviewed, no change" stamps must be signed with a passkey; a step-up by authenticator code or sign-in provider is no longer enough. Approvers without a registered passkey cannot sign until they add one. Off, any fresh step-up or passkey signs.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Protocol Library Settings / Read-and-Sign Requires Step-Up</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Read-and-sign acknowledgments will need a fresh step-up instead of the signed-in session alone. Read-and-sign is not available yet; the choice is saved for when it is.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Protocol Library Settings / Default Review Interval Days</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Days between reviews for new and imported protocols that do not set their own interval, 0 to 3650; 0 sets none. Existing protocols keep theirs. Publishing a version or recording "reviewed, no change" restarts the interval, and the protocol's owner, or the department administrators when it has none, is reminded 30 and 7 days before a review is due and again when it is overdue.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>Protocol Library Settings / Legal Hold</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>A department-wide legal hold: while it is on, no superseded or retired protocol version is deleted, whatever the retention days. An approver can also hold a single protocol from its edit page.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Protocol Library Settings / Retention</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Days each protocol kind (Dispatch, SOG, Clinical Guideline, Policy, Procedure, Reference) keeps a version after it is superseded or retired, up to 36500; after that a background job deletes it. 0 keeps that kind's versions. A version still attached to a call is never deleted, and nothing is deleted while a legal hold is on.</value>
+  </data>
+  <data name="Field.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Protocol Kind Retention / Kind</value>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>The protocol kind the entry applies to: 0 Dispatch, 1 SOG, 2 Clinical Guideline, 3 Policy, 4 Procedure, 5 Reference. One entry per kind; a kind without an entry keeps every version.</value>
+  </data>
+  <data name="Field.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Protocol Kind Retention / Keep Days</value>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Days after a version of that kind is superseded or retired before it may be deleted, 1 to 36500. An entry of 0 is dropped when saved, so the kind keeps its versions.</value>
+  </data>
+  <data name="Feature.protocol-review-queue" xml:space="preserve">
+    <value>Protocol Review Queue</value>
+  </data>
+  <data name="FeaturePurpose.protocol-review-queue" xml:space="preserve">
+    <value>Approve or reject submitted protocol versions with a signed approval, then publish them now or on a set date.</value>
+  </data>
+  <data name="Feature.protocol-review-stamp" xml:space="preserve">
+    <value>Record a Protocol Review</value>
+  </data>
+  <data name="FeaturePurpose.protocol-review-stamp" xml:space="preserve">
+    <value>Mark a published protocol "reviewed, no change" with a signed stamp, without a new version.</value>
+  </data>
+  <data name="Feature.protocol-compare" xml:space="preserve">
+    <value>Compare Protocol Versions</value>
+  </data>
+  <data name="FeaturePurpose.protocol-compare" xml:space="preserve">
+    <value>See what changed between two versions of a protocol as a redline.</value>
+  </data>
+  <data name="Feature.protocol-categories" xml:space="preserve">
+    <value>Protocol Categories</value>
+  </data>
+  <data name="FeaturePurpose.protocol-categories" xml:space="preserve">
+    <value>Group the library into categories and set the approval steps each category needs.</value>
+  </data>
+  <data name="Feature.protocol-settings" xml:space="preserve">
+    <value>Protocol Settings</value>
+  </data>
+  <data name="FeaturePurpose.protocol-settings" xml:space="preserve">
+    <value>Set signature requirements, the default review interval, version retention and the department-wide legal hold.</value>
+  </data>
+  <data name="Feature.protocol-import" xml:space="preserve">
+    <value>Import Protocols</value>
+  </data>
+  <data name="FeaturePurpose.protocol-import" xml:space="preserve">
+    <value>Bring protocols in from a Resgrid protocol exchange file as drafts for review.</value>
+  </data>
+  <data name="Setting.TrainingRecordSettings" xml:space="preserve">
+    <value>Training record settings</value>
+  </data>
+  <data name="SettingHelp.TrainingRecordSettings" xml:space="preserve">
+    <value>How training records are kept: rounding of calendar check-in hours, whether members may submit outside training themselves, and the minimum years records are kept after a member leaves.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Training record settings / Round check-in hours to</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Hours from check-in to check-out on calendar events that count as training are rounded to this step: 5, 6, 10, 15, 30 or 60 minutes, or 0 for the exact minute.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Training record settings / Rounding direction</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Whether check-in hours round to the nearest step, down or up. It has no effect while hours are kept to the exact minute.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>Training record settings / Members may not submit outside training</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>When on, members cannot submit outside training themselves. Officers can still record it through an import or a certification credit.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Training record settings / Keep records after a member leaves (years)</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Minimum years a former member's training records are kept, used when their category sets none. 0 sets no minimum.</value>
+  </data>
+  <data name="Feature.training-transcript" xml:space="preserve">
+    <value>Training Transcript</value>
+  </data>
+  <data name="FeaturePurpose.training-transcript" xml:space="preserve">
+    <value>Each member's course completions, training records, calendar attendance, imports and outside certificates, with their hours and whether they count.</value>
+  </data>
+  <data name="FeatureValue.training-transcript" xml:space="preserve">
+    <value>One record of every member's training and hours for renewals and audits, without adding up sign-in sheets by hand.</value>
+  </data>
+  <data name="FeatureExample.training-transcript" xml:space="preserve">
+    <value>Before renewing a certification, a member downloads their transcript as a PDF with hours by category, and the training officer opens the same transcript from the member's name.</value>
+  </data>
+  <data name="FeatureSetup.training-transcript" xml:space="preserve">
+    <value>Open Trainings and choose My transcript. Officers who review a member's records pick the member on the transcript. Only verified records count toward hours.</value>
+  </data>
+  <data name="Feature.training-external-submissions" xml:space="preserve">
+    <value>Outside Training Submissions</value>
+  </data>
+  <data name="FeaturePurpose.training-external-submissions" xml:space="preserve">
+    <value>Members submit courses they completed outside the department, with hours and evidence (a certificate, photo, document or receipt); a reviewer approves or denies each one in Training reviews, unless the department accepts them as self-reported.</value>
+  </data>
+  <data name="FeatureValue.training-external-submissions" xml:space="preserve">
+    <value>Outside courses and continuing education reach the transcript with proof attached, checked by a reviewer when the department wants that.</value>
+  </data>
+  <data name="FeatureExample.training-external-submissions" xml:space="preserve">
+    <value>A member finishes an online safety course and submits it with the certificate and 4 hours; the training officer approves it in Training reviews and the hours count.</value>
+  </data>
+  <data name="FeatureSetup.training-external-submissions" xml:space="preserve">
+    <value>Members choose Submit outside training on their transcript. Reviewers open Training reviews to approve, deny or ask for more information; possible duplicates stay in the records queue. Submissions can be switched off in Training record settings.</value>
+  </data>
+  <data name="Feature.training-categories" xml:space="preserve">
+    <value>Training Categories</value>
+  </data>
+  <data name="FeaturePurpose.training-categories" xml:space="preserve">
+    <value>Group training hours into categories with optional hour targets and retention, start from templates for fire (ISO), EMS (NCCP), workplace safety (OSHA), industry, search and rescue, law enforcement, security, CPD, Canada or the EU, and categorize existing records in bulk.</value>
+  </data>
+  <data name="FeatureValue.training-categories" xml:space="preserve">
+    <value>Hours add up the way your regulator, licensing body, insurer or accreditor asks for them, and targets show who is behind.</value>
+  </data>
+  <data name="FeatureExample.training-categories" xml:space="preserve">
+    <value>A department applies the ISO template, sets an annual target for company training, then categorizes last year's drill records in bulk by course name.</value>
+  </data>
+  <data name="FeatureSetup.training-categories" xml:space="preserve">
+    <value>In Trainings, open Training records, then Training categories. Apply a template or add your own, then use Categorize history to give uncategorized records a category.</value>
+  </data>
+  <data name="Feature.training-credit-mappings" xml:space="preserve">
+    <value>Certification Credit Mappings</value>
+  </data>
+  <data name="FeaturePurpose.training-credit-mappings" xml:space="preserve">
+    <value>Count a training category's verified hours toward a certification's renewal, for the whole category or only one part of it.</value>
+  </data>
+  <data name="FeatureValue.training-credit-mappings" xml:space="preserve">
+    <value>Renewal hours fill in from the training members already do, instead of being typed onto each certification.</value>
+  </data>
+  <data name="FeatureExample.training-credit-mappings" xml:space="preserve">
+    <value>Hours in the EMS continuing education category count toward the EMT certification, so a member's renewal progress moves as soon as a session is verified.</value>
+  </data>
+  <data name="FeatureSetup.training-credit-mappings" xml:space="preserve">
+    <value>In Trainings, open Training records, then Certification credits, and map a category to a certification type. Records completed before the mapping was turned on become credits only when you apply history.</value>
+  </data>
+  <data name="Feature.training-history-backfill" xml:space="preserve">
+    <value>Training History Backfill</value>
+  </data>
+  <data name="FeaturePurpose.training-history-backfill" xml:space="preserve">
+    <value>Bring training completions and training records from before the transcript onto members' transcripts, with a dry run that counts what would be written.</value>
+  </data>
+  <data name="FeatureValue.training-history-backfill" xml:space="preserve">
+    <value>Transcripts start with the history your department already has in Resgrid instead of empty.</value>
+  </data>
+  <data name="FeatureExample.training-history-backfill" xml:space="preserve">
+    <value>An officer runs a dry run, sees how many past completions and training records were found, then starts the backfill, which keeps running in the background.</value>
+  </data>
+  <data name="FeatureSetup.training-history-backfill" xml:space="preserve">
+    <value>In Trainings, open Training records, then History backfill, and run a dry run first. Backfilled records become certification credits only when you apply history to a certification type.</value>
+  </data>
+  <data name="Feature.training-history-import" xml:space="preserve">
+    <value>Training History Import</value>
+  </data>
+  <data name="FeaturePurpose.training-history-import" xml:space="preserve">
+    <value>Import completions from another system with a CSV file: check how each row matched a member, fix the rows that did not match, then import.</value>
+  </data>
+  <data name="FeatureValue.training-history-import" xml:space="preserve">
+    <value>Years of records from a spreadsheet or a previous training system reach members' transcripts without retyping.</value>
+  </data>
+  <data name="FeatureExample.training-history-import" xml:space="preserve">
+    <value>A department leaving its old records system exports its completions, imports them, and picks the right member for the few rows matched by name only.</value>
+  </data>
+  <data name="FeatureSetup.training-history-import" xml:space="preserve">
+    <value>In Trainings, open Training records, then Import training history. Download the template, fill in one row per completion with the member, course, date and hours, upload it and review the check before importing.</value>
+  </data>
+  <data name="Feature.training-hours-report" xml:space="preserve">
+    <value>Training Hours Report</value>
+  </data>
+  <data name="FeaturePurpose.training-hours-report" xml:space="preserve">
+    <value>Verified training hours by category, member or month, with CSV and PDF export and former members on request.</value>
+  </data>
+  <data name="FeatureValue.training-hours-report" xml:space="preserve">
+    <value>Answer how many hours the department trained, and in what, for budgets, grants and annual reports.</value>
+  </data>
+  <data name="FeatureExample.training-hours-report" xml:space="preserve">
+    <value>For the annual report, the chief exports last year's training hours by category as a PDF.</value>
+  </data>
+  <data name="FeatureSetup.training-hours-report" xml:space="preserve">
+    <value>In Trainings, open Training records, then Training hours. Choose the period and grouping, then export to CSV or PDF.</value>
+  </data>
+  <data name="Feature.my-courses" xml:space="preserve">
+    <value>My Courses</value>
+  </data>
+  <data name="FeaturePurpose.my-courses" xml:space="preserve">
+    <value>The courses assigned to a member, the courses they can join and the Resgrid Academy lessons, with progress and due dates.</value>
+  </data>
+  <data name="FeatureValue.my-courses" xml:space="preserve">
+    <value>Members see what to finish next and pick up where they stopped, on the website or in the mobile app.</value>
+  </data>
+  <data name="FeatureExample.my-courses" xml:space="preserve">
+    <value>A new member opens My courses, finishes the Getting started lesson and its short check, and the completion appears on their transcript.</value>
+  </data>
+  <data name="FeatureSetup.my-courses" xml:space="preserve">
+    <value>Open Trainings and choose Courses. Assigned courses come first; Resgrid Academy lessons are always there while the Training module is on.</value>
+  </data>
+  <data name="Feature.academy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+  </data>
+  <data name="FeaturePurpose.academy" xml:space="preserve">
+    <value>Short Resgrid video lessons, each with a three-question check, published by Resgrid for every department at no cost, plus role paths for members, dispatchers, officers and administrators.</value>
+  </data>
+  <data name="FeatureValue.academy" xml:space="preserve">
+    <value>New members and officers learn the system the same way, and each finished lesson counts on their transcript under Systems training.</value>
+  </data>
+  <data name="FeatureExample.academy" xml:space="preserve">
+    <value>The training officer assigns the Dispatcher path to new dispatch staff and follows which lessons each person has finished.</value>
+  </data>
+  <data name="FeatureSetup.academy" xml:space="preserve">
+    <value>Open Trainings and choose Academy. People who can assign training assign a lesson or a role path to members, roles or groups. Lessons for modules or add-ons the department does not use stay hidden.</value>
+  </data>
+  <data name="Feature.lms-course-builder" xml:space="preserve">
+    <value>Course Builder</value>
+  </data>
+  <data name="FeaturePurpose.lms-course-builder" xml:space="preserve">
+    <value>Department-built courses with modules, video, documents, protocol lessons, assessments drawn from question banks and surveys, approved and versioned like protocols.</value>
+  </data>
+  <data name="FeatureValue.lms-course-builder" xml:space="preserve">
+    <value>Run the department's own training online, with scored assessments, seat time and completions that issue or renew certifications.</value>
+  </data>
+  <data name="FeatureExample.lms-course-builder" xml:space="preserve">
+    <value>The EMS coordinator builds a yearly refresher with a video and a 20-question test drawn from a bank with a pass mark of 80%, then assigns it to every EMT.</value>
+  </data>
+  <data name="FeatureSetup.lms-course-builder" xml:space="preserve">
+    <value>Nothing to set up yet: the course builder is part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.lms-grading" xml:space="preserve">
+    <value>Assessment Grading</value>
+  </data>
+  <data name="FeaturePurpose.lms-grading" xml:space="preserve">
+    <value>A queue of free-text answers waiting for a grader, and item analysis showing how hard each question is and how well it separates strong and weak results.</value>
+  </data>
+  <data name="FeatureValue.lms-grading" xml:space="preserve">
+    <value>Written answers get a fair, recorded grade, and weak questions are found and fixed.</value>
+  </data>
+  <data name="FeatureExample.lms-grading" xml:space="preserve">
+    <value>A training officer grades three short answers on last week's hazmat test; the analysis shows one question nearly everyone misses, so it is rewritten.</value>
+  </data>
+  <data name="FeatureSetup.lms-grading" xml:space="preserve">
+    <value>Nothing to set up yet: grading is part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Area.lms" xml:space="preserve">
+    <value>Learning Management (LMS)</value>
+  </data>
+  <data name="AreaPurpose.lms" xml:space="preserve">
+    <value>Courses, training requirements, classes and formal training reports. Not available yet.</value>
+  </data>
+  <data name="AreaValue.lms" xml:space="preserve">
+    <value>Structured courses and formal reports on top of the free training transcript, once released.</value>
+  </data>
+  <data name="AreaExample.lms" xml:space="preserve">
+    <value>Nothing to try yet: the learning management add-on is still being built.</value>
+  </data>
+  <data name="ModuleAdoption.lms" xml:space="preserve">
+    <value>Nothing to set up yet; the free training transcript works without it.</value>
+  </data>
+  <data name="Feature.addon-lms" xml:space="preserve">
+    <value>LMS Add-on</value>
+  </data>
+  <data name="FeaturePurpose.addon-lms" xml:space="preserve">
+    <value>The learning management add-on, bought in 25-member packs: courses, formal training reports and verifiable certificates. Offered once Resgrid switches it on for your department.</value>
+  </data>
+  <data name="FeatureValue.addon-lms" xml:space="preserve">
+    <value>Adds courses, formal reports and verifiable certificates to the free transcript, for the members you enable.</value>
+  </data>
+  <data name="FeatureExample.addon-lms" xml:space="preserve">
+    <value>A department buys 2 packs, enables its 40 career members and runs the ISO FSRS report; its volunteers keep free Training.</value>
+  </data>
+  <data name="FeatureAdoption.addon-lms" xml:space="preserve">
+    <value>In Subscription, open the LMS card and choose the number of packs, then enable members on the personnel page.</value>
+  </data>
+  <data name="Feature.lms-seats" xml:space="preserve">
+    <value>LMS Seats</value>
+  </data>
+  <data name="FeaturePurpose.lms-seats" xml:space="preserve">
+    <value>Switch the LMS on for members one at a time on their personnel page, or for a whole group at once, within the seats your packs buy.</value>
+  </data>
+  <data name="FeatureValue.lms-seats" xml:space="preserve">
+    <value>You pay only for the members you train through the LMS; everyone else keeps the free Training module.</value>
+  </data>
+  <data name="FeatureExample.lms-seats" xml:space="preserve">
+    <value>A combination department enables its 40 career staff for LMS courses and leaves its volunteers on free Training.</value>
+  </data>
+  <data name="FeatureSetup.lms-seats" xml:space="preserve">
+    <value>In Personnel, use LMS seats to enable a group, or open a member and choose Enable LMS. Only active members can hold a seat; add a pack when the seats run out.</value>
+  </data>
+  <data name="Feature.lms-packs" xml:space="preserve">
+    <value>LMS Packs</value>
+  </data>
+  <data name="FeaturePurpose.lms-packs" xml:space="preserve">
+    <value>Buy the LMS add-on in 25-member packs and change the number of packs, with the price shown before any change.</value>
+  </data>
+  <data name="FeatureValue.lms-packs" xml:space="preserve">
+    <value>The bill follows the seats you need: graduated tiers make large rosters cheaper per member, and added packs are prorated.</value>
+  </data>
+  <data name="FeatureExample.lms-packs" xml:space="preserve">
+    <value>A department with 110 LMS-enabled members holds 5 packs; when it passes 125 it adds a sixth pack and pays the prorated difference at once.</value>
+  </data>
+  <data name="FeatureSetup.lms-packs" xml:space="preserve">
+    <value>In Subscription, open the LMS card, choose the number of packs and check out. Removing packs takes effect at the next billing date.</value>
+  </data>
+  <data name="Setting.WellnessSettings" xml:space="preserve">
+    <value>Wellness settings</value>
+  </data>
+  <data name="SettingHelp.WellnessSettings" xml:space="preserve">
+    <value>Who reads members' exposure and critical-incident logs (the wellness officer role), who the designated officers and the peer support team are, the certification each wellness role can hold, and how many years entries are kept. Member wellness is part of the Workforce Pro add-on, not the LMS add-on: without it, existing records are read-only.</value>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Wellness settings / Wellness officer role</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Members of this personnel role read every member's exposure log and keep screening flags and follow-ups. Department administrators do not see the logs unless they hold the role. None leaves each log to its member.</value>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Wellness settings / Peer support team certification</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>The peer support team's certification type. With a peer support team role, it is shown as each team member's status; with no role, the members holding a current certification of this type are the team and receive the critical-incident anniversary reminders a member chooses to share. With neither, there is no team.</value>
+  </data>
+  <data name="Field.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Wellness settings / Keep entries for (years)</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Years an exposure entry is kept after it happened, from 30 (the OSHA 29 CFR 1910.1020 minimum) to 100. A legal hold keeps entries longer.</value>
+  </data>
+  <data name="Feature.member-wellness" xml:space="preserve">
+    <value>My Exposures</value>
+  </data>
+  <data name="FeaturePurpose.member-wellness" xml:space="preserve">
+    <value>Each member's own log of carcinogen, bloodborne pathogen, hazardous substance and critical-incident exposures, with entries suggested from dispatch data after a call is flagged.</value>
+  </data>
+  <data name="FeatureValue.member-wellness" xml:space="preserve">
+    <value>Exposure records for cancer presumption and workers' compensation, kept 30 years, without anyone but the member and the wellness officers reading them.</value>
+  </data>
+  <data name="FeatureExample.member-wellness" xml:space="preserve">
+    <value>After a structure fire, the officer flags the call; each member on scene confirms a suggested carcinogen entry and adds the PPE worn and decontamination done.</value>
+  </data>
+  <data name="FeatureSetup.member-wellness" xml:space="preserve">
+    <value>Choose the wellness officer role in Personnel, My exposures, Settings, and optionally a certification type for each wellness role. Members open My exposures from Personnel; officers flag a call from its Wellness follow-up button. Member wellness is part of the Workforce Pro add-on (not the LMS add-on): records are kept for the members with Workforce Pro switched on, and without the add-on existing records are read-only.</value>
+  </data>
+  <data name="Feature.ai-knowledge" xml:space="preserve">
+    <value>Knowledge answers</value>
+  </data>
+  <data name="FeaturePurpose.ai-knowledge" xml:space="preserve">
+    <value>Members ask a question and get an answer taken only from your department's published protocols and training and the Resgrid Academy, each part linked to its source.</value>
+  </data>
+  <data name="FeatureValue.ai-knowledge" xml:space="preserve">
+    <value>Members find what your protocols say in seconds, and the people who write them see the questions the content does not answer.</value>
+  </data>
+  <data name="FeatureExample.ai-knowledge" xml:space="preserve">
+    <value>A member asks which protective equipment the hazmat guideline requires and gets the answer with a link to that section of the version in force.</value>
+  </data>
+  <data name="FeatureSetup.ai-knowledge" xml:space="preserve">
+    <value>Needs the Enhanced AI add-on with knowledge answers turned on for your department. Publish your protocols and start your trainings; members then use Ask on the protocol library, a protocol, a training or a call. Training officers see unanswered questions under Knowledge gaps.</value>
+  </data>
+  <data name="Setting.KnowledgeSettings" xml:space="preserve">
+    <value>Knowledge Settings</value>
+  </data>
+  <data name="SettingHelp.KnowledgeSettings" xml:space="preserve">
+    <value>Department-wide rules for knowledge answers on the Knowledge Settings page: whether the Documents module is used, and the department's dosing tool link. Missing means Documents are not used and there is no dosing link. Only department administrators can change it.</value>
+  </data>
+  <data name="Field.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Knowledge Settings / Include Documents</value>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Documents join the sources knowledge answers use. Admins-only documents are used only for administrators, and no document is used while Advanced Data Protection is on. Changing it rebuilds the department's knowledge index in the background.</value>
+  </data>
+  <data name="Field.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>Knowledge Settings / Dosing Tool Link</value>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>An https link to the department's dosing tool. Answers that quote a dose show it; doses are only ever quoted from a source, and neither the model nor Resgrid calculates one. Anything but an https link is refused.</value>
+  </data>
+  <data name="Feature.document-sealing" xml:space="preserve">
+    <value>Sealed documents and Verify a document</value>
+  </data>
+  <data name="FeaturePurpose.document-sealing" xml:space="preserve">
+    <value>Certificates, transcripts, protocol PDFs and signed documents are sealed with a timestamp so anyone can check they have not changed; officers can check any PDF under Verify a document.</value>
+  </data>
+  <data name="FeatureValue.document-sealing" xml:space="preserve">
+    <value>Hand out documents that outside agencies and courts can trust, and spot altered copies.</value>
+  </data>
+  <data name="FeatureExample.document-sealing" xml:space="preserve">
+    <value>An inspector checks that a certificate a member brought from another department was issued by Resgrid and has not been edited.</value>
+  </data>
+  <data name="FeatureSetup.document-sealing" xml:space="preserve">
+    <value>Open Verify a document and upload a PDF. Sealing itself is set up by the operator of the installation; until then documents are marked sealing pending.</value>
+  </data>
+  <data name="Feature.external-signatures" xml:space="preserve">
+    <value>External signatures</value>
+  </data>
+  <data name="FeaturePurpose.external-signatures" xml:space="preserve">
+    <value>Customers, occupants and outside parties sign time reports, bids, contracts, inspections and custody transfers in person on a member's device, or by a Resgrid link with a one-time code.</value>
+  </data>
+  <data name="FeatureValue.external-signatures" xml:space="preserve">
+    <value>Replace typed names with signatures the other party can verify, sealed with an audit page.</value>
+  </data>
+  <data name="FeatureExample.external-signatures" xml:space="preserve">
+    <value>A crew boss hands the tablet to the customer's representative to sign the daily shift ticket before leaving the incident.</value>
+  </data>
+  <data name="FeatureSetup.external-signatures" xml:space="preserve">
+    <value>Open the document and use Hand device to signer, or request a signature by link. For links, an admin adds the department's Documenso team token under E-sign settings; links come with the add-on that owns the document.</value>
+  </data>
+  <data name="Feature.protocol-acknowledgments" xml:space="preserve">
+    <value>My Acknowledgments</value>
+  </data>
+  <data name="FeaturePurpose.protocol-acknowledgments" xml:space="preserve">
+    <value>Read and sign the protocols and bulletins you are asked to acknowledge.</value>
+  </data>
+  <data name="Feature.protocol-compliance" xml:space="preserve">
+    <value>Acknowledgment Compliance</value>
+  </data>
+  <data name="FeaturePurpose.protocol-compliance" xml:space="preserve">
+    <value>See who has read and signed each protocol version, by group, and export it.</value>
+  </data>
+  <data name="Feature.protocol-bulletins" xml:space="preserve">
+    <value>Priority Bulletins</value>
+  </data>
+  <data name="FeaturePurpose.protocol-bulletins" xml:space="preserve">
+    <value>Issue a short must-read notice that takes effect at once and is approved afterwards.</value>
+  </data>
+  <data name="Feature.protocol-bulk-upload" xml:space="preserve">
+    <value>Upload Protocol Documents</value>
+  </data>
+  <data name="FeaturePurpose.protocol-bulk-upload" xml:space="preserve">
+    <value>Bring PDF and Word protocols in at once as drafts, with their text searchable.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Protocol Library Settings / Content Language</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>The language protocols are written in. Members whose language has no approved translation of a version read it in this language, and block labels such as Caution are written in it. Blank means English.</value>
+  </data>
+  <data name="Feature.protocol-block-editor" xml:space="preserve">
+    <value>Structured Protocol Content</value>
+  </data>
+  <data name="FeaturePurpose.protocol-block-editor" xml:space="preserve">
+    <value>Write protocols as blocks: steps, cautions, medical control gates, tables, medications and adult/pediatric variants.</value>
+  </data>
+  <data name="Feature.protocol-step-through" xml:space="preserve">
+    <value>Protocol Step-Through on Calls</value>
+  </data>
+  <data name="FeaturePurpose.protocol-step-through" xml:space="preserve">
+    <value>Work through a Procedure or Dispatch protocol on a call like a checklist, every step timestamped.</value>
+  </data>
+  <data name="Feature.protocol-book" xml:space="preserve">
+    <value>Protocol PDF Book, QR Code and Print View</value>
+  </data>
+  <data name="FeaturePurpose.protocol-book" xml:space="preserve">
+    <value>Export a category or the whole library as one PDF book, print a protocol, or post its QR code.</value>
+  </data>
+  <data name="Feature.protocol-translations" xml:space="preserve">
+    <value>Protocol Content Translations</value>
+  </data>
+  <data name="FeaturePurpose.protocol-translations" xml:space="preserve">
+    <value>Translate a protocol version into members' languages, each translation approved on its own.</value>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Wellness settings / Designated officer role</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Members of this personnel role receive bloodborne-pathogen and infectious-disease exposure reports (Ryan White Part G) and run the exposure cases. None means the wellness officer role serves.</value>
+  </data>
+  <data name="Field.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Wellness settings / Bloodborne-pathogen training certification</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>The certification type of the annual bloodborne-pathogen training (OSHA 1910.1030). Each exposure case shows the member's current status of it. None leaves it untracked.</value>
+  </data>
+  <data name="Field.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Wellness settings / Medical clearance certification</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>The certification type an NFPA 1582 medical evaluation is also recorded as (from the Medical Clearance (NFPA 1582) template). Not cleared suspends it. None keeps clearances in Wellness only.</value>
+  </data>
+  <data name="Field.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Wellness settings / Keep injury records for (years)</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Years an injury record is kept after the end of its year, from 5 (OSHA 29 CFR 1904.33) to 100. A legal hold keeps records longer.</value>
+  </data>
+  <data name="Feature.ai-authoring-aids" xml:space="preserve">
+    <value>Drafting aids</value>
+  </data>
+  <data name="FeaturePurpose.ai-authoring-aids" xml:space="preserve">
+    <value>Draft quiz questions, course outlines and change summaries from the department's own content for authors to review.</value>
+  </data>
+  <data name="FeatureValue.ai-authoring-aids" xml:space="preserve">
+    <value>Authors start from a grounded draft instead of a blank page, and nothing is saved until they accept it.</value>
+  </data>
+  <data name="FeatureExample.ai-authoring-aids" xml:space="preserve">
+    <value>A training officer drafts five quiz questions from the new SCBA training and keeps three.</value>
+  </data>
+  <data name="FeatureSetup.ai-authoring-aids" xml:space="preserve">
+    <value>Turn on knowledge answers with Enhanced AI; the aids then appear in the training editor and the course builder.</value>
+  </data>
+  <data name="Feature.help-search" xml:space="preserve">
+    <value>Help center search</value>
+  </data>
+  <data name="FeaturePurpose.help-search" xml:space="preserve">
+    <value>Free keyword search over the Resgrid Academy and the product reference from the Help menu.</value>
+  </data>
+  <data name="FeatureValue.help-search" xml:space="preserve">
+    <value>Members find the lesson or setting they need without leaving Resgrid.</value>
+  </data>
+  <data name="FeatureExample.help-search" xml:space="preserve">
+    <value>A new member searches for "status" and opens the orientation lesson.</value>
+  </data>
+  <data name="FeatureSetup.help-search" xml:space="preserve">
+    <value>Nothing to set up: open Help, then Search help.</value>
+  </data>
+  <data name="Feature.academy-guidance" xml:space="preserve">
+    <value>Guided tours and What's new</value>
+  </data>
+  <data name="FeaturePurpose.academy-guidance" xml:space="preserve">
+    <value>First-run tasks for each role built on the Academy walkthroughs, and a short lesson on each release.</value>
+  </data>
+  <data name="FeatureValue.academy-guidance" xml:space="preserve">
+    <value>New members and administrators know what to do first, and everyone sees what changed.</value>
+  </data>
+  <data name="FeatureExample.academy-guidance" xml:space="preserve">
+    <value>A new dispatcher ticks off opening the call list, checking units and the map.</value>
+  </data>
+  <data name="FeatureSetup.academy-guidance" xml:space="preserve">
+    <value>Nothing to set up: each member sees the tour for their role on the dashboard and can hide it.</value>
+  </data>
+  <data name="Feature.multi-signer-signatures" xml:space="preserve">
+    <value>Multi-signer signatures</value>
+  </data>
+  <data name="FeaturePurpose.multi-signer-signatures" xml:space="preserve">
+    <value>Several people sign one document in order: members at level 1 or 2, witnesses, certifying officials, evaluators and outside parties, with reminders until everyone has signed.</value>
+  </data>
+  <data name="FeatureValue.multi-signer-signatures" xml:space="preserve">
+    <value>Sign-offs that need more than one person are recorded in the right order, bound to the exact content, and sealed with an audit page when complete.</value>
+  </data>
+  <data name="FeatureExample.multi-signer-signatures" xml:space="preserve">
+    <value>A training officer evaluates a skill at level 2, then the certifying official signs; each is reminded when it is their turn.</value>
+  </data>
+  <data name="FeatureSetup.multi-signer-signatures" xml:space="preserve">
+    <value>Members find what is waiting for them under My signatures and on their home page; requests start from the document that needs signing.</value>
+  </data>
+  <data name="Feature.checklist-witness-signature" xml:space="preserve">
+    <value>Checklist witness signature</value>
+  </data>
+  <data name="FeaturePurpose.checklist-witness-signature" xml:space="preserve">
+    <value>A checklist can require its independent witness to sign at level 2 (a fresh step-up or a passkey) instead of attesting with text alone.</value>
+  </data>
+  <data name="FeatureValue.checklist-witness-signature" xml:space="preserve">
+    <value>Controlled-substance and safety checks get a witness signature bound to the recorded results, included with Checklists at no extra cost.</value>
+  </data>
+  <data name="FeatureExample.checklist-witness-signature" xml:space="preserve">
+    <value>After a drug box check, a second paramedic signs as witness with their passkey before the check counts as complete.</value>
+  </data>
+  <data name="FeatureSetup.checklist-witness-signature" xml:space="preserve">
+    <value>Edit the checklist, turn on the independent witness and the witness signature, and publish the new version.</value>
+  </data>
+  <data name="Feature.readiness-signatures" xml:space="preserve">
+    <value>Vendor acceptance and issue receipts</value>
+  </data>
+  <data name="FeaturePurpose.readiness-signatures" xml:space="preserve">
+    <value>Vendors accept completed work orders, and members or recipients sign receipts for issued equipment, in person or by a Resgrid link.</value>
+  </data>
+  <data name="FeatureValue.readiness-signatures" xml:space="preserve">
+    <value>Replace verbal hand-offs with signed acceptances and receipts that the other party can verify.</value>
+  </data>
+  <data name="FeatureExample.readiness-signatures" xml:space="preserve">
+    <value>The pump repair shop's technician signs the completed work order on the station tablet before driving away.</value>
+  </data>
+  <data name="FeatureSetup.readiness-signatures" xml:space="preserve">
+    <value>Open a completed work order, or an issued item's Receipt, and request the signature. Remote links need Readiness Pro and the department's e-sign settings.</value>
+  </data>
+  <data name="Setting.LmsProgramSettings" xml:space="preserve">
+    <value>Training program settings</value>
+  </data>
+  <data name="SettingHelp.LmsProgramSettings" xml:space="preserve">
+    <value>How training requests are approved and in which currency their costs are entered, and whether Records inspections and pre-plan reviews credit building familiarization.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Supervisor approves training requests</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>The admins of the member's group (or the department admins) approve a training request first.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Training officer approves training requests</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>A member who manages training records for the whole department approves the request, after the supervisor when both are on.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Training currency</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>The three-letter currency code (EUR, CAD, USD …) the department's training request costs, class costs and class fees are entered and totalled in. A class can name its own.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Credit building familiarization</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Completed occupancy inspections and pre-plan reviews in Records go on the transcript of the person who did them.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Familiarization category</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>The training category familiarization credit lands in, for example the ISO pre-fire planning category.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>Minutes per visit</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>The minutes credited for a visit that has no start and end time. A visit with its own times is credited its real length.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Credit from inspections</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Completed occupancy inspections credit the inspector.</value>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Credit from pre-plan reviews</value>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Occupancy and contact pre-plan reviews credit the reviewer.</value>
+  </data>
+  <data name="Feature.lms-training-plan" xml:space="preserve">
+    <value>Annual Training Plan</value>
+  </data>
+  <data name="FeaturePurpose.lms-training-plan" xml:space="preserve">
+    <value>A year of planned sessions and hours per category and month for the department, a group or a shift, compared with the hours actually recorded.</value>
+  </data>
+  <data name="FeatureValue.lms-training-plan" xml:space="preserve">
+    <value>The written plan auditors, regulators and accreditors ask for, and a shortfall against the annual targets that shows in June, not at the audit.</value>
+  </data>
+  <data name="FeatureExample.lms-training-plan" xml:space="preserve">
+    <value>The training officer plans 16 hours of company training each month; by June the forecast shows the department will miss the 192-hour target by 20 hours.</value>
+  </data>
+  <data name="FeatureSetup.lms-training-plan" xml:space="preserve">
+    <value>Nothing to set up yet: the annual plan is part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.lms-competency-frameworks" xml:space="preserve">
+    <value>Competency Frameworks</value>
+  </data>
+  <data name="FeaturePurpose.lms-competency-frameworks" xml:space="preserve">
+    <value>Job performance requirements, positions and skills, tagged on the courses, trainings and certifications that evidence them, with a gap report per member.</value>
+  </data>
+  <data name="FeatureValue.lms-competency-frameworks" xml:space="preserve">
+    <value>Shows for every member which requirements have evidence, how old it is, and which have none.</value>
+  </data>
+  <data name="FeatureExample.lms-competency-frameworks" xml:space="preserve">
+    <value>A department imports its regulator's competency framework, tags its courses, and sees a recruit still has no evidence for three requirements.</value>
+  </data>
+  <data name="FeatureSetup.lms-competency-frameworks" xml:space="preserve">
+    <value>Nothing to set up yet: competency frameworks are part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.lms-training-requests" xml:space="preserve">
+    <value>Training Requests</value>
+  </data>
+  <data name="FeaturePurpose.lms-training-requests" xml:space="preserve">
+    <value>Members ask to attend an outside class with its cost; the supervisor and a training officer approve it, and the class goes on the transcript once taken.</value>
+  </data>
+  <data name="FeatureValue.lms-training-requests" xml:space="preserve">
+    <value>One approved, costed record per outside class, and spending totals per member, course and year.</value>
+  </data>
+  <data name="FeatureExample.lms-training-requests" xml:space="preserve">
+    <value>A paramedic asks to attend a 16-hour course costing 450 dollars; the captain and the training officer approve it, and the certificate is verified afterwards.</value>
+  </data>
+  <data name="FeatureSetup.lms-training-requests" xml:space="preserve">
+    <value>Nothing to set up yet: training requests are part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.lms-report-catalog" xml:space="preserve">
+    <value>Training Report Catalog</value>
+  </data>
+  <data name="FeaturePurpose.lms-report-catalog" xml:space="preserve">
+    <value>Every training report in one place, saved with its settings in folders and sent on a daily, weekly or monthly schedule as CSV or PDF.</value>
+  </data>
+  <data name="FeatureValue.lms-report-catalog" xml:space="preserve">
+    <value>The reports an audit needs arrive by themselves, already filtered the same way every time.</value>
+  </data>
+  <data name="FeatureExample.lms-report-catalog" xml:space="preserve">
+    <value>The ISO training report goes to the chief and the training officer as a PDF on the first of every month.</value>
+  </data>
+  <data name="FeatureSetup.lms-report-catalog" xml:space="preserve">
+    <value>Nothing to set up yet: saved and scheduled reports are part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.lms-certification-cycles" xml:space="preserve">
+    <value>Certification Cycles</value>
+  </data>
+  <data name="FeaturePurpose.lms-certification-cycles" xml:space="preserve">
+    <value>A certification's next cycle starts by itself once its renewal hours are met, and supervisors, admins or named members are alerted when a cycle completes, starts, nears expiry or expires.</value>
+  </data>
+  <data name="FeatureValue.lms-certification-cycles" xml:space="preserve">
+    <value>Recurring credentials keep tracking hours without anyone re-entering them, and the right people hear about them in time.</value>
+  </data>
+  <data name="FeatureExample.lms-certification-cycles" xml:space="preserve">
+    <value>When an EMT reaches the renewal hours, the next two-year cycle starts at the current expiry and the EMS captain gets a note.</value>
+  </data>
+  <data name="FeatureSetup.lms-certification-cycles" xml:space="preserve">
+    <value>Nothing to set up yet: certification cycle rules are part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.lms-credential-audiences" xml:space="preserve">
+    <value>Messages by Certification Status</value>
+  </data>
+  <data name="FeaturePurpose.lms-credential-audiences" xml:space="preserve">
+    <value>Send a message to the members whose certification has expired, expires within a number of days, or who never held it.</value>
+  </data>
+  <data name="FeatureValue.lms-credential-audiences" xml:space="preserve">
+    <value>Reminders reach exactly the people who need them, without building a list by hand.</value>
+  </data>
+  <data name="FeatureExample.lms-credential-audiences" xml:space="preserve">
+    <value>The training officer messages everyone whose CPR card expires within 30 days with the date of the next class.</value>
+  </data>
+  <data name="FeatureSetup.lms-credential-audiences" xml:space="preserve">
+    <value>Nothing to set up yet: certification-status audiences are part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Setting.LearningRequirementSettings" xml:space="preserve">
+    <value>Learning requirement settings</value>
+  </data>
+  <data name="SettingHelp.LearningRequirementSettings" xml:space="preserve">
+    <value>Training-backed enforcement for the department (off by default), the largest share of a role's members one enforcement run may remove, and the default at-risk warning for new requirements.</value>
+  </data>
+  <data name="Field.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>Learning requirement settings / Training-backed enforcement</value>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>When on, a requirement that opts in can expire the certification it backs once a member is overdue past the grace period; the certification module then removes roles after its own grace period. Off by default, never while the LMS add-on is inactive, and turning it on first shows who would lose which role.</value>
+  </data>
+  <data name="Field.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>Learning requirement settings / Largest share of a role removed in one run</value>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>A run that would remove more than this percentage of a role's active members is refused, and the department admins are told. Default 20.</value>
+  </data>
+  <data name="Field.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Learning requirement settings / Default at-risk warning</value>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Days before the due date a new requirement starts showing members at risk. Default 14.</value>
+  </data>
+  <data name="Feature.lms-requirements" xml:space="preserve">
+    <value>Learning Requirements</value>
+  </data>
+  <data name="FeaturePurpose.lms-requirements" xml:space="preserve">
+    <value>Recurring and one-time training requirements by role, group, certification or shift: courses, trainings, hours per category, learning paths and passed skill evaluations, with due dates from when members join or are given a role.</value>
+  </data>
+  <data name="FeatureValue.lms-requirements" xml:space="preserve">
+    <value>Everyone knows what they owe and by when, and officers see who is at risk before an audit.</value>
+  </data>
+  <data name="FeatureExample.lms-requirements" xml:space="preserve">
+    <value>Every engineer completes the pump operations course every 12 months, and every member logs 24 hours of company training per calendar year.</value>
+  </data>
+  <data name="FeatureSetup.lms-requirements" xml:space="preserve">
+    <value>Open Trainings, choose Programs and add a requirement.</value>
+  </data>
+  <data name="Feature.lms-compliance-matrix" xml:space="preserve">
+    <value>Compliance Matrix</value>
+  </data>
+  <data name="FeaturePurpose.lms-compliance-matrix" xml:space="preserve">
+    <value>Each member against each requirement: compliant, due later, at risk, overdue, exempt, on leave or not licensed, with CSV and PDF export and a group admin's own group.</value>
+  </data>
+  <data name="FeatureValue.lms-compliance-matrix" xml:space="preserve">
+    <value>One page answers who is out of compliance and what is due next.</value>
+  </data>
+  <data name="FeatureExample.lms-compliance-matrix" xml:space="preserve">
+    <value>A captain filters the matrix to their station and exempts a member on military leave.</value>
+  </data>
+  <data name="FeatureSetup.lms-compliance-matrix" xml:space="preserve">
+    <value>Open Trainings, choose Programs, then Compliance.</value>
+  </data>
+  <data name="Feature.lms-learning-paths" xml:space="preserve">
+    <value>Learning Paths and Onboarding</value>
+  </data>
+  <data name="FeaturePurpose.lms-learning-paths" xml:space="preserve">
+    <value>Ordered courses, Academy lessons and trainings with prerequisites and electives; finishing a path can issue a certification. A path per role can be assigned automatically when someone joins or is given the role.</value>
+  </data>
+  <data name="FeatureValue.lms-learning-paths" xml:space="preserve">
+    <value>New members follow the same onboarding with a due date, without anyone remembering to assign it.</value>
+  </data>
+  <data name="FeatureExample.lms-learning-paths" xml:space="preserve">
+    <value>New dispatchers get the Dispatcher path with 30 days to finish it, and finishing it issues the department's dispatcher certification.</value>
+  </data>
+  <data name="FeatureSetup.lms-learning-paths" xml:space="preserve">
+    <value>Open Trainings, choose Programs, then Paths to build a path and Onboarding to assign it by role.</value>
+  </data>
+  <data name="Feature.ai-call-answers" xml:space="preserve">
+    <value>Ask about a call</value>
+  </data>
+  <data name="FeaturePurpose.ai-call-answers" xml:space="preserve">
+    <value>Members ask a question on View Call and get an answer taken only from the protocol versions the call cites and its type, priority, determinant and location type, each part linked to its section.</value>
+  </data>
+  <data name="FeatureValue.ai-call-answers" xml:space="preserve">
+    <value>Crews and dispatchers find what the call's protocols say for this call in seconds, and patient or caller details are never sent.</value>
+  </data>
+  <data name="FeatureExample.ai-call-answers" xml:space="preserve">
+    <value>On a structure fire at a school, a lieutenant asks where crews stage and gets the answer from the cited section of the school protocol.</value>
+  </data>
+  <data name="FeatureSetup.ai-call-answers" xml:space="preserve">
+    <value>Turn on knowledge answers with Enhanced AI and attach protocols to calls; Ask about this call then appears on View Call's protocols tab.</value>
+  </data>
+  <data name="Feature.ai-tutor" xml:space="preserve">
+    <value>Tutor and scenario practice</value>
+  </data>
+  <data name="FeaturePurpose.ai-tutor" xml:space="preserve">
+    <value>Learners ask questions about the course they are taking, and members practise on a short scenario written from a protocol, with their own answers scored against that protocol.</value>
+  </data>
+  <data name="FeatureValue.ai-tutor" xml:space="preserve">
+    <value>Members check their understanding between drills, and every answer and score points back to the exact section, without anything being recorded on their transcript.</value>
+  </data>
+  <data name="FeatureExample.ai-tutor" xml:space="preserve">
+    <value>A new EMT practises the cardiac arrest protocol: a short scenario, three questions, and feedback that quotes the steps the protocol lists.</value>
+  </data>
+  <data name="FeatureSetup.ai-tutor" xml:space="preserve">
+    <value>Turn on knowledge answers with Enhanced AI; Practice then appears on each protocol. Ask this course in the course player also needs the LMS add-on.</value>
+  </data>
+  <data name="Feature.lms-recommendations" xml:space="preserve">
+    <value>Learning recommendations</value>
+  </data>
+  <data name="FeaturePurpose.lms-recommendations" xml:space="preserve">
+    <value>Recommends learning paths and courses to each member from their open requirements, the paths they are on, their competency gaps and the courses offered to their roles.</value>
+  </data>
+  <data name="FeatureValue.lms-recommendations" xml:space="preserve">
+    <value>Members see what to take next and why, and officers see the same for the members they supervise.</value>
+  </data>
+  <data name="FeatureExample.lms-recommendations" xml:space="preserve">
+    <value>A firefighter with no evidence for the ladder competency sees the ladder operations course recommended under My Training, with the reason.</value>
+  </data>
+  <data name="FeatureSetup.lms-recommendations" xml:space="preserve">
+    <value>Open Trainings, choose Programs, then Recommendations; members also see Recommended on My Training. Explain with AI needs Enhanced AI.</value>
+  </data>
+  <data name="Feature.approval-chains" xml:space="preserve">
+    <value>Approval chains</value>
+  </data>
+  <data name="FeaturePurpose.approval-chains" xml:space="preserve">
+    <value>Purchases, Incident Action Plans, invoices, Cal OES MARS packages and mutual-aid agreements are approved by a chain of people in order, with amount thresholds, parallel steps, delegates while someone is on leave and escalation when a step stalls.</value>
+  </data>
+  <data name="FeatureValue.approval-chains" xml:space="preserve">
+    <value>Every approval is a level 2 signature bound to the exact content: a change voids it, a rejection needs a reason, and the completed chain seals the document.</value>
+  </data>
+  <data name="FeatureExample.approval-chains" xml:space="preserve">
+    <value>Purchases over 5,000 need the finance chief after the logistics section chief; if the finance chief does not act within 24 hours, the department admins are asked.</value>
+  </data>
+  <data name="FeatureSetup.approval-chains" xml:space="preserve">
+    <value>A department admin defines a chain per kind under Approvals, Chains; members submit from the item's page or Approvals, and approvers find requests under My approvals and on their home page.</value>
+  </data>
+  <data name="Feature.lms-protocol-learning" xml:space="preserve">
+    <value>Protocol Quizzes and Micro-Learning</value>
+  </data>
+  <data name="FeaturePurpose.lms-protocol-learning" xml:space="preserve">
+    <value>Make a protocol's acknowledgment wait for a quiz drawn from a question bank, and send members one scenario question a week from chosen protocols.</value>
+  </data>
+  <data name="FeatureValue.lms-protocol-learning" xml:space="preserve">
+    <value>Members show they understood a protocol, not only that they opened it, and keep it fresh between reviews.</value>
+  </data>
+  <data name="FeatureExample.lms-protocol-learning" xml:space="preserve">
+    <value>A new mayday procedure needs five questions passed at 80% before the acknowledgment counts, and every Monday each firefighter answers one scenario from it.</value>
+  </data>
+  <data name="FeatureSetup.lms-protocol-learning" xml:space="preserve">
+    <value>Nothing to set up yet: protocol quizzes and micro-learning are part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.lms-class-sessions" xml:space="preserve">
+    <value>Class Sessions</value>
+  </data>
+  <data name="FeaturePurpose.lms-class-sessions" xml:space="preserve">
+    <value>Instructor-led classes on the calendar with capacity, waitlist, enrolment rules, rotating-QR and GPS sign-in, and an instructor sign-off that writes every attendee's training record.</value>
+  </data>
+  <data name="FeatureValue.lms-class-sessions" xml:space="preserve">
+    <value>One roster per class that stands as the record: who taught, who attended, what was covered and for how long, kept for the category's retention.</value>
+  </data>
+  <data name="FeatureExample.lms-class-sessions" xml:space="preserve">
+    <value>A bloodborne pathogens refresher for 20 seats fills up; three members wait on the waitlist, and when one withdraws the next is enrolled and notified.</value>
+  </data>
+  <data name="FeatureSetup.lms-class-sessions" xml:space="preserve">
+    <value>Nothing to set up yet: class sessions are part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.lms-lesson-plans" xml:space="preserve">
+    <value>Lesson Plans</value>
+  </data>
+  <data name="FeaturePurpose.lms-lesson-plans" xml:space="preserve">
+    <value>Reusable plans for instructor-led sessions: objectives, competencies covered, materials and props, instructor-to-student ratio, safety plan and pre-brief checklist, versioned and approved before use.</value>
+  </data>
+  <data name="FeatureValue.lms-lesson-plans" xml:space="preserve">
+    <value>Live-fire, driving and SCBA sessions are taught from an approved plan, and the roster shows which version was used.</value>
+  </data>
+  <data name="FeatureExample.lms-lesson-plans" xml:space="preserve">
+    <value>The training officer copies the live-fire starter plan, adds the department's burn building and ratios, and a chief approves it before the first evolution.</value>
+  </data>
+  <data name="FeatureSetup.lms-lesson-plans" xml:space="preserve">
+    <value>Nothing to set up yet: lesson plans are part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.lms-training-resources" xml:space="preserve">
+    <value>Facility and Prop Booking</value>
+  </data>
+  <data name="FeaturePurpose.lms-training-resources" xml:space="preserve">
+    <value>The organization's training grounds, classrooms, props, vehicles and equipment, booked for class times so nothing is double-booked.</value>
+  </data>
+  <data name="FeatureValue.lms-training-resources" xml:space="preserve">
+    <value>Two classes never plan on the same burn building or engine for the same afternoon.</value>
+  </data>
+  <data name="FeatureExample.lms-training-resources" xml:space="preserve">
+    <value>The ladder evolution books the training tower and Engine 3 for Saturday morning; a second class asking for the tower then is refused.</value>
+  </data>
+  <data name="FeatureSetup.lms-training-resources" xml:space="preserve">
+    <value>Nothing to set up yet: facility booking is part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Protocol Library Settings / Determinant in dispatch texts</value>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Adds the determinant and the protocol name of a call's case flow to the dispatch push title, the dispatch text message and the voice dispatch prompt. Off by default; with it off every dispatch text is as before.</value>
+  </data>
+  <data name="Feature.protocol-case-flow" xml:space="preserve">
+    <value>Protocol case flow (dispatch decision engine)</value>
+  </data>
+  <data name="FeaturePurpose.protocol-case-flow" xml:space="preserve">
+    <value>A Dispatch protocol can carry a case flow: entry and key questions, read-aloud instructions and outcomes with a determinant and a suggested priority. Dispatchers walk it on the New Call form, override the determinant only with a reason, text instructions to an SMS caller, and with Enhanced AI get a suggested protocol to confirm. Run cards can react to the determinant.</value>
+  </data>
+  <data name="Feature.lms-skill-sheets" xml:space="preserve">
+    <value>Skill Sheets</value>
+  </data>
+  <data name="FeaturePurpose.lms-skill-sheets" xml:space="preserve">
+    <value>Job-performance skill sheets with ordered steps, critical criteria that fail the evaluation, rating scales, timers and evidence, versioned, with a library of Resgrid starters.</value>
+  </data>
+  <data name="FeatureValue.lms-skill-sheets" xml:space="preserve">
+    <value>Every evaluator grades the same skill the same way, and the department can show exactly what was checked.</value>
+  </data>
+  <data name="FeatureExample.lms-skill-sheets" xml:space="preserve">
+    <value>The SCBA donning sheet fails anyone who takes longer than 60 seconds or misses the facepiece seal check.</value>
+  </data>
+  <data name="FeatureSetup.lms-skill-sheets" xml:space="preserve">
+    <value>Open Trainings, choose Skills, then Skill sheets, and start from a template.</value>
+  </data>
+  <data name="Feature.lms-skill-evaluations" xml:space="preserve">
+    <value>Skill Evaluations</value>
+  </data>
+  <data name="FeaturePurpose.lms-skill-evaluations" xml:space="preserve">
+    <value>Evaluator mode: grade one member or a whole crew on a skill sheet, with Pass All, annotations and evidence, then sign at L2; passed evaluations land on the transcript and the record is sealed.</value>
+  </data>
+  <data name="FeatureValue.lms-skill-evaluations" xml:space="preserve">
+    <value>Skills checked on the drill ground become signed, sealed proof that requirements and certifications can count.</value>
+  </data>
+  <data name="FeatureExample.lms-skill-evaluations" xml:space="preserve">
+    <value>A captain grades Engine 2's crew on the hoseline advance on one form, splits out the member who struggled, and signs from a tablet.</value>
+  </data>
+  <data name="FeatureSetup.lms-skill-evaluations" xml:space="preserve">
+    <value>Publish a skill sheet, set who may evaluate on it, then choose Start an evaluation under Trainings, Skills.</value>
+  </data>
+  <data name="Feature.lms-task-books" xml:space="preserve">
+    <value>Position Task Books</value>
+  </data>
+  <data name="FeaturePurpose.lms-task-books" xml:space="preserve">
+    <value>Task books on the NWCG model: initiated with a position code and date, tasks signed by qualified evaluators across dates and incidents, recommended by a final evaluator and certified by the certifying official; certification activates the trainee's certification.</value>
+  </data>
+  <data name="FeatureValue.lms-task-books" xml:space="preserve">
+    <value>Trainee positions move to qualified with a full, signed trail instead of a paper book in a locker.</value>
+  </data>
+  <data name="FeatureExample.lms-task-books" xml:space="preserve">
+    <value>An FFT2 trainee's task book is initiated in March, two incident tasks are signed on wildfires that summer, and the certifying official certifies it in September.</value>
+  </data>
+  <data name="FeatureSetup.lms-task-books" xml:space="preserve">
+    <value>Open Trainings, choose Skills, then Definitions, start from a task book starter, set who signs and certifies, then initiate books under Task books.</value>
+  </data>
+  <data name="Setting.LmsSkillSettings" xml:space="preserve">
+    <value>Skill notice settings</value>
+  </data>
+  <data name="SettingHelp.LmsSkillSettings" xml:space="preserve">
+    <value>How skill evaluation and task book notices are delivered, immediately or as a daily or weekly digest, and whether the evaluated members and the department admins receive them.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Skill notice delivery</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Immediately, a daily or weekly digest (one message per person with every notice due), or off.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Skill digest time</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>The department-local hour daily and weekly digests are sent.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>Skill weekly digest day</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>The weekday weekly digests are sent.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Notify evaluated members</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>The evaluated members and trainees receive notices about their own evaluations and task books.</value>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Notify department admins</value>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>The active department admins receive a notice about every evaluation and task book.</value>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewDispatchCases">
+    <value>Review Dispatch Cases</value>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ReviewDispatchCases">
+    <value>Allows sampling calls for dispatch case review, scoring the recorded case against a dispatch case rubric, sending the review to the dispatcher and reading the compliance report. Nobody reviews their own calls. With no saved rule only department administrators may.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.dispatch-case-review">
+    <value>Dispatch Case Review</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dispatch-case-review">
+    <value>Officers sample calls by protocol, version, determinant, dispatcher and dates, score each recorded case question by question and instruction by instruction with a Records QA rubric beside the protocol's case flow, and send the review to the dispatcher. Reports show compliance by protocol, version, dispatcher and month, with CSV.</value>
+  </data>
+  <data xml:space="preserve" name="Feature.my-case-reviews">
+    <value>My Case Reviews</value>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.my-case-reviews">
+    <value>Dispatchers read the reviews of calls they handled, with every question and instruction scored and the reviewer's comments, acknowledge each one once and may reply once; the reviewer is notified of the reply.</value>
+  </data>
+  <data name="Setting.LmsCeReportingSettings" xml:space="preserve">
+    <value>CE reporting settings</value>
+  </data>
+  <data name="SettingHelp.LmsCeReportingSettings" xml:space="preserve">
+    <value>The CAPCE and CE Broker provider numbers, the certification types that hold members' license, NREMT and National EMS ID numbers, and the column lists of the CE / CPD training-hours file and the CAPCE, state CE and state roster files.</value>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>CAPCE provider number</value>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>The department's CAPCE provider number when it is a CAPCE-accredited provider. Without it no CAPCE completion file is built.</value>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>CAPCE provider name</value>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>The provider name as the department enters it on courses and records; completions naming it count as the department's own CE.</value>
+  </data>
+  <data name="Field.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>State license certification type</value>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>The certification type whose number, area, type and expiry the files report as the member's state license.</value>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>NREMT certification type</value>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>The certification type whose number and expiry the files report as the NREMT number and next re-registration date.</value>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>National EMS ID certification type</value>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>The certification type whose number the files report as the member's National EMS ID (NEMSID).</value>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>CE Broker provider number</value>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>The CE Broker provider tracking number (Florida) written in column A of the CE Broker file without its 50- prefix.</value>
+  </data>
+  <data name="Field.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>CE file column lists</value>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>The department's own column lists, one per file type; a file type without one uses its default columns.</value>
+  </data>
+  <data name="Field.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>CE file type</value>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>Which file a column list belongs to: training-hours, capce, fl-ems, va-ems, nj-ems, fl-fire, state-ce or state-roster.</value>
+  </data>
+  <data name="Field.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>CE file columns</value>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>The columns of the file, in order.</value>
+  </data>
+  <data name="Field.LmsCeColumn.Header" xml:space="preserve">
+    <value>CE column heading</value>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Header" xml:space="preserve">
+    <value>The heading written in the file's header row; files without a header row leave it out.</value>
+  </data>
+  <data name="Field.LmsCeColumn.Source" xml:space="preserve">
+    <value>CE column value</value>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Source" xml:space="preserve">
+    <value>Which value the column carries: a member, record, certification or provider field, or fixed text.</value>
+  </data>
+  <data name="Field.LmsCeColumn.Argument" xml:space="preserve">
+    <value>CE column format</value>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Argument" xml:space="preserve">
+    <value>A date or number format for the value, or the text of a fixed-text column.</value>
+  </data>
+  <data name="Feature.lms-data-export" xml:space="preserve">
+    <value>Training data export</value>
+  </data>
+  <data name="FeaturePurpose.lms-data-export" xml:space="preserve">
+    <value>Department owners and admins export everything the department put into Training: courses with their versions, lessons and media, question banks with answer keys, and every learning record, attempt and certificate as CSV and xAPI statements, with a SCORM 1.2 package per course where the lessons allow.</value>
+  </data>
+  <data name="FeatureValue.lms-data-export" xml:space="preserve">
+    <value>A department can always take its training content and evidence with it, also after the LMS add-on lapses.</value>
+  </data>
+  <data name="FeatureExample.lms-data-export" xml:space="preserve">
+    <value>Before moving to a regional academy's system, the training officer exports everything, loads the xAPI statements into the new record store and keeps the CSV records for the audit.</value>
+  </data>
+  <data name="FeatureSetup.lms-data-export" xml:space="preserve">
+    <value>Open Trainings, choose Programs, then Data export, pick Everything or Records only and start the export; download the zip when it is ready.</value>
+  </data>
+  <data name="Feature.lms-ce-reporting" xml:space="preserve">
+    <value>CE reporting files</value>
+  </data>
+  <data name="FeaturePurpose.lms-ce-reporting" xml:space="preserve">
+    <value>Builds a CE / CPD training-hours file with the columns your regulator or professional body asks for, and for US departments the CAPCE completion file, state CE files (Florida's CE Broker layout and a configurable CSV for other states) and a state-ready roster for systems such as Acadis, with a preview and per-department columns.</value>
+  </data>
+  <data name="FeatureValue.lms-ce-reporting" xml:space="preserve">
+    <value>Completions reach your regulator, professional body, CAPCE or state office without retyping a roster, and nothing is submitted before someone checks the file.</value>
+  </data>
+  <data name="FeatureExample.lms-ce-reporting" xml:space="preserve">
+    <value>Each month the EMS coordinator previews last month's CAPCE file, fixes two members missing a state license number and uploads the CSV to CAPCE.</value>
+  </data>
+  <data name="FeatureSetup.lms-ce-reporting" xml:space="preserve">
+    <value>Open Trainings, choose Programs, then CE reporting, enter the provider numbers and the certification types that hold license numbers, then build a file for a date range.</value>
+  </data>
+  <data name="Feature.protocol-public-pages" xml:space="preserve">
+    <value>Public Protocol Pages</value>
+  </data>
+  <data name="FeaturePurpose.protocol-public-pages" xml:space="preserve">
+    <value>Publish a protocol's version in force, or a category as a set, at an opt-in public address with an embed code. Drafts, audience-restricted and licensed content are never shown, and a page can be revoked at any time.</value>
+  </data>
+  <data name="Feature.protocol-template-library" xml:space="preserve">
+    <value>Protocol Template Library</value>
+  </data>
+  <data name="FeaturePurpose.protocol-template-library" xml:space="preserve">
+    <value>Clone starter sets written by Resgrid (fire SOGs, search and rescue, industrial hazards, business continuity, law enforcement policies, security post orders, workplace policies and an EMS outline without clinical text) into the library as drafts in your language, with the source, licence and version kept on each version.</value>
+  </data>
+  <data name="Feature.community-exchange" xml:space="preserve">
+    <value>Community Exchange</value>
+  </data>
+  <data name="FeaturePurpose.community-exchange" xml:space="preserve">
+    <value>Share protocols and trainings with other departments for free. Department data is taken out, licensed content is refused, Resgrid reviews every contribution before it is listed, and other departments can rate, comment on and import a copy with the attribution kept.</value>
+  </data>
+  <data name="Feature.protocol-open-format" xml:space="preserve">
+    <value>Protocol Open Format and Export</value>
+  </data>
+  <data name="FeaturePurpose.protocol-open-format" xml:space="preserve">
+    <value>Export the library or a category in the documented open JSON format (blocks, version history, decision graph, translations and an attachments list), as one HTML file or as the PDF book. Files in the older format still import.</value>
+  </data>
+  <data name="Feature.protocol-analytics" xml:space="preserve">
+    <value>Protocol Analytics</value>
+  </data>
+  <data name="FeaturePurpose.protocol-analytics" xml:space="preserve">
+    <value>See how protocols are used on calls by version, the determinant distribution and override rate, time on protocol, acknowledgment compliance and searches that found nothing, with a CSV export.</value>
+  </data>
+  <data name="Feature.lms-external-learners" xml:space="preserve">
+    <value>External learners</value>
+  </data>
+  <data name="FeaturePurpose.lms-external-learners" xml:space="preserve">
+    <value>Train people who are not members: mutual-aid partners, contractors, volunteers and the public.</value>
+  </data>
+  <data name="FeatureValue.lms-external-learners" xml:space="preserve">
+    <value>Partners and the public take your courses and classes without member accounts or access to anything else.</value>
+  </data>
+  <data name="FeatureExample.lms-external-learners" xml:space="preserve">
+    <value>Contractors take your site safety induction, a neighbouring volunteer company takes your pump operator course, and CERT volunteers register for a class.</value>
+  </data>
+  <data name="FeatureSetup.lms-external-learners" xml:space="preserve">
+    <value>Turn the learner portal on, open courses to external learners, then invite learners by e-mail. Up to 25% of your seats (minimum 25) are included.</value>
+  </data>
+  <data name="Feature.lms-learner-portal" xml:space="preserve">
+    <value>Branded learner portal</value>
+  </data>
+  <data name="FeaturePurpose.lms-learner-portal" xml:space="preserve">
+    <value>A sign-in page and catalog for external learners with your department's logo and colour.</value>
+  </data>
+  <data name="FeatureValue.lms-learner-portal" xml:space="preserve">
+    <value>Learners see your department, not Resgrid, and nothing but their own training.</value>
+  </data>
+  <data name="FeatureExample.lms-learner-portal" xml:space="preserve">
+    <value>The public finds your CPR classes on your portal and registers after confirming their e-mail.</value>
+  </data>
+  <data name="FeatureSetup.lms-learner-portal" xml:space="preserve">
+    <value>Upload a logo in the department profile, choose an accent colour and decide whether people may register themselves and whether visitors see the listing.</value>
+  </data>
+  <data name="Feature.lms-public-class-fees" xml:space="preserve">
+    <value>Paid public classes</value>
+  </data>
+  <data name="FeaturePurpose.lms-public-class-fees" xml:space="preserve">
+    <value>An optional fee per external learner on a class, with a roster export and invoices.</value>
+  </data>
+  <data name="FeatureValue.lms-public-class-fees" xml:space="preserve">
+    <value>Bill CPR, first-aid and CERT classes: export the roster for your own billing or raise invoices with Business Ops.</value>
+  </data>
+  <data name="FeatureExample.lms-public-class-fees" xml:space="preserve">
+    <value>A CPR class charges 45 per person; one invoice goes to the employer that sent six staff.</value>
+  </data>
+  <data name="FeatureSetup.lms-public-class-fees" xml:space="preserve">
+    <value>Open a class session's Public class and fees page, list it, set the fee, then export the roster or raise invoices per learner or per sponsoring organization. Resgrid never takes payment.</value>
+  </data>
+  <data name="Feature.ai-course-drafts" xml:space="preserve">
+    <value>Course drafts from protocols and SOPs</value>
+  </data>
+  <data name="FeaturePurpose.ai-course-drafts" xml:space="preserve">
+    <value>Draft an online course from a published protocol or an uploaded SOP document: modules, lessons that each cite the sections they teach, and a question bank to review.</value>
+  </data>
+  <data name="FeatureValue.ai-course-drafts" xml:space="preserve">
+    <value>Training officers start from a complete draft that follows the department's own procedure instead of a blank page, and every lesson shows the source text it rests on.</value>
+  </data>
+  <data name="FeatureExample.ai-course-drafts" xml:space="preserve">
+    <value>A training officer turns the new mayday SOP into a draft course with four modules and five quiz questions, checks each lesson against its cited section, and submits it for approval.</value>
+  </data>
+  <data name="FeatureSetup.ai-course-drafts" xml:space="preserve">
+    <value>Needs Enhanced AI with knowledge answers and the LMS add-on; open Trainings, Course library, Draft with AI. Drafts are never published on their own, every number must appear in the cited sections, content marked no AI is never sent, and departments using Advanced Data Protection do not get drafts.</value>
+  </data>
+  <data name="Feature.ai-flashcards" xml:space="preserve">
+    <value>Course flashcards</value>
+  </data>
+  <data name="FeaturePurpose.ai-flashcards" xml:space="preserve">
+    <value>Practice cards drafted from a course or the protocol it is built from; authors keep the ones they want and learners practise them in the course player.</value>
+  </data>
+  <data name="FeatureValue.ai-flashcards" xml:space="preserve">
+    <value>Members rehearse the steps and criteria they must remember between drills, and a card is hidden and flagged for review as soon as its source gets a new version.</value>
+  </data>
+  <data name="FeatureExample.ai-flashcards" xml:space="preserve">
+    <value>After the cardiac arrest protocol moves to a new version, its flashcards disappear from the player until the training officer checks them against the new version.</value>
+  </data>
+  <data name="FeatureSetup.ai-flashcards" xml:space="preserve">
+    <value>Needs Enhanced AI with knowledge answers and the LMS add-on; open a course and choose Flashcards. Practice is never graded or recorded on the transcript.</value>
+  </data>
+  <data name="Feature.lms-starter-courses" xml:space="preserve">
+    <value>Starter courses</value>
+  </data>
+  <data name="FeaturePurpose.lms-starter-courses" xml:space="preserve">
+    <value>Courses written by Resgrid (getting started with Resgrid, incident safety basics, a hazardous materials awareness outline, driver basics) to copy into the department as a draft.</value>
+  </data>
+  <data name="FeatureValue.lms-starter-courses" xml:space="preserve">
+    <value>A department gets a structured first course in minutes and adapts it to its own procedures; the copy keeps its attribution, and partner slots show where accredited content will plug in.</value>
+  </data>
+  <data name="FeatureExample.lms-starter-courses" xml:space="preserve">
+    <value>A volunteer department copies Getting started with Resgrid, adds its radio channels and station names, and assigns it to every new member after approval.</value>
+  </data>
+  <data name="FeatureSetup.lms-starter-courses" xml:space="preserve">
+    <value>Needs the LMS add-on and Manage Courses; open Trainings, Course library, Starter courses. Starters carry no standard's text and no accreditation.</value>
+  </data>
+  <data name="Setting.LmsStandardsSettings" xml:space="preserve">
+    <value>xAPI (LRS) settings</value>
+  </data>
+  <data name="SettingHelp.LmsStandardsSettings" xml:space="preserve">
+    <value>Whether LMS course and lesson results are sent as xAPI statements to the department's Learning Record Store, with which key and secret, and whether members are identified by e-mail address.</value>
+  </data>
+  <data name="Field.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>Send xAPI statements</value>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>Course and lesson results (attempted, completed, passed, failed) are queued and sent to the LRS by the standards worker, with retries.</value>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>LRS endpoint</value>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>The https address of the Learning Record Store's xAPI endpoint; statements are posted to its statements resource.</value>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>LRS key</value>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>The basic-auth key (user name) the LRS issued.</value>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>LRS secret</value>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>The basic-auth secret, stored encrypted for the department and never shown again.</value>
+  </data>
+  <data name="Field.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Identify members by e-mail</value>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Off: each member is a pseudonymous department account. On: the member's e-mail address is sent as the statement's actor.</value>
+  </data>
+  <data name="Feature.lms-content-standards" xml:space="preserve">
+    <value>SCORM, cmi5, xAPI and LTI</value>
+  </data>
+  <data name="FeaturePurpose.lms-content-standards" xml:space="preserve">
+    <value>Import SCORM 1.2/2004 and cmi5 packages played in a sandboxed player, launch third-party CE courses over LTI 1.3 with score passback, and send results to an external LRS as xAPI statements.</value>
+  </data>
+  <data name="FeatureValue.lms-content-standards" xml:space="preserve">
+    <value>Partner and purchased e-learning runs inside Resgrid and lands on the transcript, and results can flow to the department's own LRS.</value>
+  </data>
+  <data name="FeatureExample.lms-content-standards" xml:space="preserve">
+    <value>A CAPCE provider's cardiac course launches from a course lesson over LTI; the score comes back, the lesson completes and the credit lands on the member's transcript.</value>
+  </data>
+  <data name="FeatureSetup.lms-content-standards" xml:space="preserve">
+    <value>Open Trainings, choose Standards, upload a package or register an LTI tool, then add a SCORM, cmi5 or LTI lesson to a course.</value>
+  </data>
+  <data name="Feature.ai-protocol-tools" xml:space="preserve">
+    <value>Protocol practice cards, training and translation drafts</value>
+  </data>
+  <data name="FeaturePurpose.ai-protocol-tools" xml:space="preserve">
+    <value>Draft practice cards, a training with a quiz, and translations from a published protocol version for authors to review; members practise the cards on the protocol.</value>
+  </data>
+  <data name="FeatureValue.ai-protocol-tools" xml:space="preserve">
+    <value>Protocol authors get drafts grounded in the department's own protocols with Enhanced AI alone, and every drafted item cites the section it comes from.</value>
+  </data>
+  <data name="FeatureExample.ai-protocol-tools" xml:space="preserve">
+    <value>After the stroke protocol is published, the EMS coordinator drafts ten practice cards, a training with five quiz questions for the acknowledgment, and a Spanish translation to review.</value>
+  </data>
+  <data name="FeatureSetup.ai-protocol-tools" xml:space="preserve">
+    <value>Turn on knowledge answers with Enhanced AI; open a published protocol and choose Practice cards or Draft a training, or open a draft translation and choose Draft translation with AI.</value>
+  </data>
+  <data name="Permission.RecordTrainingCompletions" xml:space="preserve">
+    <value>Record Training Completions</value>
+  </data>
+  <data name="PermissionHelp.RecordTrainingCompletions" xml:space="preserve">
+    <value>Allows recording that members completed a training or LMS course they took together (from a class roster, or from a course's enrolment list or a training's assignee list with a note). Each record shows it was recorded by an instructor, and the recorder can void it with a reason. Group admins record only for their own group's members. With no saved rule only department administrators may.</value>
+  </data>
+  <data name="Feature.training-record-completions" xml:space="preserve">
+    <value>Record training completions for members</value>
+  </data>
+  <data name="FeaturePurpose.training-record-completions" xml:space="preserve">
+    <value>An instructor or training officer records that members completed a training or course they took together.</value>
+  </data>
+  <data name="FeatureValue.training-record-completions" xml:space="preserve">
+    <value>Group training (a CPR class, a crew watching the videos together) lands on every member's record, with the certification renewed, and the record says who recorded it.</value>
+  </data>
+  <data name="FeatureExample.training-record-completions" xml:space="preserve">
+    <value>After a CPR class, the training captain ticks the attendees on the class roster and records the CPR course as completed for all of them.</value>
+  </data>
+  <data name="FeatureSetup.training-record-completions" xml:space="preserve">
+    <value>Give the right roles Record Training Completions on the Security page; link the class to its course or training.</value>
+  </data>
+  <data name="Feature.lms-certification-requirements" xml:space="preserve">
+    <value>Certification Requirement Sets</value>
+  </data>
+  <data name="FeaturePurpose.lms-certification-requirements" xml:space="preserve">
+    <value>A certification is issued or renewed automatically when a member completes every item of its set inside the cycle: LMS courses, a course set, trainings, a supervised practical recorded by an instructor, skill evaluations or continuing-education hours. Voiding a completion behind it takes the certification back.</value>
+  </data>
+  <data name="FeatureValue.lms-certification-requirements" xml:space="preserve">
+    <value>Members and officers see exactly what is left ("3 of 4 done"), nobody re-enters a renewal by hand, and a mistaken completion never leaves a certification standing on nothing.</value>
+  </data>
+  <data name="FeatureExample.lms-certification-requirements" xml:space="preserve">
+    <value>An operator certification needs the yearly driving course, the vehicle checks course and a slow speed course an instructor signs off; when the last one is recorded the certification renews to the next 31 December.</value>
+  </data>
+  <data name="FeatureSetup.lms-certification-requirements" xml:space="preserve">
+    <value>Nothing to set up yet: certification requirement sets are part of the LMS add-on, which is not available yet.</value>
+  </data>
+  <data name="Feature.certification-validity-rules" xml:space="preserve">
+    <value>Certification Validity Rules</value>
+  </data>
+  <data name="FeaturePurpose.certification-validity-rules" xml:space="preserve">
+    <value>A certification type expires a number of months after issue, at the end of each calendar year, at the end of the organization's own year, or on a fixed date, with an optional grace period and renewal window.</value>
+  </data>
+  <data name="FeatureValue.certification-validity-rules" xml:space="preserve">
+    <value>Annual and fiscal-year authorizations expire the same day for everyone, renewals land in the right year, and dates follow the organization's time zone.</value>
+  </data>
+  <data name="FeatureExample.certification-validity-rules" xml:space="preserve">
+    <value>A forklift authorization set to expire on 31 March each year renews to the following 31 March when the refresher is completed in February.</value>
+  </data>
+  <data name="FeatureSetup.certification-validity-rules" xml:space="preserve">
+    <value>Open Certifications, then a certification type, and choose how it expires.</value>
+  </data>
+  <data name="Feature.training-read-and-confirm" xml:space="preserve">
+    <value>Read and Confirm Trainings</value>
+  </data>
+  <data name="FeaturePurpose.training-read-and-confirm" xml:space="preserve">
+    <value>A training without a quiz can ask each member to confirm they read and reviewed it before its due date, and repeat every year: an employee handbook, a code of conduct or a site rule.</value>
+  </data>
+  <data name="FeatureValue.training-read-and-confirm" xml:space="preserve">
+    <value>Opening a document is no longer counted as reading it: the record shows who confirmed and when, ready for an audit.</value>
+  </data>
+  <data name="FeatureExample.training-read-and-confirm" xml:space="preserve">
+    <value>The employee handbook is assigned every January with a 31 January due date; each member ticks "I have read and reviewed this training" and the transcript shows the date.</value>
+  </data>
+  <data name="FeatureSetup.training-read-and-confirm" xml:space="preserve">
+    <value>Create a training, attach or write the document, tick "Members confirm they have read and reviewed it", set a due date and repeat every 12 months.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Training record settings / Review of member submissions</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Whether training hours members submit wait for a reviewer before they count: every submission (the default), none (accepted on submit and shown as self-reported), or only selected categories or above an hours threshold.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>Training record settings / Categories that need review</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>With review of selected submissions, submissions in these training categories wait for a reviewer.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>Training record settings / Review submissions above (hours)</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>With review of selected submissions, submissions of more hours than this wait for a reviewer. 0 means no threshold.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>Training record settings / Role reviewers only for their own group</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>When on, reviewers named by role (Record Training Completions or Assign Training) review only the members of the group they are in. Department admins still review everyone and group admins their own group.</value>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>Training record settings / Reviewer notices</value>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>How reviewers hear about new submissions: a notice for each one (the default), one summary a day, or none (the Training reviews inbox and the home page item only).</value>
+  </data>
+  <data name="Feature.training-submission-reviews" xml:space="preserve">
+    <value>Training reviews (members' training hours with evidence)</value>
+  </data>
+  <data name="FeaturePurpose.training-submission-reviews" xml:space="preserve">
+    <value>Members record continuing education or training hours done elsewhere with a certificate, photo, document or receipt; reviewers approve them, deny them or ask for more information.</value>
+  </data>
+  <data name="FeatureValue.training-submission-reviews" xml:space="preserve">
+    <value>Outside training reaches the transcript with its proof, reviewed when the department wants it, and members are told at every step.</value>
+  </data>
+  <data name="FeatureExample.training-submission-reviews" xml:space="preserve">
+    <value>A member uploads a photo of a hazardous materials refresher certificate with 8 hours; the training captain sees it in Training reviews, opens the photo and approves it.</value>
+  </data>
+  <data name="FeatureSetup.training-submission-reviews" xml:space="preserve">
+    <value>Choose the review in Training record settings and give training captains and instructors Record Training Completions on the Security page.</value>
+  </data>
+  <data name="Pack.law-enforcement" xml:space="preserve">
+    <value>Law enforcement</value>
+  </data>
+  <data name="PackPurpose.law-enforcement" xml:space="preserve">
+    <value>Review shift coverage, qualifications, in-service training, policy acknowledgments and record review.</value>
+  </data>
+  <data name="PackGap.law-enforcement" xml:space="preserve">
+    <value>The pack can review shift coverage, credentials, training and record review settings. Legal requirements, licensing body rules, use-of-force review and evidence systems are not evaluated. The responsible command or training officer must verify those sources.</value>
+  </data>
+  <data name="Pack.business" xml:space="preserve">
+    <value>Business and workplace</value>
+  </data>
+  <data name="PackPurpose.business" xml:space="preserve">
+    <value>Review staff groups, qualifications, training, checklists and policy acknowledgments for a workplace.</value>
+  </data>
+  <data name="PackGap.business" xml:space="preserve">
+    <value>The pack can review groups, credentials, training, checklists and equipment holds. Employment law, occupational safety rules, insurance and contractor requirements are not evaluated. The responsible manager must verify those sources.</value>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>Wellness settings / Wellness officer certification</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>A certification type of the department, such as one added from the Wellness Officer template, whose requirements and validity the department sets. Each wellness officer's status (current, expiring, expired, missing) shows on the settings page and the member exposure report. It decides who acts only when the certification switch is on. None shows no status.</value>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>Wellness settings / Designated officer certification</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>A certification type of the department, such as one added from the Designated Exposure Control Officer template, shown as each designated officer's status. None: while no designated officer role is named, the wellness officer certification serves.</value>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Wellness settings / Peer support team role</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Members of this personnel role are the peer support team and receive the critical-incident anniversary reminders a member chooses to share. None: the members holding a current peer support team certification are the team.</value>
+  </data>
+  <data name="Field.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Wellness settings / Only members with a current certification act</value>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Off (the default): the wellness officer, designated officer and peer support roles alone decide who acts, and each linked certification is shown as status. On: a role member also needs a current certification of the role's linked type; a role with no linked type is not affected. It cannot be turned on while nobody in the wellness officer or designated officer role holds a current certification.</value>
+  </data>
+  <data name="Permission.ManageContentSets" xml:space="preserve">
+    <value>Manage Content Sets</value>
+  </data>
+  <data name="PermissionHelp.ManageContentSets" xml:space="preserve">
+    <value>Allows publishing protocol and course sets to linked departments, subscribing to theirs, deciding the update inbox, customizing the blocks a publisher left open, answering proposals and sponsoring a linked department's LMS seats. Any member can propose a change upstream. With no saved rule only department administrators may.</value>
+  </data>
+  <data name="Setting.ContentSetSettings" xml:space="preserve">
+    <value>Set update time</value>
+  </data>
+  <data name="SettingHelp.ContentSetSettings" xml:space="preserve">
+    <value>The local time accepted protocol and course set updates go into force on or after their effective date (default 07:00, so nothing changes mid-shift by surprise), and who is told when an update arrives, a proposal is answered, a sponsorship changes or an LTI tool needs registering: the administrators (unless turned off) and members of the roles chosen.</value>
+  </data>
+  <data name="Feature.protocol-sets" xml:space="preserve">
+    <value>Protocol Sets</value>
+  </data>
+  <data name="FeaturePurpose.protocol-sets" xml:space="preserve">
+    <value>Publish protocols to linked departments as a regional set, or subscribe to a county, medical director or corporate set. Locked content follows the publisher, customizable blocks keep local phone numbers and resources, every new version arrives as a redline in the update inbox and goes into force at your update time, and members propose changes upstream.</value>
+  </data>
+  <data name="Feature.linked-department-protocols" xml:space="preserve">
+    <value>Linked Department Protocols</value>
+  </data>
+  <data name="FeaturePurpose.linked-department-protocols" xml:space="preserve">
+    <value>Read a mutual-aid partner's published protocols over a Department Link that shares Protocols, read-only and only the version in force. Restricted, licensed and uploaded-document protocols are never shared, and turning the share off cuts access at once.</value>
+  </data>
+  <data name="Feature.course-sets" xml:space="preserve">
+    <value>Course Sets</value>
+  </data>
+  <data name="FeaturePurpose.course-sets" xml:space="preserve">
+    <value>Publish trainings (and, with the LMS, courses and learning paths) to linked organizations as a set; subscribers receive their own copies, locked or open as the publisher chooses, and each update arrives in their inbox to go into force at their update time. Trainings need no add-on, and quiz changes flow down with each update.</value>
+  </data>
+  <data name="Feature.lms-sponsorship" xml:space="preserve">
+    <value>Sponsored LMS Seats</value>
+  </data>
+  <data name="FeaturePurpose.lms-sponsorship" xml:space="preserve">
+    <value>Pay for a linked department's LMS-enabled members from your own packs, optionally up to a seat limit. The sponsored department needs no add-on, may be on the free plan, runs your course sets only and sees who pays; ending the sponsorship or the link lapses access with the usual lapse rules.</value>
+  </data>
+  <data name="Setting.StepUpPolicy" xml:space="preserve">
+    <value>Step-Up Verification Policy</value>
+  </data>
+  <data name="SettingHelp.StepUpPolicy" xml:space="preserve">
+    <value>Where members must confirm it is them again (signatures, read-and-sign, approvals, protected data), whether it is optional, and whether a password or an identity provider sign-in may be used besides two-factor authentication. Check the members without two-factor authentication the page lists before requiring it.</value>
+  </data>
+  <data name="Field.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>Step-Up Verification Policy / Areas</value>
+  </data>
+  <data name="FieldHelp.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>One entry per area that differs from the default. An area with no entry requires two-factor step-up where it did before.</value>
+  </data>
+  <data name="Field.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Step-Up Area / Area</value>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Which actions the entry is for: 1 signatures, 2 read-and-sign acknowledgments, 3 approval decisions, 4 protected data.</value>
+  </data>
+  <data name="Field.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Step-Up Area / Optional</value>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Step-up is not required for signatures or approval decisions: they are signed with the signed-in session unless the member has verified recently. Read-and-sign uses the protocol library switch and protected data the ADP exemptions instead.</value>
+  </data>
+  <data name="Field.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Step-Up Area / Alternative Methods</value>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Kinds of verification accepted besides two-factor authentication: 2 a fresh sign-in with the identity provider, 4 the account password entered again. Neither is a second factor; for protected data only the managing member can change this, and a change ends the grants already issued.</value>
+  </data>
+  <data name="Feature.lms-course-sets" xml:space="preserve">
+    <value>LMS Courses And Paths In Sets</value>
+  </data>
+  <data name="FeaturePurpose.lms-course-sets" xml:space="preserve">
+    <value>LMS courses and learning paths travel in course sets: hosted video and SCORM or cmi5 packages are shared with the subscriber, an LTI lesson uses the subscriber's own registration with the tool (its managers are told to finish it), and a path points at the subscriber's copies of its courses. Needs the subscriber's LMS add-on or the publisher's sponsorship.</value>
+  </data>
+  <data name="Feature.deployment-partner-acceptance" xml:space="preserve">
+    <value>Partner Acceptance Of Deployments</value>
+  </data>
+  <data name="FeaturePurpose.deployment-partner-acceptance" xml:space="preserve">
+    <value>When a deployment order is filled for a linked organization on Resgrid, name it as the partner: each fill you accept asks its administrators to accept the assignment with a step-up signature over the link, and the deployment shows who accepted it and when.</value>
+  </data>
+  <data name="Feature.department-link-acceptance" xml:space="preserve">
+    <value>Signed Link Acceptance</value>
+  </data>
+  <data name="FeaturePurpose.department-link-acceptance" xml:space="preserve">
+    <value>Accepting a link from another organization is a step-up signature by one of your administrators, bound to the two organizations and what each shares at that moment; without the step-up the link stays unaccepted.</value>
+  </data>
+  <data name="Area.workforce-pro" xml:space="preserve">
+    <value>Workforce Pro</value>
+  </data>
+  <data name="AreaPurpose.workforce-pro" xml:space="preserve">
+    <value>The paid per-member add-on for member wellness and workplace exposure records: exposure log, exposure cases, injuries and medical clearances.</value>
+  </data>
+  <data name="AreaValue.workforce-pro" xml:space="preserve">
+    <value>Long-term exposure and injury records for the members who need them, paid per 25-member pack, readable for life even if the add-on ends.</value>
+  </data>
+  <data name="AreaExample.workforce-pro" xml:space="preserve">
+    <value>A combination department buys two packs for its 40 career staff, switches Workforce Pro on for them and leaves its volunteers off.</value>
+  </data>
+  <data name="ModuleAdoption.workforce-pro" xml:space="preserve">
+    <value>Buy packs on the Workforce Pro add-on page, switch Workforce Pro on for the members whose records you keep, then choose the wellness roles in the wellness settings.</value>
+  </data>
+  <data name="Feature.addon-workforce-pro" xml:space="preserve">
+    <value>Workforce Pro Add-on</value>
+  </data>
+  <data name="FeaturePurpose.addon-workforce-pro" xml:space="preserve">
+    <value>Buy Workforce Pro in 25-member packs and change the number of packs, with the price shown before any change.</value>
+  </data>
+  <data name="FeatureValue.addon-workforce-pro" xml:space="preserve">
+    <value>Graduated tiers make large rosters cheaper per member, there is no setup fee, and added packs are prorated.</value>
+  </data>
+  <data name="FeatureExample.addon-workforce-pro" xml:space="preserve">
+    <value>A department with 60 members switched on holds 3 packs; when it reaches 76 it adds a fourth and pays the prorated difference at once.</value>
+  </data>
+  <data name="FeatureAdoption.addon-workforce-pro" xml:space="preserve">
+    <value>In Subscription, open the Workforce Pro card, choose the number of packs and check out. Removing packs takes effect at the next billing date.</value>
+  </data>
+  <data name="Feature.workforce-pro-seats" xml:space="preserve">
+    <value>Workforce Pro Seats</value>
+  </data>
+  <data name="FeaturePurpose.workforce-pro-seats" xml:space="preserve">
+    <value>Switch Workforce Pro on for the members whose wellness and workplace exposure records you keep, within the seats your packs buy.</value>
+  </data>
+  <data name="FeatureValue.workforce-pro-seats" xml:space="preserve">
+    <value>You pay only for those members; officers and managers acting on others need their permission, not a seat.</value>
+  </data>
+  <data name="FeatureExample.workforce-pro-seats" xml:space="preserve">
+    <value>A combination department switches Workforce Pro on for its 40 career staff and leaves its volunteers off.</value>
+  </data>
+  <data name="FeatureSetup.workforce-pro-seats" xml:space="preserve">
+    <value>Open Workforce Pro seats from the Workforce Pro add-on page and switch members on. Switching a member off never deletes a record: their records become read-only.</value>
   </data>
 </root>

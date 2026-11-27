@@ -37,6 +37,9 @@ namespace Resgrid.Tests.Rms
 			var seam = RmsProtectedFields.AllFieldIds().ToHashSet();
 			var bindings = AdpTableBindings.V1.Select(b => b.TableName.ToLowerInvariant()).ToHashSet();
 
+			// Catalog 39 (round 8) puts the outside signer of a Records-owned signature in the Records family; its write seam is the
+			// ContentProtectedFields accessor maps (SignatureRequestService.Protection.cs), not RmsProtectedFields.
+			seam.UnionWith(Resgrid.Model.ContentProtectedFields.Signers.Keys.Concat(Resgrid.Model.ContentProtectedFields.Records.Keys).Concat(Resgrid.Model.ContentProtectedFields.Captures.Keys));
 			foreach (var entry in catalog.GetAll().Where(e => e.Family == RmsProtectedFields.Family))
 			{
 				seam.Should().Contain(entry.FieldId, $"a cataloged column without a write seam would ship plaintext: {entry.FieldId}");

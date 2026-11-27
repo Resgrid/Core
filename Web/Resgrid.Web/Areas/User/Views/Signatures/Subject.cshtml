@@ -1,0 +1,44 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Signatures.SignatureSubjectPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    A signed subject without a page of its own (e-Signature S3, Readiness Pro: the equipment issue receipt): what is signed and
+    the shared signature panel — the member recipient signs in Resgrid at L2, or the recipient signs in person on this device.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + Model.Info.Title;
+    ViewData["Title"] = signatureText["IssueReceiptTitle"].Value;
+    ViewData["Subtitle"] = Model.Info.Title;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Signatures/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-hand-paper-o" aria-hidden="true"></i> @Model.Info.Title</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted small"><i class="fa fa-hashtag" aria-hidden="true"></i> @signatureText["ContentCodeLabel"] <span class="rgw-mono">@SignaturePolicy.ShortCode(Model.Info.RevisionSha256)</span> · @signatureText["BindsToContentHelp"]</p>
+            @if (!Model.CanRequest)
+            {
+                <div class="rgw-next-action" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @signatureText["ReadinessProRequiredMessage"]</div>
+            }
+            @await Component.InvokeAsync("SignatureRequests", new
+            {
+                kind = Model.Kind,
+                subjectId = Model.SubjectId,
+                canRequest = Model.CanRequest,
+                returnUrl = Url.Action("Subject", "Signatures", new { area = "User", kind = (int)Model.Kind, subjectId = Model.SubjectId }),
+                suggestedName = Model.MemberSignerName,
+                memberSignerUserId = Model.MemberSignerUserId,
+                memberSignerName = Model.MemberSignerName,
+                memberSignerRole = SignatureSignerRoles.Recipient
+            })
+            <a class="btn btn-link" href="@Model.ReturnUrl"><i class="fa fa-arrow-left" aria-hidden="true"></i> @signatureText["BackLink"]</a>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

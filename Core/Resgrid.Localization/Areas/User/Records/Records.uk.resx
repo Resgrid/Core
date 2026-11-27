@@ -2298,4 +2298,72 @@
   <data name="RatedFlowHelp" xml:space="preserve">
     <value>Номінальна витрата за NFPA 291: виміряна витрата × ((статичний − 20) / (статичний − залишковий))^0.54. Клас витрати визначається з неї, коли введено статичний і залишковий тиск.</value>
   </data>
+  <data name="DeploymentPartner" xml:space="preserve">
+    <value>Пов'язаний партнер</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerNone" xml:space="preserve">
+    <value>Немає пов'язаного партнера</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSave" xml:space="preserve">
+    <value>Зберегти партнера</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerHelp" xml:space="preserve">
+    <value>Якщо агенція, для якої виконується це замовлення, є пов'язаною організацією в Resgrid, виберіть її тут. Тоді кожне прийняте заповнення проситиме її адміністраторів прийняти призначення підписом із повторним підтвердженням особи (step-up).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSaved" xml:space="preserve">
+    <value>Пов'язаного партнера збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerRequested" xml:space="preserve">
+    <value>Пов'язаного партнера попросили прийняти призначення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerAsk" xml:space="preserve">
+    <value>Попросити партнера прийняти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotLinked" xml:space="preserve">
+    <value>Зв'язок із цією організацією не ввімкнено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorClosedOut" xml:space="preserve">
+    <value>Розгортання закрито.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorConflict" xml:space="preserve">
+    <value>Хтось інший змінив це розгортання одночасно з вами. Спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotFound" xml:space="preserve">
+    <value>Розгортання не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotAuthorized" xml:space="preserve">
+    <value>Ви не можете змінити це розгортання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateRequested" xml:space="preserve">
+    <value>Запит партнеру надіслано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateSigned" xml:space="preserve">
+    <value>Партнер прийняв</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateDeclined" xml:space="preserve">
+    <value>Партнер відхилив</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateLapsed" xml:space="preserve">
+    <value>Запит до партнера втратив чинність</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateNone" xml:space="preserve">
+    <value>Немає підпису партнера</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

@@ -1,0 +1,130 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model WellnessFlagCallView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.Wellness> localizer
+@*
+    Post-call wellness flags (member wellness WL0). Flagging a call as a critical incident (or as a call where members were exposed to
+    a category) asks worker 91 to suggest an entry to every member the dispatch data places on it, once the call has ended. Members
+    confirm or dismiss their own suggestion; nothing is recorded without a person confirming it. This critical-incident flag is not the
+    call's dispatch priority.
+*@
+@{
+    var title = Model.CallId.HasValue ? string.Format(localizer["FlagCallTitle"].Value, Model.CallNumber) : localizer["FlagCallPickerTitle"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Flags";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["FlagCallIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.CallId.HasValue)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-phone" aria-hidden="true"></i> @localizer["RecentCallsHeader"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.RecentCalls.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoRecentCalls"]</p>
+                }
+                else
+                {
+                    <ul class="list-unstyled wellness-call-list">
+                        @foreach (var call in Model.RecentCalls)
+                        {
+                            <li><a asp-controller="Wellness" asp-action="FlagCall" asp-route-area="User" asp-route-callId="@call.CallId"><i class="fa fa-flag-o" aria-hidden="true"></i> @call.Label</a></li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-phone" aria-hidden="true"></i> @Model.CallNumber · @Model.CallName</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@Model.CallDate</p>
+                @if (Model.CallActive)
+                {
+                    <div class="alert alert-info" role="status"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["CallActiveNotice"]</div>
+                }
+
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["CategoryColumn"]</th>
+                                <th>@localizer["StateColumn"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var category in WellnessPresentation.Categories)
+                            {
+                                var flag = Model.Flags.FirstOrDefault(f => f.Category == category);
+                                <tr>
+                                    <td>
+                                        @localizer[WellnessPresentation.CategoryKey(category)]
+                                        @if (category == (int)ResponderExposureCategories.CriticalIncident)
+                                        {
+                                            <small class="rgw-sub text-muted">@localizer["CriticalIncidentHelp"]</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @if (flag == null || !flag.IsActive)
+                                        {
+                                            <span class="text-muted">@localizer["NotFlaggedLabel"]</span>
+                                        }
+                                        else if (flag.SuggestionsGeneratedOn.HasValue)
+                                        {
+                                            <span class="label label-primary"><i class="fa fa-flag" aria-hidden="true"></i> @string.Format(localizer["SuggestionsBuiltValue"].Value, flag.SuggestionCount)</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-warning"><i class="fa fa-flag" aria-hidden="true"></i> @localizer["SuggestionsPendingLabel"]</span>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        @if (flag == null || !flag.IsActive)
+                                        {
+                                            <form method="post" asp-controller="Wellness" asp-action="FlagCall" asp-route-area="User" class="wellness-inline-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="callId" value="@Model.CallId" />
+                                                <input type="hidden" name="category" value="@category" />
+                                                <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-flag" aria-hidden="true"></i> @localizer["FlagButton"]</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <form method="post" asp-controller="Wellness" asp-action="ClearCallFlag" asp-route-area="User" class="wellness-inline-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="callId" value="@Model.CallId" />
+                                                <input type="hidden" name="flagId" value="@flag.RmsCallExposureFlagId" />
+                                                <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-times" aria-hidden="true"></i> @localizer["ClearFlagButton"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted small">@localizer["FlagPrivacyHelp"]</p>
+                <a class="btn btn-default btn-sm" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@Model.CallId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToCallButton"]</a>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .wellness-inline-form { display: inline-block; }
+        .wellness-call-list li { padding: 4px 0; }
+    </style>
+}

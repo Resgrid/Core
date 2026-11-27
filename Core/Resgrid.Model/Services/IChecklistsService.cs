@@ -35,6 +35,14 @@ namespace Resgrid.Model.Services
 		Task<List<ChecklistHistoryEntry>> HistoryAsync(ChecklistActor actor, string definitionId, int page = 0, bool includeNext = false);
 		Task<int> SaveRunAsync(ChecklistActor actor, string id, ChecklistRunInput input, bool submit);
 		Task WitnessAsync(ChecklistActor actor, string id, string submissionHash, string attestation);
+		/// <summary>
+		/// S3: the witness step of a form that requires a witness signature. Inside the witness transaction, after every witness rule
+		/// passed, <paramref name="sign"/> is given the run and its operational content hash and records the L2 signature; when it
+		/// returns false nothing is written (the transaction rolls back).
+		/// </summary>
+		Task WitnessWithSignatureAsync(ChecklistActor actor, string id, string submissionHash, string attestation, Func<ChecklistRunView, string, Task<bool>> sign);
+		/// <summary>S3: the completion's operational content hash as stored now (null before it is submitted).</summary>
+		Task<string> WitnessArtifactHashAsync(ChecklistActor actor, string id);
 		Task AddFileAsync(ChecklistActor actor, string id, string itemId, string fileName, string contentType, byte[] data);
 		Task<ChecklistCompletionFile> GetFileAsync(ChecklistActor actor, string id);
 		Task DeleteFileAsync(ChecklistActor actor, string id);

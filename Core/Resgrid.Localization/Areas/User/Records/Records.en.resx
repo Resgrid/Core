@@ -2298,4 +2298,55 @@
   <data name="RatedFlowHelp" xml:space="preserve">
     <value>NFPA 291 rated flow: observed flow × ((static − 20) / (static − residual))^0.54. The flow class is read from it when static and residual are entered.</value>
   </data>
+  <data name="DeploymentPartner" xml:space="preserve">
+    <value>Linked partner</value>
+  </data>
+  <data name="DeploymentPartnerNone" xml:space="preserve">
+    <value>No linked partner</value>
+  </data>
+  <data name="DeploymentPartnerSave" xml:space="preserve">
+    <value>Save partner</value>
+  </data>
+  <data name="DeploymentPartnerHelp" xml:space="preserve">
+    <value>When the agency this order is filled for is a linked organization on Resgrid, choose it here. Each accepted fill then asks its administrators to accept the assignment with a step-up signature.</value>
+  </data>
+  <data name="DeploymentPartnerSaved" xml:space="preserve">
+    <value>The linked partner was saved.</value>
+  </data>
+  <data name="DeploymentPartnerRequested" xml:space="preserve">
+    <value>The linked partner was asked to accept the assignment.</value>
+  </data>
+  <data name="DeploymentPartnerAsk" xml:space="preserve">
+    <value>Ask partner to accept</value>
+  </data>
+  <data name="DeploymentPartnerErrorNotLinked" xml:space="preserve">
+    <value>The link to that organization is not enabled.</value>
+  </data>
+  <data name="DeploymentPartnerErrorClosedOut" xml:space="preserve">
+    <value>The deployment is closed out.</value>
+  </data>
+  <data name="DeploymentPartnerErrorConflict" xml:space="preserve">
+    <value>Someone else changed this deployment at the same time. Try again.</value>
+  </data>
+  <data name="DeploymentPartnerErrorNotFound" xml:space="preserve">
+    <value>The deployment was not found.</value>
+  </data>
+  <data name="DeploymentPartnerErrorNotAuthorized" xml:space="preserve">
+    <value>You cannot change this deployment.</value>
+  </data>
+  <data name="DeploymentPartnerStateRequested" xml:space="preserve">
+    <value>Partner asked</value>
+  </data>
+  <data name="DeploymentPartnerStateSigned" xml:space="preserve">
+    <value>Partner accepted</value>
+  </data>
+  <data name="DeploymentPartnerStateDeclined" xml:space="preserve">
+    <value>Partner declined</value>
+  </data>
+  <data name="DeploymentPartnerStateLapsed" xml:space="preserve">
+    <value>Partner request lapsed</value>
+  </data>
+  <data name="DeploymentPartnerStateNone" xml:space="preserve">
+    <value>No partner signature</value>
+  </data>
 </root>

@@ -179,4 +179,76 @@
   <data name="NotAttending" xml:space="preserve">
     <value>Ich nehme nicht teil</value>
   </data>
+  <data name="CredentialAudienceLabel" xml:space="preserve">
+    <value>Nach Zertifizierung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceNone" xml:space="preserve">
+    <value>Niemand nach Zertifizierung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceStatus" xml:space="preserve">
+    <value>Zertifizierungsstatus</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceExpired" xml:space="preserve">
+    <value>ist abgelaufen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceExpiring" xml:space="preserve">
+    <value>läuft innerhalb der Tage ab</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceMissing" xml:space="preserve">
+    <value>nie besessen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceDays" xml:space="preserve">
+    <value>Tage</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceHelp" xml:space="preserve">
+    <value>Fügt die aktiven Mitglieder hinzu, deren Zertifizierung zutrifft, zusätzlich zu den oben gewählten Empfängern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CredentialAudienceNoMatch" xml:space="preserve">
+    <value>Kein Mitglied entspricht dem gewählten Zertifizierungsstatus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceLabel" xml:space="preserve">
+    <value>Kursteilnehmende</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceNone" xml:space="preserve">
+    <value>Kein Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceStatus" xml:space="preserve">
+    <value>Status auf der Liste</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceEnrolled" xml:space="preserve">
+    <value>Angemeldet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceAttended" xml:space="preserve">
+    <value>Anwesend</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceAbsent" xml:space="preserve">
+    <value>Abwesend</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceWaitlisted" xml:space="preserve">
+    <value>Auf der Warteliste</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceHelp" xml:space="preserve">
+    <value>Fügt den Empfängern oben die aktiven Mitglieder des Kurses mit diesem Status hinzu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RosterAudienceNoMatch" xml:space="preserve">
+    <value>Niemand auf der Liste dieses Kurses hat diesen Status.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

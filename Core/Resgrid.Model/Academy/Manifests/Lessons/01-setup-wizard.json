@@ -1,0 +1,200 @@
+{
+  "schema": 1,
+  "id": "01-setup-wizard",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Setup wizard",
+  "minutes": 7.9,
+  "walkthrough": true,
+  "audience": [
+    "administrator"
+  ],
+  "visibility": [],
+  "pages": [],
+  "adminAssist": {
+    "areas": [
+      "security"
+    ],
+    "capabilities": [
+      "setup-help",
+      "module-settings"
+    ]
+  },
+  "media": {
+    "video": "deep-dive/media/01-setup-wizard.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "deep-dive/lessons/01-setup-wizard/captions.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Set up a department with the nine-step wizard",
+    "ar": "أعد إدارة باستخدام معالج الخطوات التسع",
+    "de": "Eine Organisation mit dem Neun-Schritte-Assistenten einrichten",
+    "el": "Ρυθμίστε μια υπηρεσία με τον οδηγό εννέα βημάτων",
+    "es": "Configurar un departamento con el asistente de nueve pasos",
+    "fr": "Configurer un service avec l’assistant en neuf étapes",
+    "it": "Configurare un dipartimento con la procedura in nove passi",
+    "pl": "Skonfiguruj jednostkę kreatorem w dziewięciu krokach",
+    "sv": "Sätt upp en organisation med guiden i nio steg",
+    "uk": "Налаштуйте підрозділ за допомогою майстра з дев’яти кроків"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "What does the setup wizard help a new department do?",
+        "ar": "بمَ يساعد معالج الإعداد إدارة جديدة؟",
+        "de": "Wobei hilft der Einrichtungsassistent einer neuen Organisation?",
+        "el": "Σε τι βοηθά ο οδηγός ρύθμισης μια νέα υπηρεσία;",
+        "es": "¿En qué ayuda el asistente de configuración a un departamento nuevo?",
+        "fr": "À quoi l’assistant de configuration aide-t-il un nouveau service ?",
+        "it": "In che cosa aiuta la procedura di configurazione un nuovo dipartimento?",
+        "pl": "W czym kreator konfiguracji pomaga nowej jednostce?",
+        "sv": "Vad hjälper installationsguiden en ny organisation med?",
+        "uk": "У чому майстер налаштування допомагає новому підрозділу?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Configure the basics step by step",
+            "ar": "ضبط الأساسيات خطوة بخطوة",
+            "de": "Die Grundlagen Schritt für Schritt einrichten",
+            "el": "Ρύθμιση των βασικών βήμα προς βήμα",
+            "es": "Configurar lo básico paso a paso",
+            "fr": "Configurer l’essentiel pas à pas",
+            "it": "Configurare le basi passo dopo passo",
+            "pl": "Skonfigurować podstawy krok po kroku",
+            "sv": "Ställa in grunderna steg för steg",
+            "uk": "Налаштувати основне крок за кроком"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Delete the department",
+            "ar": "حذف الإدارة",
+            "de": "Die Organisation löschen",
+            "el": "Διαγραφή της υπηρεσίας",
+            "es": "Eliminar el departamento",
+            "fr": "Supprimer le service",
+            "it": "Eliminare il dipartimento",
+            "pl": "Usunąć jednostkę",
+            "sv": "Radera organisationen",
+            "uk": "Видалити підрозділ"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Pay invoices",
+            "ar": "دفع الفواتير",
+            "de": "Rechnungen bezahlen",
+            "el": "Πληρωμή τιμολογίων",
+            "es": "Pagar facturas",
+            "fr": "Payer des factures",
+            "it": "Pagare fatture",
+            "pl": "Opłacić faktury",
+            "sv": "Betala fakturor",
+            "uk": "Оплатити рахунки"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "Can settings from the wizard be changed later?",
+        "ar": "هل يمكن تغيير إعدادات المعالج لاحقًا؟",
+        "de": "Lassen sich Einstellungen aus dem Assistenten später ändern?",
+        "el": "Μπορούν οι ρυθμίσεις του οδηγού να αλλάξουν αργότερα;",
+        "es": "¿Se pueden cambiar después los ajustes del asistente?",
+        "fr": "Peut-on modifier plus tard les réglages de l’assistant ?",
+        "it": "Le impostazioni della procedura si possono cambiare in seguito?",
+        "pl": "Czy ustawienia z kreatora można później zmienić?",
+        "sv": "Kan inställningarna från guiden ändras senare?",
+        "uk": "Чи можна згодом змінити налаштування з майстра?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Never",
+            "ar": "أبدًا",
+            "de": "Nie",
+            "el": "Ποτέ",
+            "es": "Nunca",
+            "fr": "Jamais",
+            "it": "Mai",
+            "pl": "Nigdy",
+            "sv": "Aldrig",
+            "uk": "Ніколи"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Only by Resgrid staff",
+            "ar": "فقط بواسطة فريق Resgrid",
+            "de": "Nur durch Resgrid-Mitarbeiter",
+            "el": "Μόνο από το προσωπικό του Resgrid",
+            "es": "Solo el personal de Resgrid",
+            "fr": "Seulement par l’équipe Resgrid",
+            "it": "Solo dal personale Resgrid",
+            "pl": "Tylko przez pracowników Resgrid",
+            "sv": "Bara av Resgrids personal",
+            "uk": "Лише працівниками Resgrid"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Yes, in the department settings",
+            "ar": "نعم، في إعدادات الإدارة",
+            "de": "Ja, in den Einstellungen der Organisation",
+            "el": "Ναι, στις ρυθμίσεις της υπηρεσίας",
+            "es": "Sí, en los ajustes del departamento",
+            "fr": "Oui, dans les paramètres du service",
+            "it": "Sì, nelle impostazioni del dipartimento",
+            "pl": "Tak, w ustawieniach jednostki",
+            "sv": "Ja, i organisationens inställningar",
+            "uk": "Так, у налаштуваннях підрозділу"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "The wizard covers basics such as time zone, groups and units.",
+        "ar": "يغطي المعالج الأساسيات مثل المنطقة الزمنية والمجموعات والوحدات.",
+        "de": "Der Assistent deckt Grundlagen wie Zeitzone, Gruppen und Einheiten ab.",
+        "el": "Ο οδηγός καλύπτει βασικά όπως ζώνη ώρας, ομάδες και μονάδες.",
+        "es": "El asistente cubre lo básico, como zona horaria, grupos y unidades.",
+        "fr": "L’assistant couvre l’essentiel, comme le fuseau horaire, les groupes et les unités.",
+        "it": "La procedura copre le basi come fuso orario, gruppi e mezzi.",
+        "pl": "Kreator obejmuje podstawy, takie jak strefa czasowa, grupy i jednostki.",
+        "sv": "Guiden täcker grunder som tidszon, grupper och enheter.",
+        "uk": "Майстер охоплює основне: часовий пояс, групи та підрозділи."
+      }
+    }
+  ]
+}

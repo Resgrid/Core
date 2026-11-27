@@ -153,6 +153,8 @@
 		</div>
 	</div>
 </div>
+@* The member's LMS seat (department admins, LMS on); the Shifts plan puts the Workforce Pro switch beside it. *@
+@await Component.InvokeAsync("LmsSeatSwitch", new { userId = Model.User.Id })
 @if (!string.IsNullOrEmpty(Model.UdfReadOnlyHtml))
 {
     <div class="row">

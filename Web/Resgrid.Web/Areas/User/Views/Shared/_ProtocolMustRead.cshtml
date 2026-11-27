@@ -1,0 +1,19 @@
+@using Resgrid.Model
+@model List<Resgrid.Model.ProtocolAcknowledgmentItem>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The must-read card at the top of home (P2 R-P7): the priority bulletins in force the member has not acknowledged. Home only:
+    never the dispatch console, a call or a status change (ProtocolBulletinPlacementTests pins where it is rendered).
+*@
+<div class="rgw-next-action rg-must-read" role="region" aria-label="@localizer["MustReadHeader"]" style="border-left: 4px solid #ed5565; background: #fff; padding: 10px 14px; margin-bottom: 15px;">
+    <strong><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["MustReadHeader"]</strong>
+    <ul class="list-unstyled m-b-none m-t-xs">
+        @foreach (var item in Model)
+        {
+            <li class="m-b-xs">
+                <span>@item.Name</span>
+                <a class="btn btn-xs btn-danger" asp-controller="ProtocolAcknowledgments" asp-action="Read" asp-route-area="User" asp-route-versionId="@item.Acknowledgment.ProtocolVersionId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ReadBulletinButton"]</a>
+            </li>
+        }
+    </ul>
+</div>

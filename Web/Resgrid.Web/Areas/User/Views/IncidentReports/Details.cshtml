@@ -4,6 +4,7 @@
 @model Resgrid.Web.Areas.User.Models.Records.IncidentReportDetailView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.Records> localizer
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Records.ReportSources> sourcesLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> sealedText
 @{
 	ViewBag.Title = "Resgrid | " + localizer["ViewIncidentReport"];
 	var a = Model.Aggregate;
@@ -76,6 +77,7 @@
 					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@localizer["Export"] <span class="caret"></span></button>
 					<ul class="dropdown-menu dropdown-menu-right">
 						<li><a asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="pdf"><i class="fa fa-print"></i> @localizer["Print"]</a></li>
+						<li><a asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="pdf" asp-route-sealedCopy="true"><i class="fa fa-shield" aria-hidden="true"></i> @sealedText["SealedPdfButton"]</a></li>
 						<li><a asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="json"><i class="fa fa-file-code-o"></i> @localizer["ExportJson"]</a></li>
 						<li><a asp-controller="RecordDocuments" asp-action="Export" asp-route-kind="IncidentReport" asp-route-id="@r.RmsIncidentReportId" asp-route-format="csv"><i class="fa fa-file-text-o"></i> @localizer["ExportCsv"]</a></li>
 					</ul>

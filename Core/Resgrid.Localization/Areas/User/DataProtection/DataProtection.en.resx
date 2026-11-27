@@ -191,7 +191,7 @@
     <value>Text, email, push and voice notifications send generic content by default ("A protected dispatch is available — sign in to Resgrid").</value>
   </data>
   <data name="Step1NotCompliance" xml:space="preserve">
-    <value>Advanced Data Protection alone is not HIPAA or ePCR compliance. It is one control inside a compliance program your agency still owns.</value>
+    <value>Advanced Data Protection alone is not HIPAA or other health-data compliance. It is one control inside a compliance program your agency still owns.</value>
   </data>
   <data name="Step2Header" xml:space="preserve">
     <value>Step 2 of 6 — Acknowledgements</value>
@@ -230,7 +230,7 @@
     <value>I understand Resgrid support cannot read protected values without an explicit, audited, department-approved support grant, and that key loss is recoverable only through the documented recovery process.</value>
   </data>
   <data name="AckNotHipaaCompliance" xml:space="preserve">
-    <value>I understand Advanced Data Protection alone is not HIPAA/ePCR compliance.</value>
+    <value>I understand Advanced Data Protection alone is not HIPAA or other health-data compliance.</value>
   </data>
   <data name="Step3Header" xml:space="preserve">
     <value>Step 3 of 6 — Preflight checks</value>

@@ -4714,4 +4714,8 @@
   <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
     <value>Rejestry nie są włączone dla Twojego działu, więc nie można tu zmienić numeracji rejestrów. Cofnij tę zmianę.</value>
   </data>
+  <data name="TabProtocols" xml:space="preserve">
+    <value>Protokoły</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

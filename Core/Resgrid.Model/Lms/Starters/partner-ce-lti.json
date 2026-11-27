@@ -1,0 +1,8 @@
+{
+  "key": "partner-ce-lti",
+  "revision": 1,
+  "kind": "partner",
+  "launch": "lti13",
+  "title": "Partner continuing education (LTI 1.3)",
+  "summary": "Accredited continuing-education courses from a content partner, launched from Resgrid over LTI 1.3 with completions reported back to the transcript. The partner keeps the accreditation and reports it; Resgrid hosts the launch."
+}

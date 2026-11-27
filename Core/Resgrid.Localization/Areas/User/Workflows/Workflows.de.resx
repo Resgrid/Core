@@ -1062,4 +1062,684 @@
   <data name="CredentialDeliversRecordsExport" xml:space="preserve">
     <value>Ein Workflow-Schritt sendet einen Berichtsexport (Datensätze) über diese Zugangsdaten. Zum Ändern sind daher die Berechtigungen "Berichte drucken und exportieren" und "Berichtsauswertungen verwalten" erforderlich (sowie "Eingeschränkte Abschnitte anzeigen", wenn der Export eingeschränkte Abschnitte enthält).</value>
   </data>
+  <data name="Trigger.DocumentSealed" xml:space="preserve">
+    <value>Dokument versiegelt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DocumentSealingFailed" xml:space="preserve">
+    <value>Versiegelung des Dokuments fehlgeschlagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolVersionPublished" xml:space="preserve">
+    <value>Protokollversion veröffentlicht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolRetired" xml:space="preserve">
+    <value>Protokoll außer Kraft gesetzt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolVersionExpired" xml:space="preserve">
+    <value>Protokollversion abgelaufen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolReviewDue" xml:space="preserve">
+    <value>Protokollüberprüfung fällig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolReviewOverdue" xml:space="preserve">
+    <value>Protokollüberprüfung überfällig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolBulletinIssued" xml:space="preserve">
+    <value>Prioritätsmitteilung herausgegeben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolBulletinWithdrawn" xml:space="preserve">
+    <value>Prioritätsmitteilung zurückgezogen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolTranslationApproved" xml:space="preserve">
+    <value>Protokollübersetzung genehmigt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolPublicLinkChanged" xml:space="preserve">
+    <value>Öffentlicher Protokolllink erstellt oder widerrufen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentAssigned" xml:space="preserve">
+    <value>Kenntnisnahme des Protokolls zugewiesen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentCompleted" xml:space="preserve">
+    <value>Kenntnisnahme des Protokolls abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentOverdue" xml:space="preserve">
+    <value>Kenntnisnahme des Protokolls überfällig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallDeterminantChanged" xml:space="preserve">
+    <value>Determinante des Einsatzes geändert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DispatchCaseReviewSent" xml:space="preserve">
+    <value>Prüfung des Einsatzfalls gesendet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DispatchCaseReviewAcknowledged" xml:space="preserve">
+    <value>Prüfung des Einsatzfalls bestätigt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExchangeListingReviewed" xml:space="preserve">
+    <value>Einreichung in der Community-Börse geprüft</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.KnowledgeGapRecorded" xml:space="preserve">
+    <value>Wissenslücke erfasst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseVersionPublished" xml:space="preserve">
+    <value>Kursversion veröffentlicht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseCompleted" xml:space="preserve">
+    <value>Kurs abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AssessmentGraded" xml:space="preserve">
+    <value>Prüfung bewertet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SkillEvaluationCompleted" xml:space="preserve">
+    <value>Fertigkeitsbewertung abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TaskBookClosed" xml:space="preserve">
+    <value>Aufgabenbuch geschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RequirementEnforcementUndone" xml:space="preserve">
+    <value>Durchsetzung der Anforderung rückgängig gemacht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingRequestSubmitted" xml:space="preserve">
+    <value>Schulungsantrag eingereicht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingRequestDecided" xml:space="preserve">
+    <value>Über Schulungsantrag entschieden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsAddonLapsed" xml:space="preserve">
+    <value>LMS-Zusatzpaket abgelaufen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsAddonReactivated" xml:space="preserve">
+    <value>LMS-Zusatzpaket reaktiviert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsDataExportReady" xml:space="preserve">
+    <value>Export der Ausbildungsdaten bereit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureStepAssigned" xml:space="preserve">
+    <value>Sie sind mit der Unterschrift an der Reihe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseAssigned" xml:space="preserve">
+    <value>Kurs zugewiesen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AssessmentAwaitingGrading" xml:space="preserve">
+    <value>Prüfung wartet auf Bewertung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseRetired" xml:space="preserve">
+    <value>Kurs außer Kraft gesetzt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsSeatsChanged" xml:space="preserve">
+    <value>LMS-Plätze oder -Pakete geändert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationIssuedByTraining" xml:space="preserve">
+    <value>Zertifikat durch Schulung ausgestellt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationRenewedByTraining" xml:space="preserve">
+    <value>Zertifikat durch Schulung verlängert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationRevokedByVoid" xml:space="preserve">
+    <value>Zertifikat durch Stornierung zurückgenommen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationRequirementsDue" xml:space="preserve">
+    <value>Zertifizierungsanforderungen fällig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionReceived" xml:space="preserve">
+    <value>Einreichung von Ausbildungsstunden eingegangen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionApproved" xml:space="preserve">
+    <value>Einreichung von Ausbildungsstunden genehmigt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionDenied" xml:space="preserve">
+    <value>Einreichung von Ausbildungsstunden nicht angenommen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionInfoRequested" xml:space="preserve">
+    <value>Weitere Angaben zu einer Ausbildungseinreichung angefordert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionResubmitted" xml:space="preserve">
+    <value>Einreichung von Ausbildungsstunden erneut eingereicht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingCompletionRecordingVoided" xml:space="preserve">
+    <value>Erfasster Ausbildungsabschluss storniert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureRequested" xml:space="preserve">
+    <value>Signatur angefordert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureCompleted" xml:space="preserve">
+    <value>Signaturanfrage abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureDeclined" xml:space="preserve">
+    <value>Signaturanfrage abgelehnt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureExpired" xml:space="preserve">
+    <value>Signaturanfrage abgelaufen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingAssigned" xml:space="preserve">
+    <value>Schulung zugewiesen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingCompleted" xml:space="preserve">
+    <value>Schulung abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingFailed" xml:space="preserve">
+    <value>Prüfung nicht bestanden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingOverdue" xml:space="preserve">
+    <value>Schulung überfällig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RequirementAtRisk" xml:space="preserve">
+    <value>Anforderung gefährdet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RequirementEnforced" xml:space="preserve">
+    <value>Anforderung durchgesetzt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalRequested" xml:space="preserve">
+    <value>Genehmigung angefordert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalGranted" xml:space="preserve">
+    <value>Genehmigung erteilt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalRejected" xml:space="preserve">
+    <value>Genehmigung abgelehnt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalEscalated" xml:space="preserve">
+    <value>Genehmigung eskaliert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassSessionScheduled" xml:space="preserve">
+    <value>Kurstermin geplant</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassSessionCancelled" xml:space="preserve">
+    <value>Kurstermin abgesagt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassSessionSignedOff" xml:space="preserve">
+    <value>Kurstermin abgezeichnet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassWaitlistPromoted" xml:space="preserve">
+    <value>Von der Kurs-Warteliste nachgerückt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingCompletionRecorded" xml:space="preserve">
+    <value>Schulungsabschluss erfasst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExternalLearnerRegistered" xml:space="preserve">
+    <value>Externer Lernender registriert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExternalLearnerEnrolled" xml:space="preserve">
+    <value>Externer Lernender eingeschrieben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExternalLearnerCompletedCourse" xml:space="preserve">
+    <value>Externer Lernender hat einen Kurs abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallAdded" xml:space="preserve">
+    <value>Einsatz hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallUpdated" xml:space="preserve">
+    <value>Einsatz aktualisiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallClosed" xml:space="preserve">
+    <value>Einsatz abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UnitStatusChanged" xml:space="preserve">
+    <value>Einheitenstatus geändert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PersonnelStaffingChanged" xml:space="preserve">
+    <value>Personalverfügbarkeit geändert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PersonnelStatusChanged" xml:space="preserve">
+    <value>Personalstatus geändert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UserCreated" xml:space="preserve">
+    <value>Benutzer erstellt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UserAssignedToGroup" xml:space="preserve">
+    <value>Benutzer einer Gruppe zugewiesen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DocumentAdded" xml:space="preserve">
+    <value>Dokument hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.NoteAdded" xml:space="preserve">
+    <value>Notiz hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UnitAdded" xml:space="preserve">
+    <value>Einheit hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LogAdded" xml:space="preserve">
+    <value>Protokoll hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CalendarEventAdded" xml:space="preserve">
+    <value>Kalendereintrag hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CalendarEventUpdated" xml:space="preserve">
+    <value>Kalendereintrag aktualisiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftCreated" xml:space="preserve">
+    <value>Schicht erstellt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftUpdated" xml:space="preserve">
+    <value>Schicht aktualisiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ResourceOrderAdded" xml:space="preserve">
+    <value>Ressourcenanforderung hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftTradeRequested" xml:space="preserve">
+    <value>Schichttausch angefragt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftTradeFilled" xml:space="preserve">
+    <value>Schichttausch erledigt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MessageSent" xml:space="preserve">
+    <value>Nachricht gesendet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingAdded" xml:space="preserve">
+    <value>Schulung hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingUpdated" xml:space="preserve">
+    <value>Schulung aktualisiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.FormSubmitted" xml:space="preserve">
+    <value>Formular eingereicht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PersonnelRoleChanged" xml:space="preserve">
+    <value>Personalrolle geändert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.GroupAdded" xml:space="preserve">
+    <value>Gruppe hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.GroupUpdated" xml:space="preserve">
+    <value>Gruppe aktualisiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CommandEstablished" xml:space="preserve">
+    <value>Einsatzleitung eingerichtet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ResourceAssigned" xml:space="preserve">
+    <value>Einsatzressource zugewiesen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ResourceReleased" xml:space="preserve">
+    <value>Einsatzressource freigegeben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ObjectiveCompleted" xml:space="preserve">
+    <value>Einsatzziel erreicht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CriticalParDetected" xml:space="preserve">
+    <value>Kritische PAR erkannt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CommandTransferred" xml:space="preserve">
+    <value>Einsatzleitung übergeben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentRoleAssigned" xml:space="preserve">
+    <value>Einsatzrolle zugewiesen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdHocResourceCreated" xml:space="preserve">
+    <value>Ad-hoc-Ressource erstellt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentChannelOpened" xml:space="preserve">
+    <value>Einsatzkanal geöffnet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentClosed" xml:space="preserve">
+    <value>Einsatzlage beendet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PublicIncidentNoteAdded" xml:space="preserve">
+    <value>Öffentliche Lagenotiz hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.InternalIncidentNoteAdded" xml:space="preserve">
+    <value>Interne Lagenotiz hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PublicIncidentDocumentAdded" xml:space="preserve">
+    <value>Öffentliches Lagedokument hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.InternalIncidentDocumentAdded" xml:space="preserve">
+    <value>Internes Lagedokument hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentNoteRemoved" xml:space="preserve">
+    <value>Lagenotiz entfernt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentDocumentRemoved" xml:space="preserve">
+    <value>Lagedokument entfernt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentActionPlanUpdated" xml:space="preserve">
+    <value>Einsatzplan aktualisiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentCommandPostUpdated" xml:space="preserve">
+    <value>Führungsstelle aktualisiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentPublicSharingEnabled" xml:space="preserve">
+    <value>Öffentliche Freigabe der Lage aktiviert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentPublicSharingDisabled" xml:space="preserve">
+    <value>Öffentliche Freigabe der Lage deaktiviert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RunCardActivated" xml:space="preserve">
+    <value>Alarmplan ausgelöst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallAlarmEscalated" xml:space="preserve">
+    <value>Alarmstufe des Einsatzes erhöht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DispatchShortfallDetected" xml:space="preserve">
+    <value>Unterdeckung bei der Alarmierung erkannt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.StationCoverageGapDetected" xml:space="preserve">
+    <value>Abdeckungslücke einer Wache erkannt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordCreated" xml:space="preserve">
+    <value>Bericht erstellt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmittedForReview" xml:space="preserve">
+    <value>Bericht zur Prüfung gesendet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordReturnedForCorrection" xml:space="preserve">
+    <value>Bericht zur Korrektur zurückgegeben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordApproved" xml:space="preserve">
+    <value>Bericht genehmigt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordFinalized" xml:space="preserve">
+    <value>Bericht abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordAmended" xml:space="preserve">
+    <value>Bericht geändert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordVoided" xml:space="preserve">
+    <value>Bericht annulliert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordCancelled" xml:space="preserve">
+    <value>Bericht verworfen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionQueued" xml:space="preserve">
+    <value>Berichtsübermittlung eingereiht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionAccepted" xml:space="preserve">
+    <value>Berichtsübermittlung angenommen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionRejected" xml:space="preserve">
+    <value>Berichtsübermittlung abgelehnt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionFailed" xml:space="preserve">
+    <value>Berichtsübermittlung fehlgeschlagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordOverdue" xml:space="preserve">
+    <value>Bericht überfällig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDefinitionPublished" xml:space="preserve">
+    <value>Berichtsvorlage veröffentlicht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDefinitionRetired" xml:space="preserve">
+    <value>Berichtsvorlage außer Betrieb genommen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordAttachmentAdded" xml:space="preserve">
+    <value>Anhang zum Bericht hinzugefügt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureRequested" xml:space="preserve">
+    <value>Auskunftsersuchen erfasst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureProduced" xml:space="preserve">
+    <value>Auskunftspaket erstellt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureReleased" xml:space="preserve">
+    <value>Auskunftspaket herausgegeben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureClosed" xml:space="preserve">
+    <value>Auskunftsersuchen abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordLegalHoldPlaced" xml:space="preserve">
+    <value>Rechtliche Aufbewahrungssperre gesetzt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordLegalHoldReleased" xml:space="preserve">
+    <value>Rechtliche Aufbewahrungssperre aufgehoben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordEvidenceCaptured" xml:space="preserve">
+    <value>Beweismittel zum Bericht gesichert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordPurged" xml:space="preserve">
+    <value>Bericht nach Aufbewahrungsfrist gelöscht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordExportScheduled" xml:space="preserve">
+    <value>Geplanter Berichtsexport bereit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordInspectionCompleted" xml:space="preserve">
+    <value>Begehung abgeschlossen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordViolationOverdue" xml:space="preserve">
+    <value>Mangelbeseitigung überfällig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordPermitExpiring" xml:space="preserve">
+    <value>Genehmigung läuft ab</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdminAssistFindingOpened" xml:space="preserve">
+    <value>Admin-Assist-Befund eröffnet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdminAssistFindingResolved" xml:space="preserve">
+    <value>Admin-Assist-Befund behoben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdminAssistFindingReopened" xml:space="preserve">
+    <value>Admin-Assist-Befund wieder eröffnet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleCreated" xml:space="preserve">
+    <value>Wiederkehrender Einsatzplan erstellt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleUpdated" xml:space="preserve">
+    <value>Wiederkehrender Einsatzplan aktualisiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallSchedulePaused" xml:space="preserve">
+    <value>Wiederkehrender Einsatzplan pausiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleResumed" xml:space="preserve">
+    <value>Wiederkehrender Einsatzplan fortgesetzt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleDeleted" xml:space="preserve">
+    <value>Wiederkehrender Einsatzplan gelöscht</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceCreated" xml:space="preserve">
+    <value>Wiederkehrender Einsatz erstellt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceSkipped" xml:space="preserve">
+    <value>Wiederkehrender Einsatz übersprungen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceDispatched" xml:space="preserve">
+    <value>Wiederkehrender Einsatz alarmiert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallAlertRaised" xml:space="preserve">
+    <value>Warnung zu wiederkehrendem Einsatz ausgelöst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallAlertResolved" xml:space="preserve">
+    <value>Warnung zu wiederkehrendem Einsatz behoben</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetUpdateArrived" xml:space="preserve">
+    <value>Aktualisierung einer Sammlung eingetroffen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetUpdateApplied" xml:space="preserve">
+    <value>Aktualisierung einer Sammlung in Kraft</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetSubscribed" xml:space="preserve">
+    <value>Abteilung hat eine Sammlung abonniert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetProposalReceived" xml:space="preserve">
+    <value>Änderung an einer Sammlung vorgeschlagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetProposalAnswered" xml:space="preserve">
+    <value>Vorschlag zu einer Sammlung beantwortet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsSponsorshipStarted" xml:space="preserve">
+    <value>LMS-Sponsoring begonnen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsSponsorshipEnded" xml:space="preserve">
+    <value>LMS-Sponsoring beendet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MutualAidCountersignRequested" xml:space="preserve">
+    <value>Gegenzeichnung (gegenseitige Hilfe) angefordert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MutualAidAgreementCountersigned" xml:space="preserve">
+    <value>Vereinbarung über gegenseitige Hilfe gegengezeichnet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MutualAidCountersignDeclined" xml:space="preserve">
+    <value>Gegenzeichnung (gegenseitige Hilfe) abgelehnt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDeploymentPartnerSignRequested" xml:space="preserve">
+    <value>Annahme durch Einsatzpartner angefordert</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDeploymentPartnerSignDecided" xml:space="preserve">
+    <value>Über Annahme durch Einsatzpartner entschieden</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

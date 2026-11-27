@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Invoicing;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Search;
@@ -28,6 +29,8 @@ namespace Resgrid.Services.Search
 		private const int SummaryMax = 1000;
 		private const int KeywordsMax = 400;
 		private const int SearchTextMax = 8000;
+		/// <summary>Protocols carry their body and file text (§24 wave 2), so they get the call-sized cap.</summary>
+		private const int ProtocolSearchTextMax = 32000;
 		/// <summary>Calls carry their dispatch notes and every call note in the full text, so they get more room than other families.</summary>
 		private const int CallSearchTextMax = 32000;
 
@@ -53,6 +56,10 @@ namespace Resgrid.Services.Search
 		private readonly IPoiTypesRepository _poiTypes;
 		private readonly IRmsOccupanciesRepository _occupancies;
 		private readonly IRmsOccupancyHazardsRepository _occupancyHazards;
+		private readonly IDepartmentsRepository _departmentRows;
+		private readonly IProtocolAudiencesRepository _protocolAudiences;
+		private readonly IProtocolFileTextsRepository _protocolFileTexts;
+		private readonly IProtocolVersionTranslationsRepository _protocolTranslations;
 
 		// One scope serves one request or one worker sweep; these keep a department rebuild from re-reading the same group,
 		// category or custom-field definition for every row.
@@ -69,16 +76,22 @@ namespace Resgrid.Services.Search
 		/// one projects the entity's own columns only. Repositories, not services, so the services that call the hooks never
 		/// form a construction cycle with this one.
 		/// </remarks>
+		/// <param name="protocolTranslations">Approved protocol translations (P3, round 5F): their text joins the protocol's row, audience-filtered as the source.</param>
 		public SearchProjectionService(ISearchProjectionsRepository projections, IDepartmentDataProtectionService dataProtection,
-			IDeploymentPersonnelRepository deploymentPersonnel = null, ICallNotesRepository callNotes = null,
+			IProtocolVersionTranslationsRepository protocolTranslations, IDeploymentPersonnelRepository deploymentPersonnel = null, ICallNotesRepository callNotes = null,
 			IAddressRepository addresses = null, IContactNotesRepository contactNotes = null, IContactCategoryRepository contactCategories = null,
 			IPersonnelRolesRepository personnelRoles = null, IDepartmentGroupMembersRepository groupMembers = null, IDepartmentGroupsRepository groups = null,
 			IDepartmentMemberSensitiveDataRepository memberSensitiveData = null, IUdfDefinitionRepository udfDefinitions = null,
 			IUdfFieldRepository udfFields = null, IUdfFieldValueRepository udfValues = null, ICallsRepository calls = null,
 			IUnitsRepository units = null, IContactsRepository contacts = null, IUserProfilesRepository profiles = null,
 			IDepartmentMembersRepository members = null, IPoiTypesRepository poiTypes = null,
-			IRmsOccupanciesRepository occupancies = null, IRmsOccupancyHazardsRepository occupancyHazards = null)
+			IRmsOccupanciesRepository occupancies = null, IRmsOccupancyHazardsRepository occupancyHazards = null, IDepartmentsRepository departmentRows = null,
+			IProtocolAudiencesRepository protocolAudiences = null, IProtocolFileTextsRepository protocolFileTexts = null)
 		{
+			_protocolTranslations = protocolTranslations;
+			_departmentRows = departmentRows;
+			_protocolAudiences = protocolAudiences;
+			_protocolFileTexts = protocolFileTexts;
 			_occupancies = occupancies;
 			_occupancyHazards = occupancyHazards;
 			_projections = projections ?? throw new ArgumentNullException(nameof(projections));
@@ -553,6 +566,10 @@ namespace Resgrid.Services.Search
 			if (document == null || document.DepartmentId <= 0 || document.DocumentId <= 0)
 				return null;
 
+			// A document moved to Protocols (R-P6) is found as the protocol now; its row is only the redirect.
+			if (document.MovedToProtocolId.HasValue)
+				return null;
+
 			var ctx = await ContextAsync(document.DepartmentId);
 			// A document's name is operational (2026-10-17); its description and original file name stay protected text.
 			var name = Safe(document.Name);
@@ -741,19 +758,74 @@ namespace Resgrid.Services.Search
 			if (name == null)
 				return null;
 
+			// P1 (R-P4): only a protocol in force is indexed, and only its published text (ProtocolText is the published
+			// version's; a draft's body never reaches the index). Returning null removes an earlier projection.
+			if (protocol.IsDeleted || !protocol.IsPublished)
+				return null;
+
+			var audience = protocol.Audiences;
+			if (audience == null && _protocolAudiences != null)
+				audience = await _protocolAudiences.GetForProtocolAsync(protocol.DepartmentId, protocol.DispatchProtocolId);
+			var rules = (audience ?? new List<ProtocolAudience>()).Where(a => a != null && a.DispatchProtocolId == protocol.DispatchProtocolId)
+				.Select(a => a.Kind.ToString(System.Globalization.CultureInfo.InvariantCulture) + ":" + (a.RefId ?? "")).OrderBy(x => x, StringComparer.Ordinal).ToList();
+
 			var ctx = await ContextAsync(protocol.DepartmentId);
 			var p = New(protocol.DepartmentId, SearchEntityTypes.Protocol, protocol.DispatchProtocolId.ToString(), ctx);
 			p.Title = Cap(name, TitleMax);
 			p.Summary = Cap(Strip(Safe(protocol.Description)), SummaryMax);
-			p.Keywords = Cap(Safe(protocol.Code), KeywordsMax);
-			p.SearchText = Cap(Join(" ", Strip(Safe(protocol.Description)), Strip(Safe(protocol.ProtocolText))), SearchTextMax);
+			p.Keywords = Cap(Join(" ", Safe(protocol.Code), Safe(protocol.Number), Safe(protocol.Tags)), KeywordsMax);
+			// Wave 2 (§24 Knowledge column): the published body and the extracted text of the version in force's file and of the
+			// attachments, so search over file text is audience-filtered exactly like the body (the row carries the audience).
+			var fileText = _protocolFileTexts == null ? null
+				: await _protocolFileTexts.GetSearchTextAsync(protocol.DepartmentId, protocol.DispatchProtocolId, protocol.CurrentVersionId, ProtocolSearchTextMax);
+			// Round 5F: the approved translations of the version in force join the same row, so a search in the member's language finds the
+			// protocol and the hit is filtered by the very same audience as the source (no translation ever has an audience of its own).
+			var (translationText, locales) = await ApprovedTranslationsAsync(protocol);
+			p.SearchText = Cap(Join(" ", Strip(Safe(protocol.Description)), Strip(Safe(protocol.ProtocolText)), Safe(fileText), translationText), ProtocolSearchTextMax);
 			p.Category = Safe(protocol.Code);
-			p.Status = protocol.IsDisabled ? "Disabled" : "Active";
+			// Status and audience travel with the row so the query can filter them; each hit is still checked against the
+			// reader (IAuthorizationService.CanUserViewProtocolAsync applies the same audience rule).
+			p.Status = protocol.IsDisabled ? "Disabled" : "Published";
 			p.IsActive = !protocol.IsDisabled;
 			p.OccurredOn = protocol.UpdatedOn ?? (protocol.CreatedOn == default ? DateTime.UtcNow : protocol.CreatedOn);
 			p.Url = $"/User/Protocols/View?id={protocol.DispatchProtocolId}";
-			p.MetadataJson = Json(new Dictionary<string, string> { ["Code"] = Safe(protocol.Code) });
+			p.MetadataJson = Json(new Dictionary<string, string>
+			{
+				["Code"] = Safe(protocol.Code),
+				["Kind"] = ((ProtocolKinds)protocol.Kind).ToString(),
+				["Status"] = ((ProtocolStatuses)protocol.Status).ToString(),
+				["VersionId"] = protocol.CurrentVersionId?.ToString(System.Globalization.CultureInfo.InvariantCulture),
+				["Audience"] = rules.Count == 0 ? "Everyone" : string.Join(",", rules),
+				["ExcludeFromAi"] = protocol.ExcludeFromAi ? "true" : "false",
+				["HasFileText"] = string.IsNullOrWhiteSpace(fileText) ? "false" : "true",
+				["Locales"] = locales.Count == 0 ? null : string.Join(",", locales)
+			});
 			return p;
+		}
+
+		/// <summary>
+		/// The plain text and locales of the approved translations of the protocol's version in force whose stored text still hashes to the
+		/// approved hash (a tampered row is left out, as the reading view does). Nothing when the repository is not there or fails.
+		/// </summary>
+		private async Task<(string Text, List<string> Locales)> ApprovedTranslationsAsync(DispatchProtocol protocol)
+		{
+			var locales = new List<string>();
+			if (_protocolTranslations == null || !protocol.CurrentVersionId.HasValue)
+				return (null, locales);
+			try
+			{
+				var approved = (await _protocolTranslations.GetForVersionAsync(protocol.DepartmentId, protocol.CurrentVersionId.Value, true) ?? new List<ProtocolVersionTranslation>())
+					.Where(t => t != null && t.DepartmentId == protocol.DepartmentId && t.ProtocolVersionId == protocol.CurrentVersionId.Value && t.IsApproved &&
+						!string.IsNullOrWhiteSpace(t.ContentHtml) && string.Equals(ProtocolContentHash.Compute(t.ContentHtml), t.ContentHash, StringComparison.Ordinal))
+					.OrderBy(t => t.Locale, StringComparer.OrdinalIgnoreCase).ToList();
+				locales.AddRange(approved.Select(t => t.Locale).Where(l => !string.IsNullOrWhiteSpace(l)).Distinct(StringComparer.OrdinalIgnoreCase));
+				return (approved.Count == 0 ? null : Join(" ", approved.Select(t => Strip(t.ContentHtml)).ToArray()), locales);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Translations of protocol {protocol.DispatchProtocolId} could not be read for search.");
+				return (null, locales);
+			}
 		}
 
 		public async Task<SearchProjection> BuildTrainingAsync(Training training)
@@ -769,8 +841,14 @@ namespace Resgrid.Services.Search
 			p.Title = Cap(name, TitleMax);
 			p.Summary = Cap(Strip(Safe(training.Description)), SummaryMax);
 			p.SearchText = Cap(Join(" ", Strip(Safe(training.Description)), Strip(Safe(training.TrainingText))), SearchTextMax);
-			p.Status = training.ToBeCompletedBy.HasValue ? "Due " + training.ToBeCompletedBy.Value.ToString("yyyy-MM-dd") : null;
-			p.IsActive = !training.ToBeCompletedBy.HasValue || training.ToBeCompletedBy.Value >= DateTime.UtcNow.Date;
+			p.Status = training.IsArchived ? "Archived" : training.ToBeCompletedBy.HasValue ? "Due " + training.ToBeCompletedBy.Value.ToString("yyyy-MM-dd") : null;
+			// ToBeCompletedBy is the department-local date the officer picked; it is due at the end of that local day (T-D19).
+			Department department = null;
+			if (training.ToBeCompletedBy.HasValue && _departmentRows != null)
+			{
+				try { department = await _departmentRows.GetByIdAsync(training.DepartmentId); } catch (Exception ex) { Logging.LogException(ex); }
+			}
+			p.IsActive = !training.IsArchived && !TrainingDueDates.IsOverdue(TrainingDueDates.FixedDueUtc(training, department), DateTime.UtcNow);
 			p.OccurredOn = training.CreatedOn == default ? DateTime.UtcNow : training.CreatedOn;
 			p.Url = $"/User/Trainings/View?trainingId={training.TrainingId}";
 			p.MetadataJson = Json(new Dictionary<string, string> { ["ToBeCompletedBy"] = training.ToBeCompletedBy?.ToString("o") });

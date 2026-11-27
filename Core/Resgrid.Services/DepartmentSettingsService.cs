@@ -29,6 +29,7 @@ namespace Resgrid.Services
 		private static string DestinationSuggestionsCacheKey = "DSetDestinationSuggestions_{0}";
 		private static string EmailCallUpdatesCacheKey = "DSetEmailCallUpdates_{0}";
 		private static string EmailLabeledFieldsCacheKey = "DSetEmailLabeledFields_{0}";
+		private static string TrainingRecordSettingsCacheKey = "DSetTrainingRecords_{0}";
 		private static string RequirePasswordResetViaEmailCacheKey = "DSetRequirePasswordResetViaEmail_{0}";
 		private static string ForceChatbotSecurityPinCacheKey = "DSetForceChatbotSecurityPin_{0}";
 		private static string HardwareTrackingStaleAfterSecondsCacheKey = "DSetHardwareTrackingStale_{0}";
@@ -49,6 +50,7 @@ namespace Resgrid.Services
 		private static string DepartmentTerminologyCacheKey = "DSetTerminology_{0}";
 		private static string DispatchResponseCodesCacheKey = "DSetDispatchResponseCodes_{0}";
 		private static string DispatchRenotifyConfigCacheKey = "DSetDispatchRenotifyConfig_{0}";
+		private static string ProtocolLibrarySettingsCacheKey = "DSetProtocolLibrarySettings_{0}";
 		private static string MappingProviderOverridesCacheKey = "DSetMappingProviderOverrides_{0}";
 		private static string DepartmentImportConfigCacheKey = "DSetDepartmentImport_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
@@ -1533,6 +1535,37 @@ namespace Resgrid.Services
 			return new DispatchResponseCodesConfig();
 		}
 
+		public async Task<ProtocolLibrarySettings> GetProtocolLibrarySettingsAsync(int departmentId, bool bypassCache = false)
+		{
+			if (departmentId <= 0)
+				return new ProtocolLibrarySettings();
+
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.ProtocolLibrarySettings);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			try
+			{
+				string value;
+				if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+					value = await _cacheProvider.RetrieveAsync<string>(string.Format(ProtocolLibrarySettingsCacheKey, departmentId), getSetting, LongCacheLength);
+				else
+					value = await getSetting();
+
+				if (!String.IsNullOrWhiteSpace(value))
+					return (ObjectSerialization.Deserialize<ProtocolLibrarySettings>(value) ?? new ProtocolLibrarySettings()).Normalize();
+			}
+			catch (Exception ex)
+			{
+				// A dispatch never fails over a settings read: the defaults (everything off) apply.
+				Logging.LogException(ex, $"Protocol library settings for department {departmentId} could not be read.");
+			}
+
+			return new ProtocolLibrarySettings();
+		}
+
 		public async Task<DepartmentSetting> SetDispatchResponseCodesAsync(int departmentId, DispatchResponseCodesConfig config,
 			CancellationToken cancellationToken = default(CancellationToken))
 		{
@@ -1941,6 +1974,42 @@ namespace Resgrid.Services
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(stored), DepartmentSettingTypes.EmailLabeledFields, cancellationToken);
 		}
 
+		public async Task<TrainingRecordSettings> GetTrainingRecordSettingsAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.TrainingRecordSettings);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync<string>(string.Format(TrainingRecordSettingsCacheKey, departmentId), getSetting, LongCacheLength)
+				: await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var settings = ObjectSerialization.Deserialize<TrainingRecordSettings>(value);
+					if (settings != null)
+						return settings.Normalized();
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Unreadable training record settings for department {departmentId}");
+				}
+			}
+
+			return new TrainingRecordSettings();
+		}
+
+		public async Task<DepartmentSetting> SetTrainingRecordSettingsAsync(int departmentId, TrainingRecordSettings settings,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var stored = (settings ?? new TrainingRecordSettings()).Normalized();
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(stored), DepartmentSettingTypes.TrainingRecordSettings, cancellationToken);
+		}
+
 		public async Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(settings),
@@ -2151,6 +2220,9 @@ namespace Resgrid.Services
 				case DepartmentSettingTypes.EmailLabeledFields:
 					cacheKey = string.Format(EmailLabeledFieldsCacheKey, departmentId);
 					break;
+				case DepartmentSettingTypes.TrainingRecordSettings:
+					cacheKey = string.Format(TrainingRecordSettingsCacheKey, departmentId);
+					break;
 				case DepartmentSettingTypes.RequirePasswordResetViaEmail:
 					cacheKey = string.Format(RequirePasswordResetViaEmailCacheKey, departmentId);
 					break;
@@ -2210,6 +2282,9 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DispatchResponseCodes:
 					cacheKey = string.Format(DispatchResponseCodesCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.ProtocolLibrarySettings:
+					cacheKey = string.Format(ProtocolLibrarySettingsCacheKey, departmentId);
 					break;
 				case DepartmentSettingTypes.DispatchRenotifyConfig:
 					cacheKey = string.Format(DispatchRenotifyConfigCacheKey, departmentId);

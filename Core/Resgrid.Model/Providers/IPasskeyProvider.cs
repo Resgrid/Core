@@ -27,8 +27,11 @@ namespace Resgrid.Model.Providers
 		Task<PasskeyRegistrationVerification> VerifyRegistrationAsync(UserSessionClientApplication client, string optionsJson,
 			string attestationResponseJson, CancellationToken cancellationToken = default);
 
-		/// <summary>Request options requiring user verification, limited to <paramref name="allowCredentialIds"/>.</summary>
-		string CreateAssertionOptions(UserSessionClientApplication client, IReadOnlyList<byte[]> allowCredentialIds);
+		/// <summary>
+		/// Request options requiring user verification, limited to <paramref name="allowCredentialIds"/>. A signing ceremony (S0)
+		/// passes its own <paramref name="challenge"/> (random bytes followed by the artifact hash); otherwise it is random.
+		/// </summary>
+		string CreateAssertionOptions(UserSessionClientApplication client, IReadOnlyList<byte[]> allowCredentialIds, byte[] challenge = null);
 
 		/// <summary>The raw credential id an assertion response names, so the caller can load the bound credential; null when unreadable.</summary>
 		byte[] ReadCredentialId(string assertionResponseJson);

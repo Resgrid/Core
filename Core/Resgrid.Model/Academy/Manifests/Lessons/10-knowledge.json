@@ -1,0 +1,213 @@
+{
+  "schema": 1,
+  "id": "10-knowledge",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Knowledge",
+  "minutes": 4.6,
+  "walkthrough": false,
+  "audience": [
+    "member",
+    "officer",
+    "training-officer"
+  ],
+  "visibility": [],
+  "pages": [
+    "Protocols",
+    "Documents",
+    "Notes",
+    "Files"
+  ],
+  "adminAssist": {
+    "areas": [
+      "knowledge"
+    ],
+    "capabilities": [
+      "protocols",
+      "documents",
+      "contacts",
+      "notes",
+      "new-protocol",
+      "protocol-acknowledgments",
+      "protocol-bulletins",
+      "file-library"
+    ]
+  },
+  "media": {
+    "video": "media/10-knowledge.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/10-knowledge.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Give members a dependable reference library",
+    "ar": "امنح الأعضاء مكتبة مرجعية موثوقة",
+    "de": "Mitgliedern eine verlässliche Nachschlagebibliothek geben",
+    "el": "Δώστε στα μέλη μια αξιόπιστη βιβλιοθήκη αναφοράς",
+    "es": "Dar a los miembros una biblioteca de consulta fiable",
+    "fr": "Offrir aux membres une bibliothèque de référence fiable",
+    "it": "Dare ai membri una biblioteca di consultazione affidabile",
+    "pl": "Zapewnij członkom wiarygodną bibliotekę materiałów",
+    "sv": "Ge medlemmarna ett pålitligt referensbibliotek",
+    "uk": "Дайте учасникам надійну довідкову бібліотеку"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What belongs in the department's reference library?",
+        "ar": "ما الذي ينتمي إلى المكتبة المرجعية للإدارة؟",
+        "de": "Was gehört in die Nachschlagebibliothek der Organisation?",
+        "el": "Τι ανήκει στη βιβλιοθήκη αναφοράς της υπηρεσίας;",
+        "es": "¿Qué debe incluir la biblioteca de consulta del departamento?",
+        "fr": "Que contient la bibliothèque de référence du service ?",
+        "it": "Che cosa va nella biblioteca di consultazione del dipartimento?",
+        "pl": "Co powinno trafić do biblioteki materiałów jednostki?",
+        "sv": "Vad hör hemma i organisationens referensbibliotek?",
+        "uk": "Що має бути в довідковій бібліотеці підрозділу?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Personal messages",
+            "ar": "الرسائل الشخصية",
+            "de": "Private Nachrichten",
+            "el": "Προσωπικά μηνύματα",
+            "es": "Mensajes personales",
+            "fr": "Des messages personnels",
+            "it": "Messaggi personali",
+            "pl": "Prywatne wiadomości",
+            "sv": "Personliga meddelanden",
+            "uk": "Особисті повідомлення"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Approved protocols, procedures and documents",
+            "ar": "البروتوكولات والإجراءات والمستندات المعتمدة",
+            "de": "Genehmigte Protokolle, Verfahren und Dokumente",
+            "el": "Εγκεκριμένα πρωτόκολλα, διαδικασίες και έγγραφα",
+            "es": "Protocolos, procedimientos y documentos aprobados",
+            "fr": "Des protocoles, procédures et documents approuvés",
+            "it": "Protocolli, procedure e documenti approvati",
+            "pl": "Zatwierdzone protokoły, procedury i dokumenty",
+            "sv": "Godkända protokoll, rutiner och dokument",
+            "uk": "Затверджені протоколи, процедури та документи"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Unit GPS logs",
+            "ar": "سجلات GPS للوحدات",
+            "de": "GPS-Protokolle der Einheiten",
+            "el": "Αρχεία GPS των μονάδων",
+            "es": "Registros GPS de las unidades",
+            "fr": "Les journaux GPS des unités",
+            "it": "Registri GPS dei mezzi",
+            "pl": "Dzienniki GPS jednostek",
+            "sv": "Enheternas GPS-loggar",
+            "uk": "GPS-журнали підрозділів"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Why do protocols have versions?",
+        "ar": "لماذا للبروتوكولات إصدارات؟",
+        "de": "Warum haben Protokolle Versionen?",
+        "el": "Γιατί τα πρωτόκολλα έχουν εκδόσεις;",
+        "es": "¿Por qué los protocolos tienen versiones?",
+        "fr": "Pourquoi les protocoles ont-ils des versions ?",
+        "it": "Perché i protocolli hanno versioni?",
+        "pl": "Dlaczego protokoły mają wersje?",
+        "sv": "Varför har protokoll versioner?",
+        "uk": "Навіщо протоколам версії?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "So everyone knows which text is in force and what changed",
+            "ar": "ليعرف الجميع النص الساري وما الذي تغيّر",
+            "de": "Damit alle wissen, welcher Text gilt und was sich geändert hat",
+            "el": "Ώστε όλοι να ξέρουν ποιο κείμενο ισχύει και τι άλλαξε",
+            "es": "Para que todos sepan qué texto está vigente y qué cambió",
+            "fr": "Pour que chacun sache quel texte est en vigueur et ce qui a changé",
+            "it": "Perché tutti sappiano quale testo è in vigore e cosa è cambiato",
+            "pl": "Aby wszyscy wiedzieli, który tekst obowiązuje i co się zmieniło",
+            "sv": "Så att alla vet vilken text som gäller och vad som ändrats",
+            "uk": "Щоб усі знали, який текст чинний і що змінилося"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "To make them longer",
+            "ar": "لجعلها أطول",
+            "de": "Um sie länger zu machen",
+            "el": "Για να γίνουν μεγαλύτερα",
+            "es": "Para hacerlos más largos",
+            "fr": "Pour les rallonger",
+            "it": "Per renderli più lunghi",
+            "pl": "Aby były dłuższe",
+            "sv": "För att göra dem längre",
+            "uk": "Щоб зробити їх довшими"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To hide old text from auditors",
+            "ar": "لإخفاء النص القديم عن المدققين",
+            "de": "Um alten Text vor Prüfern zu verbergen",
+            "el": "Για να κρυφτεί το παλιό κείμενο από ελεγκτές",
+            "es": "Para ocultar el texto antiguo a los auditores",
+            "fr": "Pour cacher l’ancien texte aux auditeurs",
+            "it": "Per nascondere il testo vecchio ai revisori",
+            "pl": "Aby ukryć stary tekst przed audytorami",
+            "sv": "För att dölja gammal text för granskare",
+            "uk": "Щоб приховати старий текст від аудиторів"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Members should read the version of a protocol that is currently published.",
+        "ar": "يجب أن يقرأ الأعضاء الإصدار المنشور حاليًا من البروتوكول.",
+        "de": "Mitglieder sollten die aktuell veröffentlichte Version eines Protokolls lesen.",
+        "el": "Τα μέλη πρέπει να διαβάζουν την έκδοση του πρωτοκόλλου που είναι δημοσιευμένη τώρα.",
+        "es": "Los miembros deben leer la versión del protocolo publicada actualmente.",
+        "fr": "Les membres doivent lire la version d’un protocole actuellement publiée.",
+        "it": "I membri devono leggere la versione del protocollo attualmente pubblicata.",
+        "pl": "Członkowie powinni czytać aktualnie opublikowaną wersję protokołu.",
+        "sv": "Medlemmar ska läsa den version av ett protokoll som är publicerad nu.",
+        "uk": "Учасники мають читати версію протоколу, опубліковану зараз."
+      }
+    }
+  ]
+}

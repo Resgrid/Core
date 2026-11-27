@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account.Greeting" xml:space="preserve">
+    <value>Γεια σας {0},</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Subject" xml:space="preserve">
+    <value>Ο φορέας {0} σας προσκάλεσε σε εκπαίδευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Body" xml:space="preserve">
+    <value>Ο φορέας {0} σας προσκάλεσε να παρακολουθήσετε εκπαίδευση στην πύλη εκπαίδευσής του. Επιλέξτε τον κωδικό πρόσβασής σας εδώ:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Lifetime" xml:space="preserve">
+    <value>Ο σύνδεσμος ισχύει για {0} ημέρες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Subject" xml:space="preserve">
+    <value>Επιβεβαιώστε τη διεύθυνση email σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Body" xml:space="preserve">
+    <value>Επιβεβαιώστε τη διεύθυνση email σας για να ολοκληρώσετε τη δημιουργία του λογαριασμού εκπαίδευσης:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Lifetime" xml:space="preserve">
+    <value>Ο σύνδεσμος ισχύει για {0} ώρες. Αν δεν ζητήσατε αυτόν τον λογαριασμό, αγνοήστε αυτό το email.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Subject" xml:space="preserve">
+    <value>Επαναφέρετε τον κωδικό πρόσβασης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Body" xml:space="preserve">
+    <value>Επιλέξτε νέο κωδικό πρόσβασης εδώ:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Lifetime" xml:space="preserve">
+    <value>Ο σύνδεσμος ισχύει για {0} ώρες. Αν δεν το ζητήσατε, αγνοήστε αυτό το email.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Subject" xml:space="preserve">
+    <value>Ο λογαριασμός εκπαίδευσής σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Body" xml:space="preserve">
+    <value>Κάποιος ζήτησε να δημιουργηθεί λογαριασμός εκπαίδευσης με αυτή τη διεύθυνση, αλλά υπάρχει ήδη. Συνδεθείτε ή επαναφέρετε τον κωδικό πρόσβασης εδώ:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Ignore" xml:space="preserve">
+    <value>Αν δεν ήσασταν εσείς, μπορείτε να αγνοήσετε αυτό το email.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.SignIn.Body" xml:space="preserve">
+    <value>Έχετε ήδη λογαριασμό εκπαίδευσης με αυτή τη διεύθυνση. Συνδεθείτε ή επαναφέρετε τον κωδικό πρόσβασης εδώ:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bulletin.Title" xml:space="preserve">
+    <value>Δελτίο προτεραιότητας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bulletin.Message" xml:space="preserve">
+    <value>{0}: διαβάστε αυτό το δελτίο και επιβεβαιώστε την ανάγνωση. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.Title" xml:space="preserve">
+    <value>Πρωτόκολλο προς επιβεβαίωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.Message" xml:space="preserve">
+    <value>Διαβάστε το πρωτόκολλο {0} {1} και επιβεβαιώστε την ανάγνωση. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.MessageVersion" xml:space="preserve">
+    <value>Διαβάστε το πρωτόκολλο {0} {1}, έκδοση {2}, και επιβεβαιώστε την ανάγνωση. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.Title" xml:space="preserve">
+    <value>Πρωτόκολλα προς επιβεβαίωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.One" xml:space="preserve">
+    <value>Έχετε ένα πρωτόκολλο να διαβάσετε και να επιβεβαιώσετε. {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.Many" xml:space="preserve">
+    <value>Έχετε {0} πρωτόκολλα να διαβάσετε και να επιβεβαιώσετε. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.DueTitle" xml:space="preserve">
+    <value>Προθεσμία επιβεβαίωσης πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.OverdueTitle" xml:space="preserve">
+    <value>Εκπρόθεσμη επιβεβαίωση πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.Due" xml:space="preserve">
+    <value>Πρέπει να επιβεβαιώσετε το πρωτόκολλο {0} {1}. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.DueOn" xml:space="preserve">
+    <value>Πρέπει να επιβεβαιώσετε το πρωτόκολλο {0} {1} έως τις {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.Overdue" xml:space="preserve">
+    <value>Η επιβεβαίωση του πρωτοκόλλου {0} {1} έχει καθυστερήσει. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.OverdueOn" xml:space="preserve">
+    <value>Η επιβεβαίωση του πρωτοκόλλου {0} {1} έπρεπε να γίνει έως τις {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Escalation.Message" xml:space="preserve">
+    <value>Ο/Η {0} δεν έχει επιβεβαιώσει το πρωτόκολλο {1} {2}, και η προθεσμία έχει λήξει. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Review.Title" xml:space="preserve">
+    <value>Πρωτόκολλο προς έλεγχο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Review.Message" xml:space="preserve">
+    <value>Το πρωτόκολλο {0} {1} περιμένει τον έλεγχό σας (βήμα {2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewDue.Title" xml:space="preserve">
+    <value>Προθεσμία αναθεώρησης πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewDue.Message" xml:space="preserve">
+    <value>Το πρωτόκολλο {0} {1} πρέπει να αναθεωρηθεί στις {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewOverdue.Title" xml:space="preserve">
+    <value>Εκπρόθεσμη αναθεώρηση πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewOverdue.Message" xml:space="preserve">
+    <value>Η αναθεώρηση του πρωτοκόλλου {0} {1} έπρεπε να γίνει στις {2}. Καταγράψτε την στη βιβλιοθήκη πρωτοκόλλων, με ή χωρίς νέα έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.Title" xml:space="preserve">
+    <value>Απαίτηση εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.Message" xml:space="preserve">
+    <value>Νέα απαίτηση εκπαίδευσης: {0} ({1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.MessageDue" xml:space="preserve">
+    <value>Νέα απαίτηση εκπαίδευσης: {0} ({1}), προθεσμία {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.Title" xml:space="preserve">
+    <value>Εκπρόθεσμη απαίτηση εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.Message" xml:space="preserve">
+    <value>Η προθεσμία για {0} ({1}) έχει λήξει. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.MessageOn" xml:space="preserve">
+    <value>Η προθεσμία για {0} ({1}) έληξε στις {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.Title" xml:space="preserve">
+    <value>Πλησιάζει η προθεσμία απαίτησης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.Message" xml:space="preserve">
+    <value>Η προθεσμία για {0} ({1}) λήγει σύντομα. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.MessageOn" xml:space="preserve">
+    <value>Η προθεσμία για {0} ({1}) λήγει στις {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.CompletedTitle" xml:space="preserve">
+    <value>Η απαίτηση εκπαίδευσης ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.Completed" xml:space="preserve">
+    <value>Ο/Η {0} ολοκλήρωσε {1} ({2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.Overdue" xml:space="preserve">
+    <value>Ο/Η {0} είναι εκπρόθεσμος/η για {1} ({2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.AMember" xml:space="preserve">
+    <value>Ένα μέλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Met.Title" xml:space="preserve">
+    <value>Η απαίτηση εκπαίδευσης καλύφθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Met.Message" xml:space="preserve">
+    <value>Η ολοκλήρωση του {0} αποκατέστησε την πιστοποίηση και τους ρόλους που είχαν επηρεαστεί. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Title" xml:space="preserve">
+    <value>Η πιστοποίηση έληξε λόγω απαίτησης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Message" xml:space="preserve">
+    <value>Το {0} είναι εκπρόθεσμο, οπότε η {1} σας έληξε. Ολοκληρώστε το για να αποκαταστήσετε την πιστοποίηση. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Certification" xml:space="preserve">
+    <value>πιστοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Title" xml:space="preserve">
+    <value>Η εφαρμογή βάσει εκπαίδευσης απορρίφθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Message" xml:space="preserve">
+    <value>Η εφαρμογή βάσει εκπαίδευσης δεν εκτελέστηκε σήμερα: θα αφαιρούσε περισσότερο από το {0}% των μελών ενός ρόλου ({1}). Ελέγξτε τις απαιτήσεις και την προεπισκόπηση της εφαρμογής. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Role" xml:space="preserve">
+    <value>ρόλος {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Breach" xml:space="preserve">
+    <value>{0}: {1} από {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.Title" xml:space="preserve">
+    <value>Εκπαιδευτικές δεξιότητες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.DigestTitle" xml:space="preserve">
+    <value>Σύνοψη εκπαιδευτικών δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.Digest" xml:space="preserve">
+    <value>Σύνοψη εκπαιδευτικών δεξιοτήτων: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.DigestMore" xml:space="preserve">
+    <value>+{0} ακόμη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationPassed" xml:space="preserve">
+    <value>Αξιολόγηση δεξιότητας {0}: επιτυχής. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationPassedScore" xml:space="preserve">
+    <value>Αξιολόγηση δεξιότητας {0}: επιτυχής (βαθμολογία {1:0.#}%). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationNotPassed" xml:space="preserve">
+    <value>Αξιολόγηση δεξιότητας {0}: ανεπιτυχής. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationNotPassedScore" xml:space="preserve">
+    <value>Αξιολόγηση δεξιότητας {0}: ανεπιτυχής (βαθμολογία {1:0.#}%). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookInitiated" xml:space="preserve">
+    <value>Το βιβλίο εργασιών {0} ({1}) ξεκίνησε, ισχύει έως {2:d}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookCertificationRequested" xml:space="preserve">
+    <value>Το βιβλίο εργασιών {0} είναι πλήρες και περιμένει τον τελικό αξιολογητή και τον υπεύθυνο πιστοποίησης. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookCertified" xml:space="preserve">
+    <value>Το βιβλίο εργασιών {0} ({1}) πιστοποιήθηκε. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookExpired" xml:space="preserve">
+    <value>Το βιβλίο εργασιών {0} ({1}) έληξε πριν πιστοποιηθεί. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskSigned" xml:space="preserve">
+    <value>Βιβλίο εργασιών {0}: η εργασία {1} υπογράφηκε ({2} από {3})· ολοκληρώθηκαν {4} από {5} εργασίες. {6}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskSignedReady" xml:space="preserve">
+    <value>Βιβλίο εργασιών {0}: η εργασία {1} υπογράφηκε ({2} από {3})· ολοκληρώθηκαν {4} από {5} εργασίες, έτοιμο για πιστοποίηση. {6}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Needed.Title" xml:space="preserve">
+    <value>Απαιτείται υπογραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Reminder.Title" xml:space="preserve">
+    <value>Υπενθύμιση υπογραφής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Needed.Message" xml:space="preserve">
+    <value>Απαιτείται η υπογραφή σας στο {0} (κωδικός περιεχομένου {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Reminder.Message" xml:space="preserve">
+    <value>Υπενθύμιση: απαιτείται ακόμη η υπογραφή σας στο {0} (κωδικός περιεχομένου {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Title" xml:space="preserve">
+    <value>Το αίτημα υπογραφής έκλεισε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Completed" xml:space="preserve">
+    <value>Το αίτημα υπογραφής για το {0} υπογράφηκε από όλους. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Declined" xml:space="preserve">
+    <value>Το αίτημα υπογραφής για το {0} απορρίφθηκε. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Expired" xml:space="preserve">
+    <value>Το αίτημα υπογραφής για το {0} έληξε πριν υπογράψουν όλοι. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Voided" xml:space="preserve">
+    <value>Το αίτημα υπογραφής για το {0} ανακλήθηκε. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Other" xml:space="preserve">
+    <value>Το αίτημα υπογραφής για το {0} έκλεισε. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Needed.Title" xml:space="preserve">
+    <value>Απαιτείται έγκριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Escalated.Title" xml:space="preserve">
+    <value>Η έγκριση κλιμακώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Needed.Message" xml:space="preserve">
+    <value>Απαιτείται η έγκρισή σας για το {0} (κωδικός περιεχομένου {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Escalated.Message" xml:space="preserve">
+    <value>Κλιμάκωση: απαιτείται η έγκρισή σας για το {0} (κωδικός περιεχομένου {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Title" xml:space="preserve">
+    <value>Ελήφθη απόφαση έγκρισης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Approved" xml:space="preserve">
+    <value>Το αίτημα έγκρισης για το {0} εγκρίθηκε. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Rejected" xml:space="preserve">
+    <value>Το αίτημα έγκρισης για το {0} απορρίφθηκε: {1} {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Expired" xml:space="preserve">
+    <value>Το αίτημα έγκρισης για το {0} έληξε πριν εγκριθεί. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Other" xml:space="preserve">
+    <value>Το αίτημα έγκρισης για το {0} έκλεισε. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Subject" xml:space="preserve">
+    <value>κλήση {0}, πρωτόκολλο {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Sent.Title" xml:space="preserve">
+    <value>Η υπόθεση διαχείρισης κλήσης ελέγχθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Sent.Message" xml:space="preserve">
+    <value>Η υπόθεση διαχείρισης κλήσης σας ελέγχθηκε ({0}). Διαβάστε τα σχόλια και επιβεβαιώστε τα: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Reply.Title" xml:space="preserve">
+    <value>Ο χειριστής απάντησε σε έλεγχο υπόθεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Reply.Message" xml:space="preserve">
+    <value>Ο χειριστής απάντησε στον έλεγχο υπόθεσής σας ({0}): {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Suggestion.Title" xml:space="preserve">
+    <value>Ελέγξτε το αρχείο εκθέσεών σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Suggestion.Message" xml:space="preserve">
+    <value>Προτάθηκε μια καταχώριση για την κλήση {0} της {1} από τα δεδομένα διαχείρισης κλήσεων. Τίποτα δεν καταγράφεται μέχρι να την ελέγξετε στις Οι εκθέσεις μου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.Title" xml:space="preserve">
+    <value>Σας σκεφτόμαστε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.OneYear" xml:space="preserve">
+    <value>Στις {0:D} συμπληρώνεται ένας χρόνος από μια δύσκολη κλήση στην οποία συμμετείχατε. Η ομάδα υποστήριξης από συναδέλφους και οι πόροι ευεξίας είναι εδώ όποτε τους χρειαστείτε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.Years" xml:space="preserve">
+    <value>Στις {0:D} συμπληρώνονται {1} χρόνια από μια δύσκολη κλήση στην οποία συμμετείχατε. Η ομάδα υποστήριξης από συναδέλφους και οι πόροι ευεξίας είναι εδώ όποτε τους χρειαστείτε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.Title" xml:space="preserve">
+    <value>Υπενθύμιση υποστήριξης από συναδέλφους</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.OneYear" xml:space="preserve">
+    <value>Ο/Η {0} ζήτησε να γνωρίζει η ομάδα υποστήριξης από συναδέλφους ότι στις {1:D} συμπληρώνεται ένας χρόνος από ένα κρίσιμο συμβάν στο οποίο συμμετείχε. Μια επικοινωνία ίσως είναι ευπρόσδεκτη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.Years" xml:space="preserve">
+    <value>Ο/Η {0} ζήτησε να γνωρίζει η ομάδα υποστήριξης από συναδέλφους ότι στις {1:D} συμπληρώνονται {2} χρόνια από ένα κρίσιμο συμβάν στο οποίο συμμετείχε. Μια επικοινωνία ίσως είναι ευπρόσδεκτη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.AMember" xml:space="preserve">
+    <value>Ένα μέλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.AMember" xml:space="preserve">
+    <value>Ένα μέλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ExposureReported.Title" xml:space="preserve">
+    <value>Αναφέρθηκε έκθεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ExposureReported.Message" xml:space="preserve">
+    <value>Ο/Η {0} ανέφερε πιθανή έκθεση σε αιματογενώς μεταδιδόμενους παθογόνους παράγοντες ή λοιμώδες νόσημα στις {1:d}. Ανοίξτε την υπόθεση έκθεσης: {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.InjuryReported.Title" xml:space="preserve">
+    <value>Αναφέρθηκε τραυματισμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.InjuryReported.Message" xml:space="preserve">
+    <value>Υπάρχει αναφορά τραυματισμού για {0} από {1:d} προς έλεγχο. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.Title" xml:space="preserve">
+    <value>Εκπρόθεσμη ειδοποίηση έκθεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.Message" xml:space="preserve">
+    <value>Η υγειονομική μονάδα δεν έχει απαντήσει στο αίτημα ειδοποίησης έκθεσης για {0}. Ο νόμος Ryan White απαιτεί απάντηση εντός 48 ωρών. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.MessageSent" xml:space="preserve">
+    <value>Η υγειονομική μονάδα δεν έχει απαντήσει στο αίτημα ειδοποίησης έκθεσης για {0} που στάλθηκε στις {1:d}. Ο νόμος Ryan White απαιτεί απάντηση εντός 48 ωρών. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ReturnReview.Title" xml:space="preserve">
+    <value>Έλεγχος επιστροφής στην υπηρεσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ReturnReview.Message" xml:space="preserve">
+    <value>Η επιστροφή του/της {0} αναμενόταν στις {1:d}. Ελέγξτε την κατάσταση υπηρεσίας. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.Title" xml:space="preserve">
+    <value>Ειδοποίηση νέας εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.Message" xml:space="preserve">
+    <value>Σας ανατέθηκε νέα εκπαίδευση ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.MessageDue" xml:space="preserve">
+    <value>Νέα εκπαίδευση ({0}) με προθεσμία {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.Title" xml:space="preserve">
+    <value>Ειδοποίηση προθεσμίας εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.OneDay" xml:space="preserve">
+    <value>Η εκπαίδευση ({0}) λήγει εντός μίας ημέρας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.OneDayOn" xml:space="preserve">
+    <value>Η εκπαίδευση ({0}) λήγει εντός μίας ημέρας ({1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.Days" xml:space="preserve">
+    <value>Η εκπαίδευση ({0}) λήγει εντός {1} ημερών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.DaysOn" xml:space="preserve">
+    <value>Η εκπαίδευση ({0}) λήγει εντός {1} ημερών ({2})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.Title" xml:space="preserve">
+    <value>Ειδοποίηση εκπρόθεσμης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.Message" xml:space="preserve">
+    <value>Η εκπαίδευση ({0}) είναι εκπρόθεσμη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.MessageDue" xml:space="preserve">
+    <value>Η εκπαίδευση ({0}) είναι εκπρόθεσμη (προθεσμία {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.CreatorOverdue" xml:space="preserve">
+    <value>{0} μέλος(η) είναι εκπρόθεσμα στην εκπαίδευση ({1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.QuestionFlagged.Title" xml:space="preserve">
+    <value>Επισημάνθηκε ερώτηση εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.QuestionFlagged.Message" xml:space="preserve">
+    <value>Μια ερώτηση της εκπαίδευσης ({0}) επισημάνθηκε για έλεγχο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Title" xml:space="preserve">
+    <value>Πιστοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Expiring.Body" xml:space="preserve">
+    <value>Η πιστοποίησή σας {0} λήγει σε {1} ημέρες ({2}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Expiring.BodyOne" xml:space="preserve">
+    <value>Η πιστοποίησή σας {0} λήγει σε 1 ημέρα ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.RoleRemoved.Body" xml:space="preserve">
+    <value>Αφαιρεθήκατε από τον ρόλο {0}: η απαιτούμενη πιστοποίηση {1} δεν είναι πλέον έγκυρη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.RemovalPending.Body" xml:space="preserve">
+    <value>Η συμμετοχή σας στον ρόλο {0} λήγει στις {1}, εκτός εάν ανανεωθεί η πιστοποίησή σας {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Title" xml:space="preserve">
+    <value>Σύνοψη πιστοποιήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Summary" xml:space="preserve">
+    <value>Σύνοψη πιστοποιήσεων για {0}: {1} έληξαν, {2} λήγουν σύντομα, {3} σε περίοδο χάριτος, {4} αφαιρέθηκαν από ρόλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Expired" xml:space="preserve">
+    <value>Έληξαν: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Expiring" xml:space="preserve">
+    <value>Λήγουν σύντομα: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.InGrace" xml:space="preserve">
+    <value>Σε περίοδο χάριτος: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Removed" xml:space="preserve">
+    <value>Αφαιρέθηκαν: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.ExpiringEntry" xml:space="preserve">
+    <value>{0} – {1} ({2} ημ.)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.InGraceEntry" xml:space="preserve">
+    <value>{0} – {1} ({2}, έως {3})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.UnknownUnit" xml:space="preserve">
+    <value>Μονάδα {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

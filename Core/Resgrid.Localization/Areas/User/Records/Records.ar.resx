@@ -2298,4 +2298,72 @@
   <data name="RatedFlowHelp" xml:space="preserve">
     <value>التدفق المقدّر وفق NFPA 291: التدفق المرصود × ((الساكن − 20) / (الساكن − المتبقي))^0.54. تُحدَّد فئة التدفق منه عند إدخال الضغطين الساكن والمتبقي.</value>
   </data>
+  <data name="DeploymentPartner" xml:space="preserve">
+    <value>الشريك المرتبط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerNone" xml:space="preserve">
+    <value>لا يوجد شريك مرتبط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSave" xml:space="preserve">
+    <value>حفظ الشريك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerHelp" xml:space="preserve">
+    <value>عندما تكون الجهة التي يُلبّى لها هذا الطلب مؤسسة مرتبطة على Resgrid، اختاروها هنا. بعد ذلك تطلب كل تلبية مقبولة من مسؤوليها قبول المهمة بتوقيع مع إعادة التحقق من الهوية (step-up).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSaved" xml:space="preserve">
+    <value>تم حفظ الشريك المرتبط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerRequested" xml:space="preserve">
+    <value>طُلب من الشريك المرتبط قبول المهمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerAsk" xml:space="preserve">
+    <value>اطلب من الشريك القبول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotLinked" xml:space="preserve">
+    <value>الرابط مع تلك المؤسسة غير مفعّل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorClosedOut" xml:space="preserve">
+    <value>تم إغلاق الانتشار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorConflict" xml:space="preserve">
+    <value>عدّل شخص آخر هذا الانتشار في الوقت نفسه. حاولوا مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotFound" xml:space="preserve">
+    <value>لم يُعثر على الانتشار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotAuthorized" xml:space="preserve">
+    <value>لا يمكنكم تغيير هذا الانتشار.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateRequested" xml:space="preserve">
+    <value>تم سؤال الشريك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateSigned" xml:space="preserve">
+    <value>قبل الشريك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateDeclined" xml:space="preserve">
+    <value>رفض الشريك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateLapsed" xml:space="preserve">
+    <value>انتهت صلاحية طلب الشريك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateNone" xml:space="preserve">
+    <value>لا يوجد توقيع للشريك</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

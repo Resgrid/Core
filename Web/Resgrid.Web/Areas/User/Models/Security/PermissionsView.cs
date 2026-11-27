@@ -15,6 +15,36 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int CreateTraining { get; set; }
 		public IEnumerable<SelectListItem> CreateTrainingPermissions { get; set; }
 
+		public int AssignTraining { get; set; }
+		public IEnumerable<SelectListItem> AssignTrainingPermissions { get; set; }
+
+		public int DeleteTraining { get; set; }
+		public IEnumerable<SelectListItem> DeleteTrainingPermissions { get; set; }
+
+		public int AuthorProtocols { get; set; }
+		public IEnumerable<SelectListItem> AuthorProtocolsPermissions { get; set; }
+
+		public int ApproveProtocols { get; set; }
+		public IEnumerable<SelectListItem> ApproveProtocolsPermissions { get; set; }
+
+		public int ManageProtocolAcknowledgments { get; set; }
+		public IEnumerable<SelectListItem> ManageProtocolAcknowledgmentsPermissions { get; set; }
+
+		public int ManageCourses { get; set; }
+		public IEnumerable<SelectListItem> ManageCoursesPermissions { get; set; }
+
+		public int GradeAssessments { get; set; }
+		public IEnumerable<SelectListItem> GradeAssessmentsPermissions { get; set; }
+
+		public int ReviewDispatchCases { get; set; }
+		public IEnumerable<SelectListItem> ReviewDispatchCasesPermissions { get; set; }
+
+		public int RecordTrainingCompletions { get; set; }
+		public IEnumerable<SelectListItem> RecordTrainingCompletionsPermissions { get; set; }
+
+		public int ManageContentSets { get; set; }
+		public IEnumerable<SelectListItem> ManageContentSetsPermissions { get; set; }
+
 		public int CreateDocument { get; set; }
 		public IEnumerable<SelectListItem> CreateDocumentPermissions { get; set; }
 

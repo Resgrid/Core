@@ -4714,4 +4714,8 @@
   <data name="Error.IMP-CONFIG-UNAVAILABLE" xml:space="preserve">
     <value>Dossiers n'est pas activé pour votre département : la numérotation des dossiers ne peut pas être modifiée ici. Annulez cette modification.</value>
   </data>
+  <data name="TabProtocols" xml:space="preserve">
+    <value>Protocoles</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

@@ -25,19 +25,27 @@ namespace Resgrid.Repositories.DataRepository
 	{
 		/// <summary>Every table this cleanup deletes by DepartmentId, module subtrees included.</summary>
 		internal static IEnumerable<string> AllTables => ChatDepartmentCleanup.Tables.Concat(IncidentCommandDepartmentCleanup.AllTables).Concat(IncidentBackOfficeDepartmentCleanup.Tables)
-			.Concat(WorkforceDepartmentCleanup.Tables).Concat(WorkflowDepartmentCleanup.Tables).Concat(DepartmentImportDepartmentCleanup.Tables).Concat(Tables);
+			.Concat(WorkforceDepartmentCleanup.Tables).Concat(WorkflowDepartmentCleanup.Tables).Concat(DepartmentImportDepartmentCleanup.Tables).Concat(LmsDepartmentCleanup.Tables).Concat(LmsProgramsDepartmentCleanup.Tables).Concat(LmsClassesDepartmentCleanup.Tables).Concat(LmsSkillsDepartmentCleanup.Tables).Concat(LmsDataExitDepartmentCleanup.Tables).Concat(LmsExternalLearnersDepartmentCleanup.Tables).Concat(LmsStandardsDepartmentCleanup.Tables).Concat(ContentSetsDepartmentCleanup.Tables).Concat(Tables);
 
 		/// <summary>The tables outside the module subtrees, in delete order.</summary>
 		internal static readonly string[] Tables =
 		{
 			"CallLocationIndexStates", "CallNumberSequences", "DocumentNumberSequences", "DepartmentApiKeys", "ScheduledTasks", "UserStates",
 			"UdfDefinitions", "ChatbotSessions", "ChatbotMessageLog", "ChatbotDepartmentConfigs", "AiDispatchAudits", "DepartmentAiDispatchConfigs",
-			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "CallEmailUpdates", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "DepartmentPhoneNumbers", "AiDestinationReviews", "AiDestinationAdvices", "DedicatedNumberBillingAccounts", "DispatcherConversationMessages", "DispatcherQueueEvents", "DispatcherQueueItems", "DispatcherPresences", "DispatcherBreaks", "ShiftDispatchers", "ShiftDispatchSettings", "UserDashboards", "DepartmentDashboardTemplates",
+			"AiBillingAccounts", "AdpBillingAccounts", "ContactPreplanHazards", "ContactPreplans", "ContactAttachments", "DepartmentProfileMedia", "TypeIcons", "MapVisualizations", "RoadClosures", "PoiImports", "PoiCapabilityAssignments", "PoiCapabilities", "PoiAvailabilities", "DestinationRules", "CallEmailUpdates", "RecurringCallAlerts", "RecurringCallOccurrences", "RecurringCalls", "CallPersonnelReleases", "CallBroadcastOutbox", "IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "DepartmentPhoneNumbers", "AiDestinationReviews", "AiDestinationAdvices", "DedicatedNumberBillingAccounts", "PackAddonBillingAccounts", "DispatcherConversationMessages", "DispatcherQueueEvents", "DispatcherQueueItems", "DispatcherPresences", "DispatcherBreaks", "ShiftDispatchers", "ShiftDispatchSettings", "UserDashboards", "DepartmentDashboardTemplates",
 			"CallOutstandingRequirements", "RunCardDecisions", "RunCardTargets", "ResponsePackages", "RunCardActivations",
 			"RunCards", "StationCoverageRequirements", "ModerationActions", "ModerationReports", "ModerationRequests", "MessageRecipients", "Messages",
 			"DepartmentMemberSensitiveData", "DepartmentMemberEmergencyContacts", "UserExternalIdentityLinks", "DepartmentSecurityPolicies",
 			"DepartmentSsoConfigs", "GdprDataExportRequests", "Autofills", "DomainEventOutbox", "ReportingDailyRollup", "SearchProjections",
-			"VoiceTransmissionLogs"
+			"VoiceTransmissionLogs", "TrainingQuestionFlags", "TrainingCompletionHistories", "TrainingQuizAttempts", "TrainingAudiences",
+			"ContentAudienceChanges", "MemberLeavePeriods", "MemberPinnedItems", "SignatureRecords", "ProtocolCategories", "TrainingCompletionRecordings", "LearningRecordReviewEvents", "TrainingReviewDigests", "LearningRecords",
+			"LearningRecordFiles", "LearningRecordBackfills", "CategoryCreditMappings", "LmsCertificateTemplates", "TrainingCategories",
+			"LmsMemberSeats", "LmsAddonLapses", "LmsAddonStates", "WorkforceProSeats", "WorkforceProAddonStates",
+			"KnowledgeChunks", "KnowledgeIndexRequests", "KnowledgeIndexStates", "KnowledgeGaps", "AcademyGuidanceStates",
+			"SignatureCaptures", "SignatureRequestSigners", "SignatureRequests", "SealedDocumentInputs", "SealedDocuments", "ESignProviderAccounts",
+			"ApprovalRequestSteps", "ApprovalRequests", "ApprovalChainSteps", "ApprovalChains", "ApprovalDelegates", "MutualAidAgreements",
+			"ProtocolAiSuggestions", "DispatchCaseReviews", "ProtocolPublicLinks", "ContentAttributions", "ProtocolSearchMisses",
+			"ExchangeRatings", "ExchangeComments", "ExchangeImports", "ExchangeListings", "ProtocolFlashcards", "CallProtocolStepNotes"
 		};
 
 		public static async Task DeleteWithinTransactionAsync(DbConnection connection, DbTransaction transaction, int departmentId, DatabaseTypes type, CancellationToken ct = default)
@@ -101,17 +109,94 @@ namespace Resgrid.Repositories.DataRepository
 			// Pages owed to resources added to live calls (M0321); no foreign keys
 			await Delete("CallBroadcastOutbox");
 
+			// Protocols P4 (M0377): Enhanced AI protocol suggestions for calls; no foreign keys (the protocol cleanup clears them too)
+			await Delete("ProtocolAiSuggestions");
+
+			// Protocols P5 QA (M0391): dispatch case reviews; no foreign keys (the protocol cleanup clears them too)
+			await Delete("DispatchCaseReviews");
+			// Round 7A (M0399): protocol flashcards; no foreign keys (the protocol cleanup clears them too)
+			await Delete("ProtocolFlashcards");
+			// Round 8 (M0403): step-through notes; no foreign keys (the protocol cleanup clears them too)
+			await Delete("CallProtocolStepNotes");
+			// Protocols P5 (M0388-M0390): public links, attribution rows and search misses; no foreign keys. The community exchange (M0389):
+			// the department's own ratings, comments, imports and listings. Other departments' ratings, comments and imports stay theirs (an
+			// import is their own copy); once the listing is gone nothing shows them
+			await Delete("ProtocolPublicLinks", "ContentAttributions", "ProtocolSearchMisses", "ExchangeRatings", "ExchangeComments", "ExchangeImports", "ExchangeListings");
+
 			// Intake channels and their message audit, voice intake sessions, AI destination advice and review requests, dedicated
 			// numbers and their billing accounts (M0323); no foreign keys. The department deletion flow reads the numbers still held at the
 			// carrier before this purge and returns them (IDepartmentPhoneNumbersService.ReleaseAtCarrierAsync) right after it commits.
 			await Delete("IntakeConversationMessages", "IntakeConversations", "IntakeBlockedSenders", "IntakeMessages", "IntakeChannels", "VoiceIntakeSessions", "AiDestinationReviews", "AiDestinationAdvices",
 				"DepartmentPhoneNumbers", "DedicatedNumberBillingAccounts");
 
+			// Pack add-on billing accounts (M0413; LMS add-on, later Workforce Pro), written by the Billing API; no foreign keys.
+			await Delete("PackAddonBillingAccounts");
+
 			// Dispatcher desk (M0324): routed work with its history and conversations, desk sessions, breaks and the dispatch roster; no foreign keys
 			await Delete("DispatcherConversationMessages", "DispatcherQueueEvents", "DispatcherQueueItems", "DispatcherPresences", "DispatcherBreaks", "ShiftDispatchers", "ShiftDispatchSettings");
 
 			// Home dashboard boards and department templates (layouts only)
 			await Delete("UserDashboards", "DepartmentDashboardTemplates");
+
+			// Training T2 LMS (M0349, M0350): courses, versions, lessons, banks, enrollments, progress, attempts and media rows, children first;
+			// system-published Academy content (DepartmentId 0) is never touched
+			await LmsDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+
+			// Training T3 part 2 (M0367-M0370): annual plans, frameworks, training requests, saved reports, cycle rules; no foreign keys
+			await LmsProgramsDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+
+			// Training T4 part 1 (M0378-M0380): class sessions, rosters, instructors, cost lines, bookings, resources and lesson plans; no foreign keys
+			await LmsClassesDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+			// Training T4 part 2 (M0381-M0384): skill sheets and versions, evaluations with members and evidence, task books and definitions,
+			// the skill notification queue; no foreign keys
+			await LmsSkillsDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+			// Training T5 data exit (M0395): export jobs and the zips kept in the database; no foreign keys
+			await LmsDataExitDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+			// Training T5 external learners (M0396-M0397): class fees, public classes, course access, learner tokens, learners and the
+			// portal; no foreign keys
+			await LmsExternalLearnersDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+			// Training T5 standards (M0392-M0394): content packages, runtime registrations and launch sessions, the cmi5 statements and state,
+			// LTI tools with their platform keys and AGS tokens, and the xAPI outbox; no foreign keys
+			await LmsStandardsDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+			// Round 10 A3 (M0415-M0416): protocol and course sets, subscriptions, copies, the update inbox, upstream proposals and LMS
+			// sponsorships, for the department as either party (publisher or subscriber, sponsor or sponsored); no foreign keys. Subscribers'
+			// local protocols, courses and trainings stay with them.
+			await ContentSetsDepartmentCleanup.DeleteWithinTransactionAsync(connection, transaction, departmentId, type, ct);
+
+			// Training T0 (M0339, M0340): attempts, audience rules, completion history and question flags reference Trainings, which the
+			// SQL Server script deletes later, so they go first; the audience-change queue, leave periods and My Training pins have no keys
+			await Delete("TrainingQuestionFlags", "TrainingCompletionHistories", "TrainingQuizAttempts", "TrainingAudiences", "ContentAudienceChanges",
+				"MemberLeavePeriods", "MemberPinnedItems");
+
+			// S0 signatures (M0341) and P1 protocol categories (M0342) have no keys; the rest of the protocol tree goes with
+			// ProtocolDepartmentCleanup
+			await Delete("SignatureRecords", "ProtocolCategories");
+			// e-Signature S1/S2 (M0356-M0359): captures and signers before their requests, inputs before their sealed documents; no keys.
+			// Webhook hints carry no DepartmentId (purged by worker 90). Sealed objects in the store are not removed here (owed).
+			await Delete("SignatureCaptures", "SignatureRequestSigners", "SignatureRequests", "SealedDocumentInputs", "SealedDocuments", "ESignProviderAccounts");
+			// e-Signature S4 (M0385, M0386): approval request steps before their requests, chain steps before their chains, delegates and
+			// mutual-aid agreements; no keys
+			await Delete("ApprovalRequestSteps", "ApprovalRequests", "ApprovalChainSteps", "ApprovalChains", "ApprovalDelegates", "MutualAidAgreements");
+			// Training T1 (M0344, M0346): the learning-record ledger has no keys (purged by DepartmentId); credit mappings go before
+			// their categories, and removing a category sets Trainings.CategoryId and CalendarItemTypes.DefaultCategoryId to null
+			// (M0345) before the script deletes those rows.
+			// Round 7B (M0400): recorded completions (permission 135) have no keys either; they go with the ledger they annotate.
+			await Delete("TrainingCompletionRecordings");
+			// Round 9B (M0409, M0410): submission review history and the reviewer digest claims; no keys, they go with the ledger.
+			await Delete("LearningRecordReviewEvents", "TrainingReviewDigests");
+			await Delete("LearningRecords", "LearningRecordFiles", "LearningRecordBackfills", "CategoryCreditMappings", "LmsCertificateTemplates", "TrainingCategories");
+
+			// LMS seats and add-on lapse tracking (M0351, M0352); no foreign keys
+			await Delete("LmsMemberSeats", "LmsAddonLapses", "LmsAddonStates");
+
+			// Workforce Pro seats and add-on state (M0422, M0423; the member wellness records themselves are RMS rows, purged by the RMS cleanup)
+			await Delete("WorkforceProSeats", "WorkforceProAddonStates");
+
+			// K1 knowledge index (M0353) and gaps (M0354): derived chunks with their embeddings, the reindex queue, the index state and the
+			// gaps report; no keys. The Academy system corpus (DepartmentId 0) belongs to no department and is never deleted here
+			await Delete("KnowledgeChunks", "KnowledgeIndexRequests", "KnowledgeIndexStates", "KnowledgeGaps");
+			// Academy A3 (M0375): members' guided-tour and "What's new" states; no keys. AcademyLessonUpdates is system-level (no department).
+			await Delete("AcademyGuidanceStates");
 
 			// The orphan decision-node sweep below reads every department's nodes, so two cleanups in it at once (a deletion and
 			// the deleted-department sweep) could each wait on nodes the other just deleted. One transaction-scoped lock, taken

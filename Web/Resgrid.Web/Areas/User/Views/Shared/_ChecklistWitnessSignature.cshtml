@@ -1,0 +1,22 @@
+@model Resgrid.Web.Areas.User.Models.Signatures.ChecklistWitnessPanelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    The checklist witness signature (e-Signature S3, free with Checklists): the shared signature panel at L2 while the run awaits
+    its witness (the attestation goes in the panel's text box; "Sign" asks for a fresh step-up first and the form is replayed),
+    then the witness signatures, each checked against the completion's operational content as it is now.
+*@
+<section class="rg-checklist-witness-signature m-t-md" aria-label="@signatureText["WitnessPanelTitle"]">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-info" role="status">@Model.Message</div>
+    }
+    @if (Model.Panel != null)
+    {
+        @await Html.PartialAsync("_SignaturePanel", Model.Panel)
+    }
+    @if (Model.View.Signatures.Count > 0)
+    {
+        <h4 class="m-t-md">@signatureText["SignaturesHeading"]</h4>
+        @await Html.PartialAsync("_SignaturesList", new Resgrid.Web.Areas.User.Models.Signatures.SignatureListModel { Items = Model.View.Signatures })
+    }
+</section>

@@ -1,0 +1,246 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ExchangeListingModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@*
+    One community exchange listing: a preview of exactly what an import creates (the reviewed payload), the contributor's attribution name and
+    licence, ratings, comments (plain text) and the import. Contributors see their own pending, rejected or withdrawn items; Resgrid reviewers
+    see the scrubber's findings and can list, reject or take an item down.
+*@
+@{
+    var view = Model.View;
+    var listing = view.Listing;
+    var status = (ExchangeListingStatuses)listing.Status;
+    ViewBag.Title = "Resgrid | " + listing.Title;
+    ViewData["Title"] = listing.Title;
+    ViewData["Subtitle"] = text["ItemKind" + (ExchangeItemKinds)listing.ItemKind].Value + " · " + listing.AttributionName;
+    ViewData["Section"] = "Sharing";
+    ViewData["SharingSection"] = view.IsOwnDepartment ? "Mine" : "Exchange";
+    ViewData["IsManager"] = Model.IsManager;
+    ViewData["CanCreate"] = Model.CanAuthor;
+    var flags = listing.ReviewFlags;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_SharingTabs", Model)
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label">@text["ColumnStatus"]</div>
+            <div class="rgw-stat-value">@text["ListingStatus" + status]</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label">@text["ColumnRating"]</div>
+            <div class="rgw-stat-value">@(listing.AverageRating.HasValue ? string.Format(text["RatingValue"].Value, listing.AverageRating.Value.ToString("0.0"), listing.RatingCount) : text["NotRated"].Value)</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label">@text["ColumnImports"]</div>
+            <div class="rgw-stat-value">@listing.ImportCount</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label">@text["ColumnLicense"]</div>
+            <div class="rgw-stat-value">
+                @if (ContentLicenses.UrlFor(listing.License) != null)
+                {
+                    <a href="@ContentLicenses.UrlFor(listing.License)" target="_blank" rel="license noopener noreferrer">@listing.License</a>
+                }
+                else
+                {
+                    @listing.License
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(listing.ReviewNote) && (view.IsOwnDepartment || Model.IsReviewer))
+    {
+        <div class="alert alert-info" role="status"><strong>@text["ReviewNoteLabel"]</strong> @listing.ReviewNote</div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-eye" aria-hidden="true"></i> @text["PreviewHeader"]</h5></div>
+                <div class="ibox-content">
+                    @if (!string.IsNullOrWhiteSpace(listing.Summary))
+                    {
+                        <p>@listing.Summary</p>
+                    }
+                    <p class="text-muted small">@string.Format(text["ListingVersion"].Value, listing.VersionLabel ?? "-") · @string.Format(text["ListingContributed"].Value, listing.AttributionName, listing.SubmittedOn.ToString("yyyy-MM-dd"))</p>
+                    <div class="rgp-content rgx-preview">@Html.ProtocolContent(view.PreviewHtml)</div>
+                </div>
+            </div>
+
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-comments-o" aria-hidden="true"></i> @string.Format(text["CommentsHeader"].Value, view.Comments.Count)</h5></div>
+                <div class="ibox-content">
+                    @if (view.Comments.Count == 0)
+                    {
+                        <p class="text-muted">@text["NoComments"]</p>
+                    }
+                    @foreach (var comment in view.Comments)
+                    {
+                        <div class="rgx-comment @(comment.HiddenOn.HasValue ? "text-muted" : null)">
+                            <p class="rgw-sub"><strong>@comment.AuthorName</strong> · @comment.CreatedOn.ToString("yyyy-MM-dd") @(comment.HiddenOn.HasValue ? "· " + text["CommentHidden"].Value : null)</p>
+                            <p style="white-space: pre-line;">@comment.Body</p>
+                            @if (!comment.HiddenOn.HasValue && (Model.IsReviewer || string.Equals(comment.UserId, ClaimsAuthorizationHelper.GetUserId(), StringComparison.OrdinalIgnoreCase)))
+                            {
+                                <form method="post" asp-controller="ProtocolSharing" asp-action="HideComment" asp-route-area="User" class="rgw-row-actions">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@listing.ExchangeListingId" />
+                                    <input type="hidden" name="commentId" value="@comment.ExchangeCommentId" />
+                                    <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-eye-slash" aria-hidden="true"></i> @text["HideCommentButton"]</button>
+                                </form>
+                            }
+                        </div>
+                    }
+                    @if (listing.IsListed)
+                    {
+                        <form method="post" asp-controller="ProtocolSharing" asp-action="Comment" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@listing.ExchangeListingId" />
+                            <div class="form-group">
+                                <label class="control-label" for="commentBody">@text["CommentLabel"]</label>
+                                <textarea id="commentBody" name="body" class="form-control" rows="3" maxlength="@ExchangeComment.BodyMaxLength" required></textarea>
+                                <span class="help-block small">@text["CommentHelp"]</span>
+                            </div>
+                            <button type="submit" class="btn btn-default"><i class="fa fa-comment" aria-hidden="true"></i> @text["CommentButton"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            @if (listing.IsListed)
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-download" aria-hidden="true"></i> @text["ImportHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="small">@text["ImportHelp"]</p>
+                        @if (view.ImportNeedsLms)
+                        {
+                            <p class="small text-muted">@text["ImportNeedsLms"]</p>
+                        }
+                        @if (view.AlreadyImported)
+                        {
+                            <p class="small text-muted"><i class="fa fa-check" aria-hidden="true"></i> @text["AlreadyImported"]</p>
+                        }
+                        @if (view.CanImport)
+                        {
+                            <form method="post" asp-controller="ProtocolSharing" asp-action="Import" asp-route-area="User">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@listing.ExchangeListingId" />
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-download" aria-hidden="true"></i> @text["ImportButton"]</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="small text-muted">@text["ImportNotAllowed"]</p>
+                        }
+                    </div>
+                </div>
+
+                @if (!view.IsOwnDepartment)
+                {
+                    <div class="ibox">
+                        <div class="ibox-title"><h5><i class="fa fa-star" aria-hidden="true"></i> @text["RateHeader"]</h5></div>
+                        <div class="ibox-content">
+                            <form method="post" asp-controller="ProtocolSharing" asp-action="Rate" asp-route-area="User" class="rgw-toolbar">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@listing.ExchangeListingId" />
+                                <label class="control-label" for="stars">@text["RateLabel"]</label>
+                                <select id="stars" name="stars" class="form-control">
+                                    @for (var s = ExchangeRules.MaxStars; s >= ExchangeRules.MinStars; s--)
+                                    {
+                                        <option value="@s" selected="@(view.MyStars == s)">@string.Format(text["StarsOption"].Value, s)</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-default"><i class="fa fa-star" aria-hidden="true"></i> @text["RateButton"]</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+
+            @if (view.IsOwnDepartment && (status == ExchangeListingStatuses.PendingReview || status == ExchangeListingStatuses.Listed))
+            {
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="ProtocolSharing" asp-action="Withdraw" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@listing.ExchangeListingId" />
+                            <button type="submit" class="btn btn-default"><i class="fa fa-undo" aria-hidden="true"></i> @text["WithdrawButton"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (Model.IsReviewer || view.IsOwnDepartment)
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-flag" aria-hidden="true"></i> @text["FlagsHeader"]</h5></div>
+                    <div class="ibox-content">
+                        @if (flags.Count == 0)
+                        {
+                            <p class="small text-muted">@text["NoFlags"]</p>
+                        }
+                        else
+                        {
+                            <ul class="small">
+                                @foreach (var flag in flags)
+                                {
+                                    <li>@text["Flag" + flag.Kind]@(string.IsNullOrWhiteSpace(flag.Text) ? null : ": " + flag.Text)</li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (Model.IsReviewer && status == ExchangeListingStatuses.PendingReview)
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-gavel" aria-hidden="true"></i> @text["DecideHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="ProtocolSharing" asp-action="Decide" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@listing.ExchangeListingId" />
+                            <div class="form-group">
+                                <label class="control-label" for="decideNote">@text["ReviewNoteLabel"]</label>
+                                <textarea id="decideNote" name="note" class="form-control" rows="3" maxlength="@ExchangeListing.ReviewNoteMaxLength"></textarea>
+                                <span class="help-block small">@text["DecideHelp"]</span>
+                            </div>
+                            <button type="submit" name="approve" value="true" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @text["ListButton"]</button>
+                            <button type="submit" name="approve" value="false" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i> @text["RejectButton"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (Model.IsReviewer && status == ExchangeListingStatuses.Listed)
+            {
+                <div class="ibox">
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="ProtocolSharing" asp-action="RemoveListing" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@listing.ExchangeListingId" />
+                            <div class="form-group">
+                                <label class="control-label" for="removeNote">@text["ReviewNoteLabel"]</label>
+                                <textarea id="removeNote" name="note" class="form-control" rows="2" maxlength="@ExchangeListing.ReviewNoteMaxLength" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-danger"><i class="fa fa-ban" aria-hidden="true"></i> @text["RemoveButton"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/protocol-content.css" asp-append-version="true" />
+}

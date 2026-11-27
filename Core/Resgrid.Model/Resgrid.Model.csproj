@@ -5,6 +5,10 @@
   </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="Tracking\Catalog\unit-tracking-catalog.json" />
+    <EmbeddedResource Include="Academy\Manifests\**\*.json" />
+    <EmbeddedResource Include="Protocols\Templates\*.json" />
+    <EmbeddedResource Include="Lms\Starters\*.json" />
+    <EmbeddedResource Include="SeedContent\Translations\*.json" />
     <EmbeddedResource Include="..\..\Web\Resgrid.Web\wwwroot\audio\caf\Emergency_call.caf">
       <Link>Audio\Emergency_call.caf</Link>
     </EmbeddedResource>

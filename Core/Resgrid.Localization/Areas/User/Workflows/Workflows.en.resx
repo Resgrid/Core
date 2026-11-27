@@ -1085,5 +1085,515 @@
   <data name="CredentialDeliversRecordsExport" xml:space="preserve">
     <value>A workflow step sends a Records report export through this credential, so changing it requires the "Print and Export Records" and "Manage Record Reports" permissions (and "View Restricted Sections" when the export includes restricted sections).</value>
   </data>
+  <data name="Trigger.DocumentSealed" xml:space="preserve">
+    <value>Document sealed</value>
+  </data>
+  <data name="Trigger.DocumentSealingFailed" xml:space="preserve">
+    <value>Document sealing failed</value>
+  </data>
+  <data name="Trigger.ProtocolVersionPublished" xml:space="preserve">
+    <value>Protocol version published</value>
+  </data>
+  <data name="Trigger.ProtocolRetired" xml:space="preserve">
+    <value>Protocol retired</value>
+  </data>
+  <data name="Trigger.ProtocolVersionExpired" xml:space="preserve">
+    <value>Protocol version expired</value>
+  </data>
+  <data name="Trigger.ProtocolReviewDue" xml:space="preserve">
+    <value>Protocol review due</value>
+  </data>
+  <data name="Trigger.ProtocolReviewOverdue" xml:space="preserve">
+    <value>Protocol review overdue</value>
+  </data>
+  <data name="Trigger.ProtocolBulletinIssued" xml:space="preserve">
+    <value>Priority bulletin issued</value>
+  </data>
+  <data name="Trigger.ProtocolBulletinWithdrawn" xml:space="preserve">
+    <value>Priority bulletin withdrawn</value>
+  </data>
+  <data name="Trigger.ProtocolTranslationApproved" xml:space="preserve">
+    <value>Protocol translation approved</value>
+  </data>
+  <data name="Trigger.ProtocolPublicLinkChanged" xml:space="preserve">
+    <value>Protocol public link created or revoked</value>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentAssigned" xml:space="preserve">
+    <value>Protocol acknowledgment assigned</value>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentCompleted" xml:space="preserve">
+    <value>Protocol acknowledgment completed</value>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentOverdue" xml:space="preserve">
+    <value>Protocol acknowledgment overdue</value>
+  </data>
+  <data name="Trigger.CallDeterminantChanged" xml:space="preserve">
+    <value>Call determinant changed</value>
+  </data>
+  <data name="Trigger.DispatchCaseReviewSent" xml:space="preserve">
+    <value>Dispatch case review sent</value>
+  </data>
+  <data name="Trigger.DispatchCaseReviewAcknowledged" xml:space="preserve">
+    <value>Dispatch case review acknowledged</value>
+  </data>
+  <data name="Trigger.ExchangeListingReviewed" xml:space="preserve">
+    <value>Community exchange submission reviewed</value>
+  </data>
+  <data name="Trigger.KnowledgeGapRecorded" xml:space="preserve">
+    <value>Knowledge gap recorded</value>
+  </data>
+  <data name="Trigger.CourseVersionPublished" xml:space="preserve">
+    <value>Course version published</value>
+  </data>
+  <data name="Trigger.CourseCompleted" xml:space="preserve">
+    <value>Course completed</value>
+  </data>
+  <data name="Trigger.AssessmentGraded" xml:space="preserve">
+    <value>Assessment graded</value>
+  </data>
+  <data name="Trigger.SkillEvaluationCompleted" xml:space="preserve">
+    <value>Skill evaluation completed</value>
+  </data>
+  <data name="Trigger.TaskBookClosed" xml:space="preserve">
+    <value>Task book closed</value>
+  </data>
+  <data name="Trigger.RequirementEnforcementUndone" xml:space="preserve">
+    <value>Requirement enforcement undone</value>
+  </data>
+  <data name="Trigger.TrainingRequestSubmitted" xml:space="preserve">
+    <value>Training request submitted</value>
+  </data>
+  <data name="Trigger.TrainingRequestDecided" xml:space="preserve">
+    <value>Training request decided</value>
+  </data>
+  <data name="Trigger.LmsAddonLapsed" xml:space="preserve">
+    <value>LMS add-on lapsed</value>
+  </data>
+  <data name="Trigger.LmsAddonReactivated" xml:space="preserve">
+    <value>LMS add-on reactivated</value>
+  </data>
+  <data name="Trigger.LmsDataExportReady" xml:space="preserve">
+    <value>Training data export ready</value>
+  </data>
+  <data name="Trigger.SignatureStepAssigned" xml:space="preserve">
+    <value>Your turn to sign</value>
+  </data>
+  <data name="Trigger.CourseAssigned" xml:space="preserve">
+    <value>Course assigned</value>
+  </data>
+  <data name="Trigger.AssessmentAwaitingGrading" xml:space="preserve">
+    <value>Assessment awaiting grading</value>
+  </data>
+  <data name="Trigger.CourseRetired" xml:space="preserve">
+    <value>Course retired</value>
+  </data>
+  <data name="Trigger.LmsSeatsChanged" xml:space="preserve">
+    <value>LMS seats or packs changed</value>
+  </data>
+  <data name="Trigger.CertificationIssuedByTraining" xml:space="preserve">
+    <value>Certification issued by training</value>
+  </data>
+  <data name="Trigger.CertificationRenewedByTraining" xml:space="preserve">
+    <value>Certification renewed by training</value>
+  </data>
+  <data name="Trigger.CertificationRevokedByVoid" xml:space="preserve">
+    <value>Certification taken back by a void</value>
+  </data>
+  <data name="Trigger.CertificationRequirementsDue" xml:space="preserve">
+    <value>Certification requirements due</value>
+  </data>
+  <data name="Trigger.TrainingSubmissionReceived" xml:space="preserve">
+    <value>Training hours submission received</value>
+  </data>
+  <data name="Trigger.TrainingSubmissionApproved" xml:space="preserve">
+    <value>Training hours submission approved</value>
+  </data>
+  <data name="Trigger.TrainingSubmissionDenied" xml:space="preserve">
+    <value>Training hours submission not accepted</value>
+  </data>
+  <data name="Trigger.TrainingSubmissionInfoRequested" xml:space="preserve">
+    <value>More information asked for on a training submission</value>
+  </data>
+  <data name="Trigger.TrainingSubmissionResubmitted" xml:space="preserve">
+    <value>Training hours submission resubmitted</value>
+  </data>
+  <data name="Trigger.TrainingCompletionRecordingVoided" xml:space="preserve">
+    <value>Recorded training completion voided</value>
+  </data>
+  <data name="Trigger.SignatureRequested" xml:space="preserve">
+    <value>Signature requested</value>
+  </data>
+  <data name="Trigger.SignatureCompleted" xml:space="preserve">
+    <value>Signature request completed</value>
+  </data>
+  <data name="Trigger.SignatureDeclined" xml:space="preserve">
+    <value>Signature request declined</value>
+  </data>
+  <data name="Trigger.SignatureExpired" xml:space="preserve">
+    <value>Signature request expired</value>
+  </data>
+  <data name="Trigger.TrainingAssigned" xml:space="preserve">
+    <value>Training assigned</value>
+  </data>
+  <data name="Trigger.TrainingCompleted" xml:space="preserve">
+    <value>Training completed</value>
+  </data>
+  <data name="Trigger.TrainingFailed" xml:space="preserve">
+    <value>Assessment failed</value>
+  </data>
+  <data name="Trigger.TrainingOverdue" xml:space="preserve">
+    <value>Training overdue</value>
+  </data>
+  <data name="Trigger.RequirementAtRisk" xml:space="preserve">
+    <value>Requirement at risk</value>
+  </data>
+  <data name="Trigger.RequirementEnforced" xml:space="preserve">
+    <value>Requirement enforced</value>
+  </data>
+  <data name="Trigger.ApprovalRequested" xml:space="preserve">
+    <value>Approval requested</value>
+  </data>
+  <data name="Trigger.ApprovalGranted" xml:space="preserve">
+    <value>Approval granted</value>
+  </data>
+  <data name="Trigger.ApprovalRejected" xml:space="preserve">
+    <value>Approval rejected</value>
+  </data>
+  <data name="Trigger.ApprovalEscalated" xml:space="preserve">
+    <value>Approval escalated</value>
+  </data>
+  <data name="Trigger.ClassSessionScheduled" xml:space="preserve">
+    <value>Class session scheduled</value>
+  </data>
+  <data name="Trigger.ClassSessionCancelled" xml:space="preserve">
+    <value>Class session cancelled</value>
+  </data>
+  <data name="Trigger.ClassSessionSignedOff" xml:space="preserve">
+    <value>Class session signed off</value>
+  </data>
+  <data name="Trigger.ClassWaitlistPromoted" xml:space="preserve">
+    <value>Moved up from a class waitlist</value>
+  </data>
+  <data name="Trigger.TrainingCompletionRecorded" xml:space="preserve">
+    <value>Training completion recorded</value>
+  </data>
+  <data name="Trigger.ExternalLearnerRegistered" xml:space="preserve">
+    <value>External learner registered</value>
+  </data>
+  <data name="Trigger.ExternalLearnerEnrolled" xml:space="preserve">
+    <value>External learner enrolled</value>
+  </data>
+  <data name="Trigger.ExternalLearnerCompletedCourse" xml:space="preserve">
+    <value>External learner completed a course</value>
+  </data>
+  <data name="Trigger.CallAdded" xml:space="preserve">
+    <value>Call added</value>
+  </data>
+  <data name="Trigger.CallUpdated" xml:space="preserve">
+    <value>Call updated</value>
+  </data>
+  <data name="Trigger.CallClosed" xml:space="preserve">
+    <value>Call closed</value>
+  </data>
+  <data name="Trigger.UnitStatusChanged" xml:space="preserve">
+    <value>Unit status changed</value>
+  </data>
+  <data name="Trigger.PersonnelStaffingChanged" xml:space="preserve">
+    <value>Personnel staffing changed</value>
+  </data>
+  <data name="Trigger.PersonnelStatusChanged" xml:space="preserve">
+    <value>Personnel status changed</value>
+  </data>
+  <data name="Trigger.UserCreated" xml:space="preserve">
+    <value>User created</value>
+  </data>
+  <data name="Trigger.UserAssignedToGroup" xml:space="preserve">
+    <value>User assigned to group</value>
+  </data>
+  <data name="Trigger.DocumentAdded" xml:space="preserve">
+    <value>Document added</value>
+  </data>
+  <data name="Trigger.NoteAdded" xml:space="preserve">
+    <value>Note added</value>
+  </data>
+  <data name="Trigger.UnitAdded" xml:space="preserve">
+    <value>Unit added</value>
+  </data>
+  <data name="Trigger.LogAdded" xml:space="preserve">
+    <value>Log added</value>
+  </data>
+  <data name="Trigger.CalendarEventAdded" xml:space="preserve">
+    <value>Calendar event added</value>
+  </data>
+  <data name="Trigger.CalendarEventUpdated" xml:space="preserve">
+    <value>Calendar event updated</value>
+  </data>
+  <data name="Trigger.ShiftCreated" xml:space="preserve">
+    <value>Shift created</value>
+  </data>
+  <data name="Trigger.ShiftUpdated" xml:space="preserve">
+    <value>Shift updated</value>
+  </data>
+  <data name="Trigger.ResourceOrderAdded" xml:space="preserve">
+    <value>Resource order added</value>
+  </data>
+  <data name="Trigger.ShiftTradeRequested" xml:space="preserve">
+    <value>Shift trade requested</value>
+  </data>
+  <data name="Trigger.ShiftTradeFilled" xml:space="preserve">
+    <value>Shift trade filled</value>
+  </data>
+  <data name="Trigger.MessageSent" xml:space="preserve">
+    <value>Message sent</value>
+  </data>
+  <data name="Trigger.TrainingAdded" xml:space="preserve">
+    <value>Training added</value>
+  </data>
+  <data name="Trigger.TrainingUpdated" xml:space="preserve">
+    <value>Training updated</value>
+  </data>
+  <data name="Trigger.FormSubmitted" xml:space="preserve">
+    <value>Form submitted</value>
+  </data>
+  <data name="Trigger.PersonnelRoleChanged" xml:space="preserve">
+    <value>Personnel role changed</value>
+  </data>
+  <data name="Trigger.GroupAdded" xml:space="preserve">
+    <value>Group added</value>
+  </data>
+  <data name="Trigger.GroupUpdated" xml:space="preserve">
+    <value>Group updated</value>
+  </data>
+  <data name="Trigger.CommandEstablished" xml:space="preserve">
+    <value>Incident command established</value>
+  </data>
+  <data name="Trigger.ResourceAssigned" xml:space="preserve">
+    <value>Incident resource assigned</value>
+  </data>
+  <data name="Trigger.ResourceReleased" xml:space="preserve">
+    <value>Incident resource released</value>
+  </data>
+  <data name="Trigger.ObjectiveCompleted" xml:space="preserve">
+    <value>Incident objective completed</value>
+  </data>
+  <data name="Trigger.CriticalParDetected" xml:space="preserve">
+    <value>Critical PAR detected</value>
+  </data>
+  <data name="Trigger.CommandTransferred" xml:space="preserve">
+    <value>Incident command transferred</value>
+  </data>
+  <data name="Trigger.IncidentRoleAssigned" xml:space="preserve">
+    <value>Incident role assigned</value>
+  </data>
+  <data name="Trigger.AdHocResourceCreated" xml:space="preserve">
+    <value>Ad hoc resource created</value>
+  </data>
+  <data name="Trigger.IncidentChannelOpened" xml:space="preserve">
+    <value>Incident channel opened</value>
+  </data>
+  <data name="Trigger.IncidentClosed" xml:space="preserve">
+    <value>Incident closed</value>
+  </data>
+  <data name="Trigger.PublicIncidentNoteAdded" xml:space="preserve">
+    <value>Public incident note added</value>
+  </data>
+  <data name="Trigger.InternalIncidentNoteAdded" xml:space="preserve">
+    <value>Internal incident note added</value>
+  </data>
+  <data name="Trigger.PublicIncidentDocumentAdded" xml:space="preserve">
+    <value>Public incident document added</value>
+  </data>
+  <data name="Trigger.InternalIncidentDocumentAdded" xml:space="preserve">
+    <value>Internal incident document added</value>
+  </data>
+  <data name="Trigger.IncidentNoteRemoved" xml:space="preserve">
+    <value>Incident note removed</value>
+  </data>
+  <data name="Trigger.IncidentDocumentRemoved" xml:space="preserve">
+    <value>Incident document removed</value>
+  </data>
+  <data name="Trigger.IncidentActionPlanUpdated" xml:space="preserve">
+    <value>Incident action plan updated</value>
+  </data>
+  <data name="Trigger.IncidentCommandPostUpdated" xml:space="preserve">
+    <value>Incident command post updated</value>
+  </data>
+  <data name="Trigger.IncidentPublicSharingEnabled" xml:space="preserve">
+    <value>Incident public sharing turned on</value>
+  </data>
+  <data name="Trigger.IncidentPublicSharingDisabled" xml:space="preserve">
+    <value>Incident public sharing turned off</value>
+  </data>
+  <data name="Trigger.RunCardActivated" xml:space="preserve">
+    <value>Run card activated</value>
+  </data>
+  <data name="Trigger.CallAlarmEscalated" xml:space="preserve">
+    <value>Call alarm escalated</value>
+  </data>
+  <data name="Trigger.DispatchShortfallDetected" xml:space="preserve">
+    <value>Dispatch shortfall detected</value>
+  </data>
+  <data name="Trigger.StationCoverageGapDetected" xml:space="preserve">
+    <value>Station coverage gap detected</value>
+  </data>
+  <data name="Trigger.RecordCreated" xml:space="preserve">
+    <value>Record created</value>
+  </data>
+  <data name="Trigger.RecordSubmittedForReview" xml:space="preserve">
+    <value>Record sent for review</value>
+  </data>
+  <data name="Trigger.RecordReturnedForCorrection" xml:space="preserve">
+    <value>Record returned for correction</value>
+  </data>
+  <data name="Trigger.RecordApproved" xml:space="preserve">
+    <value>Record approved</value>
+  </data>
+  <data name="Trigger.RecordFinalized" xml:space="preserve">
+    <value>Record finalized</value>
+  </data>
+  <data name="Trigger.RecordAmended" xml:space="preserve">
+    <value>Record amended</value>
+  </data>
+  <data name="Trigger.RecordVoided" xml:space="preserve">
+    <value>Record voided</value>
+  </data>
+  <data name="Trigger.RecordCancelled" xml:space="preserve">
+    <value>Record cancelled</value>
+  </data>
+  <data name="Trigger.RecordSubmissionQueued" xml:space="preserve">
+    <value>Record submission queued</value>
+  </data>
+  <data name="Trigger.RecordSubmissionAccepted" xml:space="preserve">
+    <value>Record submission accepted</value>
+  </data>
+  <data name="Trigger.RecordSubmissionRejected" xml:space="preserve">
+    <value>Record submission rejected</value>
+  </data>
+  <data name="Trigger.RecordSubmissionFailed" xml:space="preserve">
+    <value>Record submission failed</value>
+  </data>
+  <data name="Trigger.RecordOverdue" xml:space="preserve">
+    <value>Record overdue</value>
+  </data>
+  <data name="Trigger.RecordDefinitionPublished" xml:space="preserve">
+    <value>Record definition published</value>
+  </data>
+  <data name="Trigger.RecordDefinitionRetired" xml:space="preserve">
+    <value>Record definition retired</value>
+  </data>
+  <data name="Trigger.RecordAttachmentAdded" xml:space="preserve">
+    <value>Record attachment added</value>
+  </data>
+  <data name="Trigger.RecordDisclosureRequested" xml:space="preserve">
+    <value>Public records request logged</value>
+  </data>
+  <data name="Trigger.RecordDisclosureProduced" xml:space="preserve">
+    <value>Public records packet produced</value>
+  </data>
+  <data name="Trigger.RecordDisclosureReleased" xml:space="preserve">
+    <value>Public records packet released</value>
+  </data>
+  <data name="Trigger.RecordDisclosureClosed" xml:space="preserve">
+    <value>Public records request closed</value>
+  </data>
+  <data name="Trigger.RecordLegalHoldPlaced" xml:space="preserve">
+    <value>Legal hold placed</value>
+  </data>
+  <data name="Trigger.RecordLegalHoldReleased" xml:space="preserve">
+    <value>Legal hold released</value>
+  </data>
+  <data name="Trigger.RecordEvidenceCaptured" xml:space="preserve">
+    <value>Record evidence captured</value>
+  </data>
+  <data name="Trigger.RecordPurged" xml:space="preserve">
+    <value>Record purged</value>
+  </data>
+  <data name="Trigger.RecordExportScheduled" xml:space="preserve">
+    <value>Scheduled record export ready</value>
+  </data>
+  <data name="Trigger.RecordInspectionCompleted" xml:space="preserve">
+    <value>Inspection completed</value>
+  </data>
+  <data name="Trigger.RecordViolationOverdue" xml:space="preserve">
+    <value>Code violation overdue</value>
+  </data>
+  <data name="Trigger.RecordPermitExpiring" xml:space="preserve">
+    <value>Permit expiring</value>
+  </data>
+  <data name="Trigger.AdminAssistFindingOpened" xml:space="preserve">
+    <value>Admin Assist finding opened</value>
+  </data>
+  <data name="Trigger.AdminAssistFindingResolved" xml:space="preserve">
+    <value>Admin Assist finding resolved</value>
+  </data>
+  <data name="Trigger.AdminAssistFindingReopened" xml:space="preserve">
+    <value>Admin Assist finding reopened</value>
+  </data>
+  <data name="Trigger.RecurringCallScheduleCreated" xml:space="preserve">
+    <value>Recurring call schedule created</value>
+  </data>
+  <data name="Trigger.RecurringCallScheduleUpdated" xml:space="preserve">
+    <value>Recurring call schedule updated</value>
+  </data>
+  <data name="Trigger.RecurringCallSchedulePaused" xml:space="preserve">
+    <value>Recurring call schedule paused</value>
+  </data>
+  <data name="Trigger.RecurringCallScheduleResumed" xml:space="preserve">
+    <value>Recurring call schedule resumed</value>
+  </data>
+  <data name="Trigger.RecurringCallScheduleDeleted" xml:space="preserve">
+    <value>Recurring call schedule deleted</value>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceCreated" xml:space="preserve">
+    <value>Recurring call occurrence created</value>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceSkipped" xml:space="preserve">
+    <value>Recurring call occurrence skipped</value>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceDispatched" xml:space="preserve">
+    <value>Recurring call occurrence dispatched</value>
+  </data>
+  <data name="Trigger.RecurringCallAlertRaised" xml:space="preserve">
+    <value>Recurring call alert raised</value>
+  </data>
+  <data name="Trigger.RecurringCallAlertResolved" xml:space="preserve">
+    <value>Recurring call alert resolved</value>
+  </data>
+  <data name="Trigger.ContentSetUpdateArrived" xml:space="preserve">
+    <value>Set update arrived</value>
+  </data>
+  <data name="Trigger.ContentSetUpdateApplied" xml:space="preserve">
+    <value>Set update in force</value>
+  </data>
+  <data name="Trigger.ContentSetSubscribed" xml:space="preserve">
+    <value>Department subscribed to a set</value>
+  </data>
+  <data name="Trigger.ContentSetProposalReceived" xml:space="preserve">
+    <value>Set change proposed</value>
+  </data>
+  <data name="Trigger.ContentSetProposalAnswered" xml:space="preserve">
+    <value>Set proposal answered</value>
+  </data>
+  <data name="Trigger.LmsSponsorshipStarted" xml:space="preserve">
+    <value>LMS sponsorship started</value>
+  </data>
+  <data name="Trigger.LmsSponsorshipEnded" xml:space="preserve">
+    <value>LMS sponsorship ended</value>
+  </data>
+  <data name="Trigger.MutualAidCountersignRequested" xml:space="preserve">
+    <value>Mutual-aid countersignature requested</value>
+  </data>
+  <data name="Trigger.MutualAidAgreementCountersigned" xml:space="preserve">
+    <value>Mutual-aid agreement countersigned</value>
+  </data>
+  <data name="Trigger.MutualAidCountersignDeclined" xml:space="preserve">
+    <value>Mutual-aid countersignature declined</value>
+  </data>
+  <data name="Trigger.RecordDeploymentPartnerSignRequested" xml:space="preserve">
+    <value>Deployment partner acceptance requested</value>
+  </data>
+  <data name="Trigger.RecordDeploymentPartnerSignDecided" xml:space="preserve">
+    <value>Deployment partner acceptance decided</value>
+  </data>
 </root>
 

@@ -298,7 +298,7 @@ namespace Resgrid.Services
 			if (call.Protocols != null && call.Protocols.Any())
 			{
 				string protocols = String.Empty;
-				foreach (var protocol in call.Protocols)
+				foreach (var protocol in call.Protocols.Where(x => !x.IsRemoved))
 				{
 					if (String.IsNullOrWhiteSpace(protocols))
 						protocols = protocol.Data;
@@ -378,7 +378,7 @@ namespace Resgrid.Services
 			if (call.Protocols != null && call.Protocols.Any())
 			{
 				string protocols = String.Empty;
-				foreach (var protocol in call.Protocols)
+				foreach (var protocol in call.Protocols.Where(x => !x.IsRemoved))
 				{
 					if (String.IsNullOrWhiteSpace(protocols))
 						protocols = protocol.Data;

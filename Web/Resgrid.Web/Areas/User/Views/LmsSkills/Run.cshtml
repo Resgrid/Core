@@ -1,0 +1,280 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsSkillRunView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    Evaluator mode on the web (tablet-first): every step by its type with an annotation, Pass All, the elapsed-time timer, timestamped
+    notes, evidence uploads, the crew with "split out" for a failing member, and Submit (the evaluator picks the next signer the sheet
+    allows, or hands the signature to an outside evaluator), which fixes the result and opens the L2 signature.
+*@
+@{
+    var view = Model.Evaluation;
+    var evaluation = view.Evaluation;
+    ViewBag.Title = "Resgrid | " + evaluation.Title;
+    ViewData["Title"] = evaluation.Title;
+    ViewData["Subtitle"] = localizer["Skl.RunIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var included = view.Members.Where(m => m.IsIncluded).ToList();
+    var invariant = CultureInfo.InvariantCulture;
+    var failing = new HashSet<string>(view.Outcome?.FailedStepKeys ?? new List<string>(), StringComparer.OrdinalIgnoreCase);
+    var missing = new HashSet<string>(Model.SubmitErrors.Where(e => e.Contains(':')).Select(e => e.Split(':')[1]), StringComparer.OrdinalIgnoreCase);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-stat-tiles m-b-md">
+        <div class="rgw-stat-tile">
+            <span class="rgw-stat-value"><span id="skill-timer" class="label label-default" data-started="@evaluation.StartedOn.ToString("yyyy-MM-ddTHH:mm:ssZ", invariant)" data-limit="@(view.Version?.TimeLimitSeconds ?? 0)">--:--:--</span></span>
+            <span class="rgw-stat-label"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["Skl.Elapsed"]@(view.Version?.TimeLimitSeconds > 0 ? " / " + TimeSpan.FromSeconds(view.Version.TimeLimitSeconds).ToString(@"hh\:mm\:ss", invariant) : string.Empty)</span>
+        </div>
+        <div class="rgw-stat-tile">
+            <span class="rgw-stat-value">@(view.Outcome?.Score.HasValue == true ? view.Outcome.Score.Value.ToString("0.#") + "%" : "-")</span>
+            <span class="rgw-stat-label"><i class="fa fa-percent" aria-hidden="true"></i> @localizer["Skl.Col.Score"] (@localizer["Skl.PassAt"] @((view.Version?.PassThreshold ?? 100m).ToString("0.#"))%)</span>
+        </div>
+        <div class="rgw-stat-tile">
+            <span class="rgw-stat-value">@included.Count</span>
+            <span class="rgw-stat-label"><i class="fa fa-users" aria-hidden="true"></i> @localizer["Skl.MembersToEvaluate"]</span>
+        </div>
+    </div>
+
+    @if (view.Outcome?.CriticalFailed == true)
+    {
+        <div class="alert alert-danger" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["Skl.CriticalFailedNotice"]</div>
+    }
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-users" aria-hidden="true"></i> @localizer["Skl.MembersToEvaluate"]</h5></div>
+        <div class="ibox-content">
+            <ul class="list-unstyled">
+                @foreach (var member in included)
+                {
+                    <li class="m-b-xs">
+                        @Model.NameOf(member.UserId) <span class="rgw-sub">@localizer["Skl.Attempt"] @member.AttemptNumber</span>
+                        @if (evaluation.Mode == (int)LmsSkillEvaluationModes.Crew && included.Count > 1)
+                        {
+                            <form class="d-inline" asp-controller="LmsSkills" asp-action="Split" asp-route-area="User" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@evaluation.LmsSkillEvaluationId" />
+                                <input type="hidden" name="userId" value="@member.UserId" />
+                                <button type="submit" class="btn btn-white btn-xs" data-confirm="@localizer["Skl.SplitConfirm"]"><i class="fa fa-code-fork" aria-hidden="true"></i> @localizer["Skl.SplitOut"]</button>
+                            </form>
+                        }
+                    </li>
+                }
+            </ul>
+            @if (evaluation.Mode == (int)LmsSkillEvaluationModes.Crew)
+            {
+                <p class="help-block">@localizer["Skl.CrewHelp"]</p>
+            }
+        </div>
+    </div>
+
+    <form asp-controller="LmsSkills" asp-action="Run" asp-route-area="User" method="post" id="skill-run-form">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@evaluation.LmsSkillEvaluationId" />
+        <input type="hidden" name="rowVersion" value="@evaluation.RowVersion" />
+
+        <div class="rgw-toolbar m-b-sm">
+            <button type="submit" name="passAll" value="true" class="btn btn-white"><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["Skl.PassAll"]</button>
+            <button type="submit" name="submitAction" value="save" class="btn btn-white"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Skl.Save"]</button>
+        </div>
+
+        @foreach (var step in view.Content.Steps.Where(s => s != null))
+        {
+            var type = step.StepType;
+            var key = step.Key;
+            var answer = view.Answers.Get(key);
+            var value = answer?.Value;
+            var prefix = "s." + key + ".";
+            if (type == LmsSkillStepTypes.Heading)
+            {
+                <h3 class="m-t-md">@step.Label</h3>
+                continue;
+            }
+            if (type == LmsSkillStepTypes.Instructions)
+            {
+                <div class="alert alert-info"><i class="fa fa-info-circle" aria-hidden="true"></i> <strong>@step.Label</strong> @step.Help</div>
+                continue;
+            }
+            <fieldset class="panel panel-default @(failing.Contains(key) ? "panel-danger" : string.Empty)" id="step-@key">
+                <legend class="panel-heading h5">
+                    @step.Label
+                    @if (step.Critical) { <span class="label label-danger"><i class="fa fa-exclamation" aria-hidden="true"></i> @localizer["Skl.Step.Critical"]</span> }
+                    @if (missing.Contains(key)) { <span class="label label-warning"><i class="fa fa-question" aria-hidden="true"></i> @localizer["Skl.NeedsAnswer"]</span> }
+                </legend>
+                <div class="panel-body">
+                    @if (!string.IsNullOrWhiteSpace(step.Help)) { <p class="help-block">@step.Help</p> }
+
+                    @switch (type)
+                    {
+                        case LmsSkillStepTypes.PassFail:
+                            <div class="btn-group" role="radiogroup" aria-label="@step.Label">
+                                <label class="btn btn-white"><input type="radio" name="@(prefix)value" value="pass" checked="@(value == "pass")" /> <i class="fa fa-check" aria-hidden="true"></i> @localizer["Skl.Pass"]</label>
+                                <label class="btn btn-white"><input type="radio" name="@(prefix)value" value="fail" checked="@(value == "fail")" /> <i class="fa fa-times" aria-hidden="true"></i> @localizer["Skl.Fail"]</label>
+                            </div>
+                            break;
+                        case LmsSkillStepTypes.RatingScale:
+                            <div class="btn-group" role="radiogroup" aria-label="@step.Label">
+                                @for (var r = step.RatingMin ?? 1; r <= (step.RatingMax ?? 5); r++)
+                                {
+                                    <label class="btn btn-white"><input type="radio" name="@(prefix)value" value="@r" checked="@(value == r.ToString(invariant))" /> @r</label>
+                                }
+                            </div>
+                            @if (step.PassingRating.HasValue) { <span class="rgw-sub">@localizer["Skl.PassingRatingIs"] @step.PassingRating</span> }
+                            break;
+                        case LmsSkillStepTypes.ChooseOne:
+                            foreach (var option in step.Options ?? new List<LmsSkillOption>())
+                            {
+                                <div class="radio"><label><input type="radio" name="@(prefix)value" value="@option.Key" checked="@(string.Equals(value, option.Key, StringComparison.OrdinalIgnoreCase))" /> @option.Label</label></div>
+                            }
+                            break;
+                        case LmsSkillStepTypes.ChooseAny:
+                            foreach (var option in step.Options ?? new List<LmsSkillOption>())
+                            {
+                                <div class="checkbox"><label><input type="checkbox" name="@(prefix)values" value="@option.Key" checked="@(answer?.Values?.Contains(option.Key, StringComparer.OrdinalIgnoreCase) == true)" /> @option.Label</label></div>
+                            }
+                            break;
+                        case LmsSkillStepTypes.Text:
+                            <textarea class="form-control" name="@(prefix)value" rows="3" maxlength="4000" aria-label="@step.Label">@value</textarea>
+                            break;
+                        case LmsSkillStepTypes.Date:
+                            <input type="date" class="form-control" name="@(prefix)value" value="@value" aria-label="@step.Label" />
+                            break;
+                        case LmsSkillStepTypes.Time:
+                            <input type="time" class="form-control" name="@(prefix)value" value="@value" aria-label="@step.Label" />
+                            break;
+                        case LmsSkillStepTypes.DateTime:
+                            <input type="datetime-local" class="form-control" name="@(prefix)value" value="@value" aria-label="@step.Label" />
+                            break;
+                        case LmsSkillStepTypes.Number:
+                        case LmsSkillStepTypes.Duration:
+                            <div class="input-group">
+                                <input type="number" step="any" min="@(type == LmsSkillStepTypes.Duration ? "0" : null)" class="form-control" name="@(prefix)value" value="@value" aria-label="@step.Label" />
+                                @if (type == LmsSkillStepTypes.Duration) { <span class="input-group-addon">@localizer["Skl.Seconds"]</span> }
+                            </div>
+                            @if (step.Min.HasValue || step.Max.HasValue) { <span class="rgw-sub">@localizer["Skl.PassRange"] @(step.Min?.ToString("0.##") ?? "-") – @(step.Max?.ToString("0.##") ?? "-")</span> }
+                            break;
+                        case LmsSkillStepTypes.Computed:
+                            <p><strong>@(view.Outcome != null && view.Outcome.Computed.TryGetValue(key, out var computed) && computed.HasValue ? computed.Value.ToString("0.##") : "-")</strong> <span class="rgw-sub">@localizer["Skl.ComputedHelp"]</span></p>
+                            break;
+                        case LmsSkillStepTypes.TimestampedNotes:
+                            <ul class="list-unstyled">
+                                @foreach (var note in answer?.Notes ?? new List<LmsSkillTimedNote>())
+                                {
+                                    <li><span class="rgw-sub">@Model.When(note.At)</span> @note.Text</li>
+                                }
+                            </ul>
+                            <input class="form-control" name="@(prefix)addNote" maxlength="4000" placeholder="@localizer["Skl.AddTimedNote"]" aria-label="@localizer["Skl.AddTimedNote"]" />
+                            break;
+                        case LmsSkillStepTypes.Evidence:
+                            <p class="rgw-sub">@localizer["Skl.EvidenceStepHelp"]</p>
+                            break;
+                    }
+
+                    @foreach (var file in view.Files.Where(f => string.Equals(f.StepKey, key, StringComparison.OrdinalIgnoreCase)))
+                    {
+                        <div><a asp-controller="LmsSkills" asp-action="EvidenceFile" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId" asp-route-fileId="@file.LmsSkillEvaluationFileId"><i class="fa fa-paperclip" aria-hidden="true"></i> @file.FileName</a></div>
+                    }
+
+                    @if (type != LmsSkillStepTypes.Computed)
+                    {
+                        <div class="form-group m-t-sm">
+                            <label class="sr-only" for="note-@key">@localizer["Skl.Annotation"]</label>
+                            <input id="note-@key" class="form-control input-sm" name="@(prefix)note" value="@answer?.Note" maxlength="4000" placeholder="@localizer["Skl.Annotation"]" />
+                        </div>
+                    }
+                    @if (step.AllowNotApplicable && !step.Critical)
+                    {
+                        <div class="checkbox"><label><input type="checkbox" name="@(prefix)na" value="true" checked="@(answer?.Status == (int)LmsSkillAnswerStatuses.NotApplicable)" /> @localizer["Skl.NotApplicable"]</label></div>
+                        <input class="form-control input-sm" name="@(prefix)naReason" value="@answer?.NotApplicableReason" maxlength="2000" placeholder="@localizer["Skl.NotApplicableReason"]" aria-label="@localizer["Skl.NotApplicableReason"]" />
+                    }
+                </div>
+            </fieldset>
+        }
+
+        <div class="form-group">
+            <label for="notes">@localizer["Skl.EvaluatorComments"]</label>
+            <textarea id="notes" name="notes" class="form-control" rows="3" maxlength="4000">@evaluation.Notes</textarea>
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["Skl.SubmitTitle"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.NextSignerRequired)
+                {
+                    <div class="form-group">
+                        <label for="nextSignerUserId">@localizer["Skl.NextSigner"]</label>
+                        <select id="nextSignerUserId" name="nextSignerUserId" class="form-control">
+                            <option value="">@localizer["Skl.Choose"]</option>
+                            @foreach (var candidate in Model.NextSignerCandidates)
+                            {
+                                <option value="@candidate">@Model.NameOf(candidate)</option>
+                            }
+                        </select>
+                        <span class="help-block">@localizer["Skl.NextSignerHelp"]</span>
+                    </div>
+                }
+                @if (Model.AllowExternalEvaluator)
+                {
+                    <details class="m-b-sm">
+                        <summary>@localizer["Skl.OutsideEvaluator"]</summary>
+                        <div class="row m-t-sm">
+                            <div class="col-sm-6 form-group"><label for="externalName">@localizer["Skl.OutsideEvaluatorName"]</label><input id="externalName" name="externalName" class="form-control" maxlength="200" /></div>
+                            <div class="col-sm-6 form-group"><label for="externalEmail">@localizer["Skl.OutsideEvaluatorEmail"]</label><input id="externalEmail" name="externalEmail" type="email" class="form-control" maxlength="254" /></div>
+                        </div>
+                        <div class="checkbox"><label><input type="checkbox" name="externalRemote" value="true" /> @localizer["Skl.OutsideEvaluatorRemote"]</label></div>
+                        <p class="help-block">@localizer["Skl.OutsideEvaluatorHelp"]</p>
+                    </details>
+                }
+                <button type="submit" name="submitAction" value="submit" class="btn btn-primary" data-confirm="@localizer["Skl.SubmitConfirm"]"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Skl.SubmitAndSign"]</button>
+            </div>
+        </div>
+    </form>
+
+    <form asp-controller="LmsSkills" asp-action="Evidence" asp-route-area="User" method="post" enctype="multipart/form-data" class="ibox">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@evaluation.LmsSkillEvaluationId" />
+        <div class="ibox-title"><h5><i class="fa fa-camera" aria-hidden="true"></i> @localizer["Skl.AddEvidence"]</h5></div>
+        <div class="ibox-content">
+            <div class="row">
+                <div class="col-sm-5 form-group">
+                    <label for="stepKey">@localizer["Skl.EvidenceStep"]</label>
+                    <select id="stepKey" name="stepKey" class="form-control">
+                        <option value="">@localizer["Skl.WholeEvaluation"]</option>
+                        @foreach (var step in view.Content.Steps.Where(s => s != null && !LmsSkillSheetEngine.IsDisplayOnly(s.StepType)))
+                        {
+                            <option value="@step.Key">@step.Label</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-5 form-group">
+                    <label for="evidence-file">@localizer["Skl.EvidenceFile"]</label>
+                    <input id="evidence-file" name="file" type="file" class="form-control" accept="image/*,video/*,application/pdf,text/plain" capture="environment" required />
+                </div>
+                <div class="col-sm-2 form-group">
+                    <label class="invisible" aria-hidden="true">.</label>
+                    <button type="submit" class="btn btn-white btn-block"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Skl.Upload"]</button>
+                </div>
+            </div>
+            <p class="help-block">@localizer["Skl.EvidenceHelp"]</p>
+            @foreach (var file in view.Files.Where(f => string.IsNullOrEmpty(f.StepKey)))
+            {
+                <div><a asp-controller="LmsSkills" asp-action="EvidenceFile" asp-route-area="User" asp-route-id="@evaluation.LmsSkillEvaluationId" asp-route-fileId="@file.LmsSkillEvaluationFileId"><i class="fa fa-paperclip" aria-hidden="true"></i> @file.FileName</a></div>
+            }
+        </div>
+    </form>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.skills.js" asp-append-version="true"></script>
+}

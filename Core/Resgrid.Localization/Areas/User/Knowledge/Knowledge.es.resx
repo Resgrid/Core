@@ -1,0 +1,561 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllFilter" xml:space="preserve">
+    <value>Todas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskButton" xml:space="preserve">
+    <value>Preguntar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskHeader" xml:space="preserve">
+    <value>Pregunte al conocimiento de su departamento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskHeaderCall" xml:space="preserve">
+    <value>Pregunte sobre el protocolo de este incidente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskHeaderProtocol" xml:space="preserve">
+    <value>Pregunte sobre este protocolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskHeaderTraining" xml:space="preserve">
+    <value>Pregunte sobre esta formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskHelp" xml:space="preserve">
+    <value>Las respuestas provienen solo de los protocolos y formaciones publicados de su departamento y de Resgrid Academy, y cada respuesta enlaza a sus fuentes. Revise la fuente antes de actuar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Asking" xml:space="preserve">
+    <value>Buscando en los protocolos y formaciones de su departamento...</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskLabel" xml:space="preserve">
+    <value>Su pregunta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskPlaceholder" xml:space="preserve">
+    <value>Haga una pregunta sobre sus protocolos o formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BudgetNotice" xml:space="preserve">
+    <value>Su departamento ha agotado la asignación de IA de este mes. Estas fuentes coinciden con su pregunta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BusyNotice" xml:space="preserve">
+    <value>Las respuestas están ocupadas ahora. Inténtelo de nuevo en un momento. Estas fuentes coinciden con su pregunta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>Acciones</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnAsked" xml:space="preserve">
+    <value>Preguntada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnNearest" xml:space="preserve">
+    <value>Fuentes más cercanas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnQuestion" xml:space="preserve">
+    <value>Pregunta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnReason" xml:space="preserve">
+    <value>Motivo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConflictLabel" xml:space="preserve">
+    <value>Estas fuentes no coinciden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorpusHeader" xml:space="preserve">
+    <value>Fuentes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorpusHelp" xml:space="preserve">
+    <value>Los protocolos publicados y las formaciones iniciadas se incluyen siempre, salvo los elementos marcados para no usarse con IA. Nunca se usan borradores, cuestionarios, expedientes ni registros de aprendizaje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DismissButton" xml:space="preserve">
+    <value>Descartar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DismissedTile" xml:space="preserve">
+    <value>Descartadas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DoseNotice" xml:space="preserve">
+    <value>Las dosis se citan exactamente como las escribe la fuente. No se calculó nada. Revise la fuente y su herramienta de dosificación.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DosingToolLink" xml:space="preserve">
+    <value>Abrir la herramienta de dosificación del departamento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DosingToolUrlHelp" xml:space="preserve">
+    <value>Un enlace https a la herramienta de dosificación de su departamento. Las respuestas que citan una dosis enlazan a ella. Resgrid nunca calcula una dosis.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DosingToolUrlLabel" xml:space="preserve">
+    <value>Enlace a la herramienta de dosificación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftFailed" xml:space="preserve">
+    <value>No se pudo abrir un borrador para este protocolo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftProtocolButton" xml:space="preserve">
+    <value>Redactar cambio de protocolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>vigente desde {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotice" xml:space="preserve">
+    <value>Algo salió mal. Inténtelo de nuevo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeedbackGap" xml:space="preserve">
+    <value>Gracias. La pregunta se añadió al informe de lagunas de conocimiento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeedbackThanks" xml:space="preserve">
+    <value>Gracias por sus comentarios.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtrar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsIntro" xml:space="preserve">
+    <value>Preguntas que sus protocolos y formaciones no respondieron, y respuestas que los miembros marcaron como no útiles. Convierta una laguna en un borrador de cambio de protocolo o en una nueva formación.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsLink" xml:space="preserve">
+    <value>Lagunas de conocimiento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsTab" xml:space="preserve">
+    <value>Lagunas de conocimiento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsTitle" xml:space="preserve">
+    <value>Lagunas de conocimiento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapSuggestionBody" xml:space="preserve">
+    <value>Laguna de conocimiento: los miembros preguntaron «{0}» y los protocolos no lo respondieron.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapTrainingNoQuestion" xml:space="preserve">
+    <value>Laguna de conocimiento (pregunta no conservada)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapUpdated" xml:space="preserve">
+    <value>La laguna se actualizó.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Helpful" xml:space="preserve">
+    <value>Útil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IncludeDocumentsHelp" xml:space="preserve">
+    <value>Los documentos pasan a ser fuentes de las respuestas. Los documentos solo para administradores se usan solo para administradores. No se usan mientras Advanced Data Protection esté activo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IncludeDocumentsLabel" xml:space="preserve">
+    <value>Incluir el módulo Documentos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IndexHeader" xml:space="preserve">
+    <value>Índice</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IndexNotBuilt" xml:space="preserve">
+    <value>El índice aún no se ha creado. Se crea en segundo plano tras la primera pregunta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IndexStatus" xml:space="preserve">
+    <value>{0} secciones indexadas, {1} con incrustaciones. Última actualización: {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IndexWarning" xml:space="preserve">
+    <value>Algunos elementos no se pudieron indexar o el servicio de incrustaciones no estaba disponible; la próxima pasada lo reintenta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InvalidUrl" xml:space="preserve">
+    <value>Introduzca un enlace https.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KeptLocalNotice" xml:space="preserve">
+    <value>Su departamento usa Advanced Data Protection, así que su pregunta se queda en Resgrid. Estas fuentes coinciden con ella.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KeptLocalStatus" xml:space="preserve">
+    <value>Su departamento usa Advanced Data Protection: su pregunta se queda en Resgrid y recibe las fuentes que coinciden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KeywordOnlyNotice" xml:space="preserve">
+    <value>El servicio de búsqueda no respondió a tiempo, así que las fuentes se encontraron solo por palabras clave.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindAcademy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindCourse" xml:space="preserve">
+    <value>Curso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindDocument" xml:space="preserve">
+    <value>Documento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindProtocol" xml:space="preserve">
+    <value>Protocolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindProtocolFile" xml:space="preserve">
+    <value>Archivo del protocolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindTraining" xml:space="preserve">
+    <value>Formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindTrainingFile" xml:space="preserve">
+    <value>Archivo de la formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KnowledgeHeader" xml:space="preserve">
+    <value>Conocimiento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MatchedNotice" xml:space="preserve">
+    <value>Estas fuentes coinciden con su pregunta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NearestLabel" xml:space="preserve">
+    <value>Elementos más cercanos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewTrainingButton" xml:space="preserve">
+    <value>Nueva formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextPage" xml:space="preserve">
+    <value>Siguiente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoGaps" xml:space="preserve">
+    <value>No hay lagunas de conocimiento aquí.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoNearest" xml:space="preserve">
+    <value>No se encontró ninguna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRole" xml:space="preserve">
+    <value>Sin rol</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotCovered" xml:space="preserve">
+    <value>Los protocolos y formaciones de su departamento no cubren esto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Nota</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotHelpful" xml:space="preserve">
+    <value>No es útil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenSource" xml:space="preserve">
+    <value>Abrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenTile" xml:space="preserve">
+    <value>Abiertas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviousPage" xml:space="preserve">
+    <value>Anterior</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolsCrumb" xml:space="preserve">
+    <value>Protocolos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionNotKept" xml:space="preserve">
+    <value>Pregunta no conservada (Advanced Data Protection)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionRequired" xml:space="preserve">
+    <value>Escriba primero una pregunta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReasonNotCovered" xml:space="preserve">
+    <value>No cubierto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReasonThumbsDown" xml:space="preserve">
+    <value>Marcada como no útil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RebuildButton" xml:space="preserve">
+    <value>Reconstruir el índice</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RebuildQueued" xml:space="preserve">
+    <value>El índice se reconstruirá en segundo plano en unos minutos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReopenButton" xml:space="preserve">
+    <value>Reabrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Resolver</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResolvedTile" xml:space="preserve">
+    <value>Resueltas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Qué pueden usar las respuestas de conocimiento del departamento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Configuración del conocimiento guardada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Configuración</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsTitle" xml:space="preserve">
+    <value>Configuración del conocimiento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourcesLabel" xml:space="preserve">
+    <value>Fuentes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StaleCopyNotice" xml:space="preserve">
+    <value>Su copia sin conexión de un elemento citado es anterior a la versión citada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusFilterLabel" xml:space="preserve">
+    <value>Estado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceApi" xml:space="preserve">
+    <value>Aplicación móvil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceAssistant" xml:space="preserve">
+    <value>Asistente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceCall" xml:space="preserve">
+    <value>Incidente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>Biblioteca de protocolos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceProtocol" xml:space="preserve">
+    <value>Página del protocolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceTraining" xml:space="preserve">
+    <value>Página de la formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnavailableNotice" xml:space="preserve">
+    <value>Las respuestas no están disponibles ahora. Inténtelo de nuevo en unos minutos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>versión {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceHelp" xml:space="preserve">
+    <value>Búsqueda de ayuda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceCourse" xml:space="preserve">
+    <value>Curso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskHeaderCallWide" xml:space="preserve">
+    <value>Pregunte sobre este incidente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskHelpCallWide" xml:space="preserve">
+    <value>Las respuestas provienen solo de los protocolos que cita este incidente y de su tipo, prioridad, determinante y tipo de ubicación. Nunca se usan datos del paciente ni de quien llama.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskHeaderCourse" xml:space="preserve">
+    <value>Pregunte a este curso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AskHelpCourse" xml:space="preserve">
+    <value>Las respuestas provienen solo de la versión de este curso que está realizando, y cada parte enlaza a su lección.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallContextNotice" xml:space="preserve">
+    <value>Respondido para este incidente: sus protocolos, tipo, prioridad, determinante y tipo de ubicación.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>Práctica</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeHelp" xml:space="preserve">
+    <value>Practique con un escenario breve redactado a partir de la versión vigente de este protocolo. Sus respuestas se evalúan solo frente al protocolo y no se registra nada en su expediente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeStart" xml:space="preserve">
+    <value>Iniciar un escenario</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeStarting" xml:space="preserve">
+    <value>Redactando un escenario…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeScenarioLabel" xml:space="preserve">
+    <value>Escenario</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeAnswerLabel" xml:space="preserve">
+    <value>Su respuesta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeSubmit" xml:space="preserve">
+    <value>Evaluar mis respuestas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeScoring" xml:space="preserve">
+    <value>Evaluando sus respuestas…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>Otro escenario</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeScoreFormat" xml:space="preserve">
+    <value>Puntuación: {0} de {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeItemScoreFormat" xml:space="preserve">
+    <value>{0} de {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeNotScored" xml:space="preserve">
+    <value>No se pudo evaluar esta respuesta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeExcluded" xml:space="preserve">
+    <value>Este protocolo no se usa con IA.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeKeptLocal" xml:space="preserve">
+    <value>La Protección avanzada de datos mantiene local el contenido de este departamento, por lo que la práctica no está disponible.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeNoContent" xml:space="preserve">
+    <value>Este protocolo tiene muy poco texto para practicar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeRefused" xml:space="preserve">
+    <value>No se pudo comprobar el escenario frente al protocolo. Inténtelo de nuevo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeStale" xml:space="preserve">
+    <value>El protocolo ha cambiado desde que se redactó este escenario. Inicie uno nuevo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeAnswerRequired" xml:space="preserve">
+    <value>Responda al menos una pregunta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeOnlyNotice" xml:space="preserve">
+    <value>Solo práctica: no se registra nada en su expediente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindQuestionExplanation" xml:space="preserve">
+    <value>Explicación de la pregunta</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

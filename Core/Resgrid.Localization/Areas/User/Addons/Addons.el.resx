@@ -115,4 +115,204 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>Ο κωδικός συνεργάτη/λογαριασμού αποθηκεύτηκε για το τμήμα σας.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>Αυτός ο κωδικός συνεργάτη/λογαριασμού δεν είναι έγκυρος ή δεν είναι πλέον ενεργός.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>Το τμήμα σας έχει ήδη κωδικό συνεργάτη/λογαριασμού. Επικοινωνήστε μαζί μας αν χρειάζεται αλλαγή.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsTagline" xml:space="preserve"><value>Μαθήματα, επίσημες αναφορές εκπαίδευσης και επαληθεύσιμα πιστοποιητικά</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>Μαθήματα με ενότητες, τράπεζες ερωτήσεων και κουίζ</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>Φιλοξενούμενα βιντεομαθήματα, 100 GB ανά τμήμα περιλαμβάνονται</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>Επίσημες αναφορές εκπαίδευσης ISO FSRS και NREMT NCCP</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>Πιστοποιητικά με κωδικό επαλήθευσης, QR και δημόσια σελίδα επαλήθευσης, στο δικό σας πρότυπο</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>Θέσεις μόνο για τα μέλη που ενεργοποιείτε· όλοι κρατούν τη δωρεάν εκπαίδευση</value><comment>machine-translated</comment></data>
+  <data name="LmsNote" xml:space="preserve"><value>Τιμή ανά πακέτο 25 μελών, κλιμακωτή: τα πρώτα 4 πακέτα σε πλήρη τιμή, έπειτα φθηνότερα. Χρέωση μηνιαία ανά τμήμα· χωρίς δοκιμή. Απαιτεί επί πληρωμή πρόγραμμα Resgrid.</value><comment>machine-translated</comment></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>ανά πακέτο {0} μελών</value><comment>machine-translated</comment></data>
+  <data name="PackTierLine" xml:space="preserve"><value>Πακέτα {0}–{1}: {2} ανά πακέτο</value><comment>machine-translated</comment></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>Πακέτα από {0} και πάνω: {1} ανά πακέτο</value><comment>machine-translated</comment></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>Το LMS πωλείται με επί πληρωμή πρόγραμμα Resgrid. Επιλέξτε πρώτα πρόγραμμα στη σελίδα συνδρομής.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>Κάθε πακέτο καλύπτει 25 μέλη. Τα πακέτα τιμολογούνται κλιμακωτά: κάθε πακέτο χρεώνεται στην τιμή της δικής του κλίμακας, οπότε η προσθήκη πακέτων δεν κάνει ποτέ φθηνότερα ή ακριβότερα τα προηγούμενα. Μηνιαία χρέωση· χωρίς δοκιμή και χωρίς ετήσια διάρκεια.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>Η προσθήκη πακέτων χρεώνεται αμέσως, αναλογικά έως την ημερομηνία χρέωσης. Η αφαίρεση πακέτων ισχύει από την επόμενη ημερομηνία χρέωσης και μόνο έως τον αριθμό των μελών με ενεργό LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>Τα μέλη χωρίς ενεργό LMS κρατούν τη δωρεάν ενότητα Εκπαίδευσης, το ιστορικό εκπαίδευσής τους και την Academy. Εκπαιδευτές, αξιολογητές και αξιωματικοί δεν χρειάζονται θέση.</value><comment>machine-translated</comment></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>Διαχείριση θέσεων LMS στη σελίδα προσωπικού</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>Τα πακέτα προστέθηκαν. Η αναλογική χρέωση για το υπόλοιπο αυτής της περιόδου χρέωσης τιμολογήθηκε.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>Η μείωση των πακέτων έχει προγραμματιστεί για την επόμενη ημερομηνία χρέωσης. Οι θέσεις σας παραμένουν μέχρι τότε.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>Θα έμεναν λιγότερες θέσεις από τα μέλη με ενεργό LMS. Απενεργοποιήστε πρώτα μέλη στη σελίδα προσωπικού.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>Ο αριθμός πακέτων δεν άλλαξε και δεν χρεώθηκε τίποτα. Δοκιμάστε ξανά ή επικοινωνήστε μαζί μας.</value><comment>machine-translated</comment></data>
+  <data name="PacksHeading" xml:space="preserve"><value>Πακέτα και θέσεις</value><comment>machine-translated</comment></data>
+  <data name="PacksInForce" xml:space="preserve"><value>{0} πακέτα: {1} θέσεις, {2} σε χρήση</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>Τιμή επόμενου μήνα: {0}</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>Επόμενος μήνας</value><comment>machine-translated</comment></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>Από {0}: {1} πακέτα.</value><comment>machine-translated</comment></data>
+  <data name="PacksLabel" xml:space="preserve"><value>Πακέτα</value><comment>machine-translated</comment></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>Ενημέρωση πακέτων</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>{0} πακέτα ({1} θέσεις): {2} τον μήνα.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>{0} πακέτα ({1} θέσεις): {2} τον μήνα από τώρα. Περίπου {3} χρεώνεται τώρα για το υπόλοιπο αυτής της περιόδου χρέωσης.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>{0} πακέτα ({1} θέσεις): {2} τον μήνα από {3}. Δεν επιστρέφεται τίποτα και οι θέσεις σας παραμένουν μέχρι τότε.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>Αυτός είναι ο αριθμός πακέτων που έχετε τώρα.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>Χρειάζονται τουλάχιστον {0} πακέτα για τα μέλη με ενεργό LMS. Απενεργοποιήστε πρώτα κάποια στη σελίδα προσωπικού.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>Επιλέξτε από {0} έως {1} πακέτα.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>Η τιμή δεν μπόρεσε να εμφανιστεί. Δοκιμάστε ξανά.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>Θέση LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>Ενεργό LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>Αυτό το μέλος μπορεί να εκπαιδευτεί μέσω μαθημάτων και απαιτήσεων του LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>Χωρίς ενεργό LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>Αυτό το μέλος κρατά τη δωρεάν ενότητα Εκπαίδευσης, το ιστορικό εκπαίδευσής του και την Academy.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>Χωρίς άδεια</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>{0} από {1} θέσεις σε χρήση</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>Ενεργοποίηση LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>Απενεργοποίηση LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>Και οι {0} θέσεις χρησιμοποιούνται. Πακέτα προς προσθήκη: {1}.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>Μόνο ενεργά μέλη μπορούν να έχουν θέση LMS· όχι διαγραμμένα, απενεργοποιημένα ή κρυφά μέλη.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>Το τμήμα σας δεν έχει ενεργό πρόσθετο LMS, οπότε κανένα μέλος δεν μπορεί να ενεργοποιηθεί.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>Η θέση LMS δεν άλλαξε. Δοκιμάστε ξανά.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>Η θέση LMS ενημερώθηκε.</value><comment>machine-translated</comment></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>Προσθήκη πακέτου</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>Θέσεις LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>Ομάδα</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>Ενεργοποίηση ομάδας</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>Απενεργοποίηση ομάδας</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>{0} άλλαξαν, {1} ήταν ήδη ορισμένα, {2} παραλείφθηκαν ως ανενεργά, {3} απορρίφθηκαν λόγω έλλειψης θέσεων.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>{0} θέσεις ανήκουν σε μέλη που δεν είναι πλέον ενεργά και δεν μετρώνται.</value><comment>machine-translated</comment></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>Διαχείριση πακέτων</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>Πακέτα και θέσεις LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>Το τμήμα σας δεν έχει αγοράσει το πρόσθετο LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>Το πρόσθετο LMS έληξε. Οι εγγραφές, τα πιστοποιητικά και τα ιστορικά εκπαίδευσης παραμένουν διαθέσιμα και εξαγώγιμα.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>Μια πληρωμή απέτυχε. Το LMS συνεχίζει να λειτουργεί έως {0} ενώ η πληρωμή επαναλαμβάνεται.</value><comment>machine-translated</comment></data>
+  <data name="EnhancedAiFeature7" xml:space="preserve">
+    <value>Προσχέδια πρωτοκόλλων και εκπαιδεύσεων, μεταφράσεις, κάρτες και εξάσκηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnhancedAiFeature8" xml:space="preserve">
+    <value>Προσχέδια μαθημάτων, καθηγητής και κάρτες μαθημάτων με το πρόσθετο LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTitle" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTagline" xml:space="preserve">
+    <value>Αρχεία ευεξίας μελών και έκθεσης στον χώρο εργασίας, για τα μέλη που επιλέγετε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature1" xml:space="preserve">
+    <value>Ημερολόγιο έκθεσης σε καρκινογόνα, αιματογενή παθογόνα, επικίνδυνες ουσίες και κρίσιμα συμβάντα, με προτεινόμενες εγγραφές μετά από επισημασμένη κλήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature2" xml:space="preserve">
+    <value>Περιπτώσεις έκθεσης με ροή εργασιών υπεύθυνου και παρακολούθηση μετά την έκθεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature3" xml:space="preserve">
+    <value>Τραυματισμοί με κατάσταση υπηρεσίας, επιστροφή στην υπηρεσία και εξαγωγή του αρχείου τραυματισμών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature4" xml:space="preserve">
+    <value>Ιατρικές εγκρίσεις με κατάσταση περιορισμών και ρόλοι ευεξίας που ονομάζει ο οργανισμός σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature5" xml:space="preserve">
+    <value>Θέσεις μόνο για τα μέλη που ενεργοποιείτε· τα αρχεία παραμένουν αναγνώσιμα αν σταματήσετε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProNote" xml:space="preserve">
+    <value>Τιμή ανά πακέτο 25 μελών, κλιμακωτή: τα πρώτα 4 πακέτα στην πλήρη τιμή, μετά φθηνότερα. Μηνιαία χρέωση ανά τμήμα· χωρίς τέλος εγκατάστασης. Απαιτεί επί πληρωμή πρόγραμμα Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProRequiresPaidPlan" xml:space="preserve">
+    <value>Το Workforce Pro πωλείται με επί πληρωμή πρόγραμμα Resgrid. Επιλέξτε πρώτα ένα πρόγραμμα στη σελίδα συνδρομής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingPacksNote" xml:space="preserve">
+    <value>Κάθε πακέτο καλύπτει 25 μέλη. Τα πακέτα τιμολογούνται κλιμακωτά: κάθε πακέτο χρεώνεται στην τιμή της δικής του κλίμακας, οπότε η προσθήκη πακέτων δεν κάνει ποτέ τα προηγούμενα φθηνότερα ή ακριβότερα. Μηνιαία χρέωση· χωρίς τέλος εγκατάστασης και χωρίς ετήσια δέσμευση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingSeatsNote" xml:space="preserve">
+    <value>Η προσθήκη πακέτων χρεώνεται αμέσως, αναλογικά έως την ημερομηνία χρέωσης. Η αφαίρεση πακέτων ισχύει από την επόμενη ημερομηνία χρέωσης και μόνο έως τα μέλη που έχουν ενεργό το Workforce Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingFreeNote" xml:space="preserve">
+    <value>Οι θέσεις αφορούν τα μέλη των οποίων τηρείτε αρχεία· οι υπεύθυνοι και οι διευθυντές που ενεργούν για άλλους χρειάζονται τη δική τους άδεια, όχι θέση. Αν το πρόσθετο λήξει, τα υπάρχοντα αρχεία παραμένουν αναγνώσιμα και εξαγώγιμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProManageSeats" xml:space="preserve">
+    <value>Διαχείριση θέσεων Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsTitle" xml:space="preserve">
+    <value>Θέσεις Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsIntro" xml:space="preserve">
+    <value>Ενεργοποιήστε το Workforce Pro για τα μέλη των οποίων ο οργανισμός σας τηρεί αρχεία ευεξίας και έκθεσης στον χώρο εργασίας. Η απενεργοποίηση ενός μέλους δεν διαγράφει ποτέ αρχείο: τα αρχεία του γίνονται μόνο για ανάγνωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatCounter" xml:space="preserve">
+    <value>{0} από {1} θέσεις σε χρήση, {2} διαθέσιμες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatMember" xml:space="preserve">
+    <value>Μέλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatState" xml:space="preserve">
+    <value>Θέση Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOn" xml:space="preserve">
+    <value>Ενεργό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOff" xml:space="preserve">
+    <value>Ανενεργό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotLicensed" xml:space="preserve">
+    <value>Ενεργό, χωρίς άδεια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatEnable" xml:space="preserve">
+    <value>Ενεργοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDisable" xml:space="preserve">
+    <value>Απενεργοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsFull" xml:space="preserve">
+    <value>Και οι {0} θέσεις είναι σε χρήση. Πακέτα προς προσθήκη: {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotActive" xml:space="preserve">
+    <value>Μόνο ενεργά μέλη μπορούν να έχουν θέση Workforce Pro· όχι τα διαγραμμένα, απενεργοποιημένα και κρυφά μέλη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatAddonInactive" xml:space="preserve">
+    <value>Ο οργανισμός σας δεν έχει ενεργό πρόσθετο Workforce Pro, οπότε το Workforce Pro δεν μπορεί να ενεργοποιηθεί για κανέναν. Τα υπάρχοντα αρχεία παραμένουν μόνο για ανάγνωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αλλαγή της θέσης Workforce Pro. Δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatSaved" xml:space="preserve">
+    <value>Η θέση Workforce Pro ενημερώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDormant" xml:space="preserve">
+    <value>{0} θέσεις ανήκουν σε μέλη που δεν είναι πλέον ενεργά και δεν μετρώνται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProAddPack" xml:space="preserve">
+    <value>Προσθήκη πακέτου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsNotPurchased" xml:space="preserve">
+    <value>Ο οργανισμός σας δεν διαθέτει αυτή τη στιγμή το πρόσθετο Workforce Pro. Τα υπάρχοντα αρχεία ευεξίας παραμένουν αναγνώσιμα· αγοράστε πακέτα για να προσθέσετε ή να αλλάξετε αρχεία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsGrace" xml:space="preserve">
+    <value>Μια πληρωμή απέτυχε. Το Workforce Pro συνεχίζει να λειτουργεί έως {0} όσο επαναλαμβάνεται η πληρωμή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsBilling" xml:space="preserve">
+    <value>Αγορά ή αλλαγή πακέτων</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

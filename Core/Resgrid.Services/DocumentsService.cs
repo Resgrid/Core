@@ -40,7 +40,8 @@ namespace Resgrid.Services
 		public async Task<List<Document>> GetAllDocumentsByDepartmentIdAsync(int departmentId)
 		{
 			var documents = await _documentRepository.GetAllByDepartmentIdAsync(departmentId);
-			return documents.ToList();
+			// A document moved to Protocols (M0347, R-P6) stays only as the redirect at its old link: it leaves every list.
+			return documents.Where(d => d != null && !d.MovedToProtocolId.HasValue).ToList();
 		}
 
 		public async Task<List<Document>> GetRecentDocumentsByDepartmentIdAsync(int departmentId, int take, bool includeAdminsOnly, string category = null)
@@ -50,7 +51,7 @@ namespace Resgrid.Services
 
 			var documents = await _documentRepository.GetRecentByDepartmentIdAsync(departmentId, take, includeAdminsOnly, category);
 			return (documents ?? Enumerable.Empty<Document>())
-				.Where(d => d != null && d.DepartmentId == departmentId && (includeAdminsOnly || !d.AdminsOnly))
+				.Where(d => d != null && d.DepartmentId == departmentId && (includeAdminsOnly || !d.AdminsOnly) && !d.MovedToProtocolId.HasValue)
 				.ToList();
 		}
 

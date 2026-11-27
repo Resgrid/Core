@@ -312,7 +312,71 @@ ViewChecklistResults = 113,
 		/// to the call directly or through their group, role or a unit they crew, and resources placed on the board — always
 		/// read that incident's board whatever this says.
 		/// </summary>
-		ViewCommandBoards = 125
+		ViewCommandBoards = 125,
+
+		/// <summary>
+		/// Training T0 (registry 126): assign trainings and read their reports (assignees, audiences, due dates, extensions,
+		/// exemptions, resets, attempt history). Create Training keeps authoring. No-row default: the Create Training row; a
+		/// group admin is scoped to the trainings assigned only to their own group, and under Everyone a member to their own.
+		/// </summary>
+		AssignTraining = 126,
+
+		/// <summary>Training T0 (registry 127): archive, restore and delete trainings. No-row default: the Create Training row.</summary>
+		DeleteTraining = 127,
+
+		/// <summary>
+		/// Protocols P1 (registry 128): author protocols: create them, edit their library fields, triggers and questions, and write
+		/// and submit drafts. No-row default: department admins only (who keep every protocol right).
+		/// </summary>
+		AuthorProtocols = 128,
+
+		/// <summary>
+		/// Protocols P1 (registry 129): approve and publish protocol versions (an L2 signature per approval), schedule them,
+		/// record "reviewed, no change", retire and delete protocols. No-row default: department admins only.
+		/// </summary>
+		ApproveProtocols = 129,
+
+		/// <summary>
+		/// Protocols P2 (registry 130, added with P1): manage read-and-sign acknowledgments (assign, exempt, report). No-row
+		/// default: department admins only.
+		/// </summary>
+		ManageProtocolAcknowledgments = 130,
+
+		/// <summary>
+		/// Training T2 (registry 132): author, publish and retire LMS courses and question banks, assign them and read their
+		/// reports. Needs the LMS add-on to act (§17.3). No-row default: department admins only.
+		/// </summary>
+		ManageCourses = 132,
+
+		/// <summary>
+		/// Training T2 (registry 133): the manual grading queue for short answers, per-question answers of attempts and item
+		/// analysis (R-T12: the training-supervisor right). No-row default: department admins only.
+		/// </summary>
+		GradeAssessments = 133,
+
+		/// <summary>
+		/// Protocols P5 QA (registry 134): sample calls for dispatch case review, score the recorded case against a dispatch case rubric, send
+		/// the review to the dispatcher and read the compliance report. Records QA rights (Review Records 52) cannot express it: they are
+		/// Records-module rights over Records, while this reviews calls. Nobody reviews their own calls. No-row default: department admins only.
+		/// </summary>
+		ReviewDispatchCases = 134,
+
+		/// <summary>
+		/// Round 7B (registry 135, product-owner decision 2026-11-25): record that members completed a training they took together: from a
+		/// class roster (the session's LMS course or baseline training) or from a course's enrolment list and a training's assignee list (with a
+		/// note). The completion is written to each member's record as "recorded by instructor", with the attestation the recorder accepted, and
+		/// can be voided with a reason. Group admins (Department and group admins) record only for their own group's members. No-row default:
+		/// department admins only.
+		/// </summary>
+		RecordTrainingCompletions = 135,
+
+		/// <summary>
+		/// Round 10 A3 (Protocols P5 regional publisher/subscriber, Training T5 shared course sets and sponsored seats): publish protocol and
+		/// course sets to linked departments and answer their proposals, sponsor a linked department's LMS seats, and on the subscribing side
+		/// subscribe to a linked department's sets, decide the pending-update inbox (accept, defer, decline) and customize the blocks the
+		/// publisher left open. Any member who can read a set copy may propose a change upstream. No-row default: department admins only.
+		/// </summary>
+		ManageContentSets = 136
 	}
 
 }

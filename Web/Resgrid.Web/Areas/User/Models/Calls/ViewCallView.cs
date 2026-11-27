@@ -28,6 +28,24 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<UnitType> UnitTypes { get; set; } = new List<UnitType>();
 		public List<DepartmentGroup> Stations { get; set; }
 		public List<DispatchProtocol> Protocols { get; set; }
+
+		/// <summary>The protocol versions the call's protocol rows cite (P1), by ProtocolVersionId.</summary>
+		public Dictionary<int, ProtocolVersion> ProtocolVersions { get; set; } = new Dictionary<int, ProtocolVersion>();
+
+		/// <summary>"Text as dispatched" for the call's protocols, keyed "{DispatchProtocolId}:{ContentHash}".</summary>
+		public Dictionary<string, DispatchProtocolSnapshot> ProtocolSnapshots { get; set; } = new Dictionary<string, DispatchProtocolSnapshot>();
+
+		/// <summary>The member may edit the call: protocols get a Remove (with a reason) action.</summary>
+		public bool CanRemoveProtocols { get; set; }
+
+		/// <summary>The outcome of the last protocol removal ("Removed", "ReasonRequired"), shown once.</summary>
+		public string CallProtocolMessage { get; set; }
+
+		/// <summary>
+		/// ADP catalog 39: a protocol's case record, answers or reasons are sealed and this render had no grant (REDACTED). The page then
+		/// re-renders the protocols tab through the reveal flow after step-up.
+		/// </summary>
+		public bool ProtocolContentWithheld { get; set; }
 		public List<CallReference> ChildCalls { get; set; }
 		public List<Contact> Contacts { get; set; }
 

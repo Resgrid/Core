@@ -1,0 +1,48 @@
+@using Resgrid.Model
+@model Resgrid.Model.ProtocolDiffResult
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The version compare redline (P1): plain-text segments written encoded inside ins/del, so stored markup never renders here.
+    ViewData["ChangedOnly"] true shows only the changed paragraphs.
+*@
+@{
+    var changedOnly = ViewData["ChangedOnly"] as bool? ?? false;
+}
+@if (Model == null || !Model.HasChanges)
+{
+    <p class="text-muted"><i class="fa fa-check" aria-hidden="true"></i> @localizer["NoTextChanges"]</p>
+}
+else
+{
+    <p class="small text-muted">
+        <span class="label label-primary"><i class="fa fa-plus" aria-hidden="true"></i> @string.Format(localizer["WordsAdded"].Value, Model.WordsAdded)</span>
+        <span class="label label-danger"><i class="fa fa-minus" aria-hidden="true"></i> @string.Format(localizer["WordsRemoved"].Value, Model.WordsRemoved)</span>
+    </p>
+    <div class="protocol-redline">
+        @foreach (var paragraph in Model.Paragraphs)
+        {
+            if (changedOnly && !paragraph.Changed)
+            {
+                continue;
+            }
+            <p class="@(paragraph.IsHeading ? "protocol-redline-heading" : "")">
+                @foreach (var segment in paragraph.Segments)
+                {
+                    if (segment.Kind == ProtocolDiffKinds.Inserted)
+                    {
+                        <ins style="background: #dff0d8; text-decoration: underline;" title="@localizer["InsertedLabel"]">@segment.Text</ins>
+                    }
+                    else if (segment.Kind == ProtocolDiffKinds.Deleted)
+                    {
+                        <del style="background: #f2dede;" title="@localizer["DeletedTextLabel"]">@segment.Text</del>
+                    }
+                    else
+                    {
+                        <span>@segment.Text</span>
+                    }
+                    @(" ")
+                }
+            </p>
+        }
+    </div>
+}

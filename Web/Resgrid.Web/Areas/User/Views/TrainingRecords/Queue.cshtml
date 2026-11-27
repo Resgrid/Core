@@ -1,0 +1,232 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingRecordQueueView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> reviewText
+@*
+    The officer queue (Training T1): records waiting for review (outside certificates, calendar check-ins without a check-out) and
+    possible duplicates nobody resolved yet. An officer never reviews their own record; a group admin sees their group's members.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Rec.QueueTitle"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Rec.QueueTitle"].Value;
+    ViewData["Subtitle"] = localizer["Rec.QueueIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @* Round 9B: members' training hours submissions are reviewed in Training reviews (evidence inline, more information, bulk approve). *@
+    <div class="rgw-next-action" role="status">
+        <i class="fa fa-inbox" aria-hidden="true"></i> @string.Format(reviewText["Queue.SubmissionsMoved"].Value, Model.SubmissionsAwaiting)
+        <a class="m-l-xs" asp-controller="TrainingReviews" asp-action="Index" asp-route-area="User">@reviewText["Next.ReviewsAll"]</a>
+    </div>
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @localizer["Rec.WaitingForReview"]</div><div class="rgw-stat-value">@Model.Pending.Count</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Rec.PossibleDuplicatesHeader"]</div><div class="rgw-stat-value">@Model.Duplicates.Count</div></div>
+    </div>
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-title"><h5><i class="fa fa-check-square-o" aria-hidden="true"></i> @localizer["Rec.WaitingForReview"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Pending.Count == 0)
+            {
+                <p class="text-muted">@localizer["Rec.QueueEmpty"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Doc.Member"]</th>
+                                <th>@localizer["Doc.Course"]</th>
+                                <th>@localizer["Doc.Source"]</th>
+                                <th class="text-right">@localizer["Doc.Hours"]</th>
+                                <th>@localizer["Rec.SubmittedColumn"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in Model.Pending)
+                            {
+                                var own = Model.IsOwn(record);
+                                var openCheckIn = record.SourceKind == (int)LearningRecordSourceKinds.CalendarAttendance;
+                                var category = Model.CategoryOf(record.CategoryId);
+                                <tr>
+                                    <td>
+                                        <a asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" asp-route-userId="@(own ? null : record.UserId)">@Model.NameOf(record.UserId)</a>
+                                        @if (Model.IsFormer(record.UserId))
+                                        {
+                                            <small class="rgw-sub text-muted"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["FormerMemberLabel"]</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        @record.Title
+                                        <small class="rgw-sub text-muted">
+                                            <span>@TrainingStatePresentation.LocalDate(record.CompletedOn, Model.Department)</span>
+                                            <span>@localizer["Doc.Category"]: @(category?.Name ?? localizer["Doc.Uncategorized"].Value)</span>
+                                            @if (!string.IsNullOrWhiteSpace(record.CeProvider) || !string.IsNullOrWhiteSpace(record.CeCourseNumber))
+                                            {
+                                                <span>@localizer["Doc.CeProvider"]: @record.CeProvider @record.CeCourseNumber</span>
+                                            }
+                                            @if (record.CeHours.HasValue)
+                                            {
+                                                <span>@localizer["Doc.CeHours"]: @LearningRecordPresentation.Hours(record.CeHours)</span>
+                                            }
+                                            @if (openCheckIn && record.StartedOn.HasValue)
+                                            {
+                                                <span><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["Rec.CheckedInLabel"]: @TrainingStatePresentation.LocalDateTime(record.StartedOn, Model.Department)</span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(record.Notes))
+                                            {
+                                                <span><i class="fa fa-comment-o" aria-hidden="true"></i> @record.Notes</span>
+                                            }
+                                        </small>
+                                        @if (record.EvidenceFileId.HasValue)
+                                        {
+                                            <a class="btn btn-xs btn-default m-t-xs" asp-controller="TrainingRecords" asp-action="Evidence" asp-route-area="User" asp-route-fileId="@record.EvidenceFileId"><i class="fa fa-paperclip" aria-hidden="true"></i> @localizer["Rec.EvidenceButton"]</a>
+                                        }
+                                    </td>
+                                    <td>@await Html.PartialAsync("_RecordSource", record.SourceKind)</td>
+                                    <td class="text-right">@LearningRecordPresentation.Hours(record.Hours)</td>
+                                    <td>
+                                        @TrainingStatePresentation.LocalDateTime(record.CreatedOn, Model.Department)
+                                        @if (!string.IsNullOrWhiteSpace(record.CreatedByUserId))
+                                        {
+                                            <small class="rgw-sub text-muted">@string.Format(localizer["Rec.SubmittedBy"].Value, Model.NameOf(record.CreatedByUserId))</small>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        @if (own)
+                                        {
+                                            <small class="text-muted">@localizer["Rec.OwnRecordNotice"]</small>
+                                        }
+                                        else
+                                        {
+                                            <details class="queue-row-action">
+                                                <summary class="btn btn-xs btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.VerifyButton"]</summary>
+                                                <form method="post" asp-controller="TrainingRecords" asp-action="Verify" asp-route-area="User" asp-route-id="@record.LearningRecordId" class="m-t-xs">
+                                                    @Html.AntiForgeryToken()
+                                                    @if (openCheckIn)
+                                                    {
+                                                        <input type="hidden" name="__Invariant" value="hours" />
+                                                        <label>@localizer["Doc.Hours"] <input type="number" name="hours" class="form-control input-sm" min="0" max="9999" step="0.25" value="@LearningRecordPresentation.Invariant(record.Hours > 0 ? record.Hours : (decimal?)null)" required /></label>
+                                                        <small class="rgw-sub text-muted">@localizer["Rec.OpenCheckInHelp"]</small>
+                                                    }
+                                                    <label>@localizer["Rec.ReviewNoteLabel"] <input type="text" name="note" class="form-control input-sm" maxlength="1000" /></label>
+                                                    <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.VerifyConfirmButton"]</button>
+                                                </form>
+                                            </details>
+                                            <details class="queue-row-action">
+                                                <summary class="btn btn-xs btn-warning"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Rec.RejectButton"]</summary>
+                                                <form method="post" asp-controller="TrainingRecords" asp-action="Reject" asp-route-area="User" asp-route-id="@record.LearningRecordId" class="m-t-xs">
+                                                    @Html.AntiForgeryToken()
+                                                    <label>@localizer["ReasonLabel"] <input type="text" name="note" class="form-control input-sm" maxlength="1000" required /></label>
+                                                    <button type="submit" class="btn btn-xs btn-warning"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Rec.RejectConfirmButton"]</button>
+                                                </form>
+                                            </details>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Rec.PossibleDuplicatesHeader"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted">@localizer["Rec.PossibleDuplicatesHelp"]</p>
+            @if (Model.Duplicates.Count == 0)
+            {
+                <p class="text-muted">@localizer["Rec.NoDuplicates"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Doc.Member"]</th>
+                                <th>@localizer["Rec.ThisRecordColumn"]</th>
+                                <th>@localizer["Rec.OtherRecordColumn"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in Model.Duplicates)
+                            {
+                                var record = row.Record;
+                                var own = Model.IsOwn(record);
+                                <tr>
+                                    <td><a asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" asp-route-userId="@(own ? null : record.UserId)">@Model.NameOf(record.UserId)</a></td>
+                                    <td>
+                                        @record.Title
+                                        <small class="rgw-sub text-muted">
+                                            <span>@TrainingStatePresentation.LocalDateTime(record.StartedOn ?? record.CompletedOn, Model.Department)</span>
+                                            <span>@string.Format(localizer["HoursValue"].Value, LearningRecordPresentation.Hours(record.Hours))</span>
+                                            <span>@await Html.PartialAsync("_RecordSource", record.SourceKind)</span>
+                                        </small>
+                                    </td>
+                                    <td>
+                                        @if (row.Other != null)
+                                        {
+                                            @row.Other.Title
+                                            <small class="rgw-sub text-muted">
+                                                <span>@TrainingStatePresentation.LocalDateTime(row.Other.StartedOn ?? row.Other.CompletedOn, Model.Department)</span>
+                                                <span>@string.Format(localizer["HoursValue"].Value, LearningRecordPresentation.Hours(row.Other.Hours))</span>
+                                                <span>@await Html.PartialAsync("_RecordSource", row.Other.SourceKind)</span>
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">@localizer["Rec.OtherRecordMissing"]</span>
+                                        }
+                                    </td>
+                                    <td class="rgw-row-actions">
+                                        @if (own)
+                                        {
+                                            <small class="text-muted">@localizer["Rec.OwnRecordNotice"]</small>
+                                        }
+                                        else
+                                        {
+                                            <form method="post" asp-controller="TrainingRecords" asp-action="ResolveDuplicate" asp-route-area="User" asp-route-id="@record.LearningRecordId">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="resolution" value="@((int)LearningRecordDuplicateResolutions.KeptBoth)" />
+                                                <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-files-o" aria-hidden="true"></i> @localizer["Rec.KeepBothButton"]</button>
+                                            </form>
+                                            <form method="post" asp-controller="TrainingRecords" asp-action="ResolveDuplicate" asp-route-area="User" asp-route-id="@record.LearningRecordId">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="resolution" value="@((int)LearningRecordDuplicateResolutions.Merged)" />
+                                                <button type="submit" class="btn btn-xs btn-warning" data-confirm="@localizer["Rec.MergeConfirm"]"><i class="fa fa-compress" aria-hidden="true"></i> @localizer["Rec.MergeButton"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .queue-row-action { display: inline-block; vertical-align: top; }
+        .queue-row-action[open] form { display: block; min-width: 220px; white-space: normal; }
+        .queue-row-action summary { list-style: none; }
+        .rgw-row-actions form { display: inline-block; }
+    </style>
+}

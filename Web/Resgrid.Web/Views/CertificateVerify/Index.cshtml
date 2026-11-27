@@ -1,0 +1,36 @@
+@model Resgrid.Model.CertificateVerification
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Public certificate verification (LMS, dark): name, course, date, department and status only.
+*@
+@{
+    Layout = "_RecoveryLayout";
+    ViewData["Title"] = localizer["Verify.Title"].Value;
+    var verified = Model.Status == Resgrid.Model.LearningRecordStatuses.Verified;
+}
+<div class="panel panel-default" style="margin-top: 20px;">
+    <div class="panel-body" style="padding: 30px;">
+        <h1 style="margin-top: 0; font-size: 26px;">@localizer["Verify.Title"]</h1>
+        @if (verified)
+        {
+            <div class="alert alert-success" role="status"><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["Verify.Valid"]</div>
+        }
+        else
+        {
+            <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["Verify.NotValid"]</div>
+        }
+        <dl class="dl-horizontal" style="margin-bottom: 20px;">
+            <dt>@localizer["Verify.Member"]</dt>
+            <dd>@Model.MemberName</dd>
+            <dt>@localizer["Verify.Course"]</dt>
+            <dd>@Model.Course</dd>
+            <dt>@localizer["Verify.CompletedOn"]</dt>
+            <dd>@Model.CompletedOn.ToString("D", System.Globalization.CultureInfo.CurrentCulture)</dd>
+            <dt>@localizer["Verify.Department"]</dt>
+            <dd>@Model.DepartmentName</dd>
+            <dt>@localizer["Verify.Status"]</dt>
+            <dd>@localizer["LearningStatus." + Model.Status]</dd>
+        </dl>
+        <p class="text-muted small">@localizer["Verify.Disclaimer"]</p>
+    </div>
+</div>

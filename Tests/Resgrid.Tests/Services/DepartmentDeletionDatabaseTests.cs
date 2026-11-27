@@ -220,6 +220,47 @@ namespace Resgrid.Tests.Services
 			lost.Should().BeEmpty("another department's rows must survive the deletion");
 		}
 
+		/// <summary>
+		/// Owner decision 2026-11-26: every wellness and member-health table (<see cref="Resgrid.Model.MemberWellnessDataTables"/>) is
+		/// purged with the department, whatever its retention, and none may be kept as a RetainedTables exception. The wellness settings
+		/// row (setting 141) and a follow-up work assignment go with it.
+		/// </summary>
+		[Test]
+		public async Task DeletingADepartmentPurgesEveryWellnessAndMemberHealthTable()
+		{
+			await using var db = new SqlConnection(_connection);
+			await db.OpenAsync();
+			await LoadSchemaAsync(db);
+
+			var wellness = Resgrid.Model.MemberWellnessDataTables.All;
+			foreach (var table in wellness)
+			{
+				_columnsByTable.Should().ContainKey(table, "every listed wellness table exists in the migrated schema");
+				_columnsByTable[table].Should().Contain(c => string.Equals(c.Name, "DepartmentId", StringComparison.OrdinalIgnoreCase), table);
+				RetainedTables.Should().NotContainKey(table, "wellness rows are purged with the department");
+			}
+
+			var deleted = await SeedBareDepartmentAsync(db);
+			var kept = await SeedBareDepartmentAsync(db);
+			var extra = new[] { "RmsRecordWorkAssignments" };
+			foreach (var department in new[] { deleted, kept })
+			{
+				foreach (var table in wellness.Concat(extra))
+					await InsertOrThrowAsync(db, table, department, null);
+				await InsertOrThrowAsync(db, "DepartmentSettings", department, new Dictionary<string, object> { ["SettingType"] = (int)Resgrid.Model.DepartmentSettingTypes.WellnessSettings });
+			}
+
+			(await new DeleteRepository().DeleteDepartmentAndUsersAsync(deleted.DepartmentId)).Should().BeTrue();
+
+			async Task<int> Count(string table, int departmentId) =>
+				await db.ExecuteScalarAsync<int>($"SELECT COUNT(*) FROM [dbo].[{table}] WHERE [DepartmentId] = @DepartmentId", new { DepartmentId = departmentId });
+			foreach (var table in wellness.Concat(extra).Append("DepartmentSettings"))
+			{
+				(await Count(table, deleted.DepartmentId)).Should().Be(0, $"the deleted department's {table} rows are purged");
+				(await Count(table, kept.DepartmentId)).Should().BeGreaterThan(0, $"another department's {table} rows survive");
+			}
+		}
+
 		[Test]
 		public async Task ALiveProtectedDataMigrationLockDefersTheDeletionUntilItIsReleased()
 		{

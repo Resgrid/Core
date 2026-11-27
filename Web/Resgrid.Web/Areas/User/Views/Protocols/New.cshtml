@@ -1,254 +1,132 @@
 @using Resgrid.Model
-@model Resgrid.WebCore.Areas.User.Models.Protocols.NewProtocolModel
+@using Resgrid.Framework
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolEditorModel
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The creation wizard (P1 §18.2): kind → basics → content → triggers → audience → review. It creates the protocol as a
+    draft (nothing is published) and opens the full-page editor. The shared workspace script drives the steps and fills the
+    review step from the fields.
+*@
 @{
-  ViewBag.Title = "Resgrid | " + localizer["NewProtocolHeader"];
+    var title = localizer["NewProtocolHeader"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["EditorIntroNew"].Value;
+    ViewData["Section"] = "Editor";
+    ViewData["CanCreate"] = true;
+    ViewData["IsManager"] = true;
 }
 
-<div class="row wrapper border-bottom white-bg page-heading">
-  <div class="col-sm-4">
-    <h2>@localizer["NewProtocolHeader"]</h2>
-    <ol class="breadcrumb">
-      <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
-      </li>
-      <li>
-        <a asp-controller="Protocols" asp-action="Index" asp-route-area="User">@localizer["ProtocolsLabel"]</a>
-      </li>
-      <li class="active">
-        <strong>@localizer["NewProtocolHeader"]</strong>
-      </li>
-    </ol>
-  </div>
-</div>
+@await Html.PartialAsync("_Shell")
 
-<div class="row">
-  <div class="col-xs-12">
-    <div class="wrapper wrapper-content">
-      <div class="ibox float-e-margins">
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
         <div class="ibox-content">
-          <form id="newProtocolForm" class="form-horizontal" role="form" asp-controller="Protocols" asp-action="New" asp-route-area="User" method="post">
-
-            <div class="row">
-              <div class="col-md-8 col-md-offset-1">
-                @if (!String.IsNullOrEmpty(Model.Message))
-				{
-                  <div class="alert alert-success">
-                    @Model.Message
-                  </div>
-				}
+            <form id="protocolEditorForm" class="rgw-wizard" method="post" enctype="multipart/form-data" asp-controller="Protocols" asp-action="New" asp-route-area="User">
                 @Html.AntiForgeryToken()
-                @Html.HiddenFor(x => x.Protocol.CreatedByUserId)
-                @Html.HiddenFor(x => x.Protocol.UpdatedByUserId)
-                <div asp-validation-summary="All" class="text-danger"></div>
-              </div>
-            </div>
+                <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+                <ol class="rgw-steps"></ol>
 
-            <div class="form-group">
-              <label class="col-sm-2 control-label required">
-                @localizer["ProtocolNameLabel"]
-              </label>
-              <div class="col-sm-10">
-                <div class="col-md-5">
-                  @Html.TextBoxFor(m => m.Protocol.Name, new { @class = "form-control", autofocus = "autofocus" })
-                </div>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="col-sm-2 control-label required">
-                @localizer["ProtocolCodeLabel"]
-              </label>
-              <div class="col-sm-10">
-                <div class="col-md-2">
-                  @Html.TextBoxFor(m => m.Protocol.Code, new { @class = "form-control", autofocus = "autofocus", maxlength = 4 })
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label required">
-                @localizer["DescriptionLabel"]
-              </label>
-              <div class="col-sm-10">
-                <div class="col-md-6">
-                  <input type="hidden" asp-for="Protocol.Description">
-
-                  <div id="editor-container" style="width:100%; height: 300px;">
-                    @Html.SanitizedHtml(Model.Protocol.Description)
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label required">
-                @localizer["ProtocolTextLabel"]
-              </label>
-              <div class="col-sm-10">
-                <div class="col-md-10">
-                  <input type="hidden" asp-for="Protocol.ProtocolText">
-
-                  <div id="editor-container2" style="width:100%; height: 300px;">
-                    @Html.SanitizedHtml(Model.Protocol.ProtocolText)
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">
-                @localizer["ActivationQuestionWeightLabel"]
-              </label>
-              <div class="col-sm-10">
-                <div class="col-md-2">
-                  @Html.TextBoxFor(m => m.Protocol.MinimumWeight, new { @class = "form-control", type = "number", min = "0", max = "100", onkeydown="resgrid.protocols.newprotocol.parseNumber(event)", onkeyup="resgrid.protocols.newprotocol.parseNumber(event)" })
-                </div>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="col-sm-2 control-label">
-                @localizer["AttachmentsLabel"]
-              </label>
-              <div class="col-sm-10">
-                <div class="col-md-5">
-                  <input name="attachments" id="attachments" type="file" />
-                </div>
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="col-sm-2 control-label">
-                @localizer["TriggersLabel"]
-              </label>
-              <div class="col-sm-10">
-                <div class="row">
-                  <div class="col-xs-10">@localizer["TriggersHelp"]<br /></div>
-                </div>
-                <div class="row">
-                  <div class="col-xs-12">
-                    <div class="text-right m-b-xs">
-                        <a id="addTriggerButton" class="btn btn-success btn-xs" data-original-title="@localizer["AddTriggerButton"]" data-toggle="modal" data-target="#addTriggerModal"><i class="icon-plus"></i> @localizer["AddTriggerButton"]</a>
+                <div class="rgw-step" data-title="@localizer["WizardKindStep"]">
+                    <p class="text-muted">@localizer["WizardKindHelp"]</p>
+                    <div class="rgw-card-grid" role="radiogroup" aria-label="@localizer["KindLabel"]">
+                        @foreach (ProtocolKinds kind in ProtocolKindRules.AuthorableKinds)
+                        {
+                            <label class="rgw-card" style="cursor: pointer;">
+                                <span><input type="radio" class="protocol-kind" name="Library.Kind" value="@((int)kind)" @(Model.Library.Kind == (int)kind ? "checked" : "") /> <strong>@ProtocolDisplay.KindName((int)kind, localizer)</strong></span>
+                                <span class="rgw-card-meta">@localizer["KindHelp" + kind]</span>
+                            </label>
+                        }
                     </div>
-                    <table id="triggers" class="table table-striped table-bordered">
-                      <thead>
-                        <tr>
-                          <th style="max-width: 200px;font-size: 14px;">@localizer["TriggerTypeColumn"]</th>
-                          <th style="max-width: 350px;font-size: 14px;">@localizer["TriggerStartsOnColumn"]</th>
-                          <th style="max-width: 350px;font-size: 14px;">@localizer["TriggerEndsOnColumn"]</th>
-                          <th style="max-width: 350px;font-size: 14px;">@localizer["TriggerCallTypeColumn"]</th>
-                          <th style="max-width: 350px;font-size: 14px;">@localizer["TriggerCallPriorityColumn"]</th>
-                          <th style="width: 1%;"></th>
-                        </tr>
-                      </thead>
-                      <tbody></tbody>
-                    </table>
-                  </div>
                 </div>
-              </div>
-            </div>
-            <div class="control-group">
-              <label class="col-sm-2 control-label">
-                @localizer["QuestionsLabel"]
-              </label>
-              <div class="col-sm-10">
-                <div class="row">
-                  <div class="col-xs-10">@localizer["QuestionsHelp"]<br /></div>
-                </div>
-                <div class="row">
-                  <div class="col-xs-12">
-                    <div class="text-right m-b-xs">
-                        <a id="addQuestionButton" class="btn btn-success btn-xs" data-toggle="modal" data-target="#addQuestionModal" data-original-title="@localizer["AddQuestionButton"]"><i class="icon-plus"></i> @localizer["AddQuestionButton"]</a>
-                    </div>
-                    <table id="questions" class="table table-striped table-bordered">
-                      <thead>
-                        <tr>
-                          <th style="max-width: 200px;font-size: 14px;">@localizer["QuestionColumn"]</th>
-                          <th style="max-width: 350px;font-size: 14px;">@localizer["AnswersColumn"]</th>
-                          <th style="width: 1%;"></th>
-                        </tr>
-                      </thead>
-                      <tbody></tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <div class="form-group">
-              <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Protocols" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
-                <button class="btn btn-primary" type="submit">@localizer["AddProtocolButton"]</button>
-              </div>
-            </div>
-          </form>
+                <div class="rgw-step" data-title="@localizer["WizardBasicsStep"]" hidden>
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label class="control-label required" for="Name">@localizer["ProtocolNameLabel"]</label>
+                            <input class="form-control" id="Name" name="Name" value="@Model.Name" maxlength="100" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label required" for="Code">@localizer["ProtocolCodeLabel"]</label>
+                            <input class="form-control" id="Code" name="Code" value="@Model.Code" maxlength="@DispatchProtocol.CodeMaxLength" required pattern="[A-Za-z0-9][A-Za-z0-9 ._/\-]*" aria-describedby="CodeHelp" />
+                            <span id="CodeHelp" class="help-block">@string.Format(localizer["CodeHelp"].Value, DispatchProtocol.CodeMaxLength)</span>
+                        </div>
+                    </div>
+                    @{ ViewData["ShowKind"] = false; }
+                    @await Html.PartialAsync("_LibraryFields", Model)
+                    <div class="form-group">
+                        <label class="control-label" for="editor-container" id="DescriptionLabelText">@localizer["DescriptionLabel"]</label>
+                        <input type="hidden" id="Description" name="Description" value="@Model.Description" />
+                        <div id="editor-container" style="width:100%; height: 120px;" aria-labelledby="DescriptionLabelText">@Html.SanitizedHtml(Model.Description)</div>
+                        <span class="help-block">@string.Format(localizer["DescriptionHelp"].Value, DispatchProtocol.DescriptionTextMaxLength)</span>
+                    </div>
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["WizardContentStep"]" hidden>
+                    <div class="form-group">
+                        <label class="control-label" for="editor-container2" id="ProtocolTextLabelText">@localizer["ProtocolTextLabel"]</label>
+                        <input type="hidden" id="ProtocolText" name="ProtocolText" value="@Model.ProtocolText" />
+                        <div id="editor-container2" style="width:100%; height: 360px;" aria-labelledby="ProtocolTextLabelText">@Html.SanitizedHtml(Model.ProtocolText)</div>
+                        <span class="help-block">@localizer["ProtocolTextHeadingsHelp"]</span>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" id="Library_RequiresAcknowledgment" name="Library.RequiresAcknowledgment" value="true" @(Model.Library.RequiresAcknowledgment ? "checked" : "") />
+                            @localizer["RequiresAcknowledgmentCheckbox"]
+                        </label>
+                        <input type="hidden" name="Library.RequiresAcknowledgment" value="false" />
+                        <span class="help-block">@localizer["RequiresAcknowledgmentHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="attachments">@localizer["AddFilesLabel"]</label>
+                        <input name="attachments" id="attachments" type="file" multiple aria-describedby="AttachmentsHelp" />
+                        <span id="AttachmentsHelp" class="help-block">@string.Format(localizer["AttachmentsLimitsHelp"].Value, ProtocolRules.MaxFilesPerSave, ProtocolRules.MaxAttachmentBytes / 1000000, ProtocolRules.MaxBytesPerSave / 1000000)</span>
+                    </div>
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["WizardTriggersStep"]" hidden>
+                    <div class="form-group protocol-dispatch-only" hidden="@(!ProtocolKindRules.TriggersApply(Model.Library.Kind))">
+                        <label class="control-label" for="MinimumWeight">@localizer["ActivationQuestionWeightLabel"]</label>
+                        <input class="form-control" id="MinimumWeight" name="MinimumWeight" type="number" min="0" max="1000" value="@Model.MinimumWeight" style="max-width: 160px;" aria-describedby="MinimumWeightHelpText" />
+                        <span id="MinimumWeightHelpText" class="help-block">@localizer["MinimumWeightEditorHelp"]</span>
+                    </div>
+                    @await Html.PartialAsync("_TriggerQuestionBuilder", Model)
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["WizardAudienceStep"]" hidden>
+                    @await Html.PartialAsync("_AudiencePicker", Model)
+                </div>
+
+                <div class="rgw-step" data-title="@localizer["WizardReviewStep"]" hidden>
+                    <p class="text-muted">@localizer["WizardReviewHelp"]</p>
+                    <dl class="rgw-review"></dl>
+                    <div class="form-group">
+                        <label class="control-label" for="Library_ChangeSummary">@localizer["ChangeSummaryLabel"]</label>
+                        <textarea class="form-control" id="Library_ChangeSummary" name="Library.ChangeSummary" rows="2" maxlength="@ProtocolVersion.ChangeSummaryMaxLength">@Model.Library.ChangeSummary</textarea>
+                        <span class="help-block">@localizer["ChangeSummaryHelp"]</span>
+                    </div>
+                </div>
+
+                <div class="rgw-wizard-actions">
+                    <a class="btn btn-default" asp-controller="Protocols" asp-action="Index" asp-route-area="User"><i class="fa fa-times" aria-hidden="true"></i> @commonLocalizer["Cancel"]</a>
+                    <span class="rgw-wizard-spacer"></span>
+                    <button type="button" class="btn btn-default rgw-step-prev"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackButton"]</button>
+                    <button type="button" class="btn btn-primary rgw-step-next">@localizer["NextButton"] <i class="fa fa-arrow-right" aria-hidden="true"></i></button>
+                    <button type="submit" class="btn btn-success rgw-step-submit"><i class="fa fa-check" aria-hidden="true"></i> @localizer["CreateDraftButton"]</button>
+                </div>
+            </form>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 
-<div class="modal fade" id="addTriggerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">@localizer["AddTriggerModalTitle"]</h4>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label for="newTriggerType-name" class="control-label">@localizer["TriggerTypeLabel"]</label>
-            <select id="newTriggerType" class="form-control" asp-items="Html.GetEnumSelectList<ProtocolTriggerTypes>()" style="padding-left: 0; width: 100%;"></select>
-          </div>
-          <div class="form-group">
-            <label for="newTriggerStartsOn-name" class="control-label">@localizer["TriggerStartsOnLabel"]</label>
-            <input type="text" class="form-control" id="newTriggerStartsOn">
-          </div>
-          <div class="form-group">
-            <label for="newTriggerEndsOn-name" class="control-label">@localizer["TriggerEndsOnLabel"]</label>
-            <input type="text" class="form-control" id="newTriggerEndsOn">
-          </div>
-          <div class="form-group">
-            <label for="newTriggerCallPriority-name" class="control-label">@localizer["TriggerCallPriorityLabel"]</label>
-            <select id="newTriggerCallPriority" class="form-control" asp-items="Model.CallPriorities" style="padding-left: 0; width: 100%;"></select>
-          </div>
-          <div class="form-group">
-            <label for="newTriggerCallType-name" class="control-label">@localizer["TriggerCallTypeLabel"]</label>
-            <select id="newTriggerCallType" class="form-control" asp-items="Model.CallTypes" style="padding-left: 0; width: 100%;"></select>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">@localizer["CloseButton"]</button>
-        <button type="button" class="btn btn-primary" onclick="resgrid.protocols.newprotocol.addTrigger();">@localizer["AddTriggerButton"]</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal fade" id="addQuestionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">@localizer["AddQuestionModalTitle"]</h4>
-      </div>
-      <div class="modal-body">
-        <form>
-          <div class="form-group">
-            <label for="newQuestion-name" class="control-label">@localizer["QuestionLabel"]</label>
-            <textarea id="newQuestion" class="form-control" name="newQuestion" rows='4' cols='40'></textarea>
-          </div>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">@localizer["CloseButton"]</button>
-        <button type="button" class="btn btn-primary" onclick="resgrid.protocols.newprotocol.addQuestion();">@localizer["AddQuestionButton"]</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
 
 @section Scripts
 {
-  <script src="~/js/app/internal/protocols/resgrid.protocols.newprotocol.js"></script>
+    <script src="~/js/app/common/workspace/resgrid.common.workspace.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/protocols/resgrid.protocols.editor.js" asp-append-version="true"></script>
 }

@@ -1,0 +1,677 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Std.StripLabel" xml:space="preserve">
+    <value>Standardavsnitt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Packages" xml:space="preserve">
+    <value>Innehållspaket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Tools" xml:space="preserve">
+    <value>LTI-verktyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Tab.Xapi" xml:space="preserve">
+    <value>xAPI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.LapsedNotice" xml:space="preserve">
+    <value>LMS-tillägget har upphört: allt syns fortfarande och lektioner som redan tilldelats fungerar, men paket, verktyg och xAPI-inställningar kan inte ändras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.AddonNotice" xml:space="preserve">
+    <value>Innehållsstandarder ingår i LMS-tillägget. Aktivera det för att ladda upp paket, registrera LTI-verktyg och skicka xAPI-uttryck.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackagesTitle" xml:space="preserve">
+    <value>Innehållspaket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackagesIntro" xml:space="preserve">
+    <value>SCORM 1.2-, SCORM 2004- och cmi5-paket för kurslektioner, uppspelade i en isolerad spelare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.StoreNotConfigured" xml:space="preserve">
+    <value>LMS-medielagringen är inte konfigurerad i det här systemet, så paket kan inte laddas upp eller spelas upp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadLabel" xml:space="preserve">
+    <value>Paket (.zip)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadButton" xml:space="preserve">
+    <value>Ladda upp paket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.UploadHelp" xml:space="preserve">
+    <value>Upp till {0} MB. Zip-filen måste ha imsmanifest.xml (SCORM) eller cmi5.xml (cmi5) i roten; den kontrolleras innan den sparas och packas upp kort därefter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NoPackages" xml:space="preserve">
+    <value>Inga innehållspaket ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Title" xml:space="preserve">
+    <value>Titel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Standard" xml:space="preserve">
+    <value>Standard</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Items" xml:space="preserve">
+    <value>SCO / AU</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Status" xml:space="preserve">
+    <value>Status</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Uploaded" xml:space="preserve">
+    <value>Uppladdad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Scorm12" xml:space="preserve">
+    <value>SCORM 1.2</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Scorm2004" xml:space="preserve">
+    <value>SCORM 2004</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Standard.Cmi5" xml:space="preserve">
+    <value>cmi5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.FilesFormat" xml:space="preserve">
+    <value>{0} filer, {1} MB</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Queued" xml:space="preserve">
+    <value>Väntar på uppackning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Processing" xml:space="preserve">
+    <value>Packas upp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Ready" xml:space="preserve">
+    <value>Klar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageStatus.Failed" xml:space="preserve">
+    <value>Misslyckades</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Remove" xml:space="preserve">
+    <value>Ta bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.SandboxNote" xml:space="preserve">
+    <value>Paket körs i en isolerad ram som inte når Resgrids sidor eller inloggningar; de rapporterar bara förloppet för sin egen start.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageUploaded" xml:space="preserve">
+    <value>Paketet har laddats upp. Det är klart när det har packats upp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageRemoved" xml:space="preserve">
+    <value>Paketet togs bort från nya lektioner.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolSaved" xml:space="preserve">
+    <value>LTI-verktyget har sparats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolRemoved" xml:space="preserve">
+    <value>LTI-verktyget har tagits bort.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.KeyRotated" xml:space="preserve">
+    <value>En ny signeringsnyckel är aktiv. Den tidigare nyckeln publiceras i en vecka till.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiSaved" xml:space="preserve">
+    <value>xAPI-inställningarna har sparats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiRequeued" xml:space="preserve">
+    <value>Misslyckade uttryck har köats igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolsTitle" xml:space="preserve">
+    <value>LTI-verktyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolsIntro" xml:space="preserve">
+    <value>Kurser från tredje part (LTI 1.3) som öppnas från en lektion och skickar tillbaka poängen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NewTool" xml:space="preserve">
+    <value>Registrera ett verktyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.NoTools" xml:space="preserve">
+    <value>Inga LTI-verktyg har registrerats ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Name" xml:space="preserve">
+    <value>Namn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.ClientId" xml:space="preserve">
+    <value>Klient-ID</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Passback" xml:space="preserve">
+    <value>Poängåterföring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Yes" xml:space="preserve">
+    <value>Ja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.No" xml:space="preserve">
+    <value>Nej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Active" xml:space="preserve">
+    <value>Aktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Inactive" xml:space="preserve">
+    <value>Inaktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Open" xml:space="preserve">
+    <value>Öppna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.RotateKey" xml:space="preserve">
+    <value>Byt signeringsnyckel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.RotateKeyHelp" xml:space="preserve">
+    <value>Starter signeras med avdelningens nyckel (RS256). Efter bytet hämtar verktyg som läser nyckeluppsättningen den nya nyckeln; den gamla publiceras i en vecka till.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PlatformTitle" xml:space="preserve">
+    <value>Plattformsuppgifter för verktygsleverantörer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PlatformIntro" xml:space="preserve">
+    <value>Ge dessa till leverantören när Resgrid registreras i deras verktyg, tillsammans med verktygets klient-ID och distributions-ID.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Issuer" xml:space="preserve">
+    <value>Utfärdare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Jwks" xml:space="preserve">
+    <value>URL för nyckeluppsättning (JWKS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Auth" xml:space="preserve">
+    <value>Auktoriserings-URL (OIDC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Token" xml:space="preserve">
+    <value>URL för åtkomsttoken</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.Kid" xml:space="preserve">
+    <value>Aktivt nyckel-ID</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Platform.NoKey" xml:space="preserve">
+    <value>Skapas med det första verktyget</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolTitle" xml:space="preserve">
+    <value>LTI-verktyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ToolIntro" xml:space="preserve">
+    <value>Leverantörens slutpunkter och nycklar. Starter delar bara ett pseudonymt medlems-ID om du inte aktiverar namn eller e-post nedan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.DeploymentId" xml:space="preserve">
+    <value>Distributions-ID</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.OidcLoginUrl" xml:space="preserve">
+    <value>URL för inloggningsstart</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LaunchUrl" xml:space="preserve">
+    <value>Start-URL (mållänk)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.JwksUrl" xml:space="preserve">
+    <value>URL för verktygets nyckeluppsättning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.RedirectUris" xml:space="preserve">
+    <value>Omdirigerings-URI:er</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.RedirectUrisHelp" xml:space="preserve">
+    <value>En per rad (https). Starter skickas bara hit; är fältet tomt används start-URL:en.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PublicJwks" xml:space="preserve">
+    <value>Verktygets publika nycklar (JWKS) i stället för en URL</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PublicJwksHelp" xml:space="preserve">
+    <value>Klistra in verktygets nyckeluppsättning om det saknar URL. Den används för att verifiera verktygets begäranden om poängåterföring.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.Custom" xml:space="preserve">
+    <value>Anpassade parametrar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.CustomHelp" xml:space="preserve">
+    <value>En key=value per rad, skickas med varje start.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.Passback" xml:space="preserve">
+    <value>Verktyget skickar tillbaka poängen (Assignment and Grade Services)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareName" xml:space="preserve">
+    <value>Dela medlemmens namn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareEmail" xml:space="preserve">
+    <value>Dela medlemmens e-postadress</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.PassbackHelp" xml:space="preserve">
+    <value>Med poängåterföring slutförs lektionen när verktyget rapporterar den avslutad och bedömd minst till godkäntgränsen; utan den slutförs lektionen när verktyget öppnas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Save" xml:space="preserve">
+    <value>Spara</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Back" xml:space="preserve">
+    <value>Tillbaka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiTitle" xml:space="preserve">
+    <value>xAPI-uttryck</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiIntro" xml:space="preserve">
+    <value>Skicka kurs- och lektionsresultat till ert Learning Record Store.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Pending" xml:space="preserve">
+    <value>Väntar på att skickas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Delivered" xml:space="preserve">
+    <value>Levererade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Failed" xml:space="preserve">
+    <value>Misslyckade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.XapiEnabled" xml:space="preserve">
+    <value>Skicka xAPI-uttryck till LRS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsEndpoint" xml:space="preserve">
+    <value>LRS-slutpunkt (https)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsKey" xml:space="preserve">
+    <value>LRS-nyckel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.LrsSecret" xml:space="preserve">
+    <value>LRS-hemlighet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.SecretStored" xml:space="preserve">
+    <value>Sparad (lämna tomt för att behålla)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ClearSecret" xml:space="preserve">
+    <value>Ta bort den sparade hemligheten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Field.ShareEmailInActor" xml:space="preserve">
+    <value>Identifiera medlemmar med e-postadress (annars ett pseudonymt avdelningskonto)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.XapiHelp" xml:space="preserve">
+    <value>Uttryck (attempted, completed, passed, failed) köas när de inträffar och skickas i omgångar, med nya försök när LRS inte svarar. Hemligheten lagras krypterad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.RecentFailures" xml:space="preserve">
+    <value>Senaste misslyckanden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Statement" xml:space="preserve">
+    <value>Uttryck</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Attempts" xml:space="preserve">
+    <value>Försök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.LastError" xml:space="preserve">
+    <value>Senaste fel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Col.Queued" xml:space="preserve">
+    <value>Köad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Outbox.Retry" xml:space="preserve">
+    <value>Försök igen med misslyckade uttryck</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Tool" xml:space="preserve">
+    <value>LTI-verktyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Choose" xml:space="preserve">
+    <value>Välj…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoPassback" xml:space="preserve">
+    <value>utan poängåterföring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Target" xml:space="preserve">
+    <value>Mållänk-URI (valfritt)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.PassMark" xml:space="preserve">
+    <value>Godkäntgräns (%)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.LtiHelp" xml:space="preserve">
+    <value>Medlemmen öppnar verktyget i ett nytt fönster. Med poängåterföring slutförs lektionen vid godkäntgränsen (0 = när verktyget rapporterar den avslutad); annars när verktyget öppnas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoTools" xml:space="preserve">
+    <value>Registrera först ett LTI-verktyg (Utbildningar → Standarder → LTI-verktyg).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.Package" xml:space="preserve">
+    <value>Innehållspaket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.PackageHelp" xml:space="preserve">
+    <value>Lektionen slutförs när paketet rapporterar det (SCORM-status eller cmi5-regeln moveOn); medlemmen kan inte markera den som klar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Lesson.NoPackages" xml:space="preserve">
+    <value>Ladda först upp ett paket (Utbildningar → Standarder → Innehållspaket).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Completed" xml:space="preserve">
+    <value>Den här lektionen är klar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiIntro" xml:space="preserve">
+    <value>Lektionen tillhandahålls av {0} och öppnas i ett nytt fönster.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LaunchTool" xml:space="preserve">
+    <value>Öppna kursen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiScoreHelp" xml:space="preserve">
+    <value>Resultatet kommer från leverantören när du är klar; uppdatera sidan för att se det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.LtiOpenHelp" xml:space="preserve">
+    <value>Lektionen slutförs när kursen öppnas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Items" xml:space="preserve">
+    <value>Delar av lektionen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Done" xml:space="preserve">
+    <value>klar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Sandboxed" xml:space="preserve">
+    <value>Kursen körs i en skyddad ram och rapporterar bara sitt eget förlopp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Status" xml:space="preserve">
+    <value>Resultat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Satisfied" xml:space="preserve">
+    <value>Slutföranderegeln uppfylld</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.NotSatisfied" xml:space="preserve">
+    <value>Inte klar ännu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Score" xml:space="preserve">
+    <value>Poäng</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Player.Refresh" xml:space="preserve">
+    <value>Uppdatera förloppet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotFound" xml:space="preserve">
+    <value>Objektet hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotAuthorized" xml:space="preserve">
+    <value>Du har inte behörighet att göra detta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.AddonRequired" xml:space="preserve">
+    <value>Detta kräver ett aktivt LMS-tillägg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.LapseWindowEnded" xml:space="preserve">
+    <value>LMS-tillägget har upphört och kursen kan inte längre genomföras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotEntitled" xml:space="preserve">
+    <value>Innehållet är inte tillgängligt för er avdelning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.InvalidInput" xml:space="preserve">
+    <value>Vissa uppgifter saknas eller är ogiltiga (adresser måste vara https).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.LessonLocked" xml:space="preserve">
+    <value>Slutför de tidigare lektionerna först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.MediaUnavailable" xml:space="preserve">
+    <value>Innehållet kan inte öppnas just nu (paketet är inte klart eller verktyget är inte aktivt).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.FileTooLarge" xml:space="preserve">
+    <value>Paketet är för stort.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.UnsupportedFile" xml:space="preserve">
+    <value>Filen är inte ett paket som kan spelas upp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.RequirementNotMet" xml:space="preserve">
+    <value>Lektionen slutförs när innehållet rapporterar det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.CodeExpired" xml:space="preserve">
+    <value>Starten har gått ut. Öppna lektionen igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.AlreadySubmitted" xml:space="preserve">
+    <value>Detta är redan registrerat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.Empty" xml:space="preserve">
+    <value>Filen är tom.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.TooLarge" xml:space="preserve">
+    <value>Paketet är större än tillåtet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.NotZip" xml:space="preserve">
+    <value>Filen är inte ett zip-arkiv.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.TooManyFiles" xml:space="preserve">
+    <value>Paketet innehåller för många filer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UnsafePath" xml:space="preserve">
+    <value>Paketet innehåller en sökväg som lämnar paketmappen och avvisades därför.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UncompressedTooLarge" xml:space="preserve">
+    <value>Uppackat blir paketet större än tillåtet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.SuspiciousCompression" xml:space="preserve">
+    <value>En fil i paketet är onormalt hårt komprimerad och avvisades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.ManifestMissing" xml:space="preserve">
+    <value>Ingen imsmanifest.xml (SCORM) eller cmi5.xml (cmi5) i zip-filens rot.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.ManifestInvalid" xml:space="preserve">
+    <value>Manifestet är ogiltigt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.UnsupportedStandard" xml:space="preserve">
+    <value>Den här SCORM-versionen stöds inte (SCORM 1.2 och 2004 stöds).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.NoLaunchableItem" xml:space="preserve">
+    <value>Paketet har ingen SCO eller AU att starta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.LaunchFileMissing" xml:space="preserve">
+    <value>En SCO eller AU pekar på en fil som inte finns i paketet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.PackageError.RemoteAuNotSupported" xml:space="preserve">
+    <value>En AU finns någon annanstans; bara paketerat innehåll körs i Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.ClientReportedNote" xml:space="preserve">
+    <value>Resultat från SCORM och cmi5 (slutförande, poäng, godkänd eller underkänd) rapporteras av paketet som körs i deltagarens webbläsare, så en beslutsam deltagare skulle kunna ändra dem. Lägg även till en Resgrid-provlektion i kurser som ger fortbildningspoäng.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.Error.NotLicensed" xml:space="preserve">
+    <value>Du behöver en LMS-plats för detta. Be din administratör att aktivera LMS åt dig. Akademin och dina utbildningsposter finns kvar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Busy" xml:space="preserve">
+    <value>För många försök. Vänta en minut och försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiFramed" xml:space="preserve">
+    <value>Kursen öppnas i ett nytt fönster. Kom tillbaka hit när du är klar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiOpening" xml:space="preserve">
+    <value>Öppnar kursen…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.LtiScoreHelp" xml:space="preserve">
+    <value>Ditt resultat skickas tillbaka från leverantören när du är klar. Appen uppdateras när det kommer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Returned" xml:space="preserve">
+    <value>Du är tillbaka från kursen. Du kan stänga det här fönstret och gå tillbaka till appen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Ended" xml:space="preserve">
+    <value>Den här lektionen kan inte fortsätta här. Stäng den och öppna lektionen igen från appen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Close" xml:space="preserve">
+    <value>Stäng</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Std.App.Offline" xml:space="preserve">
+    <value>Du är offline. Den här lektionen behöver en anslutning för att spara dina framsteg.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

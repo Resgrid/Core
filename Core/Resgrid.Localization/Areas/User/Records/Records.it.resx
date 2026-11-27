@@ -2298,4 +2298,72 @@
   <data name="RatedFlowHelp" xml:space="preserve">
     <value>Portata nominale NFPA 291: portata osservata × ((statica − 20) / (statica − residua))^0.54. La classe di portata si ricava da essa quando sono inserite la pressione statica e quella residua.</value>
   </data>
+  <data name="DeploymentPartner" xml:space="preserve">
+    <value>Partner collegato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerNone" xml:space="preserve">
+    <value>Nessun partner collegato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSave" xml:space="preserve">
+    <value>Salva partner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerHelp" xml:space="preserve">
+    <value>Quando l'agenzia per cui viene evaso questo ordine è un'organizzazione collegata su Resgrid, sceglietela qui. Ogni assegnazione accettata chiede quindi ai suoi amministratori di accettare l'incarico con una firma con verifica rafforzata (step-up).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerSaved" xml:space="preserve">
+    <value>Il partner collegato è stato salvato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerRequested" xml:space="preserve">
+    <value>Al partner collegato è stato chiesto di accettare l'incarico.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerAsk" xml:space="preserve">
+    <value>Chiedi al partner di accettare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotLinked" xml:space="preserve">
+    <value>Il collegamento con quell'organizzazione non è abilitato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorClosedOut" xml:space="preserve">
+    <value>Il dispiegamento è chiuso.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorConflict" xml:space="preserve">
+    <value>Qualcun altro ha modificato questo dispiegamento nello stesso momento. Riprovate.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotFound" xml:space="preserve">
+    <value>Il dispiegamento non è stato trovato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerErrorNotAuthorized" xml:space="preserve">
+    <value>Non potete modificare questo dispiegamento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateRequested" xml:space="preserve">
+    <value>Partner interpellato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateSigned" xml:space="preserve">
+    <value>Accettato dal partner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateDeclined" xml:space="preserve">
+    <value>Rifiutato dal partner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateLapsed" xml:space="preserve">
+    <value>Richiesta al partner scaduta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeploymentPartnerStateNone" xml:space="preserve">
+    <value>Nessuna firma del partner</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

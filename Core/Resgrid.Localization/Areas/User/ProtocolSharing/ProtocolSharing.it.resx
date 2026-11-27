@@ -1,0 +1,1157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AckDetail" xml:space="preserve">
+    <value>{0} su {1} firmate, {2} scadute</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>Tutti i tipi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AlreadyImported" xml:space="preserve">
+    <value>Il tuo dipartimento lo ha già importato in passato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsHeader" xml:space="preserve">
+    <value>Analisi dei protocolli</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsIntro" xml:space="preserve">
+    <value>Come vengono usati i protocolli nelle chiamate, come vengono codificati i casi, quanto tempo vi dedicano le squadre, chi ne ha confermato la presa visione e cosa le persone cercano senza trovarlo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsTab" xml:space="preserve">
+    <value>Analisi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsTruncated" xml:space="preserve">
+    <value>Il periodo contiene più di {0} utilizzi di protocolli nelle chiamate; vengono conteggiati solo i più recenti.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsUnavailable" xml:space="preserve">
+    <value>Le analisi sono disponibili per gli autori e gli approvatori dei protocolli e per gli amministratori del dipartimento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyButton" xml:space="preserve">
+    <value>Applica</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>Confermo che abbiamo il diritto di condividere questo elemento e che non contiene contenuti in licenza (come MPDS o IntelliComm) né dati personali.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionLicense" xml:space="preserve">
+    <value>Licenza:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionNameHelp" xml:space="preserve">
+    <value>Il nome citato in ogni importazione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionNameLabel" xml:space="preserve">
+    <value>Attribuisci a</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionSource" xml:space="preserve">
+    <value>Fonte:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseItem" xml:space="preserve">
+    <value>Scegli…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>Azioni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnAddress" xml:space="preserve">
+    <value>Indirizzo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnContributor" xml:space="preserve">
+    <value>Contributore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnCreated" xml:space="preserve">
+    <value>Creato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnDeterminant" xml:space="preserve">
+    <value>Determinante</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnFlags" xml:space="preserve">
+    <value>Rilievi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnImports" xml:space="preserve">
+    <value>Importazioni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnKind" xml:space="preserve">
+    <value>Tipo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnLicense" xml:space="preserve">
+    <value>Licenza</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnListed" xml:space="preserve">
+    <value>In catalogo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnQuery" xml:space="preserve">
+    <value>Ricerca</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnRating" xml:space="preserve">
+    <value>Valutazione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnShown" xml:space="preserve">
+    <value>Nella pagina</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Stato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSubmitted" xml:space="preserve">
+    <value>Inviato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnTimes" xml:space="preserve">
+    <value>Volte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnTitle" xml:space="preserve">
+    <value>Titolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnWhere" xml:space="preserve">
+    <value>Dove</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentButton" xml:space="preserve">
+    <value>Commenta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentHelp" xml:space="preserve">
+    <value>Testo semplice. I commenti mostrano il nome del tuo dipartimento, non il tuo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentHidden" xml:space="preserve">
+    <value>nascosto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Aggiungi un commento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsHeader" xml:space="preserve">
+    <value>Commenti ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckAssigned" xml:space="preserve">
+    <value>Prese visione dovute</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckCompliance" xml:space="preserve">
+    <value>Conformità della presa visione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckOverdue" xml:space="preserve">
+    <value>Prese visione scadute</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckSigned" xml:space="preserve">
+    <value>Prese visione firmate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvButton" xml:space="preserve">
+    <value>CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvByAi" xml:space="preserve">
+    <value>Da suggerimento IA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvByDispatcher" xml:space="preserve">
+    <value>Da operatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvByTrigger" xml:space="preserve">
+    <value>Da attivatore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCalls" xml:space="preserve">
+    <value>Chiamate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDeterminants" xml:space="preserve">
+    <value>Determinanti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvMeanMinutes" xml:space="preserve">
+    <value>Minuti medi sul protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvMedianMinutes" xml:space="preserve">
+    <value>Minuti mediani sul protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvName" xml:space="preserve">
+    <value>Protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvNumber" xml:space="preserve">
+    <value>Numero</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverridden" xml:space="preserve">
+    <value>Modificati</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverrideRate" xml:space="preserve">
+    <value>Tasso di modifica</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvRemoved" xml:space="preserve">
+    <value>Rimossi dalle chiamate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvTimedCalls" xml:space="preserve">
+    <value>Chiamate cronometrate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvVersions" xml:space="preserve">
+    <value>Chiamate per versione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvWithDeterminant" xml:space="preserve">
+    <value>Chiamate con determinante</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHeader" xml:space="preserve">
+    <value>Revisione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHelp" xml:space="preserve">
+    <value>Per rifiutare serve una nota; il contributore la vedrà.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantsEmpty" xml:space="preserve">
+    <value>In questo periodo nessuna chiamata è stata codificata con un flusso del caso.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantsHeader" xml:space="preserve">
+    <value>Distribuzione dei determinanti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityAudienceRestricted" xml:space="preserve">
+    <value>Limitato a destinatari specifici, quindi mai pubblico</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityDisabled" xml:space="preserve">
+    <value>Disattivato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityDocumentBacked" xml:space="preserve">
+    <value>Le versioni con documento caricato non vengono mostrate pubblicamente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityEligible" xml:space="preserve">
+    <value>Può essere pubblico</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityLicensedContent" xml:space="preserve">
+    <value>I contenuti in licenza non sono mai pubblici</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityNotPublished" xml:space="preserve">
+    <value>Non pubblicato (le bozze non sono mai pubbliche)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeCommentHidden" xml:space="preserve">
+    <value>Commento nascosto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeCommented" xml:space="preserve">
+    <value>Commento aggiunto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeCount" xml:space="preserve">
+    <value>{0} elementi in catalogo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeEmpty" xml:space="preserve">
+    <value>Ancora nessun risultato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorAttestationRequired" xml:space="preserve">
+    <value>Conferma la dichiarazione prima di inviare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorDocumentBacked" xml:space="preserve">
+    <value>Un protocollo il cui contenuto è un documento caricato non può essere condiviso.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorImportFailed" xml:space="preserve">
+    <value>L'importazione non è stata completata. Non è stato creato nulla.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorInvalidInput" xml:space="preserve">
+    <value>Controlla i dati inseriti e riprova.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorKindUnavailable" xml:space="preserve">
+    <value>Questo tipo di elemento non è disponibile su questo server.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorLicenseRequired" xml:space="preserve">
+    <value>Scegli una licenza.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorLicensedContent" xml:space="preserve">
+    <value>I contenuti in licenza (o contrassegnati «no IA» perché in licenza) non possono mai essere condivisi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorLmsRequired" xml:space="preserve">
+    <value>Questo elemento è di tipo LMS; per importarlo serve il componente aggiuntivo LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNone" xml:space="preserve">
+    <value>Fatto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNotAuthorized" xml:space="preserve">
+    <value>Non hai i diritti per questa operazione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNotFound" xml:space="preserve">
+    <value>Impossibile trovare l'elemento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNotPublished" xml:space="preserve">
+    <value>Si può condividere solo una versione pubblicata in vigore.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorOwnListing" xml:space="preserve">
+    <value>Un dipartimento non può valutare il proprio contributo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorPayloadChanged" xml:space="preserve">
+    <value>L'elemento non corrisponde più a quanto revisionato; non può essere importato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorWrongStatus" xml:space="preserve">
+    <value>Operazione non possibile nello stato attuale dell'elemento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeFreeNote" xml:space="preserve">
+    <value>Lo scambio della community è gratuito per ogni dipartimento. Per usare gli elementi LMS importati (schede abilità, piani di lezione) serve il componente aggiuntivo LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeHeader" xml:space="preserve">
+    <value>Scambio della community</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeImported" xml:space="preserve">
+    <value>Importato. Revisionalo, adattalo e pubblicalo come tuo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeIntro" xml:space="preserve">
+    <value>Protocolli e corsi di formazione condivisi da altri dipartimenti, revisionati da Resgrid prima di entrare in catalogo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeListed" xml:space="preserve">
+    <value>Messo in catalogo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeRated" xml:space="preserve">
+    <value>Grazie per la valutazione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeRejected" xml:space="preserve">
+    <value>Rifiutato; il contributore vedrà la tua nota.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeRemoved" xml:space="preserve">
+    <value>Rimosso.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeSubmitted" xml:space="preserve">
+    <value>Grazie. Il tuo contributo è in attesa di revisione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeTab" xml:space="preserve">
+    <value>Scambio della community</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeWithdrawn" xml:space="preserve">
+    <value>Ritirato dallo scambio.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportCount" xml:space="preserve">
+    <value>{0} protocolli nella libreria.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportHeader" xml:space="preserve">
+    <value>Formato aperto ed esportazione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportHtmlButton" xml:space="preserve">
+    <value>HTML</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportHtmlHelp" xml:space="preserve">
+    <value>HTML: un unico file autonomo con le versioni in vigore che puoi leggere.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportImportHint" xml:space="preserve">
+    <value>Qualsiasi dipartimento Resgrid (o altro sistema) può importare il file JSON:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportImportLink" xml:space="preserve">
+    <value>Importa protocolli</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportIntro" xml:space="preserve">
+    <value>Porta con te i tuoi protocolli: il formato JSON aperto documentato, un unico file HTML o il libro PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportJsonButton" xml:space="preserve">
+    <value>Formato aperto (JSON)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportJsonHelp" xml:space="preserve">
+    <value>JSON: blocchi, cronologia delle versioni, albero decisionale, traduzioni approvate e l'elenco degli allegati (formato resgrid-protocols, versione 2). I file sono elencati, non inclusi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportLibraryTitle" xml:space="preserve">
+    <value>Libreria dei protocolli</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Libro PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportPdfHelp" xml:space="preserve">
+    <value>PDF: il libro dei protocolli, sigillato quando la sigillatura dei documenti è configurata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportSetLabel" xml:space="preserve">
+    <value>Insieme</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportTab" xml:space="preserve">
+    <value>Formato aperto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportWholeLibrary" xml:space="preserve">
+    <value>L'intera libreria</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagAttachmentRemoved" xml:space="preserve">
+    <value>Allegato o immagine caricata rimossi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagConfigurationRemoved" xml:space="preserve">
+    <value>Attivatori, destinatari e numero rimossi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagContactRemoved" xml:space="preserve">
+    <value>Contatto della centrale medica rimosso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagDepartmentNameRemoved" xml:space="preserve">
+    <value>Nome del dipartimento sostituito con [Department]</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagEmailRemoved" xml:space="preserve">
+    <value>Indirizzo e-mail rimosso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagInternalLinkRemoved" xml:space="preserve">
+    <value>Collegamento ai registri interni del dipartimento rimosso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagInventoryLinkRemoved" xml:space="preserve">
+    <value>Collegamento all'inventario rimosso da un farmaco</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagPhoneNumber" xml:space="preserve">
+    <value>Numero di telefono trovato (lasciato invariato; lo verifica il revisore)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagsHeader" xml:space="preserve">
+    <value>Cosa è stato rimosso o segnalato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagsHelp" xml:space="preserve">
+    <value>I dati specifici del dipartimento vengono rimossi prima della condivisione; i numeri di telefono restano e vengono verificati dal revisore. Se qualcosa non deve essere condiviso, modifica l'elemento nella tua libreria.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Da</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsEmpty" xml:space="preserve">
+    <value>Nessuna ricerca senza risposta in questo periodo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsHeader" xml:space="preserve">
+    <value>Lacune nei protocolli</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsHelp" xml:space="preserve">
+    <value>Ricerche nella libreria dei protocolli senza risultati: protocolli cercati che forse non esistono ancora.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HideCommentButton" xml:space="preserve">
+    <value>Nascondi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Importa una copia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportHeader" xml:space="preserve">
+    <value>Importa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Crea nel tuo dipartimento una copia modificabile come bozza (o come nuovo corso di formazione), mantenendo l'attribuzione al contributore.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportNeedsLms" xml:space="preserve">
+    <value>Questo è un elemento LMS: per importarlo serve il componente aggiuntivo LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportNotAllowed" xml:space="preserve">
+    <value>Possono importarlo gli autori dei protocolli (o i creatori di formazione, per i corsi).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindLessonPlan" xml:space="preserve">
+    <value>Piano di lezione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindProtocol" xml:space="preserve">
+    <value>Protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindSkillSheet" xml:space="preserve">
+    <value>Scheda abilità</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindTraining" xml:space="preserve">
+    <value>Formazione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemLabel" xml:space="preserve">
+    <value>Elemento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Tipo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicenseHelp" xml:space="preserve">
+    <value>Gli altri dipartimenti possono usare e modificare il tuo contributo secondo questa licenza.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>Licenza</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="License_CC010" xml:space="preserve">
+    <value>CC0 1.0 (pubblico dominio)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="License_CCBY40" xml:space="preserve">
+    <value>CC BY 4.0 (citare il contributore)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="License_CCBYSA40" xml:space="preserve">
+    <value>CC BY-SA 4.0 (citare, condividere allo stesso modo)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListButton" xml:space="preserve">
+    <value>Metti in catalogo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingContributed" xml:space="preserve">
+    <value>Contributo di {0} del {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusListed" xml:space="preserve">
+    <value>In catalogo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusPendingReview" xml:space="preserve">
+    <value>In attesa di revisione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusRejected" xml:space="preserve">
+    <value>Non accettato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusRemoved" xml:space="preserve">
+    <value>Rimosso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusWithdrawn" xml:space="preserve">
+    <value>Ritirato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingVersion" xml:space="preserve">
+    <value>Versione {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinutesValue" xml:space="preserve">
+    <value>{0} min</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsEmpty" xml:space="preserve">
+    <value>Il tuo dipartimento non ha ancora condiviso nulla.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>I nostri contributi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsIntro" xml:space="preserve">
+    <value>Cosa ha condiviso il tuo dipartimento e lo stato di ciascun elemento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsTab" xml:space="preserve">
+    <value>I nostri contributi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoComments" xml:space="preserve">
+    <value>Ancora nessun commento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>Non è stato trovato nulla di specifico del dipartimento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotRated" xml:space="preserve">
+    <value>Non valutato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PagingLabel" xml:space="preserve">
+    <value>Pagine</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Anteprima</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Cosa crea un'importazione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCategoryLabel" xml:space="preserve">
+    <value>Categoria</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicContentCodeHelp" xml:space="preserve">
+    <value>Codice contenuto: corrisponde alla copia stampata di questa versione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicContents" xml:space="preserve">
+    <value>Indice</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCreateButton" xml:space="preserve">
+    <value>Rendi pubblico</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCreateConfirm" xml:space="preserve">
+    <value>Chiunque abbia l'indirizzo potrà leggerlo. Continuare?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCreated" xml:space="preserve">
+    <value>La pagina pubblica è attiva.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicDisclaimer" xml:space="preserve">
+    <value>Pubblicato da {0}. Queste sono le indicazioni del dipartimento per i propri membri; non costituiscono consulenza medica o legale per altri.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEffective" xml:space="preserve">
+    <value>In vigore dal {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEligibleCount" xml:space="preserve">
+    <value>Protocolli che possono essere pubblici</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedAnySite" xml:space="preserve">
+    <value>Qualsiasi sito https può incorporarlo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedLabel" xml:space="preserve">
+    <value>Consenti l'incorporamento su altri siti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedSites" xml:space="preserve">
+    <value>Incorporabile su: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedSnippet" xml:space="preserve">
+    <value>Codice di incorporamento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorAlreadyPublic" xml:space="preserve">
+    <value>Esiste già una pagina pubblica attiva per questo elemento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorInvalidOrigins" xml:space="preserve">
+    <value>I siti di incorporamento devono essere indirizzi https come https://www.example.org (al massimo 10).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNone" xml:space="preserve">
+    <value>Fatto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNotAuthorized" xml:space="preserve">
+    <value>Solo gli approvatori dei protocolli e gli amministratori del dipartimento gestiscono le pagine pubbliche.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNotEligible" xml:space="preserve">
+    <value>Questo protocollo non può essere reso pubblico.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNotFound" xml:space="preserve">
+    <value>Impossibile trovare il protocollo o la categoria.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorTooManyLinks" xml:space="preserve">
+    <value>Il dipartimento ha raggiunto il numero massimo di pagine pubbliche; revocane prima una.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicHeader" xml:space="preserve">
+    <value>Pagine pubbliche</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicIntro" xml:space="preserve">
+    <value>Pubblica un protocollo o una categoria a un indirizzo pubblico, facoltativamente incorporabile nel tuo sito web. Puoi revocarlo in qualsiasi momento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicKindCurrent" xml:space="preserve">
+    <value>Versione in vigore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicKindPinned" xml:space="preserve">
+    <value>Solo questa versione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicKindSet" xml:space="preserve">
+    <value>Set di categoria</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicLinksHeader" xml:space="preserve">
+    <value>Le pagine pubbliche del dipartimento</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicLiveCount" xml:space="preserve">
+    <value>Pagine pubbliche attive</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicNoLinks" xml:space="preserve">
+    <value>Nulla è pubblico.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicNotEligibleHeader" xml:space="preserve">
+    <value>Protocolli che non possono essere pubblici ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicNothingPublished" xml:space="preserve">
+    <value>Qui non è ancora stato pubblicato nulla.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicOriginsHelp" xml:space="preserve">
+    <value>Indirizzi https separati da spazi. Lascia vuoto per consentire qualsiasi sito https.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicOriginsLabel" xml:space="preserve">
+    <value>Siti autorizzati a incorporarlo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPageTitle" xml:space="preserve">
+    <value>Protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPinHelp" xml:space="preserve">
+    <value>Quando viene pubblicata una versione più recente, la pagina indica che questa versione non è più in vigore. Lascia deselezionato per mostrare sempre la versione in vigore.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPinLabel" xml:space="preserve">
+    <value>Solo questa versione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPoweredBy" xml:space="preserve">
+    <value>Pubblicato con Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicProtocolHeader" xml:space="preserve">
+    <value>Rendi pubblico un protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicProtocolLabel" xml:space="preserve">
+    <value>Protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevokeButton" xml:space="preserve">
+    <value>Revoca</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevokeConfirm" xml:space="preserve">
+    <value>Revocare questa pagina pubblica? L'indirizzo smette subito di funzionare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevoked" xml:space="preserve">
+    <value>La pagina pubblica è stata revocata.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevokedLabel" xml:space="preserve">
+    <value>Revocata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSetCount" xml:space="preserve">
+    <value>{0} protocolli</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSetHeader" xml:space="preserve">
+    <value>Rendi pubblica una categoria come set</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSetHelp" xml:space="preserve">
+    <value>La pagina mostra ogni protocollo in vigore della categoria e delle sue sottocategorie che può essere pubblico; gli altri vengono esclusi automaticamente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicShownCount" xml:space="preserve">
+    <value>{0} protocolli mostrati</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicShownLabel" xml:space="preserve">
+    <value>Mostrati</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSuperseded" xml:space="preserve">
+    <value>Questa versione non è più in vigore. Contatta il dipartimento per la versione attuale.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicTab" xml:space="preserve">
+    <value>Pagine pubbliche</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicVersion" xml:space="preserve">
+    <value>Versione {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RateButton" xml:space="preserve">
+    <value>Valuta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RateHeader" xml:space="preserve">
+    <value>Valuta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RateLabel" xml:space="preserve">
+    <value>La tua valutazione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RatingValue" xml:space="preserve">
+    <value>{0} su 5 ({1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Rifiuta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Rimuovi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewEmpty" xml:space="preserve">
+    <value>Nulla in attesa di revisione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>Coda di revisione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewIntro" xml:space="preserve">
+    <value>Contributi in attesa della revisione di Resgrid, a partire dal meno recente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Nota del revisore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewTab" xml:space="preserve">
+    <value>Coda di revisione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Cerca</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Cerca nello scambio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Cerca in titoli, riepiloghi e tag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingTab" xml:space="preserve">
+    <value>Condivisione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortImports" xml:space="preserve">
+    <value>Più importati</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortLabel" xml:space="preserve">
+    <value>Ordina</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortNewest" xml:space="preserve">
+    <value>Più recenti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortRating" xml:space="preserve">
+    <value>Meglio valutati</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourcesDetail" xml:space="preserve">
+    <value>Attivatore {0} · operatore {1} · IA {2} · rimossi {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StarsOption" xml:space="preserve">
+    <value>{0} su 5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitButton" xml:space="preserve">
+    <value>Invia per la revisione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitChooseHelp" xml:space="preserve">
+    <value>I contenuti in licenza, le bozze e i protocolli basati su documenti caricati non possono essere condivisi e appaiono in grigio.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>Contribuisci allo scambio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitIntro" xml:space="preserve">
+    <value>Condividi un protocollo pubblicato o un corso di formazione con tutti i dipartimenti. Resgrid revisiona ogni contributo prima di metterlo in catalogo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitStepChoose" xml:space="preserve">
+    <value>1. Scegli cosa condividere</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitStepPreview" xml:space="preserve">
+    <value>2. Cosa verrà condiviso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitStepSend" xml:space="preserve">
+    <value>3. Licenza e invio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitTab" xml:space="preserve">
+    <value>Contribuisci</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Riepilogo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>Ricerca nella libreria</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceUnifiedSearch" xml:space="preserve">
+    <value>Ricerca</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateAuthorsOnly" xml:space="preserve">
+    <value>Gli autori dei protocolli possono clonare i modelli.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateChooseItems" xml:space="preserve">
+    <value>Elementi da clonare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCloneButton" xml:space="preserve">
+    <value>Clona come bozze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCloned" xml:space="preserve">
+    <value>{0} bozze create dal set di modelli.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_not_authorized" xml:space="preserve">
+    <value>Solo gli autori dei protocolli possono clonare i modelli.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_not_found" xml:space="preserve">
+    <value>Impossibile trovare il set di modelli.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_nothing_selected" xml:space="preserve">
+    <value>Scegli almeno un elemento da clonare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_too_many" xml:space="preserve">
+    <value>Troppi elementi in una volta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_unknown_format" xml:space="preserve">
+    <value>Impossibile leggere il set di modelli.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateMeta" xml:space="preserve">
+    <value>{0} · versione {1} · {2} elementi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateSkipped" xml:space="preserve">
+    <value>Impossibile creare {0} elementi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesDisclaimer" xml:space="preserve">
+    <value>I modelli sono punti di partenza. Prima di pubblicarli, verificali uno per uno rispetto alle tue procedure, alla normativa, al personale e alla direzione medica. Il set EMS non contiene testo clinico: lo scrive il tuo direttore sanitario.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesHeader" xml:space="preserve">
+    <value>Libreria dei modelli</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>Set iniziali scritti da Resgrid. Clonali come bozze, adattali, poi revisionali e pubblicali come tuoi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesTab" xml:space="preserve">
+    <value>Modelli</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAckCompliance" xml:space="preserve">
+    <value>Conformità della presa visione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAckDetail" xml:space="preserve">
+    <value>{0} su {1} firmate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileCalls" xml:space="preserve">
+    <value>Chiamate con un protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileGaps" xml:space="preserve">
+    <value>Ricerche senza risultati</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileGapsDetail" xml:space="preserve">
+    <value>{0} lacune di conoscenza aperte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileMedianTime" xml:space="preserve">
+    <value>Tempo mediano sul protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrideDetail" xml:space="preserve">
+    <value>{0} su {1} chiamate codificate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrideRate" xml:space="preserve">
+    <value>Tasso di modifica del determinante</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimedDetail" xml:space="preserve">
+    <value>{0} cronometrate</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>A</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsageEmpty" xml:space="preserve">
+    <value>Ancora nessun protocollo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsageHeader" xml:space="preserve">
+    <value>Utilizzo per protocollo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Ritira dallo scambio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateSuggested" xml:space="preserve">
+    <value>Suggerito per la tua organizzazione</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

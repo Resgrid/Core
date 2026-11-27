@@ -1,8 +1,6 @@
-﻿using Resgrid.Model.Helpers;
-using Resgrid.Model.Services;
+﻿using Resgrid.Model.Services;
 using Resgrid.Workers.Framework.Workers.TrainingNotifier;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using Resgrid.Framework;
@@ -18,37 +16,21 @@ namespace Resgrid.Workers.Framework.Logic
 
 			try
 			{
-				// A training without assignees is still marked, so it stops coming back as unannounced on every run.
 				if (item != null && item.Training != null)
 				{
 					// Own scope per item: root-scope services would share the process-wide root unit of work.
 					using var scope = Bootstrapper.GetKernel().BeginLifetimeScope();
 					var trainingService = scope.Resolve<ITrainingService>();
-					var communicationService = scope.Resolve<ICommunicationService>();
-					var userProfileService = scope.Resolve<IUserProfileService>();
-					var departmentSettingsService = scope.Resolve<IDepartmentSettingsService>();
-					var departmentsService = scope.Resolve<IDepartmentsService>();
+					var now = DateTime.UtcNow;
 
-					// Who is told and with what text: assignees who have not completed it and are still active members, and never
-					// an old training announced as new (TrainingNoticePlanner).
-					var activeMemberIds = await departmentsService.GetActiveMemberUserIdsAsync(item.Training.DepartmentId);
-					var plan = TrainingNoticePlanner.Plan(item.Training, activeMemberIds, DateTime.UtcNow);
+					// Per assignee (TrainingNoticePlanner): the first notice, due reminders on the training's lead days ("due
+					// within the next N hours and not yet reminded", T-D19) and overdue notices with the creator's digest. Only
+					// active members who have not completed, are not exempt and are not on leave; each send is stamped on the row.
+					await trainingService.SendTrainingNoticesAsync(item.Training, now);
 
-					if (plan.Kind != TrainingNoticeKinds.None && ConfigHelper.CanTransmit(item.Training.DepartmentId))
-					{
-						var profiles = await userProfileService.GetSelectedUserProfilesAsync(plan.RecipientUserIds);
-						var departmentNumber = await departmentSettingsService.GetTextToCallNumberForDepartmentAsync(item.Training.DepartmentId);
-						var department = await departmentsService.GetDepartmentByIdAsync(item.Training.DepartmentId, false);
-
-						foreach (var userId in plan.RecipientUserIds)
-						{
-							var profile = profiles?.FirstOrDefault(x => string.Equals(x.UserId, userId, StringComparison.OrdinalIgnoreCase));
-
-							await communicationService.SendNotificationAsync(userId, item.Training.DepartmentId, plan.Message, departmentNumber, department, plan.Title, profile);
-						}
-					}
-
-					await trainingService.MarkAsNotifiedAsync(item.Training.TrainingId);
+					// The training row keeps its "announced" stamp once it has started (a scheduled training is not announced early).
+					if (!item.Training.Notified.HasValue && item.Training.HasStarted(now))
+						await trainingService.MarkAsNotifiedAsync(item.Training.TrainingId);
 				}
 			}
 			catch (Exception ex)

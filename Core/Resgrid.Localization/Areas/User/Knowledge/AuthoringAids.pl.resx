@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Zaakceptuj zaznaczone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptedNotice" xml:space="preserve">
+    <value>Dodano {0} do edytora. Zapisz, aby je zachować.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptedSummaryNotice" xml:space="preserve">
+    <value>Podsumowanie zmian zostało uzupełnione. Sprawdź je przed wysłaniem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BudgetNotice" xml:space="preserve">
+    <value>Miesięczny limit AI jednostki został wykorzystany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BusyNotice" xml:space="preserve">
+    <value>Usługa AI jest zajęta. Spróbuj ponownie za chwilę.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Poprawna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscardButton" xml:space="preserve">
+    <value>Odrzuć</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftChangeSummaryButton" xml:space="preserve">
+    <value>Utwórz podsumowanie zmian</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftedNotice" xml:space="preserve">
+    <value>Szkic tylko na podstawie tej treści. Sprawdź każdy element; nic nie zostanie zapisane, dopóki go nie zaakceptujesz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Drafting" xml:space="preserve">
+    <value>Tworzenie szkicu…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftOutlineButton" xml:space="preserve">
+    <value>Utwórz plan kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftQuizButton" xml:space="preserve">
+    <value>Utwórz pytania quizu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DroppedNotice" xml:space="preserve">
+    <value>Pominięto {0} element(ów), ponieważ zawierały liczbę, której nie ma w treści.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExcludedNotice" xml:space="preserve">
+    <value>Ta treść jest wyłączona z AI, więc pomoce w redagowaniu są niedostępne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Wyjaśnienie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InvalidNotice" xml:space="preserve">
+    <value>Żądanie jest nieprawidłowe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KeepLabel" xml:space="preserve">
+    <value>Zachowaj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KeptLocalNotice" xml:space="preserve">
+    <value>Zaawansowana ochrona danych utrzymuje treści jednostki lokalnie, więc pomoce w redagowaniu są niedostępne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleNumber" xml:space="preserve">
+    <value>Moduł {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoChangesNotice" xml:space="preserve">
+    <value>Brak wcześniejszej wersji do porównania lub nic się nie zmieniło.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoContentNotice" xml:space="preserve">
+    <value>Najpierw dodaj więcej treści; jest jej za mało na szkic.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotAllowedNotice" xml:space="preserve">
+    <value>Nie możesz redagować tej treści.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotFoundNotice" xml:space="preserve">
+    <value>Nie znaleziono tej treści.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingSelectedNotice" xml:space="preserve">
+    <value>Zaznacz co najmniej jeden element.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ObjectiveLabel" xml:space="preserve">
+    <value>Cel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelHeader" xml:space="preserve">
+    <value>Pomoce w redagowaniu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelHelp" xml:space="preserve">
+    <value>Przygotuj szkic z tej treści za pomocą AI, a potem go sprawdź. Nic nie zostanie zapisane, dopóki go nie zaakceptujesz, a każda liczba musi pochodzić z treści.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionCountLabel" xml:space="preserve">
+    <value>Liczba pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionCountOption" xml:space="preserve">
+    <value>{0} pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionNumber" xml:space="preserve">
+    <value>Pytanie {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusedNotice" xml:space="preserve">
+    <value>Nie udało się użyć szkicu. Spróbuj ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnavailableNotice" xml:space="preserve">
+    <value>Pomoce w redagowaniu są teraz niedostępne.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

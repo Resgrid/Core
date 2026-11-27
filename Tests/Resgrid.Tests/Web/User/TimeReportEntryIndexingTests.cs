@@ -155,6 +155,8 @@ namespace Resgrid.Tests.Web.User
 			var flags = new Mock<IFeatureToggleService>();
 			flags.Setup(x => x.IsEnabledAsync(FeatureFlagKeys.Deployments, 77, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(true);
 			builder.Services.AddSingleton(departments.Object); builder.Services.AddSingleton(flags.Object);
+			// The page hosts the e-Signature panel (S2 view component); its services are stubs here (the panel renders nothing).
+			builder.Services.AddSingleton(Mock.Of<ISignatureRequestService>()); builder.Services.AddSingleton(Mock.Of<IDocumentSealingService>());
 			foreach (var parameter in typeof(DeploymentsController).GetConstructors().Single().GetParameters())
 			{
 				var type = parameter.ParameterType;

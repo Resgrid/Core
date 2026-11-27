@@ -104,6 +104,10 @@
                         {
                             <a asp-controller="DeploymentWizard" asp-action="Index" asp-route-bidId="@b.BidId" class="btn btn-primary btn-block m-t-sm"><i class="fa fa-magic"></i> @localizer["ScheduleDeploymentCall"]</a>
                         }
+                        @* e-Signature S2: the customer's acceptance, signed in person or by link; completion accepts a submitted bid. *@
+                        @await Component.InvokeAsync("SignatureRequests", new { kind = Resgrid.Model.SignatureSubjectKinds.Bid, subjectId = b.BidId,
+                            canRequest = Model.CanManageBids && status == Resgrid.Model.Invoicing.BidStatuses.Submitted,
+                            returnUrl = Url.Action("View", new { id = b.BidId }), suggestedEmail = b.SentToEmail })
                         @if (status == Resgrid.Model.Invoicing.BidStatuses.Draft)
                         {
                             <form method="post" asp-action="Delete" asp-route-id="@b.BidId" class="m-t-sm" onsubmit="return confirm('@JsEncoder.Encode(localizer["ConfirmDeleteBid"])');">@Html.AntiForgeryToken()<button type="submit" class="btn btn-danger btn-block btn-xs"><i class="fa fa-trash"></i> @localizer["Delete"]</button></form>

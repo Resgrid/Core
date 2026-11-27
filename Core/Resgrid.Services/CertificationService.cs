@@ -28,6 +28,7 @@ namespace Resgrid.Services
 		private readonly IPersonnelCertificationRepository _personnelCertificationRepository;
 		private readonly Lazy<IProtectedWriteService> _protectedWriteService;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		private readonly IContentAudienceChangeQueue _audienceChanges;
 		private readonly IPersonnelRoleCertificationRequirementRepository _requirements;
 		private readonly IDepartmentCertificationSettingsRepository _settings;
 		private readonly IPersonnelCertificationCreditsRepository _credits;
@@ -42,6 +43,8 @@ namespace Resgrid.Services
 		private readonly Lazy<IProtectedReadService> _protectedRead;
 		/// <summary>The caller's Protected Data Grant (request-bound in the web hosts, workload elsewhere); a grant holder reads decrypted values.</summary>
 		private readonly IProtectedGrantContext _grant;
+		/// <summary>Training T1: a credit typed in by hand also goes on the transcript (SourceKind ManualCredit).</summary>
+		private readonly Lazy<ILearningRecordWriter> _learningRecords;
 
 		public const string SystemUserId = "system";
 		/// <summary>Domain error: the holder may not sign off (verify or reinstate) their own record.</summary>
@@ -64,8 +67,12 @@ namespace Resgrid.Services
 			Lazy<ICommunicationService> communication,
 			Lazy<IProtectedReadService> protectedRead = null,
 			IProtectedGrantContext grant = null,
-			Lazy<ISearchProjectionService> searchProjections = null)
+			Lazy<ISearchProjectionService> searchProjections = null,
+			IContentAudienceChangeQueue audienceChanges = null,
+			Lazy<ILearningRecordWriter> learningRecords = null)
 		{
+			_learningRecords = learningRecords;
+			_audienceChanges = audienceChanges;
 			_grant = grant;
 			_departmentCertificationTypeRepository = departmentCertificationTypeRepository;
 			_personnelCertificationRepository = personnelCertificationRepository;
@@ -241,7 +248,16 @@ namespace Resgrid.Services
 			// CertificationAddedEvent triggers workflows (87); an import never fires them (wizard plan section 11.2).
 			if (!isExistingRow && effects.RaiseDomainEvents)
 				_eventAggregator.SendMessage(new CertificationAddedEvent { DepartmentId = saved.DepartmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type });
+			await QueueAudienceChangeAsync(saved.DepartmentId, saved.UserId, cancellationToken);
 			return saved;
+		}
+
+		/// <summary>A certification record changed: worker 83 re-evaluates the holder's certification-type training audiences.</summary>
+		private Task QueueAudienceChangeAsync(int departmentId, string userId, CancellationToken cancellationToken)
+		{
+			return _audienceChanges == null || string.IsNullOrWhiteSpace(userId)
+				? Task.CompletedTask
+				: _audienceChanges.EnqueueAsync(departmentId, userId, ContentAudienceChangeSources.Certification, cancellationToken);
 		}
 
 		public async Task<PersonnelCertification> GetCertificationByIdAsync(int certificationId)
@@ -313,6 +329,11 @@ namespace Resgrid.Services
 			}
 			if (type.RenewalCreditHoursRequired.HasValue && type.RenewalCreditHoursRequired.Value < 0)
 				throw new InvalidOperationException("certifications_type_credits_invalid");
+			// Round 9A: the validity rule (rolling months, calendar or fiscal year end, fixed date), the grace and the renewal window.
+			CertificationValidity.Normalize(type);
+			var validity = CertificationValidity.Validate(type);
+			if (validity != null)
+				throw new InvalidOperationException(validity);
 
 			DepartmentCertificationType existing = null;
 			if (type.DepartmentCertificationTypeId > 0)
@@ -353,9 +374,13 @@ namespace Resgrid.Services
 			return saved;
 		}
 
-		public async Task<DepartmentCertificationType> CreateCertificationTypeFromTemplateAsync(int departmentId, string templateId, string userId, CancellationToken cancellationToken = default)
+		public Task<DepartmentCertificationType> CreateCertificationTypeFromTemplateAsync(int departmentId, string templateId, string userId, CancellationToken cancellationToken = default) =>
+			CreateCertificationTypeFromTemplateAsync(departmentId, templateId, userId, null, cancellationToken);
+
+		public async Task<DepartmentCertificationType> CreateCertificationTypeFromTemplateAsync(int departmentId, string templateId, string userId, string culture, CancellationToken cancellationToken = default)
 		{
-			var template = CertificationTypeTemplateCatalog.GetById(templateId);
+			// Round 9C: the name and description in the adding user's language (English when none ships); the code stays.
+			var template = CertificationTypeTemplateCatalog.Localized(CertificationTypeTemplateCatalog.GetById(templateId), culture);
 			if (template == null)
 				throw new InvalidOperationException("certifications_template_not_found");
 			return await SaveCertificationTypeAsync(CertificationTypeTemplateCatalog.ToDepartmentType(template, departmentId), userId, cancellationToken);
@@ -413,6 +438,7 @@ namespace Resgrid.Services
 			var saved = await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationStatusChanged, before, Snapshot(saved));
 			_eventAggregator.SendMessage(new CertificationStatusChangedEvent { DepartmentId = departmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type, OldStatus = oldStatus, NewStatus = saved.Status, Reason = record.StatusReason, ChangedByUserId = userId });
+			await QueueAudienceChangeAsync(departmentId, saved.UserId, cancellationToken);
 			return saved;
 		}
 
@@ -436,6 +462,7 @@ namespace Resgrid.Services
 			var saved = await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationVerified, before, Snapshot(saved));
 			_eventAggregator.SendMessage(new CertificationStatusChangedEvent { DepartmentId = departmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type, OldStatus = oldStatus, NewStatus = saved.Status, Reason = "verified", ChangedByUserId = userId });
+			await QueueAudienceChangeAsync(departmentId, saved.UserId, cancellationToken);
 			return saved;
 		}
 
@@ -470,6 +497,7 @@ namespace Resgrid.Services
 			var saved = await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationUpdated, before, Snapshot(saved));
 			_eventAggregator.SendMessage(new CertificationRenewedEvent { DepartmentId = departmentId, Certification = saved, TypeCode = type?.Code, TypeName = type?.Type, PreviousExpiresOn = previous });
+			await QueueAudienceChangeAsync(departmentId, saved.UserId, cancellationToken);
 			return saved;
 		}
 
@@ -494,6 +522,7 @@ namespace Resgrid.Services
 			await _personnelCertificationRepository.SaveOrUpdateAsync(record, cancellationToken);
 			Audit(departmentId, userId, AuditLogTypes.CertificationRemoved, before, Snapshot(record));
 			_eventAggregator.SendMessage(new CertificationRemovedEvent { DepartmentId = departmentId, Certification = record, TypeCode = type?.Code, TypeName = type?.Type, RemovedByUserId = userId });
+			await QueueAudienceChangeAsync(departmentId, record.UserId, cancellationToken);
 			return true;
 		}
 
@@ -548,7 +577,13 @@ namespace Resgrid.Services
 				await ProtectBinaryAsync(saved.DepartmentId, CertificationProtectedFields.CreditDataFieldId, saved.PersonnelCertificationCreditId.ToString(), saved.Data, bytes => saved.Data = bytes, () => MarkProtected(saved), cancellationToken);
 				saved = await _credits.SaveOrUpdateAsync(saved, cancellationToken);
 			}
-			Audit(saved.DepartmentId, userId, AuditLogTypes.CertificationCreditAdded, null, Snapshot(new { saved.PersonnelCertificationCreditId, saved.PersonnelCertificationId, saved.CreditDate, saved.Hours, saved.Category }));
+			Audit(saved.DepartmentId, userId, AuditLogTypes.CertificationCreditAdded, null, Snapshot(new { saved.PersonnelCertificationCreditId, saved.PersonnelCertificationId, saved.CreditDate, saved.Hours, saved.Category, saved.LearningRecordId }));
+			// A derived credit came from a learning record already; only a credit typed in by hand writes one (never fails the add).
+			if (!saved.IsDerived && _learningRecords != null)
+			{
+				try { await _learningRecords.Value.WriteManualCreditAsync(saved, userId, cancellationToken); }
+				catch (Exception ex) when (!(ex is OperationCanceledException)) { Framework.Logging.LogException(ex, $"Transcript record for credit {saved.PersonnelCertificationCreditId} was not written"); }
+			}
 			_eventAggregator.SendMessage(new CertificationCreditAddedEvent
 			{
 				DepartmentId = saved.DepartmentId, Certification = record, TypeCode = type?.Code, TypeName = type?.Type, PersonnelCertificationCreditId = saved.PersonnelCertificationCreditId,
@@ -563,6 +598,11 @@ namespace Resgrid.Services
 			if (credit == null || credit.DepartmentId != departmentId)
 				throw new InvalidOperationException("certifications_credit_not_found");
 			await _credits.DeleteAsync(credit, cancellationToken);
+			if (!credit.IsDerived && _learningRecords != null)
+			{
+				try { await _learningRecords.Value.RemoveManualCreditAsync(credit, userId, cancellationToken); }
+				catch (Exception ex) when (!(ex is OperationCanceledException)) { Framework.Logging.LogException(ex, $"Transcript record of credit {credit.PersonnelCertificationCreditId} was not voided"); }
+			}
 			Audit(departmentId, userId, AuditLogTypes.CertificationCreditRemoved, Snapshot(new { credit.PersonnelCertificationCreditId, credit.PersonnelCertificationId, credit.CreditDate, credit.Hours, credit.Category }), null);
 			return true;
 		}

@@ -1,0 +1,25 @@
+@model Resgrid.Web.Models.LmsLearn.LmsLearnMessageModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@{
+    ViewData["Title"] = Model.Title;
+    var key = ViewData["PortalKey"] as string;
+}
+<div class="rgl-panel" style="max-width: 560px; margin: 0 auto;">
+    <h2>@Model.Title</h2>
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status">@Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-warning" role="alert">@Model.Error</div>
+    }
+    @if (Model.ShowSignIn)
+    {
+        <a class="btn btn-rgl" href="~/Learn/@key/SignIn"><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["Portal.SignIn"]</a>
+    }
+    else
+    {
+        <a class="btn btn-default" href="~/Learn/@key"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Portal.Back"]</a>
+    }
+</div>

@@ -1,0 +1,58 @@
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolQrModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The QR poster of a protocol (P3): its deep link (always the version in force when scanned) for apparatus and station walls.
+    Print it from here; scanning opens the protocol in Resgrid (signed-in members who may read it).
+*@
+@{
+    var p = Model.Protocol;
+    ViewBag.Title = "Resgrid | " + localizer["QrCodeHeader"].Value;
+    ViewData["Title"] = localizer["QrCodeHeader"].Value;
+    ViewData["Subtitle"] = (string.IsNullOrWhiteSpace(p.Code) ? "" : p.Code + " · ") + p.Name;
+    ViewData["Section"] = "Library";
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToProtocolButton"]</a>
+        <button type="button" class="btn btn-primary" id="qrPrintButton" disabled><i class="fa fa-print" aria-hidden="true"></i> @localizer["PrintButton"]</button>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("../Protocols/_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
+        <div class="ibox-content rgp-qr-poster">
+            <h1>@p.Name</h1>
+            <p class="lead">@p.Code @(string.IsNullOrWhiteSpace(p.Number) ? "" : "· " + p.Number) @(Model.Version?.Label == null ? "" : "· v" + Model.Version.Label)</p>
+            @if (!string.IsNullOrEmpty(Model.QrDataUrl))
+            {
+                <img src="@Model.QrDataUrl" alt="@string.Format(localizer["QrCodeAlt"].Value, p.Name)" />
+            }
+            else
+            {
+                <p class="text-muted">@localizer["QrCodeUnavailable"]</p>
+            }
+            <p class="m-t-md"><span class="text-muted">@localizer["DeepLinkLabel"]:</span> <a class="rgp-qr-link" href="@Model.DeepLink">@Model.DeepLink</a></p>
+            <p class="text-muted small">@localizer["QrCodeHelp"]</p>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/protocol-content.css" asp-append-version="true" />
+}
+
+@section Scripts
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var button = document.getElementById('qrPrintButton');
+            if (button) {
+                button.disabled = false;
+                button.addEventListener('click', function () { window.print(); });
+            }
+        });
+    </script>
+}

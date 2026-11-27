@@ -179,6 +179,22 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public List<int> ProtocolIds { get; set; }
 
 		/// <summary>
+		/// Optional, beside <see cref="ProtocolIds"/>: for a protocol with questions, the answer ids the dispatcher chose, keyed by
+		/// protocol id. The server scores them and records each question and answer in words on the call; a protocol a trigger
+		/// suggested is then attached only when every question is answered and the score reaches its minimum weight. Leave it out
+		/// (null) to attach the protocols in ProtocolIds as before, without answers.
+		/// </summary>
+		public Dictionary<int, List<int>> ProtocolAnswers { get; set; }
+
+		/// <summary>
+		/// Optional (Protocols P4): for a protocol whose version has a case flow, the case answers by step key, an optional determinant
+		/// override with its reason (required when it differs from the computed determinant), the priority applied, and an Enhanced AI
+		/// suggestion id the dispatcher confirmed. Keyed by protocol id; the server walks the cited version's graph and records the case.
+		/// Leave it out (null) and the protocol is attached as before. Older apps never send it.
+		/// </summary>
+		public Dictionary<int, Resgrid.Model.ProtocolCaseInput> ProtocolCases { get; set; }
+
+		/// <summary>
 		/// Optional. Id of another call in the department to link this call to; existing links are kept. Leave it out
 		/// (null) when the client has no way to pick one, which also leaves the linked-call requirement unenforced.
 		/// </summary>

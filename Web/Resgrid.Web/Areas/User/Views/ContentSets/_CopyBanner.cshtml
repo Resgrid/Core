@@ -1,0 +1,18 @@
+@using Resgrid.Model
+@model Resgrid.Model.Services.ContentSetCopyInfo
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@* Round 10 A3: this protocol or course is a copy a subscribed set manages; its content changes through the set's inbox. *@
+<div class="alert alert-info hidden-print" role="note">
+    <i class="fa fa-share-alt" aria-hidden="true"></i>
+    @string.Format(text["CopyBanner"].Value, Model.PublisherName, Model.Set?.Name, Model.Copy.SourceVersionLabel)
+    @if (Model.Item != null) { <span class="label label-default">@text["LockMode" + (ContentSetLockModes)Model.Item.LockMode]</span> }
+    <a asp-controller="ContentSets" asp-action="Inbox" asp-route-area="User">@text["InboxTab"]</a>
+    @if (Model.CanCustomize)
+    {
+        <text> · </text><a asp-controller="ContentSets" asp-action="Customize" asp-route-area="User" asp-route-id="@Model.Copy.ContentSetCopyId">@text["CustomizeButton"]</a>
+    }
+    @if (Model.CanPropose)
+    {
+        <text> · </text><a asp-controller="ContentSets" asp-action="Propose" asp-route-area="User" asp-route-kind="@Model.Copy.ItemKind" asp-route-localId="@Model.Copy.LocalItemId">@text["ProposeButton"]</a>
+    }
+</div>

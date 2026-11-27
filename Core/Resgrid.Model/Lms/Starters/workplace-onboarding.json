@@ -1,0 +1,68 @@
+{
+  "key": "workplace-onboarding",
+  "revision": 1,
+  "kind": "course",
+  "title": "Workplace onboarding and safety basics",
+  "code": "RG-ONB",
+  "summary": "A first-week course for new employees of any organization: the handbook and policies, where to get help, and the safety habits everyone on site follows. Add your own policies and site rules to each lesson.",
+  "tags": "onboarding, workplace, safety, business, starter",
+  "hours": 1,
+  "license": "resgrid-starter",
+  "overview": "<p>A starter course written by Resgrid in plain language for businesses and other employers. Your own policies, your site rules and the law where you operate come first: add them to each lesson before you publish the course.</p>",
+  "modules": [
+    {
+      "title": "Welcome",
+      "lessons": [
+        {
+          "title": "Policies and the handbook",
+          "html": "<p>Your employer's handbook explains how work is done here: hours, conduct, leave, equipment and how to raise a concern.</p><ul><li>Read the handbook in your first week.</li><li>Acknowledge it when you are asked to, and again when it changes.</li><li>Ask your supervisor when something is not clear.</li></ul><p><em>Add a link to your handbook and the policies new employees must read.</em></p>"
+        },
+        {
+          "title": "Where to get help",
+          "html": "<p>Know who to call before you need them.</p><ul><li>Your supervisor and their deputy.</li><li>Human resources, for questions about pay, leave and conduct.</li><li>The first aiders and the safety contact for your site.</li></ul>"
+        }
+      ]
+    },
+    {
+      "title": "Safety at work",
+      "lessons": [
+        {
+          "title": "Hazards and protective equipment",
+          "html": "<p>A hazard is anything that could hurt someone. Look for them before you start a task.</p><ul><li>Wear the protective equipment your task and area require.</li><li>Use only the equipment you have been trained and authorized to use.</li><li>Stop and report a hazard you cannot make safe yourself.</li></ul>"
+        },
+        {
+          "title": "Emergencies and reporting",
+          "html": "<p>Learn the evacuation signal, the nearest exits and the assembly point on your first day.</p><ul><li>Report every injury, illness and near miss to your supervisor before the end of the shift.</li><li>A near miss is a warning: reporting it helps prevent the next injury.</li></ul>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Onboarding check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "What should you do with a hazard you cannot make safe yourself?",
+        "kind": "single",
+        "options": [ "Stop and report it", "Work around it", "Leave it for the next shift" ],
+        "correct": 0,
+        "explanation": "Stop and report a hazard you cannot make safe yourself."
+      },
+      {
+        "text": "A near miss does not need to be reported because no one was hurt.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 1,
+        "explanation": "Report near misses too: they show where the next injury could happen."
+      },
+      {
+        "text": "When should you learn the evacuation signal and the assembly point?",
+        "kind": "single",
+        "options": [ "On your first day", "After your first month", "Only during a drill" ],
+        "correct": 0,
+        "explanation": "Learn the evacuation signal, the nearest exits and the assembly point on your first day."
+      }
+    ]
+  }
+}

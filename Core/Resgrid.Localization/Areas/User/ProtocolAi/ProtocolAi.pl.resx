@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AcceptCardsButton" xml:space="preserve">
+    <value>Zachowaj zaznaczone karty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Akcje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackColumn" xml:space="preserve">
+    <value>Odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToProtocol" xml:space="preserve">
+    <value>Powrót do protokołu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Anuluj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardActive" xml:space="preserve">
+    <value>Widoczna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardCountLabel" xml:space="preserve">
+    <value>Liczba kart</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardNeedsReview" xml:space="preserve">
+    <value>Do przeglądu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardRemoved" xml:space="preserve">
+    <value>Karta usunięta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardReviewed" xml:space="preserve">
+    <value>Kartę sprawdzono z obowiązującą wersją i ponownie pokazano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardSaved" xml:space="preserve">
+    <value>Karta zapisana.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardSourceFormat" xml:space="preserve">
+    <value>Przygotowano na podstawie: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsAccepted" xml:space="preserve">
+    <value>Zapisano karty: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsActive" xml:space="preserve">
+    <value>Widoczne dla członków</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsDropped" xml:space="preserve">
+    <value>Pominięto {0} przygotowanych kart, ponieważ nie były zgodne z protokołem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsFlagged" xml:space="preserve">
+    <value>Do przeglądu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsHeader" xml:space="preserve">
+    <value>Karty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CardsRule" xml:space="preserve">
+    <value>Każda karta cytuje jedną sekcję obowiązującej wersji i może używać tylko zapisanych tam liczb. Gdy wejdzie w życie nowsza wersja, karty są ukrywane do czasu ich sprawdzenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CitedLabel" xml:space="preserve">
+    <value>Cytowane:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>Poprawna odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateTrainingButton" xml:space="preserve">
+    <value>Utwórz projekt szkolenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftAgainButton" xml:space="preserve">
+    <value>Przygotuj ponownie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftCardsButton" xml:space="preserve">
+    <value>Przygotuj karty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftCardsHeader" xml:space="preserve">
+    <value>Przygotuj karty z AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTrainingButton" xml:space="preserve">
+    <value>Przygotuj szkolenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTrainingLink" xml:space="preserve">
+    <value>Przygotuj szkolenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTranslationButton" xml:space="preserve">
+    <value>Przygotuj tłumaczenie z AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftTranslationHelp" xml:space="preserve">
+    <value>Wypełnia pola, które nadal mają tekst źródłowy. Dawki, linki i struktura pozostają jak w źródle; Ty przeglądasz i zapisujesz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftedFromFormat" xml:space="preserve">
+    <value>Przygotowano na podstawie: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Drafting" xml:space="preserve">
+    <value>Trwa przygotowywanie z AI. Może to potrwać minutę...</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditCardButton" xml:space="preserve">
+    <value>Edytuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Wyjaśnienie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExplanationNotSavedNote" xml:space="preserve">
+    <value>Wyjaśnienia pomagają sprawdzić każde pytanie; quiz szkolenia zachowuje tylko pytania i odpowiedzi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagSuperseded" xml:space="preserve">
+    <value>Obowiązuje nowsza wersja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagUnavailable" xml:space="preserve">
+    <value>Jej sekcji nie można już odczytać</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsButton" xml:space="preserve">
+    <value>Karty ćwiczeniowe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsIntro" xml:space="preserve">
+    <value>Karty przygotowane przez Enhanced AI z obowiązującej wersji. Członkowie, którzy mogą czytać ten protokół, ćwiczą je na jego stronie; nic nie jest oceniane ani rejestrowane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsTitle" xml:space="preserve">
+    <value>Karty ćwiczeniowe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlashcardsTitleFormat" xml:space="preserve">
+    <value>Karty ćwiczeniowe: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FrontColumn" xml:space="preserve">
+    <value>Pytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KeyPointsLabel" xml:space="preserve">
+    <value>Najważniejsze punkty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCards" xml:space="preserve">
+    <value>Brak kart.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoQuestions" xml:space="preserve">
+    <value>Nie przygotowano pytań do quizu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingTicked" xml:space="preserve">
+    <value>Zaznacz co najmniej jedną kartę do zachowania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Miesięczny budżet Enhanced AI Twojej jednostki został wyczerpany. Odnowi się na początku następnego miesiąca.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Busy" xml:space="preserve">
+    <value>AI jest zajęta innymi zadaniami. Spróbuj ponownie za minutę.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Excluded" xml:space="preserve">
+    <value>Ten protokół jest oznaczony jako „bez AI” lub jest treścią licencjonowaną, więc nigdy nie jest wysyłany do AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Invalid" xml:space="preserve">
+    <value>To żądanie było nieprawidłowe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.KeptLocal" xml:space="preserve">
+    <value>Twoja jednostka korzysta z Advanced Data Protection, więc jej treści pozostają lokalnie, a projekty AI są niedostępne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NoContent" xml:space="preserve">
+    <value>Brak tekstu do pracy (pusta wersja lub zeskanowany dokument) albo nie zostało nic do przetłumaczenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotAllowed" xml:space="preserve">
+    <value>Mogą z tego korzystać tylko autorzy i zatwierdzający protokoły. Projekt szkolenia wymaga też uprawnienia do tworzenia szkoleń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotDraft" xml:space="preserve">
+    <value>Tylko projekt tłumaczenia zablokowanej wersji można przygotować z AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotEntitled" xml:space="preserve">
+    <value>Karty ćwiczeniowe, projekty szkoleń i projekty tłumaczeń wymagają dodatku Enhanced AI z włączonymi odpowiedziami z bazy wiedzy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotFound" xml:space="preserve">
+    <value>Ten protokół nie ma obowiązującej opublikowanej wersji, którą możesz otworzyć.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.NotSaved" xml:space="preserve">
+    <value>Nie udało się utworzyć szkolenia. Nic nie zostało zapisane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Refused" xml:space="preserve">
+    <value>Projekt AI nie przeszedł kontroli (każdy element musi cytować protokół i używać tylko jego liczb), więc nic nie zostało zachowane. Spróbuj ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Stale" xml:space="preserve">
+    <value>Protokół zmienił się od czasu przygotowania tego projektu. Przygotuj nowy projekt z obowiązującej wersji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Unavailable" xml:space="preserve">
+    <value>AI nie odpowiada w tej chwili. Spróbuj ponownie za kilka minut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Unconfigured" xml:space="preserve">
+    <value>AI nie jest jeszcze skonfigurowana w Twoim systemie. Zapytaj operatora systemu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeAgain" xml:space="preserve">
+    <value>Jeszcze raz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeCardFormat" xml:space="preserve">
+    <value>Znane: {0} z {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeDone" xml:space="preserve">
+    <value>Na razie znasz wszystkie karty. Zacznij od nowa, aby ćwiczyć ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeHeader" xml:space="preserve">
+    <value>Karty ćwiczeniowe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeIntro" xml:space="preserve">
+    <value>Krótkie pytania z tego protokołu. Twoje postępy pozostają w tej przeglądarce i nigdy nie są rejestrowane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeKnown" xml:space="preserve">
+    <value>Znam odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeRestart" xml:space="preserve">
+    <value>Zacznij od nowa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeShow" xml:space="preserve">
+    <value>Pokaż odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PracticeSource" xml:space="preserve">
+    <value>Źródło:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionCountLabel" xml:space="preserve">
+    <value>Liczba pytań w quizie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionsHeaderFormat" xml:space="preserve">
+    <value>Quiz (pytania: {0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveCardButton" xml:space="preserve">
+    <value>Usuń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveCardConfirm" xml:space="preserve">
+    <value>Usunąć tę kartę?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewCardButton" xml:space="preserve">
+    <value>Sprawdź z obowiązującą wersją</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveCardButton" xml:space="preserve">
+    <value>Zapisz kartę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SectionTextNote" xml:space="preserve">
+    <value>Szkolenie zacytuje tutaj wskazane sekcje w brzmieniu z protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceColumn" xml:space="preserve">
+    <value>Sekcja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCitedLabel" xml:space="preserve">
+    <value>Cytowane:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCreateNote" xml:space="preserve">
+    <value>Szkolenie zostanie utworzone jako projekt: nikt nie jest przypisany, a członkowie nie zobaczą go, dopóki go nie przypiszesz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCreatedMessage" xml:space="preserve">
+    <value>Utworzono projekt szkolenia z protokołu. Nie jest jeszcze przypisany: przejrzyj go, a następnie przypisz lub użyj w quizie potwierdzenia protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftAckNote" xml:space="preserve">
+    <value>Utworzone tu szkolenie może posłużyć do potwierdzenia protokołu z quizem: wybierz je w ustawieniach potwierdzeń protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftHeader" xml:space="preserve">
+    <value>Przygotuj z AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftIntro" xml:space="preserve">
+    <value>Enhanced AI przygotowuje szkolenie i quiz z obowiązującej wersji. Przeglądasz je, zanim cokolwiek zostanie utworzone.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftNote" xml:space="preserve">
+    <value>Przygotowano z Enhanced AI na podstawie: {0}. Każda część cytuje protokół dosłownie; przejrzyj szkolenie, zanim je przypiszesz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftRule" xml:space="preserve">
+    <value>Każda część cytuje sekcje, których uczy, i może używać tylko zapisanych tam liczb; utworzone szkolenie cytuje te sekcje dosłownie, więc dawki pojawiają się tylko tak, jak podaje je protokół.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftTitle" xml:space="preserve">
+    <value>Przygotuj szkolenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDraftTitleFormat" xml:space="preserve">
+    <value>Przygotuj szkolenie: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingDropped" xml:space="preserve">
+    <value>Pominięto przygotowane elementy: {0}, ponieważ nie były zgodne z protokołem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingFromTheProtocol" xml:space="preserve">
+    <value>Z protokołu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingKeyPoints" xml:space="preserve">
+    <value>Najważniejsze punkty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingNameLabel" xml:space="preserve">
+    <value>Nazwa szkolenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingPreviewHeader" xml:space="preserve">
+    <value>Przejrzyj projekt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingTruncated" xml:space="preserve">
+    <value>Protokół jest dłuższy, niż obejmuje jeden projekt; użyto tylko pierwszych sekcji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationDraftedNotice" xml:space="preserve">
+    <value>AI przygotowała pola: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationDroppedNotice" xml:space="preserve">
+    <value>Odrzucono pola: {0}, ponieważ zmieniła się liczba, link lub formatowanie; zachowują dotychczasową treść.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationRemainingNotice" xml:space="preserve">
+    <value>Pola z tekstem źródłowym: {0}; przygotuj projekt ponownie, aby kontynuować.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationReviewNotice" xml:space="preserve">
+    <value>Przejrzyj poniższą treść i zapisz projekt: nie jest jeszcze zapisany i nadal wymaga zatwierdzenia. Dawki, linki i struktura zawsze pozostają takie jak w źródle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionFormat" xml:space="preserve">
+    <value>Wersja {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

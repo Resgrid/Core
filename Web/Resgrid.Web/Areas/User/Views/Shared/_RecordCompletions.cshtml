@@ -1,0 +1,130 @@
+@using System.Globalization
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.RecordCompletionsPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Round 7B (permission 135): record that selected members completed a baseline training or an LMS course they took together, outside a
+    class: members on the assignee / enrolment list first, a required note, the attestation. Each member's record then shows "recorded by
+    instructor" (never as the member's own). Recordings already made are listed below with their void (reason required), outside the
+    record form (no nested forms).
+*@
+@{
+    var view = Model.View;
+    var culture = CultureInfo.CurrentCulture;
+    string T(string key) { var v = localizer[key]; return v.ResourceNotFound ? key : v.Value; }
+}
+<div class="ibox float-e-margins" id="record-completions">
+    <div class="ibox-title"><h5><i class="fa fa-check-circle-o" aria-hidden="true"></i> @T("RecordCompletions.Title")</h5></div>
+    <div class="ibox-content">
+        <p>@string.Format(culture, T("RecordCompletions.Help"), view.TargetName)</p>
+        @if (view.HasQuiz)
+        {
+            <p class="text-muted small">@T("RecordCompletions.QuizWaivedHelp")</p>
+        }
+        @if (view.Refusal != null)
+        {
+            <div class="alert alert-info" role="status">@T(view.Refusal)</div>
+        }
+        else
+        {
+            <form method="post" asp-controller="@Model.Controller" asp-action="RecordCompletions" asp-route-area="User" data-submit-once>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="targetId" value="@view.TargetId" />
+                <input type="hidden" name="attestationVersion" value="@view.AttestationVersion" />
+                <fieldset>
+                    <legend class="h5">@T("RecordCompletions.Attendees")</legend>
+                    @if (view.Candidates.Count == 0)
+                    {
+                        <p class="text-muted">@T("RecordCompletions.None")</p>
+                    }
+                    else
+                    {
+                        <div class="rgw-record-members" style="max-height: 360px; overflow-y: auto;">
+                            <table class="table rgw-table">
+                                <tbody>
+                                    @foreach (var candidate in view.Candidates)
+                                    {
+                                        var inputId = "rc-" + view.Candidates.IndexOf(candidate).ToString(CultureInfo.InvariantCulture);
+                                        var disabled = candidate.Refusal != null || candidate.Recording != null;
+                                        <tr>
+                                            <td style="width: 2em;"><input type="checkbox" id="@inputId" name="userIds" value="@candidate.UserId" disabled="@(disabled ? "disabled" : null)" /></td>
+                                            <td>
+                                                <label for="@inputId" class="m-b-none">@Model.NameOf(candidate.UserId)</label>
+                                                @if (candidate.Assigned) { <span class="rgw-sub">@T("RecordCompletions.OnList")</span> }
+                                            </td>
+                                            <td>
+                                                @if (candidate.Recording != null)
+                                                {
+                                                    <span class="label label-primary">@T("RecordCompletions.Method")</span>
+                                                }
+                                                else if (candidate.Refusal != null)
+                                                {
+                                                    <span class="text-muted">@T(candidate.Refusal)</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </fieldset>
+                <div class="form-group">
+                    <label for="rc-note">@T("RecordCompletions.Note")</label>
+                    <textarea id="rc-note" name="note" class="form-control" rows="2" maxlength="1000" required aria-describedby="rc-note-help"></textarea>
+                    <span id="rc-note-help" class="help-block">@T("RecordCompletions.NoteHelp")</span>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="attested" value="true" required /> @T(TrainingCompletionAttestation.StatementKey(view.AttestationVersion))</label>
+                    <input type="hidden" name="attested" value="false" />
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @T("RecordCompletions.Submit")</button>
+            </form>
+        }
+
+        @if (view.Recordings.Count > 0)
+        {
+            <h4 class="m-t">@T("RecordCompletions.History")</h4>
+            <div class="table-responsive">
+                <table class="table rgw-table">
+                    <thead><tr><th scope="col">@T("RecordCompletions.Attendees")</th><th scope="col">@T("RecordCompletions.State")</th><th scope="col" class="rgw-row-actions"><span class="sr-only">@T("RecordCompletions.Void")</span></th></tr></thead>
+                    <tbody>
+                        @foreach (var recording in view.Recordings)
+                        {
+                            <tr>
+                                <td>@Model.NameOf(recording.UserId)<span class="rgw-sub">@T("RecordCompletions.Source." + (TrainingCompletionRecordingSources)recording.SourceKind)</span></td>
+                                <td>
+                                    @if (recording.IsVoided)
+                                    {
+                                        <span class="label label-default">@T("RecordCompletions.Voided")</span>
+                                        <span class="rgw-sub">@string.Format(culture, T("RecordCompletions.VoidedFormat"), Model.NameOf(recording.VoidedByUserId), Model.Local(recording.VoidedOn.Value).ToString("g", culture), recording.VoidReason)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-primary">@T("RecordCompletions.Method")</span>
+                                        <span class="rgw-sub">@string.Format(culture, T("RecordCompletions.RecordedByFormat"), Model.NameOf(recording.RecordedByUserId), Model.Local(recording.RecordedOn).ToString("g", culture))</span>
+                                        @if (recording.QuizWaived) { <span class="rgw-sub">@T("RecordCompletions.QuizWaived")</span> }
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(recording.Note)) { <span class="rgw-sub">@recording.Note</span> }
+                                </td>
+                                <td class="rgw-row-actions">
+                                    @if (!recording.IsVoided)
+                                    {
+                                        <form method="post" asp-controller="@Model.Controller" asp-action="VoidRecordedCompletion" asp-route-area="User" class="form-inline" data-submit-once>
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="targetId" value="@view.TargetId" />
+                                            <input type="hidden" name="recordingId" value="@recording.TrainingCompletionRecordingId" />
+                                            <label class="sr-only" for="rv-@recording.TrainingCompletionRecordingId">@T("RecordCompletions.VoidReason")</label>
+                                            <input id="rv-@recording.TrainingCompletionRecordingId" name="reason" class="form-control input-sm" maxlength="500" required placeholder="@T("RecordCompletions.VoidReason")" />
+                                            <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-undo" aria-hidden="true"></i> @T("RecordCompletions.Void")</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

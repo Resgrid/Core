@@ -1,0 +1,158 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ProtocolTrainingDraftModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolAi.ProtocolAi> localizer
+@*
+    "Draft a training from this protocol" (round 7A, Enhanced AI only): a baseline training (text and quiz) drafted from the protocol's version in
+    force. The author reviews the draft here; nothing is created until they press Create. The training is created unassigned and not open to
+    members: the author finishes and assigns it, or uses it for the protocol's quiz-gated acknowledgment. Drafted text is rendered as text.
+*@
+@{
+    var p = Model.Protocol;
+    var draft = Model.Draft;
+    ViewBag.Title = "Resgrid | " + localizer["TrainingDraftTitle"];
+    ViewData["Title"] = string.Format(localizer["TrainingDraftTitleFormat"].Value, p.Name);
+    ViewData["Subtitle"] = localizer["TrainingDraftIntro"].Value;
+    ViewData["Section"] = "Library";
+    ViewData["IsManager"] = true;
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToProtocol"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("../Protocols/_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    <div class="rgw-next-action" role="status">
+        <i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["TrainingDraftAckNote"]
+    </div>
+
+    @if (!Model.Status.Available)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Outcome." + (Model.Status.Reason ?? ProtocolAiOutcomes.NotEntitled)]</div>
+    }
+    else
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-magic" aria-hidden="true"></i> @localizer["TrainingDraftHeader"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="ProtocolAi" asp-action="DraftTraining" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" class="form-inline" id="protocol-ai-training-form" data-busy-text="@localizer["Drafting"]">
+                    @Html.AntiForgeryToken()
+                    <label for="protocol-ai-question-count">@localizer["QuestionCountLabel"]</label>
+                    <input id="protocol-ai-question-count" name="questionCount" type="number" class="form-control" min="@ProtocolTrainingDraftRequest.MinQuestions" max="@ProtocolTrainingDraftRequest.MaxQuestions" value="@Model.QuestionCount" />
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-magic" aria-hidden="true"></i> @(draft == null ? localizer["DraftTrainingButton"] : localizer["DraftAgainButton"])</button>
+                </form>
+                <p class="rgw-progress-honest m-t-sm" id="protocol-ai-training-busy" role="status" aria-live="polite"></p>
+                <p class="small text-muted m-t-sm">@localizer["TrainingDraftRule"]</p>
+            </div>
+        </div>
+    }
+
+    @if (draft != null)
+    {
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-eye" aria-hidden="true"></i> @localizer["TrainingPreviewHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted small">@string.Format(localizer["DraftedFromFormat"].Value, string.IsNullOrWhiteSpace(draft.SourceVersionLabel) ? draft.SourceTitle : draft.SourceTitle + " " + draft.SourceVersionLabel)</p>
+                @if (draft.Dropped > 0)
+                {
+                    <p class="text-muted small"><i class="fa fa-filter" aria-hidden="true"></i> @string.Format(localizer["TrainingDropped"].Value, draft.Dropped)</p>
+                }
+                @if (draft.Truncated)
+                {
+                    <p class="text-muted small"><i class="fa fa-scissors" aria-hidden="true"></i> @localizer["TrainingTruncated"]</p>
+                }
+                @if (!string.IsNullOrWhiteSpace(draft.Summary))
+                {
+                    <p>@draft.Summary</p>
+                }
+                @foreach (var part in draft.Sections)
+                {
+                    <div class="panel panel-default rgw-builder-item">
+                        <div class="panel-heading rgw-builder-heading"><span class="rgw-builder-title">@part.Title</span></div>
+                        <div class="panel-body">
+                            @if (!string.IsNullOrWhiteSpace(part.Intro))
+                            {
+                                <p>@part.Intro</p>
+                            }
+                            @if (part.KeyPoints.Count > 0)
+                            {
+                                <p><strong>@localizer["KeyPointsLabel"]</strong></p>
+                                <ul>
+                                    @foreach (var point in part.KeyPoints)
+                                    {
+                                        <li>@point</li>
+                                    }
+                                </ul>
+                            }
+                            <p class="small text-muted"><i class="fa fa-quote-left" aria-hidden="true"></i> @localizer["SectionTextNote"]</p>
+                            <p class="small">
+                                @localizer["CitedLabel"]
+                                @for (var i = 0; i < part.Citations.Count; i++)
+                                {
+                                    var citation = part.Citations[i];
+                                    <a href="@citation.Url" target="_blank" rel="noopener">@citation.Label</a>@(i < part.Citations.Count - 1 ? "; " : "")
+                                }
+                            </p>
+                        </div>
+                    </div>
+                }
+
+                <h4>@string.Format(localizer["QuestionsHeaderFormat"].Value, draft.Questions.Count)</h4>
+                @if (draft.Questions.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoQuestions"]</p>
+                }
+                <ol>
+                    @foreach (var question in draft.Questions)
+                    {
+                        <li class="m-b-sm">
+                            <strong>@question.Text</strong>
+                            <ul class="list-unstyled">
+                                @for (var i = 0; i < question.Options.Count; i++)
+                                {
+                                    <li>@if (i == question.CorrectIndex) {<i class="fa fa-check text-success" aria-hidden="true"></i> <span class="sr-only">@localizer["CorrectAnswerLabel"]</span>} else {<i class="fa fa-circle-o text-muted" aria-hidden="true"></i>} @question.Options[i]</li>
+                                }
+                            </ul>
+                            <div class="small text-muted">@localizer["ExplanationLabel"]: @question.Explanation</div>
+                            <div class="small text-muted">
+                                @localizer["CitedLabel"]
+                                @string.Join("; ", question.Citations.Select(c => c.Label))
+                            </div>
+                        </li>
+                    }
+                </ol>
+                <p class="small text-muted">@localizer["ExplanationNotSavedNote"]</p>
+
+                <form method="post" asp-controller="ProtocolAi" asp-action="CreateTraining" asp-route-area="User" asp-route-id="@p.DispatchProtocolId">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="exchangeId" value="@draft.ExchangeId" />
+                    <div class="form-group">
+                        <label for="protocol-ai-training-title">@localizer["TrainingNameLabel"]</label>
+                        <input id="protocol-ai-training-title" name="title" class="form-control" maxlength="200" value="@draft.Title" />
+                    </div>
+                    <p class="small text-muted">@localizer["TrainingCreateNote"]</p>
+                    <div class="rgw-wizard-actions">
+                        <span class="rgw-wizard-spacer"></span>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["CreateTrainingButton"]</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/protocols/resgrid.protocols.ai.js" asp-append-version="true"></script>
+}

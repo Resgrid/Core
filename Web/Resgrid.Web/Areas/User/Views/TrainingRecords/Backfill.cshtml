@@ -1,0 +1,109 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingBackfillView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    History backfill (R-T3): training completions and Training Record participants from before the transcript existed become
+    Verified records with their original dates. Runs in the background, resumes where it stopped, never credits a certification by
+    itself; calendar check-ins are not backfilled. A dry run only counts.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Rec.BackfillTitle"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Rec.BackfillTitle"].Value;
+    ViewData["Subtitle"] = localizer["Rec.BackfillIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var job = Model.Latest;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Rec.BackfillHowItWorks"]</h5></div>
+        <div class="ibox-content">
+            <ul class="m-b-none">
+                <li>@localizer["Rec.BackfillRuleVerified"]</li>
+                <li>@localizer["Rec.BackfillRuleNoCredits"]</li>
+                <li>@localizer["Rec.BackfillRuleNoCalendar"]</li>
+                <li>@localizer["Rec.BackfillRuleRerun"]</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="rgw-toolbar m-b-sm">
+        <form method="post" asp-controller="TrainingRecords" asp-action="RequestBackfill" asp-route-area="User">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="dryRun" value="true" />
+            <button type="submit" class="btn btn-default"><i class="fa fa-calculator" aria-hidden="true"></i> @localizer["Rec.BackfillDryRunButton"]</button>
+        </form>
+        <form method="post" asp-controller="TrainingRecords" asp-action="RequestBackfill" asp-route-area="User">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="dryRun" value="false" />
+            <button type="submit" class="btn btn-primary" data-confirm="@localizer["Rec.BackfillRunConfirm"]"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Rec.BackfillRunButton"]</button>
+        </form>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-history" aria-hidden="true"></i> @localizer["Rec.LatestBackfillHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (job == null)
+            {
+                <p class="text-muted m-b-none">@localizer["Rec.NoBackfill"]</p>
+            }
+            else
+            {
+                <div class="rgw-stat-tiles" role="list">
+                    <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["Rec.CompletionsFound"]</div><div class="rgw-stat-value">@job.CompletionsFound.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+                    <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-clipboard" aria-hidden="true"></i> @localizer["Rec.TrainingRecordsFound"]</div><div class="rgw-stat-value">@job.TrainingRecordsFound.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+                    <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.RecordsWritten"]</div><div class="rgw-stat-value">@job.RecordsWritten.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+                    <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-forward" aria-hidden="true"></i> @localizer["Rec.RecordsSkipped"]</div><div class="rgw-stat-value">@job.RecordsSkipped.ToString("#,0", CultureInfo.CurrentCulture)</div></div>
+                </div>
+                <dl class="dl-horizontal m-t-sm">
+                    <dt>@localizer["Doc.Status"]</dt>
+                    <dd>
+                        <span class="label @(job.State == (int)LearningRecordBackfillStates.Completed ? "label-primary" : job.State == (int)LearningRecordBackfillStates.Failed ? "label-danger" : "label-info")">@localizer[LearningRecordPresentation.BackfillStateKey(job.State)]</span>
+                        @if (job.DryRun)
+                        {
+                            <span class="label label-default"><i class="fa fa-calculator" aria-hidden="true"></i> @localizer["Rec.DryRunLabel"]</span>
+                        }
+                    </dd>
+                    <dt>@localizer["Rec.RequestedLabel"]</dt>
+                    <dd>@TrainingStatePresentation.LocalDateTime(job.RequestedOn, Model.Department) · @Model.NameOf(job.RequestedByUserId)</dd>
+                    @if (job.StartedOn.HasValue)
+                    {
+                        <dt>@localizer["Rec.StartedLabel"]</dt>
+                        <dd>@TrainingStatePresentation.LocalDateTime(job.StartedOn, Model.Department)</dd>
+                    }
+                    @if (job.CompletedOn.HasValue)
+                    {
+                        <dt>@localizer["Rec.FinishedLabel"]</dt>
+                        <dd>@TrainingStatePresentation.LocalDateTime(job.CompletedOn, Model.Department)</dd>
+                    }
+                    @if (job.Attempts > 1)
+                    {
+                        <dt>@localizer["Rec.AttemptsLabel"]</dt>
+                        <dd>@job.Attempts</dd>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(job.Error))
+                    {
+                        <dt>@localizer["Rec.ErrorLabel"]</dt>
+                        <dd class="text-danger">@job.Error</dd>
+                    }
+                </dl>
+                @if (!job.IsFinished)
+                {
+                    <p class="text-muted m-b-none"><i class="fa fa-spinner" aria-hidden="true"></i> @localizer["Rec.BackfillRunning"]</p>
+                }
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -1,0 +1,65 @@
+@using Resgrid.Model
+@using Resgrid.Model.Approvals
+@model Resgrid.Web.Areas.User.Models.Approvals.ApprovalRequestsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    The department's approval requests by status (department admins): who submitted them, when they were decided and their sealed state.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + approvalText["RequestsTab"];
+    ViewData["Title"] = approvalText["RequestsTab"].Value;
+    ViewData["Subtitle"] = approvalText["RequestsIntro"].Value;
+    ViewData["Section"] = "Requests";
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Approvals/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-toolbar" role="group" aria-label="@approvalText["StatusLabel"]">
+        @foreach (ApprovalRequestStatuses status in Enum.GetValues(typeof(ApprovalRequestStatuses)))
+        {
+            <a class="btn btn-sm @(status == Model.Status ? "btn-primary" : "btn-default")" asp-area="User" asp-controller="Approvals" asp-action="Requests" asp-route-status="@((int)status)">@approvalText["Status" + status]</a>
+        }
+    </div>
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            @if (Model.Requests.Count == 0)
+            {
+                <p class="text-muted">@approvalText["NoRequests"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@approvalText["SubjectColumn"]</th>
+                                <th scope="col">@approvalText["AmountColumn"]</th>
+                                <th scope="col">@approvalText["SubmittedColumn"]</th>
+                                <th scope="col">@approvalText["DecidedColumn"]</th>
+                                <th scope="col"><span class="sr-only">@approvalText["ActionsColumn"]</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var request in Model.Requests)
+                            {
+                                <tr>
+                                    <td>@request.Title<div class="rgw-sub">@approvalText["Kind" + (SignatureSubjectKinds)request.SubjectKind] · <span class="rgw-mono">@SignaturePolicy.ShortCode(request.ContentSha256)</span></div></td>
+                                    <td>@ApprovalRouting.AmountText(request.Amount, request.Currency)</td>
+                                    <td>@(Model.Names.TryGetValue(request.SubmittedByUserId ?? string.Empty, out var by) ? by : "—")<div class="rgw-sub">@request.SubmittedOn.ToString("yyyy-MM-dd HH:mm") UTC</div></td>
+                                    <td>@(request.DecidedOn?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                    <td class="rgw-row-actions"><a class="btn btn-default btn-xs" asp-area="User" asp-controller="Approvals" asp-action="Detail" asp-route-id="@request.ApprovalRequestId"><i class="fa fa-eye" aria-hidden="true"></i> @approvalText["OpenRequestLink"]</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

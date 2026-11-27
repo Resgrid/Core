@@ -37,14 +37,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IModerationService _moderationService;
 		private readonly IProtectedReadService _protectedReadService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> _moderationLocalizer;
+		private readonly ICredentialStatusAudienceService _credentialAudience;
+		private readonly ICertificationService _certificationService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Messages.Messages> _messagesLocalizer;
+		private readonly IEventRosterAudienceService _rosterAudience;
 
 		public MessagesController(IMessageService messageService, IDepartmentsService departmentsService, IUsersService usersService,
 			ICommunicationService communicationService, Model.Services.IAuthorizationService authorizationService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, IShiftsService shiftsService, ICalendarService calendarService,
 			IModerationService moderationService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> moderationLocalizer,
-			IProtectedReadService protectedReadService)
+			IProtectedReadService protectedReadService,
+			ICredentialStatusAudienceService credentialAudience,
+			ICertificationService certificationService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Messages.Messages> messagesLocalizer,
+			IEventRosterAudienceService rosterAudience)
 		{
+			_rosterAudience = rosterAudience;
+			_messagesLocalizer = messagesLocalizer;
+			_credentialAudience = credentialAudience;
+			_certificationService = certificationService;
 			_messageService = messageService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -173,7 +185,34 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (collection.ContainsKey("exludedShifts"))
 				shifts.AddRange(collection["exludedShifts"].ToString().Split(char.Parse(",")));
 
-			if (!model.SendToAll && (roles.Count + groups.Count + users.Count) == 0)
+			// Training T3 (LMS): "members whose certification X is expired / expiring within N days / missing". Resolved only while the
+			// LMS gate is open (one read); always active members only.
+			var credentialRecipients = new List<string>();
+			var credentialAudienceAsked = int.TryParse(collection["credentialTypeId"].ToString(), out var credentialTypeId) && credentialTypeId > 0 && !model.SendToAll;
+			if (credentialAudienceAsked && await _credentialAudience.IsAvailableAsync(DepartmentId))
+			{
+				var credentialStatus = int.TryParse(collection["credentialStatus"].ToString(), out var status) && Enum.IsDefined(typeof(CredentialAudienceStatuses), status)
+					? (CredentialAudienceStatuses)status : CredentialAudienceStatuses.Expired;
+				var withinDays = int.TryParse(collection["credentialDays"].ToString(), out var days) ? days : 30;
+				credentialRecipients = await _credentialAudience.ResolveAsync(DepartmentId, credentialTypeId, credentialStatus, withinDays, DateTime.UtcNow) ?? new List<string>();
+				if (credentialRecipients.Count == 0 && (roles.Count + groups.Count + users.Count) == 0)
+					ModelState.AddModelError("", _messagesLocalizer["CredentialAudienceNoMatch"].Value);
+			}
+
+			// Training T4 (LMS): "members of class X who are enrolled / attended / absent / waitlisted" (event roster status). Same rules as
+			// the credential audience: resolved only while the LMS gate is open, active members only; added to the recipients chosen above.
+			var rosterAudienceAsked = int.TryParse(collection["rosterSessionId"].ToString(), out var rosterSessionId) && rosterSessionId > 0 && !model.SendToAll;
+			if (rosterAudienceAsked && await _rosterAudience.IsAvailableAsync(DepartmentId))
+			{
+				var rosterStatus = int.TryParse(collection["rosterStatus"].ToString(), out var rosterValue) && Enum.IsDefined(typeof(EventRosterAudienceStatuses), rosterValue)
+					? (EventRosterAudienceStatuses)rosterValue : EventRosterAudienceStatuses.Enrolled;
+				var rosterRecipients = await _rosterAudience.ResolveAsync(DepartmentId, rosterSessionId, rosterStatus) ?? new List<string>();
+				if (rosterRecipients.Count == 0 && (roles.Count + groups.Count + users.Count + credentialRecipients.Count) == 0)
+					ModelState.AddModelError("", _messagesLocalizer["RosterAudienceNoMatch"].Value);
+				credentialRecipients.AddRange(rosterRecipients);
+			}
+
+			if (!model.SendToAll && (roles.Count + groups.Count + users.Count + credentialRecipients.Count) == 0 && !credentialAudienceAsked && !rosterAudienceAsked)
 				ModelState.AddModelError("", "You must specify at least one Recipient.");
 
 			if (model.SendToMatchOnly && (roles.Count + groups.Count) == 0)
@@ -274,6 +313,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 				
+				foreach (var credentialRecipient in credentialRecipients)
+				{
+					if (model.Message.GetRecipients().All(x => !string.Equals(x, credentialRecipient, StringComparison.OrdinalIgnoreCase)) &&
+					    !string.Equals(credentialRecipient, UserId, StringComparison.OrdinalIgnoreCase) && (!excludedUsers.Any() || !excludedUsers.Contains(credentialRecipient)))
+						model.Message.AddRecipient(credentialRecipient);
+				}
+
 				model.Message.SentOn = DateTime.UtcNow;
 				model.Message.SendingUserId = UserId;
 				model.Message.Body = System.Net.WebUtility.HtmlDecode(model.Message.Body);
@@ -557,7 +603,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(UserId);
-			
+
+			model.CredentialAudienceAvailable = await _credentialAudience.IsAvailableAsync(DepartmentId);
+			if (model.CredentialAudienceAvailable)
+				model.CertificationTypes = new SelectList(await _certificationService.GetActiveCertificationTypesAsync(DepartmentId, CertificationAppliesTo.Person) ?? new List<DepartmentCertificationType>(),
+					"DepartmentCertificationTypeId", "Type");
+
+			// The event-roster audience answers to the same LMS gate as the credential audience: no second billing read on this page.
+			model.RosterAudienceAvailable = model.CredentialAudienceAvailable;
+			if (model.RosterAudienceAvailable)
+				model.RosterSessions = await _rosterAudience.GetSessionsAsync(DepartmentId, DateTime.UtcNow) ?? new List<EventRosterAudienceSession>();
+
 			//model.Users = _departmentsService.GetAllUsersForDepartment(model.Department.DepartmentId);
 
 			return model;

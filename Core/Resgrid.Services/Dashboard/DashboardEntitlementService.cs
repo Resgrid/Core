@@ -35,7 +35,8 @@ namespace Resgrid.Services.Dashboard
 			{ PlanAddonTypes.BusinessOperations, FeatureFlagKeys.BusinessOperations },
 			{ PlanAddonTypes.EnhancedAi, FeatureFlagKeys.AiEnhanced },
 			{ PlanAddonTypes.IncidentBackOffice, FeatureFlagKeys.IncidentBackOffice },
-			{ PlanAddonTypes.DedicatedNumber, FeatureFlagKeys.IntakeDedicatedNumber }
+			{ PlanAddonTypes.DedicatedNumber, FeatureFlagKeys.IntakeDedicatedNumber },
+			{ PlanAddonTypes.WorkforcePro, FeatureFlagKeys.WorkforcePro }
 		};
 
 		private readonly IFeatureToggleService _featureToggleService;
@@ -53,6 +54,7 @@ namespace Resgrid.Services.Dashboard
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentDataProtectionService _dataProtectionService;
 		private readonly IDedicatedNumberAccessService _dedicatedNumberAccessService;
+		private readonly IWorkforceProAccessService _workforceProAccessService;
 
 		public DashboardEntitlementService(IFeatureToggleService featureToggleService, IDepartmentSettingsService departmentSettingsService,
 			IReadinessAccessService readinessAccessService, IRecordsCutoverService recordsCutoverService,
@@ -60,8 +62,9 @@ namespace Resgrid.Services.Dashboard
 			IEnhancedAiAccessService enhancedAiAccessService, IVoiceService voiceService, IAiDispatchAdminService aiDispatchAdminService,
 			INerisProfileService nerisProfileService, IRecordsAuthorizationService recordsAuthorizationService, IPermissionsService permissionsService,
 			IPersonnelRolesService personnelRolesService, IDepartmentDataProtectionService dataProtectionService,
-			IDedicatedNumberAccessService dedicatedNumberAccessService)
+			IDedicatedNumberAccessService dedicatedNumberAccessService, IWorkforceProAccessService workforceProAccessService)
 		{
+			_workforceProAccessService = workforceProAccessService;
 			_featureToggleService = featureToggleService;
 			_departmentSettingsService = departmentSettingsService;
 			_readinessAccessService = readinessAccessService;
@@ -192,6 +195,7 @@ namespace Resgrid.Services.Dashboard
 			if (await _incidentBackOfficeAccessService.HasActiveAddonAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.IncidentBackOffice);
 			if (await _enhancedAiAccessService.HasActiveAddonAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.EnhancedAi);
 			if (await _dedicatedNumberAccessService.HasActiveAddonAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.DedicatedNumber);
+			if (await _workforceProAccessService.HasActiveAddonAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.WorkforcePro);
 			if (await _voiceService.CanDepartmentUseVoiceAsync(departmentId)) viewer.HeldAddons.Add(PlanAddonTypes.PTT);
 			if (viewer.AdpEnforced) viewer.HeldAddons.Add(PlanAddonTypes.ADP);
 		}

@@ -1,0 +1,72 @@
+@using Resgrid.Web.Areas.User.Models.AuthoringAids
+@model AuthoringAidsPanelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Knowledge.AuthoringAids> aidsLocalizer
+@*
+    K2 drafting aids (Enhanced AI): quiz questions, a course outline and a change summary drafted from this content only, for the author to
+    review. Rendered hidden; resgrid.authoring.aids.js asks AuthoringAids/Status and shows the panel only when the department has knowledge
+    answers (the free tier sees nothing). Nothing is saved until the author accepts: the host editor (or its accept URL) saves what they keep.
+    Hosts: the training editor, the course builder, and the protocol editor (P3 hosts it there).
+*@
+@{
+    var id = string.IsNullOrWhiteSpace(Model.PanelId) ? "aids" : Model.PanelId;
+    var text = new
+    {
+        drafting = aidsLocalizer["Drafting"].Value,
+        error = aidsLocalizer["UnavailableNotice"].Value,
+        correct = aidsLocalizer["CorrectLabel"].Value,
+        explanation = aidsLocalizer["ExplanationLabel"].Value,
+        objective = aidsLocalizer["ObjectiveLabel"].Value,
+        keep = aidsLocalizer["KeepLabel"].Value,
+        accept = aidsLocalizer["AcceptButton"].Value,
+        discard = aidsLocalizer["DiscardButton"].Value,
+        accepted = aidsLocalizer["AcceptedNotice"].Value,
+        acceptedSummary = aidsLocalizer["AcceptedSummaryNotice"].Value,
+        nothingSelected = aidsLocalizer["NothingSelectedNotice"].Value,
+        excluded = aidsLocalizer["ExcludedNotice"].Value,
+        questionNumber = aidsLocalizer["QuestionNumber"].Value,
+        moduleNumber = aidsLocalizer["ModuleNumber"].Value
+    };
+}
+<section class="ibox rgw-authoring-aids" id="@id" hidden aria-labelledby="@(id)-title"
+         data-status-url="@Url.Action("Status", "AuthoringAids", new { area = "User" })"
+         data-draft-url="@Url.Action("Draft", "AuthoringAids", new { area = "User" })"
+         data-source-kind="@Model.SourceKind"
+         data-source-id="@Model.SourceId"
+         data-content-selector="@Model.ContentSelector"
+         data-title-selector="@Model.TitleSelector"
+         data-exclude-selector="@Model.ExcludeSelector"
+         data-summary-target="@Model.SummaryTargetSelector"
+         data-accept-questions-url="@Model.AcceptQuestionsUrl"
+         data-accept-outline-url="@Model.AcceptOutlineUrl"
+         data-text='@Html.ScriptJson(text)'>
+    <div class="ibox-title">
+        <h5 id="@(id)-title"><i class="fa fa-magic" aria-hidden="true"></i> @aidsLocalizer["PanelHeader"]</h5>
+    </div>
+    <div class="ibox-content">
+        <p class="text-muted small">@aidsLocalizer["PanelHelp"]</p>
+        <p class="text-info small" data-role="status-message" hidden></p>
+        @Html.AntiForgeryToken()
+        <div class="rgw-toolbar" data-role="actions">
+            @if (Model.OfferQuiz)
+            {
+                <label class="sr-only" for="@(id)-count">@aidsLocalizer["QuestionCountLabel"]</label>
+                <select id="@(id)-count" class="form-control input-sm" data-role="count" style="width:auto" aria-label="@aidsLocalizer["QuestionCountLabel"]">
+                    <option value="3">@string.Format(aidsLocalizer["QuestionCountOption"].Value, 3)</option>
+                    <option value="5" selected>@string.Format(aidsLocalizer["QuestionCountOption"].Value, 5)</option>
+                    <option value="10">@string.Format(aidsLocalizer["QuestionCountOption"].Value, 10)</option>
+                </select>
+                <button type="button" class="btn btn-white btn-sm" data-aid="0"><i class="fa fa-question-circle" aria-hidden="true"></i> @aidsLocalizer["DraftQuizButton"]</button>
+            }
+            @if (Model.OfferOutline)
+            {
+                <button type="button" class="btn btn-white btn-sm" data-aid="1"><i class="fa fa-list-ol" aria-hidden="true"></i> @aidsLocalizer["DraftOutlineButton"]</button>
+            }
+            @if (Model.OfferChangeSummary)
+            {
+                <button type="button" class="btn btn-white btn-sm" data-aid="2"><i class="fa fa-exchange" aria-hidden="true"></i> @aidsLocalizer["DraftChangeSummaryButton"]</button>
+            }
+        </div>
+        <div data-role="result" class="m-t-sm" aria-live="polite"></div>
+    </div>
+</section>
+<script src="~/js/app/internal/knowledge/resgrid.authoring.aids.js" asp-append-version="true" defer></script>

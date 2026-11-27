@@ -163,4 +163,118 @@
   <data name="ViewDepartmentLinkTitle" xml:space="preserve">
     <value>View Department Link</value>
   </data>
+  <data name="AgreementFrom" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="AgreementRequested" xml:space="preserve">
+    <value>Requested</value>
+  </data>
+  <data name="AgreementTitle" xml:space="preserve">
+    <value>Agreement</value>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Review and countersign</value>
+  </data>
+  <data name="CourseSetsLink" xml:space="preserve">
+    <value>Course sets</value>
+  </data>
+  <data name="EditSharing" xml:space="preserve">
+    <value>Sharing</value>
+  </data>
+  <data name="LinkedProtocolChange" xml:space="preserve">
+    <value>What changed:</value>
+  </data>
+  <data name="LinkedProtocolReadOnly" xml:space="preserve">
+    <value>Read-only: this is the linked department's version in force.</value>
+  </data>
+  <data name="LinkedProtocolSubtitle" xml:space="preserve">
+    <value>{0}, version {1}, in force since {2}, content code {3}</value>
+  </data>
+  <data name="LinkedProtocolsHeader" xml:space="preserve">
+    <value>Linked protocols</value>
+  </data>
+  <data name="LinkedProtocolsIntro" xml:space="preserve">
+    <value>The published protocols this linked department shares with your department. Only the version in force is shown.</value>
+  </data>
+  <data name="LinkedProtocolsTitle" xml:space="preserve">
+    <value>Protocols of {0}</value>
+  </data>
+  <data name="NoLinkedProtocols" xml:space="preserve">
+    <value>This department shares no published protocols.</value>
+  </data>
+  <data name="NoPartnerAgreements" xml:space="preserve">
+    <value>No agreement is waiting for your department's countersignature.</value>
+  </data>
+  <data name="PartnerAgreementsIntro" xml:space="preserve">
+    <value>Mutual-aid agreements linked departments ask your department to countersign. Any department admin can countersign.</value>
+  </data>
+  <data name="PartnerAgreementsLink" xml:space="preserve">
+    <value>Agreements to countersign</value>
+  </data>
+  <data name="ProtocolCategory" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="ProtocolEffective" xml:space="preserve">
+    <value>In force since</value>
+  </data>
+  <data name="ProtocolName" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="ProtocolNumber" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="ProtocolSetsLink" xml:space="preserve">
+    <value>Protocol sets</value>
+  </data>
+  <data name="ProtocolVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Protocols" xml:space="preserve">
+    <value>Protocols</value>
+  </data>
+  <data name="SetsIntro" xml:space="preserve">
+    <value>Share protocols and courses with linked departments as sets, sponsor their LMS seats, and countersign their mutual-aid agreements.</value>
+  </data>
+  <data name="ShareProtocols" xml:space="preserve">
+    <value>Share Protocols</value>
+  </data>
+  <data name="ShareProtocolsHelp" xml:space="preserve">
+    <value>The other department can read your published protocols and subscribe to your protocol sets.</value>
+  </data>
+  <data name="ShareTraining" xml:space="preserve">
+    <value>Share Training</value>
+  </data>
+  <data name="ShareTrainingHelp" xml:space="preserve">
+    <value>The other department can subscribe to your course sets, and you can sponsor its LMS seats.</value>
+  </data>
+  <data name="SharedBack" xml:space="preserve">
+    <value>They share:</value>
+  </data>
+  <data name="SharingIntro" xml:space="preserve">
+    <value>Choose what your department shares with {0}. You never change what they share with you.</value>
+  </data>
+  <data name="SharingRevokeHelp" xml:space="preserve">
+    <value>Turning something off cuts access at once: reads stop, subscriptions to your sets are suspended and sponsorships over this link end.</value>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Training</value>
+  </data>
+  <data name="ViewProtocols" xml:space="preserve">
+    <value>Protocols</value>
+  </data>
+  <data name="PartnerDeploymentsTitle" xml:space="preserve">
+    <value>Deployment assignments to accept</value>
+  </data>
+  <data name="NoPartnerDeployments" xml:space="preserve">
+    <value>No linked organization is asking you to accept a deployment assignment.</value>
+  </data>
+  <data name="PartnerDeploymentAssignment" xml:space="preserve">
+    <value>Assignment</value>
+  </data>
+  <data name="PartnerDeploymentAccept" xml:space="preserve">
+    <value>Review and accept</value>
+  </data>
+  <data name="LinkAcceptanceSignatureNote" xml:space="preserve">
+    <value>Accepting this link is a signed decision: you will be asked to verify your identity again, and your signature records both organizations and what each one shares.</value>
+  </data>
 </root>

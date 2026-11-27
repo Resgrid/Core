@@ -1,0 +1,2381 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Academy.CategoryDescription" xml:space="preserve">
+    <value>Lekcje Akademii Resgrid (bez punktów kształcenia ustawicznego).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Academy.CategoryName" xml:space="preserve">
+    <value>Szkolenie systemowe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyBadge" xml:space="preserve">
+    <value>Akademia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyCompletedTile" xml:space="preserve">
+    <value>Ukończone przez Ciebie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyIntro" xml:space="preserve">
+    <value>Krótkie lekcje o każdej części Resgrid, bezpłatne dla każdej jednostki. Każda ma krótki sprawdzian i trafia do Twojego wykazu szkoleń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyLessonsHeader" xml:space="preserve">
+    <value>Lekcje i przewodniki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyLessonsTile" xml:space="preserve">
+    <value>Dostępne lekcje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademySiteLink" xml:space="preserve">
+    <value>Otwórz academy.resgrid.com</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcademyTitle" xml:space="preserve">
+    <value>Akademia Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Akcje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddLessonLabel" xml:space="preserve">
+    <value>Dodaj lekcję:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddModuleButton" xml:space="preserve">
+    <value>Dodaj moduł</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddonNotice" xml:space="preserve">
+    <value>Tworzenie i przypisywanie kursów wymaga dodatku LMS. Akademia Resgrid jest bezpłatna dla wszystkich.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddOwnerButton" xml:space="preserve">
+    <value>Dodaj właściciela</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiCaptionsNote" xml:space="preserve">
+    <value>Automatyczne napisy pojawią się z Enhanced AI; na razie prześlij plik WebVTT.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnswerKeyCopy" xml:space="preserve">
+    <value>Egzemplarz z odpowiedziami</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnswersHiddenNote" xml:space="preserve">
+    <value>Odpowiedzi tego sprawdzianu nie są pokazywane po próbie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalHeader" xml:space="preserve">
+    <value>Zatwierdź tę wersję</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalRoundFormat" xml:space="preserve">
+    <value>Runda {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsHeader" xml:space="preserve">
+    <value>Zatwierdzenia i podpisy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Zatwierdzono i podpisano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveSignButton" xml:space="preserve">
+    <value>Zatwierdź i podpisz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveStepUpHelp" xml:space="preserve">
+    <value>Przed podpisaniem ponownie potwierdzasz tożsamość; podpis obejmuje dokładnie tę wersję.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssessmentHelp" xml:space="preserve">
+    <value>Pytania są losowane i oceniane na serwerze; klucz odpowiedzi nigdy nie trafia do przeglądarki ani aplikacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssessmentPassed" xml:space="preserve">
+    <value>Zaliczono ten sprawdzian.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssessmentTitle" xml:space="preserve">
+    <value>Sprawdzian</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignButton" xml:space="preserve">
+    <value>Przypisz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedMessage" xml:space="preserve">
+    <value>Przypisano {0} członkom ({1} już go mieli, {2} nie można było przypisać).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignHeader" xml:space="preserve">
+    <value>Przypisz ten kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignLessonHeader" xml:space="preserve">
+    <value>Przypisz lekcję „{0}”</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignPathButton" xml:space="preserve">
+    <value>Przypisz ścieżkę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignPathHeader" xml:space="preserve">
+    <value>Przypisz ścieżkę roli „{0}”</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Przypisz do</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttemptLimitLabel" xml:space="preserve">
+    <value>Dozwolone próby (0 = bez limitu)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttemptsAllowedFormat" xml:space="preserve">
+    <value>Dozwolone próby: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttemptsTile" xml:space="preserve">
+    <value>Zakończone próby</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttemptsUnlimited" xml:space="preserve">
+    <value>Nieograniczona liczba prób</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttestationLabel" xml:space="preserve">
+    <value>Poproś uczestnika o potwierdzenie samodzielnego rozwiązania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>Rozwiązuję ten sprawdzian samodzielnie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceCurrentFormat" xml:space="preserve">
+    <value>Zapisane reguły odbiorców: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceHeader" xml:space="preserve">
+    <value>Kto widzi go w katalogu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Nie wybieraj nikogo, aby widziała go cała jednostka.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableOfflineLabel" xml:space="preserve">
+    <value>Dostępne offline (Omni może przechowywać jedną kopię na urządzenie)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AverageRatingFormat" xml:space="preserve">
+    <value>Średnia ocena: {0} z 5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AwaitingGradeBadge" xml:space="preserve">
+    <value>Czeka na ocenę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToAcademy" xml:space="preserve">
+    <value>Wróć do akademii</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToCourse" xml:space="preserve">
+    <value>Wróć do kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToCourseDetail" xml:space="preserve">
+    <value>Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BankLabel" xml:space="preserve">
+    <value>Bank pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BanksIntro" xml:space="preserve">
+    <value>Pule pytań losowanych przy każdej próbie. Banki wspólne są dostępne dla wszystkich autorów, prywatne tylko dla właściciela.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BanksTitle" xml:space="preserve">
+    <value>Banki pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BrowseAcademyLink" xml:space="preserve">
+    <value>Przeglądaj Resgrid Academy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BuilderTitle" xml:space="preserve">
+    <value>Kreator kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Anuluj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaptionsFileLabel" xml:space="preserve">
+    <value>Plik WebVTT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaptionsLabelLabel" xml:space="preserve">
+    <value>Etykieta napisów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaptionsLocaleLabel" xml:space="preserve">
+    <value>Język napisów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CatalogFieldsHeader" xml:space="preserve">
+    <value>Szczegóły kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CatalogHeader" xml:space="preserve">
+    <value>Kursy, do których możesz dołączyć</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Kategoria szkolenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CeDisclaimer" xml:space="preserve">
+    <value>Resgrid nie akredytuje kształcenia ustawicznego: dostawca i numer są zapisywane tak, jak je wpiszesz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CeNumberLabel" xml:space="preserve">
+    <value>Numer kursu kształcenia ustawicznego</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CeProviderLabel" xml:space="preserve">
+    <value>Dostawca kształcenia ustawicznego</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificateTemplateLabel" xml:space="preserve">
+    <value>Szablon certyfikatu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Co się zmieniło</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseAllHelp" xml:space="preserve">
+    <value>Wybierz wszystkie pasujące.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseMember" xml:space="preserve">
+    <value>Wybierz członka…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseOption" xml:space="preserve">
+    <value>Wybierz…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Kod kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Komentarz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedBadge" xml:space="preserve">
+    <value>Ukończono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Ukończono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedHeader" xml:space="preserve">
+    <value>Ukończone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedOfFormat" xml:space="preserve">
+    <value>{0} z {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentHelp" xml:space="preserve">
+    <value>Tekst sformatowany (HTML). Jest oczyszczany przy zapisie; dozwolone osadzenia YouTube, Vimeo i Google Docs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentLabel" xml:space="preserve">
+    <value>Treść lekcji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CooldownFormat" xml:space="preserve">
+    <value>Odczekaj {0} godz. między próbami</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CooldownLabel" xml:space="preserve">
+    <value>Godziny między próbami</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectAnswerLabel" xml:space="preserve">
+    <value>poprawna odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Poprawna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CorrectOrderLabel" xml:space="preserve">
+    <value>Poprawna kolejność:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseColumn" xml:space="preserve">
+    <value>Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseCompletedMessage" xml:space="preserve">
+    <value>Kurs ukończony. Jest w Twoim wykazie szkoleń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CoursesHeader" xml:space="preserve">
+    <value>Kursy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateBankButton" xml:space="preserve">
+    <value>Utwórz bank</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateCourseButton" xml:space="preserve">
+    <value>Utwórz kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewEndedMessage" xml:space="preserve">
+    <value>To wspólne oglądanie zostało zakończone.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewQrAlt" xml:space="preserve">
+    <value>Kod wspólnego oglądania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewQrRotates" xml:space="preserve">
+    <value>Kod zmienia się co 30 sekund, więc jego zdjęcie przestaje działać.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewScanConfirm" xml:space="preserve">
+    <value>Oznaczyć swoją obecność na tym wspólnym oglądaniu? Wyświetlona lekcja zostanie zaliczona jako obejrzana; ewentualny quiz rozwiązujesz następnie na własnym telefonie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewScanInstruction" xml:space="preserve">
+    <value>Zeskanuj ten kod własnym telefonem, aby zostać oznaczonym jako obecny.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CrewViewingTitle" xml:space="preserve">
+    <value>Wspólne oglądanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DateLine" xml:space="preserve">
+    <value>Data:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decision.Approved" xml:space="preserve">
+    <value>zatwierdzono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decision.Pending" xml:space="preserve">
+    <value>oczekuje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decision.Rejected" xml:space="preserve">
+    <value>odesłano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Decision.Withdrawn" xml:space="preserve">
+    <value>wycofano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Usuń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeletedMessage" xml:space="preserve">
+    <value>Usunięto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteLessonConfirm" xml:space="preserve">
+    <value>Usunąć tę lekcję?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteModuleConfirm" xml:space="preserve">
+    <value>Usunąć ten moduł i jego lekcje?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DifficultyColumn" xml:space="preserve">
+    <value>Trudność (p)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DifficultyHelp" xml:space="preserve">
+    <value>Odsetek poprawnych odpowiedzi: wyższy oznacza łatwiejsze.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscardButton" xml:space="preserve">
+    <value>Odrzuć wersję roboczą</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscardConfirm" xml:space="preserve">
+    <value>Odrzucić tę wersję roboczą? Nie została przesłana, więc nic nie zostanie zachowane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscardedMessage" xml:space="preserve">
+    <value>Wersję roboczą odrzucono.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscriminationColumn" xml:space="preserve">
+    <value>Moc różnicująca (D)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscriminationHelp" xml:space="preserve">
+    <value>Odsetek poprawnych w najlepszych 27% prób minus w najsłabszych 27%: poniżej 0,2 warto sprawdzić.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentNameLabel" xml:space="preserve">
+    <value>Nazwa dokumentu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentUrlLabel" xml:space="preserve">
+    <value>Link do dokumentu (https)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawCountLabel" xml:space="preserve">
+    <value>Pytań na próbę (0 = wszystkie)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawTagsLabel" xml:space="preserve">
+    <value>Tylko pytania z tagiem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Termin</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueDateHelp" xml:space="preserve">
+    <value>Opcjonalnie. Koniec tego dnia w strefie czasowej jednostki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>Termin</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueFormat" xml:space="preserve">
+    <value>Termin {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Edytuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Edytuj wersję roboczą</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditQuestionHeader" xml:space="preserve">
+    <value>Edytuj pytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndCrewViewingButton" xml:space="preserve">
+    <value>Zakończ pokaz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollButton" xml:space="preserve">
+    <value>Zapisz się</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrolledColumn" xml:space="preserve">
+    <value>Zapisani</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrolledMessage" xml:space="preserve">
+    <value>Zapisano Cię.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentsHeader" xml:space="preserve">
+    <value>Zapisy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentStatus.Completed" xml:space="preserve">
+    <value>Ukończono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentStatus.InProgress" xml:space="preserve">
+    <value>W toku</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentStatus.NotStarted" xml:space="preserve">
+    <value>Nie rozpoczęto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnrollmentStatus.Withdrawn" xml:space="preserve">
+    <value>Wypisany</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.AddonRequired" xml:space="preserve">
+    <value>Wymaga to dodatku LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.AlreadySubmitted" xml:space="preserve">
+    <value>To zostało już przesłane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.AttemptLimitReached" xml:space="preserve">
+    <value>Wykorzystano wszystkie dozwolone próby.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.CodeExpired" xml:space="preserve">
+    <value>Ten kod się zmienił. Zeskanuj ponownie kod z ekranu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.CooldownActive" xml:space="preserve">
+    <value>Odczekaj przed kolejną próbą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.FileTooLarge" xml:space="preserve">
+    <value>Plik jest za duży.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.InvalidInput" xml:space="preserve">
+    <value>Brakuje części informacji lub są nieprawidłowe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.LapseWindowEnded" xml:space="preserve">
+    <value>Dodatek LMS wygasł, a termin ukończenia tego kursu minął.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.LessonLocked" xml:space="preserve">
+    <value>Najpierw ukończ wcześniejsze lekcje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.MediaUnavailable" xml:space="preserve">
+    <value>Magazyn wideo jest teraz niedostępny.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.None" xml:space="preserve">
+    <value>Gotowe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotAuthorized" xml:space="preserve">
+    <value>Nie masz do tego uprawnień.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotDraft" xml:space="preserve">
+    <value>Można zmieniać tylko wersję roboczą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotEntitled" xml:space="preserve">
+    <value>Ta lekcja dotyczy modułu lub dodatku, którego Twoja jednostka nie ma.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotFound" xml:space="preserve">
+    <value>Nie znaleziono elementu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.RequirementNotMet" xml:space="preserve">
+    <value>Ten krok nie jest jeszcze ukończony.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.ResponseRequired" xml:space="preserve">
+    <value>Wykonaj zadanie (lub dołącz wymagany plik), aby ukończyć lekcję.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.SeatTimeNotMet" xml:space="preserve">
+    <value>Poświęć tej lekcji trochę więcej czasu przed jej ukończeniem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.StaleCopy" xml:space="preserve">
+    <value>Ktoś inny to zmienił od czasu otwarcia. Odśwież i spróbuj ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.TimeExpired" xml:space="preserve">
+    <value>Czas na tę próbę minął.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.UnsupportedFile" xml:space="preserve">
+    <value>Ten typ pliku nie jest akceptowany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EveryoneOption" xml:space="preserve">
+    <value>Wszyscy w jednostce</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiredBadge" xml:space="preserve">
+    <value>Czas minął</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExplanationLabel" xml:space="preserve">
+    <value>Wyjaśnienie (pokazywane po próbie; wzorcowa odpowiedź przy krótkich odpowiedziach)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailedBadge" xml:space="preserve">
+    <value>Nie zaliczono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FileColumn" xml:space="preserve">
+    <value>Plik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FileRequestHelp" xml:space="preserve">
+    <value>PDF, obraz, tekst, Word lub Excel, do 10 MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FileRequestLabel" xml:space="preserve">
+    <value>Prośba o plik (opcjonalnie)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FingerprintFormat" xml:space="preserve">
+    <value>odcisk {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FreeResponseLabel" xml:space="preserve">
+    <value>Zadanie z odpowiedzią otwartą (opcjonalnie)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GradedMessage" xml:space="preserve">
+    <value>Ocenę zapisano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraderNotesLabel" xml:space="preserve">
+    <value>Uwagi oceniającego</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GradingEmpty" xml:space="preserve">
+    <value>Nic nie czeka na ocenę.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GradingIntro" xml:space="preserve">
+    <value>Krótkie odpowiedzi czekające na ocenę. Nikt nie ocenia własnej próby.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GradingTitle" xml:space="preserve">
+    <value>Kolejka oceniania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupsLabel" xml:space="preserve">
+    <value>Grupy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HostedVideoLabel" xml:space="preserve">
+    <value>Przesłane wideo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursColumn" xml:space="preserve">
+    <value>Godziny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursFormat" xml:space="preserve">
+    <value>{0} godz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursLabel" xml:space="preserve">
+    <value>Zaliczane godziny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImageUrlLabel" xml:space="preserve">
+    <value>Link do obrazu (https, opcjonalnie)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IncludedTile" xml:space="preserve">
+    <value>W pakiecie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IncorrectLabel" xml:space="preserve">
+    <value>Niepoprawna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InForceFormat" xml:space="preserve">
+    <value>Obowiązująca wersja {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InProgressBadge" xml:space="preserve">
+    <value>W toku</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InProgressHeader" xml:space="preserve">
+    <value>Przypisane i w toku</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssuesCertificationLabel" xml:space="preserve">
+    <value>Ukończenie wydaje lub odnawia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAnalysisFootnote" xml:space="preserve">
+    <value>Moc różnicująca wymaga co najmniej 10 zakończonych prób. Próby czekające na ocenę są pomijane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAnalysisIntro" xml:space="preserve">
+    <value>Jak każde pytanie wypadło w zakończonych próbach.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAnalysisTitle" xml:space="preserve">
+    <value>Analiza pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Assessment" xml:space="preserve">
+    <value>Sprawdzian</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Blocks" xml:space="preserve">
+    <value>Czytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Cmi5" xml:space="preserve">
+    <value>Pakiet cmi5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Document" xml:space="preserve">
+    <value>Dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.LiveSession" xml:space="preserve">
+    <value>Sesja na żywo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.ProtocolVersion" xml:space="preserve">
+    <value>Protokół</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Scorm" xml:space="preserve">
+    <value>Pakiet SCORM</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Survey" xml:space="preserve">
+    <value>Ocena kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.Video" xml:space="preserve">
+    <value>Wideo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LapsedNotice" xml:space="preserve">
+    <value>Dodatek LMS wygasł: kursy i rejestry pozostają dostępne do odczytu, przypisane kursy są otwarte do terminu (lub 30 dni), hostowane wideo jest tylko do odczytu przez 90 dni, a nowe kursy i przypisania wymagają ponownie dodatku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LengthColumn" xml:space="preserve">
+    <value>Długość</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonBadge" xml:space="preserve">
+    <value>Lekcja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonColumn" xml:space="preserve">
+    <value>Lekcja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonCompletedMessage" xml:space="preserve">
+    <value>Lekcja ukończona.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonDoneLabel" xml:space="preserve">
+    <value>Ukończono tę lekcję.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Kursy Twojej jednostki: tworzenie, zatwierdzanie, publikacja, przypisywanie i raporty.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LibraryTitle" xml:space="preserve">
+    <value>Biblioteka kursów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.AlreadyDecided" xml:space="preserve">
+    <value>Ten krok już rozstrzygnięto lub już zatwierdzono tę rundę.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.ArtifactChanged" xml:space="preserve">
+    <value>Wersja zmieniła się po przesłaniu lub podpisaniu; prześlij ją ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.ChangeSummaryRequired" xml:space="preserve">
+    <value>Przed publikacją opisz, co się zmieniło.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.DraftExists" xml:space="preserve">
+    <value>Dla tego kursu jest już otwarta wersja robocza.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.EffectiveDateInPast" xml:space="preserve">
+    <value>Data wejścia w życie jest w przeszłości.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.EmptyContent" xml:space="preserve">
+    <value>Dodaj co najmniej jedną lekcję przed przesłaniem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.InvalidInput" xml:space="preserve">
+    <value>Brakuje części informacji lub są nieprawidłowe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.None" xml:space="preserve">
+    <value>Gotowe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotApproved" xml:space="preserve">
+    <value>Opublikować można tylko zatwierdzoną wersję.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotAuthorized" xml:space="preserve">
+    <value>Nie masz do tego uprawnień.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotDraft" xml:space="preserve">
+    <value>Przesłać można tylko wersję roboczą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotFound" xml:space="preserve">
+    <value>Nie znaleziono wersji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotInReview" xml:space="preserve">
+    <value>Ta wersja nie czeka na zatwierdzenie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.NotPublished" xml:space="preserve">
+    <value>Nic jeszcze nie opublikowano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.OpenComments" xml:space="preserve">
+    <value>Najpierw rozwiąż otwarte komentarze z przeglądu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.PasskeyRequired" xml:space="preserve">
+    <value>Twoja jednostka wymaga klucza dostępu do tego podpisu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.RetentionProtected" xml:space="preserve">
+    <value>Przesłana wersja jest przechowywana i nie można jej odrzucić.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.SignatureRequired" xml:space="preserve">
+    <value>Potwierdź tożsamość, aby podpisać zatwierdzenie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Lifecycle.StaleCopy" xml:space="preserve">
+    <value>Ktoś inny to zmienił od czasu otwarcia. Odśwież i spróbuj ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockedBadge" xml:space="preserve">
+    <value>zablokowana do ukończenia wcześniejszych lekcji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MajorPolicyLabel" xml:space="preserve">
+    <value>Przy wersji głównej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Wersja główna: wybierz, co dzieje się z osobami, które go ukończyły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MarkCompleteButton" xml:space="preserve">
+    <value>Oznacz jako ukończoną</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MarkPresentButton" xml:space="preserve">
+    <value>Jestem obecny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaNotConfigured" xml:space="preserve">
+    <value>W tej instalacji nie skonfigurowano magazynu wideo, więc nie można przesyłać filmów. Linki do YouTube i Vimeo nadal działają.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Archived" xml:space="preserve">
+    <value>Zarchiwizowane (dodatek wygasł)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Failed" xml:space="preserve">
+    <value>Nie udało się przetworzyć</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Queued" xml:space="preserve">
+    <value>Czeka na przetworzenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Ready" xml:space="preserve">
+    <value>Gotowe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Transcoding" xml:space="preserve">
+    <value>Przetwarzanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MediaStatus.Uploading" xml:space="preserve">
+    <value>Przesyłanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Członek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Członkowie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinimumSeatLabel" xml:space="preserve">
+    <value>Minimalny czas na lekcji (sekundy)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Wersja drobna: ukończenia pozostają ważne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinutesFormat" xml:space="preserve">
+    <value>{0} minut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModelAnswerLabel" xml:space="preserve">
+    <value>Wzorcowa odpowiedź:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleLabel" xml:space="preserve">
+    <value>Moduł</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleNumberFormat" xml:space="preserve">
+    <value>Moduł {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleTitleLabel" xml:space="preserve">
+    <value>Tytuł modułu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoveUpButton" xml:space="preserve">
+    <value>Przesuń w górę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCoursesIntro" xml:space="preserve">
+    <value>Kursy przypisane do Ciebie, Resgrid Academy i kursy, do których możesz dołączyć.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCoursesTitle" xml:space="preserve">
+    <value>Moje kursy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Nazwa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NameLine" xml:space="preserve">
+    <value>Imię i nazwisko:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewBankHeader" xml:space="preserve">
+    <value>Nowy bank pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewCourseHeader" xml:space="preserve">
+    <value>Nowy kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewLessonFormat" xml:space="preserve">
+    <value>Nowa lekcja: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewQuestionHeader" xml:space="preserve">
+    <value>Nowe pytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Rozpocznij nową wersję</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextAttemptFormat" xml:space="preserve">
+    <value>Następna próba od {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Dalej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextUpLabel" xml:space="preserve">
+    <value>Następny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoBanks" xml:space="preserve">
+    <value>Nie ma jeszcze banków pytań.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCourses" xml:space="preserve">
+    <value>Nie ma jeszcze kursów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoneOption" xml:space="preserve">
+    <value>Brak</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoOpenCourses" xml:space="preserve">
+    <value>Nie masz otwartych kursów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingToPlay" xml:space="preserve">
+    <value>Ten kurs nie ma lekcji do wyświetlenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseAssigned" xml:space="preserve">
+    <value>Przypisano Ci kurs "{0}". Otwórz: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseAssigned.Title" xml:space="preserve">
+    <value>Przypisano nowy kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseNewVersion" xml:space="preserve">
+    <value>Opublikowano nową wersję główną ({1}) ukończonego przez Ciebie kursu "{0}".</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseNewVersion.Title" xml:space="preserve">
+    <value>Kurs zaktualizowany</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseReassigned" xml:space="preserve">
+    <value>Kurs "{0}" ma nową wersję główną ({1}) i został Ci ponownie przypisany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.CourseReassigned.Title" xml:space="preserve">
+    <value>Kurs przypisany ponownie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.InProgressReminder" xml:space="preserve">
+    <value>Nie ukończono kursu "{0}". Kontynuuj od miejsca, w którym przerwano: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.InProgressReminder.Title" xml:space="preserve">
+    <value>Przypomnienie o kursie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotStartedBadge" xml:space="preserve">
+    <value>Nie rozpoczęto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OfflineCapLabel" xml:space="preserve">
+    <value>Limit rozmiaru offline (MB)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OfflineExpiryLabel" xml:space="preserve">
+    <value>Kopia offline przechowywana przez (dni)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Otwórz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Otwórz dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionalBadge" xml:space="preserve">
+    <value>opcjonalny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionCountsColumn" xml:space="preserve">
+    <value>Wybrane opcje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionNumberFormat" xml:space="preserve">
+    <value>Opcja {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionsHelp" xml:space="preserve">
+    <value>Zaznacz poprawną opcję lub opcje. Przy kolejności wpisz je we właściwej kolejności. Prawda/fałsz używa dwóch pierwszych. Krótkie odpowiedzi nie wymagają opcji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OptionsLabel" xml:space="preserve">
+    <value>Opcje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OrderHelp" xml:space="preserve">
+    <value>Ułóż elementy we właściwej kolejności: wybierz pierwszy, potem drugi i tak dalej.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutlineLabel" xml:space="preserve">
+    <value>Plan kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverdueBadge" xml:space="preserve">
+    <value>po terminie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverIncludedNote" xml:space="preserve">
+    <value>Magazyn przekracza zawartą ilość. Obecnie nie jest to rozliczane; rozważ usunięcie starych filmów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverviewLabel" xml:space="preserve">
+    <value>Opis ogólny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnersHeader" xml:space="preserve">
+    <value>Właściciele kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PassedBadge" xml:space="preserve">
+    <value>Zaliczono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PassMarkFormat" xml:space="preserve">
+    <value>Próg zaliczenia {0}%</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PassMarkLabel" xml:space="preserve">
+    <value>Próg zaliczenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PassRateTile" xml:space="preserve">
+    <value>Odsetek zaliczeń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathLessonsFormat" xml:space="preserve">
+    <value>Lekcje: {0} · ukończone przez Ciebie: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathNobodyAssigned" xml:space="preserve">
+    <value>Tej ścieżki nie przypisano jeszcze nikomu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathProgressButton" xml:space="preserve">
+    <value>Postęp (przypisano: {0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathProgressIntro" xml:space="preserve">
+    <value>Postęp każdego przypisanego członka w lekcjach ścieżki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PlaybackSpeedLabel" xml:space="preserve">
+    <value>Prędkość odtwarzania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PlayerTitle" xml:space="preserve">
+    <value>Kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PointsAwardedFormat" xml:space="preserve">
+    <value>Przyznane punkty (z {0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PointsLabel" xml:space="preserve">
+    <value>Punkty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PointsShort" xml:space="preserve">
+    <value>pkt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Policy.Nothing" xml:space="preserve">
+    <value>Nic: ukończenia pozostają ważne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Policy.Notify" xml:space="preserve">
+    <value>Powiadom osoby, które go ukończyły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Policy.Reassign" xml:space="preserve">
+    <value>Przypisz ponownie osobom, które go ukończyły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PresentHeader" xml:space="preserve">
+    <value>Obecni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PresentMessage" xml:space="preserve">
+    <value>Oznaczono Cię jako obecnego. Kontynuuj następną lekcję na telefonie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreTestLabel" xml:space="preserve">
+    <value>Test wstępny (zaliczenie kończy kurs)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreTestNote" xml:space="preserve">
+    <value>Test wstępny: jego zaliczenie kończy cały kurs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>Poprzednia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintHint" xml:space="preserve">
+    <value>Użyj funkcji drukowania przeglądarki, aby wydrukować ten test.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintKeyButton" xml:space="preserve">
+    <value>Z odpowiedziami</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintTestButton" xml:space="preserve">
+    <value>Test do druku</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivateBadge" xml:space="preserve">
+    <value>Prywatny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProgressColumn" xml:space="preserve">
+    <value>Postęp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProgressHonest" xml:space="preserve">
+    <value>Ukończono {0}% wymaganych lekcji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProgressLabel" xml:space="preserve">
+    <value>Postęp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolUnavailable" xml:space="preserve">
+    <value>Ta wersja protokołu nie jest już dostępna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersionFormat" xml:space="preserve">
+    <value>Wersja protokołu {0}, w opublikowanej postaci.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersionHelp" xml:space="preserve">
+    <value>Lekcja pokazuje tę wersję w opublikowanej postaci, nawet gdy protokół się zmieni.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersionLabel" xml:space="preserve">
+    <value>Wersja protokołu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishBeforeAssign" xml:space="preserve">
+    <value>Opublikuj wersję przed przypisaniem kursu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Opublikuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedColumn" xml:space="preserve">
+    <value>Opublikowano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Wersja została opublikowana.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Opublikuj tę wersję</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishHelp" xml:space="preserve">
+    <value>Osoby w trakcie kursu zachowują rozpoczętą wersję; osoby, które nie zaczęły, przechodzą na tę.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>Pytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.MultiChoice" xml:space="preserve">
+    <value>Wielokrotny wybór</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.Ordering" xml:space="preserve">
+    <value>Ustaw kolejność</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.ShortAnswer" xml:space="preserve">
+    <value>Krótka odpowiedź (oceniana ręcznie)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.SingleChoice" xml:space="preserve">
+    <value>Jednokrotny wybór</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKind.TrueFalse" xml:space="preserve">
+    <value>Prawda czy fałsz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionKindLabel" xml:space="preserve">
+    <value>Typ pytania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionNumberFormat" xml:space="preserve">
+    <value>Pytanie {0} z {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionsCountFormat" xml:space="preserve">
+    <value>Pytania: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionTextLabel" xml:space="preserve">
+    <value>Pytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RandomizeLabel" xml:space="preserve">
+    <value>Losuj kolejność odpowiedzi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RatingHelp" xml:space="preserve">
+    <value>1 to słabo, 5 to doskonale.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReassignDaysLabel" xml:space="preserve">
+    <value>Dni na ukończenie po ponownym przypisaniu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Odeślij do wersji roboczej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Wersję odesłano do wersji roboczej.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Powód zwrotu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Usuń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RenameButton" xml:space="preserve">
+    <value>Zmień nazwę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Wymagana do ukończenia kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiredWatchLabel" xml:space="preserve">
+    <value>Obejrzeć co najmniej (%)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResponsesColumn" xml:space="preserve">
+    <value>Odpowiedzi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResponsesFormat" xml:space="preserve">
+    <value>Anonimowe odpowiedzi: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>Rezultat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultTitle" xml:space="preserve">
+    <value>Rezultat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResumeAttemptButton" xml:space="preserve">
+    <value>Kontynuuj próbę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResumeButton" xml:space="preserve">
+    <value>Wznów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetakeButton" xml:space="preserve">
+    <value>Spróbuj ponownie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Wycofaj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Wycofać ten kurs? Zniknie z katalogu; już zapisani członkowie nadal mogą go ukończyć.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetiredBadge" xml:space="preserve">
+    <value>wycofany</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>Kurs został wycofany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetiredQuestionMessage" xml:space="preserve">
+    <value>Pytanie zostało wycofane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetireQuestionConfirm" xml:space="preserve">
+    <value>Wycofać to pytanie? Próby, w których wystąpiło, zachowują swoją kopię.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Przejrzyj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewQueueHeader" xml:space="preserve">
+    <value>Czeka na zatwierdzenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RightAssign" xml:space="preserve">
+    <value>przypisywanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RightEdit" xml:space="preserve">
+    <value>edycja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RightReport" xml:space="preserve">
+    <value>raporty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RightsColumn" xml:space="preserve">
+    <value>Uprawnienia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RolePathsHeader" xml:space="preserve">
+    <value>Ścieżki ról</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RolePathsIntro" xml:space="preserve">
+    <value>Uporządkowane listy lekcji akademii dla danej roli. Przypisanie ścieżki przypisuje każdą zawartą w niej lekcję dostępną w Twojej jednostce.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Role</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Zapisz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SavedMessage" xml:space="preserve">
+    <value>Zapisano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveGradeButton" xml:space="preserve">
+    <value>Zapisz ocenę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveLessonButton" xml:space="preserve">
+    <value>Zapisz lekcję</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>Wynik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatTimeRequirement" xml:space="preserve">
+    <value>Ta lekcja wymaga co najmniej {0} min (masz {1} min).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SelfEnrollLabel" xml:space="preserve">
+    <value>Członkowie mogą zapisać się sami z katalogu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBadge" xml:space="preserve">
+    <value>Wspólny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBankLabel" xml:space="preserve">
+    <value>Udostępniony wszystkim autorom</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingColumn" xml:space="preserve">
+    <value>Udostępnianie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswers.AfterPassing" xml:space="preserve">
+    <value>Klucz po zaliczeniu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswers.Always" xml:space="preserve">
+    <value>Klucz po każdej próbie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswers.CorrectnessOnly" xml:space="preserve">
+    <value>Które odpowiedzi były poprawne, bez klucza</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswers.Never" xml:space="preserve">
+    <value>Tylko wynik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAnswersLabel" xml:space="preserve">
+    <value>Pokazuj odpowiedzi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.ArtifactChanged" xml:space="preserve">
+    <value>wersja zmieniła się po podpisaniu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.SubjectMissing" xml:space="preserve">
+    <value>wersja już nie istnieje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Valid" xml:space="preserve">
+    <value>zgodny z tą wersją</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Voided" xml:space="preserve">
+    <value>unieważniony</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SizeColumn" xml:space="preserve">
+    <value>Rozmiar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StandardOption" xml:space="preserve">
+    <value>Standardowy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartAssessmentButton" xml:space="preserve">
+    <value>Rozpocznij sprawdzian</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartButton" xml:space="preserve">
+    <value>Rozpocznij</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartCrewViewingButton" xml:space="preserve">
+    <value>Oglądaj razem (wspólne oglądanie)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Stan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StorageIntro" xml:space="preserve">
+    <value>Wideo przechowywane dla Twojej jednostki w odniesieniu do 100 GB zawartych w dodatku LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StorageTitle" xml:space="preserve">
+    <value>Magazyn wideo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitAttemptButton" xml:space="preserve">
+    <value>Prześlij odpowiedzi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitConfirm" xml:space="preserve">
+    <value>Wysłać odpowiedzi? Później nie będzie można ich zmienić.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Prześlij do zatwierdzenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitSurveyButton" xml:space="preserve">
+    <value>Wyślij odpowiedzi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Przesłano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Wersję przesłano do zatwierdzenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Podsumowanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyAnonymous" xml:space="preserve">
+    <value>Twoje odpowiedzi są anonimowe: przełożeni widzą tylko sumy, od trzech odpowiedzi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyFormatHelp" xml:space="preserve">
+    <value>Jedno w wierszu: "rating: tekst", "text: tekst" lub "choice: tekst | opcja | opcja".</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyQuestionsLabel" xml:space="preserve">
+    <value>Pytania ankiety</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyResultsTitle" xml:space="preserve">
+    <value>Ocena kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyThanksMessage" xml:space="preserve">
+    <value>Dziękujemy, Twoje odpowiedzi zapisano anonimowo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurveyTooFew" xml:space="preserve">
+    <value>Wyniki są widoczne od {0} odpowiedzi, aby żadnej nie dało się przypisać członkowi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Tagi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TestedOutBadge" xml:space="preserve">
+    <value>Zaliczone testem wstępnym</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimeLimitFormat" xml:space="preserve">
+    <value>Limit czasu {0} min</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimeLimitLabel" xml:space="preserve">
+    <value>Limit czasu (minuty, 0 = brak)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimeRemainingFormat" xml:space="preserve">
+    <value>Pozostało {0} min</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Tytuł</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TooFewAttempts" xml:space="preserve">
+    <value>za mało prób</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranscriptHeader" xml:space="preserve">
+    <value>Transkrypcja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranscriptLink" xml:space="preserve">
+    <value>Wykaz szkoleń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadButton" xml:space="preserve">
+    <value>Prześlij</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadCaptionsButton" xml:space="preserve">
+    <value>Prześlij napisy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadedColumn" xml:space="preserve">
+    <value>Przesłano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadedMessage" xml:space="preserve">
+    <value>Przesłano. Filmy są przetwarzane w tle i odtwarzają się, gdy są gotowe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadVideoLabel" xml:space="preserve">
+    <value>Prześlij wideo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsedTile" xml:space="preserve">
+    <value>Wykorzystano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Wersja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabelFormat" xml:space="preserve">
+    <value>Wersja {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionSettingsHeader" xml:space="preserve">
+    <value>Ustawienia wersji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionsHeader" xml:space="preserve">
+    <value>Wersje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Approved" xml:space="preserve">
+    <value>Zatwierdzona</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Draft" xml:space="preserve">
+    <value>Wersja robocza</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.InReview" xml:space="preserve">
+    <value>W przeglądzie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Legacy" xml:space="preserve">
+    <value>Starsza</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Published" xml:space="preserve">
+    <value>Opublikowana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Retired" xml:space="preserve">
+    <value>Wycofana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatus.Superseded" xml:space="preserve">
+    <value>Zastąpiona</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoHelp" xml:space="preserve">
+    <value>Linki do YouTube i Vimeo działają wszędzie. Przesłane wideo należy do dodatku LMS: jest transkodowane do HLS i odtwarzane przez podpisane linki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoSource.Embed" xml:space="preserve">
+    <value>YouTube lub Vimeo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoSource.Hosted" xml:space="preserve">
+    <value>Przesłane (LMS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoSourceLabel" xml:space="preserve">
+    <value>Źródło wideo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideosTile" xml:space="preserve">
+    <value>Filmy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoUnavailable" xml:space="preserve">
+    <value>Ten film jest teraz niedostępny.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VideoUrlLabel" xml:space="preserve">
+    <value>Link do YouTube lub Vimeo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WalkthroughBadge" xml:space="preserve">
+    <value>Przewodnik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WatchAgainButton" xml:space="preserve">
+    <value>Obejrzyj ponownie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WatchRequirement" xml:space="preserve">
+    <value>Obejrzyj co najmniej {0}% (obejrzano {1}%).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Wypisz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawConfirm" xml:space="preserve">
+    <value>Wypisać tego członka z kursu? Jego postęp zostanie zachowany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawDraftButton" xml:space="preserve">
+    <value>Wróć do wersji roboczej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnDraftMessage" xml:space="preserve">
+    <value>Wersja znów jest roboczą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Członka wypisano z kursu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourAnswerLabel" xml:space="preserve">
+    <value>Twoja odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourAttemptsHeader" xml:space="preserve">
+    <value>Twoje próby</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidNothingAccepted" xml:space="preserve">
+    <value>Nic nie zostało zaakceptowane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidBankNameFormat" xml:space="preserve">
+    <value>Szkice pytań: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidBankDescription" xml:space="preserve">
+    <value>Pytania zaakceptowane z pomocy w redagowaniu. Sprawdź je przed użyciem w teście.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidQuestionsSaved" xml:space="preserve">
+    <value>Dodano {0} pyt. do banku "{1}".</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidOpenBank" xml:space="preserve">
+    <value>Otwórz bank</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AidOutlineSaved" xml:space="preserve">
+    <value>Dodano {0} moduł(y) do tego szkicu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.MicroLearning" xml:space="preserve">
+    <value>Cotygodniowe pytanie do protokołu ({0}) jest gotowe. Odpowiedz w sekcji Protokoły, Moje potwierdzenia, Cotygodniowe pytania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notify.MicroLearning.Title" xml:space="preserve">
+    <value>Cotygodniowe pytanie do protokołu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.TabsLabel" xml:space="preserve">
+    <value>Sekcje biblioteki kursów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersTab" xml:space="preserve">
+    <value>Kursy startowe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTab" xml:space="preserve">
+    <value>Szkic z AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotEntitled" xml:space="preserve">
+    <value>Tworzenie szkiców kursów i fiszek wymaga Enhanced AI z odpowiedziami z wiedzy oraz dodatku LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotAllowed" xml:space="preserve">
+    <value>Potrzebne jest uprawnienie Zarządzanie kursami (lub prawo edycji kursu) oraz dostęp do źródła.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotFound" xml:space="preserve">
+    <value>Nie znaleziono źródła lub kursu albo nie jest on opublikowany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Excluded" xml:space="preserve">
+    <value>Ten protokół jest oznaczony „bez AI” lub jest treścią licencjonowaną, więc nigdy nie trafia do modelu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.KeptLocal" xml:space="preserve">
+    <value>Advanced Data Protection zatrzymuje treści jednostki lokalnie, więc nie można utworzyć szkicu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NoContent" xml:space="preserve">
+    <value>W źródle nie znaleziono czytelnego tekstu (zeskanowany PDF nie ma warstwy tekstowej).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Unconfigured" xml:space="preserve">
+    <value>Model AI nie jest skonfigurowany w tym systemie. Skontaktuj się z operatorem Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Unavailable" xml:space="preserve">
+    <value>Model AI jest teraz niedostępny. Spróbuj ponownie za kilka minut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Busy" xml:space="preserve">
+    <value>Model AI jest zajęty. Spróbuj ponownie za minutę.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.BudgetExhausted" xml:space="preserve">
+    <value>Miesięczny limit Enhanced AI Twojej jednostki został wykorzystany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Refused" xml:space="preserve">
+    <value>Szkic odrzucono: niczego z jego treści nie dało się sprawdzić w cytowanych sekcjach.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Invalid" xml:space="preserve">
+    <value>Żądanie było nieprawidłowe. Sprawdź typ pliku (PDF, DOCX lub TXT) i jego rozmiar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.NotSaved" xml:space="preserve">
+    <value>Nie udało się zapisać szkicu jako kursu. Niczego nie zachowano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Drafted" xml:space="preserve">
+    <value>Szkic gotowy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Outcome.Created" xml:space="preserve">
+    <value>Gotowe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterCloned" xml:space="preserve">
+    <value>Kurs startowy skopiowano jako szkic: {0} lekcji i {1} pytań. Dostosuj go, a potem prześlij do zatwierdzenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Drafted" xml:space="preserve">
+    <value>Utworzono szkic kursu: {0} modułów, {1} lekcji i {2} pytań. Sprawdź każdą lekcję z cytowaną sekcją, a potem prześlij kurs do zatwierdzenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftDropped" xml:space="preserve">
+    <value>Pominięto {0} elementów, ponieważ nie cytowały żadnej sekcji lub zawierały liczbę, której nie ma w źródle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTruncated" xml:space="preserve">
+    <value>Źródło było długie, dlatego użyto tylko jego pierwszych sekcji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsDropped" xml:space="preserve">
+    <value>Pominięto {0} fiszek, ponieważ zawierały liczbę, której nie ma w ich sekcji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsAccepted" xml:space="preserve">
+    <value>Dodano {0} fiszek.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardSaved" xml:space="preserve">
+    <value>Fiszkę zapisano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardReviewed" xml:space="preserve">
+    <value>Fiszkę sprawdzono z obowiązującą wersją i ponownie pokazano uczącym się.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardRemoved" xml:space="preserve">
+    <value>Fiszkę usunięto.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftOverviewNote" xml:space="preserve">
+    <value>Szkic przygotowany przez Enhanced AI na podstawie: {0}. Przed przesłaniem kursu sprawdź każdą lekcję z cytowaną sekcją.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTag" xml:space="preserve">
+    <value>szkic-ai</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftBankName" xml:space="preserve">
+    <value>{0} – szkice pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftBankDescription" xml:space="preserve">
+    <value>Pytania przygotowane przez Enhanced AI na podstawie źródła kursu. Przejrzyj je przed użyciem w teście.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CheckModuleTitle" xml:space="preserve">
+    <value>Sprawdź swoją wiedzę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CheckLessonTitle" xml:space="preserve">
+    <value>Test kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.KeyPoints" xml:space="preserve">
+    <value>Najważniejsze punkty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FromTheSource" xml:space="preserve">
+    <value>Ze źródła</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CitedLabel" xml:space="preserve">
+    <value>Źródło:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftAttribution" xml:space="preserve">
+    <value>Szkic przygotowany przez Enhanced AI na podstawie: {0}; treść z własnego źródła jednostki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterAttribution" xml:space="preserve">
+    <value>Na podstawie kursu startowego Resgrid „{0}” (wersja {1}). Każda jednostka Resgrid może bezpłatnie używać i dostosowywać te treści; nie dają one akredytacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterBankName" xml:space="preserve">
+    <value>{0} – pytania sprawdzające</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersTitle" xml:space="preserve">
+    <value>Kursy startowe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersIntro" xml:space="preserve">
+    <value>Kursy napisane przez Resgrid na początek. Skopiuj kurs do jednostki jako szkic, dostosuj go i opublikuj w zwykłym trybie zatwierdzania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.AuthorNeeded" xml:space="preserve">
+    <value>Skopiowanie kursu startowego wymaga uprawnienia Zarządzanie kursami i aktywnego dodatku LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StartersLicence" xml:space="preserve">
+    <value>Kursy startowe to własne, proste teksty Resgrid: bez treści norm i bez akredytacji. Twoja kopia zachowuje informację o autorstwie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterFacts" xml:space="preserve">
+    <value>Moduły: {0} · lekcje: {1} · godziny: {2} · wersja {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.LicenceResgridStarter" xml:space="preserve">
+    <value>Licencja startowa Resgrid: bezpłatne użycie i dostosowanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CloneButton" xml:space="preserve">
+    <value>Kopiuj jako szkic</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PartnerHeader" xml:space="preserve">
+    <value>Treści partnerów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PartnerIntro" xml:space="preserve">
+    <value>Akredytowane kształcenie ustawiczne pozostaje u partnera posiadającego akredytację. Resgrid je uruchamia i zapisuje ukończenie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PartnerComing" xml:space="preserve">
+    <value>Pojawi się wraz z obsługą standardów (LTI, SCORM i cmi5).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.resgrid-onboarding.Title" xml:space="preserve">
+    <value>Pierwsze kroki w Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.resgrid-onboarding.Summary" xml:space="preserve">
+    <value>Pierwszy kurs nowego członka: konto, status i dostępność, reagowanie na zgłoszenia, wiadomości, kalendarz i szkolenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.incident-safety-basics.Title" xml:space="preserve">
+    <value>Podstawy bezpieczeństwa na zdarzeniu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.incident-safety-basics.Summary" xml:space="preserve">
+    <value>Nawyki bezpieczeństwa na każdym zdarzeniu: świadomość sytuacyjna, środki ochrony, kontrola ratowników i odpoczynek.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.hazmat-awareness-outline.Title" xml:space="preserve">
+    <value>Świadomość zagrożeń materiałami niebezpiecznymi (konspekt)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.hazmat-awareness-outline.Summary" xml:space="preserve">
+    <value>Konspekt do uzupełnienia własnymi procedurami: rozpoznaj, odizoluj i nie wpuszczaj, powiadom, chroń siebie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.driver-evo-basics.Title" xml:space="preserve">
+    <value>Podstawy kierowania pojazdami uprzywilejowanymi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.driver-evo-basics.Summary" xml:space="preserve">
+    <value>Kontrola pojazdu, jazda alarmowa, skrzyżowania i cofanie z asekuracją. Połącz z zajęciami praktycznymi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-ce-lti.Title" xml:space="preserve">
+    <value>Kształcenie ustawiczne partnerów (LTI 1.3)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-ce-lti.Summary" xml:space="preserve">
+    <value>Akredytowane kursy partnera treści uruchamiane z Resgrid; ukończenia trafiają do rejestru szkoleń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-packages-scorm.Title" xml:space="preserve">
+    <value>Pakiety kursów partnerów (SCORM / cmi5)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Starter.partner-packages-scorm.Summary" xml:space="preserve">
+    <value>Pakiety kupione od partnera lub wyeksportowane z innego systemu szkoleniowego, odtwarzane w odizolowanym odtwarzaczu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftTitle" xml:space="preserve">
+    <value>Szkic kursu z AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftIntro" xml:space="preserve">
+    <value>Zamień opublikowany protokół lub dokument procedury w szkic kursu. Każda lekcja cytuje źródło; nic nie jest publikowane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftNeeds" xml:space="preserve">
+    <value>Szkice kursów wymagają Enhanced AI z odpowiedziami z wiedzy, dodatku LMS i uprawnienia Zarządzanie kursami.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftHeader" xml:space="preserve">
+    <value>Utwórz szkic kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Drafting" xml:space="preserve">
+    <value>Tworzenie szkicu… to może potrwać minutę.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceLegend" xml:space="preserve">
+    <value>Szkic na podstawie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceProtocol" xml:space="preserve">
+    <value>Opublikowanego protokołu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceDocument" xml:space="preserve">
+    <value>Dokumentu procedury (PDF, DOCX lub TXT)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ProtocolLabel" xml:space="preserve">
+    <value>Protokół</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NoProtocols" xml:space="preserve">
+    <value>Żaden opublikowany protokół, którego jesteś autorem, nie może być użyty z AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ProtocolHelp" xml:space="preserve">
+    <value>Używana jest obowiązująca wersja. Protokoły oznaczone „bez AI” i treści licencjonowane nie są wymienione.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DocumentLabel" xml:space="preserve">
+    <value>Dokument procedury</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DocumentHelp" xml:space="preserve">
+    <value>Do {0} MB. Odczytywany jest tylko tekst; plik nie jest przechowywany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.TitleLabel" xml:space="preserve">
+    <value>Tytuł kursu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.TitleHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby użyć proponowanego tytułu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.QuestionsLabel" xml:space="preserve">
+    <value>Liczba pytań testowych</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftButton" xml:space="preserve">
+    <value>Utwórz szkic</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.HowItWorks" xml:space="preserve">
+    <value>Jak działa tworzenie szkiców</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Draft" xml:space="preserve">
+    <value>Wynikiem jest nowy szkic kursu. Edytujesz go i przesyłasz w zwykłym trybie zatwierdzania; nic nie jest publikowane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Citations" xml:space="preserve">
+    <value>Każda lekcja cytuje sekcje, na podstawie których powstała, i pokazuje ich tekst w brzmieniu źródła.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Numbers" xml:space="preserve">
+    <value>Każda liczba napisana przez AI musi występować w cytowanych sekcjach; dawki ani częstości nigdy nie są obliczane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.NoAi" xml:space="preserve">
+    <value>Protokoły oznaczone „bez AI”, treści licencjonowane i jednostki z Advanced Data Protection nigdy nie trafiają do modelu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.Rule.Logged" xml:space="preserve">
+    <value>Każdy szkic jest rejestrowany wraz z modelem i wersją polecenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsTitle" xml:space="preserve">
+    <value>Fiszki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsTitleFormat" xml:space="preserve">
+    <value>Fiszki: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsIntro" xml:space="preserve">
+    <value>Fiszki do ćwiczeń widoczne w odtwarzaczu kursu. Fiszka jest oznaczana do przeglądu, gdy zmienia się jej źródło.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsActive" xml:space="preserve">
+    <value>Widoczne dla uczących się</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsFlagged" xml:space="preserve">
+    <value>Do przeglądu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NoCardSources" xml:space="preserve">
+    <value>Opublikuj kurs (lub utwórz go z protokołu), aby przygotować z niego fiszki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.AcceptCardsButton" xml:space="preserve">
+    <value>Dodaj zaznaczone fiszki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NothingTicked" xml:space="preserve">
+    <value>Zaznacz co najmniej jedną fiszkę.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardSourceFormat" xml:space="preserve">
+    <value>Na podstawie: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftCardsHeader" xml:space="preserve">
+    <value>Szkice fiszek z AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardSourceLabel" xml:space="preserve">
+    <value>Źródło</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ThisCourse" xml:space="preserve">
+    <value>Ten kurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardCountLabel" xml:space="preserve">
+    <value>Fiszki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.DraftCardsButton" xml:space="preserve">
+    <value>Utwórz fiszki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsRule" xml:space="preserve">
+    <value>Każda fiszka cytuje jedną sekcję, a każda liczba na niej musi w niej występować. Ćwiczenia nigdy nie są oceniane ani zapisywane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardsHeader" xml:space="preserve">
+    <value>Fiszki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.NoCards" xml:space="preserve">
+    <value>Brak fiszek.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FrontColumn" xml:space="preserve">
+    <value>Awers</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.BackColumn" xml:space="preserve">
+    <value>Rewers</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SourceColumn" xml:space="preserve">
+    <value>Źródło</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.SaveCardButton" xml:space="preserve">
+    <value>Zapisz fiszkę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardActive" xml:space="preserve">
+    <value>Aktywna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.CardNeedsReview" xml:space="preserve">
+    <value>Do przeglądu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlagUnavailable" xml:space="preserve">
+    <value>Jej źródła nie można już odczytać.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlagSuperseded" xml:space="preserve">
+    <value>Obowiązuje nowsza wersja jej źródła.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.ReviewCardButton" xml:space="preserve">
+    <value>Oznacz jako sprawdzoną</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.EditCardButton" xml:space="preserve">
+    <value>Edytuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.RemoveCardConfirm" xml:space="preserve">
+    <value>Usunąć tę fiszkę?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.RemoveCardButton" xml:space="preserve">
+    <value>Usuń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginAiHeader" xml:space="preserve">
+    <value>Szkic AI na podstawie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginAiCheck" xml:space="preserve">
+    <value>Przed przesłaniem kursu do zatwierdzenia sprawdź każdą lekcję z cytowaną sekcją.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginCitationsFormat" xml:space="preserve">
+    <value>Cytowania z {0} lekcji ze szkicu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginStarterHeader" xml:space="preserve">
+    <value>Kurs startowy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.OriginLicenceFormat" xml:space="preserve">
+    <value>Licencja: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeCardFormat" xml:space="preserve">
+    <value>Opanowane fiszki: {0} z {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeDone" xml:space="preserve">
+    <value>Na razie znasz wszystkie fiszki. Wróć później lub zacznij od nowa.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeSource" xml:space="preserve">
+    <value>Z:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeHeader" xml:space="preserve">
+    <value>Fiszki do ćwiczeń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeIntro" xml:space="preserve">
+    <value>Tylko ćwiczenia: nic nie jest oceniane ani zapisywane w rejestrze szkoleń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeShow" xml:space="preserve">
+    <value>Pokaż odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeAgain" xml:space="preserve">
+    <value>Jeszcze raz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeKnown" xml:space="preserve">
+    <value>Znam to</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.PracticeRestart" xml:space="preserve">
+    <value>Zacznij od nowa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.FlashcardsButton" xml:space="preserve">
+    <value>Fiszki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Kind.LtiLink" xml:space="preserve">
+    <value>Narzędzie LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Studio.StarterSuggested" xml:space="preserve">
+    <value>Sugerowane dla twojej organizacji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotLicensed" xml:space="preserve">
+    <value>Do tego potrzebne jest miejsce LMS. Poproś administratora o włączenie Ci dostępu do LMS. Akademia i Twoje rejestry szkoleń pozostają dostępne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedNotLicensedMessage" xml:space="preserve">
+    <value>{0} z nich nie ma miejsca LMS i nie zostało zapisanych; włącz im dostęp do LMS, a następnie przypisz ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

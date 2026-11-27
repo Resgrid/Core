@@ -1,0 +1,52 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolDocumentVersionModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* A new upload is a new version (P1 R-P5): the file becomes the content of the protocol's draft, for one review-and-publish pass. *@
+@{
+    var p = Model.Protocol;
+    ViewBag.Title = "Resgrid | " + localizer["UploadNewVersionButton"];
+    ViewData["Title"] = localizer["UploadNewVersionButton"].Value;
+    ViewData["Subtitle"] = p.Code + " · " + p.Name;
+    var error = TempData?["ProtocolError"] as string;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @error</div>
+    }
+    @if (Model.Draft != null && Model.Draft.Status != (int)ProtocolVersionStatuses.Draft)
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["UploadBlockedByReview"]</div>
+    }
+    <div class="ibox">
+        <div class="ibox-content">
+            @if (Model.CurrentFile != null)
+            {
+                <p class="text-muted"><i class="fa fa-file-o" aria-hidden="true"></i> @string.Format(localizer["CurrentDocumentLabel"].Value, Model.CurrentFile.FileName, Model.Current?.Label)</p>
+            }
+            <p>@localizer["UploadNewVersionHelp"]</p>
+            <form method="post" enctype="multipart/form-data" asp-controller="ProtocolDocuments" asp-action="Upload" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                <div class="form-group">
+                    <label class="control-label required" for="documentFile">@localizer["DocumentFileLabel"]</label>
+                    <input id="documentFile" name="file" type="file" accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
+                    <span class="help-block">@localizer["DocumentFileHelp"]</span>
+                </div>
+                <div class="rgw-wizard-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["UploadDocumentButton"]</button>
+                    <a class="btn btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackButton"]</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -370,6 +370,9 @@ namespace Resgrid.Web.Areas.User.Models.Records
 		public RecordDeploymentFillInput NewFill { get; set; } = new RecordDeploymentFillInput();
 		public List<SelectListItem> Personnel { get; set; } = new List<SelectListItem>();
 		public List<SelectListItem> AvailableUnits { get; set; } = new List<SelectListItem>();
+		/// <summary>Round 10 A3: the department's enabled links (the partners an order may name), and the partner it names now.</summary>
+		public List<SelectListItem> PartnerLinks { get; set; } = new List<SelectListItem>();
+		public string PartnerName { get; set; }
 	}
 
 	// ---- definition-driven record form (RMS-1B) ----------------------------------------------------

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllTours" xml:space="preserve">
+    <value>Όλες οι περιηγήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DismissTour" xml:space="preserve">
+    <value>Απόκρυψη αυτής της περιήγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DismissWhatsNew" xml:space="preserve">
+    <value>Απόκρυψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocsHeader" xml:space="preserve">
+    <value>Λειτουργίες και εγχειρίδιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DoneLabel" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EarlierReleases" xml:space="preserve">
+    <value>Άλλες εκδόσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureBadge" xml:space="preserve">
+    <value>Λειτουργία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GoToPage" xml:space="preserve">
+    <value>Μετάβαση στη σελίδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HelpCenterHeader" xml:space="preserve">
+    <value>Κέντρο βοήθειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HowDoIHeader" xml:space="preserve">
+    <value>Πώς μπορώ να…;</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HowDoIHelp" xml:space="preserve">
+    <value>Κάντε μια ερώτηση για τη χρήση του Resgrid. Οι απαντήσεις προέρχονται μόνο από τη Resgrid Academy και παραπέμπουν στα μαθήματα που χρησιμοποιούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonMinutes" xml:space="preserve">
+    <value>{0} λεπτά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LessonsHeader" xml:space="preserve">
+    <value>Μαθήματα Academy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MarkDone" xml:space="preserve">
+    <value>Σήμανση ως ολοκληρωμένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MarkNotDone" xml:space="preserve">
+    <value>Σήμανση ως μη ολοκληρωμένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MarkRead" xml:space="preserve">
+    <value>Σήμανση ως αναγνωσμένο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MenuSearchHelp" xml:space="preserve">
+    <value>Αναζήτηση βοήθειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MenuTours" xml:space="preserve">
+    <value>Καθοδηγούμενες περιηγήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MenuWhatsNew" xml:space="preserve">
+    <value>Τι νέο υπάρχει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDocs" xml:space="preserve">
+    <value>Καμία λειτουργία ή άρθρο αναφοράς δεν ταιριάζει στην αναζήτησή σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLessons" xml:space="preserve">
+    <value>Κανένα μάθημα της Academy δεν ταιριάζει στην αναζήτησή σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoTours" xml:space="preserve">
+    <value>Δεν υπάρχουν καθοδηγούμενες περιηγήσεις για την υπηρεσία σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenDocs" xml:space="preserve">
+    <value>Τεκμηρίωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenPage" xml:space="preserve">
+    <value>Άνοιγμα σελίδας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadLabel" xml:space="preserve">
+    <value>Αναγνώστηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadMinutes" xml:space="preserve">
+    <value>Ανάγνωση ({0} λεπτά)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReferenceBadge" xml:space="preserve">
+    <value>Εγχειρίδιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReopenTour" xml:space="preserve">
+    <value>Εμφάνιση ξανά αυτής της περιήγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Αναζήτηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchEmptyHelp" xml:space="preserve">
+    <value>Γράψτε λίγες λέξεις για αυτό που θέλετε να κάνετε. Μπορείτε επίσης να ακολουθήσετε την περιήγηση για τον ρόλο σας ή να δείτε τι νέο υπάρχει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchIntro" xml:space="preserve">
+    <value>Αναζητήστε στη Resgrid Academy και στο εγχειρίδιο του προϊόντος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Αναζήτηση βοήθειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Τι θέλετε να κάνετε; Για παράδειγμα: προσθήκη οχήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchTab" xml:space="preserve">
+    <value>Αναζήτηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>Αναζήτηση βοήθειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TourProgress" xml:space="preserve">
+    <value>Ολοκληρώθηκαν {0} από {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TourReopened" xml:space="preserve">
+    <value>Η περιήγηση εμφανίζεται ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToursIntro" xml:space="preserve">
+    <value>Πρώτα βήματα για κάθε ρόλο, το καθένα με ένα σύντομο μάθημα της Academy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToursTab" xml:space="preserve">
+    <value>Καθοδηγούμενες περιηγήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToursTitle" xml:space="preserve">
+    <value>Καθοδηγούμενες περιηγήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>Δοκιμάστε το</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WatchLesson" xml:space="preserve">
+    <value>Παρακολούθηση μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WhatsNewSubtitle" xml:space="preserve">
+    <value>Κυκλοφόρησε {0} · {1} λεπτά ανάγνωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WhatsNewTab" xml:space="preserve">
+    <value>Τι νέο υπάρχει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WhatsNewTitle" xml:space="preserve">
+    <value>Τι νέο υπάρχει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourTourBadge" xml:space="preserve">
+    <value>Ο ρόλος σας</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

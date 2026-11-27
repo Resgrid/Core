@@ -1,0 +1,1269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AnyApprover" xml:space="preserve">
+    <value>будь-який затверджувач</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BindsToContentHelp" xml:space="preserve">
+    <value>Підпис стосується саме цього тексту. Якщо текст зміниться, він більше не збігатиметься, і знадобиться новий підпис.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationVerificationStatement" xml:space="preserve">
+    <value>Я підтверджую запис про сертифікацію {0} ({1}, отримано {2}, дійсний до {3}): за результатами моєї перевірки він справжній.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Коментар (необов'язково)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Код вмісту</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentApprove" xml:space="preserve">
+    <value>Затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentAttest" xml:space="preserve">
+    <value>Засвідчення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentColumn" xml:space="preserve">
+    <value>Значення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentReview" xml:space="preserve">
+    <value>Перевірка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentVerify" xml:space="preserve">
+    <value>Підтвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentWitness" xml:space="preserve">
+    <value>Свідок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelAttest" xml:space="preserve">
+    <value>сеанс входу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelBadge" xml:space="preserve">
+    <value>Рівень {0}: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelColumn" xml:space="preserve">
+    <value>Рівень</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelStepUp" xml:space="preserve">
+    <value>особу перевірено повторно</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodPasskey" xml:space="preserve">
+    <value>Ключ доступу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodSession" xml:space="preserve">
+    <value>Сеанс входу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodStepUp" xml:space="preserve">
+    <value>Перевірка другим фактором</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSignatures" xml:space="preserve">
+    <value>Підписів ще немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OthersToSignLabel" xml:space="preserve">
+    <value>Після вас мають підписати:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>Запит ключа доступу закрито. Нічого не підписано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>Не вдалося перевірити ключ доступу. Нічого не підписано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyOnlyHelp" xml:space="preserve">
+    <value>Ваш підрозділ вимагає ключ доступу для цього підпису.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyRequiredHelp" xml:space="preserve">
+    <value>Потрібен ключ доступу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyUnsupported" xml:space="preserve">
+    <value>Цей браузер не підтримує ключі доступу. Натомість скористайтеся кнопкою «Підписати».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolApprovalStatement" xml:space="preserve">
+    <value>Я затверджую цю редакцію протоколу {0} "{1}" (вміст {2}) до публікації як етап {3} з {4} його перевірки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolReviewStatement" xml:space="preserve">
+    <value>Протокол {0} "{1}" версії {2} (вміст {3}) мною перевірено, і він залишається правильним без змін.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignApproveButton" xml:space="preserve">
+    <value>Підписати й затвердити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignReviewButton" xml:space="preserve">
+    <value>Підписати перевірку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignWithPasskeyButton" xml:space="preserve">
+    <value>Підписати ключем доступу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedOnColumn" xml:space="preserve">
+    <value>Підписано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerColumn" xml:space="preserve">
+    <value>Підписант</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementLabel" xml:space="preserve">
+    <value>Ви підписуєте таку заяву:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpHelp" xml:space="preserve">
+    <value>Під час підписання вас попросять підтвердити особу другим фактором, якщо ви щойно цього не зробили.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationChanged" xml:space="preserve">
+    <value>Вміст змінено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationColumn" xml:space="preserve">
+    <value>Перевірка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationMissing" xml:space="preserve">
+    <value>Вміст не знайдено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationValid" xml:space="preserve">
+    <value>Збігається</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationVoided" xml:space="preserve">
+    <value>Анульовано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdoptTypedButton" xml:space="preserve">
+    <value>Використати друковане ім'я як підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditDepartment" xml:space="preserve">
+    <value>Підрозділ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditDocument" xml:space="preserve">
+    <value>Документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditEvidence" xml:space="preserve">
+    <value>Підтвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditMethod" xml:space="preserve">
+    <value>Спосіб</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditNoSigners" xml:space="preserve">
+    <value>У цьому документі немає підписів; його запечатано у виданому вигляді.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditPageTitle" xml:space="preserve">
+    <value>Сторінка аудиту Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditPreparedOn" xml:space="preserve">
+    <value>Підготовлено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditRevisionHash" xml:space="preserve">
+    <value>Хеш вмісту (SHA-256)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditRole" xml:space="preserve">
+    <value>Роль</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditSealNote" xml:space="preserve">
+    <value>Ця сторінка є частиною запечатаного документа. Печатка (PAdES з позначкою часу RFC 3161) показує, що файл не змінювався після запечатування; перевірте її в розділі «Перевірити документ» у Resgrid або в будь-якій програмі для PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditSigners" xml:space="preserve">
+    <value>Підписанти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditSubject" xml:space="preserve">
+    <value>Предмет</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackLink" xml:space="preserve">
+    <value>Назад</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelLink" xml:space="preserve">
+    <value>Скасувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChannelInPerson" xml:space="preserve">
+    <value>Особисто</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChannelLabel" xml:space="preserve">
+    <value>Спосіб</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChannelRemote" xml:space="preserve">
+    <value>За посиланням</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearSignatureButton" xml:space="preserve">
+    <value>Очистити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClosedText" xml:space="preserve">
+    <value>Це посилання для підпису більше не дійсне. Можливо, його вже використано, відкликано або строк дії минув. Попросіть відправника надіслати нове посилання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeAttemptsLeft" xml:space="preserve">
+    <value>Залишилося спроб: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeHeading" xml:space="preserve">
+    <value>Введіть код</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Шестизначний код</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeNotSent" xml:space="preserve">
+    <value>Зараз не вдалося надіслати код. Зачекайте хвилину й спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeSentEmail" xml:space="preserve">
+    <value>Ми надіслали шестизначний код на {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeSentSms" xml:space="preserve">
+    <value>Ми надіслали шестизначний код SMS-повідомленням на {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeWrong" xml:space="preserve">
+    <value>Код неправильний або його строк дії минув.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedPdfButton" xml:space="preserve">
+    <value>Завершений документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentButton" xml:space="preserve">
+    <value>Погодитися й надіслати код</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentCheckbox" xml:space="preserve">
+    <value>Я погоджуюся підписати цей документ електронно.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentCodeNote" xml:space="preserve">
+    <value>Далі ми надішлемо одноразовий код на {0}, щоб підтвердити, що це ви.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentHeading" xml:space="preserve">
+    <value>Згода на електронний підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentRequired" xml:space="preserve">
+    <value>Позначте поле згоди, щоб продовжити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentText" xml:space="preserve">
+    <value>Вас просять підписати документ електронно. Погоджуючись, ви даєте згоду на електронне оформлення цього документа і визнаєте, що ваш електронний підпис має таку саму силу, як власноручний. Ви можете попросити відправника про паперову копію і можете відкликати цю згоду, не підписуючи. Ваше ім'я, час підпису та надісланий вам код зберігаються разом із підписом, а підписаний документ запечатується, щоб його не можна було змінити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>Продовжити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContinueInPersonLink" xml:space="preserve">
+    <value>Продовжити особисто</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DetailIntro" xml:space="preserve">
+    <value>Запит на зовнішній підпис: статус, підписант і документи.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DoneHeading" xml:space="preserve">
+    <value>Дякуємо.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DoneText" xml:space="preserve">
+    <value>Ваш підпис збережено. Можете закрити цю сторінку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSignatureHelp" xml:space="preserve">
+    <value>Підпишіть пальцем, стилусом або мишею. Без вказівника введіть ім'я та використайте його як підпис.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSignatureLabel" xml:space="preserve">
+    <value>Підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSignatureRequired" xml:space="preserve">
+    <value>Підпишіть у полі або використайте ім'я як підпис.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignAccountHeading" xml:space="preserve">
+    <value>Команда Documenso цього підрозділу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignActiveLabel" xml:space="preserve">
+    <value>Використовувати цей обліковий запис для посилань на підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignClusterHeading" xml:space="preserve">
+    <value>Служби підпису цієї інсталяції</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignClusterHelp" xml:space="preserve">
+    <value>Їх налаштовує оператор цієї інсталяції Resgrid. Без платформи електронного підпису посилання на підпис недоступні, але особистий підпис працює. Без запечатування документи підписуються й очікують запечатування, доки його не налаштують.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignIntro" xml:space="preserve">
+    <value>Обліковий запис платформи електронного підпису, що надсилає документи на підпис за посиланням, і стан запечатування документів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignPlatformConfigured" xml:space="preserve">
+    <value>Платформа електронного підпису (Documenso)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignRemoveButton" xml:space="preserve">
+    <value>Видалити токен</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignSaved" xml:space="preserve">
+    <value>Налаштування електронного підпису збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTab" xml:space="preserve">
+    <value>Налаштування е-підпису</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTeamIdLabel" xml:space="preserve">
+    <value>Ідентифікатор команди</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTitle" xml:space="preserve">
+    <value>Налаштування електронного підпису</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTokenHelp" xml:space="preserve">
+    <value>API-токен команди. Він зберігається зашифрованим, видно лише чотири останні символи. Залиште порожнім, щоб зберегти поточний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTokenLabel" xml:space="preserve">
+    <value>API-токен</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EmbedFrameTitle" xml:space="preserve">
+    <value>Підписання документа</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EmbedUnavailable" xml:space="preserve">
+    <value>Служба підпису зараз недоступна. Спробуйте пізніше.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Спливає</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExternalPanelHelp" xml:space="preserve">
+    <value>Клієнт, мешканець або стороння особа може підписати цей документ особисто на цьому пристрої або, де доступно, за посиланням Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExternalPanelTitle" xml:space="preserve">
+    <value>Зовнішній підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FinishedButton" xml:space="preserve">
+    <value>Я завершив підписання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HandDeviceButton" xml:space="preserve">
+    <value>Передати пристрій підписанту</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HandDeviceHelp" xml:space="preserve">
+    <value>Відкриває на цьому пристрої сторінку підпису для іншої особи: згода, ім'я та намальований підпис, за бажанням зі свідком.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HandDeviceTitle" xml:space="preserve">
+    <value>Підписати особисто</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Головна</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InPersonSignedMessage" xml:space="preserve">
+    <value>Підписано особисто. Підписаний документ буде запечатано, щойно запечатування стане доступним.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LandingExpires" xml:space="preserve">
+    <value>Строк дії посилання спливає {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LandingIntro" xml:space="preserve">
+    <value>{0}, {1} просить вас переглянути й підписати документ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelExternal" xml:space="preserve">
+    <value>Зовнішній підписант</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelSealed" xml:space="preserve">
+    <value>Запечатаний документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkOnceHelp" xml:space="preserve">
+    <value>Не вдалося доставити посилання для підпису. Ви можете передати його підписанту самі; воно показується лише зараз і діє один раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodExternalLink" xml:space="preserve">
+    <value>Посилання для підпису й код</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodInPersonOffline" xml:space="preserve">
+    <value>Особисто (офлайн)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodInPersonOnline" xml:space="preserve">
+    <value>Особисто</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRightToRequest" xml:space="preserve">
+    <value>Ви не можете запитувати підписи для цього елемента.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenRequestStatus" xml:space="preserve">
+    <value>Запит на підпис: {0} ({1}), спливає {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OtpChannelEmail" xml:space="preserve">
+    <value>Електронна пошта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OtpChannelLabel" xml:space="preserve">
+    <value>Надіслати одноразовий код через</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OtpChannelSms" xml:space="preserve">
+    <value>SMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PdfFailed" xml:space="preserve">
+    <value>Не вдалося створити PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintedNameLabel" xml:space="preserve">
+    <value>Ім'я друкованими літерами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolPdfButton" xml:space="preserve">
+    <value>PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Готово.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Деякі дані відсутні або недійсні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Елемент не знайдено або ви не можете його відкрити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalRemoteNeedsAddon" xml:space="preserve">
+    <value>Підпис за посиланням входить до доповнення, якому належить цей документ. Особистий підпис доступний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalProviderUnavailable" xml:space="preserve">
+    <value>Підпис за посиланням не налаштовано для цього підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalRevisionChanged" xml:space="preserve">
+    <value>Документ змінився після того, як його показали для підпису. Почніть знову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalRequestClosed" xml:space="preserve">
+    <value>Цей запит уже закрито.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalProviderFailed" xml:space="preserve">
+    <value>Платформа електронного підпису не змогла підготувати документ. Спробуйте пізніше.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalContactRequired" xml:space="preserve">
+    <value>Введіть дійсну адресу електронної пошти або номер телефону в міжнародному форматі для одноразового коду.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteRequestButton" xml:space="preserve">
+    <value>Запитати підпис за посиланням</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteRequestHelp" xml:space="preserve">
+    <value>Resgrid надсилає підписанту одноразове посилання. Перед підписанням він дає згоду на електронний підпис і вводить одноразовий код, надісланий на вказану пошту або телефон.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableNone" xml:space="preserve">
+    <value>Підпис за посиланням доступний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableInvalidRequest" xml:space="preserve">
+    <value>Підпис за посиланням для цього елемента не пропонується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableSubjectNotFound" xml:space="preserve">
+    <value>Підпис за посиланням для цього елемента не пропонується.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableRemoteNeedsAddon" xml:space="preserve">
+    <value>Підпис за посиланням входить до доповнення, якому належить цей документ; особистий підпис безкоштовний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableProviderUnavailable" xml:space="preserve">
+    <value>Підпис за посиланням не налаштовано (налаштування е-підпису); особистий підпис доступний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableRevisionChanged" xml:space="preserve">
+    <value>Підпис за посиланням зараз недоступний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableRequestClosed" xml:space="preserve">
+    <value>Підпис за посиланням зараз недоступний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableProviderFailed" xml:space="preserve">
+    <value>Підпис за посиланням зараз недоступний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableContactRequired" xml:space="preserve">
+    <value>Підпис за посиланням зараз недоступний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestHeading" xml:space="preserve">
+    <value>Запит на підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestNotDeliveredMessage" xml:space="preserve">
+    <value>Запит створено, але посилання не вдалося доставити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestSentMessage" xml:space="preserve">
+    <value>Посилання для підпису надіслано на {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestVoidedMessage" xml:space="preserve">
+    <value>Запит відкликано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResendButton" xml:space="preserve">
+    <value>Надіслати нове посилання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResendCodeButton" xml:space="preserve">
+    <value>Надіслати новий код</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCustomer" xml:space="preserve">
+    <value>Клієнт</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleOccupant" xml:space="preserve">
+    <value>Мешканець</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleExternalParty" xml:space="preserve">
+    <value>Стороння особа</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleWitness" xml:space="preserve">
+    <value>Свідок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCounterparty" xml:space="preserve">
+    <value>Контрагент</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Зберегти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealedPdfButton" xml:space="preserve">
+    <value>Запечатаний PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingKey" xml:space="preserve">
+    <value>Сертифікат підпису</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingPendingState" xml:space="preserve">
+    <value>очікує запечатування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingSidecar" xml:space="preserve">
+    <value>Служба запечатування (EU DSS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingStore" xml:space="preserve">
+    <value>Сховище запечатаних документів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingTsa" xml:space="preserve">
+    <value>Служба позначок часу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendCodeButton" xml:space="preserve">
+    <value>Надіслати код</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendRequestButton" xml:space="preserve">
+    <value>Надіслати запит</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignNowButton" xml:space="preserve">
+    <value>Підписати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturePageTitle" xml:space="preserve">
+    <value>Підписи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturesHeading" xml:space="preserve">
+    <value>Підписи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturesModuleTitle" xml:space="preserve">
+    <value>Підписи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedByNote" xml:space="preserve">
+    <value>{0} · {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedState" xml:space="preserve">
+    <value>Підписано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerEmailLabel" xml:space="preserve">
+    <value>Електронна пошта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerNameLabel" xml:space="preserve">
+    <value>Ім'я підписанта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerPhoneLabel" xml:space="preserve">
+    <value>Мобільний телефон</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusPending" xml:space="preserve">
+    <value>Очікує</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusOpened" xml:space="preserve">
+    <value>Відкрито</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusVerified" xml:space="preserve">
+    <value>Код підтверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusSigned" xml:space="preserve">
+    <value>Підписано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusDeclined" xml:space="preserve">
+    <value>Відхилено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningBeingConfirmed" xml:space="preserve">
+    <value>Ваш підпис підтверджується. Це може тривати хвилину; можете закрити сторінку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningLinkLabel" xml:space="preserve">
+    <value>Посилання для підпису</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningPageTitle" xml:space="preserve">
+    <value>Підписати документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementTimeReport" xml:space="preserve">
+    <value>Я підтверджую, що час, зазначений у {0}, правильний (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementBid" xml:space="preserve">
+    <value>Я приймаю {0} (код вмісту {1}) від імені клієнта.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementServiceContract" xml:space="preserve">
+    <value>Я погоджуюся з {0} (код вмісту {1}) від імені своєї організації.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementRecordsInspection" xml:space="preserve">
+    <value>Я підтверджую, що отримав результати {0} (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementCustodyTransfer" xml:space="preserve">
+    <value>Я підтверджую, що отримав речовий доказ за {0} (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Чернетка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Очікує підпису</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusPartiallySigned" xml:space="preserve">
+    <value>Частково підписано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>Завершено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusDeclined" xml:space="preserve">
+    <value>Відхилено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Строк минув</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusVoided" xml:space="preserve">
+    <value>Відкликано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Статус</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectUnavailable" xml:space="preserve">
+    <value>Цей елемент зараз не можна підписати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TooManyRequests" xml:space="preserve">
+    <value>Забагато запитів. Зачекайте хвилину й спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyButton" xml:space="preserve">
+    <value>Перевірити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>Підтвердити код</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyFileLabel" xml:space="preserve">
+    <value>PDF-документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyFileRequired" xml:space="preserve">
+    <value>Виберіть PDF-файл розміром до 25 МБ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyFormatColumn" xml:space="preserve">
+    <value>Формат</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIndicationColumn" xml:space="preserve">
+    <value>Результат</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIntro" xml:space="preserve">
+    <value>Завантажте PDF, щоб перевірити підписи й позначки часу та чи видав Resgrid саме цей файл.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIssuedElsewhere" xml:space="preserve">
+    <value>Resgrid видав саме цей файл для іншого підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIssuedHere" xml:space="preserve">
+    <value>Resgrid видав саме цей файл для цього підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIssuedLabel" xml:space="preserve">
+    <value>Видано Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyNoSignatures" xml:space="preserve">
+    <value>Документ не містить підписів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyNotIssued" xml:space="preserve">
+    <value>Resgrid не має запису про видачу саме цього файла. Змінений файл, навіть на один байт, не збігається.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyNotPdf" xml:space="preserve">
+    <value>Файл не є PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyResultHeading" xml:space="preserve">
+    <value>Результат</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifySidecarMissing" xml:space="preserve">
+    <value>Службу перевірки в цій інсталяції не налаштовано, тому перевіряються лише записи Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifySignaturesLabel" xml:space="preserve">
+    <value>Дійсні підписи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTab" xml:space="preserve">
+    <value>Перевірити документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTimestampColumn" xml:space="preserve">
+    <value>Позначка часу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTimestampedOn" xml:space="preserve">
+    <value>позначка часу {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTitle" xml:space="preserve">
+    <value>Перевірити документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyUploadHeading" xml:space="preserve">
+    <value>Документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyValidationUnavailable" xml:space="preserve">
+    <value>Служба перевірки не відповіла.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ViewRequestLink" xml:space="preserve">
+    <value>Деталі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Відкликати запит</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessNameLabel" xml:space="preserve">
+    <value>Свідок (необов'язково)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Так</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Дії</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllMySignaturesLink" xml:space="preserve">
+    <value>Усі мої підписи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyEligibleMember" xml:space="preserve">
+    <value>будь-який учасник із відповідними правами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Відхилити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineConfirmButton" xml:space="preserve">
+    <value>Відмовитися підписувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineHelp" xml:space="preserve">
+    <value>Відмова завершує запит для всіх; ініціатор запиту дізнається вашу причину.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineReasonLabel" xml:space="preserve">
+    <value>Чому ви відмовляєтеся?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentColumn" xml:space="preserve">
+    <value>Документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>до {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueReceiptButton" xml:space="preserve">
+    <value>Розписка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueReceiptTitle" xml:space="preserve">
+    <value>Розписка про видачу спорядження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberFallbackName" xml:space="preserve">
+    <value>учасник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberRequestButton" xml:space="preserve">
+    <value>Запросити підпис: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberRequestHelp" xml:space="preserve">
+    <value>Учасник підписує в Resgrid після нової перевірки особи (рівень 2); запит з'являється в розділі «Мої підписи» та на його головній сторінці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberRequestSentMessage" xml:space="preserve">
+    <value>Запит на підпис надіслано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySignaturesIntro" xml:space="preserve">
+    <value>Документи, що очікують на ваш підпис, із кроком, який належить вам.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySignaturesTab" xml:space="preserve">
+    <value>Мої підписи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySignaturesTitle" xml:space="preserve">
+    <value>Мої підписи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingToSign" xml:space="preserve">
+    <value>Ніщо не очікує на ваш підпис.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenDocumentLink" xml:space="preserve">
+    <value>Відкрити документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenSigningPageLink" xml:space="preserve">
+    <value>Сторінка підписання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenStepButton" xml:space="preserve">
+    <value>Переглянути й підписати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OrderedHelp" xml:space="preserve">
+    <value>Підписанти підписують у порядку номерів кроків; кроки з однаковим номером можна підписувати одночасно.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutsideSignerFallbackName" xml:space="preserve">
+    <value>зовнішній підписант</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingSignaturesHeader" xml:space="preserve">
+    <value>Очікують на ваш підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadinessProRequiredMessage" xml:space="preserve">
+    <value>Прийняття нарядів на роботи постачальником і розписки про видачу спорядження входять до Readiness Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedCountLabel" xml:space="preserve">
+    <value>Підписано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignStepButton" xml:space="preserve">
+    <value>Підписати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepDeclinedMessage" xml:space="preserve">
+    <value>Ви відмовилися підписувати. Запит закрито.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>Крок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepPageIntro" xml:space="preserve">
+    <value>Прочитайте заяву, перевірте код вмісту й підпишіть свій крок.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepPanelTitle" xml:space="preserve">
+    <value>Ваш підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Підписанти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepSignedMessage" xml:space="preserve">
+    <value>Ваш підпис записано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnorderedHelp" xml:space="preserve">
+    <value>Кожен підписант може підписати будь-коли.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VendorAcceptanceHeading" xml:space="preserve">
+    <value>Прийняття постачальником</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessNotYouNote" xml:space="preserve">
+    <value>Особа, яка заповнила контрольний список, не може бути його свідком.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessPanelTitle" xml:space="preserve">
+    <value>Підпис свідка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignatureHelp" xml:space="preserve">
+    <value>Опишіть у полі, що ви засвідчуєте. Ваш підпис прив'язується до показаних результатів (не до приміток чи довільного тексту), а контрольний список завершується, щойно ви підпишете.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignButton" xml:space="preserve">
+    <value>Підписати як свідок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignedMessage" xml:space="preserve">
+    <value>Ваш підпис свідка записано, контрольний список завершено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignFailedMessage" xml:space="preserve">
+    <value>Не вдалося записати підпис свідка.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourStepColumn" xml:space="preserve">
+    <value>Ваш крок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourStepNote" xml:space="preserve">
+    <value>Ваш крок: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Ваша черга ще не настала: не всі попередні підписанти підписали.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotEligible" xml:space="preserve">
+    <value>У вас немає сертифікації або ролі, яких вимагає цей крок.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Цей крок потребує рівня 2: підтвердьте особу другим фактором або ключем доступу, а потім підпишіть.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Цей крок потрібно підписати ключем доступу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotASigner" xml:space="preserve">
+    <value>Ви не є підписантом цього кроку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalArtifactMismatch" xml:space="preserve">
+    <value>Підтвердження ключем доступу стосувалося іншого вмісту. Перезавантажте сторінку й підпишіть знову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleMember" xml:space="preserve">
+    <value>Учасник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCertifyingOfficial" xml:space="preserve">
+    <value>Відповідальний за сертифікацію</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleEvaluator" xml:space="preserve">
+    <value>Оцінювач</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleVendor" xml:space="preserve">
+    <value>Постачальник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleRecipient" xml:space="preserve">
+    <value>Отримувач</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentEvaluate" xml:space="preserve">
+    <value>Оцінювання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentCertify" xml:space="preserve">
+    <value>Сертифікація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentAccept" xml:space="preserve">
+    <value>Прийняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeStepUpRequired" xml:space="preserve">
+    <value>Підтвердьте особу другим фактором, а потім підпишіть знову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomePasskeyRequired" xml:space="preserve">
+    <value>Для підпису потрібен ключ доступу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeArtifactMismatch" xml:space="preserve">
+    <value>Підтвердження ключем доступу стосувалося іншого вмісту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeInvalidRequest" xml:space="preserve">
+    <value>Не вдалося записати підпис.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementWorkOrderVendorAcceptance" xml:space="preserve">
+    <value>Я приймаю роботи, виконані за {0} (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementInventoryIssueReceipt" xml:space="preserve">
+    <value>Я підтверджую отримання {0} (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementSkillEvaluation" xml:space="preserve">
+    <value>Я підтверджую оцінювання, записане для {0} (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementChecklistWitness" xml:space="preserve">
+    <value>Як свідок я підтверджую виконання контрольного списку {0} для {1} і те, що показані результати відповідають записаним (код вмісту {2}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Я затверджую заявку на закупівлю {0} (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementIncidentPlanApproval" xml:space="preserve">
+    <value>Я затверджую план дій щодо інциденту {0} (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementInvoiceApproval" xml:space="preserve">
+    <value>Я затверджую надсилання {0} (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementPayrollRunApproval" xml:space="preserve">
+    <value>Я затверджую нарахування зарплати {0} (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Я затверджую пакет Cal OES MARS {0} до подання (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementMutualAidAgreementApproval" xml:space="preserve">
+    <value>Я затверджую угоду про взаємодопомогу {0} від імені підрозділу (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsTab" xml:space="preserve">
+    <value>Затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementMutualAidAgreementCountersignature" xml:space="preserve">
+    <value>Я ставлю зустрічний підпис на угоді про взаємодопомогу {0} від імені нашого підрозділу як партнера (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementRecordDeploymentPartnerAcceptance" xml:space="preserve">
+    <value>Я приймаю призначення {0} від імені нашої організації як пов'язаний партнер, для якого воно виконується (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementDepartmentLinkAcceptance" xml:space="preserve">
+    <value>Я приймаю зв'язок із {0} від імені нашої організації з наведеним обсягом спільного доступу (код вмісту {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentFrom" xml:space="preserve">
+    <value>Організація-відправник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentOrder" xml:space="preserve">
+    <value>Замовлення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentRequest" xml:space="preserve">
+    <value>Запит / заповнення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentResource" xml:space="preserve">
+    <value>Ресурс</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentPosition" xml:space="preserve">
+    <value>Посада</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentFilledOn" xml:space="preserve">
+    <value>Прийнято відправником</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

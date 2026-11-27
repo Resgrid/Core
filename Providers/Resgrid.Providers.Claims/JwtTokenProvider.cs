@@ -118,7 +118,7 @@ namespace Resgrid.Providers.Claims
 			ClaimsLogic.AddInventoryClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 			ClaimsLogic.AddConnectClaims(id, departmentAdmin);
 			ClaimsLogic.AddCommandClaims(id, departmentAdmin);
-			ClaimsLogic.AddProtocolClaims(id, departmentAdmin);
+			ClaimsLogic.AddProtocolClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 			ClaimsLogic.AddFormsClaims(id, departmentAdmin);
 			ClaimsLogic.AddVoiceClaims(id, departmentAdmin);
 			ClaimsLogic.AddCustomStateClaims(id, departmentAdmin);

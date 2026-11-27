@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account.Greeting" xml:space="preserve">
+    <value>Вітаємо, {0}!</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Subject" xml:space="preserve">
+    <value>{0} запрошує вас на навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Body" xml:space="preserve">
+    <value>{0} запрошує вас пройти навчання на своєму навчальному порталі. Оберіть пароль тут:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Lifetime" xml:space="preserve">
+    <value>Посилання дійсне {0} дн.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Subject" xml:space="preserve">
+    <value>Підтвердьте адресу електронної пошти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Body" xml:space="preserve">
+    <value>Підтвердьте адресу електронної пошти, щоб завершити створення навчального облікового запису:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Lifetime" xml:space="preserve">
+    <value>Посилання дійсне {0} год. Якщо ви не створювали цей обліковий запис, проігноруйте цей лист.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Subject" xml:space="preserve">
+    <value>Скиньте пароль для навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Body" xml:space="preserve">
+    <value>Оберіть новий пароль тут:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Lifetime" xml:space="preserve">
+    <value>Посилання дійсне {0} год. Якщо ви цього не запитували, проігноруйте цей лист.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Subject" xml:space="preserve">
+    <value>Ваш навчальний обліковий запис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Body" xml:space="preserve">
+    <value>Хтось намагався створити навчальний обліковий запис із цією адресою, але він уже існує. Увійдіть або скиньте пароль тут:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Ignore" xml:space="preserve">
+    <value>Якщо це були не ви, просто проігноруйте цей лист.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.SignIn.Body" xml:space="preserve">
+    <value>У вас уже є навчальний обліковий запис із цією адресою. Увійдіть або скиньте пароль тут:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bulletin.Title" xml:space="preserve">
+    <value>Пріоритетний бюлетень</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bulletin.Message" xml:space="preserve">
+    <value>{0}: прочитайте цей бюлетень і підтвердьте ознайомлення. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.Title" xml:space="preserve">
+    <value>Протокол для підтвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.Message" xml:space="preserve">
+    <value>Прочитайте протокол {0} {1} і підтвердьте ознайомлення. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.MessageVersion" xml:space="preserve">
+    <value>Прочитайте протокол {0} {1}, версія {2}, і підтвердьте ознайомлення. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.Title" xml:space="preserve">
+    <value>Протоколи для підтвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.One" xml:space="preserve">
+    <value>У вас є протокол, який потрібно прочитати й підтвердити. {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.Many" xml:space="preserve">
+    <value>Протоколів, які потрібно прочитати й підтвердити: {0}. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.DueTitle" xml:space="preserve">
+    <value>Настає строк підтвердження протоколу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.OverdueTitle" xml:space="preserve">
+    <value>Підтвердження протоколу прострочено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.Due" xml:space="preserve">
+    <value>Потрібно підтвердити ознайомлення з протоколом {0} {1}. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.DueOn" xml:space="preserve">
+    <value>Потрібно підтвердити ознайомлення з протоколом {0} {1} до {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.Overdue" xml:space="preserve">
+    <value>Строк підтвердження протоколу {0} {1} минув. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.OverdueOn" xml:space="preserve">
+    <value>Строк підтвердження протоколу {0} {1} минув {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Escalation.Message" xml:space="preserve">
+    <value>{0} не підтвердив(-ла) протокол {1} {2}, і строк уже минув. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Review.Title" xml:space="preserve">
+    <value>Протокол для розгляду</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Review.Message" xml:space="preserve">
+    <value>Протокол {0} {1} очікує на ваш розгляд (крок {2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewDue.Title" xml:space="preserve">
+    <value>Настає строк перегляду протоколу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewDue.Message" xml:space="preserve">
+    <value>Протокол {0} {1} потрібно переглянути {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewOverdue.Title" xml:space="preserve">
+    <value>Перегляд протоколу прострочено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewOverdue.Message" xml:space="preserve">
+    <value>Перегляд протоколу {0} {1} мав відбутися {2}. Зафіксуйте його в бібліотеці протоколів, із новою версією або без неї.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.Title" xml:space="preserve">
+    <value>Вимога щодо навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.Message" xml:space="preserve">
+    <value>Нова вимога щодо навчання: {0} ({1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.MessageDue" xml:space="preserve">
+    <value>Нова вимога щодо навчання: {0} ({1}), строк {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.Title" xml:space="preserve">
+    <value>Вимогу щодо навчання прострочено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.Message" xml:space="preserve">
+    <value>Строк виконання {0} ({1}) минув. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.MessageOn" xml:space="preserve">
+    <value>Строк виконання {0} ({1}) минув {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.Title" xml:space="preserve">
+    <value>Наближається строк вимоги щодо навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.Message" xml:space="preserve">
+    <value>Строк виконання {0} ({1}) спливає незабаром. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.MessageOn" xml:space="preserve">
+    <value>Строк виконання {0} ({1}) спливає {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.CompletedTitle" xml:space="preserve">
+    <value>Вимогу щодо навчання виконано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.Completed" xml:space="preserve">
+    <value>{0} виконав(-ла) {1} ({2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.Overdue" xml:space="preserve">
+    <value>{0} прострочив(-ла) {1} ({2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.AMember" xml:space="preserve">
+    <value>Учасник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Met.Title" xml:space="preserve">
+    <value>Вимогу щодо навчання виконано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Met.Message" xml:space="preserve">
+    <value>Завдяки виконанню {0} відновлено сертифікацію та ролі, яких це стосувалося. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Title" xml:space="preserve">
+    <value>Сертифікація скасована через вимогу щодо навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Message" xml:space="preserve">
+    <value>{0} прострочено, тому ваша {1} втратила чинність. Пройдіть навчання, щоб відновити сертифікацію. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Certification" xml:space="preserve">
+    <value>сертифікація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Title" xml:space="preserve">
+    <value>Застосування на основі навчання відхилено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Message" xml:space="preserve">
+    <value>Застосування на основі навчання сьогодні не виконано: воно вилучило б понад {0}% учасників однієї ролі ({1}). Перевірте вимоги та попередній перегляд застосування. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Role" xml:space="preserve">
+    <value>роль {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Breach" xml:space="preserve">
+    <value>{0}: {1} з {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.Title" xml:space="preserve">
+    <value>Навчальні навички</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.DigestTitle" xml:space="preserve">
+    <value>Зведення навчальних навичок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.Digest" xml:space="preserve">
+    <value>Зведення навчальних навичок: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.DigestMore" xml:space="preserve">
+    <value>ще {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationPassed" xml:space="preserve">
+    <value>Оцінювання навички {0}: зараховано. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationPassedScore" xml:space="preserve">
+    <value>Оцінювання навички {0}: зараховано (результат {1:0.#}%). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationNotPassed" xml:space="preserve">
+    <value>Оцінювання навички {0}: не зараховано. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationNotPassedScore" xml:space="preserve">
+    <value>Оцінювання навички {0}: не зараховано (результат {1:0.#}%). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookInitiated" xml:space="preserve">
+    <value>Книжку завдань {0} ({1}) відкрито, дійсна до {2:d}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookCertificationRequested" xml:space="preserve">
+    <value>Книжка завдань {0} заповнена й очікує на остаточного оцінювача та посадову особу, що засвідчує. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookCertified" xml:space="preserve">
+    <value>Книжку завдань {0} ({1}) засвідчено. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookExpired" xml:space="preserve">
+    <value>Книжка завдань {0} ({1}) втратила чинність до засвідчення. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskSigned" xml:space="preserve">
+    <value>Книжка завдань {0}: завдання {1} підписано ({2} з {3}); виконано завдань: {4} з {5}. {6}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskSignedReady" xml:space="preserve">
+    <value>Книжка завдань {0}: завдання {1} підписано ({2} з {3}); виконано завдань: {4} з {5}, готова до засвідчення. {6}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Needed.Title" xml:space="preserve">
+    <value>Потрібен підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Reminder.Title" xml:space="preserve">
+    <value>Нагадування про підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Needed.Message" xml:space="preserve">
+    <value>Потрібен ваш підпис на документі {0} (код вмісту {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Reminder.Message" xml:space="preserve">
+    <value>Нагадування: ваш підпис на документі {0} досі потрібен (код вмісту {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Title" xml:space="preserve">
+    <value>Запит на підпис закрито</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Completed" xml:space="preserve">
+    <value>Запит на підпис документа {0} підписали всі. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Declined" xml:space="preserve">
+    <value>Запит на підпис документа {0} відхилено. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Expired" xml:space="preserve">
+    <value>Запит на підпис документа {0} втратив чинність до того, як усі підписали. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Voided" xml:space="preserve">
+    <value>Запит на підпис документа {0} відкликано. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Other" xml:space="preserve">
+    <value>Запит на підпис документа {0} закрито. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Needed.Title" xml:space="preserve">
+    <value>Потрібне погодження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Escalated.Title" xml:space="preserve">
+    <value>Погодження передано вище</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Needed.Message" xml:space="preserve">
+    <value>Потрібне ваше погодження: {0} (код вмісту {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Escalated.Message" xml:space="preserve">
+    <value>Передано вище: потрібне ваше погодження: {0} (код вмісту {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Title" xml:space="preserve">
+    <value>Рішення щодо погодження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Approved" xml:space="preserve">
+    <value>Ваш запит на погодження ({0}) погоджено. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Rejected" xml:space="preserve">
+    <value>Ваш запит на погодження ({0}) відхилено: {1} {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Expired" xml:space="preserve">
+    <value>Ваш запит на погодження ({0}) втратив чинність до погодження. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Other" xml:space="preserve">
+    <value>Ваш запит на погодження ({0}) закрито. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Subject" xml:space="preserve">
+    <value>виклик {0}, протокол {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Sent.Title" xml:space="preserve">
+    <value>Диспетчерську справу розглянуто</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Sent.Message" xml:space="preserve">
+    <value>Вашу диспетчерську справу розглянуто ({0}). Прочитайте відгук і підтвердьте його: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Reply.Title" xml:space="preserve">
+    <value>Диспетчер відповів на розгляд справи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Reply.Message" xml:space="preserve">
+    <value>Диспетчер відповів на ваш розгляд справи ({0}): {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Suggestion.Title" xml:space="preserve">
+    <value>Перегляньте свій журнал впливів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Suggestion.Message" xml:space="preserve">
+    <value>На основі диспетчерських даних запропоновано запис для виклику {0} від {1}. Нічого не буде збережено, доки ви не переглянете його в розділі «Мої впливи».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.Title" xml:space="preserve">
+    <value>Думаємо про вас</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.OneYear" xml:space="preserve">
+    <value>{0:D} минає рік від складного виклику, на якому ви були. Ваша команда взаємопідтримки та ресурси з благополуччя поруч, щойно вони вам знадобляться.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.Years" xml:space="preserve">
+    <value>{0:D} — {1}-та річниця складного виклику, на якому ви були. Ваша команда взаємопідтримки та ресурси з благополуччя поруч, щойно вони вам знадобляться.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.Title" xml:space="preserve">
+    <value>Нагадування для команди взаємопідтримки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.OneYear" xml:space="preserve">
+    <value>{0} попросив(-ла), щоб команда взаємопідтримки знала: {1:D} минає рік від критичної події, у якій ця людина брала участь. Можливо, варто поцікавитися, як справи.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.Years" xml:space="preserve">
+    <value>{0} попросив(-ла), щоб команда взаємопідтримки знала: {1:D} — {2}-та річниця критичної події, у якій ця людина брала участь. Можливо, варто поцікавитися, як справи.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.AMember" xml:space="preserve">
+    <value>Учасник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.AMember" xml:space="preserve">
+    <value>Учасник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ExposureReported.Title" xml:space="preserve">
+    <value>Повідомлено про вплив</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ExposureReported.Message" xml:space="preserve">
+    <value>{0} повідомив(-ла) про можливий вплив збудників, що передаються через кров, або інфекційної хвороби {1:d}. Відкрийте справу про вплив: {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.InjuryReported.Title" xml:space="preserve">
+    <value>Повідомлено про травму</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.InjuryReported.Message" xml:space="preserve">
+    <value>Потрібно розглянути повідомлення про травму {0} від {1:d}. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.Title" xml:space="preserve">
+    <value>Повідомлення про вплив прострочено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.Message" xml:space="preserve">
+    <value>Медичний заклад не відповів на запит про повідомлення щодо впливу для {0}. Ryan White вимагає відповіді протягом 48 годин. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.MessageSent" xml:space="preserve">
+    <value>Медичний заклад не відповів на запит про повідомлення щодо впливу для {0}, надісланий {1:d}. Ryan White вимагає відповіді протягом 48 годин. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ReturnReview.Title" xml:space="preserve">
+    <value>Розгляд повернення до служби</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ReturnReview.Message" xml:space="preserve">
+    <value>Повернення {0} очікувалося {1:d}. Перегляньте службовий статус. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.Title" xml:space="preserve">
+    <value>Сповіщення про нове навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.Message" xml:space="preserve">
+    <value>Вам призначено нове навчання ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.MessageDue" xml:space="preserve">
+    <value>Нове навчання ({0}) зі строком {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.Title" xml:space="preserve">
+    <value>Сповіщення про строк навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.OneDay" xml:space="preserve">
+    <value>Строк навчання ({0}) спливає протягом доби</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.OneDayOn" xml:space="preserve">
+    <value>Строк навчання ({0}) спливає протягом доби ({1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.Days" xml:space="preserve">
+    <value>Строк навчання ({0}) спливає протягом {1} дн.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.DaysOn" xml:space="preserve">
+    <value>Строк навчання ({0}) спливає протягом {1} дн. ({2})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.Title" xml:space="preserve">
+    <value>Сповіщення про прострочене навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.Message" xml:space="preserve">
+    <value>Навчання ({0}) прострочено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.MessageDue" xml:space="preserve">
+    <value>Навчання ({0}) прострочено (строк {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.CreatorOverdue" xml:space="preserve">
+    <value>Учасників із простроченим навчанням ({1}): {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.QuestionFlagged.Title" xml:space="preserve">
+    <value>Позначено питання навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.QuestionFlagged.Message" xml:space="preserve">
+    <value>Питання в навчанні ({0}) позначено для перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Title" xml:space="preserve">
+    <value>Сертифікація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Expiring.Body" xml:space="preserve">
+    <value>Ваш сертифікат {0} спливає {2} (залишилося днів: {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Expiring.BodyOne" xml:space="preserve">
+    <value>Ваш сертифікат {0} спливає через 1 день ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.RoleRemoved.Body" xml:space="preserve">
+    <value>Вас вилучено з ролі {0}: обов'язковий сертифікат {1} більше не дійсний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.RemovalPending.Body" xml:space="preserve">
+    <value>Ваше членство в ролі {0} завершується {1}, якщо ваш сертифікат {2} не буде поновлено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Title" xml:space="preserve">
+    <value>Зведення сертифікатів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Summary" xml:space="preserve">
+    <value>Зведення сертифікатів на {0}: прострочено: {1}, спливають: {2}, у пільговому періоді: {3}, вилучено з ролей: {4}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Expired" xml:space="preserve">
+    <value>Прострочені: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Expiring" xml:space="preserve">
+    <value>Спливають: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.InGrace" xml:space="preserve">
+    <value>У пільговому періоді: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Removed" xml:space="preserve">
+    <value>Вилучені: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.ExpiringEntry" xml:space="preserve">
+    <value>{0} – {1} ({2} дн.)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.InGraceEntry" xml:space="preserve">
+    <value>{0} – {1} ({2}, до {3})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.UnknownUnit" xml:space="preserve">
+    <value>Підрозділ {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

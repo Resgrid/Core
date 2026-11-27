@@ -40,6 +40,8 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Sum of hours per certification id for the ids given.</summary>
 		Task<IReadOnlyDictionary<int, decimal>> GetHourTotalsAsync(IEnumerable<int> personnelCertificationIds);
 		Task<int> DeleteByCertificationIdAsync(int personnelCertificationId, CancellationToken cancellationToken = default);
+		/// <summary>Training T1: the credits derived from these learning records (no file bytes).</summary>
+		Task<IEnumerable<PersonnelCertificationCredit>> GetByLearningRecordIdsAsync(int departmentId, IEnumerable<int> learningRecordIds);
 	}
 
 	/// <summary>Unit-scoped certification records (plan D1.8; M0213). Reads exclude the file bytes unless asked.</summary>

@@ -20,7 +20,9 @@ namespace Resgrid.Model
 		Medical = 7,
 		Driver = 8,
 		Vehicle = 9,
-		Other = 10
+		Other = 10,
+		/// <summary>Police services and other law enforcement agencies (round 9C).</summary>
+		LawEnforcement = 11
 	}
 
 	/// <summary>Whether records of a type are held by a person or by a unit (plan D1.1: one catalog, two record scopes).</summary>
@@ -318,6 +320,16 @@ namespace Resgrid.Model
 
 		public int? ProtectedCatalogVersion { get; set; }
 
+		/// <summary>
+		/// Training T1: the learning record this credit was derived from through a category credit mapping (null for a credit
+		/// typed in by hand). Voiding the record removes the credit (R-T4).
+		/// </summary>
+		public int? LearningRecordId { get; set; }
+
+		[NotMapped]
+		[JsonIgnore]
+		public bool IsDerived => LearningRecordId.HasValue && LearningRecordId.Value > 0;
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -336,7 +348,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName" };
+		public IEnumerable<string> IgnoredProperties => new[] { "IdValue", "IdType", "TableName", "IdName", "IsDerived" };
 	}
 
 	// ---- Read models -----------------------------------------------------------------------------------

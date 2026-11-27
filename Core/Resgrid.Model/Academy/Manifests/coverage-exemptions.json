@@ -1,0 +1,49 @@
+{
+  "areas": [],
+  "capabilities": [
+    {
+      "id": "addon-adp",
+      "reason": "Add-on purchase entry; 19-adp teaches the module."
+    },
+    {
+      "id": "addon-ai",
+      "reason": "Add-on purchase entry; 21-ai teaches the module."
+    },
+    {
+      "id": "addon-business",
+      "reason": "Add-on purchase entry; 16-business teaches the module."
+    },
+    {
+      "id": "addon-incidents",
+      "reason": "Add-on purchase entry; 15-deployments covers Incident Back Office."
+    },
+    {
+      "id": "addon-dedicated-number",
+      "reason": "Add-on purchase entry; 05-calls covers intake numbers."
+    },
+    {
+      "id": "addon-readiness",
+      "reason": "Add-on purchase entry; 12-maintenance teaches the module."
+    },
+    {
+      "id": "addon-ptt",
+      "reason": "Add-on purchase entry; 18-ptt teaches the module."
+    },
+    {
+      "id": "addon-lms",
+      "reason": "Add-on purchase entry; 09-training covers courses."
+    },
+    {
+      "id": "lms-packs",
+      "reason": "Billing screen for LMS packs; no lesson by design."
+    },
+    {
+      "id": "lms-seats",
+      "reason": "Billing screen for LMS seats; no lesson by design."
+    },
+    {
+      "id": "my-demographics",
+      "reason": "Personal pay-data form; no lesson by design."
+    }
+  ]
+}

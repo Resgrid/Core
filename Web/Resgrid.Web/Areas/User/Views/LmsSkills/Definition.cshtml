@@ -1,0 +1,147 @@
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsTaskBookDefinitionView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    A task book definition: position code and name, the certification type a certification activates, validity and re-evaluation, who signs
+    tasks, who recommends and who certifies (certification types or roles), and the tasks (rows; a task may name a skill sheet).
+*@
+@{
+    var definition = Model.Definition;
+    var title = definition.LmsTaskBookDefinitionId > 0 ? definition.PositionCode + " - " + definition.Name : localizer["Skl.NewDefinition"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["Skl.DefinitionIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var editable = Model.CanAuthor;
+}
+
+@functions {
+    private static bool Has(SignerEligibility rule, bool certification, int id) =>
+        rule != null && (certification ? rule.CertificationTypeIds.Contains(id) : rule.PersonnelRoleIds.Contains(id));
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <form asp-controller="LmsSkills" asp-action="SaveDefinition" asp-route-area="User" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="id" value="@definition.LmsTaskBookDefinitionId" />
+        <div class="ibox">
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-sm-3 form-group"><label for="positionCode">@localizer["Skl.Position"]</label><input id="positionCode" name="positionCode" class="form-control" maxlength="40" required value="@definition.PositionCode" disabled="@(!editable)" /></div>
+                    <div class="col-sm-6 form-group"><label for="name">@localizer["Skl.Field.Title"]</label><input id="name" name="name" class="form-control" maxlength="250" required value="@definition.Name" disabled="@(!editable)" /></div>
+                    <div class="col-sm-3 form-group">
+                        <label for="family">@localizer["Skl.Family"]</label>
+                        <select id="family" name="family" class="form-control" disabled="@(!editable)">
+                            @foreach (LmsTaskBookFamilies family in Enum.GetValues(typeof(LmsTaskBookFamilies)))
+                            {
+                                <option value="@((int)family)" selected="@(definition.Family == (int)family)">@localizer["Skl.Family." + family]</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group"><label for="description">@localizer["Skl.Field.Description"]</label><textarea id="description" name="description" class="form-control" rows="2" maxlength="4000" disabled="@(!editable)">@definition.Description</textarea></div>
+                <div class="row">
+                    <div class="col-sm-4 form-group">
+                        <label for="certificationTypeId">@localizer["Skl.Field.CertificationType"]</label>
+                        <select id="certificationTypeId" name="certificationTypeId" class="form-control" disabled="@(!editable)">
+                            <option value="">@localizer["Skl.None"]</option>
+                            @foreach (var type in Model.CertificationTypes) { <option value="@type.Id" selected="@(definition.CertificationTypeId == type.Id)">@type.Name</option> }
+                        </select>
+                        <span class="help-block">@localizer["Skl.Field.CertificationTypeHelp"]</span>
+                    </div>
+                    <div class="col-sm-4 form-group"><label for="validityMonths">@localizer["Skl.Field.ValidityMonths"]</label><input id="validityMonths" name="validityMonths" type="number" min="1" max="120" class="form-control" value="@definition.ValidityMonths" disabled="@(!editable)" /></div>
+                    <div class="col-sm-4 form-group"><label for="recertifyMonths">@localizer["Skl.Field.RecertifyMonths"]</label><input id="recertifyMonths" name="recertifyMonths" type="number" min="0" max="120" class="form-control" value="@definition.RecertifyMonths" disabled="@(!editable)" /><span class="help-block">@localizer["Skl.Field.RecertifyMonthsHelp"]</span></div>
+                </div>
+                <div class="row">
+                    @foreach (var (prefix, labelKey, rule) in new[] { ("evaluator", "Skl.TaskEvaluators", Model.EvaluatorRule), ("final", "Skl.FinalEvaluator", Model.FinalEvaluatorRule), ("certifying", "Skl.CertifyingOfficial", Model.CertifyingRule) })
+                    {
+                        <fieldset class="col-md-4">
+                            <legend class="h5">@localizer[labelKey]</legend>
+                            <label for="@(prefix)Types">@localizer["Skl.Field.CertificationTypes"]</label>
+                            <select id="@(prefix)Types" name="@(prefix)Types" class="form-control" multiple size="4" disabled="@(!editable)">
+                                @foreach (var type in Model.CertificationTypes) { <option value="@type.Id" selected="@Has(rule, true, type.Id)">@type.Name</option> }
+                            </select>
+                            <label for="@(prefix)Roles">@localizer["Skl.Field.Roles"]</label>
+                            <select id="@(prefix)Roles" name="@(prefix)Roles" class="form-control" multiple size="4" disabled="@(!editable)">
+                                @foreach (var role in Model.Roles) { <option value="@role.Id" selected="@Has(rule, false, role.Id)">@role.Name</option> }
+                            </select>
+                        </fieldset>
+                    }
+                </div>
+                <p class="help-block">@localizer["Skl.SignerRulesHelp"]</p>
+            </div>
+        </div>
+
+        <h3>@localizer["Skl.Tasks"]</h3>
+        <div class="table-responsive">
+            <table class="table rgw-table" id="task-rows">
+                <thead><tr><th>@localizer["Skl.TaskNumber"]</th><th>@localizer["Skl.Task"]</th><th>@localizer["Skl.Required"]</th><th>@localizer["Skl.IncidentTask"]</th><th>@localizer["Skl.Sheet"]</th><th class="rgw-row-actions"></th></tr></thead>
+                <tbody>
+                    @foreach (var task in Model.Tasks)
+                    {
+                        <tr>
+                            <td><input type="hidden" name="taskKey" value="@task.Key" /><input name="taskNumber" class="form-control input-sm" maxlength="40" value="@task.Number" aria-label="@localizer["Skl.TaskNumber"]" disabled="@(!editable)" /></td>
+                            <td><input name="taskTitle" class="form-control input-sm" maxlength="300" value="@task.Title" aria-label="@localizer["Skl.Task"]" disabled="@(!editable)" /></td>
+                            <td><input name="taskRequired" type="number" min="1" max="50" class="form-control input-sm" value="@task.RequiredEvaluations" aria-label="@localizer["Skl.Required"]" disabled="@(!editable)" /></td>
+                            <td><input type="checkbox" name="taskIncident" value="@task.Key" checked="@task.RequiresIncident" aria-label="@localizer["Skl.IncidentTask"]" disabled="@(!editable)" /></td>
+                            <td>
+                                <select name="taskSheet" class="form-control input-sm" aria-label="@localizer["Skl.Sheet"]" disabled="@(!editable)">
+                                    <option value="0">@localizer["Skl.NoSheet"]</option>
+                                    @foreach (var sheet in Model.Sheets) { <option value="@sheet.LmsSkillSheetId" selected="@(task.LmsSkillSheetId == sheet.LmsSkillSheetId)">@sheet.Title</option> }
+                                </select>
+                            </td>
+                            <td class="rgw-row-actions">@if (editable) { <button type="button" class="btn btn-white btn-xs" data-remove-row="true"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Skl.Remove"]</button> }</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (editable)
+        {
+            <template id="task-row-template">
+                <tr>
+                    <td><input type="hidden" name="taskKey" value="__KEY__" /><input name="taskNumber" class="form-control input-sm" maxlength="40" aria-label="@localizer["Skl.TaskNumber"]" /></td>
+                    <td><input name="taskTitle" class="form-control input-sm" maxlength="300" aria-label="@localizer["Skl.Task"]" /></td>
+                    <td><input name="taskRequired" type="number" min="1" max="50" class="form-control input-sm" value="1" aria-label="@localizer["Skl.Required"]" /></td>
+                    <td><input type="checkbox" name="taskIncident" value="__KEY__" aria-label="@localizer["Skl.IncidentTask"]" /></td>
+                    <td>
+                        <select name="taskSheet" class="form-control input-sm" aria-label="@localizer["Skl.Sheet"]">
+                            <option value="0">@localizer["Skl.NoSheet"]</option>
+                            @foreach (var sheet in Model.Sheets) { <option value="@sheet.LmsSkillSheetId">@sheet.Title</option> }
+                        </select>
+                    </td>
+                    <td class="rgw-row-actions"><button type="button" class="btn btn-white btn-xs" data-remove-row="true"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Skl.Remove"]</button></td>
+                </tr>
+            </template>
+            <button type="button" class="btn btn-white" id="task-row-add"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Skl.AddTask"]</button>
+            <div class="m-t-md">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Skl.Save"]</button>
+            </div>
+        }
+    </form>
+
+    @if (editable && definition.LmsTaskBookDefinitionId > 0)
+    {
+        <form asp-controller="LmsSkills" asp-action="DeleteDefinition" asp-route-area="User" method="post" class="m-t-md">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@definition.LmsTaskBookDefinitionId" />
+            <button type="submit" class="btn btn-danger btn-sm" data-confirm="@localizer["Skl.DeleteDefinitionConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Skl.DeleteDefinition"]</button>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.skills.js" asp-append-version="true"></script>
+}

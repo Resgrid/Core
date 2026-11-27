@@ -1,0 +1,43 @@
+@model Resgrid.WebCore.Areas.User.Models.Links.LinkSharingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Links.Links> localizer
+@*
+    Round 10 A3: what this department shares with the other side of a link (each side sets only its own). Turning a kind off cuts the other
+    side's access at once: reads stop, realtime groups rotate, set subscriptions are suspended and sponsorships over the link end.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["EditSharing"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-8">
+    <h2>@localizer["EditSharing"]</h2>
+    <ol class="breadcrumb">
+      <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a></li>
+      <li><a asp-controller="Links" asp-action="Index" asp-route-area="User">@localizer["DepartmentLinks"]</a></li>
+      <li class="active"><strong>@localizer["EditSharing"]</strong></li>
+    </ol>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox">
+    <div class="ibox-content">
+      <p>@string.Format(localizer["SharingIntro"].Value, Model.OtherDepartmentName)</p>
+      <form method="post" asp-controller="Links" asp-action="Sharing" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="linkId" value="@Model.Link.DepartmentLinkId" />
+        <div class="checkbox"><label><input type="checkbox" name="calls" value="true" checked="@Model.Calls" /> @localizer["ShareCalls"]</label><input type="hidden" name="calls" value="false" /></div>
+        <div class="checkbox"><label><input type="checkbox" name="units" value="true" checked="@Model.Units" /> @localizer["ShareUnits"]</label><input type="hidden" name="units" value="false" /></div>
+        <div class="checkbox"><label><input type="checkbox" name="personnel" value="true" checked="@Model.Personnel" /> @localizer["SharePersonnel"]</label><input type="hidden" name="personnel" value="false" /></div>
+        <div class="checkbox"><label><input type="checkbox" name="orders" value="true" checked="@Model.Orders" /> @localizer["ShareOrders"]</label><input type="hidden" name="orders" value="false" /></div>
+        <div class="checkbox"><label><input type="checkbox" name="protocols" value="true" checked="@Model.Protocols" /> @localizer["ShareProtocols"]</label><input type="hidden" name="protocols" value="false" />
+          <span class="help-block small">@localizer["ShareProtocolsHelp"]</span></div>
+        <div class="checkbox"><label><input type="checkbox" name="training" value="true" checked="@Model.Training" /> @localizer["ShareTraining"]</label><input type="hidden" name="training" value="false" />
+          <span class="help-block small">@localizer["ShareTrainingHelp"]</span></div>
+        <p class="small text-muted">@localizer["SharingRevokeHelp"]</p>
+        <a class="btn btn-white" asp-controller="Links" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+        <button type="submit" class="btn btn-primary">@localizer["SaveLink"]</button>
+      </form>
+    </div>
+  </div>
+</div>

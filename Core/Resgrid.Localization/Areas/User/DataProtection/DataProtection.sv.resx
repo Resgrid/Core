@@ -191,7 +191,8 @@
     <value>Sms-, e-post-, push- och röstnotiser skickar som standard generiskt innehåll (”Ett skyddat larm finns tillgängligt — logga in på Resgrid”).</value>
   </data>
   <data name="Step1NotCompliance" xml:space="preserve">
-    <value>Avancerat dataskydd innebär i sig inte HIPAA- eller ePCR-efterlevnad. Det är en kontroll inom ett efterlevnadsprogram som din organisation fortfarande ansvarar för.</value>
+    <value>Avancerat dataskydd innebär i sig inte efterlevnad av HIPAA eller andra regler för hälsodata. Det är en kontroll inom ett efterlevnadsprogram som din organisation fortfarande ansvarar för.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step2Header" xml:space="preserve">
     <value>Steg 2 av 6 — Bekräftelser</value>
@@ -230,7 +231,8 @@
     <value>Jag förstår att Resgrids support inte kan läsa skyddade värden utan ett uttryckligt, granskat och organisationsgodkänt supportmedgivande, och att nyckelförlust endast kan återställas via den dokumenterade återställningsprocessen.</value>
   </data>
   <data name="AckNotHipaaCompliance" xml:space="preserve">
-    <value>Jag förstår att avancerat dataskydd i sig inte innebär HIPAA/ePCR-efterlevnad.</value>
+    <value>Jag förstår att avancerat dataskydd i sig inte innebär efterlevnad av HIPAA eller andra regler för hälsodata.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step3Header" xml:space="preserve">
     <value>Steg 3 av 6 — Förkontroller</value>

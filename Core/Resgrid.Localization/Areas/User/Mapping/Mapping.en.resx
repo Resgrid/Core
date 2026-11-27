@@ -240,17 +240,29 @@
   <data name="PoiImportPending" xml:space="preserve">
     <value>{0} entries to import.</value>
   </data>
+  <data name="PoiImportPendingOne" xml:space="preserve">
+    <value>{0} entry to import.</value>
+  </data>
   <data name="PoiImportSummary" xml:space="preserve">
     <value>{0} of {1} entries imported.</value>
   </data>
   <data name="PoiImportGeocoded" xml:space="preserve">
     <value>{0} were located from their address; check their positions on the map.</value>
   </data>
+  <data name="PoiImportGeocodedOne" xml:space="preserve">
+    <value>{0} was located from its address; check its position on the map.</value>
+  </data>
   <data name="PoiImportSkipped" xml:space="preserve">
     <value>{0} were skipped because they have neither coordinates nor an address.</value>
   </data>
+  <data name="PoiImportSkippedOne" xml:space="preserve">
+    <value>{0} was skipped because it has neither coordinates nor an address.</value>
+  </data>
   <data name="PoiImportUnlocated" xml:space="preserve">
     <value>{0} were not imported because their address could not be located:</value>
+  </data>
+  <data name="PoiImportUnlocatedOne" xml:space="preserve">
+    <value>{0} was not imported because its address could not be located:</value>
   </data>
   <data name="PoiImportUnlocatedMore" xml:space="preserve">
     <value>and {0} more.</value>
@@ -264,8 +276,14 @@
   <data name="PoiImportRetrying" xml:space="preserve">
     <value>The address lookup service did not answer for {0} entries; they will be tried again after {1}.</value>
   </data>
+  <data name="PoiImportRetryingOne" xml:space="preserve">
+    <value>The address lookup service did not answer for {0} entry; it will be tried again after {1}.</value>
+  </data>
   <data name="PoiImportLookupFailed" xml:space="preserve">
     <value>{0} were not imported because the address lookup service did not answer, even after retrying:</value>
+  </data>
+  <data name="PoiImportLookupFailedOne" xml:space="preserve">
+    <value>{0} was not imported because the address lookup service did not answer, even after retrying:</value>
   </data>
   <data name="PoiImportLookupFailedHint" xml:space="preserve">
     <value>This is usually temporary: import just those entries again later.</value>
@@ -273,11 +291,17 @@
   <data name="PoiImportLookupNotConfigured" xml:space="preserve">
     <value>{0} were not imported because address lookup is not set up on this server:</value>
   </data>
+  <data name="PoiImportLookupNotConfiguredOne" xml:space="preserve">
+    <value>{0} was not imported because address lookup is not set up on this server:</value>
+  </data>
   <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
     <value>Add latitude and longitude columns to those entries and import them again.</value>
   </data>
   <data name="PoiImportNotTried" xml:space="preserve">
     <value>{0} were not imported because the file has more addresses than one import looks up:</value>
+  </data>
+  <data name="PoiImportNotTriedOne" xml:space="preserve">
+    <value>{0} was not imported because the file has more addresses than one import looks up:</value>
   </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">

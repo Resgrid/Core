@@ -1,0 +1,54 @@
+@using System.Globalization
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsClassSignInView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@*
+    What a member's phone opens from the class QR: one button signs them in (the GET itself changes nothing). When the session asks for
+    GPS the browser's position is sent with the sign-in; otherwise nothing about the location leaves the phone.
+*@
+@{
+    var culture = CultureInfo.CurrentCulture;
+    ViewBag.Title = "Resgrid | " + localizer["SignInTitle"];
+    ViewData["Title"] = localizer["SignInTitle"].Value;
+    ViewData["Subtitle"] = Model.Session.Title + " — " + Model.Local(Model.Session.StartsOn).ToString("g", culture);
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Mine?.CheckInOn != null)
+    {
+        <p class="lead"><i class="fa fa-check" aria-hidden="true"></i> @localizer["AlreadySignedIn"] @Model.Local(Model.Mine.CheckInOn.Value).ToString("t", culture)</p>
+    }
+    else if (Model.Open)
+    {
+        <form method="post" asp-controller="LmsClasses" asp-action="SignIn" asp-route-area="User" id="lms-class-signin" data-gps="@(Model.Session.GpsRequired ? "true" : "false")">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="s" value="@Model.Session.LmsClassSessionId" />
+            <input type="hidden" name="c" value="@Model.Code" />
+            <input type="hidden" name="latitude" id="lms-class-lat" />
+            <input type="hidden" name="longitude" id="lms-class-lon" />
+            <p class="lead">@localizer["SignInConfirm"]</p>
+            @if (Model.Session.GpsRequired)
+            {
+                <p class="text-muted" id="lms-class-gps-status">@localizer["GpsRequiredNotice"]</p>
+            }
+            <button type="submit" class="btn btn-primary btn-lg"><i class="fa fa-sign-in" aria-hidden="true"></i> @localizer["SignInButton"]</button>
+        </form>
+    }
+    else
+    {
+        <p class="lead text-muted">@localizer["SignInClosed"]</p>
+    }
+    <p class="m-t-md"><a asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@Model.Session.LmsClassSessionId">@localizer["OpenClass"]</a></p>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/lmsclasses/resgrid.lmsclasses.js" asp-append-version="true"></script>
+}

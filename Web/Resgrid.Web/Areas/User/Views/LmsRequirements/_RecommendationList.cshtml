@@ -1,0 +1,100 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsRecommendationListModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@*
+    K3 learning recommendations: the deterministic ranking (requirements, paths in progress, competency gaps, courses offered to the member's
+    roles), each with the reasons it rests on, and an optional "Explain with AI" (Enhanced AI) that adds one sentence per item written only from
+    those reasons. Explanations are written into the page with text nodes by resgrid.lms.recommendations.js.
+*@
+@{
+    var items = Model.Set?.Items ?? new List<LmsRecommendation>();
+    var text = new
+    {
+        explaining = localizer["Explaining"].Value,
+        failed = localizer["ExplainFailed"].Value,
+        notice = localizer["AiExplanationNotice"].Value
+    };
+}
+@if (items.Count == 0)
+{
+    <p class="text-muted">@localizer["NoRecommendations"]</p>
+}
+else
+{
+    <div class="rgw-lms-recommendations" id="@Model.PanelId"
+         data-explain-url="@Url.Action("ExplainRecommendations", "LmsRequirements", new { area = "User" })" data-user="@Model.Set.UserId"
+         data-text='@Html.ScriptJson(text)'>
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th scope="col">@localizer["RecommendationColumn"]</th>
+                        <th scope="col">@localizer["ReasonsColumn"]</th>
+                        <th scope="col"><span class="sr-only">@localizer["ActionsColumn"]</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in items)
+                    {
+                        var key = LmsRecommendationExplanation.Key(item.TargetKind, item.TargetId);
+                        <tr>
+                            <td>
+                                <i class="fa @(item.TargetKind == LmsRecommendationTargetKinds.Path ? "fa-road" : item.IsSystem ? "fa-graduation-cap" : "fa-book")" aria-hidden="true"></i>
+                                @item.Title
+                                <div class="rgw-sub">@localizer[item.TargetKind == LmsRecommendationTargetKinds.Path ? "KindPath" : item.IsSystem ? "KindAcademy" : "KindCourse"]</div>
+                                <div class="rgw-sub text-info" data-explanation="@key" hidden></div>
+                            </td>
+                            <td>
+                                <ul class="list-unstyled m-b-none">
+                                    @foreach (var reason in item.Reasons)
+                                    {
+                                        <li class="small">
+                                            @string.Format(localizer["Reason." + reason.Reason].Value, reason.Detail ?? string.Empty)
+                                            @if (reason.DueUtc.HasValue)
+                                            {
+                                                <span class="rgw-progress-honest">@string.Format(localizer["DueFormat"].Value, Model.Date(reason.DueUtc))</span>
+                                            }
+                                        </li>
+                                    }
+                                </ul>
+                            </td>
+                            <td class="rgw-row-actions">
+                                @if (item.TargetKind == LmsRecommendationTargetKinds.Course && Model.IsSelf)
+                                {
+                                    if (item.EnrollmentId.HasValue)
+                                    {
+                                        <a class="btn btn-primary btn-xs" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@item.EnrollmentId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["RecommendationContinue"]</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="My" asp-route-area="User"><i class="fa fa-folder-open-o" aria-hidden="true"></i> @localizer["OpenCourses"]</a>
+                                    }
+                                }
+                                else if (item.TargetKind == LmsRecommendationTargetKinds.Path && Model.IsSelf)
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="Trainings" asp-action="Index" asp-route-area="User"><i class="fa fa-road" aria-hidden="true"></i> @localizer["OpenTraining"]</a>
+                                }
+                                else if (item.TargetKind == LmsRecommendationTargetKinds.Path && Model.CanOpenPaths)
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="LmsRequirements" asp-action="Path" asp-route-area="User" asp-route-id="@item.TargetId"><i class="fa fa-road" aria-hidden="true"></i> @localizer["OpenTraining"]</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        @if (Model.Set.CanExplain)
+        {
+            <form data-role="explain-form" class="hidden-print" novalidate>
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="userId" value="@Model.Set.UserId" />
+                <p class="text-warning small"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["ExplainPrivacyNote"]</p>
+                <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-magic" aria-hidden="true"></i> @localizer["ExplainButton"]</button>
+                <span class="small text-muted m-l-sm" data-role="explain-status" role="status"></span>
+            </form>
+        }
+    </div>
+    <script src="~/js/app/internal/lms/resgrid.lms.recommendations.js" asp-append-version="true" defer></script>
+}

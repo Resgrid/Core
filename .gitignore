@@ -286,6 +286,8 @@ opencode.json
 # articles (CatalogTests checks their anchors), so it must be committed.
 /docs/*
 !/docs/admin-assist/
+# The protocols open format (Protocols P5): its documentation and JSON schema are published with the code.
+!/docs/protocols/
 .claude/settings.local.json
 *.stackdump
 /MEMORY.md

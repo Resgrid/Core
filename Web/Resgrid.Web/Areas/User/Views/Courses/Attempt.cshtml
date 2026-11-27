@@ -1,0 +1,92 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model AttemptModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* An attempt as the learner takes it: questions and options only, drawn and scored on the server (R-T11). *@
+@{
+    var view = Model.View;
+    ViewBag.Title = "Resgrid | " + (view.Lesson?.Title ?? localizer["AssessmentTitle"].Value);
+    ViewData["Section"] = "Courses";
+    ViewData["Title"] = view.Lesson?.Title ?? localizer["AssessmentTitle"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error ?? (view.Error == LmsErrors.TimeExpired ? localizer["Error.TimeExpired"].Value : null);
+    var number = 0;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-content">
+            @if (view.SecondsRemaining.HasValue)
+            {
+                <p class="text-warning" id="lms-timer" data-seconds="@view.SecondsRemaining" role="timer" aria-live="off">
+                    <i class="fa fa-clock-o" aria-hidden="true"></i> @string.Format(localizer["TimeRemainingFormat"].Value, Math.Ceiling(view.SecondsRemaining.Value / 60.0))
+                </p>
+            }
+            <form method="post" asp-controller="Courses" asp-action="SubmitAttempt" asp-route-area="User" asp-route-id="@view.Attempt.LmsAssessmentAttemptId" id="lms-attempt">
+                @Html.AntiForgeryToken()
+                @foreach (var question in view.Questions)
+                {
+                    number++;
+                    var name = "a_" + question.QuestionId;
+                    <fieldset class="form-group m-b-md">
+                        <legend class="h5">@string.Format(localizer["QuestionNumberFormat"].Value, number, view.Questions.Count): @question.Text</legend>
+                        @if (!string.IsNullOrWhiteSpace(question.ImageUrl))
+                        {
+                            <img src="@question.ImageUrl" alt="" class="img-responsive m-b-sm" style="max-height:280px" loading="lazy" referrerpolicy="no-referrer" />
+                        }
+                        @switch ((LmsQuestionKinds)question.Kind)
+                        {
+                            case LmsQuestionKinds.MultiChoice:
+                                <p class="help-block">@localizer["ChooseAllHelp"]</p>
+                                foreach (var option in question.Options)
+                                {
+                                    <div class="checkbox"><label><input type="checkbox" name="@name" value="@option.Key" /> @option.Text</label></div>
+                                }
+                                break;
+                            case LmsQuestionKinds.Ordering:
+                                <p class="help-block">@localizer["OrderHelp"]</p>
+                                for (var position = 0; position < question.Options.Count; position++)
+                                {
+                                    <div class="form-inline m-b-xs">
+                                        <label for="@(name)_@position">@(position + 1).</label>
+                                        <select id="@(name)_@position" name="@name" class="form-control input-sm" required>
+                                            <option value="">@localizer["ChooseOption"]</option>
+                                            @foreach (var option in question.Options)
+                                            {
+                                                <option value="@option.Key">@option.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+                                }
+                                break;
+                            case LmsQuestionKinds.ShortAnswer:
+                                <textarea name="@(name)_text" class="form-control" rows="4" maxlength="4000" aria-label="@question.Text"></textarea>
+                                break;
+                            default:
+                                foreach (var option in question.Options)
+                                {
+                                    <div class="radio"><label><input type="radio" name="@name" value="@option.Key" /> @option.Text</label></div>
+                                }
+                                break;
+                        }
+                    </fieldset>
+                }
+                <button type="submit" class="btn btn-primary" data-confirm="@localizer["SubmitConfirm"]"><i class="fa fa-check" aria-hidden="true"></i> @localizer["SubmitAttemptButton"]</button>
+                <a class="btn btn-white" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@Model.EnrollmentId" asp-route-lesson="@view.Attempt.LmsLessonId">@localizer["BackToCourse"]</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script>
+        var resgridCoursesI18n = @Html.ScriptJson(new { minutesLeft = localizer["TimeRemainingFormat"].Value });
+    </script>
+    <script src="~/js/app/internal/courses/resgrid.courses.player.js" asp-append-version="true"></script>
+}

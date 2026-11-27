@@ -1,0 +1,125 @@
+@using Microsoft.AspNetCore.Html
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingIsoReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@*
+    LMS (dark, §24): the formal ISO FSRS training report, each member's hours in the ISO categories beside their targets.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Doc.IsoReport"];
+    ViewData["Section"] = "Records";
+    ViewData["Title"] = localizer["Doc.IsoReport"].Value;
+    ViewData["Subtitle"] = localizer["Rec.IsoReportIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["SubTabs"] = Model.OfficerTabs;
+    var report = Model.Report;
+
+    Func<dynamic, IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="IsoReport" asp-route-area="User" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-former="@(Model.Former ? "true" : null)" asp-route-format="pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Rec.ExportPdfButton"]</a>
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="IsoReport" asp-route-area="User" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-former="@(Model.Former ? "true" : null)" asp-route-format="csv"><i class="fa fa-file-excel-o" aria-hidden="true"></i> @localizer["Rec.ExportCsvButton"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="get" asp-controller="TrainingRecords" asp-action="IsoReport" asp-route-area="User" class="rgw-filter" role="search" aria-label="@localizer["Rec.FilterLabel"]">
+        <div class="rgw-grid">
+            <div class="form-group">
+                <label for="iso-from">@localizer["Rec.FromLabel"]</label>
+                <input id="iso-from" name="from" type="date" class="form-control" value="@Model.From" />
+            </div>
+            <div class="form-group">
+                <label for="iso-to">@localizer["Rec.ToLabel"]</label>
+                <input id="iso-to" name="to" type="date" class="form-control" value="@Model.To" />
+            </div>
+            <div class="form-group">
+                <div class="checkbox">
+                    <label><input type="checkbox" name="former" value="true" checked="@Model.Former" /> @localizer["Rec.IncludeFormerLabel"]</label>
+                </div>
+            </div>
+        </div>
+        <div class="rgw-filter-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["FilterButton"]</button>
+        </div>
+    </form>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-shield" aria-hidden="true"></i> @localizer["Doc.IsoReport"]</h5></div>
+        <div class="ibox-content">
+            @if (report.Categories.Count == 0)
+            {
+                <p class="text-muted">@localizer["Rec.IsoNoCategories"]</p>
+                <a class="btn btn-primary btn-sm" asp-controller="TrainingRecords" asp-action="Categories" asp-route-area="User"><i class="fa fa-tags" aria-hidden="true"></i> @localizer["Rec.CategoriesTitle"]</a>
+            }
+            else if (report.Rows.Count == 0)
+            {
+                <p class="text-muted">@localizer["Rec.NoHours"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Doc.Member"]</th>
+                                @foreach (var category in report.Categories)
+                                {
+                                    <th class="text-right">
+                                        @category.Name
+                                        @if (category.TargetHours.HasValue)
+                                        {
+                                            <small class="rgw-sub text-muted">@string.Format(localizer["Rec.TargetValue"].Value, LearningRecordPresentation.Hours(category.TargetHours), localizer[LearningRecordPresentation.TargetPeriodKey(category.TargetPeriod)].Value)</small>
+                                        }
+                                    </th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in report.Rows)
+                            {
+                                <tr>
+                                    <td>
+                                        @(string.IsNullOrWhiteSpace(row.Name) ? Model.NameOf(row.UserId) : row.Name)
+                                        @if (Model.IsFormer(row.UserId))
+                                        {
+                                            <small class="rgw-sub text-muted"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["FormerMemberLabel"]</small>
+                                        }
+                                        @if (row.NotLicensed)
+                                        {
+                                            @* §17.4 seat rules: a member without an LMS seat shows as not licensed, never as compliant or behind. *@
+                                            <small class="rgw-sub text-muted"><i class="fa fa-id-card-o" aria-hidden="true"></i> @addonLocalizer["LmsSeatNotLicensed"]</small>
+                                        }
+                                    </td>
+                                    @foreach (var category in report.Categories)
+                                    {
+                                        var hours = category.Code != null && row.HoursByCode.TryGetValue(category.Code, out var value) ? value : 0m;
+                                        var met = category.TargetHours.HasValue && hours >= category.TargetHours.Value;
+                                        <td class="text-right @(met ? "text-navy" : null)">
+                                            @LearningRecordPresentation.Hours(hours)
+                                            @if (met)
+                                            {
+                                                <span class="sr-only">@localizer["Rec.TargetMet"]</span>
+                                                <i class="fa fa-check m-l-xs" aria-hidden="true"></i>
+                                            }
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted small m-b-none">@localizer["Doc.NotAccreditor"]</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

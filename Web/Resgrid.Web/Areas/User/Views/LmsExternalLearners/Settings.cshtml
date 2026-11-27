@@ -1,0 +1,77 @@
+@model Resgrid.Web.Areas.User.Models.LmsExternalLearners.LmsLearnerPortalSettingsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@* The learner portal: on/off, self-registration, public listing and branding (the department profile's logo; an accent colour). *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["PortalSettings"];
+    ViewData["Title"] = localizer["PortalSettings"].Value;
+    ViewData["Subtitle"] = localizer["Intro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white btn-sm" asp-controller="LmsExternalLearners" asp-action="Index" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Title"]</a>
+    </div>
+    <div class="row">
+        <div class="col-md-7">
+            <div class="ibox"><div class="ibox-content">
+                <form method="post" asp-controller="LmsExternalLearners" asp-action="Settings" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <div class="checkbox"><label><input type="checkbox" name="Input.IsEnabled" value="true" checked="@Model.Input.IsEnabled" /> @localizer["Settings.Enabled"]</label></div>
+                    <div class="checkbox"><label><input type="checkbox" name="Input.SelfRegistration" value="true" checked="@Model.Input.SelfRegistration" /> @localizer["Settings.SelfRegistration"]</label></div>
+                    <div class="checkbox"><label><input type="checkbox" name="Input.PublicListing" value="true" checked="@Model.Input.PublicListing" /> @localizer["Settings.PublicListing"]</label></div>
+                    <div class="checkbox"><label><input type="checkbox" name="Input.HideLogo" value="true" checked="@Model.Input.HideLogo" /> @localizer["Settings.HideLogo"]</label></div>
+                    <div class="form-group">
+                        <label for="xl-accent">@localizer["Settings.Accent"]</label>
+                        <input id="xl-accent" name="Input.AccentColor" class="form-control" value="@Model.Input.AccentColor" maxlength="7" placeholder="#1ab394" pattern="#?[0-9A-Fa-f]{3}([0-9A-Fa-f]{3})?" aria-describedby="xl-accent-help" />
+                        <span id="xl-accent-help" class="help-block">@localizer["Settings.AccentHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="xl-welcome">@localizer["Settings.Welcome"]</label>
+                        <textarea id="xl-welcome" name="Input.WelcomeText" class="form-control" rows="4" maxlength="1000" aria-describedby="xl-welcome-help">@Model.Input.WelcomeText</textarea>
+                        <span id="xl-welcome-help" class="help-block">@localizer["Settings.WelcomeHelp"]</span>
+                    </div>
+                    <div class="alert alert-info" role="note"><i class="fa fa-shield" aria-hidden="true"></i> @localizer["Settings.PrivacyHelp"]</div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Save"]</button>
+                </form>
+            </div></div>
+        </div>
+        <div class="col-md-5">
+            <div class="ibox"><div class="ibox-content">
+                <h3>@localizer["PortalHeader"]</h3>
+                @if (Model.Portal == null)
+                {
+                    <p class="text-muted">@localizer["PortalOff"]</p>
+                }
+                else
+                {
+                    <p><strong>@localizer["PortalLink"]:</strong><br /><a href="@Model.PortalUrl" target="_blank" rel="noopener">@Model.PortalUrl</a></p>
+                    <form method="post" asp-controller="LmsExternalLearners" asp-action="RegenerateKey" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <p class="text-muted small">@localizer["Settings.RegenerateHelp"]</p>
+                        <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["Settings.Regenerate"]</button>
+                    </form>
+                }
+                @if (Model.Branding != null)
+                {
+                    <h3 class="m-t-md">@localizer["Settings.Preview"]</h3>
+                    <div style="background:@Model.Branding.Accent;color:@Model.Branding.AccentText;padding:12px;border-radius:4px;display:flex;align-items:center;gap:10px;">
+                        @if (!string.IsNullOrEmpty(Model.Branding.LogoUrl))
+                        {
+                            <img src="@Model.Branding.LogoUrl" alt="" style="max-height:40px;background:#fff;border-radius:3px;padding:2px;" />
+                        }
+                        <strong>@Model.Branding.DisplayName</strong>
+                    </div>
+                }
+            </div></div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -29,6 +29,12 @@ namespace Resgrid.Model
 
 		public bool DepartmentShareOrders { get; set; }
 
+		/// <summary>Protocols P5 (M0414): the creating department shares its published protocols and protocol sets.</summary>
+		public bool DepartmentShareProtocols { get; set; }
+
+		/// <summary>Training T5 (M0414): the creating department shares its course sets (and may sponsor LMS seats) over the link.</summary>
+		public bool DepartmentShareTraining { get; set; }
+
 		[Required]
 		public int LinkedDepartmentId { get; set; } // Linked Department color for the Department
 
@@ -45,6 +51,12 @@ namespace Resgrid.Model
 		public bool LinkedDepartmentSharePersonnel { get; set; }
 
 		public bool LinkedDepartmentShareOrders { get; set; }
+
+		/// <summary>Protocols P5 (M0414): the linked department shares its published protocols and protocol sets.</summary>
+		public bool LinkedDepartmentShareProtocols { get; set; }
+
+		/// <summary>Training T5 (M0414): the linked department shares its course sets (and may sponsor LMS seats) over the link.</summary>
+		public bool LinkedDepartmentShareTraining { get; set; }
 
 		public DateTime LinkCreated { get; set; }
 

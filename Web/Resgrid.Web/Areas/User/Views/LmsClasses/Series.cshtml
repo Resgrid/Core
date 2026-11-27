@@ -1,0 +1,58 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsClassSeriesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@* Series reporting (§13a T4): each member's attendance across the sessions of a recurring class. *@
+@{
+    var culture = CultureInfo.CurrentCulture;
+    var first = Model.Sessions.OrderBy(s => s.SeriesIndex).First();
+    ViewBag.Title = "Resgrid | " + localizer["SeriesTitle"];
+    ViewData["Title"] = first.Title;
+    ViewData["Subtitle"] = localizer["SeriesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var sessions = Model.Sessions.OrderBy(s => s.StartsOn).ToList();
+    var members = Model.Roster.Where(e => e.Status == (int)LmsClassEnrollmentStatuses.Enrolled).Select(e => e.UserId).Distinct(StringComparer.OrdinalIgnoreCase)
+        .OrderBy(u => Model.NameOf(u), StringComparer.CurrentCultureIgnoreCase).ToList();
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="table-responsive">
+        <table class="table rgw-table">
+            <thead>
+                <tr>
+                    <th>@localizer["Col.Member"]</th>
+                    @foreach (var session in sessions)
+                    {
+                        <th><a asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@session.LmsClassSessionId">@Model.Local(session.StartsOn).ToString("d", culture)</a></th>
+                    }
+                    <th>@localizer["Col.Attended"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var member in members)
+                {
+                    var attended = 0;
+                    <tr>
+                        <td>@Model.NameOf(member)</td>
+                        @foreach (var session in sessions)
+                        {
+                            var row = Model.Roster.FirstOrDefault(e => e.LmsClassSessionId == session.LmsClassSessionId && string.Equals(e.UserId, member, StringComparison.OrdinalIgnoreCase) && e.Status == (int)LmsClassEnrollmentStatuses.Enrolled);
+                            if (row?.Attendance == (int)LmsClassAttendanceStates.Attended) { attended++; }
+                            <td>@(row == null ? "—" : localizer["Attendance." + (LmsClassAttendanceStates)row.Attendance].Value)</td>
+                        }
+                        <td>@attended / @sessions.Count(s => s.Status != (int)LmsClassSessionStatuses.Cancelled)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

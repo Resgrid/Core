@@ -1,0 +1,224 @@
+{
+  "schema": 1,
+  "id": "05-calls",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Calls",
+  "minutes": 4.3,
+  "walkthrough": false,
+  "audience": [
+    "dispatcher",
+    "officer",
+    "records"
+  ],
+  "visibility": [],
+  "pages": [
+    "Dispatch",
+    "DispatcherDesk",
+    "RecurringCalls",
+    "RunCards",
+    "Templates",
+    "IntakeChannels",
+    "IntakeConversations",
+    "CadUpdates",
+    "DestinationRules"
+  ],
+  "adminAssist": {
+    "areas": [
+      "calls",
+      "dedicated-number"
+    ],
+    "capabilities": [
+      "calls",
+      "new-call",
+      "call-types-priorities",
+      "run-cards",
+      "email-intake",
+      "text-intake",
+      "pending-calls",
+      "scheduled-calls",
+      "recurring-calls",
+      "archived-calls",
+      "call-templates",
+      "call-locations",
+      "dedicated-number"
+    ]
+  },
+  "media": {
+    "video": "media/05-calls.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/05-calls.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Take an incident from intake to closeout",
+    "ar": "أدِر الحادث من الاستلام حتى الإغلاق",
+    "de": "Einen Einsatz von der Annahme bis zum Abschluss führen",
+    "el": "Διαχειριστείτε ένα συμβάν από τη λήψη έως το κλείσιμο",
+    "es": "Llevar un incidente desde la recepción hasta el cierre",
+    "fr": "Mener une intervention de la prise d’appel à la clôture",
+    "it": "Gestire un intervento dalla ricezione alla chiusura",
+    "pl": "Poprowadź zdarzenie od przyjęcia do zamknięcia",
+    "sv": "Hantera en händelse från mottagning till avslut",
+    "uk": "Проведіть подію від прийому до закриття"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What is the first step when a new incident comes in?",
+        "ar": "ما الخطوة الأولى عند ورود حادث جديد؟",
+        "de": "Was ist der erste Schritt, wenn ein neuer Einsatz eingeht?",
+        "el": "Ποιο είναι το πρώτο βήμα όταν έρχεται νέο συμβάν;",
+        "es": "¿Cuál es el primer paso cuando llega un incidente nuevo?",
+        "fr": "Quelle est la première étape quand une nouvelle intervention arrive ?",
+        "it": "Qual è il primo passo quando arriva un nuovo intervento?",
+        "pl": "Jaki jest pierwszy krok, gdy wpływa nowe zdarzenie?",
+        "sv": "Vad är första steget när en ny händelse kommer in?",
+        "uk": "Який перший крок, коли надходить нова подія?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Close the call",
+            "ar": "إغلاق البلاغ",
+            "de": "Den Einsatz schließen",
+            "el": "Κλείσιμο της κλήσης",
+            "es": "Cerrar la llamada",
+            "fr": "Clôturer l’intervention",
+            "it": "Chiudere la chiamata",
+            "pl": "Zamknąć zgłoszenie",
+            "sv": "Avsluta larmet",
+            "uk": "Закрити виклик"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Archive it",
+            "ar": "أرشفته",
+            "de": "Ihn archivieren",
+            "el": "Αρχειοθέτησή του",
+            "es": "Archivarla",
+            "fr": "L’archiver",
+            "it": "Archiviarla",
+            "pl": "Zarchiwizować je",
+            "sv": "Arkivera det",
+            "uk": "Заархівувати її"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Create the call with its type, priority and location",
+            "ar": "إنشاء البلاغ مع نوعه وأولويته وموقعه",
+            "de": "Den Einsatz mit Art, Priorität und Ort anlegen",
+            "el": "Δημιουργία της κλήσης με τύπο, προτεραιότητα και τοποθεσία",
+            "es": "Crear la llamada con su tipo, prioridad y ubicación",
+            "fr": "Créer l’intervention avec son type, sa priorité et son lieu",
+            "it": "Creare la chiamata con tipo, priorità e posizione",
+            "pl": "Utworzyć zgłoszenie z typem, priorytetem i lokalizacją",
+            "sv": "Skapa larmet med typ, prioritet och plats",
+            "uk": "Створити виклик із типом, пріоритетом і місцем"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "Who should be dispatched to a call?",
+        "ar": "من يجب إرساله إلى البلاغ؟",
+        "de": "Wer sollte zu einem Einsatz alarmiert werden?",
+        "el": "Ποιος πρέπει να σταλεί σε μια κλήση;",
+        "es": "¿A quién se debe despachar a una llamada?",
+        "fr": "Qui faut-il engager sur une intervention ?",
+        "it": "Chi deve essere inviato su una chiamata?",
+        "pl": "Kogo należy zadysponować do zgłoszenia?",
+        "sv": "Vem ska larmas till ett larm?",
+        "uk": "Кого слід відправити на виклик?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Every member, always",
+            "ar": "كل الأعضاء دائمًا",
+            "de": "Immer alle Mitglieder",
+            "el": "Πάντα όλα τα μέλη",
+            "es": "Todos los miembros, siempre",
+            "fr": "Tous les membres, toujours",
+            "it": "Tutti i membri, sempre",
+            "pl": "Zawsze wszyscy członkowie",
+            "sv": "Alla medlemmar, alltid",
+            "uk": "Завжди всі учасники"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "The units and people the incident needs",
+            "ar": "الوحدات والأفراد الذين يحتاجهم الحادث",
+            "de": "Die Einheiten und Personen, die der Einsatz braucht",
+            "el": "Οι μονάδες και τα άτομα που χρειάζεται το συμβάν",
+            "es": "Las unidades y personas que necesita el incidente",
+            "fr": "Les unités et personnes dont l’intervention a besoin",
+            "it": "I mezzi e le persone di cui l’intervento ha bisogno",
+            "pl": "Jednostki i osoby potrzebne przy zdarzeniu",
+            "sv": "De enheter och personer som händelsen behöver",
+            "uk": "Підрозділи та люди, потрібні для події"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Nobody until it is closed",
+            "ar": "لا أحد حتى يُغلق",
+            "de": "Niemand, bis er geschlossen ist",
+            "el": "Κανείς μέχρι να κλείσει",
+            "es": "Nadie hasta que se cierre",
+            "fr": "Personne jusqu’à la clôture",
+            "it": "Nessuno finché non è chiusa",
+            "pl": "Nikt, dopóki nie zostanie zamknięte",
+            "sv": "Ingen förrän det är avslutat",
+            "uk": "Нікого, доки її не закрито"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "A call should be closed when the incident is over, with notes on what happened.",
+        "ar": "يجب إغلاق البلاغ عند انتهاء الحادث مع ملاحظات عما جرى.",
+        "de": "Ein Einsatz sollte nach seinem Ende mit Notizen zum Ablauf geschlossen werden.",
+        "el": "Μια κλήση πρέπει να κλείνει όταν τελειώσει το συμβάν, με σημειώσεις για το τι συνέβη.",
+        "es": "Una llamada debe cerrarse cuando termina el incidente, con notas de lo ocurrido.",
+        "fr": "Une intervention doit être clôturée à sa fin, avec des notes sur son déroulement.",
+        "it": "Una chiamata va chiusa a intervento concluso, con note su quanto accaduto.",
+        "pl": "Zgłoszenie należy zamknąć po zakończeniu zdarzenia, z notatkami o jego przebiegu.",
+        "sv": "Ett larm ska avslutas när händelsen är över, med anteckningar om vad som hände.",
+        "uk": "Виклик слід закрити після завершення події з нотатками про те, що сталося."
+      }
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model MyCoursesModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["MyCoursesTitle"];
+    ViewData["Section"] = "Courses";
+    ViewData["Title"] = localizer["MyCoursesTitle"].Value;
+    ViewData["Subtitle"] = localizer["MyCoursesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var open = Model.Courses.Where(c => c.Enrollment.IsOpen).ToList();
+    var done = Model.Courses.Where(c => c.Enrollment.Status == (int)LmsEnrollmentStatuses.Completed).ToList();
+    var next = open.FirstOrDefault(c => c.CanRun);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (next != null)
+    {
+        <div class="rgw-next-action" role="region" aria-label="@localizer["NextUpLabel"]">
+            <strong>@localizer["NextUpLabel"]</strong>
+            <p class="m-b-xs">@Model.TitleOf(next.Course)@(next.Course.IsSystem ? "" : " — " + next.Version.Title)</p>
+            <p class="rgw-progress-honest">@string.Format(localizer["ProgressHonest"].Value, next.Enrollment.ProgressPercent)</p>
+            <a class="btn btn-primary btn-sm" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@next.Enrollment.LmsEnrollmentId">
+                <i class="fa fa-play" aria-hidden="true"></i> @(next.Enrollment.StartedOn.HasValue ? localizer["ResumeButton"] : localizer["StartButton"])
+            </a>
+        </div>
+    }
+
+    <h3>@localizer["InProgressHeader"]</h3>
+    @if (open.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoOpenCourses"] <a asp-controller="Courses" asp-action="Academy" asp-route-area="User">@localizer["BrowseAcademyLink"]</a></p>
+    }
+    else
+    {
+        <div class="rgw-card-grid m-b-md">
+            @foreach (var course in open)
+            {
+                <div class="rgw-card">
+                    <h4>@Model.TitleOf(course.Course)</h4>
+                    <div class="rgw-card-meta">
+                        @if (course.Course.IsSystem)
+                        {
+                            <span class="label label-info"><i class="fa fa-university" aria-hidden="true"></i> @localizer["AcademyBadge"]</span>
+                        }
+                        else if (course.Version.Label != null)
+                        {
+                            <span>@string.Format(localizer["VersionLabelFormat"].Value, course.Version.Label)</span>
+                        }
+                        @if (course.Enrollment.DueOn.HasValue)
+                        {
+                            <span class="@(course.IsOverdue ? "text-danger" : "")"><i class="fa fa-calendar" aria-hidden="true"></i> @string.Format(localizer["DueFormat"].Value, Model.Date(course.Enrollment.DueOn))</span>
+                        }
+                    </div>
+                    <div class="progress progress-mini" role="progressbar" aria-valuenow="@course.Enrollment.ProgressPercent" aria-valuemin="0" aria-valuemax="100" aria-label="@localizer["ProgressLabel"]">
+                        <div class="progress-bar" style="width: @(course.Enrollment.ProgressPercent)%"></div>
+                    </div>
+                    <span class="rgw-progress-honest">@string.Format(localizer["ProgressHonest"].Value, course.Enrollment.ProgressPercent)</span>
+                    <div class="rgw-card-action">
+                        @if (course.CanRun)
+                        {
+                            <a class="btn btn-primary btn-sm" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@course.Enrollment.LmsEnrollmentId">
+                                <i class="fa fa-play" aria-hidden="true"></i> @(course.Enrollment.StartedOn.HasValue ? localizer["ResumeButton"] : localizer["StartButton"])
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer[CourseLabels.Error(course.BlockedBy)]</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (Model.Catalog.Count > 0)
+    {
+        <h3>@localizer["CatalogHeader"]</h3>
+        <div class="rgw-card-grid m-b-md">
+            @foreach (var entry in Model.Catalog)
+            {
+                <div class="rgw-card">
+                    <h4>@entry.Course.Title</h4>
+                    @if (!string.IsNullOrWhiteSpace(entry.Course.Summary))
+                    {
+                        <p class="rgw-card-meta">@entry.Course.Summary</p>
+                    }
+                    <div class="rgw-card-meta">@string.Format(localizer["HoursFormat"].Value, (entry.Version?.Hours ?? 0).ToString("0.##"))</div>
+                    <div class="rgw-card-action">
+                        @if (entry.BlockedBy != LmsErrors.None)
+                        {
+                            @* Round 10 A7: no LMS seat: say so (ask your administrator) instead of offering Enroll or Resume. *@
+                            <span class="text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer[CourseLabels.Error(entry.BlockedBy)]</span>
+                        }
+                        else if (entry.OpenEnrollment != null)
+                        {
+                            <a class="btn btn-white btn-sm" asp-controller="Courses" asp-action="Play" asp-route-area="User" asp-route-id="@entry.OpenEnrollment.LmsEnrollmentId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["ResumeButton"]</a>
+                        }
+                        else if (entry.CanEnroll)
+                        {
+                            <form method="post" asp-controller="Courses" asp-action="Enroll" asp-route-area="User">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="courseId" value="@entry.Course.LmsCourseId" />
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["EnrollButton"]</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    @if (done.Count > 0)
+    {
+        <h3>@localizer["CompletedHeader"]</h3>
+        <div class="table-responsive">
+            <table class="table table-striped rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["CourseColumn"]</th>
+                        <th>@localizer["VersionColumn"]</th>
+                        <th>@localizer["CompletedColumn"]</th>
+                        <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var course in done)
+                    {
+                        <tr>
+                            <td>@Model.TitleOf(course.Course)@if (course.Enrollment.TestedOut) {<span class="rgw-sub">@localizer["TestedOutBadge"]</span>}</td>
+                            <td>@course.Version.Label</td>
+                            <td>@Model.Date(course.Enrollment.CompletedOn)</td>
+                            <td class="rgw-row-actions"><a class="btn btn-white btn-xs" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User"><i class="fa fa-id-card-o" aria-hidden="true"></i> @localizer["TranscriptLink"]</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

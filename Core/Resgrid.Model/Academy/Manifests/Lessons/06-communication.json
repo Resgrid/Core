@@ -1,0 +1,213 @@
+{
+  "schema": 1,
+  "id": "06-communication",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Communication",
+  "minutes": 3.6,
+  "walkthrough": false,
+  "audience": [
+    "member",
+    "dispatcher",
+    "officer"
+  ],
+  "visibility": [],
+  "pages": [
+    "Messages",
+    "Notifications",
+    "DistributionLists",
+    "CommunicationTest",
+    "MessagingAccounts"
+  ],
+  "adminAssist": {
+    "areas": [
+      "communication"
+    ],
+    "capabilities": [
+      "notifications",
+      "distribution-lists",
+      "communication-tests",
+      "inbox",
+      "outbox",
+      "compose-message",
+      "intake-channels"
+    ]
+  },
+  "media": {
+    "video": "media/06-communication.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/06-communication.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Make alerts reach the intended audience",
+    "ar": "اجعل التنبيهات تصل إلى الجمهور المقصود",
+    "de": "Alarme an die richtigen Empfänger bringen",
+    "el": "Κάντε τις ειδοποιήσεις να φτάνουν στους σωστούς παραλήπτες",
+    "es": "Hacer que las alertas lleguen a quien deben",
+    "fr": "Faire parvenir les alertes au bon public",
+    "it": "Far arrivare gli allarmi ai destinatari giusti",
+    "pl": "Dbaj, by alarmy docierały do właściwych odbiorców",
+    "sv": "Se till att larm når rätt mottagare",
+    "uk": "Доставляйте сповіщення потрібним адресатам"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "How do you make sure an alert reaches the right people?",
+        "ar": "كيف تضمن وصول التنبيه إلى الأشخاص المناسبين؟",
+        "de": "Wie stellen Sie sicher, dass ein Alarm die richtigen Personen erreicht?",
+        "el": "Πώς διασφαλίζετε ότι μια ειδοποίηση φτάνει στα σωστά άτομα;",
+        "es": "¿Cómo se asegura de que una alerta llegue a las personas adecuadas?",
+        "fr": "Comment s’assurer qu’une alerte atteint les bonnes personnes ?",
+        "it": "Come ti assicuri che un allarme raggiunga le persone giuste?",
+        "pl": "Jak zapewnić, że alarm dotrze do właściwych osób?",
+        "sv": "Hur ser du till att ett larm når rätt personer?",
+        "uk": "Як переконатися, що сповіщення дійде до потрібних людей?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Send it to the right groups, roles or members",
+            "ar": "إرساله إلى المجموعات أو الأدوار أو الأعضاء المناسبين",
+            "de": "An die richtigen Gruppen, Rollen oder Mitglieder senden",
+            "el": "Αποστολή στις σωστές ομάδες, ρόλους ή μέλη",
+            "es": "Enviarla a los grupos, funciones o miembros adecuados",
+            "fr": "L’envoyer aux bons groupes, rôles ou membres",
+            "it": "Inviarlo ai gruppi, ruoli o membri giusti",
+            "pl": "Wysłać go do właściwych grup, ról lub członków",
+            "sv": "Skicka det till rätt grupper, roller eller medlemmar",
+            "uk": "Надіслати потрібним групам, ролям чи учасникам"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Send it to everyone every time",
+            "ar": "إرساله إلى الجميع في كل مرة",
+            "de": "Jedes Mal an alle senden",
+            "el": "Αποστολή σε όλους κάθε φορά",
+            "es": "Enviarla a todos siempre",
+            "fr": "L’envoyer à tout le monde à chaque fois",
+            "it": "Inviarlo a tutti ogni volta",
+            "pl": "Za każdym razem wysyłać do wszystkich",
+            "sv": "Skicka det till alla varje gång",
+            "uk": "Щоразу надсилати всім"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Post it on a notice board only",
+            "ar": "تعليقه على لوحة الإعلانات فقط",
+            "de": "Nur am Schwarzen Brett aushängen",
+            "el": "Μόνο ανάρτηση σε πίνακα ανακοινώσεων",
+            "es": "Ponerla solo en un tablón de anuncios",
+            "fr": "L’afficher seulement sur un tableau",
+            "it": "Affiggerlo solo in bacheca",
+            "pl": "Tylko wywiesić na tablicy ogłoszeń",
+            "sv": "Bara sätta upp det på en anslagstavla",
+            "uk": "Лише вивісити на дошці оголошень"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Which channels can Resgrid use to reach members?",
+        "ar": "ما القنوات التي يستخدمها Resgrid للوصول إلى الأعضاء؟",
+        "de": "Über welche Kanäle kann Resgrid Mitglieder erreichen?",
+        "el": "Ποια κανάλια μπορεί να χρησιμοποιήσει το Resgrid για να φτάσει στα μέλη;",
+        "es": "¿Qué canales puede usar Resgrid para llegar a los miembros?",
+        "fr": "Par quels canaux Resgrid peut-il joindre les membres ?",
+        "it": "Quali canali può usare Resgrid per raggiungere i membri?",
+        "pl": "Jakimi kanałami Resgrid może docierać do członków?",
+        "sv": "Vilka kanaler kan Resgrid använda för att nå medlemmar?",
+        "uk": "Якими каналами Resgrid може зв’язатися з учасниками?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Push, text message, email and voice calls",
+            "ar": "الإشعارات والرسائل النصية والبريد الإلكتروني والمكالمات الصوتية",
+            "de": "Push, SMS, E-Mail und Sprachanrufe",
+            "el": "Push, SMS, email και φωνητικές κλήσεις",
+            "es": "Notificaciones push, SMS, correo y llamadas de voz",
+            "fr": "Push, SMS, e-mail et appels vocaux",
+            "it": "Push, SMS, email e chiamate vocali",
+            "pl": "Powiadomienia push, SMS, e-mail i połączenia głosowe",
+            "sv": "Push, sms, e-post och röstsamtal",
+            "uk": "Push, SMS, ел. пошта та голосові дзвінки"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Only fax",
+            "ar": "الفاكس فقط",
+            "de": "Nur Fax",
+            "el": "Μόνο φαξ",
+            "es": "Solo fax",
+            "fr": "Le fax seulement",
+            "it": "Solo fax",
+            "pl": "Tylko faks",
+            "sv": "Bara fax",
+            "uk": "Лише факс"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Only paper letters",
+            "ar": "الرسائل الورقية فقط",
+            "de": "Nur Briefe auf Papier",
+            "el": "Μόνο έντυπες επιστολές",
+            "es": "Solo cartas en papel",
+            "fr": "Les lettres papier seulement",
+            "it": "Solo lettere cartacee",
+            "pl": "Tylko listy papierowe",
+            "sv": "Bara pappersbrev",
+            "uk": "Лише паперові листи"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "f",
+      "text": {
+        "en": "Members cannot choose how they receive notifications.",
+        "ar": "لا يستطيع الأعضاء اختيار طريقة تلقي الإشعارات.",
+        "de": "Mitglieder können nicht wählen, wie sie Benachrichtigungen erhalten.",
+        "el": "Τα μέλη δεν μπορούν να επιλέξουν πώς λαμβάνουν ειδοποιήσεις.",
+        "es": "Los miembros no pueden elegir cómo reciben las notificaciones.",
+        "fr": "Les membres ne peuvent pas choisir comment ils reçoivent les notifications.",
+        "it": "I membri non possono scegliere come ricevere le notifiche.",
+        "pl": "Członkowie nie mogą wybrać sposobu otrzymywania powiadomień.",
+        "sv": "Medlemmar kan inte välja hur de får aviseringar.",
+        "uk": "Учасники не можуть обрати, як отримувати сповіщення."
+      }
+    }
+  ]
+}

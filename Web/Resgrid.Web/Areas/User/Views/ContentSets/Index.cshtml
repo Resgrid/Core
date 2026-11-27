@@ -1,0 +1,169 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetIndexModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3: the department's sets of one kind (protocol sets or course sets). Managers publish sets of their own; every member sees the
+    sets linked departments share with the department over a Department Link, and the department's subscriptions with their copies.
+*@
+@{
+    var training = Model.Kind == ContentSetKinds.Training;
+    ViewBag.Title = "Resgrid | " + (training ? text["CourseSetsTab"] : text["ProtocolSetsTab"]);
+    ViewData["Title"] = training ? text["CourseSetsTab"].Value : text["ProtocolSetsTab"].Value;
+    ViewData["Subtitle"] = training ? text["CourseSetsIntro"].Value : text["ProtocolSetsIntro"].Value;
+    ViewData["SetSection"] = training ? "Training" : "Protocols";
+    var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.CanManage)
+    {
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-share-alt" aria-hidden="true"></i> @text["PublishedHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@text["PublishedIntro"]</p>
+                @if (Model.Published.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table rgw-table">
+                            <thead><tr><th scope="col">@text["ColumnSet"]</th><th scope="col">@text["ColumnItems"]</th><th scope="col">@text["ColumnSubscribers"]</th><th scope="col">@text["ColumnStatus"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var set in Model.Published)
+                                {
+                                    <tr>
+                                        <td><a asp-action="Set" asp-route-id="@set.Set.ContentSetId">@set.Set.Name</a></td>
+                                        <td>@set.Items.Count</td>
+                                        <td>@set.Subscribers.Count</td>
+                                        <td>@(set.Set.IsArchived ? text["StatusArchived"] : text["StatusLive"])</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                <form method="post" asp-action="SaveSet" asp-route-area="User" class="form-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="0" />
+                    <input type="hidden" name="kind" value="@((int)Model.Kind)" />
+                    <input type="hidden" name="lockedDeferDays" value="@ContentSet.DefaultDeferDays" />
+                    <label class="sr-only" for="newSetName">@text["SetNameLabel"]</label>
+                    <input id="newSetName" name="name" class="form-control" maxlength="@ContentSet.NameMaxLength" required placeholder="@text["SetNameLabel"]" />
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @text["NewSetButton"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-link" aria-hidden="true"></i> @text["AvailableHeader"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted">@(training ? text["AvailableIntroTraining"] : text["AvailableIntroProtocols"])</p>
+            @if (Model.Available.Count == 0)
+            {
+                <p class="text-muted">@text["NoAvailable"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead><tr><th scope="col">@text["ColumnSet"]</th><th scope="col">@text["ColumnPublisher"]</th><th scope="col">@text["ColumnStatus"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var set in Model.Available)
+                            {
+                                <tr>
+                                    <td><a asp-action="Available" asp-route-id="@set.Set.ContentSetId">@set.Set.Name</a>
+                                        @if (training && set.SponsoredByPublisher) { <span class="label label-info">@text["SponsoredLabel"]</span> }</td>
+                                    <td>@set.PublisherName</td>
+                                    <td>@(set.Subscription == null ? text["NotSubscribed"] : set.Subscription.IsActive ? text["StatusSubscribed"] : text["StatusSuspended"])</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-download" aria-hidden="true"></i> @text["SubscriptionsHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Subscriptions.Count == 0)
+            {
+                <p class="text-muted">@text["NoSubscriptions"]</p>
+            }
+            @foreach (var subscription in Model.Subscriptions)
+            {
+                var status = (ContentSetSubscriptionStatuses)subscription.Subscription.Status;
+                <div class="rgw-card" style="margin-bottom: 16px;">
+                    <h4>@subscription.Set.Name <small>@subscription.PublisherName</small>
+                        <span class="label @(status == ContentSetSubscriptionStatuses.Active ? "label-primary" : status == ContentSetSubscriptionStatuses.Suspended ? "label-warning" : "label-default")">@text["SubscriptionStatus" + status]</span>
+                        @if (subscription.SponsoredByPublisher) { <span class="label label-info">@text["SponsoredLabel"]</span> }
+                    </h4>
+                    <p class="small text-muted">@text["SubscribedOn"] @time.Format(subscription.Subscription.SubscribedOn)
+                        @if (subscription.OpenUpdates > 0) { <text>· <a asp-action="Inbox">@string.Format(text["OpenUpdatesCount"].Value, subscription.OpenUpdates)</a></text> }
+                        @if (status == ContentSetSubscriptionStatuses.Suspended) { <text>· @text["SuspendedHelp"]</text> }
+                    </p>
+                    @if (subscription.Copies.Count > 0)
+                    {
+                        <ul class="list-unstyled">
+                            @foreach (var copy in subscription.Copies)
+                            {
+                                <li>
+                                    @if (copy.Copy.ItemKind == (int)ContentSetItemKinds.Protocol)
+                                    {
+                                        <a asp-controller="Protocols" asp-action="View" asp-route-id="@copy.Copy.LocalItemId"><i class="fa fa-book" aria-hidden="true"></i> @copy.Title</a>
+                                    }
+                                    else if (copy.Copy.ItemKind == (int)ContentSetItemKinds.LmsCourse)
+                                    {
+                                        <a asp-controller="Courses" asp-action="Course" asp-route-id="@copy.Copy.LocalItemId"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @copy.Title</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Trainings" asp-action="View" asp-route-trainingId="@copy.Copy.LocalItemId"><i class="fa fa-file-text-o" aria-hidden="true"></i> @copy.Title</a>
+                                    }
+                                    <span class="text-muted small">@copy.Copy.SourceVersionLabel</span>
+                                    @if (copy.Item != null) { <span class="label label-default">@text["LockMode" + (ContentSetLockModes)copy.Item.LockMode]</span> }
+                                    @if (copy.HasLocalChanges) { <span class="label label-success">@text["LocalChangesLabel"]</span> }
+                                    @if (Model.CanManage && copy.Copy.ItemKind == (int)ContentSetItemKinds.Protocol && copy.Item != null && copy.Item.LockMode != (int)ContentSetLockModes.Locked && status == ContentSetSubscriptionStatuses.Active)
+                                    {
+                                        <a class="btn btn-xs btn-white" asp-action="Customize" asp-route-id="@copy.Copy.ContentSetCopyId"><i class="fa fa-pencil" aria-hidden="true"></i> @text["CustomizeButton"]</a>
+                                    }
+                                    @if (status == ContentSetSubscriptionStatuses.Active)
+                                    {
+                                        <a class="btn btn-xs btn-white" asp-action="Propose" asp-route-kind="@copy.Copy.ItemKind" asp-route-localId="@copy.Copy.LocalItemId"><i class="fa fa-comment-o" aria-hidden="true"></i> @text["ProposeButton"]</a>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                    }
+                    @if (Model.CanManage && status != ContentSetSubscriptionStatuses.Ended)
+                    {
+                        <div class="rgw-actions">
+                            <form method="post" asp-action="AutoAccept" asp-route-area="User" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@subscription.Subscription.ContentSetSubscriptionId" />
+                                <input type="hidden" name="kind" value="@((int)Model.Kind)" />
+                                <input type="hidden" name="autoAccept" value="@((!subscription.Subscription.AutoAccept).ToString().ToLowerInvariant())" />
+                                <button type="submit" class="btn btn-xs btn-white">@(subscription.Subscription.AutoAccept ? text["AutoAcceptOff"] : text["AutoAcceptOn"])</button>
+                            </form>
+                            <form method="post" asp-action="Sync" asp-route-area="User" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@subscription.Subscription.ContentSetSubscriptionId" />
+                                <input type="hidden" name="kind" value="@((int)Model.Kind)" />
+                                <button type="submit" class="btn btn-xs btn-white"><i class="fa fa-refresh" aria-hidden="true"></i> @text["SyncButton"]</button>
+                            </form>
+                            <form method="post" asp-action="Unsubscribe" asp-route-area="User" style="display:inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@subscription.Subscription.ContentSetSubscriptionId" />
+                                <input type="hidden" name="kind" value="@((int)Model.Kind)" />
+                                <button type="submit" class="btn btn-xs btn-danger" data-confirm="@text["UnsubscribeConfirm"]">@text["UnsubscribeButton"]</button>
+                            </form>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

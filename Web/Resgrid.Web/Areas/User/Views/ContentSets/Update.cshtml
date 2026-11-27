@@ -1,0 +1,105 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetUpdateModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3, subscriber: one inbox row opened. The redline of the department's version against what accepting puts in force (the
+    publisher's version with the department's own changes kept), the change summary, and accept (at the department's update time on or after
+    the effective date, or a later time), defer (never past a locked item's deadline) or decline (open items only).
+*@
+@{
+    var row = Model.View.Row;
+    var update = row.Update;
+    ViewBag.Title = "Resgrid | " + update.Title;
+    ViewData["Title"] = update.Title;
+    ViewData["Subtitle"] = string.Format(text["UpdateSubtitle"].Value, row.PublisherName, row.SetName, update.SourceVersionLabel);
+    ViewData["SetSection"] = "Inbox";
+    var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+    var decidable = Model.View.CanManage && (update.Status == (int)ContentSetUpdateStatuses.Pending || update.Status == (int)ContentSetUpdateStatuses.Deferred);
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="ibox">
+                <div class="ibox-content">
+                    <dl>
+                        <dt>@text["ColumnStatus"]</dt><dd>@text["UpdateStatus" + (ContentSetUpdateStatuses)update.Status]</dd>
+                        <dt>@text["LockModeLabel"]</dt><dd>@text["LockMode" + row.LockMode]</dd>
+                        <dt>@text["ColumnEffective"]</dt><dd>@time.Format(update.SourceEffectiveOn)</dd>
+                        <dt>@text["ColumnDeadline"]</dt><dd>@(update.DeadlineOn.HasValue ? time.Format(update.DeadlineOn) : text["NoDeadline"].Value)</dd>
+                        @if (update.ApplyOn.HasValue) { <dt>@text["ApplyOnLabel"]</dt><dd>@time.Format(update.ApplyOn)</dd> }
+                        @if (update.AppliedOn.HasValue) { <dt>@text["AppliedOnLabel"]</dt><dd>@time.Format(update.AppliedOn)</dd> }
+                        @if (!string.IsNullOrEmpty(update.FailureReason)) { <dt>@text["FailureLabel"]</dt><dd>@update.FailureReason</dd> }
+                    </dl>
+                    @if (!string.IsNullOrWhiteSpace(update.ChangeSummary))
+                    {
+                        <h5>@text["ChangeSummaryLabel"]</h5>
+                        <p>@update.ChangeSummary</p>
+                    }
+                    @if (Model.View.DroppedChanges.Count > 0)
+                    {
+                        <div class="alert alert-warning small">@text["DroppedChangesHelp"] @string.Join(", ", Model.View.DroppedChanges)</div>
+                    }
+                </div>
+            </div>
+
+            @if (decidable)
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5>@text["DecideHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-action="Accept" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@update.ContentSetUpdateId" />
+                            <div class="form-group">
+                                <label class="control-label" for="applyOn">@text["ApplyOnLabel"]</label>
+                                <input id="applyOn" name="applyOn" type="datetime-local" class="form-control" value="@time.Input(Model.View.SuggestedApplyOnUtc)" />
+                                <span class="help-block small">@text["ApplyOnHelp"]</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @text["AcceptButton"]</button>
+                        </form>
+                        <hr />
+                        <form method="post" asp-action="Defer" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@update.ContentSetUpdateId" />
+                            <div class="form-group">
+                                <label class="control-label" for="until">@text["DeferUntilLabel"]</label>
+                                <input id="until" name="until" type="datetime-local" class="form-control" max="@(update.DeadlineOn.HasValue ? time.Input(update.DeadlineOn) : null)" required />
+                                @if (update.DeadlineOn.HasValue) { <span class="help-block small">@text["DeferLockedHelp"]</span> }
+                            </div>
+                            <button type="submit" class="btn btn-white"><i class="fa fa-clock-o" aria-hidden="true"></i> @text["DeferButton"]</button>
+                        </form>
+                        @if (row.CanDecline)
+                        {
+                            <hr />
+                            <form method="post" asp-action="Decline" asp-route-area="User">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@update.ContentSetUpdateId" />
+                                <button type="submit" class="btn btn-danger btn-sm" data-confirm="@text["DeclineConfirm"]">@text["DeclineButton"]</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <p class="small text-muted">@text["LockedCannotDeclineHelp"]</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="col-md-8">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-random" aria-hidden="true"></i> @text["RedlineHeader"]</h5></div>
+                <div class="ibox-content">
+                    @if (update.UpdateKind == (int)ContentSetUpdateKinds.NewItem)
+                    {
+                        <p class="text-muted">@text["NewItemHelp"]</p>
+                    }
+                    @await Html.PartialAsync("~/Areas/User/Views/Protocols/_Redline.cshtml", Model.View.Diff)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,228 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@using Resgrid.Web.Areas.User.Controllers
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolTranslationEditModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolAi.ProtocolAi> protocolAiText
+@inject Resgrid.Model.Services.IProtocolTranslationDraftService translationDrafts
+@*
+    One translation beside its source (P3). Only wording is translated: the structure, doses, links, attachments and scope tags stay
+    the source's (the server copies them over again on every save). Approval is an L2 signature bound to the translation's own hash.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    var p = Model.Protocol;
+    var tr = Model.Translation;
+    var title = string.Format(localizer["TranslationHeader"].Value, ProtocolDisplay.LanguageName(tr.Locale));
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = (string.IsNullOrWhiteSpace(p.Code) ? "" : p.Code + " · ") + p.Name + " · " + ProtocolDisplay.VersionLabel(Model.Version, localizer);
+    ViewData["Section"] = "Library";
+    ViewData["IsManager"] = true;
+    var translatedByKey = new Dictionary<string, ProtocolContentBlock>(StringComparer.Ordinal);
+    var translatedItems = new Dictionary<string, ProtocolStepItem>(StringComparer.Ordinal);
+    var translatedVariants = new Dictionary<string, ProtocolVariant>(StringComparer.Ordinal);
+    foreach (var (b, _) in ProtocolBlocks.Flatten(Model.Translated))
+    {
+        if (b.Key != null) { translatedByKey[b.Key] = b; }
+        foreach (var i in b.Items ?? new List<ProtocolStepItem>()) { if (i.Key != null) { translatedItems[i.Key] = i; } }
+        foreach (var v in b.Variants ?? new List<ProtocolVariant>()) { if (v.Key != null) { translatedVariants[v.Key] = v; } }
+    }
+    ProtocolContentBlock T(ProtocolContentBlock source) => source.Key != null && translatedByKey.TryGetValue(source.Key, out var t) ? t : source;
+    // Round 7A: "Draft translation with AI" (Enhanced AI only) on a draft the member may edit; the service decides and fails closed.
+    var aiDraftOpen = false;
+    if (Model.CanEdit && !Model.IsAiDraft)
+    {
+        try { aiDraftOpen = (await translationDrafts.GetStatusAsync(ClaimsAuthorizationHelper.GetDepartmentId(), ClaimsAuthorizationHelper.GetUserId(), tr.ProtocolVersionTranslationId))?.Available == true; }
+        catch (Exception) { aiDraftOpen = false; }
+    }
+}
+
+@await Html.PartialAsync("../Protocols/_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    @if (Model.SourceChanged)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["TranslationSourceChangedNotice"]</div>
+    }
+
+    <div class="rgw-next-action" role="status">
+        <i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["TranslationRulesCallout"]
+        <a class="btn btn-xs btn-default" asp-controller="ProtocolTools" asp-action="Translations" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-versionId="@Model.Version.ProtocolVersionId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["TranslationsHeader"]</a>
+    </div>
+
+    @if (Model.IsAiDraft)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-magic" aria-hidden="true"></i> @Model.AiNotice @protocolAiText["TranslationReviewNotice"]</div>
+    }
+    else if (aiDraftOpen)
+    {
+        <form method="post" asp-controller="ProtocolAi" asp-action="DraftTranslation" asp-route-area="User" class="m-b-md" id="protocol-ai-translation-form" data-busy-text="@protocolAiText["Drafting"]">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+            <input type="hidden" name="translationId" value="@tr.ProtocolVersionTranslationId" />
+            <button type="submit" class="btn btn-default"><i class="fa fa-magic" aria-hidden="true"></i> @protocolAiText["DraftTranslationButton"]</button>
+            <span class="small text-muted">@protocolAiText["DraftTranslationHelp"]</span>
+            <p class="rgw-progress-honest m-t-sm" id="protocol-ai-translation-busy" role="status" aria-live="polite"></p>
+        </form>
+    }
+
+    @if (Model.CanEdit)
+    {
+        <form id="translationForm" method="post" asp-controller="ProtocolTools" asp-action="SaveTranslation" asp-route-area="User">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+            <input type="hidden" name="translationId" value="@tr.ProtocolVersionTranslationId" />
+            <input type="hidden" name="rowVersion" value="@tr.RowVersion" />
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-language" aria-hidden="true"></i> @localizer["TranslationWordingHeader"]</h5></div>
+                <div class="ibox-content">
+                    @if (!Model.Source.IsBlockModel)
+                    {
+                        <div class="row">
+                            <div class="col-md-6"><div class="text-muted small">@localizer["TranslationSourceColumn"]</div><div class="protocol-content well">@Html.ProtocolContent(Model.Version.ContentHtml)</div></div>
+                            <div class="col-md-6">
+                                <label class="control-label" id="tr-html-label">@localizer["TranslationTranslatedColumn"]</label>
+                                <input type="hidden" name="@TranslationForm.Name("html", "html")" value="@Model.Translated.Render()" data-rich-target="tr-html" />
+                                <div id="tr-html" class="form-control rgp-rich-area" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="tr-html-label">@Html.SanitizedHtml(Model.Translated.Render())</div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var (block, variant) in ProtocolBlocks.Flatten(Model.Source))
+                        {
+                            var t = T(block);
+                            var fields = new List<(string Field, string Source, string Translated, bool Rich)>();
+                            if (!string.IsNullOrEmpty(block.Text)) { fields.Add(("text", block.Text, t.Text, false)); }
+                            if (!string.IsNullOrEmpty(block.Title)) { fields.Add(("title", block.Title, t.Title, false)); }
+                            if (!string.IsNullOrEmpty(block.Html)) { fields.Add(("html", block.Html, t.Html, true)); }
+                            if (!string.IsNullOrEmpty(block.Contact)) { fields.Add(("contact", block.Contact, t.Contact, false)); }
+                            if (!string.IsNullOrEmpty(block.Alt)) { fields.Add(("alt", block.Alt, t.Alt, false)); }
+                            if (!string.IsNullOrEmpty(block.Label)) { fields.Add(("label", block.Label, t.Label, false)); }
+                            if (block.Medication != null && !string.IsNullOrEmpty(block.Medication.Indication)) { fields.Add(("indication", block.Medication.Indication, t.Medication?.Indication, false)); }
+                            if (block.Medication != null && !string.IsNullOrEmpty(block.Medication.Notes)) { fields.Add(("notes", block.Medication.Notes, t.Medication?.Notes, true)); }
+                            <div class="panel panel-default rgw-builder-item">
+                                <div class="panel-heading rgw-builder-heading">
+                                    <span class="rgw-builder-title">@localizer["BlockType" + char.ToUpperInvariant(block.Type[0]) + block.Type.Substring(1)]@(variant == null ? "" : " · " + variant.Label)</span>
+                                    @if (block.Type == ProtocolBlockTypes.Medication)
+                                    {
+                                        <span class="rgw-builder-actions"><span class="label label-info"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["TranslationDosesLocked"]</span></span>
+                                    }
+                                </div>
+                                <div class="panel-body">
+                                    @foreach (var f in fields)
+                                    {
+                                        var id = "tr-" + block.Key + "-" + f.Field;
+                                        <div class="row form-group">
+                                            <div class="col-md-6"><div class="text-muted small">@localizer["TranslationSourceColumn"]</div>@if (f.Rich) { <div class="well well-sm">@Html.SanitizedHtml(f.Source)</div> } else { <div class="well well-sm">@f.Source</div> }</div>
+                                            <div class="col-md-6">
+                                                <label class="control-label" for="@id" id="@(id)-label">@localizer["TranslationTranslatedColumn"]</label>
+                                                @if (f.Rich)
+                                                {
+                                                    <input type="hidden" name="@TranslationForm.Name(block.Key, f.Field)" value="@(f.Translated ?? f.Source)" data-rich-target="@id" />
+                                                    <div id="@id" class="form-control rgp-rich-area" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="@(id)-label">@Html.SanitizedHtml(f.Translated ?? f.Source)</div>
+                                                }
+                                                else
+                                                {
+                                                    <input id="@id" class="form-control" name="@TranslationForm.Name(block.Key, f.Field)" value="@(f.Translated ?? f.Source)" maxlength="500" />
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    @foreach (var item in block.Items ?? new List<ProtocolStepItem>())
+                                    {
+                                        var tItem = item.Key != null && translatedItems.TryGetValue(item.Key, out var ti) ? ti : item;
+                                        var id = "tr-" + item.Key + "-html";
+                                        <div class="row form-group">
+                                            <div class="col-md-6"><div class="text-muted small">@localizer["BlockFieldStep"]</div><div class="well well-sm">@Html.SanitizedHtml(item.Html)</div></div>
+                                            <div class="col-md-6">
+                                                <label class="control-label" id="@(id)-label">@localizer["TranslationTranslatedColumn"]</label>
+                                                <input type="hidden" name="@TranslationForm.Name(item.Key, "html")" value="@tItem.Html" data-rich-target="@id" />
+                                                <div id="@id" class="form-control rgp-rich-area" contenteditable="true" role="textbox" aria-multiline="true" aria-labelledby="@(id)-label">@Html.SanitizedHtml(tItem.Html)</div>
+                                            </div>
+                                        </div>
+                                    }
+                                    @if (block.Rows != null)
+                                    {
+                                        for (var r = 0; r < block.Rows.Count; r++)
+                                        {
+                                            for (var c = 0; c < block.Rows[r].Count; c++)
+                                            {
+                                                var sourceCell = block.Rows[r][c];
+                                                if (string.IsNullOrWhiteSpace(sourceCell)) { continue; }
+                                                var translatedCell = t.Rows != null && r < t.Rows.Count && c < t.Rows[r].Count ? t.Rows[r][c] : sourceCell;
+                                                var id = "tr-" + block.Key + "-cell-" + r + "-" + c;
+                                                <div class="row form-group">
+                                                    <div class="col-md-6"><div class="text-muted small">@localizer["BlockFieldCell"] @(r + 1).@(c + 1)</div><div class="well well-sm">@sourceCell</div></div>
+                                                    <div class="col-md-6"><label class="control-label" for="@id">@localizer["TranslationTranslatedColumn"]</label><input id="@id" class="form-control" name="@TranslationForm.Name(block.Key, "cell." + r + "." + c)" value="@translatedCell" maxlength="500" /></div>
+                                                </div>
+                                            }
+                                        }
+                                    }
+                                    @foreach (var v in block.Variants ?? new List<ProtocolVariant>())
+                                    {
+                                        var tv = v.Key != null && translatedVariants.TryGetValue(v.Key, out var found) ? found : v;
+                                        var id = "tr-" + v.Key + "-label";
+                                        <div class="row form-group">
+                                            <div class="col-md-6"><div class="text-muted small">@localizer["BlockFieldVariantLabel"]</div><div class="well well-sm">@v.Label</div></div>
+                                            <div class="col-md-6"><label class="control-label" for="@id">@localizer["TranslationTranslatedColumn"]</label><input id="@id" class="form-control" name="@TranslationForm.Name(v.Key, "label")" value="@tv.Label" maxlength="100" /></div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    <div class="rgw-wizard-actions">
+                        <span class="rgw-wizard-spacer"></span>
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveTranslationButton"]</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    }
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-eye" aria-hidden="true"></i> @localizer["TranslationPreviewHeader"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted small">@localizer["StatusLabel"]: @localizer["TranslationStatus" + (ProtocolTranslationStatuses)tr.Status] · <span class="rgw-mono">@SignaturePolicy.ShortCode(tr.ContentHash)</span>@(tr.ApprovedOn.HasValue ? " · " + departmentTime.Format(tr.ApprovedOn) : "")</p>
+            <div class="protocol-content rgp-reader" lang="@tr.Locale">@Html.ProtocolContent(Model.TranslatedHtml)</div>
+        </div>
+    </div>
+
+    @if (Model.CanApprove)
+    {
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["ApproveTranslationHeader"]</h5></div>
+            <div class="ibox-content">
+                <blockquote>@Model.Statement</blockquote>
+                <p class="text-muted small">@localizer["ApproveTranslationHelp"]</p>
+                <form method="post" asp-controller="ProtocolTools" asp-action="ApproveTranslation" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                    <input type="hidden" name="translationId" value="@tr.ProtocolVersionTranslationId" />
+                    <button type="submit" class="btn btn-success" disabled="@Model.SourceChanged"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ApproveTranslationButton"]</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/protocol-content.css" asp-append-version="true" />
+}
+
+@section Scripts
+{
+    <script src="~/js/app/internal/protocols/resgrid.protocols.translation.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/protocols/resgrid.protocols.ai.js" asp-append-version="true"></script>
+}

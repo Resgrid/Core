@@ -564,4 +564,5 @@
   <data name="SurveyBlocker_rate_locked" xml:space="preserve"><value>Профіль ставок більше не редагується.</value></data>
   <data name="SurveyBlocker_workforce_unavailable" xml:space="preserve"><value>Дані оплати недоступні для цього підрозділу.</value></data>
   <data name="workforce_disabled" xml:space="preserve"><value>Дані оплати не ввімкнено для цього підрозділу.</value></data>
+  <data name="calmars_approval_required" xml:space="preserve"><value>Цей пакет потрібно затвердити перед передачею до порталу. Спершу подайте його на затвердження.</value><comment>machine-translated</comment></data>
 </root>

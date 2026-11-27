@@ -1,0 +1,168 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ProtocolFlashcardsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolAi.ProtocolAi> localizer
+@*
+    A protocol's practice cards (round 7A, Enhanced AI only): drafted from the published version in force, kept only when an author accepts them,
+    and shown to members who may read the protocol on its page. A newer version going into force flags a card for review; a flagged card is
+    hidden from members until an author checks it against the version in force. Practice is never graded or recorded.
+*@
+@{
+    var p = Model.Protocol;
+    ViewBag.Title = "Resgrid | " + localizer["FlashcardsTitle"];
+    ViewData["Title"] = string.Format(localizer["FlashcardsTitleFormat"].Value, p.Name);
+    ViewData["Subtitle"] = localizer["FlashcardsIntro"].Value;
+    ViewData["Section"] = "Library";
+    ViewData["IsManager"] = true;
+    var flagged = Model.Cards.Count(c => !c.IsActive);
+    var active = Model.Cards.Count(c => c.IsActive);
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToProtocol"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("../Protocols/_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    <div class="rgw-stat-tiles m-b-md">
+        <div class="rgw-stat-tile">
+            <div class="rgw-stat-label">@localizer["CardsActive"]</div>
+            <div class="rgw-stat-value">@active</div>
+        </div>
+        <div class="rgw-stat-tile">
+            <div class="rgw-stat-label">@localizer["CardsFlagged"]</div>
+            <div class="rgw-stat-value">@flagged</div>
+        </div>
+    </div>
+
+    @if (!Model.Status.Available)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Outcome." + (Model.Status.Reason ?? ProtocolAiOutcomes.NotEntitled)]</div>
+    }
+    else
+    {
+        <div class="ibox float-e-margins" id="protocol-ai-cards" data-draft-url="@Url.Action("DraftCards", "ProtocolAi", new { area = "User", id = p.DispatchProtocolId })"
+             data-accept-url="@Url.Action("AcceptCards", "ProtocolAi", new { area = "User", id = p.DispatchProtocolId })"
+             data-busy-text="@localizer["Drafting"]" data-accept-text="@localizer["AcceptCardsButton"]" data-none-text="@localizer["NothingTicked"]"
+             data-failed-text="@localizer["Outcome.Unavailable"]" data-source-text="@localizer["CardSourceFormat"]">
+            <div class="ibox-title"><h5><i class="fa fa-magic" aria-hidden="true"></i> @localizer["DraftCardsHeader"]</h5></div>
+            <div class="ibox-content">
+                <form class="form-inline" id="protocol-ai-cards-form">
+                    @Html.AntiForgeryToken()
+                    <label for="protocol-ai-card-count">@localizer["CardCountLabel"]</label>
+                    <input id="protocol-ai-card-count" type="number" class="form-control" min="@ProtocolFlashcardDraftRequest.MinCards" max="@ProtocolFlashcardDraftRequest.MaxCards" value="10" />
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-magic" aria-hidden="true"></i> @localizer["DraftCardsButton"]</button>
+                </form>
+                <p class="rgw-progress-honest m-t-sm" id="protocol-ai-cards-status" role="status" aria-live="polite"></p>
+                <div id="protocol-ai-cards-draft"></div>
+                <p class="small text-muted m-t-sm">@localizer["CardsRule"]</p>
+            </div>
+        </div>
+    }
+
+    <h3>@localizer["CardsHeader"]</h3>
+    @if (Model.Cards.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoCards"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["FrontColumn"]</th>
+                        <th>@localizer["BackColumn"]</th>
+                        <th>@localizer["SourceColumn"]</th>
+                        <th>@localizer["StatusColumn"]</th>
+                        <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var card in Model.Cards)
+                    {
+                        <tr>
+                            @if (Model.EditingCardId == card.ProtocolFlashcardId)
+                            {
+                                <td colspan="2">
+                                    <form method="post" asp-controller="ProtocolAi" asp-action="SaveCard" asp-route-area="User" asp-route-id="@p.DispatchProtocolId">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="cardId" value="@card.ProtocolFlashcardId" />
+                                        <div class="form-group">
+                                            <label for="front-@card.ProtocolFlashcardId">@localizer["FrontColumn"]</label>
+                                            <textarea id="front-@card.ProtocolFlashcardId" name="front" class="form-control" rows="2" maxlength="@ProtocolFlashcard.FrontMaxLength" required>@card.Front</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="back-@card.ProtocolFlashcardId">@localizer["BackColumn"]</label>
+                                            <textarea id="back-@card.ProtocolFlashcardId" name="back" class="form-control" rows="3" maxlength="@ProtocolFlashcard.BackMaxLength" required>@card.Back</textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-xs"><i class="fa fa-check" aria-hidden="true"></i> @localizer["SaveCardButton"]</button>
+                                        <a class="btn btn-white btn-xs" asp-controller="ProtocolAi" asp-action="Flashcards" asp-route-area="User" asp-route-id="@p.DispatchProtocolId">@localizer["CancelButton"]</a>
+                                    </form>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>@card.Front</td>
+                                <td>@card.Back</td>
+                            }
+                            <td>
+                                @string.Format(localizer["VersionFormat"].Value, card.SourceVersionLabel)
+                                @if (!string.IsNullOrWhiteSpace(card.SourceHeading)) {<span class="rgw-sub">@card.SourceHeading</span>}
+                            </td>
+                            <td>
+                                @if (card.IsActive)
+                                {
+                                    <span class="label label-primary">@localizer["CardActive"]</span>
+                                }
+                                else
+                                {
+                                    <span class="label label-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["CardNeedsReview"]</span>
+                                    <span class="rgw-sub">@localizer[card.FlagReason == (int)ProtocolFlashcardFlagReasons.SourceUnavailable ? "FlagUnavailable" : "FlagSuperseded"]</span>
+                                }
+                            </td>
+                            <td class="rgw-row-actions">
+                                @if (!card.IsActive)
+                                {
+                                    <form method="post" asp-controller="ProtocolAi" asp-action="ReviewCard" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" class="inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="cardId" value="@card.ProtocolFlashcardId" />
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-check-circle" aria-hidden="true"></i> @localizer["ReviewCardButton"]</button>
+                                    </form>
+                                }
+                                @if (Model.EditingCardId != card.ProtocolFlashcardId)
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="ProtocolAi" asp-action="Flashcards" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" asp-route-edit="@card.ProtocolFlashcardId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["EditCardButton"]</a>
+                                }
+                                <form method="post" asp-controller="ProtocolAi" asp-action="RemoveCard" asp-route-area="User" asp-route-id="@p.DispatchProtocolId" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="cardId" value="@card.ProtocolFlashcardId" />
+                                    <button type="submit" class="btn btn-white btn-xs" data-confirm="@localizer["RemoveCardConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["RemoveCardButton"]</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/protocols/resgrid.protocols.ai.js" asp-append-version="true"></script>
+}

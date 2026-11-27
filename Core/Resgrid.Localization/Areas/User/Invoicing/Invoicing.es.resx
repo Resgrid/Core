@@ -373,4 +373,5 @@
   <data name="TimeSourceCallWindowHelp" xml:space="preserve"><value>La unidad nunca informó En escena en esta llamada, por lo que la línea factura el tiempo desde el registro de la llamada hasta su cierre. Compruebe la cantidad antes de enviar.</value></data>
   <data name="TimeSourceUnitStatus" xml:space="preserve"><value>tiempo en escena del estado de la unidad</value></data>
   <data name="TimeSourceUnitStatusHelp" xml:space="preserve"><value>La unidad vinculó ella misma su estado En escena, y el estado que lo terminó, a esta llamada.</value></data>
+  <data name="invoicing_approval_required" xml:space="preserve"><value>Esta factura necesita su aprobación antes de enviarse. Preséntela para aprobación o envíela una vez aprobada.</value><comment>machine-translated</comment></data>
 </root>

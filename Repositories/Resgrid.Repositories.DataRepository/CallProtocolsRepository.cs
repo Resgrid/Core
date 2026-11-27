@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Framework;
@@ -13,7 +14,7 @@ using Resgrid.Repositories.DataRepository.Queries.Calls;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class CallProtocolsRepository : RepositoryBase<CallProtocol>, ICallProtocolsRepository
+	public class CallProtocolsRepository : RmsRepositoryBase<CallProtocol>, ICallProtocolsRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
@@ -28,6 +29,79 @@ namespace Resgrid.Repositories.DataRepository
 			_queryFactory = queryFactory;
 			_unitOfWork = unitOfWork;
 		}
+		public Task<IEnumerable<ProtocolUsageCount>> GetUsageCountsAsync(int departmentId, DateTime sinceUtc)
+		{
+			return QueryAsync<ProtocolUsageCount>(
+				$"SELECT cp.{Col("DispatchProtocolId")} AS {Col("DispatchProtocolId")}, COUNT(DISTINCT cp.{Col("CallId")}) AS {Col("Calls")} " +
+				$"FROM {Tbl("CallProtocols")} cp INNER JOIN {Tbl("Calls")} c ON c.{Col("CallId")} = cp.{Col("CallId")} " +
+				$"WHERE c.{Col("DepartmentId")} = {P}DepartmentId AND c.{Col("LoggedOn")} >= {P}Since AND cp.{Col("RemovedOn")} IS NULL " +
+				$"GROUP BY cp.{Col("DispatchProtocolId")}",
+				new { DepartmentId = departmentId, Since = DatabaseTimestamp(sinceUtc) });
+		}
+
+		public Task<CallProtocol> GetForDepartmentCallAsync(int departmentId, int callId, int callProtocolId)
+		{
+			return QueryFirstOrDefaultAsync<CallProtocol>(
+				$"SELECT cp.* FROM {Tbl("CallProtocols")} cp INNER JOIN {Tbl("Calls")} c ON c.{Col("CallId")} = cp.{Col("CallId")} " +
+				$"WHERE cp.{Col("CallProtocolId")} = {P}Id AND cp.{Col("CallId")} = {P}CallId AND c.{Col("DepartmentId")} = {P}DepartmentId",
+				new { Id = callProtocolId, CallId = callId, DepartmentId = departmentId });
+		}
+
+		public async Task<bool> TryUpdateStepLogAsync(int callProtocolId, string stepLogJson, int expectedRevision, System.Threading.CancellationToken cancellationToken = default)
+		{
+			if (callProtocolId <= 0)
+				return false;
+
+			var parameters = new Dapper.DynamicParameters();
+			parameters.Add("Id", callProtocolId);
+			parameters.Add("Json", stepLogJson, System.Data.DbType.String);
+			parameters.Add("Expected", expectedRevision);
+			parameters.Add("Next", expectedRevision + 1);
+			var changed = await ExecuteAsync(
+				$"UPDATE {Tbl("CallProtocols")} SET {Col("StepLogJson")} = {P}Json, {Col("StepLogRevision")} = {P}Next " +
+				$"WHERE {Col("CallProtocolId")} = {P}Id AND {Col("StepLogRevision")} = {P}Expected",
+				parameters, cancellationToken);
+			return changed == 1;
+		}
+
+		public async Task<bool> TryUpdateCaseAsync(int departmentId, int callProtocolId, string determinant, string overrideReason, string caseJson,
+			System.Threading.CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || callProtocolId <= 0)
+				return false;
+
+			var parameters = new Dapper.DynamicParameters();
+			parameters.Add("Id", callProtocolId);
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("Determinant", determinant, System.Data.DbType.String);
+			parameters.Add("Reason", overrideReason, System.Data.DbType.String);
+			parameters.Add("Json", caseJson, System.Data.DbType.String);
+			var changed = await ExecuteAsync(
+				$"UPDATE {Tbl("CallProtocols")} SET {Col("Determinant")} = {P}Determinant, {Col("OverrideReason")} = {P}Reason, {Col("CaseJson")} = {P}Json " +
+				$"WHERE {Col("CallProtocolId")} = {P}Id AND {Col("CallId")} IN (SELECT c.{Col("CallId")} FROM {Tbl("Calls")} c WHERE c.{Col("DepartmentId")} = {P}DepartmentId)",
+				parameters, cancellationToken);
+			return changed == 1;
+		}
+
+		public async Task<bool> UpdateProtectedContentAsync(int departmentId, CallProtocol row, System.Threading.CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0 || row == null || row.CallProtocolId <= 0)
+				return false;
+
+			var parameters = new Dapper.DynamicParameters();
+			parameters.Add("Id", row.CallProtocolId);
+			parameters.Add("DepartmentId", departmentId);
+			parameters.Add("CaseJson", row.CaseJson, System.Data.DbType.String);
+			parameters.Add("AnswersJson", row.AnswersJson, System.Data.DbType.String);
+			parameters.Add("Reason", row.OverrideReason, System.Data.DbType.String);
+			parameters.Add("Removed", row.RemovedReason, System.Data.DbType.String);
+			var changed = await ExecuteAsync(
+				$"UPDATE {Tbl("CallProtocols")} SET {Col("CaseJson")} = {P}CaseJson, {Col("AnswersJson")} = {P}AnswersJson, {Col("OverrideReason")} = {P}Reason, {Col("RemovedReason")} = {P}Removed " +
+				$"WHERE {Col("CallProtocolId")} = {P}Id AND {Col("CallId")} IN (SELECT c.{Col("CallId")} FROM {Tbl("Calls")} c WHERE c.{Col("DepartmentId")} = {P}DepartmentId)",
+				parameters, cancellationToken);
+			return changed == 1;
+		}
+
 		public async Task<IEnumerable<CallProtocol>> GetCallProtocolsByCallIdAsync(int callId)
 		{
 			try

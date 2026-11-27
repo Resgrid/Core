@@ -44,7 +44,8 @@ namespace Resgrid.Tests.Services
 				_questionRepository,
 				_communicationServiceMock.Object,
 				_departmentServiceMock.Object,
-				_departmentSettingsServiceMock.Object
+				_departmentSettingsServiceMock.Object,
+				Mock.Of<IKnowledgeIndexQueue>(), Mock.Of<IUserProfileService>()
 			);
 		}
 
@@ -439,7 +440,7 @@ namespace Resgrid.Tests.Services
 		#region SendInitialTrainingNoticeAsync Tests
 
 		[Test]
-		public async Task SendInitialTrainingNoticeAsync_Should_Notify_Each_User_From_The_Department_Number()
+		public async Task SendTrainingNoticesAsync_Should_Notify_Each_New_Assignee_From_The_Department_Number()
 		{
 			var previousDoNotBroadcast = Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast;
 			Resgrid.Config.SystemBehaviorConfig.DoNotBroadcast = false;
@@ -447,22 +448,28 @@ namespace Resgrid.Tests.Services
 			try
 			{
 				_departmentSettingsServiceMock.Setup(x => x.GetTextToCallNumberForDepartmentAsync(1)).ReturnsAsync("15555550100");
+				_departmentServiceMock.Setup(x => x.GetActiveMemberUserIdsAsync(1))
+					.ReturnsAsync(new HashSet<string>(new[] { TestData.Users.TestUser1Id, TestData.Users.TestUser2Id }, StringComparer.OrdinalIgnoreCase));
 
 				var training = new Training
 				{
 					TrainingId = 1,
 					DepartmentId = 1,
 					Name = "Hose Lays",
+					CreatedOn = DateTime.UtcNow,
 					Users = new List<TrainingUser>
 					{
-						new TrainingUser { UserId = TestData.Users.TestUser1Id },
-						new TrainingUser { UserId = TestData.Users.TestUser2Id }
+						new TrainingUser { TrainingUserId = 1, TrainingId = 1, UserId = TestData.Users.TestUser1Id, AssignedOn = DateTime.UtcNow },
+						new TrainingUser { TrainingUserId = 2, TrainingId = 1, UserId = TestData.Users.TestUser2Id, AssignedOn = DateTime.UtcNow }
 					}
 				};
+				foreach (var user in training.Users)
+					_userRepository.SeedUser(user);
 
-				var result = await _trainingService.SendInitialTrainingNoticeAsync(training);
+				var result = await _trainingService.SendTrainingNoticesAsync(training, DateTime.UtcNow);
 
-				result.Should().BeTrue();
+				result.Should().Be(2);
+				training.Users.All(u => u.NotifiedOn.HasValue).Should().BeTrue();
 				_communicationServiceMock.Verify(x => x.SendNotificationAsync(It.IsAny<string>(), 1, "New Training (Hose Lays) assigned to you", "15555550100",
 					It.IsAny<Department>(), "New Training Notice", It.IsAny<UserProfile>(), It.IsAny<bool>()), Times.Exactly(2));
 				_communicationServiceMock.Verify(x => x.SendNotificationAsync(TestData.Users.TestUser2Id, It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>(),
@@ -495,10 +502,10 @@ namespace Resgrid.Tests.Services
 			_trainingRepository.SeedTraining(training);
 
 			// Act
-			var result = await _trainingService.DeleteTrainingAsync(1);
+			var result = await _trainingService.DeleteTrainingAsync(1, 1, TestData.Users.TestUser1Id);
 
 			// Assert
-			result.Should().BeTrue();
+			result.Should().Be(TrainingDeleteOutcomes.Deleted);
 			var deleted = await _trainingRepository.GetByIdAsync(1);
 			deleted.Should().BeNull();
 		}
@@ -530,6 +537,9 @@ namespace Resgrid.Tests.Services
 				Viewed = false,
 				Complete = false
 			});
+
+			// The service finds the assignment on the training row's assignees (one read).
+			_trainingRepository.Trainings.First().Users = new List<TrainingUser> { await _userRepository.GetByIdAsync(1) };
 
 			// Act
 			var result = await _trainingService.SetTrainingAsViewedAsync(1, TestData.Users.TestUser1Id);
@@ -563,6 +573,9 @@ namespace Resgrid.Tests.Services
 				Viewed = false,
 				Complete = false
 			});
+
+			// The service finds the assignment on the training row's assignees (one read).
+			_trainingRepository.Trainings.First().Users = new List<TrainingUser> { await _userRepository.GetByIdAsync(1) };
 
 			// Act
 			var result = await _trainingService.SetTrainingAsViewedAsync(1, TestData.Users.TestUser1Id);
@@ -622,12 +635,25 @@ namespace Resgrid.Tests.Services
 				Complete = false
 			});
 
-			// Act - User gets 2 out of 3 correct (66.67%)
-			var result = await _trainingService.RecordTrainingQuizResultAsync(1, TestData.Users.TestUser1Id, 2);
+			var row = _userRepository.GetByIdAsync(1).Result;
+			_trainingRepository.Trainings.First().Users = new List<TrainingUser> { row };
+			foreach (var q in _trainingRepository.Trainings.First().Questions)
+				q.Answers = new List<TrainingQuestionAnswer>
+				{
+					new TrainingQuestionAnswer { TrainingQuestionAnswerId = q.TrainingQuestionId * 10 + 1, TrainingQuestionId = q.TrainingQuestionId, Answer = "Right", Correct = true },
+					new TrainingQuestionAnswer { TrainingQuestionAnswerId = q.TrainingQuestionId * 10 + 2, TrainingQuestionId = q.TrainingQuestionId, Answer = "Wrong" }
+				};
+
+			// Act - User gets 2 out of 3 correct (66.67%), scored on the server
+			var answers = new Dictionary<int, List<int>> { [1] = new List<int> { 11 }, [2] = new List<int> { 21 }, [3] = new List<int> { 32 } };
+			var submission = await _trainingService.RecordQuizAttemptAsync(1, 1, TestData.Users.TestUser1Id, answers);
 
 			// Assert
-			result.Should().NotBeNull();
+			submission.Status.Should().Be(TrainingQuizSubmissionStatuses.Recorded);
+			submission.Result.Score.Should().BeApproximately(66.67, 0.1);
+			var result = await _userRepository.GetByIdAsync(1);
 			result.Complete.Should().BeTrue();
+			result.Passed.Should().BeTrue();
 			result.CompletedOn.Should().NotBeNull();
 			result.Score.Should().BeApproximately(66.67, 0.1);
 		}
@@ -652,8 +678,12 @@ namespace Resgrid.Tests.Services
 				Score = 85.5
 			});
 
+			_trainingRepository.SeedTraining(new Training { TrainingId = 1, DepartmentId = 1, Name = "Training", Users = new List<TrainingUser> { _userRepository.GetByIdAsync(1).Result } });
+			var assignments = new TrainingAssignmentService(_trainingRepository, _userRepository, new Mock<ITrainingAudiencesRepository>().Object,
+				new Mock<ITrainingCompletionHistoriesRepository>().Object, new Mock<IContentAudienceService>().Object, _departmentServiceMock.Object, null);
+
 			// Act
-			var result = await _trainingService.ResetUserAsync(1, TestData.Users.TestUser1Id);
+			var result = await assignments.ResetMemberAsync(1, 1, TestData.Users.TestUser1Id, TestData.Users.TestUser2Id);
 
 			// Assert
 			result.Should().NotBeNull();

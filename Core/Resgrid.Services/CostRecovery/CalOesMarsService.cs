@@ -60,6 +60,7 @@ namespace Resgrid.Services.CostRecovery
 		private readonly IUnitOfWork _unitOfWork;
 		private readonly ICalOesMarsReimbursementCalculator _calculator;
 		private readonly ICalOesMarsExternalGateway _gateway;
+		private readonly IApprovalGateService _approvalGate;
 		private readonly Lazy<ICommunicationService> _communication;
 		private readonly Lazy<IDepartmentSettingsService> _departmentSettings;
 		private readonly Lazy<ICompensationCostService> _compensation;
@@ -68,7 +69,7 @@ namespace Resgrid.Services.CostRecovery
 			ICalOesMarsRateLineRepository rateLines, ICalOesMarsAdministrativeRateInputRepository adminInputs, ICalOesMarsAgreementSnapshotRepository agreements,
 			ICalOesMarsWorkItemRepository workItems, ICalOesMarsReimbursementLineRepository lines, IDeploymentService deploymentService, ITimeTrackingService timeTracking,
 			IDeploymentTimeEntryRepository timeEntries, IUnitsService unitsService, IUserProfileService userProfileService, IDepartmentsService departmentsService,
-			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, ICalOesMarsReimbursementCalculator calculator, ICalOesMarsExternalGateway gateway,
+			IEventAggregator eventAggregator, IUnitOfWork unitOfWork, ICalOesMarsReimbursementCalculator calculator, ICalOesMarsExternalGateway gateway, IApprovalGateService approvalGate,
 			Lazy<ICommunicationService> communication = null, Lazy<IDepartmentSettingsService> departmentSettings = null, Lazy<ICompensationCostService> compensation = null)
 		{
 			_agencies = agencies;
@@ -89,6 +90,7 @@ namespace Resgrid.Services.CostRecovery
 			_unitOfWork = unitOfWork;
 			_calculator = calculator;
 			_gateway = gateway;
+			_approvalGate = approvalGate;
 			_communication = communication;
 			_departmentSettings = departmentSettings;
 			_compensation = compensation;

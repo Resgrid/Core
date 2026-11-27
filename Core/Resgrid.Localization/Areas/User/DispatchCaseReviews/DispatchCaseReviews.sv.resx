@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CaseReviewsTab" xml:space="preserve">
+    <value>Ärendegranskningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCaseReviewsTab" xml:space="preserve">
+    <value>Mina ärendegranskningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueLink" xml:space="preserve">
+    <value>Kö</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleLink" xml:space="preserve">
+    <value>Stickprov</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsLink" xml:space="preserve">
+    <value>Rapporter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsLink" xml:space="preserve">
+    <value>Bedömningsmallar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueIntro" xml:space="preserve">
+    <value>Utlarmningsärenden i stickprov som väntar på granskning, äldst först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueCaption" xml:space="preserve">
+    <value>Utlarmningsärenden som väntar på granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>Kön är tom. Dra ett stickprov för att börja granska.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileQueued" xml:space="preserve">
+    <value>I kön</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileInReview" xml:space="preserve">
+    <value>Utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAssignedToMe" xml:space="preserve">
+    <value>Tilldelade mig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAwaitingAcknowledgment" xml:space="preserve">
+    <value>Väntar på larmoperatören</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAcknowledged" xml:space="preserve">
+    <value>Kvitterade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileReviews" xml:space="preserve">
+    <value>Granskningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAverageScore" xml:space="preserve">
+    <value>Medelpoäng</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrides" xml:space="preserve">
+    <value>Ändringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileToAcknowledge" xml:space="preserve">
+    <value>Att kvittera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowWholeQueue" xml:space="preserve">
+    <value>Hela kön</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowMineOnly" xml:space="preserve">
+    <value>Tilldelade mig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleCallsButton" xml:space="preserve">
+    <value>Dra stickprov</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Larm</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolColumn" xml:space="preserve">
+    <value>Protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Larmoperatör</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>Tilldelad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Läge</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Åtgärder</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverriddenLabel" xml:space="preserve">
+    <value>Ändrad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Ej tilldelad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnCaseShort" xml:space="preserve">
+    <value>Ditt larm</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Granska</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakeButton" xml:space="preserve">
+    <value>Ta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Ta bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveConfirm" xml:space="preserve">
+    <value>Ta bort ärendet ur kön? Det kan dras i ett stickprov igen senare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>I kö</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>Utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Skickad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusAcknowledged" xml:space="preserve">
+    <value>Kvitterad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleTitle" xml:space="preserve">
+    <value>Dra larm för granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleIntro" xml:space="preserve">
+    <value>Välj larm slumpmässigt för granskning efter protokoll, utgåva, determinant, larmoperatör och datum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Förhandsvisning av stickprovet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewCandidates" xml:space="preserve">
+    <value>Matchande ärenden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewAlreadyReviewed" xml:space="preserve">
+    <value>Redan granskade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewExcluded" xml:space="preserve">
+    <value>Utelämnade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewEligible" xml:space="preserve">
+    <value>Valbara</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewSampleSize" xml:space="preserve">
+    <value>Skulle dras</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewCapped" xml:space="preserve">
+    <value>Bara de {0} senaste matchande larmen räknades. Begränsa datumen för en fullständig räkning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WhichCallsLegend" xml:space="preserve">
+    <value>Vilka larm</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>Från</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>Till</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolLabel" xml:space="preserve">
+    <value>Protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Utgåva</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantLabel" xml:space="preserve">
+    <value>Determinantkod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantHelp" xml:space="preserve">
+    <value>En determinant eller dess början, till exempel 09-E.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherLabel" xml:space="preserve">
+    <value>Larmoperatör</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HowManyLegend" xml:space="preserve">
+    <value>Hur många</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModeCount" xml:space="preserve">
+    <value>Antal ärenden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModePercent" xml:space="preserve">
+    <value>Andel av de valbara ärendena i procent</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleSizeHelp" xml:space="preserve">
+    <value>Högst {0} ärenden per stickprov. En procentsats avrundas uppåt. Redan granskade larm dras aldrig igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricLabel" xml:space="preserve">
+    <value>Bedömningsmall</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Tilldela</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignHelp" xml:space="preserve">
+    <value>Personens egna larm lämnas utanför stickprovet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Räkna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSampleButton" xml:space="preserve">
+    <value>Dra stickprov</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyProtocol" xml:space="preserve">
+    <value>Alla protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyVersion" xml:space="preserve">
+    <value>Alla utgåvor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyDispatcher" xml:space="preserve">
+    <value>Alla larmoperatörer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRubricWillBeCreated" xml:space="preserve">
+    <value>Standardmall (skapas med det första stickprovet)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampledMessage" xml:space="preserve">
+    <value>{0} ärenden köade för granskning ({1} valbara, {2} redan granskade).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewTitle" xml:space="preserve">
+    <value>Ärendegranskning: larm {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnCaseNotice" xml:space="preserve">
+    <value>Det här är ditt eget larm: en annan granskare måste bedöma det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Poäng</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionComplianceLabel" xml:space="preserve">
+    <value>Följsamhet i frågor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InstructionComplianceLabel" xml:space="preserve">
+    <value>Följsamhet i instruktioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotApplicableShort" xml:space="preserve">
+    <value>e.t.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseHeader" xml:space="preserve">
+    <value>Ärendet som det registrerades</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverrideDetail" xml:space="preserve">
+    <value>Beräknad {0}; ändrad av {1} den {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverrideReasonLabel" xml:space="preserve">
+    <value>Skäl</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PriorityLabel" xml:space="preserve">
+    <value>Föreslagen prioritet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceLabel" xml:space="preserve">
+    <value>Källa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceAi" xml:space="preserve">
+    <value>Förslag från Enhanced AI, bekräftat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineHeader" xml:space="preserve">
+    <value>Tidslinje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCallLogged" xml:space="preserve">
+    <value>Larm registrerat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineAttached" xml:space="preserve">
+    <value>Protokoll bifogat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCaseCompleted" xml:space="preserve">
+    <value>Ärendeflödet slutfört</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCaseNotCompleted" xml:space="preserve">
+    <value>Ärendeflödet slutfördes inte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineOverridden" xml:space="preserve">
+    <value>Determinant ändrad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCallerText" xml:space="preserve">
+    <value>Meddelande till inringaren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineStepsStarted" xml:space="preserve">
+    <value>Steg för steg påbörjat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineStepsCompleted" xml:space="preserve">
+    <value>slutfört</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineSampled" xml:space="preserve">
+    <value>Draget för granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineSent" xml:space="preserve">
+    <value>Granskning skickad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineAcknowledged" xml:space="preserve">
+    <value>Kvitterad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>Frågor och instruktioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>Inga frågor eller instruktioner registrerades i ärendet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindEntryQuestion" xml:space="preserve">
+    <value>Inledande fråga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindKeyQuestion" xml:space="preserve">
+    <value>Nyckelfråga</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindInstruction" xml:space="preserve">
+    <value>Instruktion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnswerLabel" xml:space="preserve">
+    <value>Svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceLabel" xml:space="preserve">
+    <value>Följsamhet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotScored" xml:space="preserve">
+    <value>Ej bedömd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceCompliant" xml:space="preserve">
+    <value>Följd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompliancePartial" xml:space="preserve">
+    <value>Delvis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotCompliant" xml:space="preserve">
+    <value>Inte följd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotApplicable" xml:space="preserve">
+    <value>Ej tillämplig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Anteckning (valfri)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriteriaHeader" xml:space="preserve">
+    <value>Mallens kriterier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeightLabel" xml:space="preserve">
+    <value>vikt {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DerivedCriterionHelp" xml:space="preserve">
+    <value>Bedöms utifrån frågorna och instruktionerna ovan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotScoredOption" xml:space="preserve">
+    <value>Ej bedömd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score100" xml:space="preserve">
+    <value>100 - helt uppfyllt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score75" xml:space="preserve">
+    <value>75 - till största delen uppfyllt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score50" xml:space="preserve">
+    <value>50 - delvis uppfyllt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score25" xml:space="preserve">
+    <value>25 - knappt uppfyllt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score0" xml:space="preserve">
+    <value>0 - inte uppfyllt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsLabel" xml:space="preserve">
+    <value>Kommentarer till larmoperatören</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsHelp" xml:space="preserve">
+    <value>Larmoperatören läser kommentarerna tillsammans med poängen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveDraftButton" xml:space="preserve">
+    <value>Spara utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>Skicka till larmoperatören</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriterionColumn" xml:space="preserve">
+    <value>Kriterium</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeightColumn" xml:space="preserve">
+    <value>Vikt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeedbackHeader" xml:space="preserve">
+    <value>Larmoperatörens återkoppling</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedOn" xml:space="preserve">
+    <value>Kvitterad {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotAcknowledgedYet" xml:space="preserve">
+    <value>Inte kvitterad än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherReplyHeader" xml:space="preserve">
+    <value>Larmoperatörens svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyOptionalLabel" xml:space="preserve">
+    <value>Svar (valfritt)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyOnceHelp" xml:space="preserve">
+    <value>Du kan svara en gång; granskaren aviseras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeButton" xml:space="preserve">
+    <value>Kvittera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>Ditt svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Skicka svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphHeader" xml:space="preserve">
+    <value>Protokollets ärendeflöde</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoGraph" xml:space="preserve">
+    <value>Den citerade utgåvan har inget ärendeflöde att visa.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathLegend" xml:space="preserve">
+    <value>Steg på vägen som larmet tog</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MineIntro" xml:space="preserve">
+    <value>Granskningar av larm som du hanterade. Läs och kvittera varje granskning; du kan svara en gång.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MineEmpty" xml:space="preserve">
+    <value>Inga ärendegranskningar för dig än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadAndAcknowledgeButton" xml:space="preserve">
+    <value>Läs och kvittera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RepliedLabel" xml:space="preserve">
+    <value>Du har svarat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsTitle" xml:space="preserve">
+    <value>Rapporter om ärendegranskningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsIntro" xml:space="preserve">
+    <value>Följsamhet i granskade utlarmningsärenden per protokoll, utgåva, larmoperatör och månad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyButton" xml:space="preserve">
+    <value>Tillämpa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Exportera CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportEmpty" xml:space="preserve">
+    <value>Inga skickade granskningar av larm under perioden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByMonthHeader" xml:space="preserve">
+    <value>Per månad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByProtocolHeader" xml:space="preserve">
+    <value>Per protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByVersionHeader" xml:space="preserve">
+    <value>Per utgåva</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>Per larmoperatör</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByItemHeader" xml:space="preserve">
+    <value>Per fråga och instruktion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Grupp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCall" xml:space="preserve">
+    <value>Larm</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCallDate" xml:space="preserve">
+    <value>Larmdatum</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvProtocol" xml:space="preserve">
+    <value>Protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvVersion" xml:space="preserve">
+    <value>Utgåva</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDeterminant" xml:space="preserve">
+    <value>Determinantkod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverridden" xml:space="preserve">
+    <value>Ändrad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDispatcher" xml:space="preserve">
+    <value>Larmoperatör</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvReviewer" xml:space="preserve">
+    <value>Granskare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvScore" xml:space="preserve">
+    <value>Poäng</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvQuestionCompliance" xml:space="preserve">
+    <value>Följsamhet i frågor %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvInstructionCompliance" xml:space="preserve">
+    <value>Följsamhet i instruktioner %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvSent" xml:space="preserve">
+    <value>Skickad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAcknowledged" xml:space="preserve">
+    <value>Kvitterad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsTitle" xml:space="preserve">
+    <value>Bedömningsmallar för utlarmningsärenden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsIntro" xml:space="preserve">
+    <value>Bedömningsmallar från Records kvalitetsgranskning som används för att bedöma utlarmningsärenden. Varje granskning behåller kriterierna den drogs med.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRubrics" xml:space="preserve">
+    <value>Det finns ingen bedömningsmall för utlarmningsärenden än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateTemplateButton" xml:space="preserve">
+    <value>Skapa standardmallen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InactiveLabel" xml:space="preserve">
+    <value>Inaktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DerivedLabel" xml:space="preserve">
+    <value>från posterna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Redigera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewRubricHeader" xml:space="preserve">
+    <value>Ny mall</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditRubricHeader" xml:space="preserve">
+    <value>Redigera mall</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricNameLabel" xml:space="preserve">
+    <value>Namn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Aktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriteriaHelp" xml:space="preserve">
+    <value>Nycklarna "questions" och "instructions" hämtar poängen från frågorna och instruktionerna; övriga kriterier bedöms för hand. Vikterna går från 1 till 10.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriterionKeyColumn" xml:space="preserve">
+    <value>Nyckel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Avbryt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveRubricButton" xml:space="preserve">
+    <value>Spara mallen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricSavedMessage" xml:space="preserve">
+    <value>Mallen sparades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricNotSaved" xml:space="preserve">
+    <value>Mallen sparades inte. Den behöver ett namn och minst ett kriterium med unika nycklar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRubricName" xml:space="preserve">
+    <value>Granskning av utlarmningsärenden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCaseEntry" xml:space="preserve">
+    <value>Ärendeintag: adress, återuppringningsnummer och huvudbesvär bekräftade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateQuestions" xml:space="preserve">
+    <value>Frågor ställda som de är skrivna, i ordning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateDeterminant" xml:space="preserve">
+    <value>Rätt determinant (en ändring har goda skäl)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateInstructions" xml:space="preserve">
+    <value>Instruktioner givna som de är skrivna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCallerCare" xml:space="preserve">
+    <value>Lugn, tydlig och artig mot inringaren</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakenMessage" xml:space="preserve">
+    <value>Ärendet ligger i din kö.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>Ärendet togs bort ur kön.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>Granskningen skickades till larmoperatören.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftSavedMessage" xml:space="preserve">
+    <value>Utkastet sparades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Granskningen kvitterades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RepliedMessage" xml:space="preserve">
+    <value>Ditt svar skickades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultDone" xml:space="preserve">
+    <value>Klart.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNotFound" xml:space="preserve">
+    <value>Granskningen hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultForbidden" xml:space="preserve">
+    <value>Du har inte behörighet att göra det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultOwnCase" xml:space="preserve">
+    <value>Du kan inte granska ditt eget larm.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadySent" xml:space="preserve">
+    <value>Granskningen har redan skickats till larmoperatören och kan inte längre ändras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultIncomplete" xml:space="preserve">
+    <value>Bedöm varje fråga, instruktion och kriterium innan du skickar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadyAcknowledged" xml:space="preserve">
+    <value>Granskningen har redan kvitterats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadyCommented" xml:space="preserve">
+    <value>Du har redan svarat på granskningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNotSent" xml:space="preserve">
+    <value>Granskningen har inte skickats än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultConflict" xml:space="preserve">
+    <value>Någon annan ändrade eller tog granskningen. Ladda om sidan och försök igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultCommentRequired" xml:space="preserve">
+    <value>Skriv ett svar först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNoRubric" xml:space="preserve">
+    <value>Välj en aktiv bedömningsmall för utlarmningsärenden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultInvalid" xml:space="preserve">
+    <value>Kontrollera datumen och stickprovets storlek.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

@@ -1,0 +1,53 @@
+@using Resgrid.Web.Areas.User.Models.LmsClasses
+@model LmsClassKioskView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@* The kiosk screen of a class (§13 T4 item 1): a QR that rotates every 30 seconds (a photo of it stops working), and who has signed in. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["KioskTitle"];
+    ViewData["Title"] = localizer["KioskTitle"].Value;
+    ViewData["Subtitle"] = Model.Session.Title;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page" id="lms-class-kiosk" data-code-url="@Url.Action("Code", "LmsClasses", new { area = "User", id = Model.Session.LmsClassSessionId })">
+    <div class="row">
+        <div class="col-md-6 text-center">
+            @if (Model.Open)
+            {
+                <p class="lead">@localizer["KioskInstruction"]</p>
+                <img id="lms-class-qr" src="@Model.QrDataUrl" alt="@localizer["QrAlt"]" style="max-width:360px;width:100%" />
+                <p class="small text-muted m-t-sm">@localizer["QrRotates"]@(Model.Session.GpsRequired ? " " + localizer["GpsRequiredNotice"].Value : string.Empty)</p>
+            }
+            else
+            {
+                <p class="lead text-muted"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["SignInClosed"]</p>
+            }
+            <form method="post" asp-controller="LmsClasses" asp-action="RotateQr" asp-route-area="User" class="m-t-sm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Session.LmsClassSessionId" />
+                <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["NewQrSecret"]</button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <h3>@localizer["PresentHeader"] <span class="badge" id="lms-class-count">@Model.Present.Count</span></h3>
+            <ul id="lms-class-present" aria-live="polite">
+                @foreach (var name in Model.Present)
+                {
+                    <li>@name</li>
+                }
+            </ul>
+            <a class="btn btn-white" asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@Model.Session.LmsClassSessionId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Back"]</a>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/lmsclasses/resgrid.lmsclasses.js" asp-append-version="true"></script>
+}

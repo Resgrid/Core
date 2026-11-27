@@ -38,14 +38,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserProfileService _userProfileService;
 		private readonly IPermissionsService _permissionsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly ILearningRecordService _learningRecordService;
 
 		public CalendarController(IDepartmentsService departmentsService, IUsersService usersService, ICalendarService calendarService,
 			IDepartmentGroupsService departmentGroupsService, IGeoLocationProvider geoLocationProvider, IEventAggregator eventAggregator,
 			IAuthorizationService authorizationService, IUserProfileService userProfileService,
 			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
-			IProtectedReadService protectedReadService, IChecklistsService checklists = null)
+			IProtectedReadService protectedReadService, IChecklistsService checklists = null, ILearningRecordService learningRecordService = null)
 		{
 			_protectedReadService = protectedReadService; _checklists = checklists;
+			_learningRecordService = learningRecordService;
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_calendarService = calendarService;
@@ -858,6 +860,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			NewTypeView model = new NewTypeView();
 			model.Type = new CalendarItemType();
+			await FillTrainingCategoriesAsync(model);
 
 			return View(model);
 		}
@@ -873,6 +876,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if ((await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId)).Any(x => x.Name == model.Type.Name))
 				ModelState.AddModelError("", "Type name already exists, please choose another name.");
 
+			model.Type.DefaultCategoryId = await ValidTrainingCategoryAsync(model.Type.DefaultCategoryId, null);
+
 			if (ModelState.IsValid)
 			{
 				model.Type.DepartmentId = DepartmentId;
@@ -881,6 +886,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Types", "Calendar", new { Area = "User" });
 			}
 
+			await FillTrainingCategoriesAsync(model);
 			return View(model);
 		}
 
@@ -904,6 +910,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			NewTypeView model = new NewTypeView();
 			model.Type = calendarItemType;
+			await FillTrainingCategoriesAsync(model);
 
 			return View(model);
 		}
@@ -925,12 +932,58 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				savedType.Name = model.Type.Name;
 				savedType.Color = model.Type.Color;
-				await _calendarService.SaveCalendarItemTypeAsync(savedType, cancellationToken);
+				// Training T1 (R-T9): check-in/out on items of this type becomes training hours on the attendees' transcripts.
+				savedType.CountsAsTraining = model.Type.CountsAsTraining;
+				savedType.DefaultCategoryId = await ValidTrainingCategoryAsync(model.Type.DefaultCategoryId, savedType.DefaultCategoryId);
 
-				return RedirectToAction("Types", "Calendar", new { Area = "User" });
+				if (ModelState.IsValid)
+				{
+					await _calendarService.SaveCalendarItemTypeAsync(savedType, cancellationToken);
+
+					return RedirectToAction("Types", "Calendar", new { Area = "User" });
+				}
 			}
 
+			await FillTrainingCategoriesAsync(model);
 			return View(model);
+		}
+
+		/// <summary>The training categories the type form offers (a removed one only while it is the stored value).</summary>
+		private async Task FillTrainingCategoriesAsync(NewTypeView model)
+		{
+			if (_learningRecordService == null || model == null)
+				return;
+
+			var stored = model.Type?.DefaultCategoryId;
+			try
+			{
+				model.TrainingCategories = (await _learningRecordService.GetCategoriesAsync(DepartmentId, true) ?? new List<TrainingCategory>())
+					.Where(c => c.DepartmentId == DepartmentId && (!c.IsDeleted || c.TrainingCategoryId == stored))
+					.OrderBy(c => c.SortOrder).ThenBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase).ToList();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				model.TrainingCategories = new List<TrainingCategory>();
+			}
+		}
+
+		/// <summary>A posted training category is kept only when it is one of the department's (or the one already stored).</summary>
+		private async Task<int?> ValidTrainingCategoryAsync(int? categoryId, int? storedCategoryId)
+		{
+			if (!categoryId.HasValue || categoryId.Value <= 0)
+				return null;
+			if (categoryId == storedCategoryId)
+				return categoryId;
+			if (_learningRecordService == null)
+				return storedCategoryId;
+
+			var categories = await _learningRecordService.GetCategoriesAsync(DepartmentId) ?? new List<TrainingCategory>();
+			if (categories.Any(c => c.TrainingCategoryId == categoryId.Value && c.DepartmentId == DepartmentId && !c.IsDeleted))
+				return categoryId;
+
+			// Only a tampered post names another category (the form offers the department's): keep what is stored.
+			return storedCategoryId;
 		}
 
 		[HttpPost]

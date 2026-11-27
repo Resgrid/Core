@@ -1085,5 +1085,685 @@
   <data name="CredentialDeliversRecordsExport" xml:space="preserve">
     <value>Ένα βήμα ροής εργασιών στέλνει εξαγωγή αναφοράς εγγραφών μέσω αυτών των διαπιστευτηρίων, επομένως η αλλαγή τους απαιτεί τα δικαιώματα "Εκτύπωση και εξαγωγή αναφορών" και "Διαχείριση συγκεντρωτικών αναφορών" (και "Προβολή περιορισμένων ενοτήτων" όταν η εξαγωγή περιλαμβάνει περιορισμένες ενότητες).</value>
   </data>
+  <data name="Trigger.DocumentSealed" xml:space="preserve">
+    <value>Το έγγραφο σφραγίστηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DocumentSealingFailed" xml:space="preserve">
+    <value>Η σφράγιση του εγγράφου απέτυχε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolVersionPublished" xml:space="preserve">
+    <value>Δημοσιεύθηκε έκδοση πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolRetired" xml:space="preserve">
+    <value>Το πρωτόκολλο αποσύρθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolVersionExpired" xml:space="preserve">
+    <value>Η έκδοση πρωτοκόλλου έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolReviewDue" xml:space="preserve">
+    <value>Οφειλόμενη αναθεώρηση πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolReviewOverdue" xml:space="preserve">
+    <value>Εκπρόθεσμη αναθεώρηση πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolBulletinIssued" xml:space="preserve">
+    <value>Εκδόθηκε δελτίο προτεραιότητας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolBulletinWithdrawn" xml:space="preserve">
+    <value>Ανακλήθηκε δελτίο προτεραιότητας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolTranslationApproved" xml:space="preserve">
+    <value>Εγκρίθηκε μετάφραση πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolPublicLinkChanged" xml:space="preserve">
+    <value>Δημιουργήθηκε ή ανακλήθηκε δημόσιος σύνδεσμος πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentAssigned" xml:space="preserve">
+    <value>Ανατέθηκε βεβαίωση ανάγνωσης πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentCompleted" xml:space="preserve">
+    <value>Ολοκληρώθηκε βεβαίωση ανάγνωσης πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ProtocolAcknowledgmentOverdue" xml:space="preserve">
+    <value>Εκπρόθεσμη βεβαίωση ανάγνωσης πρωτοκόλλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallDeterminantChanged" xml:space="preserve">
+    <value>Άλλαξε ο καθοριστικός κωδικός της κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DispatchCaseReviewSent" xml:space="preserve">
+    <value>Εστάλη αξιολόγηση περιστατικού διαχείρισης κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DispatchCaseReviewAcknowledged" xml:space="preserve">
+    <value>Επιβεβαιώθηκε αξιολόγηση περιστατικού διαχείρισης κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExchangeListingReviewed" xml:space="preserve">
+    <value>Εξετάστηκε υποβολή στην κοινοτική ανταλλαγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.KnowledgeGapRecorded" xml:space="preserve">
+    <value>Καταγράφηκε κενό γνώσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseVersionPublished" xml:space="preserve">
+    <value>Δημοσιεύθηκε έκδοση μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseCompleted" xml:space="preserve">
+    <value>Το μάθημα ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AssessmentGraded" xml:space="preserve">
+    <value>Βαθμολογήθηκε η αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SkillEvaluationCompleted" xml:space="preserve">
+    <value>Ολοκληρώθηκε αξιολόγηση δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TaskBookClosed" xml:space="preserve">
+    <value>Έκλεισε το βιβλίο εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RequirementEnforcementUndone" xml:space="preserve">
+    <value>Αναιρέθηκε η επιβολή απαίτησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingRequestSubmitted" xml:space="preserve">
+    <value>Υποβλήθηκε αίτημα εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingRequestDecided" xml:space="preserve">
+    <value>Αποφασίστηκε αίτημα εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsAddonLapsed" xml:space="preserve">
+    <value>Το πρόσθετο LMS έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsAddonReactivated" xml:space="preserve">
+    <value>Το πρόσθετο LMS επανενεργοποιήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsDataExportReady" xml:space="preserve">
+    <value>Η εξαγωγή δεδομένων εκπαίδευσης είναι έτοιμη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureStepAssigned" xml:space="preserve">
+    <value>Σειρά σας να υπογράψετε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseAssigned" xml:space="preserve">
+    <value>Ανατέθηκε μάθημα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AssessmentAwaitingGrading" xml:space="preserve">
+    <value>Η αξιολόγηση αναμένει βαθμολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CourseRetired" xml:space="preserve">
+    <value>Το μάθημα αποσύρθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsSeatsChanged" xml:space="preserve">
+    <value>Άλλαξαν θέσεις ή πακέτα LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationIssuedByTraining" xml:space="preserve">
+    <value>Έκδοση πιστοποίησης μέσω εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationRenewedByTraining" xml:space="preserve">
+    <value>Ανανέωση πιστοποίησης μέσω εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationRevokedByVoid" xml:space="preserve">
+    <value>Αναίρεση πιστοποίησης λόγω ακύρωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CertificationRequirementsDue" xml:space="preserve">
+    <value>Απαιτήσεις πιστοποίησης προς ολοκλήρωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionReceived" xml:space="preserve">
+    <value>Παραλήφθηκε υποβολή ωρών εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionApproved" xml:space="preserve">
+    <value>Εγκρίθηκε υποβολή ωρών εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionDenied" xml:space="preserve">
+    <value>Δεν έγινε δεκτή υποβολή ωρών εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionInfoRequested" xml:space="preserve">
+    <value>Ζητήθηκαν πληροφορίες για υποβολή εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingSubmissionResubmitted" xml:space="preserve">
+    <value>Υποβλήθηκε ξανά υποβολή ωρών εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingCompletionRecordingVoided" xml:space="preserve">
+    <value>Ακυρώθηκε καταγεγραμμένη ολοκλήρωση εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureRequested" xml:space="preserve">
+    <value>Ζητήθηκε υπογραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureCompleted" xml:space="preserve">
+    <value>Το αίτημα υπογραφής ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureDeclined" xml:space="preserve">
+    <value>Το αίτημα υπογραφής απορρίφθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.SignatureExpired" xml:space="preserve">
+    <value>Το αίτημα υπογραφής έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingAssigned" xml:space="preserve">
+    <value>Ανατέθηκε εκπαίδευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingCompleted" xml:space="preserve">
+    <value>Η εκπαίδευση ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingFailed" xml:space="preserve">
+    <value>Αποτυχία στην αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingOverdue" xml:space="preserve">
+    <value>Η εκπαίδευση καθυστερεί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RequirementAtRisk" xml:space="preserve">
+    <value>Απαίτηση σε κίνδυνο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RequirementEnforced" xml:space="preserve">
+    <value>Η απαίτηση επιβλήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalRequested" xml:space="preserve">
+    <value>Ζητήθηκε έγκριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalGranted" xml:space="preserve">
+    <value>Η έγκριση δόθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalRejected" xml:space="preserve">
+    <value>Η έγκριση απορρίφθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ApprovalEscalated" xml:space="preserve">
+    <value>Η έγκριση κλιμακώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassSessionScheduled" xml:space="preserve">
+    <value>Προγραμματίστηκε συνεδρία μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassSessionCancelled" xml:space="preserve">
+    <value>Ακυρώθηκε συνεδρία μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassSessionSignedOff" xml:space="preserve">
+    <value>Υπογράφηκε συνεδρία μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ClassWaitlistPromoted" xml:space="preserve">
+    <value>Μετακίνηση από τη λίστα αναμονής μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingCompletionRecorded" xml:space="preserve">
+    <value>Καταγράφηκε ολοκλήρωση εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExternalLearnerRegistered" xml:space="preserve">
+    <value>Δημιουργήθηκε λογαριασμός εξωτερικού εκπαιδευόμενου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExternalLearnerEnrolled" xml:space="preserve">
+    <value>Εξωτερικός εκπαιδευόμενος γράφτηκε σε μάθημα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ExternalLearnerCompletedCourse" xml:space="preserve">
+    <value>Εξωτερικός εκπαιδευόμενος ολοκλήρωσε μάθημα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallAdded" xml:space="preserve">
+    <value>Η κλήση προστέθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallUpdated" xml:space="preserve">
+    <value>Η κλήση ενημερώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallClosed" xml:space="preserve">
+    <value>Η κλήση έκλεισε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UnitStatusChanged" xml:space="preserve">
+    <value>Η κατάσταση μονάδας άλλαξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PersonnelStaffingChanged" xml:space="preserve">
+    <value>Η διαθεσιμότητα προσωπικού άλλαξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PersonnelStatusChanged" xml:space="preserve">
+    <value>Η κατάσταση προσωπικού άλλαξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UserCreated" xml:space="preserve">
+    <value>Δημιουργήθηκε χρήστης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UserAssignedToGroup" xml:space="preserve">
+    <value>Ο χρήστης ανατέθηκε σε ομάδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DocumentAdded" xml:space="preserve">
+    <value>Προστέθηκε έγγραφο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.NoteAdded" xml:space="preserve">
+    <value>Προστέθηκε σημείωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.UnitAdded" xml:space="preserve">
+    <value>Προστέθηκε μονάδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LogAdded" xml:space="preserve">
+    <value>Προστέθηκε αρχείο καταγραφής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CalendarEventAdded" xml:space="preserve">
+    <value>Προστέθηκε συμβάν ημερολογίου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CalendarEventUpdated" xml:space="preserve">
+    <value>Ενημερώθηκε συμβάν ημερολογίου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftCreated" xml:space="preserve">
+    <value>Δημιουργήθηκε βάρδια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftUpdated" xml:space="preserve">
+    <value>Ενημερώθηκε βάρδια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ResourceOrderAdded" xml:space="preserve">
+    <value>Προστέθηκε παραγγελία πόρων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftTradeRequested" xml:space="preserve">
+    <value>Ζητήθηκε ανταλλαγή βάρδιας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ShiftTradeFilled" xml:space="preserve">
+    <value>Η ανταλλαγή βάρδιας ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MessageSent" xml:space="preserve">
+    <value>Το μήνυμα στάλθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingAdded" xml:space="preserve">
+    <value>Προστέθηκε εκπαίδευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.TrainingUpdated" xml:space="preserve">
+    <value>Ενημερώθηκε εκπαίδευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.FormSubmitted" xml:space="preserve">
+    <value>Υποβλήθηκε φόρμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PersonnelRoleChanged" xml:space="preserve">
+    <value>Άλλαξε ρόλος προσωπικού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.GroupAdded" xml:space="preserve">
+    <value>Προστέθηκε ομάδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.GroupUpdated" xml:space="preserve">
+    <value>Ενημερώθηκε ομάδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CommandEstablished" xml:space="preserve">
+    <value>Ορίστηκε διοίκηση συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ResourceAssigned" xml:space="preserve">
+    <value>Ανατέθηκε πόρος συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ResourceReleased" xml:space="preserve">
+    <value>Αποδεσμεύτηκε πόρος συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ObjectiveCompleted" xml:space="preserve">
+    <value>Ολοκληρώθηκε στόχος συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CriticalParDetected" xml:space="preserve">
+    <value>Εντοπίστηκε κρίσιμο PAR</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CommandTransferred" xml:space="preserve">
+    <value>Μεταβιβάστηκε η διοίκηση συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentRoleAssigned" xml:space="preserve">
+    <value>Ανατέθηκε ρόλος συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdHocResourceCreated" xml:space="preserve">
+    <value>Δημιουργήθηκε έκτακτος πόρος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentChannelOpened" xml:space="preserve">
+    <value>Άνοιξε κανάλι συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentClosed" xml:space="preserve">
+    <value>Το συμβάν έκλεισε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PublicIncidentNoteAdded" xml:space="preserve">
+    <value>Προστέθηκε δημόσια σημείωση συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.InternalIncidentNoteAdded" xml:space="preserve">
+    <value>Προστέθηκε εσωτερική σημείωση συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.PublicIncidentDocumentAdded" xml:space="preserve">
+    <value>Προστέθηκε δημόσιο έγγραφο συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.InternalIncidentDocumentAdded" xml:space="preserve">
+    <value>Προστέθηκε εσωτερικό έγγραφο συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentNoteRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκε σημείωση συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentDocumentRemoved" xml:space="preserve">
+    <value>Αφαιρέθηκε έγγραφο συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentActionPlanUpdated" xml:space="preserve">
+    <value>Ενημερώθηκε σχέδιο δράσης συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentCommandPostUpdated" xml:space="preserve">
+    <value>Ενημερώθηκε θέση διοίκησης συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentPublicSharingEnabled" xml:space="preserve">
+    <value>Ενεργοποιήθηκε η δημόσια κοινοποίηση συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.IncidentPublicSharingDisabled" xml:space="preserve">
+    <value>Απενεργοποιήθηκε η δημόσια κοινοποίηση συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RunCardActivated" xml:space="preserve">
+    <value>Ενεργοποιήθηκε κάρτα απόκρισης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.CallAlarmEscalated" xml:space="preserve">
+    <value>Κλιμακώθηκε ο συναγερμός κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.DispatchShortfallDetected" xml:space="preserve">
+    <value>Εντοπίστηκε έλλειμμα αποστολής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.StationCoverageGapDetected" xml:space="preserve">
+    <value>Εντοπίστηκε κενό κάλυψης σταθμού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordCreated" xml:space="preserve">
+    <value>Δημιουργήθηκε αναφορά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmittedForReview" xml:space="preserve">
+    <value>Η αναφορά στάλθηκε για έλεγχο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordReturnedForCorrection" xml:space="preserve">
+    <value>Η αναφορά επιστράφηκε για διόρθωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordApproved" xml:space="preserve">
+    <value>Η αναφορά εγκρίθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordFinalized" xml:space="preserve">
+    <value>Η αναφορά οριστικοποιήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordAmended" xml:space="preserve">
+    <value>Η αναφορά τροποποιήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordVoided" xml:space="preserve">
+    <value>Η αναφορά ακυρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordCancelled" xml:space="preserve">
+    <value>Η αναφορά εγκαταλείφθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionQueued" xml:space="preserve">
+    <value>Η υποβολή αναφοράς μπήκε σε ουρά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionAccepted" xml:space="preserve">
+    <value>Η υποβολή αναφοράς έγινε δεκτή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionRejected" xml:space="preserve">
+    <value>Η υποβολή αναφοράς απορρίφθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordSubmissionFailed" xml:space="preserve">
+    <value>Η υποβολή αναφοράς απέτυχε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordOverdue" xml:space="preserve">
+    <value>Η αναφορά καθυστερεί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDefinitionPublished" xml:space="preserve">
+    <value>Δημοσιεύτηκε ορισμός αναφοράς</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDefinitionRetired" xml:space="preserve">
+    <value>Αποσύρθηκε ορισμός αναφοράς</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordAttachmentAdded" xml:space="preserve">
+    <value>Προστέθηκε συνημμένο αναφοράς</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureRequested" xml:space="preserve">
+    <value>Καταχωρίστηκε αίτημα πρόσβασης σε αρχεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureProduced" xml:space="preserve">
+    <value>Δημιουργήθηκε πακέτο δημοσιοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureReleased" xml:space="preserve">
+    <value>Παραδόθηκε πακέτο δημοσιοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDisclosureClosed" xml:space="preserve">
+    <value>Έκλεισε αίτημα πρόσβασης σε αρχεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordLegalHoldPlaced" xml:space="preserve">
+    <value>Επιβλήθηκε νομική δέσμευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordLegalHoldReleased" xml:space="preserve">
+    <value>Άρθηκε νομική δέσμευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordEvidenceCaptured" xml:space="preserve">
+    <value>Καταγράφηκε αποδεικτικό αναφοράς</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordPurged" xml:space="preserve">
+    <value>Η αναφορά εκκαθαρίστηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordExportScheduled" xml:space="preserve">
+    <value>Η προγραμματισμένη εξαγωγή αναφορών είναι έτοιμη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordInspectionCompleted" xml:space="preserve">
+    <value>Η επιθεώρηση ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordViolationOverdue" xml:space="preserve">
+    <value>Καθυστερεί η διόρθωση παράβασης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordPermitExpiring" xml:space="preserve">
+    <value>Η άδεια λήγει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdminAssistFindingOpened" xml:space="preserve">
+    <value>Άνοιξε εύρημα Admin Assist</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdminAssistFindingResolved" xml:space="preserve">
+    <value>Επιλύθηκε εύρημα Admin Assist</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.AdminAssistFindingReopened" xml:space="preserve">
+    <value>Άνοιξε ξανά εύρημα Admin Assist</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleCreated" xml:space="preserve">
+    <value>Δημιουργήθηκε πρόγραμμα επαναλαμβανόμενης κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleUpdated" xml:space="preserve">
+    <value>Ενημερώθηκε πρόγραμμα επαναλαμβανόμενης κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallSchedulePaused" xml:space="preserve">
+    <value>Τέθηκε σε παύση πρόγραμμα επαναλαμβανόμενης κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleResumed" xml:space="preserve">
+    <value>Συνεχίστηκε πρόγραμμα επαναλαμβανόμενης κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallScheduleDeleted" xml:space="preserve">
+    <value>Διαγράφηκε πρόγραμμα επαναλαμβανόμενης κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceCreated" xml:space="preserve">
+    <value>Δημιουργήθηκε επανάληψη κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceSkipped" xml:space="preserve">
+    <value>Παραλείφθηκε επανάληψη κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallOccurrenceDispatched" xml:space="preserve">
+    <value>Απεστάλη επανάληψη κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallAlertRaised" xml:space="preserve">
+    <value>Εκδόθηκε ειδοποίηση επαναλαμβανόμενης κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecurringCallAlertResolved" xml:space="preserve">
+    <value>Επιλύθηκε ειδοποίηση επαναλαμβανόμενης κλήσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetUpdateArrived" xml:space="preserve">
+    <value>Έφτασε ενημέρωση συνόλου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetUpdateApplied" xml:space="preserve">
+    <value>Ενημέρωση συνόλου σε ισχύ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetSubscribed" xml:space="preserve">
+    <value>Εγγραφή τμήματος σε σύνολο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetProposalReceived" xml:space="preserve">
+    <value>Προτάθηκε αλλαγή σε σύνολο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.ContentSetProposalAnswered" xml:space="preserve">
+    <value>Απαντήθηκε πρόταση για σύνολο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsSponsorshipStarted" xml:space="preserve">
+    <value>Έναρξη χορηγίας LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.LmsSponsorshipEnded" xml:space="preserve">
+    <value>Λήξη χορηγίας LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MutualAidCountersignRequested" xml:space="preserve">
+    <value>Ζητήθηκε προσυπογραφή αμοιβαίας βοήθειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MutualAidAgreementCountersigned" xml:space="preserve">
+    <value>Προσυπογράφηκε συμφωνία αμοιβαίας βοήθειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.MutualAidCountersignDeclined" xml:space="preserve">
+    <value>Απορρίφθηκε προσυπογραφή αμοιβαίας βοήθειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDeploymentPartnerSignRequested" xml:space="preserve">
+    <value>Ζητήθηκε αποδοχή συνεργάτη αποστολής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Trigger.RecordDeploymentPartnerSignDecided" xml:space="preserve">
+    <value>Αποφασίστηκε η αποδοχή συνεργάτη αποστολής</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>
 

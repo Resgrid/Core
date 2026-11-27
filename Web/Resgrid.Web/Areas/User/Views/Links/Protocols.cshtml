@@ -1,0 +1,53 @@
+@model Resgrid.Model.Services.LinkedProtocolList
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Links.Links> localizer
+@*
+    Round 10 A3 (Protocols P5 "Linked departments"): the other side's published protocols, read-only and only the version in force, over a
+    link that shares Protocols toward this department. Restricted, licensed and document-backed protocols are never listed.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["LinkedProtocolsHeader"];
+    var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-8">
+    <h2>@string.Format(localizer["LinkedProtocolsTitle"].Value, Model.SharingDepartmentName)</h2>
+    <ol class="breadcrumb">
+      <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a></li>
+      <li><a asp-controller="Links" asp-action="Index" asp-route-area="User">@localizer["DepartmentLinks"]</a></li>
+      <li class="active"><strong>@localizer["LinkedProtocolsHeader"]</strong></li>
+    </ol>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox">
+    <div class="ibox-content">
+      <p class="text-muted">@localizer["LinkedProtocolsIntro"]</p>
+      @if (Model.Protocols.Count == 0)
+      {
+        <p class="text-muted">@localizer["NoLinkedProtocols"]</p>
+      }
+      else
+      {
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead><tr><th>@localizer["ProtocolNumber"]</th><th>@localizer["ProtocolName"]</th><th>@localizer["ProtocolCategory"]</th><th>@localizer["ProtocolVersion"]</th><th>@localizer["ProtocolEffective"]</th></tr></thead>
+            <tbody>
+              @foreach (var protocol in Model.Protocols)
+              {
+                <tr>
+                  <td>@protocol.Number</td>
+                  <td><a asp-controller="Links" asp-action="Protocol" asp-route-area="User" asp-route-linkId="@Model.Link.DepartmentLinkId" asp-route-id="@protocol.ProtocolId">@protocol.Name</a></td>
+                  <td>@protocol.CategoryName</td>
+                  <td>@protocol.VersionLabel</td>
+                  <td>@time.Format(protocol.EffectiveOn)</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  </div>
+</div>

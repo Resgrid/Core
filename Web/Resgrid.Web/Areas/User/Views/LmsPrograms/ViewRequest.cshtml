@@ -1,0 +1,151 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsRequestView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    One training request: its class, costs and approval steps, each decision, and what the viewer may do now (decide the current
+    step, withdraw, report it taken with evidence, or cancel an approved one).
+*@
+@{
+    var view = Model.Request;
+    var request = view.Request;
+    var culture = CultureInfo.CurrentCulture;
+    string Money(decimal value) => value.ToString("N2", culture);
+    ViewBag.Title = "Resgrid | " + request.Title;
+    ViewData["Title"] = request.Title;
+    ViewData["Subtitle"] = Model.NameOf(request.UserId);
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var steps = request.StepList();
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <ul class="rgw-journey m-b-md">
+        <li><span><i class="fa fa-paper-plane-o" aria-hidden="true"></i> @localizer["Prg.RequestStatus.Submitted"] <span class="rgw-sub">@Model.Date(request.SubmittedOn)</span></span></li>
+        @foreach (var step in steps)
+        {
+            var decision = view.Decisions.LastOrDefault(d => d.Step == (int)step);
+            <li>
+                <span>
+                    @localizer["Prg.Step." + step]
+                    @if (decision != null)
+                    {
+                        <span class="rgw-sub">@localizer["Prg.Decision." + (LmsTrainingRequestDecisions)decision.Decision] · @Model.NameOf(decision.DecidedByUserId) · @Model.Date(decision.DecidedOn)</span>
+                        @if (!string.IsNullOrWhiteSpace(decision.Note)) {<span class="rgw-sub">@decision.Note</span>}
+                    }
+                    else if (request.CurrentStep == (int)step)
+                    {
+                        <span class="rgw-sub">@localizer["Prg.Waiting"]</span>
+                    }
+                </span>
+            </li>
+        }
+        <li><span>@localizer["Prg.RequestStatus." + (LmsTrainingRequestStatuses)request.Status]</span></li>
+    </ul>
+
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table rgw-table">
+                <tbody>
+                    <tr><th>@localizer["Prg.Provider"]</th><td>@request.Provider</td></tr>
+                    <tr><th>@localizer["Prg.Location"]</th><td>@request.Location</td></tr>
+                    <tr><th>@localizer["Prg.Col.CourseCode"]</th><td>@request.CourseCode</td></tr>
+                    <tr><th>@localizer["Prg.StartsOn"]</th><td>@(request.StartsOn?.ToString("d", culture)) @(request.EndsOn.HasValue ? "– " + request.EndsOn.Value.ToString("d", culture) : string.Empty)</td></tr>
+                    <tr><th>@localizer["Prg.Col.Hours"]</th><td>@request.Hours.ToString("0.##", culture)</td></tr>
+                    <tr><th>@localizer["Prg.Col.Category"]</th><td>@(Model.CategoryName(request.CategoryId) ?? localizer["Prg.Uncategorized"].Value)</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table rgw-table">
+                <tbody>
+                    <tr><th>@localizer["Prg.CostTuition"]</th><td>@Money(request.CostTuition) @request.Currency</td></tr>
+                    <tr><th>@localizer["Prg.CostTravel"]</th><td>@Money(request.CostTravel) @request.Currency</td></tr>
+                    <tr><th>@localizer["Prg.CostOther"]</th><td>@Money(request.CostOther) @request.Currency</td></tr>
+                    <tr><th>@localizer["Prg.Col.Cost"]</th><td><strong>@Money(request.RequestedCost) @request.Currency</strong></td></tr>
+                    @if (request.ActualCost.HasValue)
+                    {
+                        <tr><th>@localizer["Prg.ActualCost"]</th><td>@Money(request.ActualCost.Value) @request.Currency</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @if (!string.IsNullOrWhiteSpace(request.Justification))
+    {
+        <h4>@localizer["Prg.Justification"]</h4>
+        <p style="white-space:pre-wrap">@request.Justification</p>
+    }
+    @if (request.LearningRecordId.HasValue)
+    {
+        <div class="rgw-next-action m-b-sm"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Prg.SubmissionWritten"]
+            <a asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" asp-route-userId="@request.UserId">@localizer["Prg.OpenTranscript"]</a></div>
+    }
+
+    @if (view.CanDecide)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-gavel" aria-hidden="true"></i> @localizer["Prg.Decide"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="LmsPrograms" asp-action="Decide" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@request.LmsTrainingRequestId" />
+                    <div class="form-group"><label for="decide-note">@localizer["Prg.DecisionNote"]</label><textarea id="decide-note" name="note" class="form-control" rows="2" maxlength="2000"></textarea></div>
+                    <button type="submit" name="approve" value="true" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Prg.Approve"]</button>
+                    <button type="submit" name="approve" value="false" class="btn btn-danger"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Prg.Reject"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (view.CanComplete)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-check-square-o" aria-hidden="true"></i> @localizer["Prg.CompleteRequest"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["Prg.CompleteRequestHelp"]</p>
+                <form method="post" enctype="multipart/form-data" asp-controller="LmsPrograms" asp-action="CompleteRequest" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@request.LmsTrainingRequestId" />
+                    <div class="rgw-grid">
+                        <div class="form-group"><label for="done-date">@localizer["Prg.CompletedOn"]</label><input id="done-date" name="completedOn" type="date" class="form-control" value="@((request.EndsOn ?? request.StartsOn)?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))" required /></div>
+                        <div class="form-group"><label for="done-hours">@localizer["Prg.Col.Hours"]</label><input id="done-hours" name="hours" type="number" step="0.25" min="0" max="1000" class="form-control" value="@request.Hours.ToString("0.##", CultureInfo.InvariantCulture)" required /></div>
+                        <div class="form-group"><label for="done-cost">@localizer["Prg.ActualCost"] (@request.Currency)</label><input id="done-cost" name="actualCost" type="number" step="0.01" min="0" class="form-control" /></div>
+                        <div class="form-group"><label for="done-file">@localizer["Prg.Evidence"]</label><input id="done-file" name="evidence" type="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png,.gif,.doc,.docx" /></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Prg.CompleteRequest"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <div class="rgw-toolbar">
+        @if (view.CanWithdraw)
+        {
+            <form method="post" asp-controller="LmsPrograms" asp-action="Withdraw" asp-route-area="User" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@request.LmsTrainingRequestId" />
+                <button type="submit" class="btn btn-white"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["Prg.Withdraw"]</button>
+            </form>
+        }
+        @if (view.CanCancel)
+        {
+            <form method="post" asp-controller="LmsPrograms" asp-action="CancelRequest" asp-route-area="User" class="form-inline d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@request.LmsTrainingRequestId" />
+                <label class="sr-only" for="cancel-note">@localizer["Prg.DecisionNote"]</label>
+                <input id="cancel-note" name="note" class="form-control input-sm" maxlength="2000" placeholder="@localizer["Prg.DecisionNote"]" />
+                <button type="submit" class="btn btn-white"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["Prg.CancelRequest"]</button>
+            </form>
+        }
+        <a class="btn btn-white" asp-controller="LmsPrograms" asp-action="Requests" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Prg.RequestsTitle"]</a>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

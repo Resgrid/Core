@@ -122,6 +122,18 @@ namespace Resgrid.Services
 				cancellationToken);
 		}
 
+		public async Task<MfaEvidence> GetLatestReauthenticationAsync(string userId, string sessionKey, long currentGeneration,
+			CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(sessionKey))
+				return null;
+
+			var latest = await CountsForSessionAsync(await _evidence.GetLatestForPurposeAsync(userId, sessionKey, MfaEvidenceKind.FirstFactor,
+				MfaEvidencePurpose.Reauthentication, currentGeneration, _time.GetUtcNow().UtcDateTime, cancellationToken));
+			// Only the two first factors a member can enter again count; anything else recorded under this purpose is not a step-up.
+			return latest != null && (latest.Method == (int)MfaEvidenceMethod.Password || latest.Method == (int)MfaEvidenceMethod.Sso) ? latest : null;
+		}
+
 		/// <summary>
 		/// On a shared session nothing counts while it is locked, and nothing verified before its last lock counts after an
 		/// unlock (plan section 12.5.3), however the lock happened. The latest evidence is the only candidate, so when it is

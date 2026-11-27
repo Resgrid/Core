@@ -1,0 +1,19 @@
+using System;
+using System.Collections.Generic;
+using Quidjibo.Commands;
+
+namespace Resgrid.Workers.Console.Commands
+{
+	/// <summary>Worker 87: LMS hosted video transcoding to HLS (ffmpeg).</summary>
+	public class LmsMediaCommand : IQuidjiboCommand
+	{
+		public int Id { get; }
+		public Guid? CorrelationId { get; set; }
+		public Dictionary<string, string> Metadata { get; set; }
+
+		public LmsMediaCommand(int id)
+		{
+			Id = id;
+		}
+	}
+}

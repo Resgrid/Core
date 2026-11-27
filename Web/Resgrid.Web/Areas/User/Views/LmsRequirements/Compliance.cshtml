@@ -1,0 +1,195 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsComplianceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> recordLocalizer
+@* The compliance matrix (T3 item 2): active members in the viewer's scope × live requirements, the certification dashboard's cell
+   pattern (colour + text + date), state totals, filters, CSV and PDF; exemptions and extensions per member (R-C2). *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ComplianceTitle"];
+    ViewData["Title"] = localizer["ComplianceTitle"].Value;
+    ViewData["Subtitle"] = localizer["ComplianceIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["Scope"] = Model.Scope;
+    ViewData["Sub"] = "Compliance";
+    ViewData["CanManage"] = Model.Actor?.MayManage == true;
+    ViewData["CanPaths"] = Model.Actor?.MayAssignAcademy == true;
+    ViewData["Paused"] = Model.Paused || Model.Matrix.Paused;
+    var matrix = Model.Matrix;
+    string Cell(LmsRequirementStates state) => state switch
+    {
+        LmsRequirementStates.Compliant => "success",
+        LmsRequirementStates.AtRisk => "warning",
+        LmsRequirementStates.Overdue => "danger",
+        LmsRequirementStates.Pending => "info",
+        _ => "active"
+    };
+    var tiles = new[] { LmsRequirementStates.Overdue, LmsRequirementStates.AtRisk, LmsRequirementStates.Pending, LmsRequirementStates.Compliant, LmsRequirementStates.Exempt,
+        LmsRequirementStates.NotLicensed };
+
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-info" asp-controller="LmsRequirements" asp-action="ComplianceCsv" asp-route-area="User" asp-route-requirementId="@Model.RequirementId" asp-route-groupId="@Model.GroupId" asp-route-state="@Model.State"><i class="fa fa-download" aria-hidden="true"></i> @localizer["ExportCsv"]</a>
+        <a class="btn btn-info" asp-controller="LmsRequirements" asp-action="CompliancePdf" asp-route-area="User" asp-route-requirementId="@Model.RequirementId" asp-route-groupId="@Model.GroupId" asp-route-state="@Model.State"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["ExportPdf"]</a>
+    </text>;
+    ViewData["HeaderActions"] = matrix.Error == LmsErrors.None ? headerActions : null;
+}
+
+@await Html.PartialAsync("_Heading")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles" role="list">
+        @foreach (var state in tiles)
+        {
+            <a class="rgw-stat-tile" role="listitem" asp-controller="LmsRequirements" asp-action="Compliance" asp-route-area="User" asp-route-requirementId="@Model.RequirementId" asp-route-groupId="@Model.GroupId" asp-route-state="@((int)state)">
+                <div class="rgw-stat-label">@await Html.PartialAsync("_StatePill", state)</div>
+                <div class="rgw-stat-value">@(matrix.Totals.TryGetValue(state, out var count) ? count : 0)</div>
+            </a>
+        }
+    </div>
+
+    <form method="get" asp-controller="LmsRequirements" asp-action="Compliance" asp-route-area="User" class="rgw-toolbar m-b-sm">
+        <label for="f-req" class="sr-only">@localizer["FilterRequirement"]</label>
+        <select id="f-req" name="requirementId" class="form-control input-sm">
+            <option value="">@localizer["AllRequirements"]</option>
+            @foreach (var requirement in Model.Matrix.AllRequirements)
+            {
+                <option value="@requirement.LmsRequirementId" selected="@(Model.RequirementId == requirement.LmsRequirementId)">@requirement.Name</option>
+            }
+        </select>
+        <label for="f-group" class="sr-only">@localizer["FilterGroup"]</label>
+        <select id="f-group" name="groupId" class="form-control input-sm">
+            <option value="">@localizer["AllGroups"]</option>
+            @foreach (var group in Model.Groups)
+            {
+                <option value="@group.Value" selected="@(Model.GroupId?.ToString() == group.Value)">@group.Text</option>
+            }
+        </select>
+        <label for="f-state" class="sr-only">@localizer["FilterState"]</label>
+        <select id="f-state" name="state" class="form-control input-sm">
+            <option value="">@localizer["AllStates"]</option>
+            @foreach (var state in Enum.GetValues<LmsRequirementStates>())
+            {
+                <option value="@((int)state)" selected="@(Model.State == (int)state)">@localizer["State." + state]</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["Filter"]</button>
+    </form>
+
+    @if (matrix.Rows.Count == 0)
+    {
+        <p class="text-muted">@localizer["NoMatrixRows"]</p>
+    }
+    else
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-condensed">
+                        <caption class="sr-only">@localizer["ComplianceTitle"]</caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">@localizer["Member"]</th>
+                                @foreach (var requirement in matrix.Requirements)
+                                {
+                                    <th scope="col" class="text-center"><a asp-controller="LmsRequirements" asp-action="Compliance" asp-route-area="User" asp-route-requirementId="@requirement.LmsRequirementId">@requirement.Name</a></th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var row in matrix.Rows)
+                            {
+                                <tr>
+                                    <th scope="row">@row.Name</th>
+                                    @foreach (var requirement in matrix.Requirements)
+                                    {
+                                        if (row.Cells.TryGetValue(requirement.LmsRequirementId, out var cell))
+                                        {
+                                            <td class="text-center @Cell(cell.State)">
+                                                <strong>@localizer["State." + cell.State]</strong>
+                                                @if (cell.Counted && cell.State != LmsRequirementStates.Compliant)
+                                                {
+                                                    <br /><small>@string.Format(localizer["ProgressFormat"].Value, cell.Progress.ToString("0.##"), cell.Required.ToString("0.##"))</small>
+                                                }
+                                                @if (cell.DueUtc.HasValue)
+                                                {
+                                                    <br /><small>@string.Format(localizer[cell.State == LmsRequirementStates.Compliant ? "RenewsFormat" : "DueFormat"].Value, Model.Date(cell.DueUtc))</small>
+                                                }
+                                                @if (!string.IsNullOrEmpty(cell.ExemptReason))
+                                                {
+                                                    <br /><small>@cell.ExemptReason</small>
+                                                }
+                                                @if (cell.Enforced)
+                                                {
+                                                    <br /><span class="label label-danger"><i class="fa fa-shield" aria-hidden="true"></i> @localizer["EnforcedBadge"]</span>
+                                                }
+                                                @if (cell.RecordedByOther)
+                                                {
+                                                    <br /><span class="label label-primary"><i class="fa fa-user-circle-o" aria-hidden="true"></i> @recordLocalizer["RecordCompletions.Method"]</span>
+                                                }
+                                                @if (Model.CanChangeMembers && cell.State != LmsRequirementStates.NotLicensed)
+                                                {
+                                                    <details class="text-left m-t-xs">
+                                                        <summary>@localizer["ChangeMember"]</summary>
+                                                        <form method="post" asp-controller="LmsRequirements" asp-action="Exempt" asp-route-area="User" class="m-t-xs">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="memberRowId" value="@cell.LmsRequirementMemberId" />
+                                                            <input type="hidden" name="requirementId" value="@Model.RequirementId" />
+                                                            @if (cell.State == LmsRequirementStates.Exempt)
+                                                            {
+                                                                <input type="hidden" name="exempt" value="false" />
+                                                                <button type="submit" class="btn btn-xs btn-white"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["LiftExemption"]</button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <input type="hidden" name="exempt" value="true" />
+                                                                <label class="sr-only" for="ex-r-@cell.LmsRequirementMemberId">@localizer["ReasonLabel"]</label>
+                                                                <input id="ex-r-@cell.LmsRequirementMemberId" name="reason" class="form-control input-sm" maxlength="500" placeholder="@localizer["ReasonLabel"]" required />
+                                                                <label class="small" for="ex-u-@cell.LmsRequirementMemberId">@localizer["UntilLabel"]</label>
+                                                                <input id="ex-u-@cell.LmsRequirementMemberId" name="until" type="date" class="form-control input-sm" />
+                                                                <button type="submit" class="btn btn-xs btn-white m-t-xs"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["ExemptAction"]</button>
+                                                            }
+                                                        </form>
+                                                        @if (cell.State != LmsRequirementStates.Exempt && cell.State != LmsRequirementStates.Compliant)
+                                                        {
+                                                            <form method="post" asp-controller="LmsRequirements" asp-action="Extend" asp-route-area="User" class="m-t-xs">
+                                                                @Html.AntiForgeryToken()
+                                                                <input type="hidden" name="memberRowId" value="@cell.LmsRequirementMemberId" />
+                                                                <input type="hidden" name="requirementId" value="@Model.RequirementId" />
+                                                                <label class="small" for="ext-d-@cell.LmsRequirementMemberId">@localizer["NewDueDateLabel"]</label>
+                                                                <input id="ext-d-@cell.LmsRequirementMemberId" name="dueOn" type="date" class="form-control input-sm" required />
+                                                                <label class="sr-only" for="ext-r-@cell.LmsRequirementMemberId">@localizer["ReasonLabel"]</label>
+                                                                <input id="ext-r-@cell.LmsRequirementMemberId" name="reason" class="form-control input-sm" maxlength="500" placeholder="@localizer["ReasonLabel"]" required />
+                                                                <button type="submit" class="btn btn-xs btn-white m-t-xs"><i class="fa fa-calendar-plus-o" aria-hidden="true"></i> @localizer["ExtendAction"]</button>
+                                                            </form>
+                                                        }
+                                                    </details>
+                                                }
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <td class="text-center text-muted"><span aria-label="@localizer["NotApplicable"]">—</span></td>
+                                        }
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted small">
+                    <span class="label label-primary">&nbsp;</span> @localizer["State.Compliant"] &nbsp;
+                    <span class="label label-info">&nbsp;</span> @localizer["State.Pending"] &nbsp;
+                    <span class="label label-warning">&nbsp;</span> @localizer["State.AtRisk"] &nbsp;
+                    <span class="label label-danger">&nbsp;</span> @localizer["State.Overdue"] &nbsp;
+                    <span class="label label-default">&nbsp;</span> @localizer["LegendOther"]
+                </p>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

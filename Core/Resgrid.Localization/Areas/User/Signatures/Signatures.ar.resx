@@ -1,0 +1,1269 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AnyApprover" xml:space="preserve">
+    <value>أي معتمِد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BindsToContentHelp" xml:space="preserve">
+    <value>يغطي التوقيع هذا النص تحديدًا. إذا تغيّر النص، فلن يعود مطابقًا وسيلزم توقيع جديد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationVerificationStatement" xml:space="preserve">
+    <value>أتحقق من سجل الشهادة {0} ({1}، تاريخ الاستلام {2}، تاريخ الانتهاء {3}): لقد فحصته وهو أصلي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>تعليق (اختياري)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>رمز المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentApprove" xml:space="preserve">
+    <value>اعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentAttest" xml:space="preserve">
+    <value>تصديق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentColumn" xml:space="preserve">
+    <value>المعنى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentReview" xml:space="preserve">
+    <value>مراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentVerify" xml:space="preserve">
+    <value>تحقق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentWitness" xml:space="preserve">
+    <value>شاهد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelAttest" xml:space="preserve">
+    <value>جلسة تسجيل الدخول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelBadge" xml:space="preserve">
+    <value>المستوى {0}: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelColumn" xml:space="preserve">
+    <value>المستوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelStepUp" xml:space="preserve">
+    <value>أُعيد التحقق من الهوية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodPasskey" xml:space="preserve">
+    <value>مفتاح المرور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodSession" xml:space="preserve">
+    <value>جلسة تسجيل الدخول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodStepUp" xml:space="preserve">
+    <value>التحقق بالعامل الثاني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSignatures" xml:space="preserve">
+    <value>لا توجد توقيعات بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OthersToSignLabel" xml:space="preserve">
+    <value>سيوقّع بعدك:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyCancelled" xml:space="preserve">
+    <value>أُغلقت نافذة مفتاح المرور. لم يُوقَّع أي شيء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyFailed" xml:space="preserve">
+    <value>تعذر التحقق من مفتاح المرور. لم يُوقَّع أي شيء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyOnlyHelp" xml:space="preserve">
+    <value>يتطلب قسمك مفتاح مرور لهذا التوقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyRequiredHelp" xml:space="preserve">
+    <value>مفتاح المرور مطلوب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PasskeyUnsupported" xml:space="preserve">
+    <value>لا يمكن لهذا المتصفح استخدام مفاتيح المرور. استخدم «توقيع» بدلًا من ذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolApprovalStatement" xml:space="preserve">
+    <value>أعتمد هذا التنقيح للبروتوكول {0} «{1}» (المحتوى {2}) للنشر، بوصفه الخطوة {3} من {4} في مراجعته.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolReviewStatement" xml:space="preserve">
+    <value>لقد راجعت البروتوكول {0} «{1}» الإصدار {2} (المحتوى {3}) وما زال صحيحًا دون تغيير.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignApproveButton" xml:space="preserve">
+    <value>توقيع واعتماد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignReviewButton" xml:space="preserve">
+    <value>توقيع المراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignWithPasskeyButton" xml:space="preserve">
+    <value>التوقيع بمفتاح المرور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedOnColumn" xml:space="preserve">
+    <value>تاريخ التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerColumn" xml:space="preserve">
+    <value>الموقّع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementLabel" xml:space="preserve">
+    <value>أنت توقّع على هذا البيان:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpHelp" xml:space="preserve">
+    <value>عند التوقيع، يُطلب منك تأكيد هويتك بالعامل الثاني إن لم تكن قد فعلت ذلك للتو.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationChanged" xml:space="preserve">
+    <value>تغيّر المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationColumn" xml:space="preserve">
+    <value>الفحص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationMissing" xml:space="preserve">
+    <value>المحتوى غير موجود</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationValid" xml:space="preserve">
+    <value>مطابق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerificationVoided" xml:space="preserve">
+    <value>مُلغى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdoptTypedButton" xml:space="preserve">
+    <value>استخدام الاسم المطبوع كتوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditDepartment" xml:space="preserve">
+    <value>الإدارة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditDocument" xml:space="preserve">
+    <value>المستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditEvidence" xml:space="preserve">
+    <value>الدليل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditMethod" xml:space="preserve">
+    <value>الطريقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditNoSigners" xml:space="preserve">
+    <value>لا توجد توقيعات مسجلة على هذا المستند؛ يُختم كما صدر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditPageTitle" xml:space="preserve">
+    <value>صفحة تدقيق Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditPreparedOn" xml:space="preserve">
+    <value>أُعد في</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditRevisionHash" xml:space="preserve">
+    <value>تجزئة المحتوى (SHA-256)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditRole" xml:space="preserve">
+    <value>الدور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditSealNote" xml:space="preserve">
+    <value>هذه الصفحة جزء من المستند المختوم. يُظهر الختم (PAdES مع ختم زمني RFC 3161) أن الملف لم يتغير منذ ختمه؛ تحقق منه عبر «التحقق من مستند» في Resgrid أو في أي قارئ PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditSigners" xml:space="preserve">
+    <value>الموقّعون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditSubject" xml:space="preserve">
+    <value>الموضوع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackLink" xml:space="preserve">
+    <value>رجوع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelLink" xml:space="preserve">
+    <value>إلغاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChannelInPerson" xml:space="preserve">
+    <value>حضوريًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChannelLabel" xml:space="preserve">
+    <value>الطريقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChannelRemote" xml:space="preserve">
+    <value>عبر رابط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearSignatureButton" xml:space="preserve">
+    <value>مسح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClosedText" xml:space="preserve">
+    <value>رابط التوقيع هذا لم يعد صالحًا. ربما استُخدم أو سُحب أو انتهت صلاحيته. اطلب رابطًا جديدًا من المرسل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeAttemptsLeft" xml:space="preserve">
+    <value>المحاولات المتبقية: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeHeading" xml:space="preserve">
+    <value>أدخل الرمز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>رمز من ستة أرقام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeNotSent" xml:space="preserve">
+    <value>تعذر إرسال الرمز الآن. انتظر دقيقة ثم حاول مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeSentEmail" xml:space="preserve">
+    <value>أرسلنا رمزًا من ستة أرقام إلى {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeSentSms" xml:space="preserve">
+    <value>أرسلنا رمزًا من ستة أرقام برسالة نصية إلى {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeWrong" xml:space="preserve">
+    <value>الرمز غير صحيح أو انتهت صلاحيته.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompletedPdfButton" xml:space="preserve">
+    <value>المستند المكتمل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentButton" xml:space="preserve">
+    <value>موافقة وإرسال الرمز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentCheckbox" xml:space="preserve">
+    <value>أوافق على توقيع هذا المستند إلكترونيًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentCodeNote" xml:space="preserve">
+    <value>بعد ذلك سنرسل رمزًا لمرة واحدة إلى {0} للتأكد من هويتك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentHeading" xml:space="preserve">
+    <value>الموافقة على التوقيع الإلكتروني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentRequired" xml:space="preserve">
+    <value>يرجى تحديد المربع للموافقة قبل المتابعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConsentText" xml:space="preserve">
+    <value>يُطلب منك توقيع مستند إلكترونيًا. بموافقتك، توافق على إنجاز هذا المستند إلكترونيًا وعلى أن توقيعك الإلكتروني صالح مثل التوقيع بخط اليد. يمكنك طلب نسخة ورقية من المرسل، ويمكنك سحب هذه الموافقة بعدم التوقيع. يُسجَّل اسمك ووقت التوقيع والرمز الذي نرسله إليك مع توقيعك، ويُختم المستند الموقّع بحيث لا يمكن تغييره.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContinueButton" xml:space="preserve">
+    <value>متابعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContinueInPersonLink" xml:space="preserve">
+    <value>المتابعة حضوريًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DetailIntro" xml:space="preserve">
+    <value>طلب توقيع خارجي: حالته والموقّع والمستندات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DoneHeading" xml:space="preserve">
+    <value>شكرًا لك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DoneText" xml:space="preserve">
+    <value>تم تسجيل توقيعك. يمكنك إغلاق هذه الصفحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSignatureHelp" xml:space="preserve">
+    <value>وقّع بإصبعك أو بقلم أو بالفأرة. بدون مؤشر، اكتب الاسم واستخدمه كتوقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSignatureLabel" xml:space="preserve">
+    <value>التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSignatureRequired" xml:space="preserve">
+    <value>يرجى التوقيع في المربع أو استخدام الاسم كتوقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignAccountHeading" xml:space="preserve">
+    <value>فريق Documenso لهذه الإدارة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignActiveLabel" xml:space="preserve">
+    <value>استخدام هذا الحساب لروابط التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignClusterHeading" xml:space="preserve">
+    <value>خدمات التوقيع في هذا التثبيت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignClusterHelp" xml:space="preserve">
+    <value>يضبطها مشغّل تثبيت Resgrid هذا. بدون منصة التوقيع الإلكتروني لا تتوفر روابط التوقيع ويظل التوقيع الحضوري متاحًا. بدون الختم، تُوقَّع المستندات وتبقى بانتظار الختم حتى يتم إعداده.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignIntro" xml:space="preserve">
+    <value>حساب منصة التوقيع الإلكتروني الذي يرسل المستندات للتوقيع عبر رابط، وحالة ختم المستندات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignPlatformConfigured" xml:space="preserve">
+    <value>منصة التوقيع الإلكتروني (Documenso)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignRemoveButton" xml:space="preserve">
+    <value>إزالة الرمز المميز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignSaved" xml:space="preserve">
+    <value>تم حفظ إعدادات التوقيع الإلكتروني.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTab" xml:space="preserve">
+    <value>إعدادات التوقيع الإلكتروني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTeamIdLabel" xml:space="preserve">
+    <value>معرّف الفريق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTitle" xml:space="preserve">
+    <value>إعدادات التوقيع الإلكتروني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTokenHelp" xml:space="preserve">
+    <value>رمز API خاص بالفريق. يُخزَّن مشفرًا ولا تظهر إلا أحرفه الأربعة الأخيرة. اتركه فارغًا للإبقاء على الرمز الحالي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ESignTokenLabel" xml:space="preserve">
+    <value>رمز API</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EmbedFrameTitle" xml:space="preserve">
+    <value>توقيع المستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EmbedUnavailable" xml:space="preserve">
+    <value>خدمة التوقيع غير متاحة حاليًا. حاول لاحقًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>تنتهي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExternalPanelHelp" xml:space="preserve">
+    <value>يمكن للعميل أو الشاغل أو الطرف الخارجي توقيع هذا المستند حضوريًا على هذا الجهاز، أو عبر رابط توقيع من Resgrid عند توفره.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExternalPanelTitle" xml:space="preserve">
+    <value>توقيع خارجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FinishedButton" xml:space="preserve">
+    <value>لقد انتهيت من التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HandDeviceButton" xml:space="preserve">
+    <value>تسليم الجهاز إلى الموقّع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HandDeviceHelp" xml:space="preserve">
+    <value>يفتح صفحة توقيع على هذا الجهاز للشخص الآخر: موافقة واسم وتوقيع مرسوم، مع شاهد اختياري.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HandDeviceTitle" xml:space="preserve">
+    <value>التوقيع حضوريًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>الرئيسية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InPersonSignedMessage" xml:space="preserve">
+    <value>تم التوقيع حضوريًا. يُختم المستند الموقّع عند توفر الختم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LandingExpires" xml:space="preserve">
+    <value>تنتهي صلاحية هذا الرابط في {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LandingIntro" xml:space="preserve">
+    <value>{0}، تطلب منك {1} مراجعة مستند وتوقيعه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelExternal" xml:space="preserve">
+    <value>موقّع خارجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LevelSealed" xml:space="preserve">
+    <value>مستند مختوم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkOnceHelp" xml:space="preserve">
+    <value>تعذر تسليم رابط التوقيع. يمكنك تمريره إلى الموقّع بنفسك؛ يظهر الآن فقط ويمكن استخدامه مرة واحدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodExternalLink" xml:space="preserve">
+    <value>رابط توقيع ورمز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodInPersonOffline" xml:space="preserve">
+    <value>حضوريًا (دون اتصال)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MethodInPersonOnline" xml:space="preserve">
+    <value>حضوريًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>لا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRightToRequest" xml:space="preserve">
+    <value>لا يمكنك طلب توقيعات على هذا العنصر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenRequestStatus" xml:space="preserve">
+    <value>طلب التوقيع: {0} ({1})، ينتهي في {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OtpChannelEmail" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OtpChannelLabel" xml:space="preserve">
+    <value>إرسال الرمز لمرة واحدة عبر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OtpChannelSms" xml:space="preserve">
+    <value>رسالة نصية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PdfFailed" xml:space="preserve">
+    <value>تعذر إنشاء ملف PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintedNameLabel" xml:space="preserve">
+    <value>الاسم بخط واضح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolPdfButton" xml:space="preserve">
+    <value>PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>تم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>بعض البيانات مفقودة أو غير صالحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>لم يُعثر على العنصر أو لا يمكنك فتحه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalRemoteNeedsAddon" xml:space="preserve">
+    <value>التوقيع عبر رابط جزء من الإضافة التي يتبعها هذا المستند. التوقيع الحضوري متاح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalProviderUnavailable" xml:space="preserve">
+    <value>لم يتم إعداد التوقيع عبر رابط لهذه الإدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalRevisionChanged" xml:space="preserve">
+    <value>تغيّر المستند بعد عرضه للتوقيع. يرجى البدء من جديد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalRequestClosed" xml:space="preserve">
+    <value>لم يعد هذا الطلب مفتوحًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalProviderFailed" xml:space="preserve">
+    <value>تعذر على منصة التوقيع الإلكتروني تجهيز المستند. حاول لاحقًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalContactRequired" xml:space="preserve">
+    <value>أدخل بريدًا إلكترونيًا صالحًا أو رقم هاتف بالتنسيق الدولي للرمز لمرة واحدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteRequestButton" xml:space="preserve">
+    <value>طلب التوقيع عبر رابط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteRequestHelp" xml:space="preserve">
+    <value>يرسل Resgrid إلى الموقّع رابطًا لمرة واحدة. قبل التوقيع يوافق على التوقيع الإلكتروني ويدخل رمزًا لمرة واحدة يُرسل إلى البريد الإلكتروني أو رقم الهاتف أعلاه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableNone" xml:space="preserve">
+    <value>التوقيع عبر رابط متاح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableInvalidRequest" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح لهذا العنصر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableSubjectNotFound" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح لهذا العنصر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableRemoteNeedsAddon" xml:space="preserve">
+    <value>التوقيع عبر رابط يأتي مع الإضافة التي يتبعها هذا المستند؛ التوقيع الحضوري مجاني.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableProviderUnavailable" xml:space="preserve">
+    <value>لم يتم إعداد التوقيع عبر رابط (إعدادات التوقيع الإلكتروني)؛ التوقيع الحضوري متاح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableRevisionChanged" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح حاليًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableRequestClosed" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح حاليًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableProviderFailed" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح حاليًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoteUnavailableContactRequired" xml:space="preserve">
+    <value>التوقيع عبر رابط غير متاح حاليًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestHeading" xml:space="preserve">
+    <value>طلب توقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestNotDeliveredMessage" xml:space="preserve">
+    <value>تم إنشاء الطلب لكن تعذر تسليم الرابط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestSentMessage" xml:space="preserve">
+    <value>أُرسل رابط التوقيع إلى {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestVoidedMessage" xml:space="preserve">
+    <value>تم سحب الطلب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResendButton" xml:space="preserve">
+    <value>إرسال رابط جديد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResendCodeButton" xml:space="preserve">
+    <value>إرسال رمز جديد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCustomer" xml:space="preserve">
+    <value>العميل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleOccupant" xml:space="preserve">
+    <value>الشاغل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleExternalParty" xml:space="preserve">
+    <value>طرف خارجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleWitness" xml:space="preserve">
+    <value>الشاهد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCounterparty" xml:space="preserve">
+    <value>الطرف المقابل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>حفظ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealedPdfButton" xml:space="preserve">
+    <value>ملف PDF مختوم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingKey" xml:space="preserve">
+    <value>شهادة التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingPendingState" xml:space="preserve">
+    <value>الختم قيد الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingSidecar" xml:space="preserve">
+    <value>خدمة الختم (EU DSS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingStore" xml:space="preserve">
+    <value>تخزين المستندات المختومة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingTsa" xml:space="preserve">
+    <value>جهة الختم الزمني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendCodeButton" xml:space="preserve">
+    <value>إرسال الرمز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendRequestButton" xml:space="preserve">
+    <value>إرسال الطلب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignNowButton" xml:space="preserve">
+    <value>توقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturePageTitle" xml:space="preserve">
+    <value>التوقيعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturesHeading" xml:space="preserve">
+    <value>التوقيعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturesModuleTitle" xml:space="preserve">
+    <value>التوقيعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedByNote" xml:space="preserve">
+    <value>{0} · {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedState" xml:space="preserve">
+    <value>تم التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerEmailLabel" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerNameLabel" xml:space="preserve">
+    <value>اسم الموقّع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerPhoneLabel" xml:space="preserve">
+    <value>الهاتف المحمول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusPending" xml:space="preserve">
+    <value>قيد الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusOpened" xml:space="preserve">
+    <value>تم الفتح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusVerified" xml:space="preserve">
+    <value>تم التحقق من الرمز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusSigned" xml:space="preserve">
+    <value>تم التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignerStatusDeclined" xml:space="preserve">
+    <value>مرفوض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningBeingConfirmed" xml:space="preserve">
+    <value>جارٍ تأكيد توقيعك. قد يستغرق ذلك دقيقة؛ يمكنك إغلاق هذه الصفحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningLinkLabel" xml:space="preserve">
+    <value>رابط التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningPageTitle" xml:space="preserve">
+    <value>توقيع مستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementTimeReport" xml:space="preserve">
+    <value>أؤكد أن الوقت المسجل في {0} صحيح (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementBid" xml:space="preserve">
+    <value>أقبل {0} (رمز المحتوى {1}) نيابة عن العميل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementServiceContract" xml:space="preserve">
+    <value>أوافق على {0} (رمز المحتوى {1}) نيابة عن مؤسستي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementRecordsInspection" xml:space="preserve">
+    <value>أُقر بأنني استلمت نتائج {0} (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementCustodyTransfer" xml:space="preserve">
+    <value>أُقر بأنني استلمت الدليل الوارد في {0} (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>مسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>بانتظار التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusPartiallySigned" xml:space="preserve">
+    <value>موقّع جزئيًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusCompleted" xml:space="preserve">
+    <value>مكتمل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusDeclined" xml:space="preserve">
+    <value>مرفوض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>منتهي الصلاحية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusVoided" xml:space="preserve">
+    <value>مسحوب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>الحالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectUnavailable" xml:space="preserve">
+    <value>لا يمكن توقيع هذا العنصر الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TooManyRequests" xml:space="preserve">
+    <value>طلبات كثيرة جدًا. انتظر دقيقة ثم حاول مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyButton" xml:space="preserve">
+    <value>تحقق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyCodeButton" xml:space="preserve">
+    <value>تأكيد الرمز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyFileLabel" xml:space="preserve">
+    <value>مستند PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyFileRequired" xml:space="preserve">
+    <value>اختر ملف PDF بحجم يصل إلى 25 ميغابايت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyFormatColumn" xml:space="preserve">
+    <value>التنسيق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIndicationColumn" xml:space="preserve">
+    <value>النتيجة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIntro" xml:space="preserve">
+    <value>ارفع ملف PDF للتحقق من توقيعاته وأختامه الزمنية، ومما إذا كان Resgrid قد أصدر هذا الملف بعينه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIssuedElsewhere" xml:space="preserve">
+    <value>أصدر Resgrid هذا الملف بعينه لإدارة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIssuedHere" xml:space="preserve">
+    <value>أصدر Resgrid هذا الملف بعينه لهذه الإدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyIssuedLabel" xml:space="preserve">
+    <value>صادر عن Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyNoSignatures" xml:space="preserve">
+    <value>لا يحمل المستند أي توقيعات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyNotIssued" xml:space="preserve">
+    <value>لا يملك Resgrid سجلًا بإصدار هذا الملف بعينه. الملف المعدَّل ولو ببايت واحد لا يطابق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyNotPdf" xml:space="preserve">
+    <value>الملف ليس بتنسيق PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyResultHeading" xml:space="preserve">
+    <value>النتيجة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifySidecarMissing" xml:space="preserve">
+    <value>خدمة التحقق غير مُعدّة في هذا التثبيت، لذا يتم التحقق من سجلات Resgrid فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifySignaturesLabel" xml:space="preserve">
+    <value>توقيعات صالحة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTab" xml:space="preserve">
+    <value>التحقق من مستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTimestampColumn" xml:space="preserve">
+    <value>الختم الزمني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTimestampedOn" xml:space="preserve">
+    <value>مختوم زمنيًا في {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyTitle" xml:space="preserve">
+    <value>التحقق من مستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyUploadHeading" xml:space="preserve">
+    <value>المستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifyValidationUnavailable" xml:space="preserve">
+    <value>لم تستجب خدمة التحقق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ViewRequestLink" xml:space="preserve">
+    <value>التفاصيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>سحب الطلب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessNameLabel" xml:space="preserve">
+    <value>الشاهد (اختياري)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>الإجراءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllMySignaturesLink" xml:space="preserve">
+    <value>جميع توقيعاتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyEligibleMember" xml:space="preserve">
+    <value>أي عضو مؤهل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>رفض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineConfirmButton" xml:space="preserve">
+    <value>رفض التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineHelp" xml:space="preserve">
+    <value>يُنهي الرفض الطلب للجميع، ويُبلَّغ مقدّم الطلب بسببك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineReasonLabel" xml:space="preserve">
+    <value>لماذا ترفض؟</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentColumn" xml:space="preserve">
+    <value>المستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>مستحق بحلول {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueReceiptButton" xml:space="preserve">
+    <value>إيصال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueReceiptTitle" xml:space="preserve">
+    <value>إيصال صرف المعدات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberFallbackName" xml:space="preserve">
+    <value>أحد الأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberRequestButton" xml:space="preserve">
+    <value>اطلب من {0} التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberRequestHelp" xml:space="preserve">
+    <value>يوقّع العضو في Resgrid بعد إعادة التحقق من هويته (المستوى 2)، ويظهر الطلب ضمن «توقيعاتي» وفي صفحته الرئيسية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberRequestSentMessage" xml:space="preserve">
+    <value>أُرسل طلب التوقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySignaturesIntro" xml:space="preserve">
+    <value>المستندات التي تنتظر توقيعك، مع الخطوة الخاصة بك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySignaturesTab" xml:space="preserve">
+    <value>توقيعاتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySignaturesTitle" xml:space="preserve">
+    <value>توقيعاتي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingToSign" xml:space="preserve">
+    <value>لا يوجد ما ينتظر توقيعك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenDocumentLink" xml:space="preserve">
+    <value>فتح المستند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenSigningPageLink" xml:space="preserve">
+    <value>صفحة التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenStepButton" xml:space="preserve">
+    <value>المراجعة والتوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OrderedHelp" xml:space="preserve">
+    <value>يوقّع الموقّعون حسب ترتيب رقم الخطوة، ويمكن للخطوات التي تحمل الرقم نفسه التوقيع في الوقت نفسه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutsideSignerFallbackName" xml:space="preserve">
+    <value>موقّع خارجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingSignaturesHeader" xml:space="preserve">
+    <value>بانتظار توقيعك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadinessProRequiredMessage" xml:space="preserve">
+    <value>قبول المورد لأوامر العمل وإيصالات صرف المعدات جزء من Readiness Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedCountLabel" xml:space="preserve">
+    <value>الموقَّعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignStepButton" xml:space="preserve">
+    <value>توقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepDeclinedMessage" xml:space="preserve">
+    <value>لقد رفضت التوقيع. أُغلق الطلب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>الخطوة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepPageIntro" xml:space="preserve">
+    <value>اقرأ البيان، وتحقق من رمز المحتوى، ثم وقّع خطوتك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepPanelTitle" xml:space="preserve">
+    <value>توقيعك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>الموقّعون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepSignedMessage" xml:space="preserve">
+    <value>سُجّل توقيعك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnorderedHelp" xml:space="preserve">
+    <value>يمكن لكل موقّع التوقيع في أي وقت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VendorAcceptanceHeading" xml:space="preserve">
+    <value>قبول المورد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessNotYouNote" xml:space="preserve">
+    <value>لا يمكن للشخص الذي أكمل قائمة التحقق أن يشهد عليها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessPanelTitle" xml:space="preserve">
+    <value>توقيع الشاهد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignatureHelp" xml:space="preserve">
+    <value>اكتب في المربع ما شهدته. يرتبط توقيعك بالنتائج المعروضة (لا بالملاحظات أو النص الحر)، وتكتمل قائمة التحقق عند توقيعك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignButton" xml:space="preserve">
+    <value>التوقيع بصفة شاهد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignedMessage" xml:space="preserve">
+    <value>سُجّل توقيعك بصفة شاهد واكتملت قائمة التحقق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WitnessSignFailedMessage" xml:space="preserve">
+    <value>تعذّر تسجيل توقيع الشاهد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourStepColumn" xml:space="preserve">
+    <value>خطوتك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YourStepNote" xml:space="preserve">
+    <value>خطوتك: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>لم يحن دورك بعد: لم يوقّع جميع الموقّعين السابقين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotEligible" xml:space="preserve">
+    <value>لا تحمل شهادة أو دورًا تتطلبه هذه الخطوة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>تتطلب هذه الخطوة المستوى 2: أكّد هويتك بالعامل الثاني أو بمفتاح مرور، ثم وقّع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>يجب توقيع هذه الخطوة بمفتاح مرور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotASigner" xml:space="preserve">
+    <value>لست موقّعًا في هذه الخطوة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalArtifactMismatch" xml:space="preserve">
+    <value>كان تأكيد مفتاح المرور لمحتوى مختلف. أعد تحميل الصفحة ووقّع مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleMember" xml:space="preserve">
+    <value>العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleCertifyingOfficial" xml:space="preserve">
+    <value>المسؤول المصادِق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleEvaluator" xml:space="preserve">
+    <value>المقيِّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleVendor" xml:space="preserve">
+    <value>المورد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleRecipient" xml:space="preserve">
+    <value>المستلم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentEvaluate" xml:space="preserve">
+    <value>تقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentCertify" xml:space="preserve">
+    <value>مصادقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IntentAccept" xml:space="preserve">
+    <value>قبول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeStepUpRequired" xml:space="preserve">
+    <value>أكّد هويتك بالعامل الثاني، ثم وقّع مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomePasskeyRequired" xml:space="preserve">
+    <value>مفتاح المرور مطلوب للتوقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeArtifactMismatch" xml:space="preserve">
+    <value>كان تأكيد مفتاح المرور لمحتوى مختلف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeInvalidRequest" xml:space="preserve">
+    <value>تعذّر تسجيل التوقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementWorkOrderVendorAcceptance" xml:space="preserve">
+    <value>أقبل العمل المنجز في {0} (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementInventoryIssueReceipt" xml:space="preserve">
+    <value>أؤكد أنني استلمت {0} (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementSkillEvaluation" xml:space="preserve">
+    <value>أؤكد التقييم المسجل لـ {0} (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementChecklistWitness" xml:space="preserve">
+    <value>شهدتُ قائمة التحقق {0} الخاصة بـ {1} وأؤكد أن النتائج المعروضة هي ما سُجّل (رمز المحتوى {2}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementPurchaseRequisitionApproval" xml:space="preserve">
+    <value>أعتمد طلب الشراء {0} (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementIncidentPlanApproval" xml:space="preserve">
+    <value>أعتمد خطة عمل الحادث {0} (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementInvoiceApproval" xml:space="preserve">
+    <value>أعتمد إرسال {0} (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementPayrollRunApproval" xml:space="preserve">
+    <value>أعتمد دورة الرواتب {0} (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementCalOesMarsPackageApproval" xml:space="preserve">
+    <value>أعتمد حزمة Cal OES MARS {0} لتقديمها (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementMutualAidAgreementApproval" xml:space="preserve">
+    <value>أعتمد اتفاقية المساعدة المتبادلة {0} نيابةً عن القسم (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsTab" xml:space="preserve">
+    <value>الاعتمادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementMutualAidAgreementCountersignature" xml:space="preserve">
+    <value>أوقّع توقيعًا مقابلًا على اتفاقية المساعدة المتبادلة {0} نيابةً عن قسمنا بصفته شريكًا (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementRecordDeploymentPartnerAcceptance" xml:space="preserve">
+    <value>أقبل المهمة {0} نيابة عن مؤسستنا، بصفتنا الشريك المرتبط الذي تُلبّى له (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatementDepartmentLinkAcceptance" xml:space="preserve">
+    <value>أقبل الرابط مع {0} نيابة عن مؤسستنا، مع المشاركة المعروضة (رمز المحتوى {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentFrom" xml:space="preserve">
+    <value>المؤسسة المُرسِلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentOrder" xml:space="preserve">
+    <value>الطلب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentRequest" xml:space="preserve">
+    <value>الطلب الفرعي / التلبية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentResource" xml:space="preserve">
+    <value>المورد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentPosition" xml:space="preserve">
+    <value>المنصب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentFilledOn" xml:space="preserve">
+    <value>قبله المُرسِل</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

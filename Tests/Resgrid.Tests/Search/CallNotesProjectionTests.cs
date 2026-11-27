@@ -41,7 +41,7 @@ namespace Resgrid.Tests.Search
 			_callNotes.Setup(r => r.GetCallNotesByCallIdAsync(42)).ReturnsAsync(() => _rows);
 			_protection = new Mock<IDepartmentDataProtectionService>();
 			_protection.Setup(p => p.IsProtectionEnforcedAsync(It.IsAny<int>())).ReturnsAsync(() => _enforced);
-			_service = new SearchProjectionService(Mock.Of<ISearchProjectionsRepository>(), _protection.Object, null, _callNotes.Object);
+			_service = new SearchProjectionService(Mock.Of<ISearchProjectionsRepository>(), _protection.Object, Mock.Of<Resgrid.Model.Repositories.IProtocolVersionTranslationsRepository>(), null, _callNotes.Object);
 		}
 
 		private static Call Call() => new Call
@@ -92,7 +92,7 @@ namespace Resgrid.Tests.Search
 		[Test]
 		public async Task Without_the_repository_the_notes_loaded_on_the_call_are_used()
 		{
-			var service = new SearchProjectionService(Mock.Of<ISearchProjectionsRepository>(), _protection.Object);
+			var service = new SearchProjectionService(Mock.Of<ISearchProjectionsRepository>(), _protection.Object, Mock.Of<Resgrid.Model.Repositories.IProtocolVersionTranslationsRepository>());
 			var call = Call();
 			call.CallNotes = _rows;
 

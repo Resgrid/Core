@@ -1002,6 +1002,58 @@
   <data name="W.trainings.mine.OverdueSince" xml:space="preserve">
     <value>كان مستحقًا: {0}</value>
   </data>
+  <data name="W.trainings.bulletin.Title" xml:space="preserve">
+    <value>لوحة إعلانات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.Description" xml:space="preserve">
+    <value>الجديد في التدريب لك: التكليفات الأخيرة والتدريبات المنشورة حديثًا والمفتوحة لجميع الأعضاء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.Setting.days" xml:space="preserve">
+    <value>عدد الأيام السابقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.Setting.maxItems" xml:space="preserve">
+    <value>الحد الأقصى لعدد التدريبات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.Empty" xml:space="preserve">
+    <value>لا يوجد تدريب جديد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.NewAssignedCount" xml:space="preserve">
+    <value>{0} جديدة لك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.Training" xml:space="preserve">
+    <value>تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.Assigned" xml:space="preserve">
+    <value>مكلَّف بها</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.Catalog" xml:space="preserve">
+    <value>مفتوح لجميع الأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.CanEnrol" xml:space="preserve">
+    <value>مفتوح للجميع، يمكنك التسجيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.Due" xml:space="preserve">
+    <value>الاستحقاق {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.OverdueSince" xml:space="preserve">
+    <value>كان مستحقًا في {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="W.trainings.bulletin.Published" xml:space="preserve">
+    <value>نُشر في {0}</value>
+    <comment>machine-translated</comment>
+  </data>
   <data name="W.documents.recent.OpenDocuments" xml:space="preserve">
     <value>فتح المستندات</value>
   </data>
@@ -4013,5 +4065,9 @@
   </data>
   <data name="W.personnel.myStatus.Since" xml:space="preserve">
     <value>منذ {0}</value>
+  </data>
+  <data name="W.admin.plan.Addon.WorkforcePro" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

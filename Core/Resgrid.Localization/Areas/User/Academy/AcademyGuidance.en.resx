@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllTours" xml:space="preserve">
+    <value>All tours</value>
+  </data>
+  <data name="DismissTour" xml:space="preserve">
+    <value>Hide this tour</value>
+  </data>
+  <data name="DismissWhatsNew" xml:space="preserve">
+    <value>Hide</value>
+  </data>
+  <data name="DocsHeader" xml:space="preserve">
+    <value>Features and reference</value>
+  </data>
+  <data name="DoneLabel" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="EarlierReleases" xml:space="preserve">
+    <value>Other releases</value>
+  </data>
+  <data name="FeatureBadge" xml:space="preserve">
+    <value>Feature</value>
+  </data>
+  <data name="GoToPage" xml:space="preserve">
+    <value>Go to page</value>
+  </data>
+  <data name="HelpCenterHeader" xml:space="preserve">
+    <value>Help center</value>
+  </data>
+  <data name="HowDoIHeader" xml:space="preserve">
+    <value>How do I…?</value>
+  </data>
+  <data name="HowDoIHelp" xml:space="preserve">
+    <value>Ask a question about using Resgrid. Answers come only from the Resgrid Academy and link to the lessons they use.</value>
+  </data>
+  <data name="LessonMinutes" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="LessonsHeader" xml:space="preserve">
+    <value>Academy lessons</value>
+  </data>
+  <data name="MarkDone" xml:space="preserve">
+    <value>Mark done</value>
+  </data>
+  <data name="MarkNotDone" xml:space="preserve">
+    <value>Mark not done</value>
+  </data>
+  <data name="MarkRead" xml:space="preserve">
+    <value>Mark as read</value>
+  </data>
+  <data name="MenuSearchHelp" xml:space="preserve">
+    <value>Search help</value>
+  </data>
+  <data name="MenuTours" xml:space="preserve">
+    <value>Guided tours</value>
+  </data>
+  <data name="MenuWhatsNew" xml:space="preserve">
+    <value>What's new</value>
+  </data>
+  <data name="NoDocs" xml:space="preserve">
+    <value>No feature or reference article matches your search.</value>
+  </data>
+  <data name="NoLessons" xml:space="preserve">
+    <value>No Academy lesson matches your search.</value>
+  </data>
+  <data name="NoTours" xml:space="preserve">
+    <value>There are no guided tours for your department.</value>
+  </data>
+  <data name="OpenDocs" xml:space="preserve">
+    <value>Documentation</value>
+  </data>
+  <data name="OpenPage" xml:space="preserve">
+    <value>Open page</value>
+  </data>
+  <data name="ReadLabel" xml:space="preserve">
+    <value>Read</value>
+  </data>
+  <data name="ReadMinutes" xml:space="preserve">
+    <value>Read ({0} min)</value>
+  </data>
+  <data name="ReferenceBadge" xml:space="preserve">
+    <value>Reference</value>
+  </data>
+  <data name="ReopenTour" xml:space="preserve">
+    <value>Show this tour again</value>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchEmptyHelp" xml:space="preserve">
+    <value>Type a few words about what you want to do. You can also follow the guided tour for your role or see what is new.</value>
+  </data>
+  <data name="SearchIntro" xml:space="preserve">
+    <value>Search the Resgrid Academy and the product reference.</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Search help</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>What do you want to do? For example: add a unit</value>
+  </data>
+  <data name="SearchTab" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SearchTitle" xml:space="preserve">
+    <value>Search help</value>
+  </data>
+  <data name="TourProgress" xml:space="preserve">
+    <value>{0} of {1} done</value>
+  </data>
+  <data name="TourReopened" xml:space="preserve">
+    <value>The tour is shown again.</value>
+  </data>
+  <data name="ToursIntro" xml:space="preserve">
+    <value>First steps for each role, each with a short Academy lesson.</value>
+  </data>
+  <data name="ToursTab" xml:space="preserve">
+    <value>Guided tours</value>
+  </data>
+  <data name="ToursTitle" xml:space="preserve">
+    <value>Guided tours</value>
+  </data>
+  <data name="TryIt" xml:space="preserve">
+    <value>Try it</value>
+  </data>
+  <data name="WatchLesson" xml:space="preserve">
+    <value>Watch lesson</value>
+  </data>
+  <data name="WhatsNewSubtitle" xml:space="preserve">
+    <value>Released {0} · {1} min read</value>
+  </data>
+  <data name="WhatsNewTab" xml:space="preserve">
+    <value>What's new</value>
+  </data>
+  <data name="WhatsNewTitle" xml:space="preserve">
+    <value>What's new</value>
+  </data>
+  <data name="YourTourBadge" xml:space="preserve">
+    <value>Your role</value>
+  </data>
+</root>

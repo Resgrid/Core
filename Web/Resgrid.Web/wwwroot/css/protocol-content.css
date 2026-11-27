@@ -1,0 +1,80 @@
+/* Protocols P3: structured protocol content (the reading view, the editor preview, the print view) and the block editor.
+   The rgp-* classes are written by the server renderer (Resgrid.Model.ProtocolBlocks) into the version's HTML; the structured
+   allow-list keeps only rgp-* classes, so this file is their only styling. Colours keep 4.5:1 contrast on their backgrounds;
+   every callout also carries its label as text, never colour alone. */
+
+.rgp-reader { font-size: 14px; line-height: 1.55; }
+.rgp-reader .rgp-doc > * + * { margin-top: 10px; }
+.rgp-reader .rgp-heading { margin-top: 18px; scroll-margin-top: 70px; }
+.rgp-reader .rgp-block { scroll-margin-top: 70px; }
+.rgp-reader .rgp-block:target, .rgp-reader .rgp-heading:target, .rgp-reader .rgp-step:target { outline: 3px solid #1c84c6; outline-offset: 3px; }
+
+.rgp-scope { margin: 4px 0 6px; font-size: 12px; color: #444; }
+.rgp-scope-label { font-weight: 600; margin-right: 4px; }
+.rgp-chip { display: inline-block; border: 1px solid #8a8a8a; border-radius: 10px; padding: 0 8px; margin: 0 4px 2px 0; background: #f7f7f7; color: #333; }
+
+.rgp-title { margin-bottom: 4px; }
+.rgp-step-list { padding-left: 24px; }
+.rgp-step-list > li { margin: 4px 0; scroll-margin-top: 70px; }
+
+.rgp-caution, .rgp-warning, .rgp-gate { border-left: 5px solid #8a5300; background: #fff6e0; padding: 8px 12px; border-radius: 2px; color: #222; }
+.rgp-warning { border-left-color: #a1001b; background: #fdecee; }
+.rgp-gate { border-left-color: #0d4f8b; background: #e8f1fb; }
+.rgp-label { margin-bottom: 4px; text-transform: none; }
+.rgp-contact { margin-top: 6px; }
+
+.rgp-grid, .rgp-med-table { border-collapse: collapse; max-width: 100%; }
+.rgp-grid caption { caption-side: top; text-align: left; font-weight: 600; color: #333; padding: 2px 0 4px; }
+.rgp-grid th, .rgp-grid td, .rgp-med-table th, .rgp-med-table td { border: 1px solid #b5b5b5; padding: 5px 8px; vertical-align: top; text-align: left; }
+.rgp-grid th, .rgp-med-table th { background: #f3f3f4; }
+.rgp-table, .rgp-medication { overflow-x: auto; }
+
+.rgp-medication { border: 1px solid #7a7a7a; border-radius: 3px; padding: 8px 12px; background: #fcfcfd; }
+.rgp-med-table th { width: 42%; font-weight: 600; }
+.rgp-med-notice { font-size: 12px; color: #555; margin-top: 6px; }
+.rgp-dosing-tool { margin-top: 6px; }
+.rgp-dosing-tool a { font-weight: 600; }
+
+.rgp-image img { max-width: 100%; height: auto; }
+.rgp-caption { font-size: 12px; color: #555; }
+
+.rgp-variants { display: flex; flex-wrap: wrap; gap: 12px; }
+.rgp-variant { flex: 1 1 280px; min-width: 0; border: 1px dashed #9a9a9a; border-radius: 3px; padding: 8px 12px; }
+.rgp-variant-label { margin-bottom: 6px; }
+
+/* Large-text and night reading (P3 member reading mode). */
+.rgp-reading-large .rgp-reader { font-size: 18px; }
+.rgp-reading-night .rgp-reader { background: #111; color: #eee; padding: 12px; }
+.rgp-reading-night .rgp-reader a { color: #8cc8ff; }
+.rgp-reading-night .rgp-caution, .rgp-reading-night .rgp-warning, .rgp-reading-night .rgp-gate, .rgp-reading-night .rgp-medication { background: #222; color: #eee; }
+.rgp-reading-night .rgp-grid th, .rgp-reading-night .rgp-med-table th { background: #2a2a2a; }
+
+/* -- Block editor --------------------------------------------------------- */
+.rgp-editor-block > .panel-body > .form-group:last-child { margin-bottom: 0; }
+.rgp-editor-add { margin: 8px 0 4px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.rgp-editor-add .control-label { margin-right: 6px; }
+.rgp-rich-toolbar { margin-bottom: 4px; }
+.rgp-rich-toolbar .btn + .btn { margin-left: 2px; }
+.rgp-rich-area { min-height: 70px; height: auto; overflow-y: auto; max-height: 420px; }
+.rgp-rich-area:focus { outline: 2px solid #1c84c6; }
+.rgp-editor-steps { padding-left: 20px; }
+.rgp-editor-steps > li { margin-bottom: 8px; }
+.rgp-editor-grid td { padding: 2px !important; }
+.rgp-editor-grid .form-control { min-width: 90px; }
+.rgp-scopes { margin-top: 8px; }
+.rgp-scopes legend { font-size: 13px; border: 0; margin-bottom: 2px; }
+.rgp-editor-variant { margin-top: 8px; }
+
+/* -- Step-through ---------------------------------------------------------- */
+.rgp-run-step { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid #e7eaec; }
+.rgp-run-step .rgp-run-text { flex: 1 1 260px; min-width: 0; }
+.rgp-run-step .rgp-run-actions { flex: 0 0 auto; display: flex; flex-wrap: wrap; gap: 4px; }
+.rgp-run-step.rgp-state-1 .rgp-run-text { color: #1a6b2f; }
+.rgp-run-step.rgp-state-2 .rgp-run-text, .rgp-run-step.rgp-state-3 .rgp-run-text { color: #555; }
+.rgp-run-gate { background: #e8f1fb; padding-left: 8px; padding-right: 8px; }
+.rgp-run-meta { font-size: 12px; color: #555; }
+
+/* -- QR poster and print view ---------------------------------------------- */
+.rgp-qr-poster { text-align: center; }
+.rgp-qr-poster img { width: 260px; height: 260px; image-rendering: pixelated; }
+.rgp-qr-link { word-break: break-all; }

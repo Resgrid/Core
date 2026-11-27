@@ -1,0 +1,90 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsGapsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@* A member's competency gap list (R-C7): per item the newest evidence and its age, or none. Members see their own; reviewers others. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Prg.GapReport"];
+    ViewData["Title"] = localizer["Prg.GapReport"].Value;
+    ViewData["Subtitle"] = localizer["Prg.GapIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var report = Model.Report;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="get" asp-controller="LmsPrograms" asp-action="Gaps" asp-route-area="User" class="rgw-toolbar m-b-sm">
+        <div class="rgw-filter">
+            <label for="gap-framework">@localizer["Prg.Framework"]</label>
+            <select id="gap-framework" name="frameworkId" class="form-control">
+                @foreach (var framework in Model.Frameworks)
+                {
+                    <option value="@framework.LmsCompetencyFrameworkId" selected="@(Model.FrameworkId == framework.LmsCompetencyFrameworkId)">@framework.Name</option>
+                }
+            </select>
+        </div>
+        @if (Model.Members.Count > 0)
+        {
+            <div class="rgw-filter">
+                <label for="gap-member">@localizer["Prg.Col.Member"]</label>
+                <select id="gap-member" name="userId" class="form-control">
+                    @foreach (var member in Model.Members)
+                    {
+                        <option value="@member.Key" selected="@(string.Equals(member.Key, Model.UserId, StringComparison.OrdinalIgnoreCase))">@member.Value</option>
+                    }
+                </select>
+            </div>
+        }
+        <button type="submit" class="btn btn-white"><i class="fa fa-search" aria-hidden="true"></i> @localizer["Prg.Show"]</button>
+    </form>
+
+    @if (Model.Frameworks.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoFrameworks"]</p>
+    }
+    else if (report != null)
+    {
+        <div class="rgw-stat-tiles m-b-md">
+            <div class="rgw-stat-tile"><div class="rgw-stat-label"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Prg.Evidence.Current"]</div><div class="rgw-stat-value">@report.Current</div></div>
+            <div class="rgw-stat-tile"><div class="rgw-stat-label"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["Prg.Evidence.Aged"]</div><div class="rgw-stat-value">@report.Aged</div></div>
+            <div class="rgw-stat-tile"><div class="rgw-stat-label"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Prg.Evidence.None"]</div><div class="rgw-stat-value">@report.Missing</div></div>
+        </div>
+        <p><strong>@report.MemberName</strong> · @report.Framework.Name</p>
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Prg.Col.Code"]</th>
+                        <th>@localizer["Prg.Col.Competency"]</th>
+                        <th>@localizer["Prg.Col.Status"]</th>
+                        <th>@localizer["Prg.Col.EvidenceDate"]</th>
+                        <th>@localizer["Prg.Col.AgeDays"]</th>
+                        <th>@localizer["Prg.Col.Evidence"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in report.Rows)
+                    {
+                        var css = row.State == LmsCompetencyEvidenceStates.Current ? "label-primary" : row.State == LmsCompetencyEvidenceStates.Aged ? "label-warning"
+                            : row.State == LmsCompetencyEvidenceStates.None ? "label-danger" : "label-default";
+                        <tr>
+                            <td class="rgw-mono">@row.Code</td>
+                            <td style="padding-inline-start:@(8 + Math.Min(row.Depth, 6) * 18)px">@row.Label</td>
+                            <td><span class="label @css">@localizer["Prg.Evidence." + row.State]</span></td>
+                            <td>@Model.Date(row.EvidenceOn)</td>
+                            <td>@row.AgeDays</td>
+                            <td>@row.EvidenceTitle</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

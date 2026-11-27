@@ -1,0 +1,86 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsStandards
+@model LmsStandardsToolView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsStandards.LmsStandards> localizer
+@*
+    One LTI 1.3 tool registration: the provider's endpoints (https only), its key set (a JWKS URL, or the key set pasted in), custom parameters,
+    grade passback, and what a launch shares about the member (a pseudonymous id by default; name and e-mail only when switched on).
+*@
+@{
+    var tool = Model.Tool;
+    var isNew = tool.LmsLtiToolId == 0;
+    ViewBag.Title = "Resgrid | " + localizer["Std.ToolTitle"];
+    ViewData["Title"] = isNew ? localizer["Std.NewTool"].Value : tool.Name;
+    ViewData["Subtitle"] = localizer["Std.ToolIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <form asp-controller="LmsStandards" asp-action="SaveTool" asp-route-area="User" method="post" class="ibox">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="LmsLtiToolId" value="@tool.LmsLtiToolId" />
+        <fieldset class="ibox-content" disabled="@(!Model.CanAuthor)">
+            @if (!isNew)
+            {
+                <dl class="dl-horizontal">
+                    <dt>@localizer["Std.Col.ClientId"]</dt><dd><code>@tool.ClientId</code></dd>
+                    <dt>@localizer["Std.DeploymentId"]</dt><dd><code>@tool.DeploymentId</code></dd>
+                </dl>
+            }
+            <div class="rgw-grid">
+                <div class="form-group"><label for="t-name">@localizer["Std.Col.Name"]</label><input id="t-name" name="Name" class="form-control" value="@tool.Name" maxlength="200" required /></div>
+                <div class="form-group"><label for="t-login">@localizer["Std.Field.OidcLoginUrl"]</label><input id="t-login" name="OidcLoginUrl" type="url" class="form-control" value="@tool.OidcLoginUrl" maxlength="2000" required /></div>
+                <div class="form-group"><label for="t-launch">@localizer["Std.Field.LaunchUrl"]</label><input id="t-launch" name="LaunchUrl" type="url" class="form-control" value="@tool.LaunchUrl" maxlength="2000" required /></div>
+                <div class="form-group"><label for="t-jwks">@localizer["Std.Field.JwksUrl"]</label><input id="t-jwks" name="JwksUrl" type="url" class="form-control" value="@tool.JwksUrl" maxlength="2000" /></div>
+            </div>
+            <div class="form-group">
+                <label for="t-redirects">@localizer["Std.Field.RedirectUris"]</label>
+                <textarea id="t-redirects" name="RedirectUris" class="form-control" rows="2">@tool.RedirectUris</textarea>
+                <span class="help-block">@localizer["Std.Field.RedirectUrisHelp"]</span>
+            </div>
+            <div class="form-group">
+                <label for="t-keys">@localizer["Std.Field.PublicJwks"]</label>
+                <textarea id="t-keys" name="PublicJwksJson" class="form-control" rows="3" spellcheck="false">@tool.PublicJwksJson</textarea>
+                <span class="help-block">@localizer["Std.Field.PublicJwksHelp"]</span>
+            </div>
+            <div class="form-group">
+                <label for="t-custom">@localizer["Std.Field.Custom"]</label>
+                <textarea id="t-custom" name="CustomParameters" class="form-control" rows="2" maxlength="4000" spellcheck="false">@tool.CustomParameters</textarea>
+                <span class="help-block">@localizer["Std.Field.CustomHelp"]</span>
+            </div>
+            <div class="rgw-builder-toggles">
+                <div class="checkbox"><label><input type="checkbox" name="AllowGradePassback" value="true" checked="@tool.AllowGradePassback" /> @localizer["Std.Field.Passback"]</label></div>
+                <div class="checkbox"><label><input type="checkbox" name="ShareName" value="true" checked="@tool.ShareName" /> @localizer["Std.Field.ShareName"]</label></div>
+                <div class="checkbox"><label><input type="checkbox" name="ShareEmail" value="true" checked="@tool.ShareEmail" /> @localizer["Std.Field.ShareEmail"]</label></div>
+                <div class="checkbox"><label><input type="checkbox" name="IsActive" value="true" checked="@tool.IsActive" /> @localizer["Std.Active"]</label></div>
+            </div>
+            <p class="help-block">@localizer["Std.Field.PassbackHelp"]</p>
+            @if (Model.CanAuthor)
+            {
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Std.Save"]</button>
+            }
+            <a class="btn btn-white" asp-controller="LmsStandards" asp-action="Tools" asp-route-area="User">@localizer["Std.Back"]</a>
+        </fieldset>
+    </form>
+
+    @if (!isNew && Model.CanAuthor)
+    {
+        <form asp-controller="LmsStandards" asp-action="DeleteTool" asp-route-area="User" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@tool.LmsLtiToolId" />
+            <button type="submit" class="btn btn-white"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Std.Remove"]</button>
+        </form>
+    }
+
+    @await Html.PartialAsync("_Platform", Model.Platform)
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -1,0 +1,122 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsReportsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    The LMS report catalog (§13a.3): every report with its tier, the saved reports in their folders with their schedules, and the folders.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Prg.ReportsTitle"];
+    ViewData["Title"] = localizer["Prg.ReportsTitle"].Value;
+    ViewData["Subtitle"] = localizer["Prg.ReportsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var byFolder = Model.Definitions.GroupBy(d => d.LmsReportFolderId ?? 0).ToDictionary(g => g.Key, g => g.ToList());
+    var folders = new List<(int Id, string Name)> { (0, localizer["Prg.NoFolder"].Value) };
+    folders.InsertRange(0, Model.Folders.Select(f => (f.LmsReportFolderId, f.Name)));
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <h3>@localizer["Prg.Catalog"]</h3>
+    <div class="rgw-card-grid m-b-md">
+        @foreach (var report in Model.Catalog)
+        {
+            <div class="rgw-card">
+                <h4>@localizer[report.NameKey]</h4>
+                <p class="rgw-card-meta"><span class="label @(report.Tier == LmsReportTiers.Free ? "label-default" : "label-primary")">@localizer["Prg.Tier." + report.Tier]</span></p>
+                <p>@localizer[report.DescriptionKey]</p>
+                <a class="btn btn-white btn-sm" asp-controller="LmsPrograms" asp-action="Report" asp-route-area="User" asp-route-key="@report.Key"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Prg.RunReport"]</a>
+            </div>
+        }
+    </div>
+
+    <h3>@localizer["Prg.SavedReports"]</h3>
+    @foreach (var (id, name) in folders)
+    {
+        var list = byFolder.TryGetValue(id, out var found) ? found : new List<LmsReportDefinition>();
+        if (id == 0 && list.Count == 0)
+        {
+            continue;
+        }
+        <div class="ibox float-e-margins">
+            <div class="ibox-title">
+                <h5><i class="fa fa-folder-o" aria-hidden="true"></i> @name</h5>
+                @if (id > 0)
+                {
+                    <div class="ibox-tools">
+                        <form method="post" asp-controller="LmsPrograms" asp-action="DeleteFolder" asp-route-area="User" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@id" />
+                            <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["Prg.DeleteFolder"]</button>
+                        </form>
+                    </div>
+                }
+            </div>
+            <div class="ibox-content">
+                @if (list.Count == 0)
+                {
+                    <p class="text-muted">@localizer["Prg.EmptyFolder"]</p>
+                }
+                else
+                {
+                    <table class="table rgw-table">
+                        <thead><tr><th>@localizer["Prg.Name"]</th><th>@localizer["Prg.Schedule"]</th><th>@localizer["Prg.LastRun"]</th><th class="rgw-row-actions">@localizer["Prg.Actions"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var definition in list)
+                            {
+                                var descriptor = Model.Catalog.FirstOrDefault(c => c.Key == definition.ReportKey);
+                                <tr>
+                                    <td>@definition.Name<span class="rgw-sub">@(descriptor == null ? definition.ReportKey : localizer[descriptor.NameKey].Value)</span></td>
+                                    <td>@localizer["Prg.Frequency." + (LmsReportFrequencies)definition.Frequency]
+                                        @if (definition.NextRunUtc.HasValue) {<span class="rgw-sub">@localizer["Prg.NextRun"] @Model.Date(definition.NextRunUtc)</span>}</td>
+                                    <td>@Model.Date(definition.LastRunUtc)
+                                        @if (definition.LastRunStatus.HasValue) {<span class="rgw-sub">@localizer["Prg.RunStatus." + (LmsReportRunStatuses)definition.LastRunStatus.Value]</span>}</td>
+                                    <td class="rgw-row-actions">
+                                        <a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="Report" asp-route-area="User" asp-route-definitionId="@definition.LmsReportDefinitionId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Prg.Open"]</a>
+                                        <a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="ReportFile" asp-route-area="User" asp-route-definitionId="@definition.LmsReportDefinitionId" asp-route-format="csv"><i class="fa fa-file-text-o" aria-hidden="true"></i> CSV</a>
+                                        <a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="ReportFile" asp-route-area="User" asp-route-definitionId="@definition.LmsReportDefinitionId" asp-route-format="pdf"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> PDF</a>
+                                        <form method="post" asp-controller="LmsPrograms" asp-action="DeleteReport" asp-route-area="User" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@definition.LmsReportDefinitionId" />
+                                            <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Prg.Remove"]</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    }
+    @if (Model.Definitions.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoSavedReports"]</p>
+    }
+
+    @if (Model.CanAuthor)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-folder-o" aria-hidden="true"></i> @localizer["Prg.NewFolder"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="LmsPrograms" asp-action="SaveFolder" asp-route-area="User" class="form-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="0" />
+                    <input type="hidden" name="sortOrder" value="@Model.Folders.Count" />
+                    <label for="folder-name" class="sr-only">@localizer["Prg.Name"]</label>
+                    <input id="folder-name" name="name" class="form-control" maxlength="100" placeholder="@localizer["Prg.Name"]" required />
+                    <button type="submit" class="btn btn-white"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Prg.Create"]</button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -1,0 +1,205 @@
+{
+  "schema": 1,
+  "id": "19-adp",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Data protection",
+  "minutes": 2.7,
+  "walkthrough": false,
+  "audience": [
+    "administrator",
+    "records"
+  ],
+  "visibility": [
+    "addon:ADP"
+  ],
+  "pages": [
+    "DataProtection"
+  ],
+  "adminAssist": {
+    "areas": [
+      "adp"
+    ],
+    "capabilities": [
+      "data-protection",
+      "protected-workflows"
+    ]
+  },
+  "media": {
+    "video": "media/19-adp.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/19-adp.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Plan protected-data access and recovery",
+    "ar": "خطط للوصول إلى البيانات المحمية واستعادتها",
+    "de": "Zugriff auf geschützte Daten und Wiederherstellung planen",
+    "el": "Σχεδιάστε πρόσβαση και ανάκτηση προστατευμένων δεδομένων",
+    "es": "Planificar el acceso y la recuperación de datos protegidos",
+    "fr": "Planifier l’accès aux données protégées et leur récupération",
+    "it": "Pianificare accesso e recupero dei dati protetti",
+    "pl": "Zaplanuj dostęp do chronionych danych i ich odzyskiwanie",
+    "sv": "Planera åtkomst till och återställning av skyddade data",
+    "uk": "Сплануйте доступ до захищених даних і їх відновлення"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What does data protection add?",
+        "ar": "ماذا تضيف حماية البيانات؟",
+        "de": "Was fügt der Datenschutz hinzu?",
+        "el": "Τι προσθέτει η προστασία δεδομένων;",
+        "es": "¿Qué añade la protección de datos?",
+        "fr": "Qu’apporte la protection des données ?",
+        "it": "Che cosa aggiunge la protezione dei dati?",
+        "pl": "Co dodaje ochrona danych?",
+        "sv": "Vad tillför dataskyddet?",
+        "uk": "Що додає захист даних?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Faster maps",
+            "ar": "خرائط أسرع",
+            "de": "Schnellere Karten",
+            "el": "Ταχύτερους χάρτες",
+            "es": "Mapas más rápidos",
+            "fr": "Des cartes plus rapides",
+            "it": "Mappe più veloci",
+            "pl": "Szybsze mapy",
+            "sv": "Snabbare kartor",
+            "uk": "Швидші мапи"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Encryption of sensitive data with controlled access",
+            "ar": "تشفير البيانات الحساسة مع وصول مضبوط",
+            "de": "Verschlüsselung sensibler Daten mit kontrolliertem Zugriff",
+            "el": "Κρυπτογράφηση ευαίσθητων δεδομένων με ελεγχόμενη πρόσβαση",
+            "es": "Cifrado de datos sensibles con acceso controlado",
+            "fr": "Le chiffrement des données sensibles avec un accès contrôlé",
+            "it": "Cifratura dei dati sensibili con accesso controllato",
+            "pl": "Szyfrowanie danych wrażliwych z kontrolowanym dostępem",
+            "sv": "Kryptering av känsliga data med styrd åtkomst",
+            "uk": "Шифрування чутливих даних із контрольованим доступом"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "More notification sounds",
+            "ar": "أصوات إشعارات أكثر",
+            "de": "Mehr Benachrichtigungstöne",
+            "el": "Περισσότερους ήχους ειδοποίησης",
+            "es": "Más sonidos de notificación",
+            "fr": "Plus de sons de notification",
+            "it": "Più suoni di notifica",
+            "pl": "Więcej dźwięków powiadomień",
+            "sv": "Fler aviseringsljud",
+            "uk": "Більше звуків сповіщень"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "Why plan recovery before enabling protection?",
+        "ar": "لماذا تُخطط للاستعادة قبل تفعيل الحماية؟",
+        "de": "Warum die Wiederherstellung vor dem Aktivieren des Schutzes planen?",
+        "el": "Γιατί να σχεδιαστεί η ανάκτηση πριν ενεργοποιηθεί η προστασία;",
+        "es": "¿Por qué planificar la recuperación antes de activar la protección?",
+        "fr": "Pourquoi planifier la récupération avant d’activer la protection ?",
+        "it": "Perché pianificare il recupero prima di attivare la protezione?",
+        "pl": "Po co planować odzyskiwanie przed włączeniem ochrony?",
+        "sv": "Varför planera återställning innan skyddet aktiveras?",
+        "uk": "Навіщо планувати відновлення до ввімкнення захисту?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "So access can be restored if a key holder is unavailable",
+            "ar": "ليمكن استعادة الوصول إذا تعذر وجود حامل المفتاح",
+            "de": "Damit der Zugriff wiederhergestellt werden kann, wenn ein Schlüsselinhaber ausfällt",
+            "el": "Ώστε να αποκατασταθεί η πρόσβαση αν ο κάτοχος κλειδιού λείπει",
+            "es": "Para poder restaurar el acceso si un titular de clave no está disponible",
+            "fr": "Pour rétablir l’accès si un détenteur de clé est indisponible",
+            "it": "Per ripristinare l’accesso se un detentore di chiave non è disponibile",
+            "pl": "Aby przywrócić dostęp, gdy posiadacz klucza jest niedostępny",
+            "sv": "Så att åtkomsten kan återställas om en nyckelinnehavare inte är tillgänglig",
+            "uk": "Щоб відновити доступ, якщо власник ключа недоступний"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "It is not needed",
+            "ar": "ليس ذلك ضروريًا",
+            "de": "Das ist nicht nötig",
+            "el": "Δεν χρειάζεται",
+            "es": "No hace falta",
+            "fr": "Ce n’est pas nécessaire",
+            "it": "Non serve",
+            "pl": "Nie jest to potrzebne",
+            "sv": "Det behövs inte",
+            "uk": "Це не потрібно"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To make data public",
+            "ar": "لجعل البيانات عامة",
+            "de": "Um Daten öffentlich zu machen",
+            "el": "Για να γίνουν δημόσια τα δεδομένα",
+            "es": "Para hacer públicos los datos",
+            "fr": "Pour rendre les données publiques",
+            "it": "Per rendere pubblici i dati",
+            "pl": "Aby upublicznić dane",
+            "sv": "För att göra data offentliga",
+            "uk": "Щоб зробити дані публічними"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Access to protected data is recorded.",
+        "ar": "يُسجَّل الوصول إلى البيانات المحمية.",
+        "de": "Zugriffe auf geschützte Daten werden protokolliert.",
+        "el": "Η πρόσβαση στα προστατευμένα δεδομένα καταγράφεται.",
+        "es": "El acceso a los datos protegidos queda registrado.",
+        "fr": "L’accès aux données protégées est consigné.",
+        "it": "L’accesso ai dati protetti viene registrato.",
+        "pl": "Dostęp do chronionych danych jest rejestrowany.",
+        "sv": "Åtkomst till skyddade data loggas.",
+        "uk": "Доступ до захищених даних фіксується."
+      }
+    }
+  ]
+}

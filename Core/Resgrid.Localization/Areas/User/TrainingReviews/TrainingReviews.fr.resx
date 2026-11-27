@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Reviews.Tab" xml:space="preserve">
+    <value>Vérifications de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.Title" xml:space="preserve">
+    <value>Vérifications de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.Intro" xml:space="preserve">
+    <value>Heures de formation soumises par les membres avec des justificatifs, en attente de votre vérification, les plus anciennes d'abord.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.AwaitingTab" xml:space="preserve">
+    <value>En attente de vérification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.InfoTab" xml:space="preserve">
+    <value>En attente du membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.AwaitingTile" xml:space="preserve">
+    <value>En attente de votre vérification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.InfoTile" xml:space="preserve">
+    <value>En attente de la réponse du membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.OldestTile" xml:space="preserve">
+    <value>La plus ancienne attend depuis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.MySubmissionsLink" xml:space="preserve">
+    <value>Mes soumissions</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.Empty" xml:space="preserve">
+    <value>Rien n'attend votre vérification.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.EmptyInfo" xml:space="preserve">
+    <value>Aucune soumission n'attend la réponse d'un membre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.SelectAll" xml:space="preserve">
+    <value>Tout sélectionner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.SelectRow" xml:space="preserve">
+    <value>Sélectionner {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.FilesCount" xml:space="preserve">
+    <value>{0} fichiers</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.ReviewButton" xml:space="preserve">
+    <value>Vérifier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkNoteLabel" xml:space="preserve">
+    <value>Note aux membres (facultatif)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkConfirm" xml:space="preserve">
+    <value>Approuver les soumissions sélectionnées ?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkApproveButton" xml:space="preserve">
+    <value>Approuver la sélection</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.NoneSelected" xml:space="preserve">
+    <value>Sélectionnez au moins une soumission.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkApproved" xml:space="preserve">
+    <value>{0} soumissions approuvées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkRefused" xml:space="preserve">
+    <value>{0} soumissions n'ont pas pu être approuvées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Category" xml:space="preserve">
+    <value>Catégorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.AllCategories" xml:space="preserve">
+    <value>Toutes les catégories</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Uncategorized" xml:space="preserve">
+    <value>Sans catégorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Member" xml:space="preserve">
+    <value>Membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.AllMembers" xml:space="preserve">
+    <value>Tous les membres</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Search" xml:space="preserve">
+    <value>Rechercher un titre, un organisme ou un numéro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Apply" xml:space="preserve">
+    <value>Filtrer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Clear" xml:space="preserve">
+    <value>Effacer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Member" xml:space="preserve">
+    <value>Membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Training" xml:space="preserve">
+    <value>Formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Category" xml:space="preserve">
+    <value>Catégorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Hours" xml:space="preserve">
+    <value>Heures</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Evidence" xml:space="preserve">
+    <value>Justificatifs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Waiting" xml:space="preserve">
+    <value>En attente depuis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.State" xml:space="preserve">
+    <value>Vérification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Actions" xml:space="preserve">
+    <value>Actions</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Header" xml:space="preserve">
+    <value>Justificatifs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.None" xml:space="preserve">
+    <value>Aucun justificatif joint</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Open" xml:space="preserve">
+    <value>Ouvrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Download" xml:space="preserve">
+    <value>Télécharger</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.PreviewUnavailable" xml:space="preserve">
+    <value>Pas d'aperçu pour ce type de fichier ; téléchargez-le pour le consulter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.FilesLabel" xml:space="preserve">
+    <value>Fichiers justificatifs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.FilesHelp" xml:space="preserve">
+    <value>Jusqu'à {0} fichiers de {1} Mo chacun : un certificat, une photo, un document ou un reçu (PDF, JPG, PNG, GIF, WebP, DOC, DOCX ou ODT).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.KindLabel" xml:space="preserve">
+    <value>Ces fichiers sont</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Other" xml:space="preserve">
+    <value>Autre justificatif</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Certificate" xml:space="preserve">
+    <value>Un certificat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Photo" xml:space="preserve">
+    <value>Une photo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Document" xml:space="preserve">
+    <value>Un document</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Receipt" xml:space="preserve">
+    <value>Un reçu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Review.Title" xml:space="preserve">
+    <value>Vérifier une soumission de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submission.Title" xml:space="preserve">
+    <value>Soumission de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Back.Inbox" xml:space="preserve">
+    <value>Retour aux vérifications de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Back.Mine" xml:space="preserve">
+    <value>Retour à mes soumissions</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Member" xml:space="preserve">
+    <value>Membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.CompletedOn" xml:space="preserve">
+    <value>Terminée le</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Hours" xml:space="preserve">
+    <value>Heures</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.CeHours" xml:space="preserve">
+    <value>Heures de formation continue (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Category" xml:space="preserve">
+    <value>Catégorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Provider" xml:space="preserve">
+    <value>Organisme</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.CourseNumber" xml:space="preserve">
+    <value>Numéro du cours ou de formation continue</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.SubmittedOn" xml:space="preserve">
+    <value>Soumise</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Notes" xml:space="preserve">
+    <value>Notes du membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.DeniedReason" xml:space="preserve">
+    <value>Non acceptée :</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.AwaitingReview" xml:space="preserve">
+    <value>En attente de vérification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.InfoRequested" xml:space="preserve">
+    <value>Informations supplémentaires requises</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.Approved" xml:space="preserve">
+    <value>Approuvée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.Denied" xml:space="preserve">
+    <value>Non acceptée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.SelfReported" xml:space="preserve">
+    <value>Auto-déclarée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveHeader" xml:space="preserve">
+    <value>Approuver</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveHoursLabel" xml:space="preserve">
+    <value>Heures retenues</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveNoteLabel" xml:space="preserve">
+    <value>Note au membre (facultatif)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveButton" xml:space="preserve">
+    <value>Approuver</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.InfoHeader" xml:space="preserve">
+    <value>Demander des informations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.InfoNoteLabel" xml:space="preserve">
+    <value>Ce qui est nécessaire</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.InfoButton" xml:space="preserve">
+    <value>Demander au membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.DenyHeader" xml:space="preserve">
+    <value>Refuser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.DenyReasonLabel" xml:space="preserve">
+    <value>Motif (le membre le lira)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.DenyButton" xml:space="preserve">
+    <value>Refuser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.Decided" xml:space="preserve">
+    <value>Cette soumission n'attend plus de décision.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.ReviewerAsked" xml:space="preserve">
+    <value>Le vérificateur a demandé :</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.Header" xml:space="preserve">
+    <value>Compléter et soumettre à nouveau</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.Help" xml:space="preserve">
+    <value>Ajoutez des justificatifs, corrigez les heures ou la catégorie et indiquez au vérificateur ce qui a changé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.NoteLabel" xml:space="preserve">
+    <value>Votre réponse</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.FilesLabel" xml:space="preserve">
+    <value>Autres justificatifs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.HoursLabel" xml:space="preserve">
+    <value>Heures corrigées</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.CategoryLabel" xml:space="preserve">
+    <value>Catégorie corrigée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.KeepCategory" xml:space="preserve">
+    <value>Garder la catégorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.Button" xml:space="preserve">
+    <value>Soumettre à nouveau</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Header" xml:space="preserve">
+    <value>Historique</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.By" xml:space="preserve">
+    <value>par {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.FilesAdded" xml:space="preserve">
+    <value>{0} fichiers ajoutés</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Empty" xml:space="preserve">
+    <value>Pas encore d'historique.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Submitted" xml:space="preserve">
+    <value>Soumise pour vérification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.SelfReported" xml:space="preserve">
+    <value>Enregistrée comme auto-déclarée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Approved" xml:space="preserve">
+    <value>Approuvée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Denied" xml:space="preserve">
+    <value>Non acceptée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.InfoRequested" xml:space="preserve">
+    <value>Informations supplémentaires demandées</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Resubmitted" xml:space="preserve">
+    <value>Soumise à nouveau</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.Title" xml:space="preserve">
+    <value>Mes soumissions de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.Intro" xml:space="preserve">
+    <value>Les heures de formation que vous avez soumises avec des justificatifs, et où en est chacune.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.SubmitButton" xml:space="preserve">
+    <value>Soumettre des heures de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.Empty" xml:space="preserve">
+    <value>Vous n'avez encore soumis aucune heure de formation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.OpenButton" xml:space="preserve">
+    <value>Ouvrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Approved" xml:space="preserve">
+    <value>Soumission approuvée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Denied" xml:space="preserve">
+    <value>Soumission non acceptée ; le membre a été informé du motif.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.InfoRequested" xml:space="preserve">
+    <value>Des informations supplémentaires ont été demandées au membre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Resubmitted" xml:space="preserve">
+    <value>Votre soumission est de nouveau entre les mains des vérificateurs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Submitted" xml:space="preserve">
+    <value>Votre soumission a été reçue et attend la vérification.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Accepted" xml:space="preserve">
+    <value>Vos heures de formation ont été enregistrées comme auto-déclarées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>L'action n'a pas pu être effectuée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.ReviewsHeader" xml:space="preserve">
+    <value>Soumissions de formation à vérifier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.ReviewsAll" xml:space="preserve">
+    <value>Ouvrir les vérifications de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.WaitingSince" xml:space="preserve">
+    <value>en attente depuis le {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.InfoHeader" xml:space="preserve">
+    <value>Un vérificateur a besoin d'informations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Hours.Value" xml:space="preserve">
+    <value>{0} h</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.System" xml:space="preserve">
+    <value>Enregistrée par le système</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.SelfReported" xml:space="preserve">
+    <value>Auto-déclarée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.Reviewed" xml:space="preserve">
+    <value>Vérifiée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.RecordedByOther" xml:space="preserve">
+    <value>Enregistrée par un formateur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.Imported" xml:space="preserve">
+    <value>Importée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Transcript.SubmissionButton" xml:space="preserve">
+    <value>Soumission</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Queue.SubmissionsMoved" xml:space="preserve">
+    <value>Les heures de formation soumises par les membres se vérifient dans Vérifications de formation ({0} vous attendent).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submit.ReviewNotice.Always" xml:space="preserve">
+    <value>Un vérificateur contrôle votre soumission avant que les heures comptent. Vous êtes prévenu quand elle est approuvée ou si des informations manquent.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submit.ReviewNotice.Off" xml:space="preserve">
+    <value>Vos heures comptent dès la soumission et sont affichées comme auto-déclarées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submit.ReviewNotice.Selected" xml:space="preserve">
+    <value>Certaines soumissions (selon la catégorie ou le nombre d'heures) sont vérifiées avant de compter ; les autres comptent tout de suite comme auto-déclarées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Header" xml:space="preserve">
+    <value>Vérification des soumissions des membres</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Help" xml:space="preserve">
+    <value>Choisissez si les heures de formation soumises par les membres attendent un vérificateur avant de compter. Vérifient les titulaires du droit Enregistrer les formations suivies (responsables de formation, formateurs) et les gestionnaires des dossiers de formation, pour tous ou pour leur propre groupe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode" xml:space="preserve">
+    <value>Vérification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode.Always" xml:space="preserve">
+    <value>Chaque soumission attend un vérificateur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode.Off" xml:space="preserve">
+    <value>Aucune vérification : acceptée à la soumission et affichée comme auto-déclarée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode.Selected" xml:space="preserve">
+    <value>Seulement les catégories ci-dessous, ou au-delà d'un seuil d'heures</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Categories" xml:space="preserve">
+    <value>Catégories à vérifier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.CategoriesHelp" xml:space="preserve">
+    <value>Avec « seulement les catégories ci-dessous » : les soumissions de ces catégories attendent un vérificateur.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.AboveHours" xml:space="preserve">
+    <value>Vérifier les soumissions de plus de (heures)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.AboveHoursHelp" xml:space="preserve">
+    <value>0 = aucun seuil.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices" xml:space="preserve">
+    <value>Notifications aux vérificateurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices.Immediate" xml:space="preserve">
+    <value>Une notification par soumission</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices.DailyDigest" xml:space="preserve">
+    <value>Un récapitulatif par jour</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices.None" xml:space="preserve">
+    <value>Aucune notification (boîte de réception et page d'accueil seulement)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.OwnGroupOnly" xml:space="preserve">
+    <value>Les vérificateurs désignés par rôle ne vérifient que les membres de leur propre groupe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.OwnGroupOnlyHelp" xml:space="preserve">
+    <value>Les administrateurs du service vérifient toujours tout le monde ; les administrateurs de groupe, leur groupe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ModeInvalid" xml:space="preserve">
+    <value>Choisissez une des options.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.SelectedRequired" xml:space="preserve">
+    <value>Choisissez au moins une catégorie ou un seuil d'heures.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_type" xml:space="preserve">
+    <value>Ce type de fichier n'est pas accepté.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_too_large" xml:space="preserve">
+    <value>Un fichier, ou l'ensemble des fichiers, est trop volumineux.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_content" xml:space="preserve">
+    <value>Le contenu d'un fichier ne correspond pas à son type.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_too_many_files" xml:space="preserve">
+    <value>Trop de fichiers.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_rejected" xml:space="preserve">
+    <value>Un fichier a été rejeté par l'antivirus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_empty" xml:space="preserve">
+    <value>Un fichier est vide.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_submissions_disabled" xml:space="preserve">
+    <value>Votre organisation n'accepte pas les soumissions de formation des membres.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_resubmit_empty" xml:space="preserve">
+    <value>Ajoutez une réponse, une correction ou un fichier.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_reviewer" xml:space="preserve">
+    <value>Vous ne vérifiez pas les soumissions de ce membre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_pending" xml:space="preserve">
+    <value>Cette soumission n'est plus en attente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_self_review" xml:space="preserve">
+    <value>Vous ne pouvez pas vérifier votre propre soumission.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_note_required" xml:space="preserve">
+    <value>Indiquez ce qui est nécessaire.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_reason_required" xml:space="preserve">
+    <value>Un motif est requis.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_awaiting_review" xml:space="preserve">
+    <value>Cette soumission attend déjà son membre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_submission" xml:space="preserve">
+    <value>Cet enregistrement n'est pas une soumission de membre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_hours_invalid" xml:space="preserve">
+    <value>Les heures ne sont pas valides.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_category_invalid" xml:space="preserve">
+    <value>La catégorie n'est pas valide.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_bulk_limit" xml:space="preserve">
+    <value>Trop de soumissions à la fois.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionReceived.Title" xml:space="preserve">
+    <value>Soumission de formation reçue</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionReceived.Body" xml:space="preserve">
+    <value>Votre soumission de formation "{0}" ({1} h) a été reçue et attend la vérification.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionAccepted.Title" xml:space="preserve">
+    <value>Heures de formation enregistrées</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionAccepted.Body" xml:space="preserve">
+    <value>Vos heures de formation "{0}" ({1} h) ont été enregistrées comme auto-déclarées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionApproved.Title" xml:space="preserve">
+    <value>Soumission de formation approuvée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionApproved.Body" xml:space="preserve">
+    <value>Votre soumission de formation "{0}" a été approuvée ; {1} h comptent désormais.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionDenied.Title" xml:space="preserve">
+    <value>Soumission de formation non acceptée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionDenied.Body" xml:space="preserve">
+    <value>Votre soumission de formation "{0}" n'a pas été acceptée. Motif : {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionInfoRequested.Title" xml:space="preserve">
+    <value>Informations supplémentaires requises</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionInfoRequested.Body" xml:space="preserve">
+    <value>Un vérificateur a besoin d'informations sur "{0}" : {1}. Ouvrez-la pour ajouter des justificatifs et la soumettre à nouveau.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewWaiting.Title" xml:space="preserve">
+    <value>Soumission de formation à vérifier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewWaiting.Body" xml:space="preserve">
+    <value>{0} a soumis "{1}" ({2} h) à votre vérification.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewResubmitted.Title" xml:space="preserve">
+    <value>Soumission de formation soumise à nouveau</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewDigest.Title" xml:space="preserve">
+    <value>Soumissions de formation à vérifier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewDigest.Body" xml:space="preserve">
+    <value>{0} soumissions de formation attendent votre vérification.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionRecorded.Title" xml:space="preserve">
+    <value>Formation suivie enregistrée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionRecorded.Body" xml:space="preserve">
+    <value>{0} a enregistré que vous avez suivi "{1}" le {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionVoided.Title" xml:space="preserve">
+    <value>Formation enregistrée annulée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionVoided.Body" xml:space="preserve">
+    <value>L'enregistrement de votre formation "{0}" a été annulé. Motif : {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.AMember" xml:space="preserve">
+    <value>Un membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.AnInstructor" xml:space="preserve">
+    <value>Un formateur</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

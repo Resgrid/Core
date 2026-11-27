@@ -656,4 +656,12 @@
   <data name="ResumeGoBack" xml:space="preserve">
     <value>Retour</value>
   </data>
+  <data name="StepUpUseReauthenticationLink" xml:space="preserve">
+    <value>Utiliser plutôt votre mot de passe ou la connexion de votre organisation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpReauthenticateIntro" xml:space="preserve">
+    <value>Pour votre sécurité, confirmez qu’il s’agit bien de vous pour continuer : saisissez votre mot de passe ou reconnectez-vous auprès du fournisseur d’identité de votre organisation. Cela ne vous déconnecte pas et ne prolonge pas votre session.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

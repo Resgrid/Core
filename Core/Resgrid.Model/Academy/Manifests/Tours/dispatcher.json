@@ -1,0 +1,165 @@
+{
+  "schema": 1,
+  "key": "dispatcher",
+  "revision": 1,
+  "title": {
+    "en": "Get ready to dispatch",
+    "ar": "استعد للإرسال",
+    "de": "Bereit zum Disponieren",
+    "el": "Προετοιμαστείτε για τη διαχείριση συμβάντων",
+    "es": "Prepárese para despachar",
+    "fr": "Préparez-vous à la régulation",
+    "it": "Preparati a gestire gli interventi",
+    "pl": "Przygotuj się do dysponowania",
+    "sv": "Gör dig redo att larma ut",
+    "uk": "Підготуйтеся до диспетчеризації"
+  },
+  "intro": {
+    "en": "Four first steps for dispatchers. Each links to its page and to a short Academy lesson.",
+    "ar": "أربع خطوات أولى للمرسلين. كل خطوة ترتبط بصفحتها وبدرس قصير من الأكاديمية.",
+    "de": "Vier erste Schritte für Disponenten. Jeder Schritt verlinkt seine Seite und eine kurze Academy-Lektion.",
+    "el": "Τέσσερα πρώτα βήματα για τους χειριστές. Το καθένα οδηγεί στη σελίδα του και σε ένα σύντομο μάθημα της Academy.",
+    "es": "Cuatro primeros pasos para despachadores. Cada uno enlaza con su página y con una breve lección de la Academy.",
+    "fr": "Quatre premières étapes pour les régulateurs. Chacune renvoie à sa page et à une courte leçon de l'Academy.",
+    "it": "Quattro primi passi per gli operatori. Ognuno rimanda alla sua pagina e a una breve lezione dell'Academy.",
+    "pl": "Cztery pierwsze kroki dla dyspozytorów. Każdy prowadzi do swojej strony i krótkiej lekcji Academy.",
+    "sv": "Fyra första steg för larmoperatörer. Varje steg länkar till sin sida och till en kort lektion i Academy.",
+    "uk": "Чотири перші кроки для диспетчерів. Кожен веде на свою сторінку та до короткого уроку в Academy."
+  },
+  "tasks": [
+    {
+      "key": "calls",
+      "lessonId": "05-calls",
+      "page": {
+        "controller": "Dispatch",
+        "action": "Index"
+      },
+      "title": {
+        "en": "Open the call list",
+        "ar": "افتح قائمة البلاغات",
+        "de": "Einsatzliste öffnen",
+        "el": "Ανοίξτε τη λίστα συμβάντων",
+        "es": "Abra la lista de llamadas",
+        "fr": "Ouvrez la liste des appels",
+        "it": "Apri l'elenco delle chiamate",
+        "pl": "Otwórz listę zgłoszeń",
+        "sv": "Öppna larmlistan",
+        "uk": "Відкрийте список викликів"
+      },
+      "hint": {
+        "en": "See active calls and start a new one.",
+        "ar": "اطّلع على البلاغات النشطة وابدأ بلاغًا جديدًا.",
+        "de": "Sehen Sie aktive Einsätze und legen Sie einen neuen an.",
+        "el": "Δείτε τα ενεργά συμβάντα και ξεκινήστε ένα νέο.",
+        "es": "Vea las llamadas activas e inicie una nueva.",
+        "fr": "Consultez les appels en cours et créez-en un nouveau.",
+        "it": "Vedi le chiamate attive e avviane una nuova.",
+        "pl": "Zobacz aktywne zgłoszenia i utwórz nowe.",
+        "sv": "Se aktiva larm och skapa ett nytt.",
+        "uk": "Перегляньте активні виклики та створіть новий."
+      },
+      "visibility": []
+    },
+    {
+      "key": "units",
+      "lessonId": "03-units",
+      "page": {
+        "controller": "Units",
+        "action": "Index"
+      },
+      "title": {
+        "en": "Check your units",
+        "ar": "تحقق من وحداتك",
+        "de": "Einheiten prüfen",
+        "el": "Ελέγξτε τα οχήματά σας",
+        "es": "Revise sus unidades",
+        "fr": "Vérifiez vos unités",
+        "it": "Controlla i tuoi mezzi",
+        "pl": "Sprawdź swoje pojazdy",
+        "sv": "Kontrollera era enheter",
+        "uk": "Перевірте свої підрозділи"
+      },
+      "hint": {
+        "en": "See which units are available and their status.",
+        "ar": "اعرف الوحدات المتاحة وحالتها.",
+        "de": "Sehen Sie, welche Einheiten verfügbar sind und welchen Status sie haben.",
+        "el": "Δείτε ποια οχήματα είναι διαθέσιμα και την κατάστασή τους.",
+        "es": "Vea qué unidades están disponibles y su estado.",
+        "fr": "Voyez quelles unités sont disponibles et leur statut.",
+        "it": "Vedi quali mezzi sono disponibili e il loro stato.",
+        "pl": "Zobacz, które pojazdy są dostępne i jaki mają status.",
+        "sv": "Se vilka enheter som är tillgängliga och deras status.",
+        "uk": "Перегляньте, які підрозділи доступні, та їхній статус."
+      },
+      "visibility": []
+    },
+    {
+      "key": "map",
+      "lessonId": "07-mapping",
+      "page": {
+        "controller": "Mapping",
+        "action": "Index"
+      },
+      "title": {
+        "en": "Open the map",
+        "ar": "افتح الخريطة",
+        "de": "Karte öffnen",
+        "el": "Ανοίξτε τον χάρτη",
+        "es": "Abra el mapa",
+        "fr": "Ouvrez la carte",
+        "it": "Apri la mappa",
+        "pl": "Otwórz mapę",
+        "sv": "Öppna kartan",
+        "uk": "Відкрийте карту"
+      },
+      "hint": {
+        "en": "See calls, units and points of interest on one map.",
+        "ar": "اعرض البلاغات والوحدات ونقاط الاهتمام على خريطة واحدة.",
+        "de": "Sehen Sie Einsätze, Einheiten und Orte auf einer Karte.",
+        "el": "Δείτε συμβάντα, οχήματα και σημεία ενδιαφέροντος σε έναν χάρτη.",
+        "es": "Vea llamadas, unidades y puntos de interés en un solo mapa.",
+        "fr": "Voyez les appels, les unités et les points d'intérêt sur une seule carte.",
+        "it": "Vedi chiamate, mezzi e punti di interesse su un'unica mappa.",
+        "pl": "Zobacz zgłoszenia, pojazdy i punkty zainteresowania na jednej mapie.",
+        "sv": "Se larm, enheter och intressepunkter på en karta.",
+        "uk": "Перегляньте виклики, підрозділи та точки інтересу на одній карті."
+      },
+      "visibility": [
+        "module:Mapping"
+      ]
+    },
+    {
+      "key": "messages",
+      "lessonId": "06-communication",
+      "page": {
+        "controller": "Messages",
+        "action": "Inbox"
+      },
+      "title": {
+        "en": "Message your team",
+        "ar": "راسل فريقك",
+        "de": "Nachricht an Ihr Team",
+        "el": "Στείλτε μήνυμα στην ομάδα σας",
+        "es": "Envíe un mensaje a su equipo",
+        "fr": "Écrivez à votre équipe",
+        "it": "Scrivi alla tua squadra",
+        "pl": "Napisz do zespołu",
+        "sv": "Skicka meddelande till teamet",
+        "uk": "Напишіть своїй команді"
+      },
+      "hint": {
+        "en": "Send a message or notification to people and groups.",
+        "ar": "أرسل رسالة أو إشعارًا إلى الأشخاص والمجموعات.",
+        "de": "Senden Sie eine Nachricht oder Benachrichtigung an Personen und Gruppen.",
+        "el": "Στείλτε μήνυμα ή ειδοποίηση σε άτομα και ομάδες.",
+        "es": "Envíe un mensaje o una notificación a personas y grupos.",
+        "fr": "Envoyez un message ou une notification à des personnes et des groupes.",
+        "it": "Invia un messaggio o una notifica a persone e gruppi.",
+        "pl": "Wyślij wiadomość lub powiadomienie do osób i grup.",
+        "sv": "Skicka ett meddelande eller en avisering till personer och grupper.",
+        "uk": "Надішліть повідомлення або сповіщення людям і групам."
+      },
+      "visibility": []
+    }
+  ]
+}

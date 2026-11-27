@@ -24,7 +24,7 @@ namespace Resgrid.Tests.Web.User
 
 		// Product names stay in English in every language; their keys are the only identical values allowed.
 		private static readonly string[] ProductNames =
-			{ "PttTitle", "ReadinessProTitle", "BusinessOpsTitle", "IncidentBackOfficeTitle", "EnhancedAiTitle", "AdpTitle", "DedicatedNumberTitle" };
+			{ "PttTitle", "ReadinessProTitle", "BusinessOpsTitle", "IncidentBackOfficeTitle", "EnhancedAiTitle", "AdpTitle", "DedicatedNumberTitle", "LmsTitle", "WorkforceProTitle" };
 
 		private static readonly Dictionary<string, string[]> SharedSpellings = new Dictionary<string, string[]>
 		{
@@ -45,7 +45,16 @@ namespace Resgrid.Tests.Web.User
 				Path.Combine(user, "Views", "Subscription", "BuyAdpAddon.cshtml"),
 				Path.Combine(user, "Views", "Subscription", "ManageAdpAddon.cshtml"),
 				Path.Combine(user, "Views", "Subscription", "ManagePTTAddon.cshtml"),
-				Path.Combine(user, "Controllers", "AddonBillingControllerBase.cs")
+				Path.Combine(user, "Controllers", "AddonBillingControllerBase.cs"),
+				Path.Combine(user, "Controllers", "LmsBillingController.cs"),
+				Path.Combine(user, "Controllers", "LmsSeatsController.cs"),
+				Path.Combine(user, "Controllers", "WorkforceProBillingController.cs"),
+				Path.Combine(user, "Views", "WorkforceProSeats", "Index.cshtml"),
+				Path.Combine(user, "Views", "Shared", "_LmsSeatSwitch.cshtml"),
+				Path.Combine(user, "Views", "Shared", "_LmsSeatSummary.cshtml"),
+				Path.Combine(user, "Views", "Shared", "_LmsSettingsSummary.cshtml"),
+				Path.Combine(user, "Views", "TrainingRecords", "IsoReport.cshtml"),
+				Path.Combine(user, "Views", "TrainingRecords", "NccpReport.cshtml")
 			};
 			var keys = new HashSet<string>(StringComparer.Ordinal);
 			foreach (var file in files)

@@ -306,41 +306,82 @@ namespace Resgrid.Web.Areas.User.Controllers
 				? html
 				: System.Net.WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(html, "<[^>]*>", " ")).Trim();
 
-		/// <summary>The protocol ids a call form posted: every active one, and each pending one whose questions passed.</summary>
-		private static List<int> PostedProtocolIds(IFormCollection collection)
+		/// <summary>
+		/// The protocols a call form asked to attach, with the answers it collected: every protocol the post names
+		/// (selectedProtocol_{id}, and activeProtocol_{id} / pendingProtocol_{id} from pages opened before P0, whatever their
+		/// value) and each chosen answer (protocolAnswer_{protocolId}_{questionId} = answer id). Nothing else in the post is
+		/// used: the code, the pass/fail flag and the score are the server's to decide (D15).
+		/// </summary>
+		private static List<ProtocolAttachRequest> PostedProtocolRequests(IFormCollection collection)
 		{
 			var ids = new List<int>();
+			var answers = new Dictionary<int, List<int>>();
+			var cases = new Dictionary<int, ProtocolCaseInput>();
 
 			foreach (var key in collection?.Keys ?? Enumerable.Empty<string>())
 			{
-				if (key.StartsWith("activeProtocol_") && int.TryParse(key.Replace("activeProtocol_", ""), out var activeId))
-					ids.Add(activeId);
-				else if (key.StartsWith("pendingProtocol_") && collection[key] == "1" && int.TryParse(key.Replace("pendingProtocol_", ""), out var pendingId))
-					ids.Add(pendingId);
+				// P4: the case flow's answers and any determinant override (protocolCase_{protocolId} = JSON); the server walks the graph.
+				if (key.StartsWith("protocolCase_", StringComparison.Ordinal) && int.TryParse(key.Substring("protocolCase_".Length), out var caseProtocolId) && caseProtocolId > 0)
+				{
+					var input = ProtocolCaseInput.Parse(collection[key].FirstOrDefault());
+					if (input != null)
+						cases[caseProtocolId] = input;
+				}
+
+				foreach (var prefix in new[] { "selectedProtocol_", "activeProtocol_", "pendingProtocol_" })
+				{
+					if (key.StartsWith(prefix, StringComparison.Ordinal) && int.TryParse(key.Substring(prefix.Length), out var id) && id > 0 && !ids.Contains(id))
+						ids.Add(id);
+				}
+
+				if (key.StartsWith("protocolAnswer_", StringComparison.Ordinal))
+				{
+					var parts = key.Substring("protocolAnswer_".Length).Split('_');
+					if (parts.Length == 2 && int.TryParse(parts[0], out var protocolId) && int.TryParse(collection[key].FirstOrDefault(), out var answerId))
+					{
+						if (!answers.TryGetValue(protocolId, out var list))
+							answers[protocolId] = list = new List<int>();
+
+						list.Add(answerId);
+					}
+				}
 			}
 
-			return ids.Distinct().ToList();
+			return ids.Select(id => new ProtocolAttachRequest
+			{
+				ProtocolId = id,
+				AnswerIds = answers.TryGetValue(id, out var chosen) ? chosen : new List<int>(),
+				// The web forms run the question flow, so a suggested protocol with questions needs them answered.
+				AnswersRequired = true,
+				Case = cases.TryGetValue(id, out var caseInput) ? caseInput : null
+			}).ToList();
 		}
 
 		/// <summary>
-		/// The posted protocol ids that are this department's own. The form only offers the department's protocols, but the
-		/// ids come back in the post, so an id from another department is dropped here instead of being attached to the call.
+		/// The CallProtocol rows for the protocols the form posted, decided by the server: only this department's enabled
+		/// protocols, triggers re-evaluated for the call's type, priority and logged time, the score recomputed from the chosen
+		/// answers, and the code taken from the protocol itself. A protocol already on the call is not added again.
 		/// </summary>
-		private async Task<List<int>> OwnedProtocolIdsAsync(IEnumerable<int> postedIds)
+		private async Task<ProtocolAttachResult> PreparePostedProtocolsAsync(Resgrid.Model.Call call, IFormCollection collection, IEnumerable<CallProtocol> alreadyOnCall, bool storeSnapshots)
 		{
-			var ids = postedIds?.Distinct().ToList() ?? new List<int>();
+			var requests = PostedProtocolRequests(collection);
+			// Never the call's bound Protocols on a new call: only rows already stored on an existing call count as on it.
+			alreadyOnCall ??= new List<CallProtocol>();
 
-			return ids.Count == 0 ? ids : await _protocolsService.GetProtocolIdsOwnedByDepartmentAsync(DepartmentId, ids);
+			return requests.Count == 0
+				? new ProtocolAttachResult()
+				: await _protocolsService.PrepareCallProtocolsAsync(DepartmentId, call, requests, UserId, alreadyOnCall, storeSnapshots);
 		}
 
 		/// <summary>
 		/// True when the post carries a protocol that will be attached to the call. This is what a required Protocols field
-		/// is checked against: a posted id that is dropped on save (another department's, or a protocol deleted while the
-		/// form was open) must not satisfy the requirement and leave the call saved with no protocol.
+		/// is checked against: a posted id that is refused on save (another department's, a disabled or deleted one, or a
+		/// suggested one whose questions were not answered) must not satisfy the requirement and leave the call saved without.
 		/// </summary>
-		private async Task<bool> HasOwnedPostedProtocolsAsync(IFormCollection collection)
+		private async Task<bool> HasAttachablePostedProtocolsAsync(Resgrid.Model.Call call, IFormCollection collection)
 		{
-			return (await OwnedProtocolIdsAsync(PostedProtocolIds(collection))).Count > 0;
+			var stored = call != null && call.CallId > 0 ? call.Protocols : null;
+			return (await PreparePostedProtocolsAsync(call, collection, stored, false)).Attached.Count > 0;
 		}
 
 		/// <summary>
@@ -369,7 +410,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var selections = PostedCallSelections.From(collection);
 			// Only looked up when the answer decides something: the department requires a protocol on the call.
-			var hasProtocols = policy.IsRequired(NewCallFieldKeys.Protocols) && await HasOwnedPostedProtocolsAsync(collection);
+			var hasProtocols = policy.IsRequired(NewCallFieldKeys.Protocols) && await HasAttachablePostedProtocolsAsync(model.Call, collection);
 
 			var values = new NewCallFieldValues
 			{
@@ -514,8 +555,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				List<int> dispatchingGroupIds = new List<int>();
 				List<int> dispatchingUnitIds = new List<int>();
 				List<int> dispatchingRoleIds = new List<int>();
-				List<int> activeProtocols = new List<int>();
-				List<int> pendingProtocols = new List<int>();
 				List<int> linkedCalls = new List<int>();
 
 				foreach (var key in collection.Keys)
@@ -542,18 +581,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						var roleId = int.Parse(key.ToString().Replace("dispatchRole_", ""));
 						dispatchingRoleIds.Add(roleId);
-					}
-					else if (key.ToString().StartsWith("activeProtocol_"))
-					{
-						var activeProtocolId = int.Parse(key.ToString().Replace("activeProtocol_", ""));
-						activeProtocols.Add(activeProtocolId);
-					}
-					else if (key.ToString().StartsWith("pendingProtocol_"))
-					{
-						var pendingProtocolId = int.Parse(key.ToString().Replace("pendingProtocol_", ""));
-
-						if (collection[key] == "1")
-							pendingProtocols.Add(pendingProtocolId);
 					}
 					else if (key.ToString().StartsWith("linkedCall_"))
 					{
@@ -634,38 +661,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				// Only this department's protocols: the ids are posted, and a pending one could repeat an active one.
-				activeProtocols = await OwnedProtocolIdsAsync(activeProtocols);
-				pendingProtocols = (await OwnedProtocolIdsAsync(pendingProtocols)).Except(activeProtocols).ToList();
-
-				model.Call.Protocols = new List<CallProtocol>();
-				if (activeProtocols.Any())
-				{
-					foreach (var id in activeProtocols)
-					{
-						CallProtocol protocol = new CallProtocol();
-						protocol.DispatchProtocolId = id;
-
-						if (collection.ContainsKey($"protocolCode_{id}"))
-							protocol.Data = collection[$"protocolCode_{id}"];
-
-						model.Call.Protocols.Add(protocol);
-					}
-				}
-
-				if (pendingProtocols.Any())
-				{
-					foreach (var id in pendingProtocols)
-					{
-						CallProtocol protocol = new CallProtocol();
-						protocol.DispatchProtocolId = id;
-
-						if (collection.ContainsKey($"protocolCode_{id}"))
-							protocol.Data = collection[$"protocolCode_{id}"];
-
-						model.Call.Protocols.Add(protocol);
-					}
-				}
+				// The server decides which protocols go on the call and records the answers, score and source (D4, D15, D22).
+				model.Call.Protocols = (await PreparePostedProtocolsAsync(model.Call, collection, null, true)).Attached;
 
 				model.Call.References = new List<CallReference>();
 				if (linkedCalls.Any())
@@ -1375,10 +1372,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 						? (destinationPoi == null ? editLocations.DestinationW3W : null)
 						: (call.DestinationPoiId.HasValue ? null : call.DestinationW3W),
 					IndoorMapZoneId = Shows(NewCallFieldKeys.IndoorLocation) ? indoorMapZoneId : call.IndoorMapZoneId,
-					// Protocols are only ever added on this form, and a list or link left off the post keeps the call's own.
-					// A posted protocol counts only when it will be attached: this department's, and not deleted.
-					HasProtocols = (call.Protocols?.Any() ?? false) ||
-								   (policy.IsRequired(NewCallFieldKeys.Protocols) && await HasOwnedPostedProtocolsAsync(collection)),
+					// Protocols are only ever added on this form (removed on View Call), and a list or link left off the post keeps
+					// the call's own. A posted protocol counts only when it will be attached, judged on the type and priority posted.
+					HasProtocols = (call.Protocols?.Any(x => !x.IsRemoved) ?? false) ||
+								   (policy.IsRequired(NewCallFieldKeys.Protocols) && await HasAttachablePostedProtocolsAsync(new Resgrid.Model.Call
+								   {
+									   CallId = call.CallId,
+									   Priority = (int)model.CallPriority,
+									   Type = model.CallTypes != null && model.CallTypes.Count() > 1 ? model.Call.Type : call.Type,
+									   LoggedOn = call.LoggedOn,
+									   Protocols = call.Protocols
+								   }, collection)),
 					HasLinkedCall = selections.HasLinkedCall || (call.References?.Any() ?? false),
 					HasDispatchList = selections.HasDispatchList || (call.Dispatches?.Any() ?? false) || (call.GroupDispatches?.Any() ?? false) ||
 									  (call.UnitDispatches?.Any() ?? false) || (call.RoleDispatches?.Any() ?? false),
@@ -1486,14 +1490,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (call.Protocols == null)
 						call.Protocols = new List<CallProtocol>();
 
-					foreach (var protocolId in await OwnedProtocolIdsAsync(PostedProtocolIds(collection)))
-					{
-						if (call.Protocols.Any(x => x.DispatchProtocolId == protocolId))
-							continue;
-
-						var protocolCode = collection.ContainsKey($"protocolCode_{protocolId}") ? collection[$"protocolCode_{protocolId}"].ToString() : null;
-						call.Protocols.Add(new CallProtocol { CallId = call.CallId, DispatchProtocolId = protocolId, Data = protocolCode });
-					}
+					// One that is already on the call (removed or not) is not added again.
+					foreach (var added in (await PreparePostedProtocolsAsync(call, collection, call.Protocols, true)).Attached)
+						call.Protocols.Add(added);
 				}
 
 				List<CallDispatch> existingDispatches = new List<CallDispatch>(call.Dispatches ?? Enumerable.Empty<CallDispatch>());
@@ -2093,20 +2092,92 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 		}
 
+		/// <summary>
+		/// Takes a protocol off a call, with a reason (D22). The row stays on the call, marked removed with who, when and why, and
+		/// the removal is written to the department's audit log.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> RemoveCallProtocol(int callId, int callProtocolId, string reason, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
+
+			if (string.IsNullOrWhiteSpace(reason))
+			{
+				TempData["CallProtocolMessage"] = "ReasonRequired";
+				return RedirectToAction("ViewCall", new { callId });
+			}
+
+			var removed = await _protocolsService.RemoveProtocolFromCallAsync(DepartmentId, callId, callProtocolId, reason, UserId, cancellationToken);
+			if (removed == null)
+				return NotFound();
+
+			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
+			{
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Type = AuditLogTypes.CallProtocolRemoved,
+				// The removal reason is free text about the call (ADP catalog 39): the audit says one was given, never what it was.
+				After = Newtonsoft.Json.JsonConvert.SerializeObject(new { removed.CallId, removed.CallProtocolId, removed.DispatchProtocolId, Code = removed.Data, HasReason = !string.IsNullOrWhiteSpace(removed.RemovedReason), removed.RemovedOn }),
+				Successful = true,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+			});
+
+			TempData["CallProtocolMessage"] = "Removed";
+			return RedirectToAction("ViewCall", new { callId });
+		}
+
+		/// <summary>
+		/// ADP catalog 39 reveal: the call's protocols tab rendered again with the grant the reveal module presents in the request header (after
+		/// step-up), so the case record, answers and the override and removal reasons show as written; without a valid grant they stay REDACTED.
+		/// The page swaps the tab in place, so the call fields it already revealed stay revealed.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<IActionResult> ViewCall(int callId)
+		public async Task<IActionResult> CallProtocolsRevealed([FromForm] int callId)
 		{
 			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
 				return Unauthorized();
 
-			var model = new ViewCallView();
-			model.Call = await _callsService.GetCallByIdAsync(callId);
-			// Who was released from the call (Released labels and buttons on the unit and personnel lists).
-			model.Call = await _callsService.PopulateCallData(model.Call, true, false, false, true, true, true, false, false, false) ?? model.Call;
-			model = await FillViewCallView(model);
-			model.CallPriority = (CallPriority)model.Call.Priority;
-			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var model = new ViewCallView { Call = call, Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false) };
+			await FillCallProtocolsAsync(model, callId, Request.Headers[HttpProtectedGrantContext.HeaderName].ToString());
+			Response.Headers["Cache-Control"] = "no-store";
+			return PartialView("_CallProtocols", model);
+		}
+
+		/// <summary>
+		/// The protocols tab of a call: the department's protocols (plus any deleted one the call still cites), the call's rows with what was
+		/// recorded on them (answers, score, source, hash, removal) resolved for this reader, the snapshots and the cited versions.
+		/// </summary>
+		private async Task FillCallProtocolsAsync(ViewCallView model, int callId, string grantToken)
+		{
 			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
+
+			if (model.Call != null)
+			{
+				model.Call.Protocols = await _callsService.GetCallProtocolsByCallIdAsync(callId) ?? new List<CallProtocol>();
+				await Resgrid.Services.CallProtocolProtection.ResolveAsync(_protectedReadService, DepartmentId, model.Call.Protocols, string.IsNullOrWhiteSpace(grantToken) ? null : grantToken, UserId);
+			}
+
+			// "Text as dispatched": the snapshot each row's content hash points at (D5).
+			model.ProtocolSnapshots = (await _protocolsService.GetSnapshotsAsync(DepartmentId, model.Call?.Protocols?.Select(x => x.ContentHash)))
+				.GroupBy(x => x.DispatchProtocolId + ":" + x.ContentHash)
+				.ToDictionary(x => x.Key, x => x.First());
+			// P1: the version each row cites (calls cite versions, never live rows).
+			model.ProtocolVersions = (await _protocolsService.GetCitedVersionsAsync(DepartmentId, model.Call?.Protocols?.Where(x => x.ProtocolVersionId.HasValue).Select(x => x.ProtocolVersionId.Value)) ?? new List<ProtocolVersion>())
+				.ToDictionary(x => x.ProtocolVersionId);
+			model.CanRemoveProtocols = model.Call != null && await _authorizationService.CanUserEditCallAsync(UserId, callId) &&
+									   User.HasClaim(ResgridClaimTypes.Resources.Call, ResgridClaimTypes.Actions.Update);
+			model.ProtocolContentWithheld = model.Call?.Protocols != null && model.Call.Protocols.Any(Resgrid.Services.CallProtocolProtection.IsWithheld);
 
 			// A protocol deleted since the call is no longer in the department's current set, but the call still cites it:
 			// load those by id (this department's only) so the call keeps showing what was attached.
@@ -2120,6 +2191,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (attached != null && attached.DepartmentId == DepartmentId)
 					model.Protocols.Add(attached);
 			}
+		}
+
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> ViewCall(int callId)
+		{
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
+				return Unauthorized();
+
+			var model = new ViewCallView();
+			model.Call = await _callsService.GetCallByIdAsync(callId);
+			// Who was released from the call (Released labels and buttons on the unit and personnel lists).
+			model.Call = await _callsService.PopulateCallData(model.Call, true, false, false, true, true, true, false, false, false) ?? model.Call;
+			model = await FillViewCallView(model);
+			model.CallPriority = (CallPriority)model.Call.Priority;
+			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			// ADP catalog 39: a page load carries no grant, so the case record, answers and reasons render REDACTED for a protected department;
+			// the reveal flow re-renders the protocols tab through CallProtocolsRevealed.
+			await FillCallProtocolsAsync(model, callId, null);
+			model.CallProtocolMessage = TempData["CallProtocolMessage"] as string;
+
 
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 
@@ -2374,13 +2465,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					model.Call.IndoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
 				}
 
-				model.Call.Protocols = (await OwnedProtocolIdsAsync(PostedProtocolIds(collection)))
-					.Select(id => new CallProtocol
-					{
-						DispatchProtocolId = id,
-						Data = collection.ContainsKey($"protocolCode_{id}") ? collection[$"protocolCode_{id}"].ToString() : null
-					})
-					.ToList();
+				// Matched against the archived call's own logged time (converted to UTC above).
+				model.Call.Protocols = (await PreparePostedProtocolsAsync(model.Call, collection, null, true)).Attached;
 
 				// Only contacts the form offered (this department's, and only with Security > View Contacts).
 				var offeredContacts = model.Contacts ?? new List<Contact>();

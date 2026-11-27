@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Exit.Tab" xml:space="preserve">
+    <value>Export des données</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Title" xml:space="preserve">
+    <value>Export des données de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Intro" xml:space="preserve">
+    <value>Exportez tout ce que votre service a saisi dans la Formation : cours, banques de questions, dossiers, tentatives et certificats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.LapsedNotice" xml:space="preserve">
+    <value>Le module complémentaire LMS n'est pas actif. Les exports continuent de fonctionner : vos dossiers et contenus restent les vôtres.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.NewExport" xml:space="preserve">
+    <value>Nouvel export</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.ScopeLabel" xml:space="preserve">
+    <value>Contenu de l'export</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.Full" xml:space="preserve">
+    <value>Tout</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.FullHelp" xml:space="preserve">
+    <value>Les cours avec leurs versions, leçons et médias, les banques de questions avec leurs corrigés, les réponses aux évaluations, les plans de cours, les fiches de compétences, les exigences, les plans et tous les dossiers.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.RecordsOnly" xml:space="preserve">
+    <value>Dossiers uniquement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.RecordsOnlyHelp" xml:space="preserve">
+    <value>Dossiers d'apprentissage, inscriptions, scores d'évaluation, certificats, membres et catégories en CSV, ainsi que des déclarations xAPI. Ni contenu de cours ni corrigés.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.IncludeMedia" xml:space="preserve">
+    <value>Copier les vidéos hébergées dans le zip (sinon le zip contient des liens de téléchargement)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.LinkHelp" xml:space="preserve">
+    <value>L'export est généré en arrière-plan. Son lien de téléchargement fonctionne pendant {0} jours.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.KeysWarning" xml:space="preserve">
+    <value>Un export complet contient vos banques de questions avec leurs corrigés et les réponses des apprenants. Gardez-le confidentiel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Queue" xml:space="preserve">
+    <value>Lancer l'export</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Queued" xml:space="preserve">
+    <value>L'export a été mis en file d'attente. Cette page indique quand il est prêt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.TooManyActive" xml:space="preserve">
+    <value>Deux exports sont déjà en cours de création. Attendez qu'un se termine.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.NotAuthorized" xml:space="preserve">
+    <value>Seuls le propriétaire et les administrateurs du service peuvent exporter les données de formation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.NotFound" xml:space="preserve">
+    <value>Cet export est introuvable.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.NotReady" xml:space="preserve">
+    <value>Cet export n'est pas encore prêt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.Expired" xml:space="preserve">
+    <value>Le lien de téléchargement de cet export a expiré. Lancez un nouvel export.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.History" xml:space="preserve">
+    <value>Historique des exports</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.None" xml:space="preserve">
+    <value>Aucun export pour l'instant.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Requested" xml:space="preserve">
+    <value>Demandé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Scope" xml:space="preserve">
+    <value>Périmètre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Status" xml:space="preserve">
+    <value>État</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Contents" xml:space="preserve">
+    <value>Taille et nombres</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Expires" xml:space="preserve">
+    <value>Expiration du lien</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Actions" xml:space="preserve">
+    <value>Actions possibles</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.WithMedia" xml:space="preserve">
+    <value>avec les vidéos hébergées</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Queued" xml:space="preserve">
+    <value>En attente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Running" xml:space="preserve">
+    <value>En cours</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Completed" xml:space="preserve">
+    <value>Prêt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Failed" xml:space="preserve">
+    <value>Échec</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Expired" xml:space="preserve">
+    <value>Expiré</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.CountsLine" xml:space="preserve">
+    <value>{0} dossiers, {1} cours, {2} tentatives</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Download" xml:space="preserve">
+    <value>Télécharger</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.FormatHelp" xml:space="preserve">
+    <value>Le zip contient manifest.json avec le nombre de chaque entité et une somme de contrôle de chaque fichier. Les CSV sont en UTF-8 ; les heures sont en UTC.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.Complete" xml:space="preserve">
+    <value>Marquer ce cours comme terminé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.Completed" xml:space="preserve">
+    <value>Ce cours est marqué comme terminé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.VideoNotIncluded" xml:space="preserve">
+    <value>Cette vidéo n'est pas incluse dans le paquet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.Transcript" xml:space="preserve">
+    <value>Transcription</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Tab" xml:space="preserve">
+    <value>Déclarations de formation continue (CE / DPC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Title" xml:space="preserve">
+    <value>Déclarations de formation continue (CE / DPC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Intro" xml:space="preserve">
+    <value>Fichiers d'heures de formation et de formation continue (CE / DPC) pour tout organisme de réglementation, ordre professionnel ou employeur, ainsi que des fichiers américains : CAPCE, bureaux de formation continue des États et une liste prête pour l'État.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.LapsedNotice" xml:space="preserve">
+    <value>Le module complémentaire LMS n'est pas actif : les fichiers peuvent toujours être générés à partir de vos dossiers, mais les paramètres ne peuvent pas être modifiés.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Disclaimer" xml:space="preserve">
+    <value>Resgrid génère les fichiers ; il ne les soumet pas et n'est pas un organisme d'accréditation. Vérifiez chaque fichier avant de le téléverser auprès d'un organisme de réglementation, d'un ordre professionnel ou d'un autre organisme destinataire.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.BuildTitle" xml:space="preserve">
+    <value>Générer un fichier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ExporterLabel" xml:space="preserve">
+    <value>Fichier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.From" xml:space="preserve">
+    <value>Du</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.To" xml:space="preserve">
+    <value>Au</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Category" xml:space="preserve">
+    <value>Catégorie de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.AllCategories" xml:space="preserve">
+    <value>Toutes les catégories</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.IncludeFormer" xml:space="preserve">
+    <value>Inclure les membres retirés, désactivés et masqués</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Preview" xml:space="preserve">
+    <value>Aperçu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Download" xml:space="preserve">
+    <value>Télécharger le CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.PreviewCount" xml:space="preserve">
+    <value>{0} lignes dans le fichier ; les {1} premières sont affichées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.NoHeaderRow" xml:space="preserve">
+    <value>Ce format n'a pas de ligne d'en-tête ; les titres ci-dessus ne sont qu'indicatifs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Missing" xml:space="preserve">
+    <value>{0} lignes n'ont pas de valeur pour "{1}".</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ExportersTitle" xml:space="preserve">
+    <value>Fichiers</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.LayoutVerified" xml:space="preserve">
+    <value>Format publié</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.LayoutFallback" xml:space="preserve">
+    <value>CSV configurable</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.CustomColumns" xml:space="preserve">
+    <value>Colonnes personnalisées</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Columns" xml:space="preserve">
+    <value>Colonnes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.SettingsTitle" xml:space="preserve">
+    <value>Paramètres des déclarations de formation continue (CE / DPC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.SettingsIntro" xml:space="preserve">
+    <value>Les numéros de prestataire des fichiers américains, et les types de certification qui contiennent les numéros de licence ou d'inscription dont les fichiers ont besoin.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.CapceProviderNumber" xml:space="preserve">
+    <value>Numéro de prestataire CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.CapceProviderName" xml:space="preserve">
+    <value>Nom du prestataire CAPCE (tel que saisi sur les cours)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.CeBrokerProviderNumber" xml:space="preserve">
+    <value>Numéro de suivi du prestataire CE Broker (Floride)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.IdentifiersHelp" xml:space="preserve">
+    <value>Les fichiers lisent ces numéros dans les certifications du type choisi de chaque membre : le numéro, la zone comme État, province ou région, le type comme niveau et la date d'expiration.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.LicenseType" xml:space="preserve">
+    <value>Type de certification de la licence ou de l'inscription (État, province ou organisme de réglementation)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.NremtType" xml:space="preserve">
+    <value>Type de certification de l'inscription NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.NemsidType" xml:space="preserve">
+    <value>Type de certification de l'identifiant national EMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.NoType" xml:space="preserve">
+    <value>Aucun</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Save" xml:space="preserve">
+    <value>Enregistrer les paramètres</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Saved" xml:space="preserve">
+    <value>Les paramètres des déclarations de formation continue (CE / DPC) ont été enregistrés.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ActionFailed" xml:space="preserve">
+    <value>L'enregistrement a échoué.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.AddonRequired" xml:space="preserve">
+    <value>La modification des paramètres des déclarations de formation continue (CE / DPC) exige un module complémentaire LMS actif.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsTitle" xml:space="preserve">
+    <value>Colonnes du fichier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsIntro" xml:space="preserve">
+    <value>Choisissez le titre, la valeur et le format de chaque colonne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Back" xml:space="preserve">
+    <value>Retour aux déclarations de formation continue (CE / DPC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsCustom" xml:space="preserve">
+    <value>Les colonnes propres à votre service sont utilisées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsDefault" xml:space="preserve">
+    <value>Les colonnes par défaut sont utilisées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Col.Header" xml:space="preserve">
+    <value>Titre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Col.Source" xml:space="preserve">
+    <value>Valeur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Col.Argument" xml:space="preserve">
+    <value>Format ou texte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsHelp" xml:space="preserve">
+    <value>Pour les dates, utilisez yyyy-MM-dd (ISO 8601) sauf si votre organisme demande un autre format, comme dd/MM/yyyy ou MM/dd/yyyy ; pour les heures, 0.## ; pour un texte fixe, choisissez « Texte fixe » et saisissez-le. Un titre vide supprime la colonne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.SaveColumns" xml:space="preserve">
+    <value>Enregistrer les colonnes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ResetColumns" xml:space="preserve">
+    <value>Rétablir les colonnes par défaut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsSaved" xml:space="preserve">
+    <value>Les colonnes ont été enregistrées.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsReset" xml:space="preserve">
+    <value>Les colonnes par défaut ont été rétablies.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Constant" xml:space="preserve">
+    <value>Texte fixe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.FirstName" xml:space="preserve">
+    <value>Prénom</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LastName" xml:space="preserve">
+    <value>Nom de famille</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.FullName" xml:space="preserve">
+    <value>Nom complet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Email" xml:space="preserve">
+    <value>Adresse e-mail</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.MemberId" xml:space="preserve">
+    <value>Identifiant utilisateur Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.IdentificationNumber" xml:space="preserve">
+    <value>Numéro de membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CompletedOn" xml:space="preserve">
+    <value>Date d'achèvement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.StartedOn" xml:space="preserve">
+    <value>Date de début</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.EndedOn" xml:space="preserve">
+    <value>Date de fin</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Title" xml:space="preserve">
+    <value>Titre du cours</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CourseCode" xml:space="preserve">
+    <value>Code du cours</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeProvider" xml:space="preserve">
+    <value>Organisme de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeCourseNumber" xml:space="preserve">
+    <value>Numéro d'activité de formation continue (CE / DPC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeCourseNumberSuffix" xml:space="preserve">
+    <value>Numéro d'activité sans préfixe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeHours" xml:space="preserve">
+    <value>Heures de formation continue (CE / DPC)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Hours" xml:space="preserve">
+    <value>Heures</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CategoryName" xml:space="preserve">
+    <value>Nom de la catégorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CategoryCode" xml:space="preserve">
+    <value>Code de la catégorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Method" xml:space="preserve">
+    <value>Méthode de formation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Location" xml:space="preserve">
+    <value>Lieu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Instructors" xml:space="preserve">
+    <value>Formateurs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseNumber" xml:space="preserve">
+    <value>Numéro de licence ou d'inscription</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseState" xml:space="preserve">
+    <value>État, province ou région de la licence</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseLevel" xml:space="preserve">
+    <value>Niveau de licence</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseExpiresOn" xml:space="preserve">
+    <value>Date d'expiration de la licence</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.NremtNumber" xml:space="preserve">
+    <value>Numéro NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.NremtExpiresOn" xml:space="preserve">
+    <value>Date de réinscription NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Nemsid" xml:space="preserve">
+    <value>Identifiant national EMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CapceProviderNumber" xml:space="preserve">
+    <value>Numéro de prestataire CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeBrokerProviderNumber" xml:space="preserve">
+    <value>Numéro de prestataire CE Broker</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.RecordId" xml:space="preserve">
+    <value>Identifiant du dossier d'apprentissage</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.VerificationCode" xml:space="preserve">
+    <value>Code de vérification du certificat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.SourceKind" xml:space="preserve">
+    <value>Origine du dossier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.capce" xml:space="preserve">
+    <value>Fichier d'achèvements CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.fl-ems" xml:space="preserve">
+    <value>SMU de Floride (CE Broker)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.va-ems" xml:space="preserve">
+    <value>SMU de Virginie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.nj-ems" xml:space="preserve">
+    <value>SMU du New Jersey</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.fl-fire" xml:space="preserve">
+    <value>Formation des pompiers de Floride</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.state-ce" xml:space="preserve">
+    <value>Formation continue d'un autre État américain (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.state-roster" xml:space="preserve">
+    <value>Liste prête pour les États américains (Acadis et autres)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.capce" xml:space="preserve">
+    <value>Pour les services qui sont des prestataires accrédités CAPCE : les achèvements vérifiés de vos propres cours de formation continue. La CAPCE ne publie pas l'ordre des colonnes de son téléversement ; les colonnes suivent les données exigées par la CAPCE, dans son ordre, et sont modifiables.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.fl-ems" xml:space="preserve">
+    <value>Le téléversement prestataire Easy Excel de CE Broker (colonnes A à H, sans ligne d'en-tête). Ouvrez le CSV dans un tableur et enregistrez-le au format Excel avant de le téléverser.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.va-ems" xml:space="preserve">
+    <value>L'OEMS de Virginie reçoit la formation continue via son application CE Scanner et ne publie aucun format de fichier ; il s'agit donc d'un CSV configurable.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.nj-ems" xml:space="preserve">
+    <value>L'OEMS du New Jersey reçoit la formation continue par apprenant dans NJLincs et ne publie aucun format de fichier ; il s'agit donc d'un CSV configurable.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.fl-fire" xml:space="preserve">
+    <value>Le bureau des normes et de la formation des pompiers de Floride ne publie aucun format de téléversement des heures de formation ; il s'agit donc d'un CSV configurable.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.state-ce" xml:space="preserve">
+    <value>Un CSV configurable pour le bureau de formation continue de tout autre État américain.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.state-roster" xml:space="preserve">
+    <value>Une liste d'achèvement de cours aux colonnes configurables pour les systèmes d'État comme Acadis, qui ne publient pas de modèle d'importation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.UnknownExporter" xml:space="preserve">
+    <value>Ce type de fichier est inconnu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.NotAuthorized" xml:space="preserve">
+    <value>Seuls les responsables de formation peuvent générer des fichiers de formation continue.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.NoCapceProvider" xml:space="preserve">
+    <value>Saisissez d'abord votre numéro de prestataire CAPCE dans les paramètres ci-dessous.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.NoCeBrokerProvider" xml:space="preserve">
+    <value>Saisissez d'abord votre numéro de suivi de prestataire CE Broker dans les paramètres ci-dessous.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_ce_not_authorized" xml:space="preserve">
+    <value>Seuls les administrateurs du service peuvent modifier les paramètres des déclarations.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_ce_certification_type_invalid" xml:space="preserve">
+    <value>Choisissez des types de certification de ce service.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_ce_exporter_unknown" xml:space="preserve">
+    <value>Ce type de fichier est inconnu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.training-hours" xml:space="preserve">
+    <value>Fichier des heures de formation (CE / DPC, pour tout organisme)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.training-hours" xml:space="preserve">
+    <value>Pour tout organisme de réglementation, ordre professionnel, employeur ou assureur, dans tout pays : une ligne par achèvement vérifié, des dates au format yyyy-MM-dd, des heures avec un point comme séparateur décimal et des titres dans votre langue. Choisissez et ordonnez les colonnes que demande votre organisme.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

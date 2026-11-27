@@ -159,7 +159,7 @@ namespace Resgrid.Model
 			foreach (var forms in shippedForms)
 			{
 				var term = DepartmentTerms.Find(forms?.Key);
-				if (term == null || term.Category != DepartmentTermCategories.Module)
+				if (term == null || !term.ReplacesWords)
 					continue;
 
 				var name = config.TextFor(term.Key);

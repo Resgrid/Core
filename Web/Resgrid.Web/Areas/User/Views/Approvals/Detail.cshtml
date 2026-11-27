@@ -1,0 +1,173 @@
+@using Resgrid.Model
+@using Resgrid.Model.Approvals
+@model Resgrid.Web.Areas.User.Models.Approvals.ApprovalDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    One approval request (e-Signature S4): the subject's document as submitted (its content code), the chain's steps with who approved
+    and whose turn it is, the shared signature panel to approve at L2 (step-up here, or a passkey bound to the content), rejecting with
+    a reason, withdrawing (submitter or admin) and the sealed document of a completed chain ("sealing pending" until it seals).
+*@
+@{
+    var view = Model.View;
+    var request = view.Request;
+    ViewBag.Title = "Resgrid | " + request.Title;
+    ViewData["Title"] = request.Title;
+    ViewData["Subtitle"] = approvalText["Kind" + (SignatureSubjectKinds)request.SubjectKind].Value;
+    ViewData["Section"] = "Detail";
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Approvals/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@approvalText["StatusLabel"]</div><div class="rgw-stat-value">@approvalText["Status" + (ApprovalRequestStatuses)request.Status]</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@approvalText["AmountColumn"]</div><div class="rgw-stat-value">@(request.Amount.HasValue ? ApprovalRouting.AmountText(request.Amount, request.Currency) : "—")</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@approvalText["ApprovedStepsLabel"]</div><div class="rgw-stat-value">@view.Steps.Count(s => s.Signer?.Status == (int)SignatureSignerStatuses.Signed) / @view.Steps.Count</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@approvalText["ContentCodeLabel"]</div><div class="rgw-stat-value rgw-mono">@SignaturePolicy.ShortCode(request.ContentSha256)</div></div>
+    </div>
+
+    @if (view.Changed && request.IsPending)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @approvalText["ChangedSinceSubmission"]</div>
+    }
+    else if (view.Changed && request.Status == (int)ApprovalRequestStatuses.Approved)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @approvalText["ChangedSinceApproval"]</div>
+    }
+    @if (request.Status == (int)ApprovalRequestStatuses.Rejected)
+    {
+        <div class="alert alert-danger" role="status"><strong>@approvalText["RejectReasonLabel"]</strong> @request.RejectReason</div>
+    }
+    @if (!string.IsNullOrWhiteSpace(request.ApplyError))
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @approvalText["ApplyErrorNote"]</div>
+    }
+    @if (request.Status == (int)ApprovalRequestStatuses.Approved)
+    {
+        <div class="rgw-next-action" role="status">
+            <i class="fa fa-lock" aria-hidden="true"></i>
+            @if (view.Sealed?.IsSealed == true)
+            {
+                <span>@approvalText["SealedNote"]</span>
+                <a asp-area="User" asp-controller="SealedDocuments" asp-action="Download" asp-route-id="@view.Sealed.SealedDocumentId">@approvalText["DownloadSealedLink"]</a>
+            }
+            else
+            {
+                <span class="rgw-progress-honest">@approvalText["SealingPendingNote"]</span>
+            }
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-file-text-o" aria-hidden="true"></i> @approvalText["SubjectHeading"]</h5>
+                    @if (!string.IsNullOrWhiteSpace(Model.SubjectUrl))
+                    {
+                        <div class="ibox-tools"><a href="@Model.SubjectUrl"><i class="fa fa-external-link" aria-hidden="true"></i> @approvalText["OpenInModuleLink"]</a></div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    @if (view.Subject == null)
+                    {
+                        <p class="text-muted">@approvalText["RefusalSubjectNotFound"]</p>
+                    }
+                    else
+                    {
+                        <iframe title="@approvalText["SubjectHeading"]" sandbox="" srcdoc="@view.Subject.DocumentHtml" style="width:100%;min-height:360px;border:1px solid #e7eaec"></iframe>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            @if (Model.Panel != null)
+            {
+                @await Html.PartialAsync("_SignaturePanel", Model.Panel)
+            }
+            @if (view.CanApprove)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-times-circle" aria-hidden="true"></i> @approvalText["RejectHeading"]</h5></div>
+                    <div class="ibox-content">
+                        <form asp-area="User" asp-controller="Approvals" asp-action="Reject" asp-route-id="@request.ApprovalRequestId" method="post">
+                            @Html.AntiForgeryToken()
+                            <label for="reject-reason">@approvalText["RejectReasonLabel"]</label>
+                            <textarea id="reject-reason" name="reason" class="form-control" rows="3" maxlength="1000" required></textarea>
+                            <button type="submit" class="btn btn-danger m-t-xs"><i class="fa fa-times" aria-hidden="true"></i> @approvalText["RejectButton"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            @if (view.CanWithdraw)
+            {
+                <form asp-area="User" asp-controller="Approvals" asp-action="Withdraw" asp-route-id="@request.ApprovalRequestId" method="post" class="m-b-md">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-default"><i class="fa fa-undo" aria-hidden="true"></i> @approvalText["WithdrawButton"]</button>
+                </form>
+            }
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-list-ol" aria-hidden="true"></i> @approvalText["StepsHeading"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted small">@approvalText["StepsHelp"]</p>
+            <div class="table-responsive">
+                <table class="table table-striped rgw-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">@approvalText["StepOrderColumn"]</th>
+                            <th scope="col">@approvalText["StepColumn"]</th>
+                            <th scope="col">@approvalText["StatusLabel"]</th>
+                            <th scope="col">@approvalText["ApprovedByColumn"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var step in view.Steps)
+                        {
+                            var signer = step.Signer;
+                            var state = signer == null ? "—"
+                                : signer.Status == (int)SignatureSignerStatuses.Signed ? approvalText["StepApproved"].Value
+                                : signer.Status == (int)SignatureSignerStatuses.Declined ? approvalText["StepRejected"].Value
+                                : step.IsTurn && request.IsPending ? approvalText["StepWaiting"].Value : approvalText["StepNotYet"].Value;
+                            <tr>
+                                <td>@step.Step.StepOrder</td>
+                                <td>@step.Step.Label
+                                    @if (!string.IsNullOrWhiteSpace(step.Step.DelegatedToUserIds))
+                                    {
+                                        <div class="rgw-sub">@approvalText["DelegatedNote"]</div>
+                                    }
+                                    @if (step.Step.EscalatedOn.HasValue)
+                                    {
+                                        <span class="label label-warning">@approvalText["EscalatedLabel"]</span>
+                                    }
+                                </td>
+                                <td>@state</td>
+                                <td>@(signer?.UserId != null && signer.Status != (int)SignatureSignerStatuses.Pending && Model.Names.TryGetValue(signer.UserId, out var name) ? name : "")
+                                    @if (signer?.SignedOn != null)
+                                    {
+                                        <div class="rgw-sub">@signer.SignedOn.Value.ToString("yyyy-MM-dd HH:mm") UTC</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-muted small">@string.Format(approvalText["SubmittedByLine"].Value, Model.Names.TryGetValue(request.SubmittedByUserId ?? string.Empty, out var submitter) ? submitter : "—", request.SubmittedOn.ToString("yyyy-MM-dd HH:mm"))</p>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script src="~/js/app/common/passkeys/resgrid.passkeys.js" asp-append-version="true"></script>
+    <script src="~/js/app/internal/signatures/resgrid.signatures.js" asp-append-version="true"></script>
+}

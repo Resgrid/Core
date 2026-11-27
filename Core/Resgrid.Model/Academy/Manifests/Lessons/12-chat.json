@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "id": "12-chat",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Chat",
+  "minutes": 5.9,
+  "walkthrough": true,
+  "audience": [
+    "member"
+  ],
+  "visibility": [
+    "module:Chat"
+  ],
+  "pages": [
+    "Chat",
+    "Moderation"
+  ],
+  "adminAssist": {
+    "areas": [
+      "communication"
+    ],
+    "capabilities": [
+      "chat"
+    ]
+  },
+  "media": {
+    "video": "deep-dive/media/12-chat.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "deep-dive/lessons/12-chat/captions.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Use chat channels, messages and acknowledgements",
+    "ar": "استخدم قنوات الدردشة والرسائل والإقرارات",
+    "de": "Chatkanäle, Nachrichten und Bestätigungen nutzen",
+    "el": "Χρησιμοποιήστε κανάλια συνομιλίας, μηνύματα και επιβεβαιώσεις",
+    "es": "Usar canales de chat, mensajes y confirmaciones",
+    "fr": "Utiliser les canaux de discussion, messages et accusés de lecture",
+    "it": "Usare canali di chat, messaggi e conferme",
+    "pl": "Korzystaj z kanałów czatu, wiadomości i potwierdzeń",
+    "sv": "Använd chattkanaler, meddelanden och kvitteringar",
+    "uk": "Користуйтеся каналами чату, повідомленнями та підтвердженнями"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What is a chat channel for?",
+        "ar": "ما فائدة قناة الدردشة؟",
+        "de": "Wofür ist ein Chatkanal da?",
+        "el": "Σε τι χρησιμεύει ένα κανάλι συνομιλίας;",
+        "es": "¿Para qué sirve un canal de chat?",
+        "fr": "À quoi sert un canal de discussion ?",
+        "it": "A che cosa serve un canale di chat?",
+        "pl": "Do czego służy kanał czatu?",
+        "sv": "Vad är en chattkanal till för?",
+        "uk": "Для чого канал чату?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Billing",
+            "ar": "الفوترة",
+            "de": "Abrechnung",
+            "el": "Χρεώσεις",
+            "es": "Facturación",
+            "fr": "La facturation",
+            "it": "Fatturazione",
+            "pl": "Rozliczenia",
+            "sv": "Fakturering",
+            "uk": "Оплата"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Conversations among a team or group",
+            "ar": "المحادثات داخل فريق أو مجموعة",
+            "de": "Gespräche innerhalb eines Teams oder einer Gruppe",
+            "el": "Συζητήσεις σε ομάδα",
+            "es": "Conversaciones dentro de un equipo o grupo",
+            "fr": "Les échanges au sein d’une équipe ou d’un groupe",
+            "it": "Conversazioni in una squadra o gruppo",
+            "pl": "Rozmowy w zespole lub grupie",
+            "sv": "Samtal inom ett team eller en grupp",
+            "uk": "Розмови в команді чи групі"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Storing protocols",
+            "ar": "تخزين البروتوكولات",
+            "de": "Protokolle speichern",
+            "el": "Αποθήκευση πρωτοκόλλων",
+            "es": "Guardar protocolos",
+            "fr": "Le stockage des protocoles",
+            "it": "Archiviare protocolli",
+            "pl": "Przechowywanie protokołów",
+            "sv": "Lagra protokoll",
+            "uk": "Зберігання протоколів"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What does an acknowledgement on a message show?",
+        "ar": "ماذا يُظهر الإقرار على الرسالة؟",
+        "de": "Was zeigt eine Bestätigung an einer Nachricht?",
+        "el": "Τι δείχνει μια επιβεβαίωση σε ένα μήνυμα;",
+        "es": "¿Qué muestra una confirmación en un mensaje?",
+        "fr": "Que montre un accusé de lecture sur un message ?",
+        "it": "Che cosa mostra una conferma su un messaggio?",
+        "pl": "Co pokazuje potwierdzenie przy wiadomości?",
+        "sv": "Vad visar en kvittering på ett meddelande?",
+        "uk": "Що показує підтвердження на повідомленні?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "The message was deleted",
+            "ar": "أن الرسالة حُذفت",
+            "de": "Die Nachricht wurde gelöscht",
+            "el": "Ότι το μήνυμα διαγράφηκε",
+            "es": "Que el mensaje se borró",
+            "fr": "Que le message a été supprimé",
+            "it": "Che il messaggio è stato eliminato",
+            "pl": "Że wiadomość została usunięta",
+            "sv": "Att meddelandet raderades",
+            "uk": "Що повідомлення видалено"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "The sender's location",
+            "ar": "موقع المرسل",
+            "de": "Den Standort des Absenders",
+            "el": "Τη θέση του αποστολέα",
+            "es": "La ubicación del remitente",
+            "fr": "La position de l’expéditeur",
+            "it": "La posizione del mittente",
+            "pl": "Lokalizację nadawcy",
+            "sv": "Avsändarens position",
+            "uk": "Місцезнаходження відправника"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "That the recipient read and confirmed it",
+            "ar": "أن المستلم قرأها وأكدها",
+            "de": "Dass der Empfänger sie gelesen und bestätigt hat",
+            "el": "Ότι ο παραλήπτης το διάβασε και το επιβεβαίωσε",
+            "es": "Que el destinatario lo leyó y lo confirmó",
+            "fr": "Que le destinataire l’a lu et confirmé",
+            "it": "Che il destinatario l’ha letto e confermato",
+            "pl": "Że odbiorca ją przeczytał i potwierdził",
+            "sv": "Att mottagaren läst och bekräftat det",
+            "uk": "Що одержувач прочитав і підтвердив його"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Chat messages can be read from the apps and the website.",
+        "ar": "يمكن قراءة رسائل الدردشة من التطبيقات والموقع الإلكتروني.",
+        "de": "Chatnachrichten lassen sich in den Apps und auf der Website lesen.",
+        "el": "Τα μηνύματα συνομιλίας διαβάζονται από τις εφαρμογές και τον ιστότοπο.",
+        "es": "Los mensajes de chat se pueden leer en las aplicaciones y en el sitio web.",
+        "fr": "Les messages de discussion se lisent dans les applications et sur le site web.",
+        "it": "I messaggi di chat si leggono dalle app e dal sito web.",
+        "pl": "Wiadomości czatu można czytać w aplikacjach i na stronie.",
+        "sv": "Chattmeddelanden kan läsas i apparna och på webbplatsen.",
+        "uk": "Повідомлення чату можна читати в застосунках і на сайті."
+      }
+    }
+  ]
+}

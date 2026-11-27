@@ -1,0 +1,60 @@
+@model Resgrid.Web.ViewComponents.LmsSeatPanelView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Addons.Addons> addonLocalizer
+@*
+    The per-member LMS switch on the personnel page (LmsSeatSwitchViewComponent; §17.4 seat rules). Department admins only. Posts to
+    LmsSeats/SetSeat, which refuses an enable beyond the purchased seats and offers a pack instead.
+*@
+@{
+    var summary = Model.Summary;
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content" style="padding-top:0">
+            <div class="ibox float-e-margins" id="lms-seat">
+                <div class="ibox-title"><h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @addonLocalizer["LmsSeatHeading"]</h5></div>
+                <div class="ibox-content">
+                    @if (!string.IsNullOrWhiteSpace(Model.Message))
+                    {
+                        <div class="alert @(Model.MessageKind == "success" ? "alert-success" : "alert-warning")" role="status">
+                            @Model.Message
+                            @if (Model.OfferPack)
+                            {
+                                <a asp-controller="LmsBilling" asp-action="Index" asp-route-area="User">@addonLocalizer["LmsAddPack"]</a>
+                            }
+                        </div>
+                    }
+                    <p>
+                        @if (Model.MemberEnabled)
+                        {
+                            <span class="label label-primary"><i class="fa fa-check" aria-hidden="true"></i> @addonLocalizer["LmsSeatEnabledLabel"]</span>
+                            @if (!Model.MemberLicensed)
+                            {
+                                <span class="label label-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @addonLocalizer["LmsSeatNotLicensed"]</span>
+                            }
+                            <span class="text-muted">@addonLocalizer["LmsSeatEnabledHelp"]</span>
+                        }
+                        else
+                        {
+                            <span class="label label-default">@addonLocalizer["LmsSeatDisabledLabel"]</span>
+                            <span class="text-muted">@addonLocalizer["LmsSeatDisabledHelp"]</span>
+                        }
+                    </p>
+                    <p class="text-muted small">@string.Format(addonLocalizer["LmsSeatCounter"].Value, summary.EnabledSeats, Model.Entitled ? summary.PurchasedSeats : 0)</p>
+                    <form method="post" asp-controller="LmsSeats" asp-action="SetSeat" asp-route-area="User" class="form-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@Model.UserId" />
+                        <input type="hidden" name="enabled" value="@(Model.MemberEnabled ? "false" : "true")" />
+                        @if (Model.MemberEnabled)
+                        {
+                            <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-toggle-on" aria-hidden="true"></i> @addonLocalizer["LmsSeatDisable"]</button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-toggle-off" aria-hidden="true"></i> @addonLocalizer["LmsSeatEnable"]</button>
+                        }
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

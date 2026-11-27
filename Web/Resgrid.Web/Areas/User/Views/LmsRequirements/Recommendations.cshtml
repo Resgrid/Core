@@ -1,0 +1,54 @@
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsRecommendationsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@*
+    Trainings → Programs → Recommendations (K3): learning paths and courses recommended to a member from their open requirements, the paths
+    they are on, their competency gaps and the courses offered to their roles. Members see their own; LMS managers, department-wide Assign
+    Training holders and group admins pick a member in their scope.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RecommendationsTitle"];
+    ViewData["Title"] = localizer["RecommendationsTitle"].Value;
+    ViewData["Subtitle"] = localizer["RecommendationsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["Scope"] = Model.Scope;
+    ViewData["Sub"] = "Recommendations";
+    ViewData["CanManage"] = Model.Actor?.MayManage == true;
+    ViewData["CanPaths"] = Model.Actor?.MayAssignAcademy == true;
+    ViewData["Paused"] = Model.Paused;
+}
+
+@await Html.PartialAsync("_Heading")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Members.Count > 1)
+    {
+        <form method="get" class="rgw-toolbar hidden-print" asp-controller="LmsRequirements" asp-action="Recommendations" asp-route-area="User">
+            <label class="control-label" for="recommendationMember"><i class="fa fa-user" aria-hidden="true"></i> @localizer["Member"]</label>
+            <select id="recommendationMember" name="userId" class="form-control" style="max-width: 320px;">
+                @foreach (var member in Model.Members)
+                {
+                    <option value="@member.UserId" selected="@(string.Equals(member.UserId, Model.MemberUserId, StringComparison.OrdinalIgnoreCase))">@member.Name</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-default"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["ShowRecommendationsButton"]</button>
+        </form>
+    }
+    <div class="ibox float-e-margins">
+        <div class="ibox-title">
+            <h5><i class="fa fa-lightbulb-o" aria-hidden="true"></i> @(string.IsNullOrWhiteSpace(Model.MemberName) ? localizer["RecommendedHeader"].Value : string.Format(localizer["RecommendedForFormat"].Value, Model.MemberName))</h5>
+        </div>
+        <div class="ibox-content">
+            @if (Model.List != null)
+            {
+                @await Html.PartialAsync("~/Areas/User/Views/LmsRequirements/_RecommendationList.cshtml", Model.List)
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

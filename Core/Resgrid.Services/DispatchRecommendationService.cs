@@ -36,6 +36,8 @@ namespace Resgrid.Services
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IOutstandingRequirementsService _outstandingRequirementsService;
 
+		private readonly IDispatchTriggerFactsService _triggerFacts;
+
 		public DispatchRecommendationService(IRunCardsService runCardsService, IUnitsService unitsService,
 			IActionLogsService actionLogsService, IUserStateService userStateService, IPersonnelRolesService personnelRolesService,
 			ICustomStateService customStateService, IDepartmentGroupsService departmentGroupsService,
@@ -44,8 +46,9 @@ namespace Resgrid.Services
 			IRunCardActivationsRepository runCardActivationsRepository, IEventAggregator eventAggregator,
 			IDepartmentsService departmentsService, IResponsePackagesService responsePackagesService,
 			IRunCardDecisionsRepository runCardDecisionsRepository, IFeatureToggleService featureToggleService,
-			IOutstandingRequirementsService outstandingRequirementsService)
+			IOutstandingRequirementsService outstandingRequirementsService, IDispatchTriggerFactsService triggerFacts)
 		{
+			_triggerFacts = triggerFacts;
 			_responsePackagesService = responsePackagesService;
 			_runCardDecisionsRepository = runCardDecisionsRepository;
 			_featureToggleService = featureToggleService;
@@ -83,9 +86,31 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				card = request.CallTypeId.HasValue
-					? await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, request.Priority, request.CallTypeName, request.CallTypeId)
-					: await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, request.Priority, request.CallTypeName);
+				// Protocols P4: one trigger engine for run cards and protocols, with the same facts (zone, local schedule, keywords, POI
+				// type at the location, intake source) besides priority, type and the call's time.
+				var facts = new DispatchTriggerFacts
+				{
+					Priority = request.Priority,
+					CallTypeName = request.CallTypeName,
+					CallTypeId = request.CallTypeId,
+					AtUtc = request.LoggedOnUtc.HasValue && request.LoggedOnUtc.Value > DateTime.MinValue.AddDays(1)
+						? DateTime.SpecifyKind(request.LoggedOnUtc.Value, DateTimeKind.Utc) : DateTime.UtcNow
+				};
+
+				if (_triggerFacts != null)
+				{
+					await _triggerFacts.FillAsync(request.DepartmentId, facts, new DispatchTriggerCallInput
+					{
+						Nature = request.Nature,
+						Notes = request.Notes,
+						Latitude = request.Latitude,
+						Longitude = request.Longitude,
+						LocationPoiId = request.LocationPoiId,
+						CallSource = request.CallSource
+					});
+				}
+
+				card = await _runCardsService.GetMatchingRunCardAsync(request.DepartmentId, facts);
 			}
 
 			if (card == null)
@@ -213,7 +238,14 @@ namespace Resgrid.Services
 				// staying released (and the role it was meant to fill unmet): released members are left out of this pass.
 				ExcludedUserIds = call.GetReleasedUserIds().ToList(),
 				CallId = call.CallId > 0 ? call.CallId : (int?)null,
-				ForcedLeafNodeKey = forcedLeafNodeKey
+				ForcedLeafNodeKey = forcedLeafNodeKey,
+				// Protocols P4: the determinants of the protocols attached with the call, and the trigger facts.
+				ProtocolDeterminants = CallProtocolDeterminant.From(call.Protocols),
+				Nature = call.NatureOfCall,
+				Notes = call.Notes,
+				LocationPoiId = call.LocationPoiId,
+				CallSource = call.CallSource,
+				LoggedOnUtc = call.LoggedOn > DateTime.MinValue.AddDays(1) ? call.LoggedOn : (DateTime?)null
 			};
 
 			var result = await GetRecommendationAsync(request, cancellationToken);

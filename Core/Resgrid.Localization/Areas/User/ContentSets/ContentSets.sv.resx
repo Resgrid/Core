@@ -1,0 +1,1049 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="SetsHeader" xml:space="preserve">
+    <value>Delade samlingar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinksCrumb" xml:space="preserve">
+    <value>Avdelningslänkar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsTab" xml:space="preserve">
+    <value>Protokollsamlingar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsTab" xml:space="preserve">
+    <value>Kurssamlingar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxTab" xml:space="preserve">
+    <value>Uppdateringsinkorg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalsTab" xml:space="preserve">
+    <value>Förslag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipsTab" xml:space="preserve">
+    <value>Sponsringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Samlingsinställningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsIntro" xml:space="preserve">
+    <value>Publicera protokoll som en samling till länkade avdelningar, eller prenumerera på de samlingar som länkade avdelningar publicerar. Låst innehåll följer utgivaren; anpassningsbara block behåller era ändringar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsIntro" xml:space="preserve">
+    <value>Publicera kurser och utbildningar som en samling till länkade avdelningar, eller prenumerera på deras. Slutföranden stannar i varje medlems eget register.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedHeader" xml:space="preserve">
+    <value>Samlingar som er avdelning publicerar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedIntro" xml:space="preserve">
+    <value>Länkade avdelningar som ni delar den här typen av innehåll med kan prenumerera. Varje ny version ni publicerar hamnar i deras uppdateringsinkorg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSet" xml:space="preserve">
+    <value>Samling</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnItems" xml:space="preserve">
+    <value>Objekt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSubscribers" xml:space="preserve">
+    <value>Prenumeranter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Läge</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnPublisher" xml:space="preserve">
+    <value>Utgivare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnItem" xml:space="preserve">
+    <value>Objekt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnVersion" xml:space="preserve">
+    <value>Utgåva</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnEffective" xml:space="preserve">
+    <value>Gäller från</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnDeadline" xml:space="preserve">
+    <value>Tidsgräns</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSponsor" xml:space="preserve">
+    <value>Sponsrande avdelning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSponsored" xml:space="preserve">
+    <value>Sponsrad avdelning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSeats" xml:space="preserve">
+    <value>Platser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Arkiverad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLive" xml:space="preserve">
+    <value>Aktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSubscribed" xml:space="preserve">
+    <value>Prenumererad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSuspended" xml:space="preserve">
+    <value>Pausad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotSubscribed" xml:space="preserve">
+    <value>Ingen prenumeration</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetNameLabel" xml:space="preserve">
+    <value>Samlingens namn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDescriptionLabel" xml:space="preserve">
+    <value>Beskrivning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewSetButton" xml:space="preserve">
+    <value>Ny samling</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableHeader" xml:space="preserve">
+    <value>Samlingar som delas med er avdelning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableIntroProtocols" xml:space="preserve">
+    <value>Samlingar från länkade avdelningar som delar protokoll med er avdelning via en Avdelningslänk.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableIntroTraining" xml:space="preserve">
+    <value>Samlingar från länkade avdelningar som delar utbildning med er avdelning via en Avdelningslänk. Kurser kräver ert eget LMS-tillägg eller utgivarens sponsring; utbildningar gör det inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAvailable" xml:space="preserve">
+    <value>Ingen länkad avdelning delar ännu en samling av det här slaget med er avdelning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredLabel" xml:space="preserve">
+    <value>Sponsrad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionsHeader" xml:space="preserve">
+    <value>Era prenumerationer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSubscriptions" xml:space="preserve">
+    <value>Er avdelning prenumererar inte på någon samling av det här slaget.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribedOn" xml:space="preserve">
+    <value>Prenumererar sedan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenUpdatesCount" xml:space="preserve">
+    <value>{0} uppdatering(ar) väntar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SuspendedHelp" xml:space="preserve">
+    <value>Länken delar inte längre det här innehållet, så inget nytt kommer in. Era kopior förblir som de är.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalChangesLabel" xml:space="preserve">
+    <value>Lokala ändringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeButton" xml:space="preserve">
+    <value>Anpassa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeButton" xml:space="preserve">
+    <value>Föreslå en ändring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptOn" xml:space="preserve">
+    <value>Godkänn uppdateringar automatiskt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptOff" xml:space="preserve">
+    <value>Sluta godkänna automatiskt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SyncButton" xml:space="preserve">
+    <value>Hämta saknade objekt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnsubscribeButton" xml:space="preserve">
+    <value>Avsluta prenumeration</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnsubscribeConfirm" xml:space="preserve">
+    <value>Avsluta prenumerationen? Kopiorna stannar i er avdelning som ert eget innehåll och inga fler uppdateringar kommer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusActive" xml:space="preserve">
+    <value>Aktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusSuspended" xml:space="preserve">
+    <value>Pausad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionStatusEnded" xml:space="preserve">
+    <value>Avslutad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeLocked" xml:space="preserve">
+    <value>Låst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeCustomizableBlocks" xml:space="preserve">
+    <value>Anpassningsbara block</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeOpen" xml:space="preserve">
+    <value>Öppen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetIntro" xml:space="preserve">
+    <value>Vad länkade avdelningar får, hur mycket de får ändra varje objekt och vem som prenumererar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchivedHelp" xml:space="preserve">
+    <value>Den här samlingen är arkiverad: den tar inte emot nya prenumeranter och skickar inga fler uppdateringar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDetailsHeader" xml:space="preserve">
+    <value>Samlingens uppgifter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysLabel" xml:space="preserve">
+    <value>Dagar som en låst uppdatering kan skjutas upp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysHelp" xml:space="preserve">
+    <value>Prenumeranter kan skjuta upp en uppdatering av låst innehåll upp till så här många dagar efter dess ikraftträdandedatum; därefter träder den i kraft vid deras nästa uppdateringstid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Spara</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchiveButton" xml:space="preserve">
+    <value>Arkivera samling</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ArchiveConfirm" xml:space="preserve">
+    <value>Arkivera den här samlingen? Prenumerationerna avslutas och prenumeranterna behåller sina kopior som eget innehåll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribersHeader" xml:space="preserve">
+    <value>Prenumererande avdelningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSubscribers" xml:space="preserve">
+    <value>Ingen avdelning prenumererar ännu på den här samlingen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Ta bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveSubscriberConfirm" xml:space="preserve">
+    <value>Avsluta den här avdelningens prenumeration? Den behåller sina kopior som eget innehåll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenProposalsCount" xml:space="preserve">
+    <value>{0} öppna förslag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>Objekt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModesHelp" xml:space="preserve">
+    <value>Låst: prenumeranter kan bara skjuta upp uppdateringar till tidsgränsen. Anpassningsbara block: prenumeranter får ersätta de block ni markerar (lokala telefonnummer, destinationer, resurser) och lägga till egna block i slutet. Öppen: prenumeranter får ändra allt och avböja uppdateringar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>Den här samlingen har inga objekt ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsItemLabel" xml:space="preserve">
+    <value>LMS-objekt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockModeLabel" xml:space="preserve">
+    <value>Låsning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizableBlocksLabel" xml:space="preserve">
+    <value>Block som prenumeranter får ersätta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveItemConfirm" xml:space="preserve">
+    <value>Ta bort det här objektet från samlingen? Prenumeranterna behåller sina kopior som eget innehåll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemHeader" xml:space="preserve">
+    <value>Lägg till ett objekt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemLabel" xml:space="preserve">
+    <value>Objekt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseItem" xml:space="preserve">
+    <value>Välj…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemHelp" xml:space="preserve">
+    <value>Avdelningar som redan prenumererar får objektet i sin uppdateringsinkorg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddItemButton" xml:space="preserve">
+    <value>Lägg till i samlingen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableSubtitle" xml:space="preserve">
+    <value>Publicerad av {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferDaysSummary" xml:space="preserve">
+    <value>Uppdateringar av låst innehåll kan skjutas upp upp till {0} dagar efter sitt ikraftträdandedatum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredBy" xml:space="preserve">
+    <value>{0} sponsrar er avdelnings LMS-platser.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsReady" xml:space="preserve">
+    <value>Er avdelning kan ta emot den här samlingens kurser.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsNeeded" xml:space="preserve">
+    <value>Den här samlingens kurser kräver LMS-tillägget eller utgivarens sponsring. Utbildningar tas emot utan det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="YouCanChange" xml:space="preserve">
+    <value>Ni kan ändra:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptLabel" xml:space="preserve">
+    <value>Godkänn uppdateringar automatiskt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutoAcceptHelp" xml:space="preserve">
+    <value>Uppdateringar träder i kraft vid er avdelnings uppdateringstid på eller efter sitt ikraftträdandedatum, utan beslut i inkorgen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribeConfirm" xml:space="preserve">
+    <value>Prenumerera? Varje objekt kopieras nu till er avdelning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribeButton" xml:space="preserve">
+    <value>Prenumerera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ManagersSubscribe" xml:space="preserve">
+    <value>Medlemmar med behörigheten ”Hantera innehållssamlingar” kan prenumerera.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxIntro" xml:space="preserve">
+    <value>Nya versioner från de samlingar som er avdelning prenumererar på. Godkända uppdateringar träder i kraft vid er uppdateringstid, aldrig oväntat mitt i ett skift.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowOpen" xml:space="preserve">
+    <value>Visa väntande uppdateringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowAll" xml:space="preserve">
+    <value>Visa alla uppdateringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InboxEmpty" xml:space="preserve">
+    <value>Inga uppdateringar väntar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewItemLabel" xml:space="preserve">
+    <value>Nytt objekt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDeadline" xml:space="preserve">
+    <value>Ingen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusPending" xml:space="preserve">
+    <value>Väntar på beslut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusScheduled" xml:space="preserve">
+    <value>Schemalagd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusApplied" xml:space="preserve">
+    <value>I kraft</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusDeferred" xml:space="preserve">
+    <value>Uppskjuten</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusDeclined" xml:space="preserve">
+    <value>Avböjd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusSuperseded" xml:space="preserve">
+    <value>Ersatt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateStatusFailed" xml:space="preserve">
+    <value>Kunde inte tillämpas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateSubtitle" xml:space="preserve">
+    <value>{0}, {1}, utgåva {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyOnLabel" xml:space="preserve">
+    <value>Träder i kraft</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AppliedOnLabel" xml:space="preserve">
+    <value>Trädde i kraft</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureLabel" xml:space="preserve">
+    <value>Fel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Vad som ändrats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DroppedChangesHelp" xml:space="preserve">
+    <value>Utgivaren har tagit bort eller låst block som ni hade ändrat; de här lokala ändringarna används inte längre:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHeader" xml:space="preserve">
+    <value>Besluta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyOnHelp" xml:space="preserve">
+    <value>Förslag: er avdelnings nästa uppdateringstid på eller efter utgivarens ikraftträdandedatum. Aldrig tidigare än ikraftträdandedatumet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Godkänn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferUntilLabel" xml:space="preserve">
+    <value>Skjut upp till</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferLockedHelp" xml:space="preserve">
+    <value>Låst innehåll kan inte skjutas upp förbi sin tidsgräns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeferButton" xml:space="preserve">
+    <value>Skjut upp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineConfirm" xml:space="preserve">
+    <value>Avböja den här uppdateringen? Er avdelning stannar kvar på sin nuvarande version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineButton" xml:space="preserve">
+    <value>Avböj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LockedCannotDeclineHelp" xml:space="preserve">
+    <value>Låst innehåll kan inte avböjas, bara skjutas upp till sin tidsgräns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RedlineHeader" xml:space="preserve">
+    <value>Ändringar jämfört med er version</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewItemHelp" xml:space="preserve">
+    <value>Det här objektet är nytt för er avdelning: om ni godkänner kopieras det in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeIntro" xml:space="preserve">
+    <value>Ersätt de block som utgivaren har lämnat anpassningsbara och lägg till egna block i slutet. Era ändringar träder i kraft nu och behålls vid varje senare uppdatering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockCustomizable" xml:space="preserve">
+    <value>Anpassningsbart</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLocked" xml:space="preserve">
+    <value>Låst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalVersionLabel" xml:space="preserve">
+    <value>Er version av det här blocket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocalVersionHelp" xml:space="preserve">
+    <value>Lämna tomt för att använda utgivarens text.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdditionsHeader" xml:space="preserve">
+    <value>Era kompletteringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AdditionsHelp" xml:space="preserve">
+    <value>Egna block som visas efter utgivarens innehåll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeConfirm" xml:space="preserve">
+    <value>Spara och låta era ändringar träda i kraft nu?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CustomizeSaveButton" xml:space="preserve">
+    <value>Spara ändringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeHeader" xml:space="preserve">
+    <value>Föreslå en ändring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeSubtitle" xml:space="preserve">
+    <value>Till {1}, om {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalSectionLabel" xml:space="preserve">
+    <value>Avsnitt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalSectionHelp" xml:space="preserve">
+    <value>Valfritt: rubriken eller blocket som ert förslag gäller.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalBodyLabel" xml:space="preserve">
+    <value>Ert förslag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalBodyHelp" xml:space="preserve">
+    <value>Utgivaren ser ert namn, er avdelning och den här texten i sitt nästa utkast.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposeSendButton" xml:space="preserve">
+    <value>Skicka förslag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalsIntro" xml:space="preserve">
+    <value>Ändringar som länkade avdelningar har föreslagit för era samlingar, och de förslag som era medlemmar har skickat till utgivare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReceivedHeader" xml:space="preserve">
+    <value>Förslag till er avdelning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SentHeader" xml:space="preserve">
+    <value>Förslag från er avdelning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoProposals" xml:space="preserve">
+    <value>Inga förslag.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResponseLabel" xml:space="preserve">
+    <value>Svar (krävs för att avböja)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcceptProposalButton" xml:space="preserve">
+    <value>Ta med i nästa utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineProposalButton" xml:space="preserve">
+    <value>Avböj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusOpen" xml:space="preserve">
+    <value>Öppet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusAccepted" xml:space="preserve">
+    <value>Medtaget i nästa utkast</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusDeclined" xml:space="preserve">
+    <value>Avböjt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalStatusWithdrawn" xml:space="preserve">
+    <value>Återkallat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipsIntro" xml:space="preserve">
+    <value>En avdelning med LMS-tillägget kan betala för en länkad avdelnings LMS-aktiverade medlemmar. De räknas i sponsorns paket och kör endast sponsorns kurssamlingar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsoredCapacity" xml:space="preserve">
+    <value>Platser tillgängliga för er avdelning: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSponsorships" xml:space="preserve">
+    <value>Er avdelning varken ger eller tar emot någon sponsring.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipActive" xml:space="preserve">
+    <value>Aktiv</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipLinkLapsed" xml:space="preserve">
+    <value>Länken delar inte längre utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndNone" xml:space="preserve">
+    <value>Avslutad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndEndedBySponsor" xml:space="preserve">
+    <value>Avslutad av sponsorn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndDeclinedBySponsored" xml:space="preserve">
+    <value>Avböjd av den sponsrade avdelningen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEndLinkRevoked" xml:space="preserve">
+    <value>Avslutad: länken slutade dela utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatLimitLabel" xml:space="preserve">
+    <value>Platsgräns</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndSponsorshipConfirm" xml:space="preserve">
+    <value>Avsluta den här sponsringen? Redan tilldelade kurser förblir tillgängliga enligt de vanliga reglerna för upphörande och upphör sedan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndSponsorshipButton" xml:space="preserve">
+    <value>Avsluta sponsring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeclineSponsorshipButton" xml:space="preserve">
+    <value>Avböj sponsring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorHeader" xml:space="preserve">
+    <value>Sponsra en länkad avdelning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorHelp" xml:space="preserve">
+    <value>Dess LMS-aktiverade medlemmar räknas i era paket (era egna medlemmar går först). Den behöver inget eget tillägg och kan ha gratisplanen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSponsorable" xml:space="preserve">
+    <value>Dela utbildning med en länkad avdelning via dess Avdelningslänk för att sponsra den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SeatLimitHelp" xml:space="preserve">
+    <value>Valfritt: det största antalet platser avdelningen får använda. Tomt: så många som era paket har lediga.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorConfirm" xml:space="preserve">
+    <value>Börja betala för den här avdelningens LMS-platser?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorButton" xml:space="preserve">
+    <value>Sponsra</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>När godkända uppdateringar träder i kraft och vem som får veta om nya.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateTimeLabel" xml:space="preserve">
+    <value>Uppdateringstid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateTimeHelp" xml:space="preserve">
+    <value>Godkända uppdateringar träder i kraft vid den här lokala tiden på eller efter sitt ikraftträdandedatum (till exempel vid ert skiftbyte).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyManagersLabel" xml:space="preserve">
+    <value>Meddela avdelningsadministratörer när en uppdatering kommer eller ett förslag besvaras</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CopyBanner" xml:space="preserve">
+    <value>Från {0}, samling {1}, utgåva {2}. Ändringar kommer via samlingen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Customized" xml:space="preserve">
+    <value>Era ändringar är i kraft.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemAdded" xml:space="preserve">
+    <value>Objektet har lagts till i samlingen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemRemoved" xml:space="preserve">
+    <value>Objektet har tagits bort från samlingen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemSaved" xml:space="preserve">
+    <value>Objektet har sparats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProposalAnswered" xml:space="preserve">
+    <value>Förslaget har besvarats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Proposed" xml:space="preserve">
+    <value>Ert förslag har skickats till utgivaren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetArchived" xml:space="preserve">
+    <value>Samlingen har arkiverats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetSaved" xml:space="preserve">
+    <value>Samlingen har sparats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Inställningarna har sparats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipEnded" xml:space="preserve">
+    <value>Sponsringen har avslutats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipSaved" xml:space="preserve">
+    <value>Sponsringen har sparats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorshipStarted" xml:space="preserve">
+    <value>Sponsringen har startat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Subscribed" xml:space="preserve">
+    <value>Prenumeration startad. Objekten har kopierats till er avdelning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscribedWithSkipped" xml:space="preserve">
+    <value>Vissa objekt kopierades inte:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriberRemoved" xml:space="preserve">
+    <value>Prenumerationen har avslutats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubscriptionSaved" xml:space="preserve">
+    <value>Prenumerationen har sparats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Synced" xml:space="preserve">
+    <value>Saknade objekt har kopierats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Unsubscribed" xml:space="preserve">
+    <value>Prenumerationen har avslutats. Kopiorna är nu er avdelnings eget innehåll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateApplied" xml:space="preserve">
+    <value>Uppdateringen är i kraft.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateScheduled" xml:space="preserve">
+    <value>Uppdateringen är schemalagd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateDeclined" xml:space="preserve">
+    <value>Uppdateringen har avböjts.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UpdateDeferred" xml:space="preserve">
+    <value>Uppdateringen har skjutits upp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNone" xml:space="preserve">
+    <value>Klart.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotFound" xml:space="preserve">
+    <value>Samlingen, objektet eller uppdateringen hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotAuthorized" xml:space="preserve">
+    <value>Ni behöver behörigheten ”Hantera innehållssamlingar”.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorInvalidInput" xml:space="preserve">
+    <value>Kontrollera det ni har angett.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotShared" xml:space="preserve">
+    <value>Ingen aktiverad Avdelningslänk delar det här innehållet med er avdelning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorAlreadySubscribed" xml:space="preserve">
+    <value>Er avdelning prenumererar redan på den här samlingen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorItemNotShareable" xml:space="preserve">
+    <value>Det här objektet kan inte delas i en samling.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorDuplicateItem" xml:space="preserve">
+    <value>Objektet finns redan i samlingen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNotPending" xml:space="preserve">
+    <value>Den här uppdateringen väntar inte längre på beslut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorLockedCannotDecline" xml:space="preserve">
+    <value>Låst innehåll kan inte avböjas, bara skjutas upp till sin tidsgräns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorDateOutOfRange" xml:space="preserve">
+    <value>Datumet ligger utanför det som utgivaren tillåter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorBlockLocked" xml:space="preserve">
+    <value>Utgivaren har låst det blocket.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNeedsLms" xml:space="preserve">
+    <value>Er avdelning behöver LMS-tillägget eller utgivarens sponsring för det här objektet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorOwnSet" xml:space="preserve">
+    <value>En avdelning kan inte prenumerera på sin egen samling.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_published" xml:space="preserve">
+    <value>inte publicerat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_licensed" xml:space="preserve">
+    <value>licensierat innehåll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_disabled" xml:space="preserve">
+    <value>inaktiverat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_document" xml:space="preserve">
+    <value>uppladdat dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lesson_kinds" xml:space="preserve">
+    <value>lektioner med livesessioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_archived" xml:space="preserve">
+    <value>arkiverat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_found" xml:space="preserve">
+    <value>hittades inte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lms" xml:space="preserve">
+    <value>kräver LMS-tillägget eller sponsring</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_not_shared" xml:space="preserve">
+    <value>länken delar det inte längre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_error" xml:space="preserve">
+    <value>ett fel uppstod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_save" xml:space="preserve">
+    <value>kunde inte sparas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNone" xml:space="preserve">
+    <value>Klart.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotAuthorized" xml:space="preserve">
+    <value>Ni behöver behörigheten ”Hantera innehållssamlingar”.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotFound" xml:space="preserve">
+    <value>Sponsringen hittades inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorNotShared" xml:space="preserve">
+    <value>Dela först utbildning med den avdelningen via en aktiverad Avdelningslänk.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorSponsorNeedsLms" xml:space="preserve">
+    <value>Er avdelning behöver ett aktivt LMS-tillägg för att sponsra platser.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorAlreadySponsored" xml:space="preserve">
+    <value>Er avdelning sponsrar redan den avdelningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SponsorErrorInvalidInput" xml:space="preserve">
+    <value>Kontrollera det ni har angett.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.UpdateArrived.Title" xml:space="preserve">
+    <value>Samlingsuppdatering väntar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.UpdateArrived.Body" xml:space="preserve">
+    <value>{2} har publicerat en ny version av {1} i samlingen {0}. Granska den i uppdateringsinkorgen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalReceived.Title" xml:space="preserve">
+    <value>Ändring föreslagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalReceived.Body" xml:space="preserve">
+    <value>{2} har föreslagit en ändring av {1} i er samling {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalAnswered.Title" xml:space="preserve">
+    <value>Förslag besvarat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ProposalAnswered.Body" xml:space="preserve">
+    <value>{2} har besvarat ert förslag om {1} i samlingen {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipStarted.Title" xml:space="preserve">
+    <value>LMS-platser sponsrade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipStarted.Body" xml:space="preserve">
+    <value>{2} sponsrar nu er avdelnings LMS-platser för sina kurssamlingar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipEnded.Title" xml:space="preserve">
+    <value>LMS-sponsring avslutad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SponsorshipEnded.Body" xml:space="preserve">
+    <value>{2} sponsrar inte längre er avdelnings LMS-platser. Redan tilldelade kurser förblir tillgängliga enligt de vanliga reglerna för upphörande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyAdminsLabel" xml:space="preserve">
+    <value>Meddela avdelningens administratörer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyRolesLabel" xml:space="preserve">
+    <value>Meddela även medlemmar i dessa roller</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotifyRolesHelp" xml:space="preserve">
+    <value>Medlemmar i de valda rollerna får samma meddelanden som administratörerna: inkommande uppdateringar, besvarade förslag, ändrad sponsring och LTI-verktyg att registrera. Meddelanden om sponsring och LTI når alltid någon: om ingen är vald får administratörerna dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ToolRegistration.Title" xml:space="preserve">
+    <value>Ett LTI-verktyg behöver registreras</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ToolRegistration.Body" xml:space="preserve">
+    <value>En kurs i samlingen {0} från {2} använder LTI-verktyget {1}. Registrera er organisation hos verktygets leverantör och aktivera verktyget; tills dess öppnas inte dess lektioner.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_media_not_ready" xml:space="preserve">
+    <value>en värdad video är inte klar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_package_not_ready" xml:space="preserve">
+    <value>ett SCORM- eller cmi5-paket är inte klart</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_lti_tool_missing" xml:space="preserve">
+    <value>ett LTI-verktyg har tagits bort</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_path_steps" xml:space="preserve">
+    <value>ett stegs kurs eller utbildning finns inte i samlingen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Problem_path_step_missing" xml:space="preserve">
+    <value>ett stegs kurs eller utbildning har inte kopierats ännu</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

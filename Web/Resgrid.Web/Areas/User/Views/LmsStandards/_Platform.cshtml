@@ -1,0 +1,20 @@
+@using Resgrid.Model.Lms
+@model LmsLtiPlatformDetails
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsStandards.LmsStandards> localizer
+@* The department's LTI platform details: what a tool provider enters to trust launches from this department. *@
+@if (Model != null)
+{
+    <div class="ibox float-e-margins m-t-md">
+        <div class="ibox-title"><h5><i class="fa fa-id-badge" aria-hidden="true"></i> @localizer["Std.PlatformTitle"]</h5></div>
+        <div class="ibox-content">
+            <p class="text-muted">@localizer["Std.PlatformIntro"]</p>
+            <dl class="dl-horizontal">
+                <dt>@localizer["Std.Platform.Issuer"]</dt><dd><code>@Model.Issuer</code></dd>
+                <dt>@localizer["Std.Platform.Jwks"]</dt><dd><code>@Model.JwksUrl</code></dd>
+                <dt>@localizer["Std.Platform.Auth"]</dt><dd><code>@Model.AuthorizationUrl</code></dd>
+                <dt>@localizer["Std.Platform.Token"]</dt><dd><code>@Model.TokenUrl</code></dd>
+                <dt>@localizer["Std.Platform.Kid"]</dt><dd>@if (Model.ActiveKid == null) {<span class="text-muted">@localizer["Std.Platform.NoKey"]</span>} else {<code>@Model.ActiveKid</code>}</dd>
+            </dl>
+        </div>
+    </div>
+}

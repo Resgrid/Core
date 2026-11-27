@@ -15,6 +15,14 @@
     ViewBag.Title = "Resgrid | " + Model.Form.Name;
     var run = Model.Completion;
     var state = (ChecklistRunState)run.State;
+    // The run keeps user ids; show the member's name (a user whose profile is gone reads "Former member", never the raw id).
+    async Task<string> MemberName(string userId)
+    {
+        var name = string.IsNullOrWhiteSpace(userId) ? null : await UserHelper.GetFullNameForUser(userId);
+        return string.IsNullOrWhiteSpace(name) ? localizer["FormerMember"].Value : name;
+    }
+    var authorName = await MemberName(run.CreatedBy);
+    var witnessName = run.WitnessedOn.HasValue ? await MemberName(run.WitnessUserId) : null;
     ViewData["Tab"] = "Index";
     ViewData["Title"] = Model.Form.Name;
     ViewData["ParentText"] = localizer["History"].Value;
@@ -65,12 +73,12 @@
 
             <dl class="dl-horizontal">
                 <dt>@localizer["Score"]</dt><dd>@(run.Score.HasValue ? run.Score + "%" : localizer["NoScore"].Value)</dd>
-                <dt>@localizer["Author"]</dt><dd>@run.CreatedBy</dd>
+                <dt>@localizer["Author"]</dt><dd>@authorName</dd>
                 <dt>@localizer["Submitted"]</dt><dd>@departmentTime.Format(run.SubmittedOn)</dd>
                 <dt>@localizer["Version"]</dt><dd>@Model.VersionNumber</dd>
                 @if (run.WitnessedOn.HasValue)
                 {
-                    <dt>@localizer["WitnessLabel"]</dt><dd>@run.WitnessUserId &middot; @departmentTime.Format(run.WitnessedOn)</dd>
+                    <dt>@localizer["WitnessLabel"]</dt><dd>@witnessName &middot;@departmentTime.Format(run.WitnessedOn)</dd>
                     <dt>@localizer["Attestation"]</dt><dd>@Model.WitnessAttestation</dd>
                 }
             </dl>
@@ -133,10 +141,16 @@
                 <p class="text-muted">@localizer["ReportedLocation"]: @Model.Input.Latitude, @Model.Input.Longitude</p>
             }
 
+            @* e-Signature S3 (free with Checklists): a form that requires it is witnessed with an L2 signature bound to the completion's content. *@
+            @if (Model.Form.RequiresIndependentWitness && Model.Form.RequireWitnessSignature && run.State != (int)ChecklistRunState.InProgress)
+            {
+                @await Component.InvokeAsync("ChecklistWitnessSignature", new { completionId = run.Id })
+            }
+
             @if (run.State == (int)ChecklistRunState.AwaitingWitness)
             {
                 <div class="alert alert-info"><i class="fa fa-user-plus"></i> @localizer["WitnessInstructions"]</div>
-                @if (run.CreatedBy != (string)ViewBag.ChecklistUserId && ViewBag.ChecklistsEnabled == true)
+                @if (run.CreatedBy != (string)ViewBag.ChecklistUserId && ViewBag.ChecklistsEnabled == true && !(Model.Form.RequiresIndependentWitness && Model.Form.RequireWitnessSignature))
                 {
                     <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#checklist-witness">@localizer["Attest"]</button>
                     <div class="modal fade rgw-modal" id="checklist-witness" tabindex="-1" role="dialog" aria-labelledby="checklist-witness-title">

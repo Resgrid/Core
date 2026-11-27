@@ -430,6 +430,87 @@ namespace Resgrid.Services
 			}
 		}
 
+		// ── Signing assertions (S0: an L2 signature bound to the artifact hash) ───────
+
+		public async Task<PasskeyCeremonyStart> BeginSigningAssertionAsync(PasskeyCaller caller, string artifactSha256, CancellationToken cancellationToken = default)
+		{
+			const AuthenticationChallengePurpose purpose = AuthenticationChallengePurpose.SensitiveOperation;
+			if (caller?.ChallengeParentId == null)
+				return PasskeyCeremonyStart.Of(PasskeyOutcome.SessionRequired);
+			if (!ParentFits(caller, purpose) || !SignaturePolicy.IsSha256(artifactSha256))
+				return PasskeyCeremonyStart.Of(PasskeyOutcome.InvalidRequest);
+			if (!IsAssertionAvailable(caller.ClientApplication, purpose))
+				return PasskeyCeremonyStart.Of(PasskeyOutcome.Unavailable);
+
+			try
+			{
+				var party = _registry.Get(caller.ClientApplication);
+				var mine = BoundTo(await _passkeys.GetActiveForUserAsync(caller.UserId, cancellationToken), caller.ClientApplication, party.RpId).ToList();
+				if (mine.Count == 0)
+					return PasskeyCeremonyStart.Of(PasskeyOutcome.NotRegisteredForClient);
+
+				var challengeBytes = SignaturePolicy.PasskeyChallengeFor(artifactSha256.ToLowerInvariant(), RandomNumberGenerator.GetBytes(16));
+				var options = _provider.CreateAssertionOptions(caller.ClientApplication, mine.Select(p => p.CredentialId).ToList(), challengeBytes);
+				var challenge = await _challenges.CreateAsync(Binding(caller, purpose, caller.DepartmentId), party.RpId, options, cancellationToken);
+				return challenge == null
+					? PasskeyCeremonyStart.Of(PasskeyOutcome.TooManyRequests)
+					: new PasskeyCeremonyStart { Outcome = PasskeyOutcome.Succeeded, RequestId = challenge.AuthenticationChallengeId, OptionsJson = options };
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "Passkey signing could not be started.");
+				return PasskeyCeremonyStart.Of(PasskeyOutcome.ServiceUnavailable);
+			}
+		}
+
+		public async Task<PasskeyAssertionResult> CompleteSigningAssertionAsync(PasskeyCaller caller, string requestId, string credentialJson, string artifactSha256,
+			CancellationToken cancellationToken = default)
+		{
+			const AuthenticationChallengePurpose purpose = AuthenticationChallengePurpose.SensitiveOperation;
+			if (caller?.ChallengeParentId == null)
+				return PasskeyAssertionResult.Of(PasskeyOutcome.SessionRequired);
+			if (!ParentFits(caller, purpose) || !SignaturePolicy.IsSha256(artifactSha256) || !IsCeremonyInput(requestId, credentialJson))
+				return PasskeyAssertionResult.Of(PasskeyOutcome.InvalidRequest);
+
+			try
+			{
+				// The challenge that was issued must carry the hash of the content being signed now; a ceremony begun for other
+				// content (an edit in between, another version) can never sign this one.
+				var lookup = await _challenges.GetForCompletionAsync(requestId, Binding(caller, purpose, caller.DepartmentId), cancellationToken);
+				if (!lookup.IsUsable)
+					return PasskeyAssertionResult.Of(Map(lookup.Outcome));
+				if (!SignaturePolicy.ChallengeEmbeds(ChallengeOf(lookup.Challenge.OptionsJson), artifactSha256.ToLowerInvariant()))
+					return PasskeyAssertionResult.Of(PasskeyOutcome.InvalidRequest);
+			}
+			catch (Exception ex) when (!(ex is OperationCanceledException))
+			{
+				Logging.LogException(ex, "Passkey signing could not be checked.");
+				return PasskeyAssertionResult.Of(PasskeyOutcome.ServiceUnavailable);
+			}
+
+			return await CompleteAssertionAsync(caller, purpose, requestId, credentialJson, cancellationToken);
+		}
+
+		/// <summary>The challenge bytes of stored assertion options (base64url in the "challenge" member); null when unreadable.</summary>
+		internal static byte[] ChallengeOf(string optionsJson)
+		{
+			if (string.IsNullOrWhiteSpace(optionsJson))
+				return null;
+			try
+			{
+				using var document = System.Text.Json.JsonDocument.Parse(optionsJson);
+				if (!document.RootElement.TryGetProperty("challenge", out var value) || value.ValueKind != System.Text.Json.JsonValueKind.String)
+					return null;
+				var text = value.GetString().Replace('-', '+').Replace('_', '/');
+				text = text.PadRight(text.Length + (4 - text.Length % 4) % 4, '=');
+				return Convert.FromBase64String(text);
+			}
+			catch (Exception ex) when (ex is System.Text.Json.JsonException || ex is FormatException || ex is InvalidOperationException)
+			{
+				return null;
+			}
+		}
+
 		// ── Rules ─────────────────────────────────────────────────────────────────────
 
 		private static int MaxDisplayNameLength => Math.Max(1, PasskeyConfig.MaxDisplayNameLength);

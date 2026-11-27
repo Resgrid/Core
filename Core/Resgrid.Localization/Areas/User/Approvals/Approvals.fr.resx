@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboveAmountNote" xml:space="preserve">
+    <value>(au-dessus de {0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Activée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddDelegateHeading" xml:space="preserve">
+    <value>Ajouter un suppléant</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementDeletedMessage" xml:space="preserve">
+    <value>L'accord a été supprimé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementInvalidMessage" xml:space="preserve">
+    <value>L'accord n'a pas pu être enregistré. Vérifiez le titre et les dates ; un accord approuvé ne peut plus être modifié.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementSavedMessage" xml:space="preserve">
+    <value>L'accord a été enregistré.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementTitleLabel" xml:space="preserve">
+    <value>Accord</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementsIntro" xml:space="preserve">
+    <value>Les accords d'entraide que votre département approuve et scelle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementsTab" xml:space="preserve">
+    <value>Accords d'entraide</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllMyApprovalsLink" xml:space="preserve">
+    <value>Toutes mes approbations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllowSelfApprovalLabel" xml:space="preserve">
+    <value>Autoriser le demandeur à approuver</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AmountColumn" xml:space="preserve">
+    <value>Montant</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyErrorNote" xml:space="preserve">
+    <value>L'approbation est maintenue, mais le module n'a pas pu l'appliquer (ses propres règles l'ont refusée). Terminez l'étape dans le module.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsHeading" xml:space="preserve">
+    <value>Approbations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsModuleTitle" xml:space="preserve">
+    <value>Approbations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Approuver</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovePanelTitle" xml:space="preserve">
+    <value>Votre approbation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedByColumn" xml:space="preserve">
+    <value>Approuvé par</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Votre approbation a été enregistrée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedStepsLabel" xml:space="preserve">
+    <value>Étapes approuvées</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverColumn" xml:space="preserve">
+    <value>Approbateur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Annuler</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CandidatesHeading" xml:space="preserve">
+    <value>Prêts à soumettre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationTypeLabel" xml:space="preserve">
+    <value>Type de certification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainDeactivatedMessage" xml:space="preserve">
+    <value>La chaîne a été désactivée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainEditorHelp" xml:space="preserve">
+    <value>Les étapes portant le même numéro se déroulent en parallèle et toutes doivent approuver. Un seuil limite une étape aux montants supérieurs. L'enregistrement crée une nouvelle version ; les demandes déjà soumises conservent les étapes avec lesquelles elles ont commencé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainNameLabel" xml:space="preserve">
+    <value>Nom de la chaîne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainSavedMessage" xml:space="preserve">
+    <value>La chaîne d'approbation a été enregistrée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainsIntro" xml:space="preserve">
+    <value>Qui approuve quoi, dans quel ordre, au-dessus de quels montants, et quand une étape bloquée est escaladée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainsTab" xml:space="preserve">
+    <value>Chaînes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangedSinceApproval" xml:space="preserve">
+    <value>Ceci a été modifié après son approbation. L'approbation ne compte plus ; soumettez-le à nouveau.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangedSinceSubmission" xml:space="preserve">
+    <value>Ceci a été modifié après sa soumission. Les approbations précédentes ne sont pas reprises ; soumettez-le à nouveau.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Code de contenu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeactivateChainButton" xml:space="preserve">
+    <value>Désactiver</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecidedColumn" xml:space="preserve">
+    <value>Décidé le</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DefineChainButton" xml:space="preserve">
+    <value>Définir une chaîne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateForLabel" xml:space="preserve">
+    <value>Membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateHelp" xml:space="preserve">
+    <value>Pendant l'absence du membre, ses étapes d'approbation nominatives sont aussi envoyées à son suppléant. Avec des dates, le suppléant le remplace aussi entre ces dates.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateInvalidMessage" xml:space="preserve">
+    <value>Le suppléant n'a pas pu être enregistré. Choisissez deux membres actifs différents et des dates valides.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateLabel" xml:space="preserve">
+    <value>Suppléant</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateRemovedMessage" xml:space="preserve">
+    <value>Le suppléant a été retiré.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateSavedMessage" xml:space="preserve">
+    <value>Le suppléant a été enregistré.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegatedNote" xml:space="preserve">
+    <value>Délégué : l'approbateur désigné est absent</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegatesIntro" xml:space="preserve">
+    <value>Qui approuve pour un membre pendant son absence.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegatesTab" xml:space="preserve">
+    <value>Suppléants</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteAgreementButton" xml:space="preserve">
+    <value>Supprimer l'accord</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DepartmentLinkLabel" xml:space="preserve">
+    <value>Lien de département</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DownloadSealedLink" xml:space="preserve">
+    <value>Télécharger le document scellé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>échéance : {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Échéance</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditChainButton" xml:space="preserve">
+    <value>Modifier la chaîne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditChainTitle" xml:space="preserve">
+    <value>Chaîne d'approbation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>En vigueur le</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndsLabel" xml:space="preserve">
+    <value>Fin</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalatedLabel" xml:space="preserve">
+    <value>Escaladé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalatesAfterNote" xml:space="preserve">
+    <value>(escalade après {0} h)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalationColumn" xml:space="preserve">
+    <value>Escalade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresInDaysLabel" xml:space="preserve">
+    <value>Expire après (jours)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Groupe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Accueil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursPlaceholder" xml:space="preserve">
+    <value>Heures (vide : jamais)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyApprovalsIntro" xml:space="preserve">
+    <value>Les demandes en attente de votre approbation, et celles que vous avez soumises.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyApprovalsTab" xml:space="preserve">
+    <value>Mes approbations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyApprovalsTitle" xml:space="preserve">
+    <value>Mes approbations</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Mes soumissions en attente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewAgreementButton" xml:space="preserve">
+    <value>Nouvel accord</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextApprovalLabel" xml:space="preserve">
+    <value>À approuver ensuite</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAgreements" xml:space="preserve">
+    <value>Aucun accord d'entraide pour l'instant.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoApprovalYet" xml:space="preserve">
+    <value>Pas encore soumis pour approbation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCandidates" xml:space="preserve">
+    <value>Rien n'attend d'être soumis.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoChainDefined" xml:space="preserve">
+    <value>Aucune chaîne : ces éléments ne nécessitent pas d'approbation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDelegates" xml:space="preserve">
+    <value>Aucun suppléant.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPendingSubmissions" xml:space="preserve">
+    <value>Rien en attente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRequests" xml:space="preserve">
+    <value>Aucune demande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingToApprove" xml:space="preserve">
+    <value>Rien n'attend votre approbation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnLeaveOnly" xml:space="preserve">
+    <value>Pendant l'absence</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenInModuleLink" xml:space="preserve">
+    <value>Ouvrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenRequestLink" xml:space="preserve">
+    <value>Ouvrir</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerLabel" xml:space="preserve">
+    <value>Département partenaire</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerSignatureOwedNote" xml:space="preserve">
+    <value>La chaîne de votre département approuve et scelle cet accord. Le contreseing du département partenaire via le lien de département n'est pas encore disponible.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PayrollRunsNote" xml:space="preserve">
+    <value>Les traitements de paie auront une chaîne d'approbation lorsque les traitements de paie existeront dans Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingApprovalsHeader" xml:space="preserve">
+    <value>En attente de votre approbation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingInDepartmentHeader" xml:space="preserve">
+    <value>En attente dans le département</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingSubmittedLabel" xml:space="preserve">
+    <value>En attente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Rejeter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectHeading" xml:space="preserve">
+    <value>Rejeter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Motif</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>La demande a été rejetée et le demandeur a été informé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Supprimer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestsIntro" xml:space="preserve">
+    <value>Toutes les demandes d'approbation du département.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestsTab" xml:space="preserve">
+    <value>Demandes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Examiner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>Rôle</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveAgreementButton" xml:space="preserve">
+    <value>Enregistrer l'accord</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveChainButton" xml:space="preserve">
+    <value>Enregistrer la chaîne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveDelegateButton" xml:space="preserve">
+    <value>Enregistrer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealedNote" xml:space="preserve">
+    <value>Approuvé et scellé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingPendingNote" xml:space="preserve">
+    <value>Approuvé. Scellement en attente : le document scellé sera produit dès que le service de scellement sera disponible.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartsLabel" xml:space="preserve">
+    <value>Début</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Statut</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepApproved" xml:space="preserve">
+    <value>Approuvée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Étape</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepLabelPlaceholder" xml:space="preserve">
+    <value>Nom de l'étape (facultatif)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepNotYet" xml:space="preserve">
+    <value>Pas encore</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>#</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepRejected" xml:space="preserve">
+    <value>Rejetée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepWaiting" xml:space="preserve">
+    <value>En attente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Étapes</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>Les étapes se déroulent dans l'ordre ; celles qui portent le même numéro se déroulent en parallèle. Chaque approbation est signée au niveau 2 et liée au code de contenu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectColumn" xml:space="preserve">
+    <value>Objet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectGroupOption" xml:space="preserve">
+    <value>Le groupe propre à l'objet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectHeading" xml:space="preserve">
+    <value>Ce qui est approuvé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Soumettre pour approbation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitHeading" xml:space="preserve">
+    <value>Soumettre pour approbation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedByLine" xml:space="preserve">
+    <value>Soumis par {0} le {1} UTC</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Soumis le</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Soumis pour approbation. Les approbateurs ont été informés.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TermsLabel" xml:space="preserve">
+    <value>Conditions</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ThresholdColumn" xml:space="preserve">
+    <value>Uniquement au-dessus de</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UseStepColumn" xml:space="preserve">
+    <value>Utiliser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WaitingForMeLabel" xml:space="preserve">
+    <value>En attente de moi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WindowColumn" xml:space="preserve">
+    <value>Quand</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Retirer la demande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>La demande a été retirée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Demandes d'achat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindIncidentPlanApproval" xml:space="preserve">
+    <value>Plans d'action de l'incident (IAP)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindInvoiceApproval" xml:space="preserve">
+    <value>Factures</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindPayrollRunApproval" xml:space="preserve">
+    <value>Traitements de paie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Dossiers Cal OES MARS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindMutualAidAgreementApproval" xml:space="preserve">
+    <value>Accords d'entraide</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusPending" xml:space="preserve">
+    <value>En attente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Approuvée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusRejected" xml:space="preserve">
+    <value>Rejetée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusWithdrawn" xml:space="preserve">
+    <value>Retirée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSuperseded" xml:space="preserve">
+    <value>Remplacée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Expirée</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverRole" xml:space="preserve">
+    <value>Toute personne ayant un rôle</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverNamedMember" xml:space="preserve">
+    <value>Un membre désigné</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverGroupAdmin" xml:space="preserve">
+    <value>Administrateurs du groupe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverCertifyingOfficial" xml:space="preserve">
+    <value>Responsable de la certification</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverDepartmentAdmins" xml:space="preserve">
+    <value>Administrateurs du département</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalateToDepartmentAdmins" xml:space="preserve">
+    <value>Escalader aux administrateurs du département</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalateToRole" xml:space="preserve">
+    <value>Escalader à un rôle</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalateToNamedMember" xml:space="preserve">
+    <value>Escalader à un membre</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusDraft" xml:space="preserve">
+    <value>Brouillon</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusInApproval" xml:space="preserve">
+    <value>En cours d'approbation</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusApproved" xml:space="preserve">
+    <value>Approuvé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusWithdrawn" xml:space="preserve">
+    <value>Retiré</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Terminé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>La demande n'a pas pu être traitée.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>L'élément n'existe plus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalModuleUnavailable" xml:space="preserve">
+    <value>Ce module ou son module complémentaire n'est pas actif pour votre département.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNoChain" xml:space="preserve">
+    <value>Votre département n'a pas de chaîne d'approbation pour ces éléments.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalAlreadyPending" xml:space="preserve">
+    <value>Ceci attend déjà une approbation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalUnchanged" xml:space="preserve">
+    <value>Rien n'a changé depuis l'approbation ou le rejet. Modifiez-le avant de le soumettre à nouveau.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotSubmittable" xml:space="preserve">
+    <value>Ceci ne peut pas être soumis dans son état actuel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalClosed" xml:space="preserve">
+    <value>Cette demande n'est plus en attente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSubjectChanged" xml:space="preserve">
+    <value>Ceci a été modifié après sa soumission. Soumettez-le à nouveau.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotAnApprover" xml:space="preserve">
+    <value>Vous n'êtes pas approbateur pour cette étape.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Une étape précédente doit d'abord approuver.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Confirmez votre identité (vérification en deux étapes ou clé d'accès) pour approuver.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Votre département exige une clé d'accès pour cette approbation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalReasonRequired" xml:space="preserve">
+    <value>Indiquez un motif de rejet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNoApprover" xml:space="preserve">
+    <value>Une étape ne désigne personne pouvant l'approuver. Vérifiez les rôles et les membres de la chaîne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotAllowed" xml:space="preserve">
+    <value>Seul le demandeur ou un administrateur du département peut faire cela.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSignatureFailed" xml:space="preserve">
+    <value>L'approbation n'a pas pu être signée. Réessayez.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotRequired" xml:space="preserve">
+    <value>Aucune étape de la chaîne ne s'applique à ce montant : aucune approbation n'est nécessaire.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindMutualAidAgreementCountersignature" xml:space="preserve">
+    <value>Contresignature d'accord d'entraide</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerCountersignNote" xml:space="preserve">
+    <value>Choisissez un Lien de département et cochez la case ci-dessous pour que le département partenaire contresigne une fois que votre circuit d'approbation a approuvé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiresCountersignatureLabel" xml:space="preserve">
+    <value>Le département partenaire contresigne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiresCountersignatureHelp" xml:space="preserve">
+    <value>Après l'approbation de votre circuit, l'accord est envoyé via le lien ; l'un des administrateurs du département partenaire le contresigne sur la base du même contenu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignNone" xml:space="preserve">
+    <value>La contresignature du partenaire est demandée une fois l'accord approuvé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignRequested" xml:space="preserve">
+    <value>En attente de la contresignature du département partenaire.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignCountersigned" xml:space="preserve">
+    <value>Contresigné par le département partenaire.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignDeclined" xml:space="preserve">
+    <value>Le département partenaire a refusé ou a laissé la demande expirer. Copiez l'accord dans une nouvelle ébauche pour réessayer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignLapsed" xml:space="preserve">
+    <value>Le Lien de département a été désactivé ou supprimé avant la contresignature du partenaire.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindRecordDeploymentPartnerAcceptance" xml:space="preserve">
+    <value>Acceptation du partenaire de déploiement</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindDepartmentLinkAcceptance" xml:space="preserve">
+    <value>Acceptation du lien</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

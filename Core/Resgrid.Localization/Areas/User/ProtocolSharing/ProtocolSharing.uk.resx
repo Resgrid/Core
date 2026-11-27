@@ -1,0 +1,1157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AckDetail" xml:space="preserve">
+    <value>Підписано {0} з {1}, прострочено {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>Усі типи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AlreadyImported" xml:space="preserve">
+    <value>Ваш підрозділ уже імпортував цей елемент.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsHeader" xml:space="preserve">
+    <value>Аналітика протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsIntro" xml:space="preserve">
+    <value>Як протоколи використовуються на викликах, як кодуються випадки, скільки часу команди на них витрачають, хто підтвердив ознайомлення з ними та що люди шукають і не можуть знайти.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsTab" xml:space="preserve">
+    <value>Аналітика</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsTruncated" xml:space="preserve">
+    <value>За цей період протоколи використано на викликах понад {0} разів; враховано лише найновіші.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnalyticsUnavailable" xml:space="preserve">
+    <value>Аналітика доступна авторам і затверджувачам протоколів та адміністраторам підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyButton" xml:space="preserve">
+    <value>Застосувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttestationText" xml:space="preserve">
+    <value>Підтверджую, що ми маємо право поширювати цей матеріал і що він не містить ліцензованого вмісту (як-от MPDS чи IntelliComm) та персональних даних.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionLicense" xml:space="preserve">
+    <value>Ліцензія:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionNameHelp" xml:space="preserve">
+    <value>Ім’я, яке зазначається під час кожного імпорту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionNameLabel" xml:space="preserve">
+    <value>Зазначати як</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttributionSource" xml:space="preserve">
+    <value>Джерело:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChooseItem" xml:space="preserve">
+    <value>Виберіть…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnActions" xml:space="preserve">
+    <value>Дії</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnAddress" xml:space="preserve">
+    <value>Адреса</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnContributor" xml:space="preserve">
+    <value>Автор внеску</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnCreated" xml:space="preserve">
+    <value>Створено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnDeterminant" xml:space="preserve">
+    <value>Детермінанта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnFlags" xml:space="preserve">
+    <value>Виявлене</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnImports" xml:space="preserve">
+    <value>Імпорти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnKind" xml:space="preserve">
+    <value>Тип</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnLicense" xml:space="preserve">
+    <value>Ліцензія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnListed" xml:space="preserve">
+    <value>Розміщено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnQuery" xml:space="preserve">
+    <value>Запит</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnRating" xml:space="preserve">
+    <value>Оцінка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnShown" xml:space="preserve">
+    <value>На сторінці</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnStatus" xml:space="preserve">
+    <value>Статус</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnSubmitted" xml:space="preserve">
+    <value>Надіслано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnTimes" xml:space="preserve">
+    <value>Разів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnTitle" xml:space="preserve">
+    <value>Назва</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ColumnWhere" xml:space="preserve">
+    <value>Де</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentButton" xml:space="preserve">
+    <value>Коментувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentHelp" xml:space="preserve">
+    <value>Звичайний текст. У коментарях показується назва вашого підрозділу, а не ваше ім’я.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentHidden" xml:space="preserve">
+    <value>приховано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentLabel" xml:space="preserve">
+    <value>Додати коментар</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsHeader" xml:space="preserve">
+    <value>Коментарі ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckAssigned" xml:space="preserve">
+    <value>Призначені підтвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckCompliance" xml:space="preserve">
+    <value>Виконання підтверджень</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckOverdue" xml:space="preserve">
+    <value>Прострочені підтвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAckSigned" xml:space="preserve">
+    <value>Підписані підтвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvButton" xml:space="preserve">
+    <value>CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvByAi" xml:space="preserve">
+    <value>За пропозицією ШІ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvByDispatcher" xml:space="preserve">
+    <value>Диспетчером</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvByTrigger" xml:space="preserve">
+    <value>За тригером</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCalls" xml:space="preserve">
+    <value>Виклики</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDeterminants" xml:space="preserve">
+    <value>Детермінанти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvMeanMinutes" xml:space="preserve">
+    <value>Середнє хвилин за протоколом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvMedianMinutes" xml:space="preserve">
+    <value>Медіана хвилин за протоколом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvName" xml:space="preserve">
+    <value>Протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvNumber" xml:space="preserve">
+    <value>Номер</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverridden" xml:space="preserve">
+    <value>Перевизначено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverrideRate" xml:space="preserve">
+    <value>Частка перевизначень</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvRemoved" xml:space="preserve">
+    <value>Вилучено з викликів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvTimedCalls" xml:space="preserve">
+    <value>Виклики з хронометражем</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvVersions" xml:space="preserve">
+    <value>Виклики за версіями</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvWithDeterminant" xml:space="preserve">
+    <value>Виклики з детермінантою</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHeader" xml:space="preserve">
+    <value>Перевірка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecideHelp" xml:space="preserve">
+    <value>Для відхилення потрібна примітка; автор внеску її бачить.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantsEmpty" xml:space="preserve">
+    <value>За цей період жоден виклик не було закодовано за сценарієм випадку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantsHeader" xml:space="preserve">
+    <value>Розподіл детермінант</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityAudienceRestricted" xml:space="preserve">
+    <value>Обмежено аудиторією, тому ніколи не буває публічним</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityDisabled" xml:space="preserve">
+    <value>Вимкнено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityDocumentBacked" xml:space="preserve">
+    <value>Версії із завантаженим документом не показуються публічно</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityEligible" xml:space="preserve">
+    <value>Може бути публічним</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityLicensedContent" xml:space="preserve">
+    <value>Ліцензований вміст ніколи не буває публічним</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EligibilityNotPublished" xml:space="preserve">
+    <value>Не опубліковано (чернетки ніколи не бувають публічними)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeCommentHidden" xml:space="preserve">
+    <value>Коментар приховано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeCommented" xml:space="preserve">
+    <value>Коментар додано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeCount" xml:space="preserve">
+    <value>Розміщених елементів: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeEmpty" xml:space="preserve">
+    <value>Поки що нічого не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorAttestationRequired" xml:space="preserve">
+    <value>Підтвердьте заяву перед надсиланням.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorDocumentBacked" xml:space="preserve">
+    <value>Протокол, вмістом якого є завантажений документ, не можна поширювати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorImportFailed" xml:space="preserve">
+    <value>Імпорт не завершено. Нічого не створено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorInvalidInput" xml:space="preserve">
+    <value>Перевірте введені дані та спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorKindUnavailable" xml:space="preserve">
+    <value>Цей тип елементів недоступний на цьому сервері.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorLicenseRequired" xml:space="preserve">
+    <value>Виберіть ліцензію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorLicensedContent" xml:space="preserve">
+    <value>Ліцензований вміст (або вміст із позначкою «без ШІ», оскільки він ліцензований) ніколи не можна поширювати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorLmsRequired" xml:space="preserve">
+    <value>Це елемент типу LMS; для його імпорту потрібне доповнення LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNone" xml:space="preserve">
+    <value>Готово.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNotAuthorized" xml:space="preserve">
+    <value>У вас немає прав на цю дію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNotFound" xml:space="preserve">
+    <value>Цей елемент не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorNotPublished" xml:space="preserve">
+    <value>Поширювати можна лише опубліковану чинну версію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorOwnListing" xml:space="preserve">
+    <value>Підрозділ не може оцінювати власний внесок.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorPayloadChanged" xml:space="preserve">
+    <value>Елемент більше не відповідає перевіреній версії; його не можна імпортувати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeErrorWrongStatus" xml:space="preserve">
+    <value>Це неможливо, поки елемент має поточний статус.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeFreeNote" xml:space="preserve">
+    <value>Обмін спільноти безкоштовний для кожного підрозділу. Для використання імпортованих елементів LMS (картки навичок, плани занять) потрібне доповнення LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeHeader" xml:space="preserve">
+    <value>Обмін спільноти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeImported" xml:space="preserve">
+    <value>Імпортовано. Перевірте, адаптуйте та опублікуйте як власний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeIntro" xml:space="preserve">
+    <value>Протоколи та навчання, якими діляться інші підрозділи; перед розміщенням їх перевіряє Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeListed" xml:space="preserve">
+    <value>Розміщено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeRated" xml:space="preserve">
+    <value>Дякуємо за оцінку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeRejected" xml:space="preserve">
+    <value>Відхилено; автор внеску бачить вашу примітку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeRemoved" xml:space="preserve">
+    <value>Знято.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeSubmitted" xml:space="preserve">
+    <value>Дякуємо. Ваш внесок очікує перевірки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeTab" xml:space="preserve">
+    <value>Обмін спільноти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExchangeWithdrawn" xml:space="preserve">
+    <value>Відкликано з обміну.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportCount" xml:space="preserve">
+    <value>Протоколів у бібліотеці: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportHeader" xml:space="preserve">
+    <value>Відкритий формат і експорт</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportHtmlButton" xml:space="preserve">
+    <value>HTML</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportHtmlHelp" xml:space="preserve">
+    <value>HTML: один автономний файл із чинними версіями, які ви можете читати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportImportHint" xml:space="preserve">
+    <value>Будь-який підрозділ Resgrid (або інша система) може імпортувати файл JSON:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportImportLink" xml:space="preserve">
+    <value>Імпорт протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportIntro" xml:space="preserve">
+    <value>Забирайте свої протоколи з собою: задокументований відкритий формат JSON, один файл HTML або книга PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportJsonButton" xml:space="preserve">
+    <value>Відкритий формат (JSON)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportJsonHelp" xml:space="preserve">
+    <value>JSON: блоки, історія версій, граф рішень, затверджені переклади та список вкладень (формат resgrid-protocols, версія 2). Файли лише перелічено, але не включено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportLibraryTitle" xml:space="preserve">
+    <value>Бібліотека протоколів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Книга PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportPdfHelp" xml:space="preserve">
+    <value>PDF: книга протоколів, запечатана, якщо налаштовано запечатування документів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportSetLabel" xml:space="preserve">
+    <value>Набір</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportTab" xml:space="preserve">
+    <value>Відкритий формат</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportWholeLibrary" xml:space="preserve">
+    <value>Уся бібліотека</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagAttachmentRemoved" xml:space="preserve">
+    <value>Вкладення або завантажене зображення видалено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagConfigurationRemoved" xml:space="preserve">
+    <value>Тригери, аудиторію та номер видалено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagContactRemoved" xml:space="preserve">
+    <value>Контакт медичного контролю видалено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagDepartmentNameRemoved" xml:space="preserve">
+    <value>Назву підрозділу замінено на [Department]</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagEmailRemoved" xml:space="preserve">
+    <value>Адресу електронної пошти видалено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagInternalLinkRemoved" xml:space="preserve">
+    <value>Посилання на власні записи підрозділу видалено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagInventoryLinkRemoved" xml:space="preserve">
+    <value>Посилання на інвентар видалено з препарату</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagPhoneNumber" xml:space="preserve">
+    <value>Знайдено номер телефону (залишено; його перевіряє рецензент)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagsHeader" xml:space="preserve">
+    <value>Що вилучено або позначено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FlagsHelp" xml:space="preserve">
+    <value>Дані, специфічні для підрозділу, вилучаються перед поширенням; номери телефонів залишаються, і їх перевіряє рецензент. Якщо щось не слід поширювати, змініть елемент у своїй бібліотеці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>З</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsEmpty" xml:space="preserve">
+    <value>За цей період немає пошуків без результатів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsHeader" xml:space="preserve">
+    <value>Прогалини в протоколах</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GapsHelp" xml:space="preserve">
+    <value>Пошуки в бібліотеці протоколів, які нічого не знайшли: протоколи, які люди шукають, але яких, можливо, ще немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HideCommentButton" xml:space="preserve">
+    <value>Приховати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Імпортувати копію</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportHeader" xml:space="preserve">
+    <value>Імпорт</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Створює у вашому підрозділі копію як чернетку (або нове навчання), яку можна змінювати, зі збереженням зазначення автора внеску.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportNeedsLms" xml:space="preserve">
+    <value>Це елемент LMS: для його імпорту потрібне доповнення LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportNotAllowed" xml:space="preserve">
+    <value>Імпортувати це можуть автори протоколів (або, для навчань, їхні творці).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindLessonPlan" xml:space="preserve">
+    <value>План заняття</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindProtocol" xml:space="preserve">
+    <value>Протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindSkillSheet" xml:space="preserve">
+    <value>Картка навичок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemKindTraining" xml:space="preserve">
+    <value>Навчання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemLabel" xml:space="preserve">
+    <value>Елемент</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Тип</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicenseHelp" xml:space="preserve">
+    <value>Інші підрозділи можуть використовувати та змінювати ваш внесок на умовах цієї ліцензії.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>Ліцензія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="License_CC010" xml:space="preserve">
+    <value>CC0 1.0 (суспільне надбання)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="License_CCBY40" xml:space="preserve">
+    <value>CC BY 4.0 (із зазначенням автора)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="License_CCBYSA40" xml:space="preserve">
+    <value>CC BY-SA 4.0 (із зазначенням автора, на тих самих умовах)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListButton" xml:space="preserve">
+    <value>Розмістити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingContributed" xml:space="preserve">
+    <value>Внесок: {0}, {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusListed" xml:space="preserve">
+    <value>Розміщено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusPendingReview" xml:space="preserve">
+    <value>Очікує перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusRejected" xml:space="preserve">
+    <value>Не прийнято</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusRemoved" xml:space="preserve">
+    <value>Знято</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingStatusWithdrawn" xml:space="preserve">
+    <value>Відкликано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ListingVersion" xml:space="preserve">
+    <value>Версія {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinutesValue" xml:space="preserve">
+    <value>{0} хв</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsEmpty" xml:space="preserve">
+    <value>Ваш підрозділ ще нічого не надсилав.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Наші внески</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsIntro" xml:space="preserve">
+    <value>Що надіслав ваш підрозділ і на якому етапі кожен елемент.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsTab" xml:space="preserve">
+    <value>Наші внески</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoComments" xml:space="preserve">
+    <value>Коментарів ще немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoFlags" xml:space="preserve">
+    <value>Даних, специфічних для підрозділу, не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotRated" xml:space="preserve">
+    <value>Без оцінки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PagingLabel" xml:space="preserve">
+    <value>Сторінки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Попередній перегляд</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Що створить імпорт</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCategoryLabel" xml:space="preserve">
+    <value>Категорія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicContentCodeHelp" xml:space="preserve">
+    <value>Код вмісту: збігається з друкованою копією цієї версії</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicContents" xml:space="preserve">
+    <value>Зміст</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCreateButton" xml:space="preserve">
+    <value>Зробити публічним</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCreateConfirm" xml:space="preserve">
+    <value>Будь-хто, хто має адресу, зможе це прочитати. Продовжити?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicCreated" xml:space="preserve">
+    <value>Публічна сторінка активна.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicDisclaimer" xml:space="preserve">
+    <value>Опубліковано: {0}. Це власні настанови підрозділу для його членів; вони не є медичною чи юридичною консультацією для інших осіб.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEffective" xml:space="preserve">
+    <value>Чинна з {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEligibleCount" xml:space="preserve">
+    <value>Протоколи, які можуть бути публічними</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedAnySite" xml:space="preserve">
+    <value>Вбудувати може будь-який сайт https.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedLabel" xml:space="preserve">
+    <value>Дозволити вбудовування на інших сайтах</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedSites" xml:space="preserve">
+    <value>Можна вбудувати на: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicEmbedSnippet" xml:space="preserve">
+    <value>Код вбудовування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorAlreadyPublic" xml:space="preserve">
+    <value>Для цього вже є активна публічна сторінка.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorInvalidOrigins" xml:space="preserve">
+    <value>Сайти для вбудовування мають бути адресами https, наприклад https://www.example.org (не більше 10).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNone" xml:space="preserve">
+    <value>Готово.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNotAuthorized" xml:space="preserve">
+    <value>Керувати публічними сторінками можуть лише затверджувачі протоколів і адміністратори підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNotEligible" xml:space="preserve">
+    <value>Цей протокол не можна зробити публічним.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorNotFound" xml:space="preserve">
+    <value>Цей протокол або категорію не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicErrorTooManyLinks" xml:space="preserve">
+    <value>Підрозділ досяг максимальної кількості публічних сторінок; спочатку відкличте одну з них.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicHeader" xml:space="preserve">
+    <value>Публічні сторінки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicIntro" xml:space="preserve">
+    <value>Опублікуйте протокол або категорію за публічною адресою, за потреби з можливістю вбудовування на вашому вебсайті. Відкликати можна будь-коли.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicKindCurrent" xml:space="preserve">
+    <value>Чинна версія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicKindPinned" xml:space="preserve">
+    <value>Лише ця версія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicKindSet" xml:space="preserve">
+    <value>Набір категорії</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicLinksHeader" xml:space="preserve">
+    <value>Публічні сторінки підрозділу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicLiveCount" xml:space="preserve">
+    <value>Активні публічні сторінки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicNoLinks" xml:space="preserve">
+    <value>Немає публічних сторінок.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicNotEligibleHeader" xml:space="preserve">
+    <value>Протоколи, які не можуть бути публічними ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicNothingPublished" xml:space="preserve">
+    <value>Тут ще нічого не опубліковано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicOriginsHelp" xml:space="preserve">
+    <value>Адреси https, розділені пробілами. Залиште порожнім, щоб дозволити будь-який сайт https.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicOriginsLabel" xml:space="preserve">
+    <value>Сайти, яким дозволено вбудовування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPageTitle" xml:space="preserve">
+    <value>Протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPinHelp" xml:space="preserve">
+    <value>Коли буде опубліковано новішу версію, на сторінці буде зазначено, що ця версія більше не чинна. Не позначайте, щоб завжди показувати чинну версію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPinLabel" xml:space="preserve">
+    <value>Лише ця версія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicPoweredBy" xml:space="preserve">
+    <value>Опубліковано за допомогою Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicProtocolHeader" xml:space="preserve">
+    <value>Зробити протокол публічним</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicProtocolLabel" xml:space="preserve">
+    <value>Протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevokeButton" xml:space="preserve">
+    <value>Відкликати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevokeConfirm" xml:space="preserve">
+    <value>Відкликати цю публічну сторінку? Адреса одразу перестане працювати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevoked" xml:space="preserve">
+    <value>Публічну сторінку відкликано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicRevokedLabel" xml:space="preserve">
+    <value>Відкликано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSetCount" xml:space="preserve">
+    <value>Протоколів: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSetHeader" xml:space="preserve">
+    <value>Зробити категорію публічною як набір</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSetHelp" xml:space="preserve">
+    <value>На сторінці показано всі чинні протоколи категорії та її підкатегорій, які можуть бути публічними; інші автоматично пропускаються.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicShownCount" xml:space="preserve">
+    <value>Показано протоколів: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicShownLabel" xml:space="preserve">
+    <value>Показано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicSuperseded" xml:space="preserve">
+    <value>Ця версія більше не чинна. Зверніться до підрозділу, щоб отримати чинну версію.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicTab" xml:space="preserve">
+    <value>Публічні сторінки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublicVersion" xml:space="preserve">
+    <value>Версія {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RateButton" xml:space="preserve">
+    <value>Оцінити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RateHeader" xml:space="preserve">
+    <value>Оцінити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RateLabel" xml:space="preserve">
+    <value>Ваша оцінка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RatingValue" xml:space="preserve">
+    <value>{0} з 5 ({1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Відхилити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Зняти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewEmpty" xml:space="preserve">
+    <value>Немає нічого, що очікує перевірки.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>Черга перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewIntro" xml:space="preserve">
+    <value>Внески, що очікують перевірки Resgrid, від найстаріших.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewNoteLabel" xml:space="preserve">
+    <value>Примітка рецензента</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewTab" xml:space="preserve">
+    <value>Черга перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchButton" xml:space="preserve">
+    <value>Шукати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Пошук в обміні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Пошук за назвами, описами й тегами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingTab" xml:space="preserve">
+    <value>Поширення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortImports" xml:space="preserve">
+    <value>Найчастіше імпортовані</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortLabel" xml:space="preserve">
+    <value>Сортування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortNewest" xml:space="preserve">
+    <value>Найновіші</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortRating" xml:space="preserve">
+    <value>Найкраще оцінені</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourcesDetail" xml:space="preserve">
+    <value>Тригер {0} · диспетчер {1} · ШІ {2} · вилучено {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StarsOption" xml:space="preserve">
+    <value>{0} з 5</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitButton" xml:space="preserve">
+    <value>Надіслати на перевірку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitChooseHelp" xml:space="preserve">
+    <value>Ліцензований вміст, чернетки та протоколи із завантаженим документом не можна поширювати; вони неактивні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>Зробити внесок до обміну</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitIntro" xml:space="preserve">
+    <value>Поділіться опублікованим протоколом або навчанням з усіма підрозділами. Resgrid перевіряє кожен внесок перед розміщенням.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitStepChoose" xml:space="preserve">
+    <value>1. Виберіть, чим поділитися</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitStepPreview" xml:space="preserve">
+    <value>2. Що буде поширено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitStepSend" xml:space="preserve">
+    <value>3. Ліцензія та надсилання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitTab" xml:space="preserve">
+    <value>Запропонувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Опис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceLibrary" xml:space="preserve">
+    <value>Пошук у бібліотеці</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SurfaceUnifiedSearch" xml:space="preserve">
+    <value>Пошук</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateAuthorsOnly" xml:space="preserve">
+    <value>Клонувати шаблони можуть автори протоколів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateChooseItems" xml:space="preserve">
+    <value>Елементи для клонування</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCloneButton" xml:space="preserve">
+    <value>Клонувати як чернетки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCloned" xml:space="preserve">
+    <value>Створено чернеток із набору шаблонів: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_not_authorized" xml:space="preserve">
+    <value>Клонувати шаблони можуть лише автори протоколів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_not_found" xml:space="preserve">
+    <value>Цей набір шаблонів не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_nothing_selected" xml:space="preserve">
+    <value>Виберіть принаймні один елемент для клонування.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_too_many" xml:space="preserve">
+    <value>Забагато елементів за один раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateError_unknown_format" xml:space="preserve">
+    <value>Не вдалося прочитати цей набір шаблонів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateMeta" xml:space="preserve">
+    <value>{0} · версія {1} · елементів: {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateSkipped" xml:space="preserve">
+    <value>Не вдалося створити: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesDisclaimer" xml:space="preserve">
+    <value>Шаблони — це відправна точка. Перед публікацією звірте кожен із власними правилами, законодавством, штатним розкладом і медичним керівництвом. Набір для екстреної медичної допомоги не містить клінічного тексту: його пише ваш медичний директор.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesHeader" xml:space="preserve">
+    <value>Бібліотека шаблонів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesIntro" xml:space="preserve">
+    <value>Початкові набори, підготовлені Resgrid. Клонуйте їх як чернетки, адаптуйте, а потім перевірте й опублікуйте як власні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesTab" xml:space="preserve">
+    <value>Шаблони</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAckCompliance" xml:space="preserve">
+    <value>Виконання підтверджень</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAckDetail" xml:space="preserve">
+    <value>Підписано {0} з {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileCalls" xml:space="preserve">
+    <value>Виклики з протоколом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileGaps" xml:space="preserve">
+    <value>Пошуки без результатів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileGapsDetail" xml:space="preserve">
+    <value>Відкритих прогалин у знаннях: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileMedianTime" xml:space="preserve">
+    <value>Медіанний час за протоколом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrideDetail" xml:space="preserve">
+    <value>{0} з {1} закодованих викликів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrideRate" xml:space="preserve">
+    <value>Частка перевизначень детермінант</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimedDetail" xml:space="preserve">
+    <value>З хронометражем: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>По</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsageEmpty" xml:space="preserve">
+    <value>Протоколів ще немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsageHeader" xml:space="preserve">
+    <value>Використання за протоколами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Відкликати з обміну</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateSuggested" xml:space="preserve">
+    <value>Рекомендовано для вашої організації</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

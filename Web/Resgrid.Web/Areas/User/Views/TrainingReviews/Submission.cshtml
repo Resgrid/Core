@@ -1,0 +1,288 @@
+@using Resgrid.Model
+@using Resgrid.Services
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingSubmissionPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> text
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    One training hours submission (round 9B). A reviewer sees the member, the hours, category and notes, every evidence file inline (images
+    and PDFs; other types download) and the history, and approves, denies (reason required) or asks for more information. The member sees
+    the same with the reviewer's note and, while it is pending, adds evidence or corrections and resubmits.
+*@
+@{
+    var record = Model.Detail.Record;
+    var state = Model.State;
+    var category = Model.CategoryOf(record.CategoryId);
+    var title = Model.AsReviewer ? text["Review.Title"].Value : text["Submission.Title"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = Model.AsReviewer ? "Reviews" : "Transcript";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = record.Title;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var methodKey = LearningRecordPresentation.MethodKey(record.MethodOfTraining);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="m-b-sm">
+        @if (Model.AsReviewer)
+        {
+            <a class="btn btn-default btn-sm" asp-controller="TrainingReviews" asp-action="Index" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @text["Back.Inbox"]</a>
+        }
+        else
+        {
+            <a class="btn btn-default btn-sm" asp-controller="TrainingReviews" asp-action="Mine" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @text["Back.Mine"]</a>
+        }
+    </div>
+
+    @if (!Model.AsReviewer && state == TrainingSubmissionReviewStates.InfoRequested && !string.IsNullOrWhiteSpace(Model.ReviewerNote))
+    {
+        <div class="rgw-next-action" role="status">
+            <strong><i class="fa fa-question-circle" aria-hidden="true"></i> @text["Respond.ReviewerAsked"]</strong>
+            <p class="m-b-none m-t-xs">@Model.ReviewerNote</p>
+        </div>
+    }
+    @if (!Model.AsReviewer && state == TrainingSubmissionReviewStates.Denied && !string.IsNullOrWhiteSpace(Model.ReviewerNote))
+    {
+        <div class="alert alert-warning" role="status"><strong>@text["Detail.DeniedReason"]</strong> @Model.ReviewerNote</div>
+    }
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @record.Title</h5>
+                    <div class="ibox-tools">
+                        <span class="label @TrainingReviewPresentation.StateClass(state)"><i class="fa @TrainingReviewPresentation.StateIcon(state)" aria-hidden="true"></i> @text[TrainingReviewPresentation.StateKey(state) ?? "State.AwaitingReview"]</span>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@text["Detail.Member"]</dt>
+                        <dd>@Model.NameOf(record.UserId)</dd>
+                        <dt>@text["Detail.CompletedOn"]</dt>
+                        <dd>@TrainingStatePresentation.LocalDate(record.CompletedOn, Model.Department)</dd>
+                        <dt>@text["Detail.Hours"]</dt>
+                        <dd>@LearningRecordPresentation.Hours(record.Hours)</dd>
+                        @if (record.CeHours.HasValue)
+                        {
+                            <dt>@text["Detail.CeHours"]</dt>
+                            <dd>@LearningRecordPresentation.Hours(record.CeHours)</dd>
+                        }
+                        <dt>@text["Detail.Category"]</dt>
+                        <dd>@(category?.Name ?? text["Filter.Uncategorized"].Value)</dd>
+                        @if (!string.IsNullOrWhiteSpace(record.CeProvider))
+                        {
+                            <dt>@text["Detail.Provider"]</dt>
+                            <dd>@record.CeProvider</dd>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(record.CeCourseNumber) || !string.IsNullOrWhiteSpace(record.CourseCode))
+                        {
+                            <dt>@text["Detail.CourseNumber"]</dt>
+                            <dd>@(record.CeCourseNumber ?? record.CourseCode)</dd>
+                        }
+                        @if (methodKey != null)
+                        {
+                            <dt>@localizer["Doc.Method"]</dt>
+                            <dd>@localizer[methodKey]</dd>
+                        }
+                        <dt>@text["Detail.SubmittedOn"]</dt>
+                        <dd>@TrainingStatePresentation.LocalDateTime(TrainingSubmissionRules.WaitingSince(record), Model.Department)</dd>
+                    </dl>
+                    @if (!string.IsNullOrWhiteSpace(record.Notes))
+                    {
+                        <h4 class="m-t-sm">@text["Detail.Notes"]</h4>
+                        <p class="text-pre-wrap">@record.Notes</p>
+                    }
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-paperclip" aria-hidden="true"></i> @text["Evidence.Header"] (@Model.Detail.Files.Count)</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Detail.Files.Count == 0)
+                    {
+                        <p class="text-muted m-b-none">@text["Evidence.None"]</p>
+                    }
+                    @foreach (var file in Model.Detail.Files)
+                    {
+                        var image = TrainingEvidencePolicy.IsInlineImage(file.ContentType);
+                        var pdf = TrainingEvidencePolicy.IsPdf(file.ContentType);
+                        <figure class="training-evidence m-b-md">
+                            <figcaption class="m-b-xs">
+                                <i class="fa @TrainingReviewPresentation.EvidenceIcon(file)" aria-hidden="true"></i>
+                                <strong>@file.FileName</strong>
+                                <span class="label label-default">@text[TrainingReviewPresentation.EvidenceKindKey(file.EvidenceKind)]</span>
+                                <small class="text-muted">@TrainingReviewPresentation.Size(file.SizeBytes) · @TrainingStatePresentation.LocalDateTime(file.UploadedOn, Model.Department)</small>
+                                <a class="btn btn-xs btn-default" asp-controller="TrainingReviews" asp-action="Evidence" asp-route-area="User" asp-route-id="@file.LearningRecordFileId" target="_blank" rel="noopener"><i class="fa fa-external-link" aria-hidden="true"></i> @text["Evidence.Open"]</a>
+                                <a class="btn btn-xs btn-default" asp-controller="TrainingReviews" asp-action="Evidence" asp-route-area="User" asp-route-id="@file.LearningRecordFileId" asp-route-download="true"><i class="fa fa-download" aria-hidden="true"></i> @text["Evidence.Download"]</a>
+                            </figcaption>
+                            @if (image)
+                            {
+                                <img class="training-evidence-image" src="@Url.Action("Evidence", "TrainingReviews", new { area = "User", id = file.LearningRecordFileId })" alt="@file.FileName" loading="lazy" />
+                            }
+                            else if (pdf)
+                            {
+                                <iframe class="training-evidence-pdf" src="@Url.Action("Evidence", "TrainingReviews", new { area = "User", id = file.LearningRecordFileId })" title="@file.FileName" loading="lazy"></iframe>
+                            }
+                            else
+                            {
+                                <p class="text-muted m-b-none"><i class="fa fa-info-circle" aria-hidden="true"></i> @text["Evidence.PreviewUnavailable"]</p>
+                            }
+                        </figure>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            @if (Model.AsReviewer)
+            {
+                if (Model.Detail.CanReview)
+                {
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5><i class="fa fa-check" aria-hidden="true"></i> @text["Action.ApproveHeader"]</h5></div>
+                        <div class="ibox-content">
+                            <form method="post" asp-controller="TrainingReviews" asp-action="Approve" asp-route-area="User" asp-route-id="@record.LearningRecordId">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="__Invariant" value="hours" />
+                                <div class="form-group">
+                                    <label for="approve-hours">@text["Action.ApproveHoursLabel"]</label>
+                                    <input id="approve-hours" name="hours" type="number" min="0.25" max="999" step="0.25" class="form-control" value="@LearningRecordPresentation.Invariant(record.Hours)" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="approve-note">@text["Action.ApproveNoteLabel"]</label>
+                                    <input id="approve-note" name="note" type="text" maxlength="1000" class="form-control" />
+                                </div>
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @text["Action.ApproveButton"]</button>
+                            </form>
+                        </div>
+                    </div>
+                    if (state == TrainingSubmissionReviewStates.AwaitingReview)
+                    {
+                        <div class="ibox float-e-margins">
+                            <div class="ibox-title"><h5><i class="fa fa-question-circle" aria-hidden="true"></i> @text["Action.InfoHeader"]</h5></div>
+                            <div class="ibox-content">
+                                <form method="post" asp-controller="TrainingReviews" asp-action="RequestInfo" asp-route-area="User" asp-route-id="@record.LearningRecordId">
+                                    @Html.AntiForgeryToken()
+                                    <div class="form-group">
+                                        <label for="info-note" class="required">@text["Action.InfoNoteLabel"]</label>
+                                        <textarea id="info-note" name="note" rows="3" maxlength="1000" class="form-control" required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-info"><i class="fa fa-question-circle" aria-hidden="true"></i> @text["Action.InfoButton"]</button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title"><h5><i class="fa fa-times" aria-hidden="true"></i> @text["Action.DenyHeader"]</h5></div>
+                        <div class="ibox-content">
+                            <form method="post" asp-controller="TrainingReviews" asp-action="Deny" asp-route-area="User" asp-route-id="@record.LearningRecordId">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <label for="deny-reason" class="required">@text["Action.DenyReasonLabel"]</label>
+                                    <textarea id="deny-reason" name="reason" rows="3" maxlength="1000" class="form-control" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-warning"><i class="fa fa-times" aria-hidden="true"></i> @text["Action.DenyButton"]</button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="rgw-next-action" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @text["Action.Decided"]</div>
+                }
+            }
+            else if (Model.CanRespond)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-reply" aria-hidden="true"></i> @text["Respond.Header"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="text-muted">@text["Respond.Help"]</p>
+                        <form method="post" asp-controller="TrainingReviews" asp-action="Respond" asp-route-area="User" asp-route-id="@record.LearningRecordId" enctype="multipart/form-data">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="__Invariant" value="hours" />
+                            <input type="hidden" name="__Invariant" value="ceHours" />
+                            <div class="form-group">
+                                <label for="respond-note">@text["Respond.NoteLabel"]</label>
+                                <textarea id="respond-note" name="note" rows="3" maxlength="1000" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="respond-evidence">@text["Respond.FilesLabel"]</label>
+                                <input id="respond-evidence" name="evidence" type="file" multiple class="form-control" accept="@Model.AcceptAttribute" aria-describedby="respond-evidence-help" />
+                                <span class="help-block" id="respond-evidence-help">@string.Format(text["Evidence.FilesHelp"].Value, TrainingSubmissionRules.MaxFilesPerUpload, LearningRecordFile.MaxBytes / (1024 * 1024))</span>
+                            </div>
+                            <div class="form-group">
+                                <label for="respond-kind">@text["Evidence.KindLabel"]</label>
+                                <select id="respond-kind" name="evidenceKind" class="form-control">
+                                    @foreach (var kind in Enum.GetValues<TrainingEvidenceKinds>())
+                                    {
+                                        <option value="@((int)kind)">@text["Evidence.Kind." + kind]</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="rgw-grid">
+                                <div class="form-group">
+                                    <label for="respond-hours">@text["Respond.HoursLabel"]</label>
+                                    <input id="respond-hours" name="hours" type="number" min="0.25" max="999" step="0.25" class="form-control" placeholder="@LearningRecordPresentation.Hours(record.Hours)" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="respond-category">@text["Respond.CategoryLabel"]</label>
+                                    <select id="respond-category" name="categoryId" class="form-control">
+                                        <option value="">@text["Respond.KeepCategory"]</option>
+                                        <option value="0">@text["Filter.Uncategorized"]</option>
+                                        @foreach (var option in Model.LiveCategories)
+                                        {
+                                            <option value="@option.TrainingCategoryId">@option.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @text["Respond.Button"]</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-history" aria-hidden="true"></i> @text["History.Header"]</h5></div>
+                <div class="ibox-content">
+                    <ol class="list-unstyled rgw-journey m-b-none">
+                        @foreach (var step in Model.Detail.Events)
+                        {
+                            <li class="m-b-sm">
+                                <strong>@text[TrainingReviewPresentation.StepKey(step.Kind)]</strong>
+                                <small class="text-muted">@TrainingStatePresentation.LocalDateTime(step.CreatedOn, Model.Department) · @string.Format(text["History.By"].Value, Model.NameOf(step.ActorUserId))</small>
+                                @if (step.FileCount > 0)
+                                {
+                                    <small class="rgw-sub text-muted"><i class="fa fa-paperclip" aria-hidden="true"></i> @string.Format(text["History.FilesAdded"].Value, step.FileCount)</small>
+                                }
+                                @if (!string.IsNullOrWhiteSpace(step.Note))
+                                {
+                                    <div class="text-pre-wrap">@step.Note</div>
+                                }
+                            </li>
+                        }
+                    </ol>
+                    @if (Model.Detail.Events.Count == 0)
+                    {
+                        <p class="text-muted m-b-none">@text["History.Empty"]</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .training-evidence-image { display: block; max-width: 100%; max-height: 640px; height: auto; border: 1px solid #e7eaec; }
+        .training-evidence-pdf { display: block; width: 100%; height: 640px; border: 1px solid #e7eaec; }
+        .text-pre-wrap { white-space: pre-wrap; overflow-wrap: anywhere; }
+        .training-evidence figcaption .btn { margin-left: 4px; }
+    </style>
+}

@@ -1,0 +1,36 @@
+@using Resgrid.Web.Areas.User.Models.Courses
+@model CrewScanModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* What a member's phone opens from the crew-viewing QR: one button marks them present (the GET itself changes nothing). *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CrewViewingTitle"];
+    ViewData["Section"] = "Courses";
+    ViewData["Title"] = localizer["CrewViewingTitle"].Value;
+    ViewData["Subtitle"] = Model.LessonTitle;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Open)
+    {
+        <form method="post" asp-controller="Courses" asp-action="CrewScan" asp-route-area="User">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.ViewingId" />
+            <input type="hidden" name="c" value="@Model.Code" />
+            <p class="lead">@localizer["CrewScanConfirm"]</p>
+            <button type="submit" class="btn btn-primary btn-lg"><i class="fa fa-user-check fa-check" aria-hidden="true"></i> @localizer["MarkPresentButton"]</button>
+        </form>
+    }
+    else
+    {
+        <p class="lead text-muted">@localizer["CrewEndedMessage"]</p>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

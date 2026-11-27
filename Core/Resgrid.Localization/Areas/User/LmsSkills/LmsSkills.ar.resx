@@ -1,0 +1,1545 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Skl.ActionFailed" xml:space="preserve">
+    <value>تعذّر إكمال الإجراء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddEvidence" xml:space="preserve">
+    <value>إضافة دليل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddStep" xml:space="preserve">
+    <value>إضافة خطوة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddTask" xml:space="preserve">
+    <value>إضافة مهمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddTimedNote" xml:space="preserve">
+    <value>إضافة ملاحظة (يُسجَّل الوقت)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddonNotice" xml:space="preserve">
+    <value>تتطلب تقييمات المهارات وكتب المهام الإضافة LMS. يظل كل ما سُجّل قابلًا للقراءة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AllSheets" xml:space="preserve">
+    <value>جميع أوراق المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AllStates" xml:space="preserve">
+    <value>جميع الحالات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AllTaskBooks" xml:space="preserve">
+    <value>جميع كتب المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Annotation" xml:space="preserve">
+    <value>تعليق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Answer" xml:space="preserve">
+    <value>الإجابة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AnyEligible" xml:space="preserve">
+    <value>أي عضو مؤهل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Attempt" xml:space="preserve">
+    <value>المحاولة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AwaitingCertification" xml:space="preserve">
+    <value>بانتظار المقيّم النهائي والمسؤول المصادِق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.BooksToEvaluate" xml:space="preserve">
+    <value>كتب المهام التي يمكنك توقيع مهامها</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CancelReason" xml:space="preserve">
+    <value>سبب الإلغاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CancelTaskBook" xml:space="preserve">
+    <value>إلغاء كتاب المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CancelTaskBookConfirm" xml:space="preserve">
+    <value>هل تريد إلغاء كتاب المهام هذا؟ تبقى المهام الموقّعة مسجّلة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CertificationRequested" xml:space="preserve">
+    <value>طُلبت المصادقة. يوقّع المقيّم النهائي أولًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CertifiedOn" xml:space="preserve">
+    <value>تمت المصادقة في</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CertifyingOfficial" xml:space="preserve">
+    <value>المسؤول المصادِق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.ChangeSummary" xml:space="preserve">
+    <value>ملخص التغييرات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Choose" xml:space="preserve">
+    <value>اختر...</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Date" xml:space="preserve">
+    <value>التاريخ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Evaluation" xml:space="preserve">
+    <value>التقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Evaluator" xml:space="preserve">
+    <value>المقيّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Expires" xml:space="preserve">
+    <value>ينتهي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Score" xml:space="preserve">
+    <value>الدرجة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Signer" xml:space="preserve">
+    <value>الموقّع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Started" xml:space="preserve">
+    <value>بدأ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Status" xml:space="preserve">
+    <value>الحالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Step" xml:space="preserve">
+    <value>الخطوة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Version" xml:space="preserve">
+    <value>الإصدار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Complete" xml:space="preserve">
+    <value>مكتملة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Compute.Average" xml:space="preserve">
+    <value>المتوسط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Compute.Max" xml:space="preserve">
+    <value>الأعلى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Compute.Min" xml:space="preserve">
+    <value>الأدنى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Compute.Sum" xml:space="preserve">
+    <value>المجموع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.ComputedHelp" xml:space="preserve">
+    <value>تُحسب من الخطوات المحددة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Continue" xml:space="preserve">
+    <value>متابعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CrewHelp" xml:space="preserve">
+    <value>نموذج واحد للفريق بأكمله: يحصل الجميع على النتيجة والسجل نفسيهما. افصل العضو الذي يجب تقييمه بشكل مختلف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CriticalFailedNotice" xml:space="preserve">
+    <value>لم تُستوفَ خطوة حرجة: التقييم غير ناجح مهما كانت الدرجة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Declined" xml:space="preserve">
+    <value>مرفوض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Definition" xml:space="preserve">
+    <value>تعريف كتاب المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionCreated" xml:space="preserve">
+    <value>أُنشئ التعريف. حدّد من يوقّع ومن يصادق ثم احفظ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionDeleted" xml:space="preserve">
+    <value>أُزيل التعريف. تحتفظ كتب المهام المفتوحة بمهامها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionIntro" xml:space="preserve">
+    <value>رمز المنصب والمهام ومن يوقّع ويوصي ويصادق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionsIntro" xml:space="preserve">
+    <value>كتب مهام المناصب لديك وقوالب Resgrid لإنشائها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionsTitle" xml:space="preserve">
+    <value>تعريفات كتب المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DeleteDefinition" xml:space="preserve">
+    <value>إزالة التعريف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DeleteDefinitionConfirm" xml:space="preserve">
+    <value>هل تريد إزالة هذا التعريف؟ تحتفظ الكتب المفتوحة بمهامها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DeleteSheet" xml:space="preserve">
+    <value>إيقاف ورقة المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DeleteSheetConfirm" xml:space="preserve">
+    <value>هل تريد إيقاف هذه الورقة؟ تبقى تقييماتها مسجّلة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Digest.Daily" xml:space="preserve">
+    <value>ملخص يومي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Digest.Immediate" xml:space="preserve">
+    <value>فورًا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Digest.Off" xml:space="preserve">
+    <value>متوقف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Digest.Weekly" xml:space="preserve">
+    <value>ملخص أسبوعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DigestHour" xml:space="preserve">
+    <value>وقت الملخص (توقيت الإدارة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DigestMode" xml:space="preserve">
+    <value>إرسال الإشعارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DigestWeekday" xml:space="preserve">
+    <value>يوم الملخص الأسبوعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Draft" xml:space="preserve">
+    <value>مسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DraftNotReady" xml:space="preserve">
+    <value>لا يمكن نشر المسودة بعد:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DraftSaved" xml:space="preserve">
+    <value>حُفظت المسودة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DraftSteps" xml:space="preserve">
+    <value>الخطوات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Edit" xml:space="preserve">
+    <value>تعديل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EditorNeedsScript" xml:space="preserve">
+    <value>يحتاج محرر الخطوات إلى JavaScript.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Elapsed" xml:space="preserve">
+    <value>الوقت المنقضي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Evaluate" xml:space="preserve">
+    <value>تقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluationIntro" xml:space="preserve">
+    <value>النتيجة وكل خطوة والأدلة والتوقيعات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluationStarted" xml:space="preserve">
+    <value>بدأ التقييم. المؤقت يعمل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Evaluations" xml:space="preserve">
+    <value>التقييمات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluationsIntro" xml:space="preserve">
+    <value>جميع تقييمات الإدارة حسب الورقة والحالة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluationsTitle" xml:space="preserve">
+    <value>تقييمات المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluatorComments" xml:space="preserve">
+    <value>ملاحظات المقيّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Evidence" xml:space="preserve">
+    <value>الأدلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceAdded" xml:space="preserve">
+    <value>أُضيف الدليل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceFile" xml:space="preserve">
+    <value>صورة أو فيديو أو ملف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceHelp" xml:space="preserve">
+    <value>حتى 30 ميغابايت لكل ملف. يُدرج SHA-256 لكل ملف في السجل المختوم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceStep" xml:space="preserve">
+    <value>للخطوة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceStepHelp" xml:space="preserve">
+    <value>أضف الصورة أو الفيديو أو الملف أدناه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Fail" xml:space="preserve">
+    <value>راسب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family" xml:space="preserve">
+    <value>الفئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.Custom" xml:space="preserve">
+    <value>مخصصة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.DriverOperator" xml:space="preserve">
+    <value>سائق/مشغّل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.FieldTraining" xml:space="preserve">
+    <value>التدريب الميداني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.NccpSkills" xml:space="preserve">
+    <value>التحقق من مهارات NCCP</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.Officer" xml:space="preserve">
+    <value>ضابط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.OshaOperator" xml:space="preserve">
+    <value>تقييم مشغّل OSHA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.Wildland" xml:space="preserve">
+    <value>حرائق الغابات (NWCG)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.AllowCrew" xml:space="preserve">
+    <value>السماح بتقييمات الفريق (نموذج واحد لعدة أعضاء)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.AllowSelf" xml:space="preserve">
+    <value>السماح للأعضاء بتقييم أنفسهم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.AttemptWindow" xml:space="preserve">
+    <value>فترة المحاولات (أيام)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CallId" xml:space="preserve">
+    <value>رقم البلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Category" xml:space="preserve">
+    <value>فئة التدريب المحتسبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CertificationType" xml:space="preserve">
+    <value>الشهادة المفعّلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CertificationTypeHelp" xml:space="preserve">
+    <value>يفتح بدء الكتاب سجل «متدرّب» من هذا النوع؛ وتجعله المصادقة نشطًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CertificationTypes" xml:space="preserve">
+    <value>أنواع الشهادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Code" xml:space="preserve">
+    <value>رمز المهارة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CodeHelp" xml:space="preserve">
+    <value>يُستخدم رمزًا للدورة في السجل التدريبي وفي متطلبات «عدد التقييمات الناجحة».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.DefaultMinutes" xml:space="preserve">
+    <value>الدقائق المحتسبة دون توقيت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.DeploymentId" xml:space="preserve">
+    <value>رقم الانتداب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Description" xml:space="preserve">
+    <value>الوصف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Evaluators" xml:space="preserve">
+    <value>من يحق له التقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.EvaluatorsHelp" xml:space="preserve">
+    <value>الأعضاء الحاصلون على شهادة سارية من نوع مختار أو دور مختار. بلا اختيار: مديرو LMS فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Kind" xml:space="preserve">
+    <value>النوع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Location" xml:space="preserve">
+    <value>الموقع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.MaxAttempts" xml:space="preserve">
+    <value>المحاولات الفاشلة المسموحة (0 = بلا حد)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.NextSigner" xml:space="preserve">
+    <value>من يمكن للمقيّم اختياره للتوقيع بعده</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.NextSignerHelp" xml:space="preserve">
+    <value>عند تحديده، يجب على المقيّم اختيار عضو تسمح به هذه القاعدة؛ ويوقّع بعد المقيّم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.PassThreshold" xml:space="preserve">
+    <value>علامة النجاح (%)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.RecertifyMonths" xml:space="preserve">
+    <value>إعادة التقييم بعد (أشهر)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.RecertifyMonthsHelp" xml:space="preserve">
+    <value>انتهاء السجل المصادق عليه (مشغّلو OSHA: 36). القيمة 0 تستخدم صلاحية نوع الشهادة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Roles" xml:space="preserve">
+    <value>الأدوار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.TimeLimit" xml:space="preserve">
+    <value>الحد الزمني (ثوانٍ، 0 = بلا حد)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Title" xml:space="preserve">
+    <value>العنوان</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.ValidityMonths" xml:space="preserve">
+    <value>صالح لمدة (أشهر)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Filter" xml:space="preserve">
+    <value>تصفية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.FinalEvaluator" xml:space="preserve">
+    <value>المقيّم النهائي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Grading" xml:space="preserve">
+    <value>قواعد التقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.HomeIntro" xml:space="preserve">
+    <value>التقييمات التي تجريها والتوقيعات المنتظرة ونتائجك وكتب مهامك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.HomeTitle" xml:space="preserve">
+    <value>المهارات وكتب المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.IncidentRequired" xml:space="preserve">
+    <value>لا تحتسب هذه المهمة إلا التقييمات أثناء بلاغ أو انتداب: أدخل رقمه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.IncidentTask" xml:space="preserve">
+    <value>مهمة أثناء البلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Initiate" xml:space="preserve">
+    <value>بدء كتاب المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.InitiatedOn" xml:space="preserve">
+    <value>بدأ في</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Kind.ObservationReport" xml:space="preserve">
+    <value>تقرير الملاحظة اليومي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Kind.SkillSheet" xml:space="preserve">
+    <value>ورقة مهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.LapsedNotice" xml:space="preserve">
+    <value>الإضافة LMS غير نشطة: تبقى السجلات قابلة للقراءة ويمكن إنهاء التقييمات والكتب المفتوحة، لكن لا يمكن بدء شيء جديد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MajorVersion" xml:space="preserve">
+    <value>إصدار رئيسي (قد تلزم إعادة التقييم)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MemberSplit" xml:space="preserve">
+    <value>نُقل العضو إلى تقييم خاص به.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MembersHelp" xml:space="preserve">
+    <value>اختر عضواً واحداً، أو عدة أعضاء لتقييم فريق عندما تسمح الورقة بذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MembersToEvaluate" xml:space="preserve">
+    <value>الأعضاء الخاضعون للتقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MoveDown" xml:space="preserve">
+    <value>لأسفل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MoveUp" xml:space="preserve">
+    <value>لأعلى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MyOpenEvaluations" xml:space="preserve">
+    <value>التقييمات التي أجريها</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MyResults" xml:space="preserve">
+    <value>نتائجي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MySignatures" xml:space="preserve">
+    <value>تقييمات بانتظار توقيعي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MyTaskBooks" xml:space="preserve">
+    <value>كتب مهامي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NeedsAnswer" xml:space="preserve">
+    <value>تحتاج إلى إجابة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NewDefinition" xml:space="preserve">
+    <value>تعريف جديد لكتاب المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NewSheet" xml:space="preserve">
+    <value>ورقة مهارات جديدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NextSigner" xml:space="preserve">
+    <value>الموقّع التالي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NextSignerHelp" xml:space="preserve">
+    <value>تطلب الورقة توقيعًا ثانيًا من عضو تسمح به قاعدتها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoDefinitions" xml:space="preserve">
+    <value>لا توجد تعريفات بعد. ابدأ من قالب Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoEvaluations" xml:space="preserve">
+    <value>لا توجد تقييمات مطابقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoOpenEvaluations" xml:space="preserve">
+    <value>لا تجري أي تقييمات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoResults" xml:space="preserve">
+    <value>لا توجد تقييمات لك بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoSheet" xml:space="preserve">
+    <value>بلا ورقة (ناجح/راسب)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoSheets" xml:space="preserve">
+    <value>لا توجد أوراق مهارات بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoSheetsToEvaluate" xml:space="preserve">
+    <value>لا توجد ورقة منشورة يحق لك التقييم بها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoSignatures" xml:space="preserve">
+    <value>لا توجد تقييمات بانتظار توقيعك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoTaskBooks" xml:space="preserve">
+    <value>لا توجد كتب مهام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.None" xml:space="preserve">
+    <value>لا شيء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NotApplicable" xml:space="preserve">
+    <value>لا ينطبق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NotApplicableReason" xml:space="preserve">
+    <value>سبب عدم الانطباق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NotifyMembers" xml:space="preserve">
+    <value>إشعار الأعضاء الخاضعين للتقييم والمتدربين بتقييماتهم وكتبهم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NotifyOfficers" xml:space="preserve">
+    <value>إشعار مسؤولي الإدارة بكل تقييم وكتاب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Open" xml:space="preserve">
+    <value>فتح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OpenSignature" xml:space="preserve">
+    <value>فتح التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OpenTaskBooks" xml:space="preserve">
+    <value>كتب المهام المفتوحة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluator" xml:space="preserve">
+    <value>يوقّع مقيّم خارجي بدلًا من ذلك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluatorEmail" xml:space="preserve">
+    <value>بريده الإلكتروني (لرابط التوقيع)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluatorHelp" xml:space="preserve">
+    <value>يوقّع المقيّمون الخارجيون بالمستوى L4 شخصيًا على هذا الجهاز أو عبر رابط ما دامت الإضافة LMS نشطة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluatorName" xml:space="preserve">
+    <value>اسمه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluatorRemote" xml:space="preserve">
+    <value>إرسال رابط توقيع بدلًا من التوقيع على هذا الجهاز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Pass" xml:space="preserve">
+    <value>ناجح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassAll" xml:space="preserve">
+    <value>نجاح كل الخطوات المتبقية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassAt" xml:space="preserve">
+    <value>النجاح عند</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassFailReport" xml:space="preserve">
+    <value>تقرير النجاح والرسوب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassRange" xml:space="preserve">
+    <value>ناجح من-إلى:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassingRatingIs" xml:space="preserve">
+    <value>التقدير الأدنى للنجاح:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Position" xml:space="preserve">
+    <value>رمز المنصب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Publish" xml:space="preserve">
+    <value>نشر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PublishTitle" xml:space="preserve">
+    <value>نشر المسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Published" xml:space="preserve">
+    <value>نُشر الإصدار. تستخدمه التقييمات الجديدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.RatingsReport" xml:space="preserve">
+    <value>التقديرات حسب السؤال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Remove" xml:space="preserve">
+    <value>إزالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.RequestCertification" xml:space="preserve">
+    <value>طلب المصادقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.RequestCertificationHelp" xml:space="preserve">
+    <value>اكتملت كل المهام. يوصي المقيّم النهائي ثم يصادق المسؤول؛ ويوقّع كلاهما بالمستوى L2.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Required" xml:space="preserve">
+    <value>التقييمات المطلوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Result.Failed" xml:space="preserve">
+    <value>غير ناجح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Result.Passed" xml:space="preserve">
+    <value>ناجح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Role.Evaluator" xml:space="preserve">
+    <value>المقيّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Role.NextSigner" xml:space="preserve">
+    <value>الموقّع التالي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.RunIntro" xml:space="preserve">
+    <value>قيّم كل خطوة؛ تدخل تعليقاتك وأدلتك في السجل المختوم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Save" xml:space="preserve">
+    <value>حفظ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SaveDraft" xml:space="preserve">
+    <value>حفظ المسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Saved" xml:space="preserve">
+    <value>تم الحفظ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SealFailed" xml:space="preserve">
+    <value>التقييم موقّع، لكن تعذّر ختم سجله. يمكن للمسؤول إعادة المحاولة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SealPending" xml:space="preserve">
+    <value>موقّع، والختم معلّق: السجل المختوم غير متاح بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SealedPdf" xml:space="preserve">
+    <value>السجل المختوم (PDF)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Seconds" xml:space="preserve">
+    <value>ثوانٍ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SettingsHelp" xml:space="preserve">
+    <value>تجمع الملخصات اليومية والأسبوعية الإشعارات المستحقة في رسالة واحدة لكل شخص. لا يتلقى الأعضاء غير النشطين أي إشعارات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SettingsIntro" xml:space="preserve">
+    <value>كيف تُرسل إشعارات التقييمات وكتب المهام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SettingsTitle" xml:space="preserve">
+    <value>إشعارات المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Sheet" xml:space="preserve">
+    <value>ورقة المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetCreated" xml:space="preserve">
+    <value>أُنشئت ورقة المهارات. عدّل خطواتها ثم انشرها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetDeleted" xml:space="preserve">
+    <value>أُوقفت ورقة المهارات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetDetails" xml:space="preserve">
+    <value>تفاصيل الورقة والموقّعون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetIntro" xml:space="preserve">
+    <value>خطوات مرتبة ومعايير حرجة وقواعد تقييم، بإصدارات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetsIntro" xml:space="preserve">
+    <value>أوراق المهارات حسب متطلبات الأداء ومكتبة القوالب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetsTitle" xml:space="preserve">
+    <value>أوراق المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Sign" xml:space="preserve">
+    <value>توقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Signatures" xml:space="preserve">
+    <value>التوقيعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Signed" xml:space="preserve">
+    <value>موقّع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SignerRulesHelp" xml:space="preserve">
+    <value>يتأهل العضو بشهادة سارية من نوع مختار أو دور مختار. بلا قاعدة، يقيّم مديرو LMS المهام ويوصي مسؤولو الإدارة ويصادقون.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SplitConfirm" xml:space="preserve">
+    <value>هل تريد نقل هذا العضو إلى تقييم خاص به؟ تُنسخ إجاباته حتى الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SplitOut" xml:space="preserve">
+    <value>فصل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SplitTo" xml:space="preserve">
+    <value>قُيّم بشكل منفصل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StartEvaluation" xml:space="preserve">
+    <value>بدء تقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StartIntro" xml:space="preserve">
+    <value>اختر الورقة ومن تقيّمه. يبدأ المؤقت الآن.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.AwaitingSignature" xml:space="preserve">
+    <value>بانتظار التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.Completed" xml:space="preserve">
+    <value>مكتمل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.InProgress" xml:space="preserve">
+    <value>قيد التنفيذ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.Open" xml:space="preserve">
+    <value>مفتوحة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.Voided" xml:space="preserve">
+    <value>ملغى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.AllowNa" xml:space="preserve">
+    <value>السماح بـ«لا ينطبق»</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Compute" xml:space="preserve">
+    <value>الحساب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.ComputeKeys" xml:space="preserve">
+    <value>من الخطوات (مفاتيح مفصولة بفواصل)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Critical" xml:space="preserve">
+    <value>حرج</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.EvidenceOnFail" xml:space="preserve">
+    <value>دليل عند الرسوب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Help" xml:space="preserve">
+    <value>تعليمات للمقيّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Key" xml:space="preserve">
+    <value>المفتاح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Label" xml:space="preserve">
+    <value>الخطوة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Max" xml:space="preserve">
+    <value>أعلى قيمة مقبولة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Min" xml:space="preserve">
+    <value>أدنى قيمة مقبولة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.NoteOnFail" xml:space="preserve">
+    <value>ملاحظة عند الرسوب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Options" xml:space="preserve">
+    <value>الخيارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.OptionsHelp" xml:space="preserve">
+    <value>واحد في كل سطر: التسمية | النقاط | fail (الجزء الأخير فقط للخيار الذي يُرسب الخطوة).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.PassingRating" xml:space="preserve">
+    <value>أدنى تقدير للنجاح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Rating" xml:space="preserve">
+    <value>المقياس</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Required" xml:space="preserve">
+    <value>الإجابة مطلوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Type" xml:space="preserve">
+    <value>نوع السؤال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Weight" xml:space="preserve">
+    <value>الوزن</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.ChooseAny" xml:space="preserve">
+    <value>اختيار متعدد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.ChooseOne" xml:space="preserve">
+    <value>اختيار واحد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Computed" xml:space="preserve">
+    <value>قيمة محسوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Date" xml:space="preserve">
+    <value>التاريخ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.DateTime" xml:space="preserve">
+    <value>التاريخ والوقت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Duration" xml:space="preserve">
+    <value>المدة (مُوقّتة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Evidence" xml:space="preserve">
+    <value>صورة أو فيديو أو ملف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Heading" xml:space="preserve">
+    <value>عنوان</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Instructions" xml:space="preserve">
+    <value>تعليمات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Number" xml:space="preserve">
+    <value>رقم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.PassFail" xml:space="preserve">
+    <value>ناجح / راسب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.RatingScale" xml:space="preserve">
+    <value>مقياس التقدير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Text" xml:space="preserve">
+    <value>نص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Time" xml:space="preserve">
+    <value>الوقت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.TimestampedNotes" xml:space="preserve">
+    <value>ملاحظات مؤرخة بالوقت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Steps" xml:space="preserve">
+    <value>الخطوات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StripLabel" xml:space="preserve">
+    <value>أقسام المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SubmitAndSign" xml:space="preserve">
+    <value>إرسال وتوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SubmitConfirm" xml:space="preserve">
+    <value>هل تريد إرسال التقييم؟ تُثبَّت النتيجة ويُفتح التوقيع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SubmitTitle" xml:space="preserve">
+    <value>إرسال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Submitted" xml:space="preserve">
+    <value>أُرسل التقييم. وقّعه لإكماله.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Definitions" xml:space="preserve">
+    <value>التعريفات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Evaluations" xml:space="preserve">
+    <value>التقييمات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Home" xml:space="preserve">
+    <value>نظرة عامة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Sheets" xml:space="preserve">
+    <value>أوراق المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.TaskBooks" xml:space="preserve">
+    <value>كتب المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Task" xml:space="preserve">
+    <value>المهمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookCancelled" xml:space="preserve">
+    <value>أُلغي كتاب المهام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookInitiated" xml:space="preserve">
+    <value>بدأ كتاب المهام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookIntro" xml:space="preserve">
+    <value>المهام وتقييماتها، ثم توصية المقيّم النهائي والمصادقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.AwaitingCertification" xml:space="preserve">
+    <value>بانتظار المصادقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.Cancelled" xml:space="preserve">
+    <value>ملغى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.Certified" xml:space="preserve">
+    <value>مصادَق عليه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.Expired" xml:space="preserve">
+    <value>منتهي الصلاحية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.Open" xml:space="preserve">
+    <value>مفتوح</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookTemplates" xml:space="preserve">
+    <value>قوالب كتب المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookTemplatesIntro" xml:space="preserve">
+    <value>من إعداد Resgrid: رموز المناصب وأرقام المهام وأسماؤها المختصرة فقط. أدخل نص كل مهمة من نسختك الخاصة وطابقه مع الإصدار الحالي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBooksIntro" xml:space="preserve">
+    <value>كتب مهام المناصب: تبدأ بتاريخ، وتُوقَّع مهمة تلو الأخرى، ثم يُصادق عليها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBooksTitle" xml:space="preserve">
+    <value>كتب مهام المناصب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskEvaluators" xml:space="preserve">
+    <value>من يوقّع المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskNumber" xml:space="preserve">
+    <value>رقم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tasks" xml:space="preserve">
+    <value>المهام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TasksComplete" xml:space="preserve">
+    <value>المهام المكتملة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TemplateLibrary" xml:space="preserve">
+    <value>مكتبة قوالب أوراق المهارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TemplateLibraryIntro" xml:space="preserve">
+    <value>نقاط انطلاق من إعداد Resgrid، الهيكل فقط. كيّفها مع معداتك وإجراءاتك قبل الاستخدام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TimeExceededNotice" xml:space="preserve">
+    <value>تجاوز الحد الزمني: التقييم غير ناجح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Trainee" xml:space="preserve">
+    <value>المتدرّب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Upload" xml:space="preserve">
+    <value>رفع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.UseTemplate" xml:space="preserve">
+    <value>استخدام القالب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.ValidUntil" xml:space="preserve">
+    <value>صالح حتى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Approved" xml:space="preserve">
+    <value>معتمد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Draft" xml:space="preserve">
+    <value>مسودة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.InReview" xml:space="preserve">
+    <value>قيد المراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Published" xml:space="preserve">
+    <value>سارٍ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Retired" xml:space="preserve">
+    <value>موقوف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Superseded" xml:space="preserve">
+    <value>مستبدل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Versions" xml:space="preserve">
+    <value>الإصدارات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Void" xml:space="preserve">
+    <value>إلغاء التقييم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VoidConfirm" xml:space="preserve">
+    <value>هل تريد إلغاء هذا التقييم؟ تُلغى سجلات التدريب الخاصة به أيضًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VoidReason" xml:space="preserve">
+    <value>سبب الإلغاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Voided" xml:space="preserve">
+    <value>أُلغي التقييم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Waiting" xml:space="preserve">
+    <value>بالانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.WholeEvaluation" xml:space="preserve">
+    <value>التقييم بأكمله</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_addon_required" xml:space="preserve">
+    <value>يتطلب ذلك الإضافة LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_answer_unknown_step" xml:space="preserve">
+    <value>إجابة لا تخص هذا الإصدار من الورقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_attempts_exhausted" xml:space="preserve">
+    <value>لم تتبقَّ لهذا العضو محاولات في هذه الفترة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_crew_not_allowed" xml:space="preserve">
+    <value>تقيّم هذه الورقة عضوًا واحدًا في كل مرة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evaluation_closed" xml:space="preserve">
+    <value>لم يعد التقييم قيد التنفيذ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evaluation_not_found" xml:space="preserve">
+    <value>لم يُعثر على التقييم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evidence_count" xml:space="preserve">
+    <value>لدى هذا التقييم بالفعل أقصى عدد من ملفات الأدلة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evidence_size" xml:space="preserve">
+    <value>اختر ملفًا حجمه حتى 30 ميغابايت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evidence_step" xml:space="preserve">
+    <value>هذه الخطوة ليست في الورقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evidence_type" xml:space="preserve">
+    <value>أضف صورة أو فيديو أو ملف PDF أو ملفًا نصيًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_idempotency_key_required" xml:space="preserve">
+    <value>يحتاج الإرسال دون اتصال إلى مفتاح صندوق الصادر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_member_invalid" xml:space="preserve">
+    <value>اختر أعضاء نشطين في الإدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_members_required" xml:space="preserve">
+    <value>اختر من يُقيَّم (حتى 50 عضوًا).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_next_signer_not_allowed" xml:space="preserve">
+    <value>لا تطلب هذه الورقة موقّعًا تاليًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_next_signer_not_eligible" xml:space="preserve">
+    <value>يجب أن يكون الموقّع التالي عضوًا نشطًا آخر تسمح به القاعدة، لا المقيّم ولا أحد الخاضعين للتقييم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_next_signer_required" xml:space="preserve">
+    <value>اختر الموقّع التالي الذي تطلبه الورقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_not_allowed" xml:space="preserve">
+    <value>لا يمكنك القيام بذلك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_not_eligible" xml:space="preserve">
+    <value>لست مقيّمًا مؤهلًا لهذه الورقة أو هذا الكتاب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_not_evaluator" xml:space="preserve">
+    <value>لا يمكن تعديل هذا التقييم إلا للمقيّم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_not_found" xml:space="preserve">
+    <value>غير موجود.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_self_evaluation" xml:space="preserve">
+    <value>لا يمكنك تقييم نفسك بهذه الورقة أو هذا الكتاب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_category_invalid" xml:space="preserve">
+    <value>اختر فئة تدريب تابعة للإدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_change_summary_required" xml:space="preserve">
+    <value>صِف ما الذي تغيّر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_kind_invalid" xml:space="preserve">
+    <value>اختر ورقة مهارات أو تقرير ملاحظة يومي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_no_draft" xml:space="preserve">
+    <value>لا توجد مسودة للنشر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_no_gradable_step" xml:space="preserve">
+    <value>أضف خطوة واحدة على الأقل يجيب عنها المقيّم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_not_found" xml:space="preserve">
+    <value>لم يُعثر على ورقة المهارات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_not_published" xml:space="preserve">
+    <value>ليس للورقة إصدار منشور.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_bounds" xml:space="preserve">
+    <value>قيمة دنيا أعلى من القصوى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_compute" xml:space="preserve">
+    <value>يجب أن تشير الخطوة المحسوبة إلى خطوات سابقة من نوع رقم أو مدة أو مقياس.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_count" xml:space="preserve">
+    <value>تحتوي الورقة على 1 إلى 200 خطوة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_critical" xml:space="preserve">
+    <value>لا يمكن أن تكون حرجة إلا الخطوات المحتسبة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_key" xml:space="preserve">
+    <value>تحتاج كل خطوة إلى مفتاح فريد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_label" xml:space="preserve">
+    <value>تحتاج كل خطوة إلى تسمية حتى 300 حرف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_options" xml:space="preserve">
+    <value>تحتاج خطوات الاختيار من 2 إلى 30 خيارًا مختلفًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_rating" xml:space="preserve">
+    <value>يحتاج المقياس إلى أدنى وأعلى تقدير وتقدير النجاح بينهما.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_type" xml:space="preserve">
+    <value>اختر نوع السؤال.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_weight" xml:space="preserve">
+    <value>الأوزان من 0 إلى 1000؛ وتحتاج الخطوة الحرجة إلى وزن أكبر من 0.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_title_required" xml:space="preserve">
+    <value>أدخل عنوانًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_signature_refused" xml:space="preserve">
+    <value>تعذّر إنشاء طلب التوقيع؛ يبقى التقييم قيد التنفيذ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_split_last_member" xml:space="preserve">
+    <value>لا يمكن فصل آخر عضو في تقييم الفريق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_split_not_crew" xml:space="preserve">
+    <value>لا يمكن فصل عضو إلا من تقييم فريق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_stale" xml:space="preserve">
+    <value>غيّر شخص آخر هذا في الأثناء. أعد التحميل وحاول مجددًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_evidence_required" xml:space="preserve">
+    <value>تحتاج الخطوة الراسبة إلى دليل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_invalid" xml:space="preserve">
+    <value>إجابة غير صالحة لخطوتها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_not_applicable" xml:space="preserve">
+    <value>يتطلب «لا ينطبق» سببًا ولا يُسمح به في الخطوات الحرجة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_note_required" xml:space="preserve">
+    <value>تحتاج الخطوة الراسبة إلى تعليق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_required" xml:space="preserve">
+    <value>أجب عن كل الخطوات المطلوبة قبل الإرسال.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_too_long" xml:space="preserve">
+    <value>إجابة أو تعليق طويل جدًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_template_not_found" xml:space="preserve">
+    <value>لم يُعثر على القالب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_void_reason_required" xml:space="preserve">
+    <value>أدخل سببًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_already_open" xml:space="preserve">
+    <value>لدى هذا العضو كتاب مفتوح من هذا التعريف بالفعل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_certification_type_invalid" xml:space="preserve">
+    <value>اختر نوع شهادة شخصية تابعًا للإدارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_certifying_official_not_eligible" xml:space="preserve">
+    <value>لا يستوفي المسؤول المصادِق قاعدة التعريف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_certifying_official_required" xml:space="preserve">
+    <value>اختر المسؤول المصادِق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_code_required" xml:space="preserve">
+    <value>أدخل رمز المنصب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_date_invalid" xml:space="preserve">
+    <value>يجب أن يكون تاريخ البدء ضمن صلاحية الكتاب وليس في المستقبل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_expired" xml:space="preserve">
+    <value>انتهت صلاحية كتاب المهام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_family_invalid" xml:space="preserve">
+    <value>اختر فئة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_final_evaluator_not_eligible" xml:space="preserve">
+    <value>لا يستوفي المقيّم النهائي قاعدة التعريف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_final_evaluator_required" xml:space="preserve">
+    <value>اختر المقيّم النهائي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_member_mismatch" xml:space="preserve">
+    <value>لا تقيّم مهمة الكتاب إلا متدربها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_name_required" xml:space="preserve">
+    <value>أدخل اسم المنصب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_not_found" xml:space="preserve">
+    <value>لم يُعثر على كتاب المهام.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_not_open" xml:space="preserve">
+    <value>كتاب المهام غير مفتوح.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_sheet_invalid" xml:space="preserve">
+    <value>تشير مهمة إلى ورقة مهارات غير موجودة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_signers_invalid" xml:space="preserve">
+    <value>يجب أن يكون المتدرّب والمقيّم النهائي والمسؤول المصادِق ثلاثة أعضاء مختلفين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_task_count" xml:space="preserve">
+    <value>يحتوي الكتاب على 1 إلى 200 مهمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_task_invalid" xml:space="preserve">
+    <value>تحتاج كل مهمة إلى عنوان ومن 1 إلى 50 تقييمًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_task_key" xml:space="preserve">
+    <value>تحتاج كل مهمة إلى مفتاح فريد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_task_not_found" xml:space="preserve">
+    <value>هذه المهمة ليست في هذا الكتاب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_tasks_incomplete" xml:space="preserve">
+    <value>يجب إكمال كل المهام قبل المصادقة.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

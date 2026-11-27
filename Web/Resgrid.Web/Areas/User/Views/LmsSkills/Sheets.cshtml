@@ -1,0 +1,98 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsSkills
+@model LmsSkillSheetsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsSkills.LmsSkills> localizer
+@*
+    Skill sheets (T4 item 2) and the skill-sheet template library (Resgrid-authored starters, structure only): managers create and use
+    templates; everyone sees the sheets in force and evaluators start an evaluation from the ones they may run.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Skl.SheetsTitle"];
+    ViewData["Title"] = localizer["Skl.SheetsTitle"].Value;
+    ViewData["Subtitle"] = localizer["Skl.SheetsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.IsManager && Model.CanAuthor)
+    {
+        <form class="rgw-toolbar m-b-md" asp-controller="LmsSkills" asp-action="CreateSheet" asp-route-area="User" method="post">
+            @Html.AntiForgeryToken()
+            <label class="sr-only" for="new-title">@localizer["Skl.Field.Title"]</label>
+            <input id="new-title" name="title" class="form-control" maxlength="250" required placeholder="@localizer["Skl.Field.Title"]" />
+            <label class="sr-only" for="new-code">@localizer["Skl.Field.Code"]</label>
+            <input id="new-code" name="code" class="form-control" maxlength="100" placeholder="@localizer["Skl.Field.Code"]" />
+            <label class="sr-only" for="new-kind">@localizer["Skl.Field.Kind"]</label>
+            <select id="new-kind" name="kind" class="form-control">
+                <option value="0">@localizer["Skl.Kind.SkillSheet"]</option>
+                <option value="1">@localizer["Skl.Kind.ObservationReport"]</option>
+            </select>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Skl.NewSheet"]</button>
+        </form>
+    }
+
+    @if (Model.Sheets.Count == 0)
+    {
+        <p class="text-muted">@localizer["Skl.NoSheets"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Skl.Field.Title"]</th><th>@localizer["Skl.Field.Kind"]</th><th>@localizer["Skl.Col.Version"]</th><th class="rgw-row-actions">@localizer["Skl.Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var sheet in Model.Sheets)
+                    {
+                        Model.Published.TryGetValue(sheet.LmsSkillSheetId, out var published);
+                        <tr>
+                            <td>@sheet.Title<span class="rgw-sub">@sheet.Code</span></td>
+                            <td>@localizer["Skl.Kind." + (LmsSkillSheetKinds)sheet.Kind]</td>
+                            <td>@(published?.Label ?? localizer["Skl.Draft"].Value)</td>
+                            <td class="rgw-row-actions">
+                                <a class="btn btn-white btn-xs" asp-controller="LmsSkills" asp-action="Sheet" asp-route-area="User" asp-route-id="@sheet.LmsSkillSheetId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Skl.Open"]</a>
+                                @if (Model.CanAuthor && Model.CanEvaluate.Contains(sheet.LmsSkillSheetId))
+                                {
+                                    <a class="btn btn-primary btn-xs" asp-controller="LmsSkills" asp-action="Start" asp-route-area="User" asp-route-sheetId="@sheet.LmsSkillSheetId"><i class="fa fa-play" aria-hidden="true"></i> @localizer["Skl.Evaluate"]</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.IsManager)
+    {
+        <h3 class="m-t-lg"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Skl.TemplateLibrary"]</h3>
+        <p class="text-muted">@localizer["Skl.TemplateLibraryIntro"]</p>
+        <div class="rgw-card-grid">
+            @foreach (var template in Model.Templates)
+            {
+                <div class="rgw-card">
+                    <h4><i class="fa @(template.Kind == LmsSkillSheetKinds.ObservationReport ? "fa-binoculars" : "fa-list-ol")" aria-hidden="true"></i> @template.Title</h4>
+                    <p class="rgw-card-meta">@template.Sector · @template.Steps.Count @localizer["Skl.Steps"]</p>
+                    <p>@template.Description</p>
+                    @if (Model.CanAuthor)
+                    {
+                        <form asp-controller="LmsSkills" asp-action="UseTemplate" asp-route-area="User" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="key" value="@template.Key" />
+                            <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-copy" aria-hidden="true"></i> @localizer["Skl.UseTemplate"]</button>
+                        </form>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

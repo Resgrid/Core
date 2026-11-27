@@ -1,0 +1,79 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsStandards
+@model LmsStandardsToolsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsStandards.LmsStandards> localizer
+@*
+    LTI 1.3 tools (T5 item 3): third-party CE providers registered on the department's platform. The platform details are what the provider
+    enters on its side; the signing key can be rotated (the old key stays published for a week so launches in flight verify).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["Std.ToolsTitle"];
+    ViewData["Title"] = localizer["Std.ToolsTitle"].Value;
+    ViewData["Subtitle"] = localizer["Std.ToolsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    @if (Model.CanAuthor)
+    {
+        <div class="rgw-toolbar m-b-md">
+            <a class="btn btn-primary" asp-controller="LmsStandards" asp-action="Tool" asp-route-area="User"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["Std.NewTool"]</a>
+        </div>
+    }
+
+    @if (Model.Tools.Count == 0)
+    {
+        <p class="text-muted">@localizer["Std.NoTools"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["Std.Col.Name"]</th>
+                        <th>@localizer["Std.Col.ClientId"]</th>
+                        <th>@localizer["Std.Col.Passback"]</th>
+                        <th>@localizer["Std.Col.Status"]</th>
+                        <th class="rgw-row-actions">@localizer["Std.Col.Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tool in Model.Tools)
+                    {
+                        <tr>
+                            <td>@tool.Name<span class="rgw-sub">@tool.LaunchUrl</span></td>
+                            <td><code>@tool.ClientId</code></td>
+                            <td>@(tool.AllowGradePassback ? localizer["Std.Yes"] : localizer["Std.No"])</td>
+                            <td><span class="label @(tool.IsActive ? "label-primary" : "label-default")">@(tool.IsActive ? localizer["Std.Active"] : localizer["Std.Inactive"])</span></td>
+                            <td class="rgw-row-actions">
+                                <a class="btn btn-white btn-xs" asp-controller="LmsStandards" asp-action="Tool" asp-route-area="User" asp-route-id="@tool.LmsLtiToolId"><i class="fa fa-pencil" aria-hidden="true"></i> @localizer["Std.Open"]</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @await Html.PartialAsync("_Platform", Model.Platform)
+
+    @if (Model.CanAuthor)
+    {
+        <form asp-controller="LmsStandards" asp-action="RotateKey" asp-route-area="User" method="post" class="m-t-sm">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-white"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["Std.RotateKey"]</button>
+            <span class="help-block">@localizer["Std.RotateKeyHelp"]</span>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

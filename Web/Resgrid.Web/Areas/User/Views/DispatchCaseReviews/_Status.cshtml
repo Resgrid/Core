@@ -1,0 +1,21 @@
+@model int
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatchCaseReviews.DispatchCaseReviews> L
+@* A dispatch case review's status pill: icon with text, contrast-checked label colours. *@
+@{
+    var status = (Resgrid.Model.DispatchCaseReviewStatuses)Model;
+    var css = status switch
+    {
+        Resgrid.Model.DispatchCaseReviewStatuses.Queued => "label-default",
+        Resgrid.Model.DispatchCaseReviewStatuses.InReview => "label-info",
+        Resgrid.Model.DispatchCaseReviewStatuses.Sent => "label-warning",
+        _ => "label-primary"
+    };
+    var icon = status switch
+    {
+        Resgrid.Model.DispatchCaseReviewStatuses.Queued => "fa-inbox",
+        Resgrid.Model.DispatchCaseReviewStatuses.InReview => "fa-pencil",
+        Resgrid.Model.DispatchCaseReviewStatuses.Sent => "fa-paper-plane",
+        _ => "fa-check"
+    };
+}
+<span class="label @css"><i class="fa @icon" aria-hidden="true"></i> @L["Status" + status]</span>

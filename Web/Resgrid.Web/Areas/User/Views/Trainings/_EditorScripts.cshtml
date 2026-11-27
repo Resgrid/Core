@@ -1,0 +1,20 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+<script>
+    var resgridTrainingsI18n = @Html.ScriptJson(new {
+        question = localizer["QuestionColumn"].Value,
+        questionNumber = localizer["QuestionNumberLabel"].Value,
+        questionType = localizer["QuestionTypeLabel"].Value,
+        typeSingle = localizer["QuestionTypeSingle"].Value,
+        typeMulti = localizer["QuestionTypeMulti"].Value,
+        typeTrueFalse = localizer["QuestionTypeTrueFalse"].Value,
+        correct = localizer["CorrectLabel"].Value,
+        answerText = localizer["AnswerTextColumn"].Value,
+        addAnswer = localizer["AddAnswerButton"].Value,
+        removeAnswer = localizer["RemoveButton"].Value,
+        removeQuestion = localizer["RemoveQuestionButton"].Value,
+        actions = localizer["ActionColumn"].Value,
+        trueLabel = localizer["TrueLabel"].Value,
+        falseLabel = localizer["FalseLabel"].Value
+    });
+</script>
+<script src="~/js/app/internal/training/resgrid.training.edittraining.js" asp-append-version="true"></script>

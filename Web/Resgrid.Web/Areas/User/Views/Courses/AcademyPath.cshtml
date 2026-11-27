@@ -1,0 +1,76 @@
+@using Resgrid.Web.Areas.User.Models.Courses
+@model AcademyPathModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@{
+    var title = Model.Text("Path." + Model.Path.Key);
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Academy";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["PathProgressIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var lessonIds = Model.Rows.SelectMany(r => r.Lessons.Keys).Distinct().ToList();
+    var ordered = Model.Path.LessonIds.Where(lessonIds.Contains).ToList();
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Rows.Count == 0)
+    {
+        <p class="text-muted">@localizer["PathNobodyAssigned"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-striped rgw-table">
+                <thead>
+                    <tr>
+                        <th>@localizer["MemberColumn"]</th>
+                        <th>@localizer["DueColumn"]</th>
+                        <th>@localizer["ProgressColumn"]</th>
+                        @foreach (var lessonId in ordered)
+                        {
+                            <th class="text-center"><span title="@Model.Text(lessonId + ".Title")">@(ordered.IndexOf(lessonId) + 1)</span></th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Rows.OrderBy(r => Model.Names.TryGetValue(r.UserId, out var n) ? n : r.UserId))
+                    {
+                        <tr>
+                            <td>@(Model.Names.TryGetValue(row.UserId, out var name) ? name : row.UserId)</td>
+                            <td>@Model.Date(row.DueOn)</td>
+                            <td>@string.Format(localizer["CompletedOfFormat"].Value, row.Completed, row.Total)</td>
+                            @foreach (var lessonId in ordered)
+                            {
+                                <td class="text-center">
+                                    @if (row.Lessons.TryGetValue(lessonId, out var done) && done)
+                                    {
+                                        <i class="fa fa-check text-navy" aria-hidden="true"></i><span class="sr-only">@localizer["CompletedBadge"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted" aria-hidden="true">·</span><span class="sr-only">@localizer["NotStartedBadge"]</span>
+                                    }
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <ol class="small text-muted">
+            @foreach (var lessonId in ordered)
+            {
+                <li>@Model.Text(lessonId + ".Title")</li>
+            }
+        </ol>
+    }
+    <a class="btn btn-white" asp-controller="Courses" asp-action="Academy" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToAcademy"]</a>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

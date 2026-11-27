@@ -1,0 +1,300 @@
+@using Resgrid.Model
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@using Resgrid.Web.Areas.User.Controllers
+@model CourseBuilderModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* The course builder (T2 item 8): modules → lessons of one version (rgw-builder), its settings, and the shared lifecycle (submit → approve
+   with an L2 signature bound to the version hash → publish). Only a Draft can change (ProtocolLifecycle). *@
+@{
+    var outline = Model.Outline;
+    var version = outline.Version;
+    var status = (ProtocolVersionStatuses)version.Status;
+    ViewBag.Title = "Resgrid | " + localizer["BuilderTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = version.Title ?? outline.Course.Title;
+    ViewData["Subtitle"] = localizer[CourseLabels.VersionStatus(version.Status)].Value + (version.Label == null ? "" : " · v" + version.Label) + " · " + string.Format(localizer["FingerprintFormat"].Value, SignaturePolicy.ShortCode(version.ContentHash));
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var manage = Model.Actor?.MayManage == true && Model.Actor.Gate?.CanAuthor == true;
+    var editing = Model.Lesson;
+    var newLesson = editing == null && Model.ModuleForNewLesson.HasValue;
+    var lessonKind = editing?.Kind ?? Model.NewLessonKind;
+    // T5: SCORM, cmi5 and LTI lessons play a package or launch a registered tool (Trainings → Standards).
+    var kinds = new[] { LmsLessonKinds.Blocks, LmsLessonKinds.Video, LmsLessonKinds.Document, LmsLessonKinds.ProtocolVersion, LmsLessonKinds.Assessment, LmsLessonKinds.Survey,
+        LmsLessonKinds.Scorm, LmsLessonKinds.Cmi5, LmsLessonKinds.LtiLink };
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white" asp-controller="Courses" asp-action="Course" asp-route-area="User" asp-route-id="@outline.Course.LmsCourseId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToCourseDetail"]</a>
+        <span class="rgw-toolbar-spacer"></span>
+        @if (Model.Editable)
+        {
+            <form method="post" asp-controller="Courses" asp-action="Discard" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-white" data-confirm="@localizer["DiscardConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i> @localizer["DiscardButton"]</button>
+            </form>
+        }
+        @if (status == ProtocolVersionStatuses.InReview || status == ProtocolVersionStatuses.Approved)
+        {
+            <form method="post" asp-controller="Courses" asp-action="Withdraw" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-white"><i class="fa fa-undo" aria-hidden="true"></i> @localizer["WithdrawDraftButton"]</button>
+            </form>
+        }
+    </div>
+
+    @* T5: a starter's attribution, or an AI draft's source with each drafted lesson's citations (check every lesson against them). *@
+    @await Component.InvokeAsync("LmsCourseOrigin", new { courseId = outline.Course.LmsCourseId, showCitations = Model.Editable })
+
+    @if (Model.Editable)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <form method="post" asp-controller="Courses" asp-action="Submit" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="form-inline">
+                    @Html.AntiForgeryToken()
+                    <label for="submit-summary">@localizer["ChangeSummaryLabel"]</label>
+                    <input id="submit-summary" name="changeSummary" class="form-control" maxlength="2000" value="@version.ChangeSummary" style="min-width:280px" />
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @localizer["SubmitForApprovalButton"]</button>
+                </form>
+            </div>
+        </div>
+
+        @* K2 drafting aids (Enhanced AI; hidden without it): accepted questions go to a question bank, an accepted outline becomes modules and
+           lessons of this draft, a change summary fills the summary above. Nothing is saved until the author accepts. *@
+        @await Html.PartialAsync("_AuthoringAids", new Resgrid.Web.Areas.User.Models.AuthoringAids.AuthoringAidsPanelModel
+        {
+            PanelId = "aids-course",
+            SourceKind = (int)AuthoringAidSourceKinds.CourseVersion,
+            SourceId = version.LmsCourseVersionId,
+            OfferQuiz = true,
+            OfferOutline = true,
+            OfferChangeSummary = true,
+            SummaryTargetSelector = "#submit-summary",
+            AcceptQuestionsUrl = Url.Action("AcceptAidQuestions", "Courses", new { area = "User", id = version.LmsCourseVersionId }),
+            AcceptOutlineUrl = Url.Action("AcceptAidOutline", "Courses", new { area = "User", id = version.LmsCourseVersionId })
+        })
+    }
+
+    @if (status == ProtocolVersionStatuses.InReview && manage)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-gavel" aria-hidden="true"></i> @localizer["ApprovalHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@LmsCourseStatements.Approval(outline.Course, version)</p>
+                <form method="post" asp-controller="Courses" asp-action="Approve" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="m-b-sm">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group"><label for="approve-comment">@localizer["CommentLabel"]</label><input id="approve-comment" name="comment" class="form-control" maxlength="2000" /></div>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ApproveSignButton"]</button>
+                    <span class="help-block">@localizer["ApproveStepUpHelp"]</span>
+                </form>
+                <form method="post" asp-controller="Courses" asp-action="Reject" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group"><label for="reject-comment">@localizer["RejectReasonLabel"]</label><input id="reject-comment" name="comment" class="form-control" maxlength="2000" required /></div>
+                    <button type="submit" class="btn btn-white"><i class="fa fa-times" aria-hidden="true"></i> @localizer["RejectButton"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    @if (status == ProtocolVersionStatuses.Approved && manage)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["PublishHeader"]</h5></div>
+            <div class="ibox-content">
+                <form method="post" asp-controller="Courses" asp-action="Publish" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId">
+                    @Html.AntiForgeryToken()
+                    <div class="radio"><label><input type="radio" name="major" value="false" checked /> @localizer["MinorVersionOption"]</label></div>
+                    <div class="radio"><label><input type="radio" name="major" value="true" /> @localizer["MajorVersionOption"]</label></div>
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="publish-policy">@localizer["MajorPolicyLabel"]</label>
+                            <select id="publish-policy" name="policy" class="form-control">
+                                <option value="0">@localizer["Policy.Nothing"]</option>
+                                <option value="1">@localizer["Policy.Notify"]</option>
+                                <option value="2">@localizer["Policy.Reassign"]</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="publish-days">@localizer["ReassignDaysLabel"]</label>
+                            <input id="publish-days" name="reassignDays" type="number" min="1" max="730" value="30" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group"><label for="publish-summary">@localizer["ChangeSummaryLabel"]</label><input id="publish-summary" name="changeSummary" class="form-control" value="@version.ChangeSummary" maxlength="2000" required /></div>
+                    <p class="help-block">@localizer["PublishHelp"]</p>
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["PublishButton"]</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-lg-5">
+            @foreach (var module in outline.Modules)
+            {
+                var moduleIndex = outline.Modules.IndexOf(module);
+                <div class="panel panel-default rgw-builder-section">
+                    <div class="panel-heading rgw-builder-heading">
+                        <span class="rgw-builder-title">@(string.IsNullOrWhiteSpace(module.Module.Title) ? string.Format(localizer["ModuleNumberFormat"].Value, moduleIndex + 1) : module.Module.Title)</span>
+                        @if (Model.Editable)
+                        {
+                            <span class="rgw-builder-actions">
+                                <form method="post" asp-controller="Courses" asp-action="Move" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="isModule" value="true" /><input type="hidden" name="itemId" value="@module.Module.LmsCourseModuleId" /><input type="hidden" name="up" value="true" />
+                                    <button type="submit" class="btn btn-white btn-xs" title="@localizer["MoveUpButton"]"><i class="fa fa-arrow-up" aria-hidden="true"></i><span class="sr-only">@localizer["MoveUpButton"]</span></button>
+                                </form>
+                                <form method="post" asp-controller="Courses" asp-action="DeleteModule" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="moduleId" value="@module.Module.LmsCourseModuleId" />
+                                    <button type="submit" class="btn btn-white btn-xs" data-confirm="@localizer["DeleteModuleConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">@localizer["DeleteButton"]</span></button>
+                                </form>
+                            </span>
+                        }
+                    </div>
+                    <div class="panel-body">
+                        @if (Model.Editable)
+                        {
+                            <form method="post" asp-controller="Courses" asp-action="SaveModule" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="form-inline m-b-sm">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="moduleId" value="@module.Module.LmsCourseModuleId" />
+                                <label class="sr-only" for="module-title-@module.Module.LmsCourseModuleId">@localizer["ModuleTitleLabel"]</label>
+                                <input id="module-title-@module.Module.LmsCourseModuleId" name="title" class="form-control input-sm" value="@module.Module.Title" placeholder="@localizer["ModuleTitleLabel"]" maxlength="250" />
+                                <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-save" aria-hidden="true"></i> @localizer["RenameButton"]</button>
+                            </form>
+                        }
+                        <ul class="rgw-journey">
+                            @foreach (var lesson in module.Lessons)
+                            {
+                                <li class="@(editing?.LmsLessonId == lesson.LmsLessonId ? "active" : "")">
+                                    <a asp-controller="Courses" asp-action="Builder" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" asp-route-lesson="@lesson.LmsLessonId">
+                                        <i class="fa @CourseLabels.LessonIcon(lesson.Kind)" aria-hidden="true"></i> @lesson.Title
+                                    </a>
+                                    <span>
+                                        <span class="rgw-sub">@localizer[CourseLabels.LessonKind(lesson.Kind)]@(lesson.IsRequired ? "" : " · " + localizer["OptionalBadge"].Value)</span>
+                                        @if (Model.Editable)
+                                        {
+                                            <form method="post" asp-controller="Courses" asp-action="Move" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="isModule" value="false" /><input type="hidden" name="itemId" value="@lesson.LmsLessonId" /><input type="hidden" name="up" value="true" />
+                                                <button type="submit" class="btn btn-white btn-xs" title="@localizer["MoveUpButton"]"><i class="fa fa-arrow-up" aria-hidden="true"></i><span class="sr-only">@localizer["MoveUpButton"]</span></button>
+                                            </form>
+                                            <form method="post" asp-controller="Courses" asp-action="DeleteLesson" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="lessonId" value="@lesson.LmsLessonId" />
+                                                <button type="submit" class="btn btn-white btn-xs" data-confirm="@localizer["DeleteLessonConfirm"]"><i class="fa fa-trash" aria-hidden="true"></i><span class="sr-only">@localizer["DeleteButton"]</span></button>
+                                            </form>
+                                        }
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                        @if (Model.Editable)
+                        {
+                            <div class="m-t-sm">
+                                <span class="small text-muted">@localizer["AddLessonLabel"]</span>
+                                @foreach (var kind in kinds)
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="Courses" asp-action="Builder" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" asp-route-module="@module.Module.LmsCourseModuleId" asp-route-kind="@((int)kind)">
+                                        <i class="fa @CourseLabels.LessonIcon((int)kind)" aria-hidden="true"></i> @localizer[CourseLabels.LessonKind((int)kind)]
+                                    </a>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            @if (Model.Editable)
+            {
+                <form method="post" asp-controller="Courses" asp-action="SaveModule" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId" class="form-inline m-b-md">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="moduleId" value="0" />
+                    <label class="sr-only" for="new-module">@localizer["ModuleTitleLabel"]</label>
+                    <input id="new-module" name="title" class="form-control input-sm" placeholder="@localizer["ModuleTitleLabel"]" maxlength="250" />
+                    <button type="submit" class="btn btn-white btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddModuleButton"]</button>
+                </form>
+            }
+
+            @if (Model.Approvals.Count > 0 || Model.Signatures.Count > 0)
+            {
+                <h4>@localizer["ApprovalsHeader"]</h4>
+                <ul class="small">
+                    @foreach (var step in Model.Approvals.OrderByDescending(a => a.Round).ThenBy(a => a.StepOrder))
+                    {
+                        <li>@string.Format(localizer["ApprovalRoundFormat"].Value, step.Round) — @localizer["Decision." + (ProtocolApprovalDecisions)step.Decision]
+                            @if (!string.IsNullOrWhiteSpace(step.DecidedByUserId)) {<span>· @(Model.Names.TryGetValue(step.DecidedByUserId, out var who) ? who : step.DecidedByUserId) · @Model.Date(step.DecidedOn)</span>}
+                            @if (!string.IsNullOrWhiteSpace(step.Comment)) {<em>· @step.Comment</em>}
+                        </li>
+                    }
+                    @foreach (var signature in Model.Signatures)
+                    {
+                        <li><i class="fa @(signature.IsValid ? "fa-check text-navy" : "fa-exclamation-triangle text-warning")" aria-hidden="true"></i>
+                            @signature.Record.SignerNameSnapshot · @SignaturePolicy.ShortCode(signature.Record.ArtifactSha256) · @localizer["Signature." + signature.State]</li>
+                    }
+                </ul>
+            }
+        </div>
+
+        <div class="col-lg-7">
+            @if (editing != null || newLesson)
+            {
+                @await Html.PartialAsync("_LessonEditor", Model)
+            }
+            else
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-cog" aria-hidden="true"></i> @localizer["VersionSettingsHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <form method="post" asp-controller="Courses" asp-action="SaveSettings" asp-route-area="User" asp-route-id="@version.LmsCourseVersionId">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="rowVersion" value="@version.RowVersion" />
+                            <fieldset disabled="@(!Model.Editable)">
+                                <div class="form-group"><label for="s-title">@localizer["TitleLabel"]</label><input id="s-title" name="title" class="form-control" value="@version.Title" maxlength="250" /></div>
+                                <div class="form-group"><label for="s-overview">@localizer["OverviewLabel"]</label><textarea id="s-overview" name="overviewHtml" class="form-control" rows="5">@version.ContentHtml</textarea></div>
+                                <div class="rgw-grid">
+                                    <div class="form-group"><label for="s-hours">@localizer["HoursLabel"]</label><input id="s-hours" name="hours" type="number" step="0.05" min="0" max="1000" class="form-control" value="@version.Hours.ToString(System.Globalization.CultureInfo.InvariantCulture)" /></div>
+                                    <div class="form-group">
+                                        <label for="s-category">@localizer["CategoryLabel"]</label>
+                                        <select id="s-category" name="categoryId" class="form-control">
+                                            <option value="">@localizer["NoneOption"]</option>
+                                            @foreach (var c in Model.Categories) {<option value="@c.Key" selected="@(version.CategoryId == c.Key)">@c.Value</option>}
+                                        </select>
+                                    </div>
+                                    <div class="form-group"><label for="s-ceprovider">@localizer["CeProviderLabel"]</label><input id="s-ceprovider" name="ceProvider" class="form-control" value="@version.CeProvider" maxlength="200" /></div>
+                                    <div class="form-group"><label for="s-cenumber">@localizer["CeNumberLabel"]</label><input id="s-cenumber" name="ceCourseNumber" class="form-control" value="@version.CeCourseNumber" maxlength="100" /></div>
+                                    <div class="form-group">
+                                        <label for="s-cert">@localizer["IssuesCertificationLabel"]</label>
+                                        <select id="s-cert" name="issuesCertificationTypeId" class="form-control">
+                                            <option value="">@localizer["NoneOption"]</option>
+                                            @foreach (var c in Model.CertificationTypes) {<option value="@c.Key" selected="@(version.IssuesCertificationTypeId == c.Key)">@c.Value</option>}
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="s-template">@localizer["CertificateTemplateLabel"]</label>
+                                        <select id="s-template" name="certificateTemplateId" class="form-control">
+                                            <option value="">@localizer["StandardOption"]</option>
+                                            @foreach (var c in Model.CertificateTemplates) {<option value="@c.Key" selected="@(version.CertificateTemplateId == c.Key)">@c.Value</option>}
+                                        </select>
+                                    </div>
+                                </div>
+                                <p class="help-block">@localizer["CeDisclaimer"]</p>
+                                @if (Model.Editable)
+                                {
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveButton"]</button>
+                                }
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -1,0 +1,793 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Reviews.Tab" xml:space="preserve">
+    <value>Utbildningsgranskningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.Title" xml:space="preserve">
+    <value>Utbildningsgranskningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.Intro" xml:space="preserve">
+    <value>Utbildningstimmar som medlemmar har skickat in med underlag och som väntar på din granskning, äldst först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.AwaitingTab" xml:space="preserve">
+    <value>Väntar på granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.InfoTab" xml:space="preserve">
+    <value>Väntar på medlemmen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.AwaitingTile" xml:space="preserve">
+    <value>Väntar på din granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.InfoTile" xml:space="preserve">
+    <value>Väntar på medlemmens svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.OldestTile" xml:space="preserve">
+    <value>Äldsta väntar sedan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.MySubmissionsLink" xml:space="preserve">
+    <value>Mina inskick</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.Empty" xml:space="preserve">
+    <value>Inget väntar på din granskning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.EmptyInfo" xml:space="preserve">
+    <value>Inget inskick väntar på en medlems svar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.SelectAll" xml:space="preserve">
+    <value>Markera alla</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.SelectRow" xml:space="preserve">
+    <value>Markera {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.FilesCount" xml:space="preserve">
+    <value>{0} filer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.ReviewButton" xml:space="preserve">
+    <value>Granska</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkNoteLabel" xml:space="preserve">
+    <value>Meddelande till medlemmarna (valfritt)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkConfirm" xml:space="preserve">
+    <value>Godkänna de markerade inskicken?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkApproveButton" xml:space="preserve">
+    <value>Godkänn markerade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.NoneSelected" xml:space="preserve">
+    <value>Markera minst ett inskick.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkApproved" xml:space="preserve">
+    <value>{0} inskick godkända.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Inbox.BulkRefused" xml:space="preserve">
+    <value>{0} inskick kunde inte godkännas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Category" xml:space="preserve">
+    <value>Kategori</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.AllCategories" xml:space="preserve">
+    <value>Alla kategorier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Uncategorized" xml:space="preserve">
+    <value>Utan kategori</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Member" xml:space="preserve">
+    <value>Medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.AllMembers" xml:space="preserve">
+    <value>Alla medlemmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Search" xml:space="preserve">
+    <value>Sök titel, anordnare eller nummer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Apply" xml:space="preserve">
+    <value>Filtrera</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Filter.Clear" xml:space="preserve">
+    <value>Rensa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Member" xml:space="preserve">
+    <value>Medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Training" xml:space="preserve">
+    <value>Utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Category" xml:space="preserve">
+    <value>Kategori</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Hours" xml:space="preserve">
+    <value>Timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Evidence" xml:space="preserve">
+    <value>Underlag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Waiting" xml:space="preserve">
+    <value>Väntar sedan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.State" xml:space="preserve">
+    <value>Granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Col.Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Header" xml:space="preserve">
+    <value>Underlag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.None" xml:space="preserve">
+    <value>Inget underlag bifogat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Open" xml:space="preserve">
+    <value>Öppna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Download" xml:space="preserve">
+    <value>Ladda ned</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.PreviewUnavailable" xml:space="preserve">
+    <value>Ingen förhandsvisning för den här filtypen; ladda ned filen för att visa den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.FilesLabel" xml:space="preserve">
+    <value>Underlagsfiler</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.FilesHelp" xml:space="preserve">
+    <value>Upp till {0} filer på högst {1} MB vardera: ett intyg, ett foto, ett dokument eller ett kvitto (PDF, JPG, PNG, GIF, WebP, DOC, DOCX eller ODT).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.KindLabel" xml:space="preserve">
+    <value>Filerna är</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Other" xml:space="preserve">
+    <value>Annat underlag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Certificate" xml:space="preserve">
+    <value>Ett intyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Photo" xml:space="preserve">
+    <value>Ett foto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Document" xml:space="preserve">
+    <value>Ett dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Evidence.Kind.Receipt" xml:space="preserve">
+    <value>Ett kvitto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Review.Title" xml:space="preserve">
+    <value>Granska utbildningsinskick</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submission.Title" xml:space="preserve">
+    <value>Utbildningsinskick</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Back.Inbox" xml:space="preserve">
+    <value>Tillbaka till utbildningsgranskningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Back.Mine" xml:space="preserve">
+    <value>Tillbaka till mina inskick</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Member" xml:space="preserve">
+    <value>Medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.CompletedOn" xml:space="preserve">
+    <value>Genomförd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Hours" xml:space="preserve">
+    <value>Timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.CeHours" xml:space="preserve">
+    <value>Fortbildningstimmar (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Category" xml:space="preserve">
+    <value>Kategori</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Provider" xml:space="preserve">
+    <value>Anordnare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.CourseNumber" xml:space="preserve">
+    <value>Kurs- eller fortbildningsnummer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.SubmittedOn" xml:space="preserve">
+    <value>Inskickad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.Notes" xml:space="preserve">
+    <value>Medlemmens anteckningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Detail.DeniedReason" xml:space="preserve">
+    <value>Inte godtaget:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.AwaitingReview" xml:space="preserve">
+    <value>Väntar på granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.InfoRequested" xml:space="preserve">
+    <value>Mer information behövs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.Approved" xml:space="preserve">
+    <value>Godkänd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.Denied" xml:space="preserve">
+    <value>Inte godtagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="State.SelfReported" xml:space="preserve">
+    <value>Egenrapporterad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveHeader" xml:space="preserve">
+    <value>Godkänn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveHoursLabel" xml:space="preserve">
+    <value>Timmar som räknas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveNoteLabel" xml:space="preserve">
+    <value>Meddelande till medlemmen (valfritt)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.ApproveButton" xml:space="preserve">
+    <value>Godkänn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.InfoHeader" xml:space="preserve">
+    <value>Be om mer information</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.InfoNoteLabel" xml:space="preserve">
+    <value>Vad som behövs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.InfoButton" xml:space="preserve">
+    <value>Fråga medlemmen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.DenyHeader" xml:space="preserve">
+    <value>Avslå</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.DenyReasonLabel" xml:space="preserve">
+    <value>Skäl (medlemmen läser det)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.DenyButton" xml:space="preserve">
+    <value>Avslå</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Action.Decided" xml:space="preserve">
+    <value>Det här inskicket väntar inte längre på ett beslut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.ReviewerAsked" xml:space="preserve">
+    <value>Granskaren frågade:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.Header" xml:space="preserve">
+    <value>Komplettera och skicka in igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.Help" xml:space="preserve">
+    <value>Lägg till underlag, rätta timmar eller kategori och berätta för granskaren vad som har ändrats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.NoteLabel" xml:space="preserve">
+    <value>Ditt svar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.FilesLabel" xml:space="preserve">
+    <value>Mer underlag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.HoursLabel" xml:space="preserve">
+    <value>Rättade timmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.CategoryLabel" xml:space="preserve">
+    <value>Rättad kategori</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.KeepCategory" xml:space="preserve">
+    <value>Behåll kategorin</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Respond.Button" xml:space="preserve">
+    <value>Skicka in igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Header" xml:space="preserve">
+    <value>Historik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.By" xml:space="preserve">
+    <value>av {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.FilesAdded" xml:space="preserve">
+    <value>{0} filer tillagda</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Empty" xml:space="preserve">
+    <value>Ingen historik ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Submitted" xml:space="preserve">
+    <value>Inskickad för granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.SelfReported" xml:space="preserve">
+    <value>Registrerad som egenrapporterad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Approved" xml:space="preserve">
+    <value>Godkänd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Denied" xml:space="preserve">
+    <value>Inte godtagen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.InfoRequested" xml:space="preserve">
+    <value>Mer information efterfrågad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="History.Step.Resubmitted" xml:space="preserve">
+    <value>Inskickad igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.Title" xml:space="preserve">
+    <value>Mina utbildningsinskick</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.Intro" xml:space="preserve">
+    <value>Utbildningstimmar som du har skickat in med underlag, och hur det går med varje inskick.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.SubmitButton" xml:space="preserve">
+    <value>Skicka in utbildningstimmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.Empty" xml:space="preserve">
+    <value>Du har inte skickat in några utbildningstimmar ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Mine.OpenButton" xml:space="preserve">
+    <value>Öppna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Approved" xml:space="preserve">
+    <value>Inskicket godkändes.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Denied" xml:space="preserve">
+    <value>Inskicket godtogs inte; medlemmen har fått veta varför.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.InfoRequested" xml:space="preserve">
+    <value>Medlemmen har ombetts om mer information.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Resubmitted" xml:space="preserve">
+    <value>Ditt inskick ligger hos granskarna igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Submitted" xml:space="preserve">
+    <value>Ditt inskick har tagits emot och väntar på granskning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Message.Accepted" xml:space="preserve">
+    <value>Dina utbildningstimmar registrerades som egenrapporterade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>Åtgärden kunde inte slutföras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.ReviewsHeader" xml:space="preserve">
+    <value>Utbildningsinskick att granska</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.ReviewsAll" xml:space="preserve">
+    <value>Öppna utbildningsgranskningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.WaitingSince" xml:space="preserve">
+    <value>väntar sedan {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Next.InfoHeader" xml:space="preserve">
+    <value>En granskare behöver mer information</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Hours.Value" xml:space="preserve">
+    <value>{0} tim</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.System" xml:space="preserve">
+    <value>Registrerad av systemet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.SelfReported" xml:space="preserve">
+    <value>Egenrapporterad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.Reviewed" xml:space="preserve">
+    <value>Granskad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.RecordedByOther" xml:space="preserve">
+    <value>Registrerad av en instruktör</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Provenance.Imported" xml:space="preserve">
+    <value>Importerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Transcript.SubmissionButton" xml:space="preserve">
+    <value>Inskick</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Queue.SubmissionsMoved" xml:space="preserve">
+    <value>Medlemmarnas inskickade utbildningstimmar granskas under Utbildningsgranskningar ({0} väntar på dig).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submit.ReviewNotice.Always" xml:space="preserve">
+    <value>En granskare kontrollerar ditt inskick innan timmarna räknas. Du får besked när det godkänns eller om mer information behövs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submit.ReviewNotice.Off" xml:space="preserve">
+    <value>Dina timmar räknas så snart du skickar in dem och visas som egenrapporterade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Submit.ReviewNotice.Selected" xml:space="preserve">
+    <value>Vissa inskick (efter kategori eller antal timmar) granskas innan de räknas; övriga räknas direkt som egenrapporterade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Header" xml:space="preserve">
+    <value>Granskning av medlemmarnas inskick</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Help" xml:space="preserve">
+    <value>Välj om utbildningstimmar som medlemmar skickar in ska vänta på en granskare innan de räknas. Granskar gör de som har behörigheten Registrera genomförda utbildningar (utbildningsansvariga, instruktörer) och de som förvaltar utbildningsregistret, för alla eller för sin egen grupp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode" xml:space="preserve">
+    <value>Granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode.Always" xml:space="preserve">
+    <value>Varje inskick väntar på en granskare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode.Off" xml:space="preserve">
+    <value>Ingen granskning: godtas vid inskick och visas som egenrapporterat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Mode.Selected" xml:space="preserve">
+    <value>Endast kategorierna nedan eller över en timgräns</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.Categories" xml:space="preserve">
+    <value>Kategorier som kräver granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.CategoriesHelp" xml:space="preserve">
+    <value>Med "endast kategorierna nedan": inskick i dessa kategorier väntar på en granskare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.AboveHours" xml:space="preserve">
+    <value>Granska inskick på mer än (timmar)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.AboveHoursHelp" xml:space="preserve">
+    <value>0 = ingen gräns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices" xml:space="preserve">
+    <value>Meddelanden till granskare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices.Immediate" xml:space="preserve">
+    <value>Ett meddelande per inskick</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices.DailyDigest" xml:space="preserve">
+    <value>En sammanfattning per dag</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ReviewerNotices.None" xml:space="preserve">
+    <value>Inga meddelanden (endast inkorg och startsida)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.OwnGroupOnly" xml:space="preserve">
+    <value>Granskare som utsetts via roll granskar endast medlemmar i sin egen grupp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.OwnGroupOnlyHelp" xml:space="preserve">
+    <value>Organisationens administratörer granskar fortfarande alla; gruppadministratörer sin egen grupp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.ModeInvalid" xml:space="preserve">
+    <value>Välj ett av alternativen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Settings.SelectedRequired" xml:space="preserve">
+    <value>Välj minst en kategori eller en timgräns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_type" xml:space="preserve">
+    <value>Den här filtypen godtas inte.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_too_large" xml:space="preserve">
+    <value>En fil, eller filerna tillsammans, är för stora.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_content" xml:space="preserve">
+    <value>En fils innehåll stämmer inte med dess typ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_too_many_files" xml:space="preserve">
+    <value>För många filer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_rejected" xml:space="preserve">
+    <value>En fil avvisades av virusskannern.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_file_empty" xml:space="preserve">
+    <value>En fil är tom.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_submissions_disabled" xml:space="preserve">
+    <value>Din organisation tar inte emot utbildningsinskick från medlemmar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_resubmit_empty" xml:space="preserve">
+    <value>Lägg till ett svar, en rättelse eller en fil.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_reviewer" xml:space="preserve">
+    <value>Du granskar inte den här medlemmens inskick.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_pending" xml:space="preserve">
+    <value>Det här inskicket väntar inte längre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_self_review" xml:space="preserve">
+    <value>Du kan inte granska ditt eget inskick.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_note_required" xml:space="preserve">
+    <value>Ange vad som behövs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_reason_required" xml:space="preserve">
+    <value>Ett skäl krävs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_awaiting_review" xml:space="preserve">
+    <value>Det här inskicket väntar redan på sin medlem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_not_submission" xml:space="preserve">
+    <value>Den här posten är inte ett inskick från en medlem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_hours_invalid" xml:space="preserve">
+    <value>Timmarna är ogiltiga.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_category_invalid" xml:space="preserve">
+    <value>Kategorin är ogiltig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="learning_record_bulk_limit" xml:space="preserve">
+    <value>För många inskick på en gång.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionReceived.Title" xml:space="preserve">
+    <value>Utbildningsinskick mottaget</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionReceived.Body" xml:space="preserve">
+    <value>Ditt utbildningsinskick "{0}" ({1} tim) har tagits emot och väntar på granskning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionAccepted.Title" xml:space="preserve">
+    <value>Utbildningstimmar registrerade</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionAccepted.Body" xml:space="preserve">
+    <value>Dina utbildningstimmar "{0}" ({1} tim) registrerades som egenrapporterade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionApproved.Title" xml:space="preserve">
+    <value>Utbildningsinskick godkänt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionApproved.Body" xml:space="preserve">
+    <value>Ditt utbildningsinskick "{0}" godkändes; {1} tim räknas nu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionDenied.Title" xml:space="preserve">
+    <value>Utbildningsinskick inte godtaget</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionDenied.Body" xml:space="preserve">
+    <value>Ditt utbildningsinskick "{0}" godtogs inte. Skäl: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionInfoRequested.Title" xml:space="preserve">
+    <value>Mer information behövs</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.SubmissionInfoRequested.Body" xml:space="preserve">
+    <value>En granskare behöver mer information om "{0}": {1}. Öppna inskicket för att lägga till underlag och skicka in det igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewWaiting.Title" xml:space="preserve">
+    <value>Utbildningsinskick att granska</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewWaiting.Body" xml:space="preserve">
+    <value>{0} skickade in "{1}" ({2} tim) för din granskning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewResubmitted.Title" xml:space="preserve">
+    <value>Utbildningsinskick inskickat igen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewDigest.Title" xml:space="preserve">
+    <value>Utbildningsinskick att granska</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.ReviewDigest.Body" xml:space="preserve">
+    <value>{0} utbildningsinskick väntar på din granskning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionRecorded.Title" xml:space="preserve">
+    <value>Genomförd utbildning registrerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionRecorded.Body" xml:space="preserve">
+    <value>{0} registrerade att du genomförde "{1}" den {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionVoided.Title" xml:space="preserve">
+    <value>Registrerad genomförd utbildning makulerad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.CompletionVoided.Body" xml:space="preserve">
+    <value>Din registrerade genomförda utbildning "{0}" makulerades. Skäl: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.AMember" xml:space="preserve">
+    <value>En medlem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Notice.AnInstructor" xml:space="preserve">
+    <value>En instruktör</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

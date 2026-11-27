@@ -1,0 +1,76 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Knowledge
+@model KnowledgeSettingsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Knowledge.Knowledge> localizer
+@* Knowledge settings (department setting 139): Documents opt-in and the dosing tool link, with the index state and a rebuild. *@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + localizer["SettingsTitle"];
+    ViewData["Title"] = localizer["SettingsTitle"].Value;
+    ViewData["Subtitle"] = localizer["SettingsIntro"].Value;
+    ViewData["Section"] = "Settings";
+    ViewData["IsAdmin"] = true;
+    ViewData["CanSeeGaps"] = Model.CanSeeGaps;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    <form method="post" asp-controller="Knowledge" asp-action="Settings" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-book" aria-hidden="true"></i> @localizer["CorpusHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["CorpusHelp"]</p>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" id="IncludeDocuments" name="IncludeDocuments" value="true" @(Model.IncludeDocuments ? "checked" : "") aria-describedby="IncludeDocumentsHelp" />
+                        @localizer["IncludeDocumentsLabel"]
+                    </label>
+                    <input type="hidden" name="IncludeDocuments" value="false" />
+                    <span id="IncludeDocumentsHelp" class="help-block">@localizer["IncludeDocumentsHelp"]</span>
+                </div>
+                <div class="form-group" style="max-width: 560px;">
+                    <label class="control-label" for="DosingToolUrl">@localizer["DosingToolUrlLabel"]</label>
+                    <input class="form-control" type="url" id="DosingToolUrl" name="DosingToolUrl" maxlength="@KnowledgeSettings.DosingToolUrlMaxLength" value="@Model.DosingToolUrl" placeholder="https://" aria-describedby="DosingToolUrlHelp" />
+                    <span id="DosingToolUrlHelp" class="help-block">@localizer["DosingToolUrlHelp"]</span>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveButton"]</button>
+            </div>
+        </div>
+    </form>
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-database" aria-hidden="true"></i> @localizer["IndexHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.State == null)
+            {
+                <p class="text-muted" role="status">@localizer["IndexNotBuilt"]</p>
+            }
+            else
+            {
+                <p role="status">@string.Format(localizer["IndexStatus"].Value, Model.State.ChunkCount, Model.State.EmbeddedCount, departmentTime.Format(Model.State.LastIndexedOn))</p>
+                @if (!string.IsNullOrEmpty(Model.State.LastError))
+                {
+                    <p class="text-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @localizer["IndexWarning"]</p>
+                }
+            }
+            <form method="post" asp-controller="Knowledge" asp-action="Rebuild" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-default"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["RebuildButton"]</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

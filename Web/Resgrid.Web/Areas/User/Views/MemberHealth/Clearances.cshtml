@@ -1,0 +1,177 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model ClearancesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> localizer
+@*
+    NFPA 1582 medical clearance (member wellness WL1, health officers): every member's current status, recording an evaluation, and one
+    member's history. The status (Cleared / Cleared with restrictions / Not cleared) is operational; the restriction detail is protected
+    (ADP catalog 38). With a clearance certification type named in the wellness settings, each evaluation is also that certification.
+*@
+@{
+    var title = localizer["ClearancesTitle"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Clearances";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["ClearancesIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Wellness/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.ClearanceTypeConfigured)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["ClearanceTypeMissingNote"]</div>
+    }
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-stethoscope" aria-hidden="true"></i> @localizer["CurrentClearancesHeader"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Current.Count == 0)
+                    {
+                        <p class="text-muted">@localizer["NoClearances"]</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped rgw-table">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["MemberColumn"]</th>
+                                        <th>@localizer["ClearanceStatusLabel"]</th>
+                                        <th>@localizer["EvaluatedOnLabel"]</th>
+                                        <th>@localizer["ValidUntilLabel"]</th>
+                                        <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var row in Model.Current.OrderBy(c => Model.NameOf(c.UserId)))
+                                    {
+                                        <tr>
+                                            <td>@Model.NameOf(row.UserId)</td>
+                                            <td><span class="@MemberHealthPresentation.ClearanceBadge(row.Status)">@localizer[MemberHealthPresentation.ClearanceKey(row.Status)]</span></td>
+                                            <td class="text-nowrap">@MemberHealthPresentation.CalendarDate(row.EvaluatedOn)</td>
+                                            <td class="text-nowrap">@MemberHealthPresentation.CalendarDate(row.ValidUntil)</td>
+                                            <td class="rgw-row-actions"><a class="btn btn-xs btn-default" asp-controller="MemberHealth" asp-action="Clearances" asp-route-area="User" asp-route-userId="@row.UserId"><i class="fa fa-history" aria-hidden="true"></i> @localizer["HistoryButton"]</a></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <form method="post" asp-controller="MemberHealth" asp-action="RecordClearance" asp-route-area="User" class="ibox float-e-margins">
+                @Html.AntiForgeryToken()
+                <div class="ibox-title"><h5><i class="fa fa-plus" aria-hidden="true"></i> @localizer["RecordClearanceHeader"]</h5></div>
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <label for="clearance-member">@localizer["MemberLabel"]</label>
+                        <select id="clearance-member" name="userId" class="form-control" required>
+                            @foreach (var member in Model.Members)
+                            {
+                                <option value="@member.UserId" selected="@(string.Equals(member.UserId, Model.HistoryUserId, StringComparison.OrdinalIgnoreCase))">@member.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="clearance-status">@localizer["ClearanceStatusLabel"]</label>
+                        <select id="clearance-status" name="status" class="form-control" required>
+                            @foreach (MedicalClearanceStatuses status in Enum.GetValues(typeof(MedicalClearanceStatuses)))
+                            {
+                                <option value="@((int)status)">@localizer[MemberHealthPresentation.ClearanceKey((int)status)]</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="clearance-evaluated">@localizer["EvaluatedOnLabel"]</label>
+                            <input id="clearance-evaluated" name="evaluatedOn" type="date" class="form-control" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="clearance-valid">@localizer["ValidUntilLabel"]</label>
+                            <input id="clearance-valid" name="validUntil" type="date" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="clearance-detail">@localizer["RestrictionDetailLabel"]</label>
+                        <textarea id="clearance-detail" name="restrictionDetail" class="form-control" rows="3" maxlength="4000"></textarea>
+                        <small class="text-muted">@localizer["ClearanceDetailHelp"]</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save" aria-hidden="true"></i> @localizer["RecordClearanceButton"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Model.HistoryUserId))
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-history" aria-hidden="true"></i> @string.Format(localizer["HistoryHeaderFormat"].Value, Model.NameOf(Model.HistoryUserId))</h5></div>
+            <div class="ibox-content">
+                @if (Model.ProtectedWithheld)
+                {
+                    <div class="alert alert-info" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ProtectedWithheldNotice"]</div>
+                }
+                @if (Model.History.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoClearances"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["EvaluatedOnLabel"]</th>
+                                    <th>@localizer["ClearanceStatusLabel"]</th>
+                                    <th>@localizer["ValidUntilLabel"]</th>
+                                    <th>@localizer["RestrictionDetailLabel"]</th>
+                                    <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in Model.History)
+                                {
+                                    <tr class="@(row.IsVoided ? "text-muted" : null)">
+                                        <td class="text-nowrap">@MemberHealthPresentation.CalendarDate(row.EvaluatedOn)</td>
+                                        <td>
+                                            <span class="@MemberHealthPresentation.ClearanceBadge(row.Status)">@localizer[MemberHealthPresentation.ClearanceKey(row.Status)]</span>
+                                            @if (row.IsVoided)
+                                            {
+                                                <small class="rgw-sub">@localizer["VoidedLabel"]</small>
+                                            }
+                                        </td>
+                                        <td class="text-nowrap">@MemberHealthPresentation.CalendarDate(row.ValidUntil)</td>
+                                        <td>@(WellnessPresentation.IsWithheld(row.RestrictionDetail) ? localizer["WithheldValue"].Value : row.RestrictionDetail)</td>
+                                        <td class="rgw-row-actions">
+                                            @if (!row.IsVoided)
+                                            {
+                                                <form method="post" asp-controller="MemberHealth" asp-action="VoidClearance" asp-route-area="User">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="userId" value="@row.UserId" />
+                                                    <input type="hidden" name="clearanceId" value="@row.RmsMedicalClearanceId" />
+                                                    <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["VoidButton"]</button>
+                                                </form>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

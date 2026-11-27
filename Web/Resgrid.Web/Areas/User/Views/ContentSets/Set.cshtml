@@ -1,0 +1,180 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetEditModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3, publisher: a set's name, description and the defer window of locked items; its items with how much subscribers may change each
+    (locked, customizable blocks, open); the departments subscribed; archive. Adding an item offers it to current subscribers in their inbox.
+*@
+@{
+    var set = Model.Detail.Set;
+    var training = set.Kind == (int)ContentSetKinds.Training;
+    ViewBag.Title = "Resgrid | " + set.Name;
+    ViewData["Title"] = set.Name;
+    ViewData["Subtitle"] = text["SetIntro"].Value;
+    ViewData["SetSection"] = training ? "Training" : "Protocols";
+    var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+    var modes = training ? new[] { ContentSetLockModes.Locked, ContentSetLockModes.Open } : new[] { ContentSetLockModes.Locked, ContentSetLockModes.CustomizableBlocks, ContentSetLockModes.Open };
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (set.IsArchived)
+    {
+        <div class="alert alert-warning">@text["ArchivedHelp"]</div>
+    }
+    <div class="row">
+        <div class="col-md-5">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-pencil" aria-hidden="true"></i> @text["SetDetailsHeader"]</h5></div>
+                <div class="ibox-content">
+                    <form method="post" asp-action="SaveSet" asp-route-area="User">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@set.ContentSetId" />
+                        <input type="hidden" name="kind" value="@set.Kind" />
+                        <div class="form-group">
+                            <label class="control-label required" for="name">@text["SetNameLabel"]</label>
+                            <input id="name" name="name" class="form-control" value="@set.Name" maxlength="@ContentSet.NameMaxLength" required />
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="description">@text["SetDescriptionLabel"]</label>
+                            <textarea id="description" name="description" class="form-control" rows="3" maxlength="@ContentSet.DescriptionMaxLength">@set.Description</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label" for="lockedDeferDays">@text["DeferDaysLabel"]</label>
+                            <input id="lockedDeferDays" name="lockedDeferDays" type="number" min="1" max="@ContentSet.MaxDeferDays" class="form-control" value="@set.LockedDeferDays" />
+                            <span class="help-block small">@text["DeferDaysHelp"]</span>
+                        </div>
+                        <button type="submit" class="btn btn-primary" @(set.IsArchived ? "disabled" : null)>@text["SaveButton"]</button>
+                    </form>
+                    @if (!set.IsArchived)
+                    {
+                        <hr />
+                        <form method="post" asp-action="ArchiveSet" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@set.ContentSetId" />
+                            <button type="submit" class="btn btn-danger btn-sm" data-confirm="@text["ArchiveConfirm"]"><i class="fa fa-archive" aria-hidden="true"></i> @text["ArchiveButton"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-building-o" aria-hidden="true"></i> @text["SubscribersHeader"]</h5></div>
+                <div class="ibox-content">
+                    @if (Model.Detail.Subscribers.Count == 0)
+                    {
+                        <p class="text-muted">@text["NoSubscribers"]</p>
+                    }
+                    <ul class="list-unstyled">
+                        @foreach (var subscriber in Model.Detail.Subscribers)
+                        {
+                            <li>
+                                @subscriber.DepartmentName
+                                <span class="label @(subscriber.Subscription.IsActive ? "label-primary" : "label-warning")">@text["SubscriptionStatus" + (ContentSetSubscriptionStatuses)subscriber.Subscription.Status]</span>
+                                @if (subscriber.Sponsored) { <span class="label label-info">@text["SponsoredLabel"]</span> }
+                                <span class="small text-muted">@time.Format(subscriber.Subscription.SubscribedOn)</span>
+                                <form method="post" asp-action="RemoveSubscriber" asp-route-area="User" style="display:inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="setId" value="@set.ContentSetId" />
+                                    <input type="hidden" name="subscriptionId" value="@subscriber.Subscription.ContentSetSubscriptionId" />
+                                    <button type="submit" class="btn btn-xs btn-white" data-confirm="@text["RemoveSubscriberConfirm"]">@text["RemoveButton"]</button>
+                                </form>
+                            </li>
+                        }
+                    </ul>
+                    @if (Model.Detail.OpenProposals > 0)
+                    {
+                        <p><a asp-action="Proposals">@string.Format(text["OpenProposalsCount"].Value, Model.Detail.OpenProposals)</a></p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-list" aria-hidden="true"></i> @text["ItemsHeader"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted small">@text["LockModesHelp"]</p>
+                    @if (Model.Detail.Items.Count == 0)
+                    {
+                        <p class="text-muted">@text["NoItems"]</p>
+                    }
+                    @foreach (var item in Model.Detail.Items)
+                    {
+                        <div class="rgw-card" style="margin-bottom: 12px;">
+                            <h4>@item.Title <small>@item.VersionLabel</small>
+                                @if (item.NeedsLms) { <span class="label label-info">@text["LmsItemLabel"]</span> }
+                                @if (!string.IsNullOrEmpty(item.Problem)) { <span class="label label-warning">@text["Problem_" + item.Problem]</span> }
+                            </h4>
+                            <form method="post" asp-action="UpdateItem" asp-route-area="User">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="setId" value="@set.ContentSetId" />
+                                <input type="hidden" name="itemId" value="@item.Item.ContentSetItemId" />
+                                <div class="form-group">
+                                    <label class="control-label" for="mode-@item.Item.ContentSetItemId">@text["LockModeLabel"]</label>
+                                    <select id="mode-@item.Item.ContentSetItemId" name="lockMode" class="form-control">
+                                        @foreach (var mode in modes)
+                                        {
+                                            <option value="@((int)mode)" selected="@(item.Item.LockMode == (int)mode)">@text["LockMode" + mode]</option>
+                                        }
+                                    </select>
+                                </div>
+                                @if (item.Blocks.Count > 0)
+                                {
+                                    <fieldset>
+                                        <legend class="small">@text["CustomizableBlocksLabel"]</legend>
+                                        @foreach (var block in item.Blocks)
+                                        {
+                                            <div class="checkbox"><label><input type="checkbox" name="keys" value="@block.Key" checked="@(block.Customizable && item.Item.LockMode == (int)ContentSetLockModes.CustomizableBlocks)" /> @block.Label</label></div>
+                                        }
+                                    </fieldset>
+                                }
+                                <button type="submit" class="btn btn-xs btn-primary" @(set.IsArchived ? "disabled" : null)>@text["SaveButton"]</button>
+                            </form>
+                            <form method="post" asp-action="RemoveItem" asp-route-area="User" style="margin-top: 6px;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="setId" value="@set.ContentSetId" />
+                                <input type="hidden" name="itemId" value="@item.Item.ContentSetItemId" />
+                                <button type="submit" class="btn btn-xs btn-white" data-confirm="@text["RemoveItemConfirm"]" @(set.IsArchived ? "disabled" : null)>@text["RemoveButton"]</button>
+                            </form>
+                        </div>
+                    }
+
+                    @if (!set.IsArchived)
+                    {
+                        <h4>@text["AddItemHeader"]</h4>
+                        <form method="post" asp-action="AddItem" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="setId" value="@set.ContentSetId" />
+                            <div class="form-group">
+                                <label class="control-label required" for="item">@text["ItemLabel"]</label>
+                                <select id="item" name="item" class="form-control" required>
+                                    <option value="">@text["ChooseItem"]</option>
+                                    @foreach (var candidate in Model.Candidates)
+                                    {
+                                        <option value="@((int)candidate.Kind):@candidate.ItemId" disabled="@(!string.IsNullOrEmpty(candidate.Problem))">
+                                            @candidate.Title @candidate.VersionLabel @(candidate.NeedsLms ? "(" + text["LmsItemLabel"].Value + ")" : null) @(string.IsNullOrEmpty(candidate.Problem) ? null : "— " + text["Problem_" + candidate.Problem].Value)
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label" for="lockMode">@text["LockModeLabel"]</label>
+                                <select id="lockMode" name="lockMode" class="form-control">
+                                    @foreach (var mode in modes)
+                                    {
+                                        <option value="@((int)mode)">@text["LockMode" + mode]</option>
+                                    }
+                                </select>
+                                <span class="help-block small">@text["AddItemHelp"]</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> @text["AddItemButton"]</button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,131 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsPrograms
+@model LmsCertRequirementsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Round 9A: certification requirement sets. One row per person-scoped certification type: the items a member must all complete inside
+    the cycle window to be issued or to keep it, how many hold it, and how many are due soon or in their grace period.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CertReq.Title"];
+    ViewData["Title"] = localizer["CertReq.Title"].Value;
+    ViewData["Subtitle"] = localizer["CertReq.Intro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_AddonNotice", Model)
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-list-ol" aria-hidden="true"></i> @localizer["CertReq.StatSets"]</div>
+            <div class="rgw-stat-value">@Model.Rows.Count(r => r.Set != null && r.Set.IsActive)</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-hourglass-half text-warning" aria-hidden="true"></i> @localizer["CertReq.StatDueSoon"]</div>
+            <div class="rgw-stat-value">@Model.Rows.Where(r => r.Set != null).Sum(r => r.DueSoon)</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-exclamation-triangle text-danger" aria-hidden="true"></i> @localizer["CertReq.StatInGrace"]</div>
+            <div class="rgw-stat-value">@Model.Rows.Where(r => r.Set != null).Sum(r => r.InGrace)</div>
+        </div>
+    </div>
+
+    @if (Model.Rows.Count == 0)
+    {
+        <p class="text-muted">@localizer["Prg.NoCertificationTypes"]</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead>
+                    <tr>
+                        <th scope="col">@localizer["CertReq.Col.Certification"]</th>
+                        <th scope="col">@localizer["CertReq.Col.Requires"]</th>
+                        <th scope="col">@localizer["CertReq.Col.Holders"]</th>
+                        <th scope="col">@localizer["CertReq.Col.Attention"]</th>
+                        <th scope="col" class="rgw-row-actions">@localizer["Prg.Actions"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in Model.Rows)
+                    {
+                        <tr>
+                            <td>
+                                @row.Type.Type
+                                <span class="rgw-sub">@row.Type.Code</span>
+                                @if (row.Set != null && !row.Set.IsActive)
+                                {
+                                    <span class="label label-default">@localizer["CertReq.Inactive"]</span>
+                                }
+                            </td>
+                            <td>
+                                @if (row.Set == null)
+                                {
+                                    <span class="text-muted">@localizer["CertReq.NoSet"]</span>
+                                }
+                                else
+                                {
+                                    <ul class="list-unstyled m-b-none">
+                                        @foreach (var (item, name) in row.Items)
+                                        {
+                                            <li>
+                                                <i class="fa @KindIcon(item.Kind)" aria-hidden="true"></i> @name
+                                                <span class="rgw-sub">@localizer["CertReq.Kind." + (LmsRequirementKinds)item.Kind]@(item.RequireRecordedByInstructor ? " · " + localizer["CertReq.Practical"].Value : string.Empty)</span>
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </td>
+                            <td>@row.Holders</td>
+                            <td>
+                                @if (row.DueSoon > 0)
+                                {
+                                    <span class="label label-warning">@string.Format(localizer["CertReq.DueSoonCount"].Value, row.DueSoon)</span>
+                                }
+                                @if (row.InGrace > 0)
+                                {
+                                    <span class="label label-danger">@string.Format(localizer["CertReq.InGraceCount"].Value, row.InGrace)</span>
+                                }
+                            </td>
+                            <td class="rgw-row-actions">
+                                @if (row.Set != null)
+                                {
+                                    <a class="btn btn-white btn-xs" asp-controller="LmsPrograms" asp-action="CertificationProgress" asp-route-area="User" asp-route-typeId="@row.Type.DepartmentCertificationTypeId">
+                                        <i class="fa fa-users" aria-hidden="true"></i> @localizer["CertReq.Progress"]
+                                    </a>
+                                }
+                                @if (Model.CanManageCertifications)
+                                {
+                                    <a class="btn btn-primary btn-xs" asp-controller="LmsPrograms" asp-action="EditCertificationRequirements" asp-route-area="User" asp-route-typeId="@row.Type.DepartmentCertificationTypeId">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i> @(row.Set == null ? localizer["CertReq.Define"] : localizer["CertReq.Edit"])
+                                    </a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+@functions {
+    private static string KindIcon(int kind) => kind switch
+    {
+        (int)LmsRequirementKinds.Course => "fa-graduation-cap",
+        (int)LmsRequirementKinds.Training => "fa-book",
+        (int)LmsRequirementKinds.CategoryHours => "fa-clock-o",
+        (int)LmsRequirementKinds.Path => "fa-road",
+        _ => "fa-check-square-o"
+    };
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

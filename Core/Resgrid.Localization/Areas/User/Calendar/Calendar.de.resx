@@ -353,4 +353,20 @@
   <data name="CheckOutBy" xml:space="preserve">
     <value>Ausgecheckt von {0}</value>
   </data>
+  <data name="CountsAsTrainingLabel" xml:space="preserve">
+    <value>Zählt als Ausbildung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountsAsTrainingHelp" xml:space="preserve">
+    <value>Check-in und Check-out bei Terminen dieser Art werden zu Ausbildungsstunden im Nachweis der Teilnehmenden. Ein Check-in ohne Check-out wartet auf eine Führungskraft.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCategoryLabel" xml:space="preserve">
+    <value>Ausbildungskategorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TrainingCategoryNone" xml:space="preserve">
+    <value>Ohne Kategorie</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

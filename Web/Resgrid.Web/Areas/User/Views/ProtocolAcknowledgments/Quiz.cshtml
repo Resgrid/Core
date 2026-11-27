@@ -1,0 +1,96 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolQuizModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    The question-bank acknowledgment quiz (LMS, round 5F): the drawn questions and options only (the key and the explanations stay on the
+    server), or the scored result. A pass completes a signature that was waiting for it.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["BankQuizHeader"];
+    ViewData["Title"] = localizer["BankQuizHeader"].Value;
+    var quiz = Model.Quiz;
+    var result = Model.Result;
+    ViewData["Subtitle"] = quiz == null ? null : (quiz.ProtocolCode + " " + quiz.ProtocolName).Trim() + (string.IsNullOrEmpty(quiz.VersionLabel) ? "" : " · v" + quiz.VersionLabel);
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+
+    @if (result != null)
+    {
+        <div class="ibox">
+            <div class="ibox-content">
+                @if (result.Passed)
+                {
+                    <div class="rgw-next-action" role="status"><i class="fa fa-check-circle text-success" aria-hidden="true"></i>
+                        @string.Format(localizer["QuizResultPassed"].Value, result.Percent.ToString("0.#"), result.Correct, result.Total, result.PassMark)
+                        @if (result.AcknowledgmentCompleted) { <div class="m-t-xs">@localizer["QuizAckCompletedMessage"]</div> }
+                    </div>
+                }
+                else
+                {
+                    <div class="rgw-next-action" role="status"><i class="fa fa-times-circle text-danger" aria-hidden="true"></i>
+                        @string.Format(localizer["QuizResultFailed"].Value, result.Percent.ToString("0.#"), result.Correct, result.Total, result.PassMark)
+                    </div>
+                }
+                <div class="rgw-wizard-actions">
+                    @if (!result.Passed && result.ProtocolVersionId > 0)
+                    {
+                        <a class="btn btn-primary" asp-controller="ProtocolAcknowledgments" asp-action="Quiz" asp-route-area="User" asp-route-versionId="@result.ProtocolVersionId"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["TakeBankQuizButton"]</a>
+                    }
+                    @if (result.ProtocolVersionId > 0)
+                    {
+                        <a class="btn btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Read" asp-route-area="User" asp-route-versionId="@result.ProtocolVersionId"><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer["ReadAndSignButton"]</a>
+                    }
+                    <a class="btn btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Mine" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["MyAcknowledgmentsTab"]</a>
+                </div>
+            </div>
+        </div>
+    }
+    else if (quiz != null)
+    {
+        <form method="post" asp-controller="ProtocolAcknowledgments" asp-action="Quiz" asp-route-area="User">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="attemptId" value="@quiz.AttemptId" />
+            <input type="hidden" name="versionId" value="@quiz.ProtocolVersionId" />
+            <p class="text-muted">@string.Format(localizer["QuizIntro"].Value, quiz.Questions.Count, quiz.PassMark)</p>
+            @{ var number = 0; }
+            @foreach (var question in quiz.Questions)
+            {
+                number++;
+                var name = "q" + question.QuestionId;
+                <fieldset class="ibox">
+                    <div class="ibox-content">
+                        <legend class="h5"><span class="text-muted">@number.</span> @question.Text</legend>
+                        @if (question.IsMultiple)
+                        {
+                            <p class="help-block small">@localizer["QuizChooseAll"]</p>
+                        }
+                        @foreach (var option in question.Options)
+                        {
+                            var id = name + "-" + option.Key;
+                            <div class="@(question.IsMultiple ? "checkbox" : "radio")">
+                                <label for="@id"><input id="@id" type="@(question.IsMultiple ? "checkbox" : "radio")" name="@name" value="@option.Key" /> @option.Text</label>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+            }
+            <div class="rgw-wizard-actions">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["SubmitQuizButton"]</button>
+                <a class="btn btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Read" asp-route-area="User" asp-route-versionId="@quiz.ProtocolVersionId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackButton"]</a>
+            </div>
+        </form>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

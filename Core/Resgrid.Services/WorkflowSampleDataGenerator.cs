@@ -26,6 +26,8 @@ namespace Resgrid.Services
 			AddSampleTimestamp(obj);
 			AddSampleUser(obj);
 			AddEventSpecificSamples(obj, eventType);
+			// Protocols, Training/LMS, signing and knowledge (round 7C): the samples come from the same table as the catalog.
+			ContentWorkflowContext.AddSample(obj, eventType);
 			if (Resgrid.Model.IncidentLogistics.IncidentBackOfficeWorkflowPayload.IsIncident((int)eventType))
 				IncidentLogistics.IncidentWorkflowContext.Apply(obj, eventType, IncidentLogistics.IncidentWorkflowContext.Sample);
 			return obj;
@@ -234,6 +236,7 @@ namespace Resgrid.Services
 					c["dispatch_on"] = DateTime.Now.AddMinutes(-8);
 					c["form_data"] = "{}";
 					c["part2_consent_on_file"] = false;
+					c["determinant"] = "26-C-1";
 					c["is_deleted"] = false;
 					c["deleted_reason"] = "";
 					obj["call"] = c;
@@ -765,6 +768,142 @@ namespace Resgrid.Services
 					recurringAlert["resolution"] = eventType == WorkflowTriggerEventType.RecurringCallAlertResolved ? "Dispatched" : null;
 					recurringAlert["raised"] = eventType == WorkflowTriggerEventType.RecurringCallAlertRaised;
 					obj["alert"] = recurringAlert;
+					break;
+
+				case WorkflowTriggerEventType.SignatureRequested:
+				case WorkflowTriggerEventType.SignatureCompleted:
+				case WorkflowTriggerEventType.SignatureDeclined:
+				case WorkflowTriggerEventType.SignatureExpired:
+					var signature = new ScriptObject();
+					signature["request_id"] = 42;
+					signature["subject_kind"] = "TimeReport";
+					signature["subject_id"] = "8d2f5a1c-4b6e-4f0a-9c3d-1e2f3a4b5c6d";
+					signature["title"] = "DTR 2026-0042 2026-11-24";
+					signature["channel"] = "Remote";
+					signature["status"] = eventType == WorkflowTriggerEventType.SignatureCompleted ? "Completed" : eventType == WorkflowTriggerEventType.SignatureDeclined ? "Declined" : eventType == WorkflowTriggerEventType.SignatureExpired ? "Expired" : "Sent";
+					signature["signer_count"] = 1;
+					signature["signed_count"] = eventType == WorkflowTriggerEventType.SignatureCompleted ? 1 : 0;
+					signature["content_code"] = "3F2A-91C0";
+					signature["expires_on"] = DateTime.UtcNow.Date.AddDays(14);
+					signature["sealed_document_id"] = eventType == WorkflowTriggerEventType.SignatureCompleted ? 7 : 0;
+					obj["signature"] = signature;
+					break;
+
+				case WorkflowTriggerEventType.TrainingAssigned:
+				case WorkflowTriggerEventType.TrainingCompleted:
+				case WorkflowTriggerEventType.TrainingFailed:
+				case WorkflowTriggerEventType.TrainingOverdue:
+				case WorkflowTriggerEventType.RequirementAtRisk:
+				case WorkflowTriggerEventType.RequirementEnforced:
+					var trainingEvent = new ScriptObject();
+					trainingEvent["change"] = eventType == WorkflowTriggerEventType.TrainingCompleted ? "Completed" : eventType == WorkflowTriggerEventType.TrainingFailed ? "Failed"
+						: eventType == WorkflowTriggerEventType.TrainingOverdue ? "Overdue" : eventType == WorkflowTriggerEventType.RequirementAtRisk ? "AtRisk"
+						: eventType == WorkflowTriggerEventType.RequirementEnforced ? "Enforced" : "Assigned";
+					trainingEvent["user_id"] = "4b8e1c2d-7a90-4f3e-b1d2-6c5a4e3f2b1a";
+					trainingEvent["subject"] = eventType == WorkflowTriggerEventType.TrainingFailed ? "Assessment" : "Requirement";
+					trainingEvent["requirement_id"] = 12;
+					trainingEvent["requirement_name"] = "Annual SCBA refresher";
+					trainingEvent["requirement_kind"] = "Course";
+					trainingEvent["course_id"] = 31;
+					trainingEvent["path_id"] = 0;
+					trainingEvent["training_name"] = "SCBA refresher 2026";
+					trainingEvent["state"] = eventType == WorkflowTriggerEventType.TrainingCompleted ? "Compliant" : eventType == WorkflowTriggerEventType.RequirementAtRisk ? "AtRisk"
+						: eventType == WorkflowTriggerEventType.TrainingAssigned ? "Pending" : "Overdue";
+					trainingEvent["due_on"] = DateTime.UtcNow.Date.AddDays(eventType == WorkflowTriggerEventType.TrainingAssigned ? 30 : -7);
+					trainingEvent["completed_on"] = eventType == WorkflowTriggerEventType.TrainingCompleted ? DateTime.UtcNow.Date : (DateTime?)null;
+					trainingEvent["days"] = eventType == WorkflowTriggerEventType.TrainingOverdue || eventType == WorkflowTriggerEventType.RequirementEnforced ? 7
+						: eventType == WorkflowTriggerEventType.RequirementAtRisk ? 10 : 0;
+					trainingEvent["certification_type_id"] = eventType == WorkflowTriggerEventType.RequirementEnforced ? 5 : 0;
+					trainingEvent["certification_type_name"] = eventType == WorkflowTriggerEventType.RequirementEnforced ? "SCBA" : null;
+					trainingEvent["score"] = eventType == WorkflowTriggerEventType.TrainingFailed ? 60m : 0m;
+					obj["training_event"] = trainingEvent;
+					break;
+
+				case WorkflowTriggerEventType.ApprovalRequested:
+				case WorkflowTriggerEventType.ApprovalGranted:
+				case WorkflowTriggerEventType.ApprovalRejected:
+				case WorkflowTriggerEventType.ApprovalEscalated:
+					var approval = new ScriptObject();
+					approval["change"] = eventType == WorkflowTriggerEventType.ApprovalGranted ? "Granted" : eventType == WorkflowTriggerEventType.ApprovalRejected ? "Rejected"
+						: eventType == WorkflowTriggerEventType.ApprovalEscalated ? "Escalated" : "Requested";
+					approval["id"] = 42;
+					approval["subject_kind"] = "PurchaseRequisitionApproval";
+					approval["subject_id"] = "8f1c2d3e-4a5b-4c6d-8e7f-9a0b1c2d3e4f";
+					approval["title"] = "REQ-12 Generator rental";
+					approval["amount"] = 7500m;
+					approval["currency"] = "USD";
+					approval["submitted_by_user_id"] = "4b8e1c2d-7a90-4f3e-b1d2-6c5a4e3f2b1a";
+					approval["user_id"] = eventType == WorkflowTriggerEventType.ApprovalRequested || eventType == WorkflowTriggerEventType.ApprovalEscalated ? null : "6c5a4e3f-2b1a-4b8e-9c2d-7a904f3eb1d2";
+					approval["step_label"] = eventType == WorkflowTriggerEventType.ApprovalEscalated ? "Finance chief" : null;
+					approval["reason"] = eventType == WorkflowTriggerEventType.ApprovalRejected ? "Quote missing" : null;
+					approval["content_code"] = "3F2A-91C0";
+					obj["approval"] = approval;
+					break;
+
+				case WorkflowTriggerEventType.ClassSessionScheduled:
+				case WorkflowTriggerEventType.ClassSessionCancelled:
+				case WorkflowTriggerEventType.ClassSessionSignedOff:
+				case WorkflowTriggerEventType.ClassWaitlistPromoted:
+					var trainingClass = new ScriptObject();
+					trainingClass["change"] = eventType == WorkflowTriggerEventType.ClassSessionCancelled ? "Cancelled" : eventType == WorkflowTriggerEventType.ClassSessionSignedOff ? "SignedOff"
+						: eventType == WorkflowTriggerEventType.ClassWaitlistPromoted ? "WaitlistPromoted" : "Scheduled";
+					trainingClass["session_id"] = 57;
+					trainingClass["title"] = "CPR and AED recertification";
+					trainingClass["course_kind"] = "Course";
+					trainingClass["course_id"] = 31;
+					trainingClass["training_id"] = 0;
+					trainingClass["starts_on"] = DateTime.UtcNow.Date.AddDays(7).AddHours(18);
+					trainingClass["ends_on"] = DateTime.UtcNow.Date.AddDays(7).AddHours(21);
+					trainingClass["capacity"] = 12;
+					trainingClass["enrolled"] = 12;
+					trainingClass["waitlisted"] = eventType == WorkflowTriggerEventType.ClassWaitlistPromoted ? 2 : 3;
+					trainingClass["attended"] = eventType == WorkflowTriggerEventType.ClassSessionSignedOff ? 11 : 0;
+					trainingClass["absent"] = eventType == WorkflowTriggerEventType.ClassSessionSignedOff ? 1 : 0;
+					trainingClass["series_key"] = null;
+					trainingClass["user_id"] = eventType == WorkflowTriggerEventType.ClassWaitlistPromoted ? "4b8e1c2d-7a90-4f3e-b1d2-6c5a4e3f2b1a" : null;
+					trainingClass["is_external_learner"] = false;
+					trainingClass["acting_user_id"] = eventType == WorkflowTriggerEventType.ClassWaitlistPromoted ? null : "6c5a4e3f-2b1a-4b8e-9c2d-7a904f3eb1d2";
+					obj["training_class"] = trainingClass;
+					break;
+
+				case WorkflowTriggerEventType.TrainingCompletionRecorded:
+					var recorded = new ScriptObject();
+					recorded["id"] = 88;
+					recorded["user_id"] = "4b8e1c2d-7a90-4f3e-b1d2-6c5a4e3f2b1a";
+					recorded["is_external_learner"] = false;
+					recorded["recorded_by_user_id"] = "6c5a4e3f-2b1a-4b8e-9c2d-7a904f3eb1d2";
+					recorded["target_kind"] = "Course";
+					recorded["target_id"] = 31;
+					recorded["target_name"] = "CPR and AED recertification";
+					recorded["source"] = "ClassSession";
+					recorded["session_id"] = 57;
+					recorded["learning_record_id"] = 1204;
+					recorded["certification_id"] = 77;
+					recorded["quiz_waived"] = false;
+					recorded["attestation_version"] = TrainingCompletionAttestation.CurrentVersion;
+					recorded["completed_on"] = DateTime.UtcNow.Date;
+					obj["recorded_completion"] = recorded;
+					break;
+
+				case WorkflowTriggerEventType.ExternalLearnerRegistered:
+				case WorkflowTriggerEventType.ExternalLearnerEnrolled:
+				case WorkflowTriggerEventType.ExternalLearnerCompletedCourse:
+					var learner = new ScriptObject();
+					learner["change"] = eventType == WorkflowTriggerEventType.ExternalLearnerEnrolled ? "Enrolled" : eventType == WorkflowTriggerEventType.ExternalLearnerCompletedCourse ? "CompletedCourse" : "Registered";
+					learner["id"] = 19;
+					learner["user_id"] = "xl-5f0c2b7e9d1a4e3b8c6d0a1b2c3d4e5f";
+					learner["source"] = "SelfRegistered";
+					learner["subject"] = eventType == WorkflowTriggerEventType.ExternalLearnerRegistered ? null : eventType == WorkflowTriggerEventType.ExternalLearnerEnrolled ? "Class" : "Course";
+					learner["session_id"] = eventType == WorkflowTriggerEventType.ExternalLearnerEnrolled ? 57 : 0;
+					learner["course_id"] = eventType == WorkflowTriggerEventType.ExternalLearnerCompletedCourse ? 31 : 0;
+					learner["title"] = eventType == WorkflowTriggerEventType.ExternalLearnerRegistered ? null : "CPR and AED recertification";
+					learner["status"] = eventType == WorkflowTriggerEventType.ExternalLearnerEnrolled ? "Enrolled" : eventType == WorkflowTriggerEventType.ExternalLearnerCompletedCourse ? "Completed" : null;
+					learner["fee"] = eventType == WorkflowTriggerEventType.ExternalLearnerEnrolled ? 45m : 0m;
+					learner["currency"] = eventType == WorkflowTriggerEventType.ExternalLearnerEnrolled ? "USD" : null;
+					learner["starts_on"] = eventType == WorkflowTriggerEventType.ExternalLearnerEnrolled ? DateTime.UtcNow.Date.AddDays(7).AddHours(18) : (DateTime?)null;
+					learner["completed_on"] = eventType == WorkflowTriggerEventType.ExternalLearnerCompletedCourse ? DateTime.UtcNow.Date : (DateTime?)null;
+					learner["learning_record_id"] = eventType == WorkflowTriggerEventType.ExternalLearnerCompletedCourse ? 1205 : 0;
+					obj["external_learner"] = learner;
 					break;
 
 				case WorkflowTriggerEventType.StationCoverageGapDetected:

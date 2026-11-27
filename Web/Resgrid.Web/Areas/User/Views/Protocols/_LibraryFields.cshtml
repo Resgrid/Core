@@ -1,0 +1,102 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolEditorModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* The P1 library fields (shared by the creation wizard and the editor). ViewData["ShowKind"] false hides the kind picker (the wizard asks it first). *@
+@{
+    var lib = Model.Library ?? new ProtocolLibraryEditorFields();
+    var showKind = ViewData["ShowKind"] as bool? ?? true;
+
+    async Task CategoryOptions(int? parent, int depth)
+    {
+        foreach (var c in Model.Lists.Categories.Where(x => x.ParentCategoryId == parent).OrderBy(x => x.SortOrder).ThenBy(x => x.Name))
+        {
+            <option value="@c.ProtocolCategoryId" selected="@(lib.CategoryId == c.ProtocolCategoryId)">@(new string('-', depth * 2)) @c.Name</option>
+            await CategoryOptions(c.ProtocolCategoryId, depth + 1);
+        }
+    }
+}
+<div class="rgw-grid">
+    @if (showKind)
+    {
+        <div class="form-group">
+            <label class="control-label required" for="Library_Kind">@localizer["KindLabel"]</label>
+            <select class="form-control protocol-kind" id="Library_Kind" name="Library.Kind" aria-describedby="KindHelp">
+                @foreach (ProtocolKinds kind in ProtocolKindRules.AuthorableKinds)
+                {
+                    <option value="@((int)kind)" selected="@(lib.Kind == (int)kind)">@ProtocolDisplay.KindName((int)kind, localizer)</option>
+                }
+            </select>
+            <span id="KindHelp" class="help-block">@localizer["KindHelp"]</span>
+        </div>
+    }
+    <div class="form-group">
+        <label class="control-label" for="Library_Number">@localizer["NumberLabel"]</label>
+        <input class="form-control" id="Library_Number" name="Library.Number" value="@lib.Number" maxlength="@DispatchProtocol.NumberMaxLength" aria-describedby="NumberHelp" />
+        <span id="NumberHelp" class="help-block">@localizer["NumberHelp"]</span>
+    </div>
+    <div class="form-group">
+        <label class="control-label" for="Library_CategoryId">@localizer["CategoryLabel"]</label>
+        <select class="form-control" id="Library_CategoryId" name="Library.CategoryId">
+            <option value="" selected="@(!lib.CategoryId.HasValue)">@localizer["NoCategoryOption"]</option>
+            @{ await CategoryOptions(null, 0); }
+        </select>
+    </div>
+    <div class="form-group">
+        <label class="control-label" for="Library_OwnerUserId">@localizer["OwnerLabel"]</label>
+        <select class="form-control" id="Library_OwnerUserId" name="Library.OwnerUserId" aria-describedby="OwnerHelp">
+            @foreach (var member in Model.Lists.Members.OrderBy(m => m.Value))
+            {
+                <option value="@member.Key" selected="@(string.Equals(member.Key, lib.OwnerUserId, StringComparison.OrdinalIgnoreCase))">@member.Value</option>
+            }
+            @if (!string.IsNullOrEmpty(lib.OwnerUserId) && !Model.Lists.Members.ContainsKey(lib.OwnerUserId))
+            {
+                <option value="@lib.OwnerUserId" selected>@localizer["FormerMemberOption"]</option>
+            }
+        </select>
+        <span id="OwnerHelp" class="help-block">@localizer["OwnerHelp"]</span>
+    </div>
+    <div class="form-group">
+        <label class="control-label" for="Library_ReviewIntervalDays">@localizer["ReviewIntervalLabel"]</label>
+        <input class="form-control" type="number" min="0" max="@ProtocolLibrarySettings.MaxReviewIntervalDays" id="Library_ReviewIntervalDays" name="Library.ReviewIntervalDays" value="@lib.ReviewIntervalDays" aria-describedby="ReviewIntervalHelp" />
+        <span id="ReviewIntervalHelp" class="help-block">@localizer["ReviewIntervalHelp"]</span>
+    </div>
+    <div class="form-group">
+        <label class="control-label" for="Library_Tags">@localizer["TagsLabel"]</label>
+        <input class="form-control" id="Library_Tags" name="Library.Tags" value="@lib.Tags" maxlength="@DispatchProtocol.TagsMaxLength" aria-describedby="TagsHelp" />
+        <span id="TagsHelp" class="help-block">@localizer["TagsHelp"]</span>
+    </div>
+</div>
+<div class="rgw-builder-toggles">
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="Library.ExcludeFromAi" value="true" @(lib.ExcludeFromAi ? "checked" : "") />
+            @localizer["ExcludeFromAiCheckbox"]
+        </label>
+        <input type="hidden" name="Library.ExcludeFromAi" value="false" />
+        <span class="help-block">@localizer["ExcludeFromAiHelp"]</span>
+    </div>
+    <div class="checkbox">
+        <label>
+            <input type="checkbox" name="Library.IsLicensedContent" value="true" @(lib.IsLicensedContent ? "checked" : "") />
+            @localizer["LicensedContentCheckbox"]
+        </label>
+        <input type="hidden" name="Library.IsLicensedContent" value="false" />
+        <span class="help-block">@localizer["LicensedContentHelp"]</span>
+    </div>
+    @if (Model.CanApprove && !Model.IsNew)
+    {
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="Library.LegalHold" value="true" @(lib.LegalHold ? "checked" : "") />
+                @localizer["LegalHoldCheckbox"]
+            </label>
+            <input type="hidden" name="Library.LegalHold" value="false" />
+            <span class="help-block">@localizer["LegalHoldHelp"]</span>
+        </div>
+    }
+    else
+    {
+        <input type="hidden" name="Library.LegalHold" value="@(lib.LegalHold ? "true" : "false")" />
+    }
+</div>

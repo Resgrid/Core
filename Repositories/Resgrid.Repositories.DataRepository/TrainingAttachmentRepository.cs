@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Dapper;
@@ -13,7 +15,7 @@ using Resgrid.Repositories.DataRepository.Queries.Trainings;
 
 namespace Resgrid.Repositories.DataRepository
 {
-	public class TrainingAttachmentRepository : RepositoryBase<TrainingAttachment>, ITrainingAttachmentRepository
+	public class TrainingAttachmentRepository : RmsRepositoryBase<TrainingAttachment>, ITrainingAttachmentRepository
 	{
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
@@ -68,6 +70,34 @@ namespace Resgrid.Repositories.DataRepository
 
 				throw;
 			}
+		}
+
+		private static string Metadata => $"{Cols("TrainingAttachmentId", "TrainingId", "FileName", "FileType")}, " +
+			(IsPostgres ? $"CAST(octet_length({Col("Data")}) AS BIGINT)" : $"CAST(DATALENGTH({Col("Data")}) AS BIGINT)") + " AS FileSize";
+
+		public async Task<List<TrainingAttachment>> GetAttachmentMetadataByTrainingIdAsync(int trainingId)
+		{
+			return (await QueryAsync<TrainingAttachment>($"SELECT {Metadata} FROM {Tbl("TrainingAttachments")} WHERE {Col("TrainingId")} = {P}TrainingId ORDER BY {Col("TrainingAttachmentId")}",
+				new { TrainingId = trainingId })).ToList();
+		}
+
+		public Task<TrainingAttachment> GetAttachmentMetadataByIdAsync(int trainingAttachmentId)
+		{
+			return QueryFirstOrDefaultAsync<TrainingAttachment>($"SELECT {Metadata} FROM {Tbl("TrainingAttachments")} WHERE {Col("TrainingAttachmentId")} = {P}Id",
+				new { Id = trainingAttachmentId });
+		}
+
+		public Task<TrainingAttachment> GetAttachmentWithDataAsync(int trainingAttachmentId)
+		{
+			return QueryFirstOrDefaultAsync<TrainingAttachment>($"SELECT * FROM {Tbl("TrainingAttachments")} WHERE {Col("TrainingAttachmentId")} = {P}Id",
+				new { Id = trainingAttachmentId });
+		}
+
+		public Task<int> CopyAttachmentsAsync(int fromTrainingId, int toTrainingId, CancellationToken cancellationToken = default)
+		{
+			return ExecuteAsync($"INSERT INTO {Tbl("TrainingAttachments")} ({Cols("TrainingId", "FileName", "FileType", "Data")}) " +
+				$"SELECT {P}ToTrainingId, {Cols("FileName", "FileType", "Data")} FROM {Tbl("TrainingAttachments")} WHERE {Col("TrainingId")} = {P}FromTrainingId",
+				new { FromTrainingId = fromTrainingId, ToTrainingId = toTrainingId }, cancellationToken);
 		}
 	}
 }

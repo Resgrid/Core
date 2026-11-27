@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "key": "member",
+  "revision": 1,
+  "title": {
+    "en": "Get started",
+    "ar": "ابدأ الآن",
+    "de": "Erste Schritte",
+    "el": "Ξεκινήστε",
+    "es": "Primeros pasos",
+    "fr": "Premiers pas",
+    "it": "Per iniziare",
+    "pl": "Pierwsze kroki",
+    "sv": "Kom igång",
+    "uk": "Початок роботи"
+  },
+  "intro": {
+    "en": "Four first steps to get comfortable with Resgrid.",
+    "ar": "أربع خطوات أولى لتعتاد على Resgrid.",
+    "de": "Vier erste Schritte, um sich mit Resgrid vertraut zu machen.",
+    "el": "Τέσσερα πρώτα βήματα για να εξοικειωθείτε με το Resgrid.",
+    "es": "Cuatro primeros pasos para familiarizarse con Resgrid.",
+    "fr": "Quatre premières étapes pour prendre vos repères dans Resgrid.",
+    "it": "Quattro primi passi per prendere confidenza con Resgrid.",
+    "pl": "Cztery pierwsze kroki, aby poznać Resgrid.",
+    "sv": "Fyra första steg för att bli hemma i Resgrid.",
+    "uk": "Чотири перші кроки, щоб освоїтися в Resgrid."
+  },
+  "tasks": [
+    {
+      "key": "profile",
+      "lessonId": "00-start",
+      "page": {
+        "controller": "Home",
+        "action": "EditUserProfile"
+      },
+      "title": {
+        "en": "Complete your profile",
+        "ar": "أكمل ملفك الشخصي",
+        "de": "Profil vervollständigen",
+        "el": "Συμπληρώστε το προφίλ σας",
+        "es": "Complete su perfil",
+        "fr": "Complétez votre profil",
+        "it": "Completa il tuo profilo",
+        "pl": "Uzupełnij swój profil",
+        "sv": "Fyll i din profil",
+        "uk": "Заповніть свій профіль"
+      },
+      "hint": {
+        "en": "Add your mobile number so you get call alerts.",
+        "ar": "أضف رقم هاتفك المحمول لتصلك تنبيهات البلاغات.",
+        "de": "Tragen Sie Ihre Mobilnummer ein, damit Sie Alarmierungen erhalten.",
+        "el": "Προσθέστε τον αριθμό του κινητού σας για να λαμβάνετε ειδοποιήσεις συμβάντων.",
+        "es": "Añada su número de móvil para recibir avisos de llamadas.",
+        "fr": "Ajoutez votre numéro de portable pour recevoir les alertes d'appel.",
+        "it": "Aggiungi il tuo numero di cellulare per ricevere gli avvisi di chiamata.",
+        "pl": "Dodaj numer telefonu komórkowego, aby otrzymywać alarmy.",
+        "sv": "Lägg till ditt mobilnummer så att du får larmaviseringar.",
+        "uk": "Додайте номер мобільного, щоб отримувати сповіщення про виклики."
+      },
+      "visibility": []
+    },
+    {
+      "key": "apps",
+      "lessonId": "04-apps",
+      "page": {
+        "controller": "Home",
+        "action": "Dashboard"
+      },
+      "title": {
+        "en": "Install the app",
+        "ar": "ثبّت التطبيق",
+        "de": "App installieren",
+        "el": "Εγκαταστήστε την εφαρμογή",
+        "es": "Instale la aplicación",
+        "fr": "Installez l'application",
+        "it": "Installa l'app",
+        "pl": "Zainstaluj aplikację",
+        "sv": "Installera appen",
+        "uk": "Установіть застосунок"
+      },
+      "hint": {
+        "en": "Get the Resgrid app on your phone to respond to calls.",
+        "ar": "احصل على تطبيق Resgrid على هاتفك للاستجابة للبلاغات.",
+        "de": "Holen Sie sich die Resgrid-App aufs Telefon, um auf Einsätze zu reagieren.",
+        "el": "Εγκαταστήστε την εφαρμογή Resgrid στο τηλέφωνό σας για να ανταποκρίνεστε σε συμβάντα.",
+        "es": "Instale la aplicación de Resgrid en su teléfono para responder a las llamadas.",
+        "fr": "Installez l'application Resgrid sur votre téléphone pour répondre aux appels.",
+        "it": "Installa l'app Resgrid sul telefono per rispondere alle chiamate.",
+        "pl": "Zainstaluj aplikację Resgrid na telefonie, aby odpowiadać na zgłoszenia.",
+        "sv": "Installera Resgrid-appen i telefonen för att svara på larm.",
+        "uk": "Установіть застосунок Resgrid на телефон, щоб відповідати на виклики."
+      },
+      "visibility": []
+    },
+    {
+      "key": "status",
+      "lessonId": "00-start",
+      "page": {
+        "controller": "Home",
+        "action": "Dashboard"
+      },
+      "title": {
+        "en": "Set your status",
+        "ar": "اضبط حالتك",
+        "de": "Status setzen",
+        "el": "Ορίστε την κατάστασή σας",
+        "es": "Indique su estado",
+        "fr": "Indiquez votre statut",
+        "it": "Imposta il tuo stato",
+        "pl": "Ustaw swój status",
+        "sv": "Ange din status",
+        "uk": "Встановіть свій статус"
+      },
+      "hint": {
+        "en": "Let your department know whether you are available or responding.",
+        "ar": "أبلغ قسمك ما إذا كنت متاحًا أو في طريقك للاستجابة.",
+        "de": "Zeigen Sie Ihrer Abteilung, ob Sie verfügbar sind oder ausrücken.",
+        "el": "Ενημερώστε την υπηρεσία σας αν είστε διαθέσιμοι ή ανταποκρίνεστε.",
+        "es": "Informe a su departamento si está disponible o respondiendo.",
+        "fr": "Indiquez à votre service si vous êtes disponible ou en intervention.",
+        "it": "Fai sapere al dipartimento se sei disponibile o in intervento.",
+        "pl": "Daj znać jednostce, czy jesteś dostępny lub jedziesz do zdarzenia.",
+        "sv": "Låt organisationen veta om du är tillgänglig eller på väg.",
+        "uk": "Повідомте підрозділ, чи ви доступні або вже реагуєте."
+      },
+      "visibility": []
+    },
+    {
+      "key": "training",
+      "lessonId": "09-training",
+      "page": {
+        "controller": "Trainings",
+        "action": "Index"
+      },
+      "title": {
+        "en": "See your training",
+        "ar": "اطّلع على تدريبك",
+        "de": "Ihre Ausbildung ansehen",
+        "el": "Δείτε την εκπαίδευσή σας",
+        "es": "Consulte su formación",
+        "fr": "Consultez votre formation",
+        "it": "Vedi la tua formazione",
+        "pl": "Zobacz swoje szkolenia",
+        "sv": "Se din utbildning",
+        "uk": "Перегляньте своє навчання"
+      },
+      "hint": {
+        "en": "Open the trainings assigned to you.",
+        "ar": "افتح التدريبات المعيّنة لك.",
+        "de": "Öffnen Sie die Ihnen zugewiesenen Ausbildungen.",
+        "el": "Ανοίξτε τις εκπαιδεύσεις που σας έχουν ανατεθεί.",
+        "es": "Abra las formaciones que tiene asignadas.",
+        "fr": "Ouvrez les formations qui vous sont attribuées.",
+        "it": "Apri le formazioni assegnate a te.",
+        "pl": "Otwórz przypisane Ci szkolenia.",
+        "sv": "Öppna de utbildningar som tilldelats dig.",
+        "uk": "Відкрийте призначені вам навчання."
+      },
+      "visibility": []
+    }
+  ]
+}

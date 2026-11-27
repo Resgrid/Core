@@ -1,0 +1,81 @@
+{
+  "key": "resgrid-onboarding",
+  "revision": 1,
+  "kind": "course",
+  "title": "Getting started with Resgrid",
+  "code": "RG-START",
+  "summary": "A new member's first course: your account, your status and staffing, responding to calls, and where messages, the calendar and training live.",
+  "tags": "onboarding, resgrid, new member",
+  "hours": 0.5,
+  "license": "resgrid-starter",
+  "overview": "<p>This course walks a new member through the parts of Resgrid they use every week. Adapt it to your department: add your own phone numbers, radio channels, station names and expectations before you publish it.</p>",
+  "modules": [
+    {
+      "title": "Your account",
+      "lessons": [
+        {
+          "title": "Signing in and your profile",
+          "html": "<p>Your department invited you by email. Sign in on the web or in the Resgrid apps with the same account.</p><ul><li>Check that your name, mobile number and email address are correct in your profile.</li><li>Choose how you want to be notified: push, text message, email or a phone call.</li><li>Turn on two-step sign-in if your department asks for it.</li></ul><p>Your officers use your profile to reach you. Keep it current when your number or address changes.</p>"
+        },
+        {
+          "title": "The apps you will use",
+          "html": "<p>Most members install the Resgrid responder app on their phone. It shows new calls, lets you respond, and sets your status and staffing with one tap.</p><p>Officers and dispatchers often also use the web application on a computer. Ask your training officer which apps your department expects you to install.</p>"
+        }
+      ]
+    },
+    {
+      "title": "Status and staffing",
+      "lessons": [
+        {
+          "title": "Setting your status",
+          "html": "<p>Your <strong>status</strong> says what you are doing right now: for example responding, on scene or available. Set it as things change so that the people running the call see who is coming.</p><p>Your department may have custom statuses. Learn what each one means here before your first call.</p>"
+        },
+        {
+          "title": "Setting your staffing",
+          "html": "<p>Your <strong>staffing</strong> says whether you can be counted on in the hours ahead: for example available, delayed or unavailable. Officers plan coverage from it.</p><ul><li>Update it when you leave town or start a shift elsewhere.</li><li>Use scheduled staffing for regular commitments so you do not have to remember to change it.</li></ul>"
+        }
+      ]
+    },
+    {
+      "title": "Calls and communication",
+      "lessons": [
+        {
+          "title": "Responding to a call",
+          "html": "<p>When a call is dispatched you receive a notification with the call type, the address and notes. Open the call to see the map and the details.</p><ul><li>Respond so that officers know you are coming.</li><li>Use the map or your navigation app to get there.</li><li>Read the call notes as they are updated on the way.</li></ul><p>Never respond to a call you were not dispatched to unless your department's policy allows it.</p>"
+        },
+        {
+          "title": "Messages, the calendar and training",
+          "html": "<p>Messages from your officers arrive in your Resgrid inbox and as notifications. The calendar shows drills, meetings and events you can sign up for.</p><p>Your assigned trainings and courses are under Training. Complete them by their due date; your transcript keeps the record of everything you finish.</p>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Getting started check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "What does your status tell the people running a call?",
+        "kind": "single",
+        "options": [ "What you are doing right now, such as responding or on scene", "Which certifications you hold", "Your home address" ],
+        "correct": 0,
+        "explanation": "Your status says what you are doing right now, so the people running the call see who is coming."
+      },
+      {
+        "text": "Staffing is used by officers to plan coverage in the hours ahead.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 0,
+        "explanation": "Staffing says whether you can be counted on in the hours ahead, and officers plan coverage from it."
+      },
+      {
+        "text": "Where do you find the trainings and courses assigned to you?",
+        "kind": "single",
+        "options": [ "Under Training", "In the call notes", "On the map" ],
+        "correct": 0,
+        "explanation": "Assigned trainings and courses are under Training, and your transcript keeps the record."
+      }
+    ]
+  }
+}

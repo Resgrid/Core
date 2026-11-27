@@ -291,6 +291,7 @@ namespace Resgrid.Tests.Web.User
             var flags = new Mock<IFeatureToggleService>(); flags.Setup(x => x.IsEnabledAsync(FeatureFlagKeys.Deployments, 77, It.IsAny<bool>(), It.IsAny<IDictionary<string, string>>())).ReturnsAsync(() => _enabled);
             builder.Services.AddSingleton(departments.Object); builder.Services.AddSingleton(cutover.Object); builder.Services.AddSingleton(flags.Object);
             builder.Services.AddSingleton(Mock.Of<IDepartmentGroupsService>()); builder.Services.AddSingleton(Mock.Of<IUnitsService>());
+            builder.Services.AddSingleton(Mock.Of<IRecordDeploymentPartnerService>());
             var records = new Mock<IRecordsService>();
             records.Setup(x => x.GetAsync(77, "deployment-record", It.IsAny<bool>())).ReturnsAsync(new RecordAggregate
             { Record = new RmsOperationalRecord { RmsOperationalRecordId = "deployment-record", DepartmentId = 77, DefinitionKey = "mutual-aid.deployment" } });

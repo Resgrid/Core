@@ -1,0 +1,60 @@
+@using Resgrid.Web.Areas.User.Models.Courses
+@model ItemAnalysisModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* Item analysis (§13a): difficulty p and discrimination D per question over scored and graded attempts. Aggregate only. *@
+@{
+    var report = Model.Report;
+    ViewBag.Title = "Resgrid | " + localizer["ItemAnalysisTitle"];
+    ViewData["Section"] = "CourseLibrary";
+    ViewData["Title"] = localizer["ItemAnalysisTitle"].Value + " — " + report.Lesson.Title;
+    ViewData["Subtitle"] = localizer["ItemAnalysisIntro"].Value;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["AttemptsTile"]</div><div class="rgw-stat-value">@report.Attempts</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@localizer["PassRateTile"]</div><div class="rgw-stat-value">@report.PassRate.ToString("0.#")%</div></div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-striped rgw-table">
+            <thead>
+                <tr>
+                    <th>@localizer["QuestionColumn"]</th>
+                    <th>@localizer["ResponsesColumn"]</th>
+                    <th><abbr title="@localizer["DifficultyHelp"]">@localizer["DifficultyColumn"]</abbr></th>
+                    <th><abbr title="@localizer["DiscriminationHelp"]">@localizer["DiscriminationColumn"]</abbr></th>
+                    <th>@localizer["OptionCountsColumn"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in report.Items)
+                {
+                    <tr>
+                        <td>@item.Text</td>
+                        <td>@item.Responses</td>
+                        <td>@item.Difficulty.ToString("0.00")</td>
+                        <td>
+                            @if (item.Discrimination.HasValue)
+                            {
+                                <span class="@(item.Discrimination.Value < 0.2m ? "text-warning" : "")">@item.Discrimination.Value.ToString("0.00")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">@localizer["TooFewAttempts"]</span>
+                            }
+                        </td>
+                        <td class="small">@string.Join(", ", item.OptionCounts.OrderBy(o => o.Key).Select(o => o.Key + ": " + o.Value))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="text-muted small">@localizer["ItemAnalysisFootnote"]</p>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

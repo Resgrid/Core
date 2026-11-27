@@ -47,14 +47,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IModuleImpactService _moduleImpacts;
 		private readonly IPermissionImpactService _permissionImpacts;
 		private readonly IAdminAssistRepository _assistRepository;
+		private readonly IProtocolLibraryService _protocolLibrary;
+		private readonly IProtocolAccessService _protocolAccess;
 
 		public DepartmentImportController(IDepartmentImportAccessService access, IDepartmentImportService imports, IImportUploadService uploads,
 			IImportMappingService mapping, IImportIssueService issues, IImportApprovalService approval, IImportRunService runs, IImportActivationService activation,
 			IDepartmentImportSupportService support, IImportTemplateService templates, IImportCatalog catalog, IDepartmentSettingsService settings,
 			IInvitesService invites, Model.Repositories.IImportInvitesRepository importInvites, Model.Repositories.IImportReconciliationsRepository reconciliations,
 			IStringLocalizer<Resgrid.Localization.Areas.User.DepartmentImport.DepartmentImport> localizer, IImportConfigurationService configuration,
-			IModuleImpactService moduleImpacts, IPermissionImpactService permissionImpacts, IAdminAssistRepository assistRepository)
+			IModuleImpactService moduleImpacts, IPermissionImpactService permissionImpacts, IAdminAssistRepository assistRepository,
+			IProtocolLibraryService protocolLibrary, IProtocolAccessService protocolAccess)
 		{
+			_protocolLibrary = protocolLibrary;
+			_protocolAccess = protocolAccess;
 			_configuration = configuration;
 			_moduleImpacts = moduleImpacts;
 			_permissionImpacts = permissionImpacts;
@@ -1105,6 +1110,62 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _settings.SetDepartmentImportConfigAsync(DepartmentId, config, cancellationToken);
 			TempData["ImportSettingsSaved"] = true;
 			return RedirectToAction(nameof(Settings));
+		}
+
+		// ---- Protocols (P1 wave 2B: bulk JSON in the open protocol exchange format) --------------------------------------
+
+		/// <summary>
+		/// Protocols in the department import wizard: a file in the open exchange format the protocol library exports (P1's serializer,
+		/// the one shape), previewed as a dry run, then imported as drafts for one review-and-publish pass. Nothing is published.
+		/// </summary>
+		[HttpGet]
+		public async Task<IActionResult> Protocols(string id, CancellationToken cancellationToken)
+		{
+			var model = await PageAsync<ImportProtocolsView>(id, cancellationToken);
+			if (model == null)
+				return NotFound();
+
+			model.CanAuthor = (await _protocolAccess.GetReaderAsync(DepartmentId, UserId)).MayAuthor;
+			return View(model);
+		}
+
+		[HttpPost, ValidateAntiForgeryToken, RequestSizeLimit(ImportProtocolsView.MaxFileBytes + 512 * 1024)]
+		public async Task<IActionResult> Protocols(string id, IFormFile file, string mode, CancellationToken cancellationToken)
+		{
+			var model = await PageAsync<ImportProtocolsView>(id, cancellationToken);
+			if (model == null)
+				return NotFound();
+
+			var reader = await _protocolAccess.GetReaderAsync(DepartmentId, UserId);
+			model.CanAuthor = reader.MayAuthor;
+			if (!reader.MayAuthor)
+			{
+				model.Result = new ProtocolImportResult { Error = "not_authorized" };
+				return View(model);
+			}
+
+			if (file == null || file.Length == 0 || file.Length > ImportProtocolsView.MaxFileBytes)
+			{
+				model.Result = new ProtocolImportResult { Error = "file" };
+				return View(model);
+			}
+
+			string json;
+			using (var stream = new System.IO.StreamReader(file.OpenReadStream(), System.Text.Encoding.UTF8))
+				json = await stream.ReadToEndAsync(cancellationToken);
+
+			var document = ProtocolExchangeDocument.Parse(json);
+			if (document == null)
+			{
+				model.Result = new ProtocolImportResult { Error = "unknown_format" };
+				return View(model);
+			}
+
+			model.Result = string.Equals(mode, "import", StringComparison.Ordinal)
+				? await _protocolLibrary.ImportAsync(reader, document, cancellationToken)
+				: await _protocolLibrary.PreviewImportAsync(reader, document);
+			model.FileName = file.FileName;
+			return View(model);
 		}
 
 		// ---- helpers ----------------------------------------------------------------------------------------------------

@@ -83,6 +83,10 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<RmsExternalOrder>> GetForDepartmentAsync(int departmentId, bool includeClosed);
 		Task<byte[]> GetArtifactAsync(int departmentId, string orderId);
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string orderId, long expectedVersion, CancellationToken cancellationToken = default);
+
+		/// <summary>Names (or clears) the order's linked partner at <paramref name="expectedVersion"/> (round 10 A3, M0419); false when another writer moved first.</summary>
+		Task<bool> TrySetPartnerAsync(int departmentId, string orderId, int? departmentLinkId, int? partnerDepartmentId, string userId, long expectedVersion,
+			CancellationToken cancellationToken = default);
 	}
 
 	public interface IRmsExternalOrderFillsRepository : IRepository<RmsExternalOrderFill>
@@ -97,5 +101,14 @@ namespace Resgrid.Model.Repositories
 		/// in-memory check alone cannot stop two callers from both reading Requested and both writing.
 		/// </summary>
 		Task<bool> TryBumpRowVersionAsync(int departmentId, string fillId, long expectedVersion, CancellationToken cancellationToken = default);
+
+		/// <summary>Writes only the partner acceptance columns (round 10 A3, M0419), so it never overwrites a concurrent fill transition.</summary>
+		Task<bool> UpdatePartnerSignAsync(RmsExternalOrderFill fill, CancellationToken cancellationToken = default);
+
+		/// <summary>Fills of any department whose acceptance request is open in <paramref name="partnerDepartmentId"/>.</summary>
+		Task<IEnumerable<RmsExternalOrderFill>> GetPartnerSignRequestedAsync(int partnerDepartmentId);
+
+		/// <summary>Up to <paramref name="max"/> fills with an open partner acceptance request (the link-lapse sweep).</summary>
+		Task<IEnumerable<RmsExternalOrderFill>> GetAllPartnerSignRequestedAsync(int max);
 	}
 }

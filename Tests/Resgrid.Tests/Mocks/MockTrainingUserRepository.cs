@@ -90,6 +90,69 @@ namespace Resgrid.Tests.Mocks
 			return Task.FromResult(user);
 		}
 
+		public Task<List<TrainingUser>> GetByTrainingIdAsync(int trainingId)
+			=> Task.FromResult(_users.Where(u => u.TrainingId == trainingId).ToList());
+
+		public Task<TrainingUser> InsertAssignmentAsync(TrainingUser assignment, CancellationToken cancellationToken = default)
+		{
+			if (_users.Any(u => u.TrainingId == assignment.TrainingId && string.Equals(u.UserId, assignment.UserId, System.StringComparison.OrdinalIgnoreCase)))
+				return Task.FromResult<TrainingUser>(null);
+			assignment.TrainingUserId = _users.Count == 0 ? 1 : _users.Max(u => u.TrainingUserId) + 1;
+			_users.Add(assignment);
+			return Task.FromResult(assignment);
+		}
+
+		/// <summary>Writes only the named columns onto the stored row, as the SQL does.</summary>
+		public Task<int> UpdateColumnsAsync(TrainingUser assignment, IReadOnlyCollection<string> columns, CancellationToken cancellationToken = default)
+		{
+			var stored = _users.FirstOrDefault(u => u.TrainingUserId == assignment.TrainingUserId);
+			if (stored == null)
+				return Task.FromResult(0);
+			if (!ReferenceEquals(stored, assignment))
+				foreach (var column in columns)
+				{
+					var property = typeof(TrainingUser).GetProperty(column);
+					property.SetValue(stored, property.GetValue(assignment));
+				}
+			return Task.FromResult(1);
+		}
+
+		public Task<int> MarkViewedAsync(int trainingUserId, System.DateTime utcNow, bool completeWithoutQuiz, CancellationToken cancellationToken = default)
+		{
+			var stored = _users.FirstOrDefault(u => u.TrainingUserId == trainingUserId && !u.RemovedOn.HasValue);
+			if (stored == null)
+				return Task.FromResult(0);
+			stored.Viewed = true;
+			stored.ViewedOn ??= utcNow;
+			if (completeWithoutQuiz)
+			{
+				stored.Complete = true;
+				stored.CompletedOn ??= utcNow;
+			}
+			return Task.FromResult(1);
+		}
+
+		public Task<int> RecordQuizResultAsync(int trainingUserId, double score, bool passed, int attemptCount, System.DateTime utcNow, CancellationToken cancellationToken = default)
+		{
+			var stored = _users.FirstOrDefault(u => u.TrainingUserId == trainingUserId);
+			if (stored == null)
+				return Task.FromResult(0);
+			stored.Score = score;
+			stored.Passed = passed;
+			stored.AttemptCount = attemptCount;
+			stored.Viewed = true;
+			stored.ViewedOn ??= utcNow;
+			if (passed)
+			{
+				stored.Complete = true;
+				stored.CompletedOn ??= utcNow;
+			}
+			return Task.FromResult(1);
+		}
+
+		public Task<int> DeleteAssignmentAsync(int trainingId, int trainingUserId, CancellationToken cancellationToken = default)
+			=> Task.FromResult(_users.RemoveAll(u => u.TrainingId == trainingId && u.TrainingUserId == trainingUserId));
+
 		public void SeedUser(TrainingUser user)
 		{
 			if (user.TrainingUserId == 0)

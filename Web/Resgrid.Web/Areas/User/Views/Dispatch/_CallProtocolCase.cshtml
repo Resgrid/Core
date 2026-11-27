@@ -1,0 +1,136 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Calls.CallProtocolCaseView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolsLocalizer
+@inject Resgrid.Model.Services.IProtocolCaseService caseService
+@inject Resgrid.Model.Services.IIntakeConversationService conversations
+@*
+    Protocols P4: the case recorded on the call for one protocol: the path in words, the determinant in force (and the override with its
+    reason), the priority suggested and applied, the response hint and the post-dispatch instructions, the texts sent to the caller, and
+    for members who may edit the call: override the determinant (reason required) and text an instruction to the caller over the
+    call's intake SMS thread.
+*@
+@{
+    var record = CallProtocolCase.Parse(Model.Row?.CaseJson);
+}
+@if (record != null)
+{
+    var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
+    ProtocolDecisionGraph graph = null;
+    var threadOpen = false;
+    if (Model.CanEdit && !Model.Row.IsRemoved)
+    {
+        try
+        {
+            graph = record.ProtocolVersionId.HasValue ? await caseService.GetGraphForVersionAsync(departmentId, record.ProtocolVersionId.Value) : null;
+            var thread = await conversations.GetForCallAsync(departmentId, Model.CallId);
+            threadOpen = thread != null && thread.State == (int)IntakeConversationStates.Open && thread.ChannelType == (int)IntakeChannelTypes.Sms && !thread.OptedOut;
+        }
+        catch (Exception)
+        {
+            graph = null;
+            threadOpen = false;
+        }
+    }
+    var callerSteps = graph == null ? new List<ProtocolDecisionNode>()
+        : graph.Nodes.Where(n => n != null && n.SendToCaller && (record.InstructionKeys.Contains(n.Key) || n.Key == record.OutcomeNodeKey)).ToList();
+
+    <div class="protocol-case-record well well-sm m-t-sm">
+        <p class="h5"><i class="fa fa-sitemap" aria-hidden="true"></i> @protocolsLocalizer["GraphLabelCaseFlow"]
+            @if (record.Source == (int)CallProtocolSources.Ai)
+            {
+                <span class="label label-info"><i class="fa fa-magic" aria-hidden="true"></i> @protocolsLocalizer["CaseSourceAi"]</span>
+            }
+        </p>
+        @if (!string.IsNullOrWhiteSpace(record.Determinant))
+        {
+            <p>
+                @protocolsLocalizer["GraphLabelDeterminant"]: <span class="label label-danger rgw-mono">@record.Determinant</span>
+                @if (record.Overridden)
+                {
+                    <span class="label label-warning">@protocolsLocalizer["CaseOverridden"]</span>
+                    <span class="small">@string.Format(protocolsLocalizer["CaseOverrideFrom"].Value, record.ComputedDeterminant ?? "-", record.OverrideReason)</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(record.SuggestedPriorityName))
+                {
+                    <span> · @protocolsLocalizer["GraphLabelPriority"]: <strong>@record.SuggestedPriorityName</strong></span>
+                }
+                @if (!string.IsNullOrWhiteSpace(record.ResponseHint))
+                {
+                    <span> · @record.ResponseHint</span>
+                }
+            </p>
+        }
+        else
+        {
+            <p class="text-muted small">@protocolsLocalizer["CaseNotComplete"]</p>
+        }
+        @if (record.Steps.Count > 0)
+        {
+            <ol class="small">
+                @foreach (var step in record.Steps)
+                {
+                    if (step.Kind == (int)ProtocolDecisionNodeKinds.Outcome)
+                    {
+                        continue;
+                    }
+                    <li>
+                        @if (step.Kind == (int)ProtocolDecisionNodeKinds.Instruction)
+                        {
+                            <strong>@protocolsLocalizer["GraphLabelInstruction"]:</strong> @step.Text
+                        }
+                        else
+                        {
+                            @step.Text <strong>@step.Answer</strong>
+                        }
+                    </li>
+                }
+            </ol>
+        }
+        @if (!string.IsNullOrWhiteSpace(record.PostDispatch))
+        {
+            <p class="small"><strong>@protocolsLocalizer["GraphLabelPostDispatch"]:</strong> @record.PostDispatch</p>
+        }
+        @if (record.CallerMessages.Count > 0)
+        {
+            <p class="small m-b-xs"><strong>@protocolsLocalizer["CaseCallerTexts"]</strong></p>
+            <ul class="small">
+                @foreach (var message in record.CallerMessages)
+                {
+                    <li>@message.SentOn.ToString("u") · @message.Text <span class="text-muted">(@message.Result)</span></li>
+                }
+            </ul>
+        }
+        @if (Model.CanEdit && !Model.Row.IsRemoved)
+        {
+            if (threadOpen && callerSteps.Count > 0)
+            {
+                <div class="rgw-toolbar">
+                    @foreach (var step in callerSteps)
+                    {
+                        <form method="post" class="form-inline" asp-controller="ProtocolCases" asp-action="SendToCaller" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="callId" value="@Model.CallId" />
+                            <input type="hidden" name="callProtocolId" value="@Model.Row.CallProtocolId" />
+                            <input type="hidden" name="node" value="@step.Key" />
+                            <button type="submit" class="btn btn-default btn-xs"><i class="fa fa-commenting-o" aria-hidden="true"></i> @string.Format(protocolsLocalizer["CaseSendToCallerButton"].Value, string.IsNullOrWhiteSpace(step.Label) ? (step.IsOutcome ? protocolsLocalizer["GraphLabelPostDispatch"].Value : protocolsLocalizer["GraphLabelInstruction"].Value) : step.Label)</button>
+                        </form>
+                    }
+                </div>
+            }
+            <details class="m-t-sm">
+                <summary><i class="fa fa-pencil" aria-hidden="true"></i> @protocolsLocalizer["CaseOverrideDeterminant"]</summary>
+                <form method="post" class="form-inline m-t-sm" asp-controller="ProtocolCases" asp-action="Override" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="callId" value="@Model.CallId" />
+                    <input type="hidden" name="callProtocolId" value="@Model.Row.CallProtocolId" />
+                    <label class="sr-only" for="caseDeterminant-@Model.Row.CallProtocolId">@protocolsLocalizer["GraphLabelDeterminant"]</label>
+                    <input class="form-control rgw-mono" id="caseDeterminant-@Model.Row.CallProtocolId" name="determinant" maxlength="@ProtocolDecisionGraphs.DeterminantMaxLength" placeholder="@record.ComputedDeterminant" value="@(record.Overridden ? record.Determinant : null)" />
+                    <label class="sr-only" for="caseReason-@Model.Row.CallProtocolId">@protocolsLocalizer["CaseOverrideReason"]</label>
+                    <input class="form-control" id="caseReason-@Model.Row.CallProtocolId" name="reason" maxlength="@ProtocolCaseFlow.OverrideReasonMaxLength" placeholder="@protocolsLocalizer["CaseOverrideReason"]" style="min-width: 260px;" />
+                    <button type="submit" class="btn btn-warning btn-sm"><i class="fa fa-check" aria-hidden="true"></i> @protocolsLocalizer["CaseOverrideSave"]</button>
+                </form>
+                <span class="help-block">@protocolsLocalizer["CaseOverrideHelp"]</span>
+            </details>
+        }
+    </div>
+}

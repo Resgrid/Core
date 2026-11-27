@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Exit.Tab" xml:space="preserve">
+    <value>تصدير البيانات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Title" xml:space="preserve">
+    <value>تصدير بيانات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Intro" xml:space="preserve">
+    <value>صدّر كل ما أدخله قسمك في التدريب: الدورات وبنوك الأسئلة والسجلات والمحاولات والشهادات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.LapsedNotice" xml:space="preserve">
+    <value>إضافة نظام إدارة التعلّم غير نشطة. يستمر التصدير في العمل: تبقى سجلاتك ومحتواك ملكًا لك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.NewExport" xml:space="preserve">
+    <value>تصدير جديد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.ScopeLabel" xml:space="preserve">
+    <value>ما يجب تضمينه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.Full" xml:space="preserve">
+    <value>كل شيء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.FullHelp" xml:space="preserve">
+    <value>الدورات بإصداراتها ودروسها ووسائطها، وبنوك الأسئلة مع مفاتيح الإجابات، وإجابات التقييمات، وخطط الدروس، وأوراق المهارات، والمتطلبات، والخطط، وكل سجل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.RecordsOnly" xml:space="preserve">
+    <value>السجلات فقط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.RecordsOnlyHelp" xml:space="preserve">
+    <value>سجلات التعلّم والتسجيلات ودرجات التقييم والشهادات والأعضاء والفئات بصيغة CSV، إضافةً إلى عبارات xAPI. من دون محتوى الدورات ومن دون مفاتيح الإجابات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.IncludeMedia" xml:space="preserve">
+    <value>نسخ مقاطع الفيديو المستضافة إلى ملف zip (وإلا فسيتضمّن الملف روابط تنزيل)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.LinkHelp" xml:space="preserve">
+    <value>يُنشأ التصدير في الخلفية. يعمل رابط التنزيل لمدة {0} يومًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.KeysWarning" xml:space="preserve">
+    <value>يحتوي التصدير الكامل على بنوك الأسئلة مع مفاتيح الإجابات وإجابات المتعلّمين. احتفظ به بشكل خاص.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Queue" xml:space="preserve">
+    <value>بدء التصدير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Queued" xml:space="preserve">
+    <value>أُضيف التصدير إلى قائمة الانتظار. تُظهر هذه الصفحة متى يصبح جاهزًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.TooManyActive" xml:space="preserve">
+    <value>يجري إنشاء تصديرين بالفعل. انتظر حتى ينتهي أحدهما.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.NotAuthorized" xml:space="preserve">
+    <value>يمكن لمالك القسم ومسؤوليه فقط تصدير بيانات التدريب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.NotFound" xml:space="preserve">
+    <value>لم يُعثر على هذا التصدير.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.NotReady" xml:space="preserve">
+    <value>هذا التصدير ليس جاهزًا بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.Expired" xml:space="preserve">
+    <value>انتهت صلاحية رابط تنزيل هذا التصدير. ابدأ تصديرًا جديدًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.History" xml:space="preserve">
+    <value>عمليات التصدير</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.None" xml:space="preserve">
+    <value>لا توجد عمليات تصدير بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Requested" xml:space="preserve">
+    <value>طُلب في</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Scope" xml:space="preserve">
+    <value>المحتوى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Status" xml:space="preserve">
+    <value>الحالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Contents" xml:space="preserve">
+    <value>الحجم والأعداد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Expires" xml:space="preserve">
+    <value>انتهاء الرابط</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.WithMedia" xml:space="preserve">
+    <value>مع مقاطع الفيديو المستضافة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Queued" xml:space="preserve">
+    <value>في قائمة الانتظار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Running" xml:space="preserve">
+    <value>قيد الإنشاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Completed" xml:space="preserve">
+    <value>جاهز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Failed" xml:space="preserve">
+    <value>فشل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Expired" xml:space="preserve">
+    <value>منتهي الصلاحية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.CountsLine" xml:space="preserve">
+    <value>{0} سجل، {1} دورة، {2} محاولة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Download" xml:space="preserve">
+    <value>تنزيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.FormatHelp" xml:space="preserve">
+    <value>يحتوي ملف zip على manifest.json مع عدد كل كيان ومجموع تحقق لكل ملف. ملفات CSV بترميز UTF-8؛ والأوقات بالتوقيت العالمي المنسق.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.Complete" xml:space="preserve">
+    <value>وضع علامة على اكتمال هذه الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.Completed" xml:space="preserve">
+    <value>تم وضع علامة على اكتمال هذه الدورة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.VideoNotIncluded" xml:space="preserve">
+    <value>هذا الفيديو غير مضمّن في الحزمة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.Transcript" xml:space="preserve">
+    <value>النص المكتوب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Tab" xml:space="preserve">
+    <value>تقارير التعليم المستمر (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Title" xml:space="preserve">
+    <value>تقارير التعليم المستمر (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Intro" xml:space="preserve">
+    <value>ملفات لساعات التدريب والتعليم المستمر (CE / CPD) لأي جهة تنظيمية أو هيئة مهنية أو صاحب عمل، إضافة إلى ملفات الولايات المتحدة: CAPCE ومكاتب التعليم المستمر في الولايات وقائمة جاهزة للولاية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.LapsedNotice" xml:space="preserve">
+    <value>إضافة نظام إدارة التعلّم غير نشطة: لا يزال بالإمكان إنشاء الملفات من سجلاتك، لكن لا يمكن تغيير الإعدادات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Disclaimer" xml:space="preserve">
+    <value>ينشئ Resgrid الملفات؛ لكنه لا يرسلها وليس جهة اعتماد. تحقّق من كل ملف قبل رفعه إلى جهة تنظيمية أو هيئة مهنية أو أي جهة أخرى تتلقى التقارير.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.BuildTitle" xml:space="preserve">
+    <value>إنشاء ملف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ExporterLabel" xml:space="preserve">
+    <value>الملف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.From" xml:space="preserve">
+    <value>من</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.To" xml:space="preserve">
+    <value>إلى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Category" xml:space="preserve">
+    <value>فئة التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.AllCategories" xml:space="preserve">
+    <value>كل الفئات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.IncludeFormer" xml:space="preserve">
+    <value>تضمين الأعضاء المحذوفين والمعطّلين والمخفيين</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Preview" xml:space="preserve">
+    <value>معاينة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Download" xml:space="preserve">
+    <value>تنزيل CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.PreviewCount" xml:space="preserve">
+    <value>{0} صف في الملف؛ يُعرض أول {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.NoHeaderRow" xml:space="preserve">
+    <value>هذا التنسيق بلا صف عناوين؛ العناوين أعلاه للرجوع إليها فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Missing" xml:space="preserve">
+    <value>{0} صف بلا قيمة في "{1}".</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ExportersTitle" xml:space="preserve">
+    <value>الملفات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.LayoutVerified" xml:space="preserve">
+    <value>تنسيق منشور</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.LayoutFallback" xml:space="preserve">
+    <value>CSV قابل للتهيئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.CustomColumns" xml:space="preserve">
+    <value>أعمدة مخصّصة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Columns" xml:space="preserve">
+    <value>الأعمدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.SettingsTitle" xml:space="preserve">
+    <value>إعدادات تقارير التعليم المستمر (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.SettingsIntro" xml:space="preserve">
+    <value>أرقام المزوّد لملفات الولايات المتحدة، وأنواع الشهادات التي تحمل أرقام الترخيص أو التسجيل التي تحتاجها الملفات.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.CapceProviderNumber" xml:space="preserve">
+    <value>رقم مزوّد CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.CapceProviderName" xml:space="preserve">
+    <value>اسم مزوّد CAPCE (كما أُدخل في الدورات)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.CeBrokerProviderNumber" xml:space="preserve">
+    <value>رقم تتبّع المزوّد في CE Broker (فلوريدا)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.IdentifiersHelp" xml:space="preserve">
+    <value>تقرأ الملفات هذه الأرقام من شهادات كل عضو من النوع المحدّد: الرقم، والمنطقة بوصفها الولاية أو المقاطعة أو الإقليم، والنوع بوصفه المستوى، وتاريخ الانتهاء.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.LicenseType" xml:space="preserve">
+    <value>نوع شهادة الترخيص أو التسجيل (ولاية أو مقاطعة أو جهة تنظيمية)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.NremtType" xml:space="preserve">
+    <value>نوع شهادة تسجيل NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.NemsidType" xml:space="preserve">
+    <value>نوع شهادة المعرّف الوطني لخدمات الإسعاف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.NoType" xml:space="preserve">
+    <value>لا شيء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Save" xml:space="preserve">
+    <value>حفظ الإعدادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Saved" xml:space="preserve">
+    <value>حُفظت إعدادات تقارير التعليم المستمر (CE / CPD).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ActionFailed" xml:space="preserve">
+    <value>تعذّر الحفظ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.AddonRequired" xml:space="preserve">
+    <value>يتطلب تغيير إعدادات تقارير التعليم المستمر (CE / CPD) إضافة نظام إدارة تعلّم نشطة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsTitle" xml:space="preserve">
+    <value>أعمدة الملف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsIntro" xml:space="preserve">
+    <value>اختر العنوان والقيمة والتنسيق لكل عمود.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Back" xml:space="preserve">
+    <value>العودة إلى تقارير التعليم المستمر (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsCustom" xml:space="preserve">
+    <value>تُستخدم أعمدة قسمك الخاصة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsDefault" xml:space="preserve">
+    <value>تُستخدم الأعمدة الافتراضية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Col.Header" xml:space="preserve">
+    <value>العنوان</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Col.Source" xml:space="preserve">
+    <value>القيمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Col.Argument" xml:space="preserve">
+    <value>التنسيق أو النص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsHelp" xml:space="preserve">
+    <value>للتواريخ استخدم yyyy-MM-dd (ISO 8601) ما لم تطلب الجهة المتلقية تنسيقًا آخر مثل dd/MM/yyyy أو MM/dd/yyyy؛ وللساعات 0.##؛ وللنص الثابت اختر «نص ثابت» واكتبه. اترك العنوان فارغًا لإزالة العمود.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.SaveColumns" xml:space="preserve">
+    <value>حفظ الأعمدة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ResetColumns" xml:space="preserve">
+    <value>استعادة الأعمدة الافتراضية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsSaved" xml:space="preserve">
+    <value>حُفظت الأعمدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsReset" xml:space="preserve">
+    <value>استُعيدت الأعمدة الافتراضية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Constant" xml:space="preserve">
+    <value>نص ثابت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.FirstName" xml:space="preserve">
+    <value>الاسم الأول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LastName" xml:space="preserve">
+    <value>اسم العائلة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.FullName" xml:space="preserve">
+    <value>الاسم الكامل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Email" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.MemberId" xml:space="preserve">
+    <value>معرّف مستخدم Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.IdentificationNumber" xml:space="preserve">
+    <value>رقم العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CompletedOn" xml:space="preserve">
+    <value>تاريخ الإتمام</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.StartedOn" xml:space="preserve">
+    <value>تاريخ البدء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.EndedOn" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Title" xml:space="preserve">
+    <value>عنوان الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CourseCode" xml:space="preserve">
+    <value>رمز الدورة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeProvider" xml:space="preserve">
+    <value>مزوّد التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeCourseNumber" xml:space="preserve">
+    <value>رقم نشاط التعليم المستمر (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeCourseNumberSuffix" xml:space="preserve">
+    <value>رقم نشاط التعليم المستمر دون البادئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeHours" xml:space="preserve">
+    <value>ساعات التعليم المستمر (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Hours" xml:space="preserve">
+    <value>الساعات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CategoryName" xml:space="preserve">
+    <value>اسم الفئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CategoryCode" xml:space="preserve">
+    <value>رمز الفئة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Method" xml:space="preserve">
+    <value>طريقة التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Location" xml:space="preserve">
+    <value>الموقع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Instructors" xml:space="preserve">
+    <value>المدرّبون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseNumber" xml:space="preserve">
+    <value>رقم الترخيص أو التسجيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseState" xml:space="preserve">
+    <value>ولاية الترخيص أو مقاطعته أو إقليمه</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseLevel" xml:space="preserve">
+    <value>مستوى الترخيص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseExpiresOn" xml:space="preserve">
+    <value>تاريخ انتهاء الترخيص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.NremtNumber" xml:space="preserve">
+    <value>رقم NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.NremtExpiresOn" xml:space="preserve">
+    <value>تاريخ إعادة تسجيل NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Nemsid" xml:space="preserve">
+    <value>المعرّف الوطني لخدمات الإسعاف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CapceProviderNumber" xml:space="preserve">
+    <value>رقم مزوّد CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeBrokerProviderNumber" xml:space="preserve">
+    <value>رقم مزوّد CE Broker</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.RecordId" xml:space="preserve">
+    <value>معرّف سجل التعلّم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.VerificationCode" xml:space="preserve">
+    <value>رمز التحقق من الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.SourceKind" xml:space="preserve">
+    <value>مصدر السجل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.capce" xml:space="preserve">
+    <value>ملف الإتمام لـ CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.fl-ems" xml:space="preserve">
+    <value>خدمات الإسعاف في فلوريدا (CE Broker)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.va-ems" xml:space="preserve">
+    <value>خدمات الإسعاف في فرجينيا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.nj-ems" xml:space="preserve">
+    <value>خدمات الإسعاف في نيوجيرسي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.fl-fire" xml:space="preserve">
+    <value>تدريب الإطفاء في فلوريدا</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.state-ce" xml:space="preserve">
+    <value>تعليم مستمر لولاية أمريكية أخرى (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.state-roster" xml:space="preserve">
+    <value>قائمة جاهزة للولايات الأمريكية (Acadis وغيرها)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.capce" xml:space="preserve">
+    <value>للأقسام المعتمدة كمزوّدين لدى CAPCE: حالات الإتمام الموثّقة لدورات التعليم المستمر الخاصة بك. لا تنشر CAPCE ترتيب أعمدة الرفع؛ تتبع الأعمدة البيانات التي تطلبها CAPCE بترتيبها، ويمكن تغييرها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.fl-ems" xml:space="preserve">
+    <value>رفع المزوّد بصيغة Easy Excel في CE Broker (الأعمدة من A إلى H، بلا صف عناوين). افتح ملف CSV في جدول بيانات واحفظه كمصنف Excel قبل الرفع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.va-ems" xml:space="preserve">
+    <value>يستقبل مكتب خدمات الإسعاف في فرجينيا التعليم المستمر عبر تطبيق CE Scanner ولا ينشر تنسيق ملف، لذا فهذا ملف CSV قابل للتهيئة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.nj-ems" xml:space="preserve">
+    <value>يستقبل مكتب خدمات الإسعاف في نيوجيرسي التعليم المستمر لكل طالب في NJLincs ولا ينشر تنسيق ملف، لذا فهذا ملف CSV قابل للتهيئة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.fl-fire" xml:space="preserve">
+    <value>لا ينشر مكتب معايير الإطفاء والتدريب في فلوريدا تنسيق رفع لساعات التدريب، لذا فهذا ملف CSV قابل للتهيئة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.state-ce" xml:space="preserve">
+    <value>ملف CSV قابل للتهيئة لمكتب التعليم المستمر في أي ولاية أمريكية أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.state-roster" xml:space="preserve">
+    <value>قائمة إتمام دورات بأعمدة قابلة للتهيئة لأنظمة الولايات مثل Acadis التي لا تنشر قالب استيراد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.UnknownExporter" xml:space="preserve">
+    <value>نوع الملف هذا غير معروف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.NotAuthorized" xml:space="preserve">
+    <value>يمكن لمسؤولي التدريب فقط إنشاء ملفات التعليم المستمر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.NoCapceProvider" xml:space="preserve">
+    <value>أدخل أولًا رقم مزوّد CAPCE في الإعدادات أدناه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.NoCeBrokerProvider" xml:space="preserve">
+    <value>أدخل أولًا رقم تتبّع المزوّد في CE Broker في الإعدادات أدناه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_ce_not_authorized" xml:space="preserve">
+    <value>يمكن لمسؤولي القسم فقط تغيير إعدادات تقارير التعليم المستمر.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_ce_certification_type_invalid" xml:space="preserve">
+    <value>اختر أنواع شهادات تابعة لهذا القسم.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_ce_exporter_unknown" xml:space="preserve">
+    <value>نوع الملف هذا غير معروف.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.training-hours" xml:space="preserve">
+    <value>ملف ساعات التدريب (CE / CPD، لأي جهة)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.training-hours" xml:space="preserve">
+    <value>لأي جهة تنظيمية أو هيئة مهنية أو صاحب عمل أو شركة تأمين، في أي بلد: صف واحد لكل إتمام موثّق، والتواريخ بتنسيق yyyy-MM-dd، والساعات بنقطة فاصلة عشرية، والعناوين بلغتك. اختر الأعمدة التي تطلبها الجهة المتلقية ورتّبها.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

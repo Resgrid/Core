@@ -163,4 +163,156 @@
   <data name="ViewDepartmentLinkTitle" xml:space="preserve">
     <value>Ver Vínculo de Departamento</value>
   </data>
+  <data name="AgreementFrom" xml:space="preserve">
+    <value>De</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementRequested" xml:space="preserve">
+    <value>Solicitado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementTitle" xml:space="preserve">
+    <value>Acuerdo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Revisar y refrendar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsLink" xml:space="preserve">
+    <value>Conjuntos de cursos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditSharing" xml:space="preserve">
+    <value>Uso compartido</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolChange" xml:space="preserve">
+    <value>Qué cambió:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolReadOnly" xml:space="preserve">
+    <value>Solo lectura: esta es la versión en vigor del departamento vinculado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolSubtitle" xml:space="preserve">
+    <value>{0}, versión {1}, en vigor desde {2}, código de contenido {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsHeader" xml:space="preserve">
+    <value>Protocolos vinculados</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsIntro" xml:space="preserve">
+    <value>Los protocolos publicados que este departamento vinculado comparte con su departamento. Solo se muestra la versión en vigor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsTitle" xml:space="preserve">
+    <value>Protocolos de {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLinkedProtocols" xml:space="preserve">
+    <value>Este departamento no comparte protocolos publicados.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerAgreements" xml:space="preserve">
+    <value>Ningún acuerdo espera el refrendo de su departamento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsIntro" xml:space="preserve">
+    <value>Acuerdos de ayuda mutua que los departamentos vinculados piden refrendar a su departamento. Cualquier administrador del departamento puede refrendar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsLink" xml:space="preserve">
+    <value>Acuerdos por refrendar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolCategory" xml:space="preserve">
+    <value>Categoría</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolEffective" xml:space="preserve">
+    <value>En vigor desde</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolName" xml:space="preserve">
+    <value>Protocolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolNumber" xml:space="preserve">
+    <value>Número</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsLink" xml:space="preserve">
+    <value>Conjuntos de protocolos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersion" xml:space="preserve">
+    <value>Versión</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocols" xml:space="preserve">
+    <value>Protocolos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetsIntro" xml:space="preserve">
+    <value>Comparta protocolos y cursos con departamentos vinculados como conjuntos, patrocine sus plazas LMS y refrende sus acuerdos de ayuda mutua.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocols" xml:space="preserve">
+    <value>Compartir protocolos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocolsHelp" xml:space="preserve">
+    <value>El otro departamento puede leer sus protocolos publicados y suscribirse a sus conjuntos de protocolos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTraining" xml:space="preserve">
+    <value>Compartir formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTrainingHelp" xml:space="preserve">
+    <value>El otro departamento puede suscribirse a sus conjuntos de cursos, y usted puede patrocinar sus plazas LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBack" xml:space="preserve">
+    <value>Ellos comparten:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingIntro" xml:space="preserve">
+    <value>Elija lo que su departamento comparte con {0}. Usted nunca cambia lo que ellos comparten con usted.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingRevokeHelp" xml:space="preserve">
+    <value>Desactivar algo corta el acceso de inmediato: las lecturas se detienen, las suscripciones a sus conjuntos se suspenden y los patrocinios a través de este vínculo finalizan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ViewProtocols" xml:space="preserve">
+    <value>Protocolos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentsTitle" xml:space="preserve">
+    <value>Misiones de despliegue por aceptar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerDeployments" xml:space="preserve">
+    <value>Ninguna organización vinculada le pide aceptar una misión de despliegue.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAssignment" xml:space="preserve">
+    <value>Misión</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAccept" xml:space="preserve">
+    <value>Revisar y aceptar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkAcceptanceSignatureNote" xml:space="preserve">
+    <value>Aceptar este vínculo es una decisión firmada: se le pedirá que verifique de nuevo su identidad y su firma registra ambas organizaciones y lo que comparte cada una.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

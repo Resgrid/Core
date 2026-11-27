@@ -1,0 +1,208 @@
+{
+  "schema": 1,
+  "id": "01-people",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "People",
+  "minutes": 2.6,
+  "walkthrough": false,
+  "audience": [
+    "administrator",
+    "training-officer"
+  ],
+  "visibility": [],
+  "pages": [
+    "Personnel",
+    "Groups"
+  ],
+  "adminAssist": {
+    "areas": [
+      "people"
+    ],
+    "capabilities": [
+      "personnel",
+      "invites",
+      "groups",
+      "personnel-roles",
+      "add-person",
+      "new-group"
+    ]
+  },
+  "media": {
+    "video": "media/01-people.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/01-people.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Build a roster dispatch can use",
+    "ar": "أنشئ قائمة أفراد يمكن لمركز الإرسال استخدامها",
+    "de": "Eine Personalliste aufbauen, mit der die Leitstelle arbeiten kann",
+    "el": "Δημιουργήστε μητρώο προσωπικού χρήσιμο για τη διασπορά",
+    "es": "Crear una plantilla que la central pueda usar",
+    "fr": "Constituer un effectif exploitable par le centre d’alerte",
+    "it": "Costruire un organico utilizzabile dalla centrale",
+    "pl": "Zbuduj listę osobową przydatną dla dyspozytorni",
+    "sv": "Bygg en personallista som larmcentralen kan använda",
+    "uk": "Створіть особовий склад, з яким може працювати диспетчер"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "Why does dispatch need an accurate roster?",
+        "ar": "لماذا يحتاج مركز الإرسال إلى قائمة أفراد دقيقة؟",
+        "de": "Warum braucht die Leitstelle eine genaue Personalliste?",
+        "el": "Γιατί η διασπορά χρειάζεται ακριβές μητρώο;",
+        "es": "¿Por qué la central necesita una plantilla exacta?",
+        "fr": "Pourquoi le centre d’alerte a-t-il besoin d’un effectif exact ?",
+        "it": "Perché la centrale ha bisogno di un organico accurato?",
+        "pl": "Dlaczego dyspozytornia potrzebuje dokładnej listy osobowej?",
+        "sv": "Varför behöver larmcentralen en korrekt personallista?",
+        "uk": "Навіщо диспетчеру точний особовий склад?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "To print birthday cards",
+            "ar": "لطباعة بطاقات أعياد الميلاد",
+            "de": "Um Geburtstagskarten zu drucken",
+            "el": "Για να εκτυπώνει κάρτες γενεθλίων",
+            "es": "Para imprimir tarjetas de cumpleaños",
+            "fr": "Pour imprimer des cartes d’anniversaire",
+            "it": "Per stampare biglietti di compleanno",
+            "pl": "Aby drukować kartki urodzinowe",
+            "sv": "För att skriva ut födelsedagskort",
+            "uk": "Щоб друкувати листівки до днів народження"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "It does not need one",
+            "ar": "لا يحتاج إليها",
+            "de": "Sie braucht keine",
+            "el": "Δεν χρειάζεται",
+            "es": "No la necesita",
+            "fr": "Il n’en a pas besoin",
+            "it": "Non ne ha bisogno",
+            "pl": "Wcale jej nie potrzebuje",
+            "sv": "Den behöver ingen",
+            "uk": "Він не потрібен"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To know who can be alerted and who is available",
+            "ar": "لمعرفة من يمكن تنبيهه ومن المتاح",
+            "de": "Um zu wissen, wer alarmiert werden kann und wer verfügbar ist",
+            "el": "Για να ξέρει ποιον να ειδοποιήσει και ποιος είναι διαθέσιμος",
+            "es": "Para saber a quién se puede alertar y quién está disponible",
+            "fr": "Pour savoir qui peut être alerté et qui est disponible",
+            "it": "Per sapere chi può essere allertato e chi è disponibile",
+            "pl": "Aby wiedzieć, kogo można zaalarmować i kto jest dostępny",
+            "sv": "För att veta vem som kan larmas och vem som är tillgänglig",
+            "uk": "Щоб знати, кого можна сповістити і хто доступний"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "What do groups, such as stations, let you do?",
+        "ar": "ماذا تتيح لك المجموعات مثل المراكز؟",
+        "de": "Was ermöglichen Gruppen wie Wachen?",
+        "el": "Τι σας επιτρέπουν οι ομάδες, όπως οι σταθμοί;",
+        "es": "¿Qué permiten hacer los grupos, como los parques?",
+        "fr": "Que permettent les groupes, comme les casernes ?",
+        "it": "Che cosa permettono di fare i gruppi, come le sedi?",
+        "pl": "Co umożliwiają grupy, na przykład strażnice?",
+        "sv": "Vad kan du göra med grupper, till exempel stationer?",
+        "uk": "Що дають групи, наприклад частини?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Organize members and units and send alerts to them",
+            "ar": "تنظيم الأعضاء والوحدات وإرسال التنبيهات إليهم",
+            "de": "Mitglieder und Einheiten ordnen und ihnen Alarme senden",
+            "el": "Οργάνωση μελών και μονάδων και αποστολή ειδοποιήσεων σε αυτά",
+            "es": "Organizar miembros y unidades y enviarles alertas",
+            "fr": "Organiser membres et unités et leur envoyer des alertes",
+            "it": "Organizzare membri e mezzi e inviare loro allarmi",
+            "pl": "Porządkować członków i jednostki oraz wysyłać im alarmy",
+            "sv": "Organisera medlemmar och enheter och skicka larm till dem",
+            "uk": "Упорядковувати учасників і підрозділи та надсилати їм сповіщення"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Change the department's billing plan",
+            "ar": "تغيير خطة فوترة الإدارة",
+            "de": "Den Abrechnungsplan der Organisation ändern",
+            "el": "Αλλαγή του προγράμματος χρέωσης της υπηρεσίας",
+            "es": "Cambiar el plan de facturación del departamento",
+            "fr": "Changer la formule de facturation du service",
+            "it": "Cambiare il piano di fatturazione del dipartimento",
+            "pl": "Zmienić plan rozliczeń jednostki",
+            "sv": "Byta organisationens betalplan",
+            "uk": "Змінити тарифний план підрозділу"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Hide calls from all members",
+            "ar": "إخفاء البلاغات عن جميع الأعضاء",
+            "de": "Einsätze vor allen Mitgliedern verbergen",
+            "el": "Απόκρυψη κλήσεων από όλα τα μέλη",
+            "es": "Ocultar las llamadas a todos los miembros",
+            "fr": "Masquer les interventions à tous les membres",
+            "it": "Nascondere le chiamate a tutti i membri",
+            "pl": "Ukryć zgłoszenia przed wszystkimi członkami",
+            "sv": "Dölja larm för alla medlemmar",
+            "uk": "Приховати виклики від усіх учасників"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Personnel roles can describe what a member is qualified to do, such as driver or EMT.",
+        "ar": "يمكن أن تصف أدوار الأفراد ما يؤهَّل له العضو، مثل سائق أو مسعف.",
+        "de": "Personalrollen können beschreiben, wofür ein Mitglied qualifiziert ist, etwa als Fahrer oder Rettungssanitäter.",
+        "el": "Οι ρόλοι προσωπικού μπορούν να περιγράφουν τι είναι καταρτισμένο να κάνει ένα μέλος, όπως οδηγός ή διασώστης.",
+        "es": "Las funciones del personal pueden describir para qué está capacitado un miembro, como conductor o técnico sanitario.",
+        "fr": "Les rôles du personnel peuvent décrire les qualifications d’un membre, comme conducteur ou secouriste.",
+        "it": "I ruoli del personale possono descrivere per cosa è qualificato un membro, come autista o soccorritore.",
+        "pl": "Role personelu mogą opisywać kwalifikacje członka, np. kierowca lub ratownik medyczny.",
+        "sv": "Personalroller kan beskriva vad en medlem är behörig för, till exempel förare eller ambulanssjukvårdare.",
+        "uk": "Ролі персоналу можуть описувати кваліфікацію учасника, наприклад водій чи парамедик."
+      }
+    }
+  ]
+}

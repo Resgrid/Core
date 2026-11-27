@@ -415,6 +415,10 @@
   <data name="PermAddCallDataNote" xml:space="preserve"><value>Esta opción determina quién puede agregar datos a las llamadas. Por defecto, todos pueden agregar datos.</value></data>
   <data name="PermCreateTrainingLabel" xml:space="preserve"><value>Quién puede Crear Entrenamientos</value></data>
   <data name="PermCreateTrainingNote" xml:space="preserve"><value>Esta opción determina quién puede crear entrenamientos. Por defecto, solo los administradores del departamento.</value></data>
+  <data name="PermAssignTrainingLabel" xml:space="preserve"><value>Quién puede asignar capacitaciones y ver informes</value><comment>machine-translated</comment></data>
+  <data name="PermAssignTrainingNote" xml:space="preserve"><value>Esta opción determina quién puede asignar capacitaciones a los miembros, fijar fechas de vencimiento, prórrogas y exenciones, y leer el informe de la capacitación y el historial de intentos. Los administradores de grupo solo actúan sobre los miembros de su propio grupo. Hasta que guarde una regla aquí, sigue a Crear capacitaciones.</value><comment>machine-translated</comment></data>
+  <data name="PermDeleteTrainingLabel" xml:space="preserve"><value>Quién puede archivar y eliminar capacitaciones</value><comment>machine-translated</comment></data>
+  <data name="PermDeleteTrainingNote" xml:space="preserve"><value>Esta opción determina quién puede archivar, restaurar y eliminar capacitaciones. Una capacitación que alguien completó se archiva, nunca se elimina. Hasta que guarde una regla aquí, sigue a Crear capacitaciones.</value><comment>machine-translated</comment></data>
   <data name="PermCreateDocumentLabel" xml:space="preserve"><value>Quién puede Agregar Documentos</value></data>
   <data name="PermCreateDocumentNote" xml:space="preserve"><value>Esta opción determina quién puede agregar documentos. Por defecto, todos pueden agregar documentos.</value></data>
   <data name="PermCreateCalendarEntryLabel" xml:space="preserve"><value>Quién puede Crear Entradas de Calendario</value></data>
@@ -1360,6 +1364,740 @@
   <data name="AuditLogTypeRecurringCallOccurrenceCreated" xml:space="preserve"><value>Ocurrencia de llamada recurrente creada</value></data>
   <data name="AuditLogTypeRecurringCallAlertAcknowledged" xml:space="preserve"><value>Aviso de llamada recurrente confirmado</value></data>
   <data name="AuditLogTypeRecurringCallAlertDismissed" xml:space="preserve"><value>Aviso de llamada recurrente descartado</value></data>
+  <data name="AuditLogTypeProtocolCreated" xml:space="preserve"><value>Protocolo creado</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeProtocolUpdated" xml:space="preserve"><value>Protocolo actualizado</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeProtocolDisabled" xml:space="preserve"><value>Protocolo desactivado</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeProtocolEnabled" xml:space="preserve"><value>Protocolo activado</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeProtocolDeleted" xml:space="preserve"><value>Protocolo eliminado</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeCallProtocolRemoved" xml:space="preserve"><value>Protocolo quitado de la llamada</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeTrainingArchived" xml:space="preserve"><value>Capacitación archivada</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeTrainingRestored" xml:space="preserve"><value>Capacitación restaurada</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeTrainingDeleted" xml:space="preserve"><value>Capacitación eliminada</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeTrainingCopied" xml:space="preserve"><value>Capacitación copiada</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeTrainingAssigneeRemoved" xml:space="preserve"><value>Asignado de capacitación eliminado</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeTrainingAssignmentExtended" xml:space="preserve"><value>Asignación de capacitación prorrogada</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeTrainingAssignmentExempted" xml:space="preserve"><value>Exención de asignación de capacitación modificada</value><comment>machine-translated</comment></data>
+  <data name="AuditLogTypeMemberLeavePeriodChanged" xml:space="preserve"><value>Período de licencia del miembro modificado</value><comment>machine-translated</comment></data>
+  <data name="PermAuthorProtocolsLabel" xml:space="preserve">
+    <value>Redactar protocolos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermAuthorProtocolsNote" xml:space="preserve">
+    <value>Crear protocolos, cambiar sus datos, disparadores y preguntas, y redactar y enviar borradores. Los administradores del departamento siempre pueden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermApproveProtocolsLabel" xml:space="preserve">
+    <value>Aprobar y publicar protocolos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermApproveProtocolsNote" xml:space="preserve">
+    <value>Aprobar versiones de protocolos (cada aprobación se firma con una verificación de identidad), publicarlas o programarlas, registrar revisiones, y dar de baja y eliminar protocolos. Los administradores del departamento siempre pueden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermManageProtocolAcknowledgmentsLabel" xml:space="preserve">
+    <value>Gestionar confirmaciones de lectura de protocolos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermManageProtocolAcknowledgmentsNote" xml:space="preserve">
+    <value>Asignar confirmaciones de lectura y firma, conceder exenciones y ver quién ha confirmado la lectura. Los administradores del departamento siempre pueden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeSignatureRecorded" xml:space="preserve">
+    <value>Firma registrada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeSignatureVoided" xml:space="preserve">
+    <value>Firma anulada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolVersionSubmitted" xml:space="preserve">
+    <value>Versión de protocolo enviada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolVersionWithdrawn" xml:space="preserve">
+    <value>Versión de protocolo retirada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolVersionApproved" xml:space="preserve">
+    <value>Versión de protocolo aprobada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolVersionRejected" xml:space="preserve">
+    <value>Versión de protocolo rechazada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolVersionPublished" xml:space="preserve">
+    <value>Versión de protocolo publicada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolVersionScheduled" xml:space="preserve">
+    <value>Versión de protocolo programada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolRetired" xml:space="preserve">
+    <value>Protocolo dado de baja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolReviewRecorded" xml:space="preserve">
+    <value>Revisión de protocolo registrada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolsImported" xml:space="preserve">
+    <value>Protocolos importados</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolCategoryChanged" xml:space="preserve">
+    <value>Categoría de protocolo cambiada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolLibrarySettingsChanged" xml:space="preserve">
+    <value>Configuración de la biblioteca de protocolos cambiada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermManageCoursesLabel" xml:space="preserve">
+    <value>Gestionar cursos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermManageCoursesNote" xml:space="preserve">
+    <value>Crear cursos y bancos de preguntas, subir vídeos de cursos, enviar y publicar versiones de cursos, asignar cursos y ver sus resultados. Aprobar una versión de curso también requiere este permiso y se firma con una comprobación de identidad. Los administradores del departamento siempre pueden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermGradeAssessmentsLabel" xml:space="preserve">
+    <value>Calificar evaluaciones</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermGradeAssessmentsNote" xml:space="preserve">
+    <value>Calificar las respuestas de texto libre pendientes en la cola de calificación y ver el análisis de preguntas. Nadie puede calificar su propio intento. Los administradores del departamento siempre pueden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseCreated" xml:space="preserve">
+    <value>Curso creado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseChanged" xml:space="preserve">
+    <value>Curso modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionSubmitted" xml:space="preserve">
+    <value>Versión de curso enviada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionWithdrawn" xml:space="preserve">
+    <value>Versión de curso retirada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionApproved" xml:space="preserve">
+    <value>Versión de curso aprobada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionRejected" xml:space="preserve">
+    <value>Versión de curso rechazada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseVersionPublished" xml:space="preserve">
+    <value>Versión de curso publicada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseRetired" xml:space="preserve">
+    <value>Curso retirado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseAssigned" xml:space="preserve">
+    <value>Curso asignado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsEnrollmentWithdrawn" xml:space="preserve">
+    <value>Inscripción al curso retirada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsQuestionBankChanged" xml:space="preserve">
+    <value>Banco de preguntas modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsAttemptGraded" xml:space="preserve">
+    <value>Intento de evaluación calificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsMediaUploaded" xml:space="preserve">
+    <value>Vídeo de curso subido</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCrewViewingStarted" xml:space="preserve">
+    <value>Visionado en grupo iniciado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeAcademyPathAssigned" xml:space="preserve">
+    <value>Ruta de función de Academy asignada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolContentConverted" xml:space="preserve">
+    <value>Contenido del protocolo convertido en bloques</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolTranslationSaved" xml:space="preserve">
+    <value>Traducción de protocolo guardada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolTranslationApproved" xml:space="preserve">
+    <value>Traducción de protocolo aprobada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolTranslationWithdrawn" xml:space="preserve">
+    <value>Traducción de protocolo retirada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolBookExported" xml:space="preserve">
+    <value>Libro de protocolos exportado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTrainingPlanChanged" xml:space="preserve">
+    <value>Plan anual de formación modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCompetencyFrameworkChanged" xml:space="preserve">
+    <value>Marco de competencias modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCompetencyFrameworkImported" xml:space="preserve">
+    <value>Marco de competencias importado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTrainingRequestSubmitted" xml:space="preserve">
+    <value>Solicitud de formación enviada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTrainingRequestDecided" xml:space="preserve">
+    <value>Solicitud de formación resuelta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTrainingRequestCompleted" xml:space="preserve">
+    <value>Solicitud de formación completada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsReportDefinitionChanged" xml:space="preserve">
+    <value>Informe de formación guardado modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCertificationCycleRuleChanged" xml:space="preserve">
+    <value>Regla de ciclo de certificación modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCertificationCycleAutoRenewed" xml:space="preserve">
+    <value>Ciclo de certificación renovado automáticamente</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsProgramSettingsChanged" xml:space="preserve">
+    <value>Configuración del programa de formación modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLearningRequirementCreated" xml:space="preserve">
+    <value>Requisito de aprendizaje creado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLearningRequirementChanged" xml:space="preserve">
+    <value>Requisito de aprendizaje modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLearningRequirementDeleted" xml:space="preserve">
+    <value>Requisito de aprendizaje eliminado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLearningRequirementMemberChanged" xml:space="preserve">
+    <value>Exención o prórroga de requisito de aprendizaje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLearningRequirementSettingsChanged" xml:space="preserve">
+    <value>Configuración de requisitos de aprendizaje modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLearningRequirementEnforced" xml:space="preserve">
+    <value>Requisito de capacitación aplicado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLearningRequirementEnforcementUndone" xml:space="preserve">
+    <value>Aplicación de requisito de capacitación deshecha</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLearningRequirementEnforcementRefused" xml:space="preserve">
+    <value>Aplicación de requisito de capacitación rechazada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsPathChanged" xml:space="preserve">
+    <value>Ruta de aprendizaje modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsPathAssigned" xml:space="preserve">
+    <value>Ruta de aprendizaje asignada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsPathCompleted" xml:space="preserve">
+    <value>Ruta de aprendizaje completada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeApprovalChainChanged" xml:space="preserve">
+    <value>Cadena de aprobación modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeApprovalDelegateChanged" xml:space="preserve">
+    <value>Suplente de aprobación modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeApprovalSubmitted" xml:space="preserve">
+    <value>Presentado para aprobación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeApprovalGranted" xml:space="preserve">
+    <value>Aprobación concedida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeApprovalRejected" xml:space="preserve">
+    <value>Aprobación rechazada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeApprovalWithdrawn" xml:space="preserve">
+    <value>Solicitud de aprobación retirada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeApprovalEscalated" xml:space="preserve">
+    <value>Aprobación escalada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeApprovalSuperseded" xml:space="preserve">
+    <value>Aprobación sustituida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeMutualAidAgreementChanged" xml:space="preserve">
+    <value>Acuerdo de ayuda mutua modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolLearningSettingsChanged" xml:space="preserve">
+    <value>Configuración de aprendizaje del protocolo cambiada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsClassSessionChanged" xml:space="preserve">
+    <value>Sesión de clase modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsClassSessionCancelled" xml:space="preserve">
+    <value>Sesión de clase cancelada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsClassSessionDeleted" xml:space="preserve">
+    <value>Sesión de clase eliminada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsClassRosterChanged" xml:space="preserve">
+    <value>Lista de la clase modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsClassAttendanceChanged" xml:space="preserve">
+    <value>Asistencia de la clase modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsClassSignedOff" xml:space="preserve">
+    <value>Clase firmada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsClassRosterPurged" xml:space="preserve">
+    <value>Lista de la clase purgada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanChanged" xml:space="preserve">
+    <value>Plan de lección modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanSubmitted" xml:space="preserve">
+    <value>Plan de lección enviado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanDecided" xml:space="preserve">
+    <value>Plan de lección aprobado o rechazado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsLessonPlanPublished" xml:space="preserve">
+    <value>Plan de lección publicado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTrainingResourceChanged" xml:space="preserve">
+    <value>Recurso de formación modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsSkillSheetChanged" xml:space="preserve">
+    <value>Hoja de destrezas modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsSkillSheetPublished" xml:space="preserve">
+    <value>Hoja de destrezas publicada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationStarted" xml:space="preserve">
+    <value>Evaluación de destrezas iniciada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationSubmitted" xml:space="preserve">
+    <value>Evaluación de destrezas enviada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationCompleted" xml:space="preserve">
+    <value>Evaluación de destrezas completada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationSplit" xml:space="preserve">
+    <value>Miembro separado de la evaluación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsSkillEvaluationVoided" xml:space="preserve">
+    <value>Evaluación de destrezas anulada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookDefinitionChanged" xml:space="preserve">
+    <value>Definición de libro de tareas modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookInitiated" xml:space="preserve">
+    <value>Libro de tareas iniciado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookCertificationRequested" xml:space="preserve">
+    <value>Certificación de libro de tareas solicitada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookCertified" xml:space="preserve">
+    <value>Libro de tareas certificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsTaskBookClosed" xml:space="preserve">
+    <value>Libro de tareas cerrado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsSkillSettingsChanged" xml:space="preserve">
+    <value>Configuración de avisos de destrezas modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermReviewDispatchCasesLabel" xml:space="preserve">
+    <value>Revisar casos de despacho</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermReviewDispatchCasesNote" xml:space="preserve">
+    <value>Muestrear llamadas para la revisión de casos, puntuar el caso registrado con una rúbrica, enviar la revisión al despachador y leer el informe de cumplimiento. Nadie revisa sus propias llamadas. Los administradores del departamento siempre pueden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeDispatchCasesSampled" xml:space="preserve">
+    <value>Casos de despacho muestreados</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeDispatchCaseReviewRemoved" xml:space="preserve">
+    <value>Revisión de caso quitada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeDispatchCaseReviewSent" xml:space="preserve">
+    <value>Revisión de caso enviada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeDispatchCaseReviewAcknowledged" xml:space="preserve">
+    <value>Revisión de caso confirmada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeDispatchCaseReviewReplied" xml:space="preserve">
+    <value>Respuesta a revisión de caso</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeDispatchCaseRubricSaved" xml:space="preserve">
+    <value>Rúbrica de casos de despacho guardada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsDataExportRequested" xml:space="preserve">
+    <value>Exportación de datos de formación solicitada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsDataExportDownloaded" xml:space="preserve">
+    <value>Exportación de datos de formación descargada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCeReportingSettingsChanged" xml:space="preserve">
+    <value>Configuración de informes de formación continua modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCeExportDownloaded" xml:space="preserve">
+    <value>Archivo de formación continua descargado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsExternalLearnerInvited" xml:space="preserve">
+    <value>Alumno externo invitado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsExternalLearnerRegistered" xml:space="preserve">
+    <value>Alumno externo registrado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsExternalLearnerChanged" xml:space="preserve">
+    <value>Alumno externo modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsExternalLearnerErased" xml:space="preserve">
+    <value>Alumno externo borrado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsLearnerPortalChanged" xml:space="preserve">
+    <value>Portal de alumnos modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsPublicClassChanged" xml:space="preserve">
+    <value>Clase pública modificada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsClassInvoicesRaised" xml:space="preserve">
+    <value>Facturas de clase emitidas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsCourseDraftedWithAi" xml:space="preserve">
+    <value>Curso redactado con IA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsStarterCourseCloned" xml:space="preserve">
+    <value>Curso inicial copiado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsFlashcardsChanged" xml:space="preserve">
+    <value>Tarjetas del curso modificadas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolFlashcardsChanged" xml:space="preserve">
+    <value>Tarjetas de protocolo modificadas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeProtocolTrainingDraftedWithAi" xml:space="preserve">
+    <value>Formación redactada con IA a partir de un protocolo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermRecordTrainingCompletionsLabel" xml:space="preserve">
+    <value>Registrar finalizaciones de formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermRecordTrainingCompletionsNote" xml:space="preserve">
+    <value>Permite registrar que los miembros completaron juntos una formación o un curso del LMS (desde la lista de una clase, o con una nota desde la lista de inscritos de un curso o la lista de asignados de una formación). Cada registro indica que lo registró un instructor, y quien lo registró puede anularlo indicando un motivo. Los administradores de grupo solo registran para los miembros de su propio grupo. Sin una regla guardada, solo pueden hacerlo los administradores del departamento.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeTrainingCompletionRecorded" xml:space="preserve">
+    <value>Finalización de formación registrada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeTrainingCompletionRecordVoided" xml:space="preserve">
+    <value>Finalización registrada anulada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsLearnerPreferencesChanged" xml:space="preserve">
+    <value>Preferencias de correo del alumno modificadas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeCertificationRequirementSetChanged" xml:space="preserve">
+    <value>Conjunto de requisitos de certificación modificado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeCertificationIssuedByTraining" xml:space="preserve">
+    <value>Certificación emitida por formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeCertificationRolledBackByVoid" xml:space="preserve">
+    <value>Certificación revertida por anulación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeTrainingSubmissionInfoRequested" xml:space="preserve">
+    <value>Más información solicitada sobre envío de formación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeTrainingSubmissionResubmitted" xml:space="preserve">
+    <value>Envío de formación reenviado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermManageContentSetsLabel" xml:space="preserve">
+    <value>Administrar conjuntos de contenido</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermManageContentSetsNote" xml:space="preserve">
+    <value>Publicar conjuntos de protocolos y cursos para departamentos vinculados, suscribirse a los suyos, decidir en la bandeja de actualizaciones, personalizar bloques abiertos y patrocinar plazas LMS. Cualquier miembro puede proponer un cambio al editor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpPageTitle" xml:space="preserve">
+    <value>Verificación reforzada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpPageIntro" xml:space="preserve">
+    <value>Elija dónde los miembros deben confirmar de nuevo su identidad antes de una acción y cómo pueden hacerlo. La autenticación de dos factores (una aplicación de autenticación, una clave de acceso o una aprobación en Responder) siempre se acepta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpSecurityBreadcrumb" xml:space="preserve">
+    <value>Seguridad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpSecurityIndexLinkHelp" xml:space="preserve">
+    <value>Dónde los miembros deben verificarse de nuevo y si se puede usar una contraseña o un inicio de sesión con su proveedor de identidad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpAreaSignatures" xml:space="preserve">
+    <value>Firmas</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpAreaSignaturesHelp" xml:space="preserve">
+    <value>Aprobaciones de protocolos, cursos y traducciones, sellos de revisión, verificación de certificaciones, testigos de listas de comprobación, solicitudes de firma y evaluaciones de habilidades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpAreaAcknowledgments" xml:space="preserve">
+    <value>Confirmaciones de lectura y firma</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpAreaAcknowledgmentsHelp" xml:space="preserve">
+    <value>Los miembros confirman que han leído un protocolo o boletín. Es el mismo interruptor que en la configuración de la biblioteca de protocolos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpAreaApprovals" xml:space="preserve">
+    <value>Decisiones de aprobación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpAreaApprovalsHelp" xml:space="preserve">
+    <value>Aprobar una compra, una orden de trabajo, una nómina o cualquier otra solicitud de una cadena de aprobación.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpAreaProtectedData" xml:space="preserve">
+    <value>Datos protegidos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpAreaProtectedDataHelp" xml:space="preserve">
+    <value>Mostrar valores protegidos por la protección avanzada de datos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpRequiredLabel" xml:space="preserve">
+    <value>Exigir verificación reforzada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpProtectedDataRequiredNote" xml:space="preserve">
+    <value>Qué aplicaciones piden la verificación se configura por aplicación en la configuración de protección de datos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpDataProtectionLink" xml:space="preserve">
+    <value>Configuración de protección de datos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpNoDataProtection" xml:space="preserve">
+    <value>La protección avanzada de datos no está activada para esta organización.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpMethodsLegend" xml:space="preserve">
+    <value>Verificación aceptada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpMethodMfa" xml:space="preserve">
+    <value>Autenticación de dos factores (siempre aceptada)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpMethodSso" xml:space="preserve">
+    <value>Volver a iniciar sesión con el proveedor de identidad de su organización</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpMethodPassword" xml:space="preserve">
+    <value>Volver a introducir la contraseña de la cuenta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpManagingMemberOnly" xml:space="preserve">
+    <value>Solo el miembro administrador puede cambiar cómo se pueden verificar los datos protegidos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpPasswordWarning" xml:space="preserve">
+    <value>Una contraseña o un inicio de sesión con el proveedor de identidad no es un segundo factor: permitirlo hace que esta verificación sea más débil. Las firmas hechas así se registran como confirmación por contraseña o por proveedor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpOptionalLowersLevel" xml:space="preserve">
+    <value>Si aquí no se exige la verificación adicional, los miembros pueden firmar sin volver a verificarse. Esas firmas se registran con la sesión iniciada (L1) en lugar de una comprobación de identidad reciente (L2); un miembro que sí se verifica sigue firmando con L2.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpProtectedDataWeakerNote" xml:space="preserve">
+    <value>Para los datos protegidos, ambas opciones están desactivadas de forma predeterminada. Una contraseña o un inicio de sesión con el proveedor abre los valores protegidos durante la ventana de verificación, pero nunca cuenta como autenticación de dos factores para gestionar la protección de datos, registrar el PIN ni para los flujos de trabajo protegidos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpWarningTitle" xml:space="preserve">
+    <value>{0} miembro(s) no pueden completar esta verificación reforzada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpWarningIfRequired" xml:space="preserve">
+    <value>Si exige aquí la verificación reforzada, {0} miembro(s) no podrían completarla</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpWarningBody" xml:space="preserve">
+    <value>No tienen configurada la autenticación de dos factores ni disponen de otra verificación aceptada, así que no podrán terminar estas acciones hasta que la configuren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpWarningMore" xml:space="preserve">
+    <value>y {0} más</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpWarningLinkEnforce" xml:space="preserve">
+    <value>Exigir autenticación de dos factores</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpWarningLinkPolicy" xml:space="preserve">
+    <value>Directiva de seguridad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpReasonNoSecondFactor" xml:space="preserve">
+    <value>sin autenticación de dos factores</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpReasonNoPassword" xml:space="preserve">
+    <value>sin autenticación de dos factores; solo inicia sesión mediante el proveedor de identidad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpReasonNoSsoLink" xml:space="preserve">
+    <value>sin autenticación de dos factores; no está vinculado al proveedor de identidad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpSaveButton" xml:space="preserve">
+    <value>Guardar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpCancelButton" xml:space="preserve">
+    <value>Cancelar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpSaved" xml:space="preserve">
+    <value>Configuración de la verificación reforzada guardada.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpUnchanged" xml:space="preserve">
+    <value>No había cambios que guardar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpSaveFailed" xml:space="preserve">
+    <value>No se pudo guardar la configuración de la verificación reforzada. Inténtelo de nuevo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepUpManagingMemberRequired" xml:space="preserve">
+    <value>Solo el miembro administrador puede cambiar cómo se pueden verificar los datos protegidos.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeStepUpPolicyChanged" xml:space="preserve">
+    <value>Directiva de verificación reforzada cambiada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeStepUpCompleted" xml:space="preserve">
+    <value>Verificación reforzada completada</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeStepUpFailed" xml:space="preserve">
+    <value>Verificación reforzada fallida</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeLmsAppLaunchOpened" xml:space="preserve">
+    <value>Lección LMS abierta en la aplicación</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeWorkforceProSeatsChanged" xml:space="preserve">
+    <value>Puestos de Workforce Pro cambiados</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AuditLogTypeWorkforceProPacksChanged" xml:space="preserve">
+    <value>Paquetes de Workforce Pro cambiados</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>
 
 

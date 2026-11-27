@@ -1,0 +1,58 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolCompareModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* Version compare (P1): a word-level redline between two versions the reader may read, after the Records revision diff. *@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    var p = Model.Protocol;
+    ViewBag.Title = "Resgrid | " + localizer["CompareHeader"];
+    ViewData["Title"] = localizer["CompareHeader"].Value + ": " + p.Name;
+    ViewData["Subtitle"] = p.Code;
+    ViewData["Section"] = "Library";
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
+        <div class="ibox-content">
+            <form method="get" class="rgw-toolbar" asp-controller="Protocols" asp-action="Compare" asp-route-area="User">
+                <input type="hidden" name="id" value="@p.DispatchProtocolId" />
+                <label class="control-label" for="compareFrom">@localizer["CompareFromLabel"]</label>
+                <select id="compareFrom" name="from" class="form-control" style="max-width: 240px;">
+                    @foreach (var v in Model.Versions)
+                    {
+                        <option value="@v.ProtocolVersionId" selected="@(Model.From?.ProtocolVersionId == v.ProtocolVersionId)">@ProtocolDisplay.VersionLabel(v, localizer) · @ProtocolDisplay.VersionStatusName(v.Status, localizer)</option>
+                    }
+                </select>
+                <label class="control-label" for="compareTo">@localizer["CompareToLabel"]</label>
+                <select id="compareTo" name="to" class="form-control" style="max-width: 240px;">
+                    @foreach (var v in Model.Versions)
+                    {
+                        <option value="@v.ProtocolVersionId" selected="@(Model.To?.ProtocolVersionId == v.ProtocolVersionId)">@ProtocolDisplay.VersionLabel(v, localizer) · @ProtocolDisplay.VersionStatusName(v.Status, localizer)</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-exchange" aria-hidden="true"></i> @localizer["CompareButton"]</button>
+                <a class="btn btn-default" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@p.DispatchProtocolId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["BackToProtocolButton"]</a>
+            </form>
+
+            <table class="table table-bordered table-condensed m-t-sm">
+                <thead><tr><th></th><th>@localizer["CompareFromLabel"]</th><th>@localizer["CompareToLabel"]</th></tr></thead>
+                <tbody>
+                    <tr><th>@localizer["VersionColumn"]</th><td>@(ProtocolDisplay.VersionLabel(Model.From, localizer) ?? "-")</td><td>@ProtocolDisplay.VersionLabel(Model.To, localizer)</td></tr>
+                    <tr><th>@localizer["EffectiveColumn"]</th><td>@departmentTime.Format(Model.From?.EffectiveOn)</td><td>@departmentTime.Format(Model.To?.EffectiveOn)</td></tr>
+                    <tr><th>@localizer["ChangeSummaryLabel"]</th><td>@Model.From?.ChangeSummary</td><td>@Model.To?.ChangeSummary</td></tr>
+                    <tr><th>@localizer["ContentCodeLabel"]</th><td class="rgw-mono">@SignaturePolicy.ShortCode(Model.From?.ContentHash)</td><td class="rgw-mono">@SignaturePolicy.ShortCode(Model.To?.ContentHash)</td></tr>
+                </tbody>
+            </table>
+
+            <partial name="_Redline" model="Model.Diff" />
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

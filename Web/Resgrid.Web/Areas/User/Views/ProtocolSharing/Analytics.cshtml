@@ -1,0 +1,189 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ProtocolAnalyticsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@*
+    Protocol analytics (P5; free, managers): usage by protocol and version, determinant distribution and override rate (P4 case flow), time on
+    protocol (step-through log), acknowledgment compliance on the version in force (P2), and protocol gaps (searches that found nothing, open
+    knowledge gaps). CSV of the same lines. Numbers are counts over calls logged in the period.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["AnalyticsHeader"];
+    ViewData["Title"] = text["AnalyticsHeader"].Value;
+    ViewData["Subtitle"] = text["AnalyticsIntro"].Value;
+    ViewData["Section"] = "Analytics";
+    ViewData["IsManager"] = Model.IsManager;
+    ViewData["CanCreate"] = Model.CanAuthor;
+    var report = Model.Report;
+    string Percent(decimal? value) => value.HasValue ? (value.Value * 100m).ToString("0.#") + "%" : "-";
+    string Minutes(decimal? value) => value.HasValue ? string.Format(text["MinutesValue"].Value, value.Value.ToString("0.#")) : "-";
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status">@Model.Message</div>
+    }
+
+    <form method="get" class="rgw-toolbar" asp-controller="ProtocolSharing" asp-action="Analytics" asp-route-area="User">
+        <label class="control-label" for="from">@text["FromLabel"]</label>
+        <input id="from" name="from" type="date" class="form-control" value="@Model.From" />
+        <label class="control-label" for="to">@text["ToLabel"]</label>
+        <input id="to" name="to" type="date" class="form-control" value="@Model.To" />
+        <button type="submit" class="btn btn-default"><i class="fa fa-filter" aria-hidden="true"></i> @text["ApplyButton"]</button>
+        <button type="submit" class="btn btn-default" formaction="@Url.Action("AnalyticsCsv", "ProtocolSharing", new { area = "User" })"><i class="fa fa-file-excel-o" aria-hidden="true"></i> @text["CsvButton"]</button>
+    </form>
+
+    @if (report == null)
+    {
+        <p class="text-muted">@text["AnalyticsUnavailable"]</p>
+    }
+    else
+    {
+        @if (report.Truncated)
+        {
+            <div class="alert alert-warning" role="status">@string.Format(text["AnalyticsTruncated"].Value, ProtocolAnalytics.MaxCallRows)</div>
+        }
+
+        <div class="rgw-stat-tiles" role="list">
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label">@text["TileCalls"]</div>
+                <div class="rgw-stat-value">@report.TotalCalls</div>
+            </div>
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label">@text["TileOverrideRate"]</div>
+                <div class="rgw-stat-value">@Percent(report.OverrideRate)</div>
+                <div class="rgw-sub">@string.Format(text["TileOverrideDetail"].Value, report.TotalOverridden, report.TotalWithDeterminant)</div>
+            </div>
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label">@text["TileMedianTime"]</div>
+                <div class="rgw-stat-value">@Minutes(report.MedianMinutes)</div>
+            </div>
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label">@text["TileAckCompliance"]</div>
+                <div class="rgw-stat-value">@Percent(report.AckCompliance)</div>
+                <div class="rgw-sub">@string.Format(text["TileAckDetail"].Value, report.AckSigned, report.AckAssigned)</div>
+            </div>
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label">@text["TileGaps"]</div>
+                <div class="rgw-stat-value">@(report.SearchMisses.Sum(m => m.Count))</div>
+                <div class="rgw-sub">@string.Format(text["TileGapsDetail"].Value, report.OpenKnowledgeGaps)</div>
+            </div>
+        </div>
+
+        <div class="ibox">
+            <div class="ibox-title"><h5><i class="fa fa-bar-chart" aria-hidden="true"></i> @text["UsageHeader"]</h5></div>
+            <div class="ibox-content">
+                @if (report.Rows.Count == 0)
+                {
+                    <p class="text-muted">@text["UsageEmpty"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table rgw-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">@text["CsvName"]</th>
+                                    <th scope="col">@text["CsvCalls"]</th>
+                                    <th scope="col">@text["CsvVersions"]</th>
+                                    <th scope="col">@text["CsvOverrideRate"]</th>
+                                    <th scope="col">@text["CsvDeterminants"]</th>
+                                    <th scope="col">@text["CsvMedianMinutes"]</th>
+                                    <th scope="col">@text["CsvAckCompliance"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in report.Rows)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-controller="Protocols" asp-action="View" asp-route-id="@row.DispatchProtocolId" asp-route-area="User">@((string.IsNullOrWhiteSpace(row.Number) ? null : row.Number + " ") + row.Name)</a>
+                                            <div class="rgw-sub">@string.Format(text["SourcesDetail"].Value, row.ByTrigger, row.ByDispatcher, row.ByAi, row.Removed)</div>
+                                        </td>
+                                        <td>@row.Calls</td>
+                                        <td>@string.Join(", ", row.Versions.Select(v => (v.Label == null ? "-" : "v" + v.Label) + ": " + v.Calls))</td>
+                                        <td>@Percent(row.OverrideRate) <div class="rgw-sub">@row.Overridden / @row.WithDeterminant</div></td>
+                                        <td>@string.Join(", ", row.Determinants.Take(5).Select(d => d.Determinant + " (" + d.Calls + ")"))</td>
+                                        <td>@Minutes(row.MedianMinutes) <div class="rgw-sub">@string.Format(text["TimedDetail"].Value, row.TimedCalls)</div></td>
+                                        <td>@Percent(row.AckCompliance) <div class="rgw-sub">@string.Format(text["AckDetail"].Value, row.AckSigned, row.AckAssigned, row.AckOverdue)</div></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-sitemap" aria-hidden="true"></i> @text["DeterminantsHeader"]</h5></div>
+                    <div class="ibox-content">
+                        @if (report.Determinants.Count == 0)
+                        {
+                            <p class="text-muted">@text["DeterminantsEmpty"]</p>
+                        }
+                        else
+                        {
+                            var max = Math.Max(1, report.Determinants.Max(d => d.Calls));
+                            <table class="table rgw-table">
+                                <thead><tr><th scope="col">@text["ColumnDeterminant"]</th><th scope="col">@text["CsvCalls"]</th><th scope="col">@text["CsvOverridden"]</th></tr></thead>
+                                <tbody>
+                                    @foreach (var determinant in report.Determinants)
+                                    {
+                                        <tr>
+                                            <td><code>@determinant.Determinant</code></td>
+                                            <td>
+                                                <div class="rgw-progress-honest" role="img" aria-label="@determinant.Calls">
+                                                    <span style="display:inline-block;height:8px;background:#1c84c6;width:@((int)Math.Round(100.0 * determinant.Calls / max))%"></span>
+                                                </div>
+                                                @determinant.Calls
+                                            </td>
+                                            <td>@determinant.Overridden</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-search-minus" aria-hidden="true"></i> @text["GapsHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="small text-muted">@text["GapsHelp"]</p>
+                        @if (report.SearchMisses.Count == 0)
+                        {
+                            <p class="text-muted">@text["GapsEmpty"]</p>
+                        }
+                        else
+                        {
+                            <table class="table rgw-table">
+                                <thead><tr><th scope="col">@text["ColumnQuery"]</th><th scope="col">@text["ColumnWhere"]</th><th scope="col">@text["ColumnTimes"]</th></tr></thead>
+                                <tbody>
+                                    @foreach (var miss in report.SearchMisses)
+                                    {
+                                        <tr>
+                                            <td>@miss.Query</td>
+                                            <td>@text["Surface" + (ProtocolSearchSurfaces)miss.Surface]</td>
+                                            <td>@miss.Count</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

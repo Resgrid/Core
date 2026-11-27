@@ -1,0 +1,1545 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Skl.ActionFailed" xml:space="preserve">
+    <value>Η ενέργεια δεν ολοκληρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddEvidence" xml:space="preserve">
+    <value>Προσθήκη τεκμηρίου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddStep" xml:space="preserve">
+    <value>Προσθήκη βήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddTask" xml:space="preserve">
+    <value>Προσθήκη εργασίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddTimedNote" xml:space="preserve">
+    <value>Προσθήκη σημείωσης (καταγράφεται η ώρα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AddonNotice" xml:space="preserve">
+    <value>Οι αξιολογήσεις δεξιοτήτων και τα βιβλία εργασιών απαιτούν το πρόσθετο LMS. Ό,τι έχει καταγραφεί παραμένει αναγνώσιμο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AllSheets" xml:space="preserve">
+    <value>Όλα τα φύλλα δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AllStates" xml:space="preserve">
+    <value>Όλες οι καταστάσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AllTaskBooks" xml:space="preserve">
+    <value>Όλα τα βιβλία εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Annotation" xml:space="preserve">
+    <value>Σχόλιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Answer" xml:space="preserve">
+    <value>Απάντηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AnyEligible" xml:space="preserve">
+    <value>Οποιοδήποτε εξουσιοδοτημένο μέλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Attempt" xml:space="preserve">
+    <value>Προσπάθεια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.AwaitingCertification" xml:space="preserve">
+    <value>Αναμένεται ο τελικός αξιολογητής και ο υπεύθυνος πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.BooksToEvaluate" xml:space="preserve">
+    <value>Βιβλία εργασιών όπου μπορείτε να υπογράψετε εργασίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CancelReason" xml:space="preserve">
+    <value>Αιτία ακύρωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CancelTaskBook" xml:space="preserve">
+    <value>Ακύρωση βιβλίου εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CancelTaskBookConfirm" xml:space="preserve">
+    <value>Ακύρωση αυτού του βιβλίου εργασιών; Οι υπογεγραμμένες εργασίες παραμένουν καταγεγραμμένες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CertificationRequested" xml:space="preserve">
+    <value>Ζητήθηκε η πιστοποίηση. Πρώτος υπογράφει ο τελικός αξιολογητής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CertifiedOn" xml:space="preserve">
+    <value>Πιστοποιήθηκε στις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CertifyingOfficial" xml:space="preserve">
+    <value>Υπεύθυνος πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.ChangeSummary" xml:space="preserve">
+    <value>Σύνοψη αλλαγών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Choose" xml:space="preserve">
+    <value>Επιλέξτε...</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Date" xml:space="preserve">
+    <value>Ημερομηνία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Evaluation" xml:space="preserve">
+    <value>Αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Evaluator" xml:space="preserve">
+    <value>Αξιολογητής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Expires" xml:space="preserve">
+    <value>Λήγει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Score" xml:space="preserve">
+    <value>Βαθμολογία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Signer" xml:space="preserve">
+    <value>Υπογράφων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Started" xml:space="preserve">
+    <value>Ξεκίνησε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Step" xml:space="preserve">
+    <value>Βήμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Col.Version" xml:space="preserve">
+    <value>Έκδοση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Complete" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Compute.Average" xml:space="preserve">
+    <value>Μέσος όρος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Compute.Max" xml:space="preserve">
+    <value>Μέγιστο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Compute.Min" xml:space="preserve">
+    <value>Ελάχιστο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Compute.Sum" xml:space="preserve">
+    <value>Άθροισμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.ComputedHelp" xml:space="preserve">
+    <value>Υπολογίζεται από τα βήματα που ορίζει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Continue" xml:space="preserve">
+    <value>Συνέχεια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CrewHelp" xml:space="preserve">
+    <value>Ένα έντυπο για ολόκληρη την ομάδα: όλοι λαμβάνουν το ίδιο αποτέλεσμα και την ίδια καταγραφή. Διαχωρίστε ένα μέλος που πρέπει να βαθμολογηθεί διαφορετικά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.CriticalFailedNotice" xml:space="preserve">
+    <value>Ένα κρίσιμο βήμα δεν εκπληρώθηκε: η αξιολογία δεν περνά, ανεξάρτητα από τη βαθμολογία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Declined" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Definition" xml:space="preserve">
+    <value>Ορισμός βιβλίου εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionCreated" xml:space="preserve">
+    <value>Ο ορισμός δημιουργήθηκε. Ορίστε ποιος υπογράφει και πιστοποιεί και αποθηκεύστε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionDeleted" xml:space="preserve">
+    <value>Ο ορισμός αφαιρέθηκε. Τα ανοιχτά βιβλία κρατούν τις εργασίες τους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionIntro" xml:space="preserve">
+    <value>Ο κωδικός θέσης, οι εργασίες και ποιος υπογράφει, προτείνει και πιστοποιεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionsIntro" xml:space="preserve">
+    <value>Τα βιβλία εργασιών θέσεων και τα πρότυπα Resgrid για να τα δημιουργήσετε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DefinitionsTitle" xml:space="preserve">
+    <value>Ορισμοί βιβλίων εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DeleteDefinition" xml:space="preserve">
+    <value>Αφαίρεση ορισμού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DeleteDefinitionConfirm" xml:space="preserve">
+    <value>Αφαίρεση αυτού του ορισμού; Τα ανοιχτά βιβλία κρατούν τις εργασίες τους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DeleteSheet" xml:space="preserve">
+    <value>Απόσυρση φύλλου δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DeleteSheetConfirm" xml:space="preserve">
+    <value>Απόσυρση αυτού του φύλλου; Οι αξιολογήσεις του παραμένουν καταγεγραμμένες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Digest.Daily" xml:space="preserve">
+    <value>Ημερήσια σύνοψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Digest.Immediate" xml:space="preserve">
+    <value>Άμεσα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Digest.Off" xml:space="preserve">
+    <value>Ανενεργό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Digest.Weekly" xml:space="preserve">
+    <value>Εβδομαδιαία σύνοψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DigestHour" xml:space="preserve">
+    <value>Ώρα σύνοψης (ώρα υπηρεσίας)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DigestMode" xml:space="preserve">
+    <value>Αποστολή ειδοποιήσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DigestWeekday" xml:space="preserve">
+    <value>Ημέρα εβδομαδιαίας σύνοψης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Draft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DraftNotReady" xml:space="preserve">
+    <value>Το πρόχειρο δεν μπορεί να δημοσιευτεί ακόμη:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DraftSaved" xml:space="preserve">
+    <value>Το πρόχειρο αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.DraftSteps" xml:space="preserve">
+    <value>Βήματα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EditorNeedsScript" xml:space="preserve">
+    <value>Ο επεξεργαστής βημάτων χρειάζεται JavaScript.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Elapsed" xml:space="preserve">
+    <value>Χρόνος που πέρασε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Evaluate" xml:space="preserve">
+    <value>Αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluationIntro" xml:space="preserve">
+    <value>Το αποτέλεσμα, κάθε βήμα, τα τεκμήρια και οι υπογραφές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluationStarted" xml:space="preserve">
+    <value>Η αξιολόγηση ξεκίνησε. Ο χρονομετρητής τρέχει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Evaluations" xml:space="preserve">
+    <value>Αξιολογήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluationsIntro" xml:space="preserve">
+    <value>Όλες οι αξιολογήσεις της υπηρεσίας ανά φύλλο και κατάσταση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluationsTitle" xml:space="preserve">
+    <value>Αξιολογήσεις δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvaluatorComments" xml:space="preserve">
+    <value>Σχόλια αξιολογητή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Evidence" xml:space="preserve">
+    <value>Τεκμήρια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceAdded" xml:space="preserve">
+    <value>Το τεκμήριο προστέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceFile" xml:space="preserve">
+    <value>Φωτογραφία, βίντεο ή αρχείο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceHelp" xml:space="preserve">
+    <value>Έως 30 MB ανά αρχείο. Το SHA-256 κάθε αρχείου μπαίνει στη σφραγισμένη εγγραφή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceStep" xml:space="preserve">
+    <value>Για το βήμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.EvidenceStepHelp" xml:space="preserve">
+    <value>Προσθέστε τη φωτογραφία, το βίντεο ή το αρχείο παρακάτω.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Fail" xml:space="preserve">
+    <value>Αποτυχία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family" xml:space="preserve">
+    <value>Κατηγορία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.Custom" xml:space="preserve">
+    <value>Προσαρμοσμένη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.DriverOperator" xml:space="preserve">
+    <value>Οδηγός/χειριστής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.FieldTraining" xml:space="preserve">
+    <value>Εκπαίδευση πεδίου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.NccpSkills" xml:space="preserve">
+    <value>Επαλήθευση δεξιοτήτων NCCP</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.Officer" xml:space="preserve">
+    <value>Αξιωματικός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.OshaOperator" xml:space="preserve">
+    <value>Αξιολόγηση χειριστή OSHA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Family.Wildland" xml:space="preserve">
+    <value>Δασικές πυρκαγιές (NWCG)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.AllowCrew" xml:space="preserve">
+    <value>Να επιτρέπονται ομαδικές αξιολογήσεις (ένα έντυπο για πολλά μέλη)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.AllowSelf" xml:space="preserve">
+    <value>Να επιτρέπεται η αυτοαξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.AttemptWindow" xml:space="preserve">
+    <value>Περίοδος προσπαθειών (ημέρες)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CallId" xml:space="preserve">
+    <value>Αριθμός συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Category" xml:space="preserve">
+    <value>Κατηγορία εκπαίδευσης που πιστώνεται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CertificationType" xml:space="preserve">
+    <value>Πιστοποίηση που ενεργοποιείται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CertificationTypeHelp" xml:space="preserve">
+    <value>Η έναρξη βιβλίου ανοίγει εγγραφή «Εκπαιδευόμενος» αυτού του τύπου· η πιστοποίηση την ενεργοποιεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CertificationTypes" xml:space="preserve">
+    <value>Τύποι πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Code" xml:space="preserve">
+    <value>Κωδικός δεξιότητας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.CodeHelp" xml:space="preserve">
+    <value>Χρησιμοποιείται ως κωδικός μαθήματος στο ιστορικό και από τις απαιτήσεις «N επιτυχείς αξιολογήσεις».</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.DefaultMinutes" xml:space="preserve">
+    <value>Λεπτά που πιστώνονται χωρίς χρονομέτρηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.DeploymentId" xml:space="preserve">
+    <value>Αριθμός αποστολής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Description" xml:space="preserve">
+    <value>Περιγραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Evaluators" xml:space="preserve">
+    <value>Ποιος μπορεί να αξιολογεί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.EvaluatorsHelp" xml:space="preserve">
+    <value>Μέλη με έγκυρη πιστοποίηση επιλεγμένου τύπου ή επιλεγμένο ρόλο. Καμία επιλογή: μόνο διαχειριστές LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Kind" xml:space="preserve">
+    <value>Είδος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Location" xml:space="preserve">
+    <value>Τοποθεσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.MaxAttempts" xml:space="preserve">
+    <value>Επιτρεπόμενες αποτυχημένες προσπάθειες (0 = χωρίς όριο)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.NextSigner" xml:space="preserve">
+    <value>Ποιον μπορεί να επιλέξει ο αξιολογητής ως επόμενο υπογράφοντα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.NextSignerHelp" xml:space="preserve">
+    <value>Αν οριστεί, ο αξιολογητής πρέπει να επιλέξει μέλος που επιτρέπει ο κανόνας· αυτό υπογράφει μετά τον αξιολογητή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.PassThreshold" xml:space="preserve">
+    <value>Βάση επιτυχίας (%)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.RecertifyMonths" xml:space="preserve">
+    <value>Επαναξιολόγηση μετά από (μήνες)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.RecertifyMonthsHelp" xml:space="preserve">
+    <value>Λήξη της πιστοποιημένης εγγραφής (χειριστές OSHA: 36). Το 0 χρησιμοποιεί τη διάρκεια του τύπου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Roles" xml:space="preserve">
+    <value>Ρόλοι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.TimeLimit" xml:space="preserve">
+    <value>Χρονικό όριο (δευτερόλεπτα, 0 = κανένα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.Title" xml:space="preserve">
+    <value>Τίτλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Field.ValidityMonths" xml:space="preserve">
+    <value>Ισχύει για (μήνες)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Filter" xml:space="preserve">
+    <value>Φιλτράρισμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.FinalEvaluator" xml:space="preserve">
+    <value>Τελικός αξιολογητής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Grading" xml:space="preserve">
+    <value>Κανόνες βαθμολόγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.HomeIntro" xml:space="preserve">
+    <value>Οι αξιολογήσεις που διεξάγετε, οι υπογραφές σε αναμονή, τα αποτελέσματα και τα βιβλία σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.HomeTitle" xml:space="preserve">
+    <value>Δεξιότητες και βιβλία εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.IncidentRequired" xml:space="preserve">
+    <value>Η εργασία μετρά μόνο αξιολογήσεις σε συμβάν ή αποστολή: δώστε τον αριθμό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.IncidentTask" xml:space="preserve">
+    <value>Εργασία σε συμβάν</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Initiate" xml:space="preserve">
+    <value>Έναρξη βιβλίου εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.InitiatedOn" xml:space="preserve">
+    <value>Ξεκίνησε στις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Kind.ObservationReport" xml:space="preserve">
+    <value>Ημερήσια αναφορά παρατήρησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Kind.SkillSheet" xml:space="preserve">
+    <value>Φύλλο δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.LapsedNotice" xml:space="preserve">
+    <value>Το πρόσθετο LMS δεν είναι ενεργό: τα καταγεγραμμένα παραμένουν αναγνώσιμα και τα ανοιχτά μπορούν να ολοκληρωθούν, αλλά δεν ξεκινά τίποτα νέο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MajorVersion" xml:space="preserve">
+    <value>Κύρια έκδοση (ίσως χρειαστεί επαναξιολόγηση)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MemberSplit" xml:space="preserve">
+    <value>Το μέλος μεταφέρθηκε σε δική του αξιολόγηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MembersHelp" xml:space="preserve">
+    <value>Επιλέξτε ένα μέλος ή πολλά για ομαδική αξιολόγηση, όταν το φύλλο το επιτρέπει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MembersToEvaluate" xml:space="preserve">
+    <value>Μέλη που αξιολογούνται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MoveDown" xml:space="preserve">
+    <value>Κάτω</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MoveUp" xml:space="preserve">
+    <value>Πάνω</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MyOpenEvaluations" xml:space="preserve">
+    <value>Αξιολογήσεις που διεξάγω</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MyResults" xml:space="preserve">
+    <value>Τα αποτελέσματά μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MySignatures" xml:space="preserve">
+    <value>Αξιολογήσεις που περιμένουν την υπογραφή μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.MyTaskBooks" xml:space="preserve">
+    <value>Τα βιβλία εργασιών μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NeedsAnswer" xml:space="preserve">
+    <value>Χρειάζεται απάντηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NewDefinition" xml:space="preserve">
+    <value>Νέος ορισμός βιβλίου εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NewSheet" xml:space="preserve">
+    <value>Νέο φύλλο δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NextSigner" xml:space="preserve">
+    <value>Επόμενος υπογράφων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NextSignerHelp" xml:space="preserve">
+    <value>Το φύλλο ζητά δεύτερη υπογραφή από μέλος που επιτρέπει ο κανόνας του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoDefinitions" xml:space="preserve">
+    <value>Δεν υπάρχουν ορισμοί ακόμη. Ξεκινήστε από πρότυπο Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoEvaluations" xml:space="preserve">
+    <value>Δεν βρέθηκαν αξιολογήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoOpenEvaluations" xml:space="preserve">
+    <value>Δεν διεξάγετε αξιολογήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoResults" xml:space="preserve">
+    <value>Καμία αξιολόγησή σας ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoSheet" xml:space="preserve">
+    <value>Χωρίς φύλλο (επιτυχία/αποτυχία)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoSheets" xml:space="preserve">
+    <value>Δεν υπάρχουν φύλλα δεξιοτήτων ακόμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoSheetsToEvaluate" xml:space="preserve">
+    <value>Δεν υπάρχει δημοσιευμένο φύλλο στο οποίο μπορείτε να αξιολογήσετε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoSignatures" xml:space="preserve">
+    <value>Καμία αξιολόγηση δεν περιμένει την υπογραφή σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NoTaskBooks" xml:space="preserve">
+    <value>Δεν υπάρχουν βιβλία εργασιών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.None" xml:space="preserve">
+    <value>Καμία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NotApplicable" xml:space="preserve">
+    <value>Δεν εφαρμόζεται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NotApplicableReason" xml:space="preserve">
+    <value>Γιατί δεν εφαρμόζεται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NotifyMembers" xml:space="preserve">
+    <value>Ειδοποίηση των αξιολογούμενων μελών και εκπαιδευόμενων για τις δικές τους αξιολογήσεις και βιβλία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.NotifyOfficers" xml:space="preserve">
+    <value>Ειδοποίηση των διαχειριστών της υπηρεσίας για κάθε αξιολόγηση και βιβλίο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Open" xml:space="preserve">
+    <value>Άνοιγμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OpenSignature" xml:space="preserve">
+    <value>Άνοιγμα υπογραφής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OpenTaskBooks" xml:space="preserve">
+    <value>Ανοιχτά βιβλία εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluator" xml:space="preserve">
+    <value>Υπογράφει αντ' αυτού εξωτερικός αξιολογητής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluatorEmail" xml:space="preserve">
+    <value>Email (για σύνδεσμο υπογραφής)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluatorHelp" xml:space="preserve">
+    <value>Οι εξωτερικοί αξιολογητές υπογράφουν στο επίπεδο L4, αυτοπροσώπως σε αυτή τη συσκευή ή μέσω συνδέσμου όσο το πρόσθετο LMS είναι ενεργό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluatorName" xml:space="preserve">
+    <value>Όνομα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.OutsideEvaluatorRemote" xml:space="preserve">
+    <value>Αποστολή συνδέσμου υπογραφής αντί για υπογραφή σε αυτή τη συσκευή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Pass" xml:space="preserve">
+    <value>Επιτυχία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassAll" xml:space="preserve">
+    <value>Επιτυχία σε όλα τα υπόλοιπα βήματα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassAt" xml:space="preserve">
+    <value>βάση στο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassFailReport" xml:space="preserve">
+    <value>Αναφορά επιτυχιών/αποτυχιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassRange" xml:space="preserve">
+    <value>Επιτυχία από-έως:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PassingRatingIs" xml:space="preserve">
+    <value>Ελάχιστη βαθμολογία:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Position" xml:space="preserve">
+    <value>Κωδικός θέσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Publish" xml:space="preserve">
+    <value>Δημοσίευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.PublishTitle" xml:space="preserve">
+    <value>Δημοσίευση του προχείρου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Published" xml:space="preserve">
+    <value>Η έκδοση δημοσιεύτηκε. Οι νέες αξιολογήσεις τη χρησιμοποιούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.RatingsReport" xml:space="preserve">
+    <value>Βαθμολογίες ανά ερώτηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Remove" xml:space="preserve">
+    <value>Αφαίρεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.RequestCertification" xml:space="preserve">
+    <value>Αίτηση πιστοποίησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.RequestCertificationHelp" xml:space="preserve">
+    <value>Όλες οι εργασίες ολοκληρώθηκαν. Ο τελικός αξιολογητής προτείνει και ο υπεύθυνος πιστοποιεί· υπογράφουν και οι δύο στο επίπεδο L2.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Required" xml:space="preserve">
+    <value>Απαιτούμενες αξιολογήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Result.Failed" xml:space="preserve">
+    <value>Δεν πέρασε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Result.Passed" xml:space="preserve">
+    <value>Πέρασε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Role.Evaluator" xml:space="preserve">
+    <value>Αξιολογητής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Role.NextSigner" xml:space="preserve">
+    <value>Επόμενος υπογράφων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.RunIntro" xml:space="preserve">
+    <value>Βαθμολογήστε κάθε βήμα· τα σχόλια και τα τεκμήρια μπαίνουν στη σφραγισμένη εγγραφή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SaveDraft" xml:space="preserve">
+    <value>Αποθήκευση προχείρου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Saved" xml:space="preserve">
+    <value>Αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SealFailed" xml:space="preserve">
+    <value>Η αξιολόγηση υπογράφηκε, αλλά η εγγραφή δεν σφραγίστηκε. Ένας διαχειριστής μπορεί να ξαναδοκιμάσει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SealPending" xml:space="preserve">
+    <value>Υπογράφηκε, εκκρεμεί η σφράγιση: η σφραγισμένη εγγραφή δεν είναι ακόμη διαθέσιμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SealedPdf" xml:space="preserve">
+    <value>Σφραγισμένη εγγραφή (PDF)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Seconds" xml:space="preserve">
+    <value>δευτερόλεπτα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SettingsHelp" xml:space="preserve">
+    <value>Οι ημερήσιες και εβδομαδιαίες συνόψεις συγκεντρώνουν τις ειδοποιήσεις σε ένα μήνυμα ανά άτομο. Τα ανενεργά μέλη δεν λαμβάνουν ειδοποιήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SettingsIntro" xml:space="preserve">
+    <value>Πώς αποστέλλονται οι ειδοποιήσεις αξιολογήσεων και βιβλίων εργασιών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SettingsTitle" xml:space="preserve">
+    <value>Ειδοποιήσεις δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Sheet" xml:space="preserve">
+    <value>Φύλλο δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetCreated" xml:space="preserve">
+    <value>Το φύλλο δημιουργήθηκε. Προσαρμόστε τα βήματα και δημοσιεύστε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetDeleted" xml:space="preserve">
+    <value>Το φύλλο αποσύρθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetDetails" xml:space="preserve">
+    <value>Στοιχεία φύλλου και υπογράφοντες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetIntro" xml:space="preserve">
+    <value>Διατεταγμένα βήματα, κρίσιμα κριτήρια και βαθμολόγηση, με εκδόσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetsIntro" xml:space="preserve">
+    <value>Φύλλα δεξιοτήτων απόδοσης εργασίας και η βιβλιοθήκη προτύπων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SheetsTitle" xml:space="preserve">
+    <value>Φύλλα δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Sign" xml:space="preserve">
+    <value>Υπογραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Signatures" xml:space="preserve">
+    <value>Υπογραφές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Signed" xml:space="preserve">
+    <value>Υπογράφηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SignerRulesHelp" xml:space="preserve">
+    <value>Ένα μέλος πληροί τις προϋποθέσεις με έγκυρη πιστοποίηση επιλεγμένου τύπου ή επιλεγμένο ρόλο. Χωρίς κανόνα, οι διαχειριστές LMS αξιολογούν τις εργασίες και οι διαχειριστές της υπηρεσίας προτείνουν και πιστοποιούν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SplitConfirm" xml:space="preserve">
+    <value>Μεταφορά του μέλους σε δική του αξιολόγηση; Οι μέχρι τώρα απαντήσεις αντιγράφονται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SplitOut" xml:space="preserve">
+    <value>Διαχωρισμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SplitTo" xml:space="preserve">
+    <value>Αξιολογήθηκε χωριστά</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StartEvaluation" xml:space="preserve">
+    <value>Έναρξη αξιολόγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StartIntro" xml:space="preserve">
+    <value>Επιλέξτε το φύλλο και ποιον αξιολογείτε. Ο χρονομετρητής ξεκινά τώρα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.AwaitingSignature" xml:space="preserve">
+    <value>Αναμένει υπογραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.Completed" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.InProgress" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.Open" xml:space="preserve">
+    <value>Ανοιχτές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Status.Voided" xml:space="preserve">
+    <value>Ακυρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.AllowNa" xml:space="preserve">
+    <value>Να επιτρέπεται «δεν εφαρμόζεται»</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Compute" xml:space="preserve">
+    <value>Υπολογισμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.ComputeKeys" xml:space="preserve">
+    <value>Από βήματα (κλειδιά χωρισμένα με κόμμα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Critical" xml:space="preserve">
+    <value>Κρίσιμο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.EvidenceOnFail" xml:space="preserve">
+    <value>Τεκμήριο σε αποτυχία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Help" xml:space="preserve">
+    <value>Οδηγίες για τον αξιολογητή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Key" xml:space="preserve">
+    <value>Κλειδί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Label" xml:space="preserve">
+    <value>Βήμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Max" xml:space="preserve">
+    <value>Μέγιστη αποδεκτή τιμή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Min" xml:space="preserve">
+    <value>Ελάχιστη αποδεκτή τιμή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.NoteOnFail" xml:space="preserve">
+    <value>Σημείωση σε αποτυχία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Options" xml:space="preserve">
+    <value>Επιλογές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.OptionsHelp" xml:space="preserve">
+    <value>Μία ανά γραμμή: Ετικέτα | πόντοι | fail (το τελευταίο μέρος μόνο για επιλογή που αποτυγχάνει το βήμα).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.PassingRating" xml:space="preserve">
+    <value>Ελάχιστη βαθμολογία επιτυχίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Rating" xml:space="preserve">
+    <value>Κλίμακα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Required" xml:space="preserve">
+    <value>Απαιτείται απάντηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Type" xml:space="preserve">
+    <value>Τύπος ερώτησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Step.Weight" xml:space="preserve">
+    <value>Βάρος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.ChooseAny" xml:space="preserve">
+    <value>Πολλαπλή επιλογή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.ChooseOne" xml:space="preserve">
+    <value>Μία επιλογή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Computed" xml:space="preserve">
+    <value>Υπολογισμένη τιμή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Date" xml:space="preserve">
+    <value>Ημερομηνία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.DateTime" xml:space="preserve">
+    <value>Ημερομηνία και ώρα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Duration" xml:space="preserve">
+    <value>Διάρκεια (χρονομετρημένη)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Evidence" xml:space="preserve">
+    <value>Φωτογραφία, βίντεο ή αρχείο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Heading" xml:space="preserve">
+    <value>Επικεφαλίδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Instructions" xml:space="preserve">
+    <value>Οδηγίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Number" xml:space="preserve">
+    <value>Αριθμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.PassFail" xml:space="preserve">
+    <value>Επιτυχία / αποτυχία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.RatingScale" xml:space="preserve">
+    <value>Κλίμακα βαθμολόγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Text" xml:space="preserve">
+    <value>Κείμενο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.Time" xml:space="preserve">
+    <value>Ώρα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StepType.TimestampedNotes" xml:space="preserve">
+    <value>Σημειώσεις με χρονοσήμανση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Steps" xml:space="preserve">
+    <value>Βήματα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.StripLabel" xml:space="preserve">
+    <value>Ενότητες δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SubmitAndSign" xml:space="preserve">
+    <value>Υποβολή και υπογραφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SubmitConfirm" xml:space="preserve">
+    <value>Υποβολή της αξιολόγησης; Το αποτέλεσμα κλειδώνει και ανοίγει η υπογραφή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.SubmitTitle" xml:space="preserve">
+    <value>Υποβολή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Submitted" xml:space="preserve">
+    <value>Η αξιολόγηση υποβλήθηκε. Υπογράψτε την για να ολοκληρωθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Definitions" xml:space="preserve">
+    <value>Ορισμοί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Evaluations" xml:space="preserve">
+    <value>Αξιολογήσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Home" xml:space="preserve">
+    <value>Επισκόπηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Settings" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.Sheets" xml:space="preserve">
+    <value>Φύλλα δεξιοτήτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tab.TaskBooks" xml:space="preserve">
+    <value>Βιβλία εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Task" xml:space="preserve">
+    <value>Εργασία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookCancelled" xml:space="preserve">
+    <value>Το βιβλίο εργασιών ακυρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookInitiated" xml:space="preserve">
+    <value>Το βιβλίο εργασιών ξεκίνησε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookIntro" xml:space="preserve">
+    <value>Εργασίες με τις αξιολογήσεις τους, έπειτα η πρόταση του τελικού αξιολογητή και η πιστοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.AwaitingCertification" xml:space="preserve">
+    <value>Αναμένει πιστοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.Cancelled" xml:space="preserve">
+    <value>Ακυρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.Certified" xml:space="preserve">
+    <value>Πιστοποιήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.Expired" xml:space="preserve">
+    <value>Έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookStatus.Open" xml:space="preserve">
+    <value>Ανοιχτό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookTemplates" xml:space="preserve">
+    <value>Πρότυπα βιβλίων εργασιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBookTemplatesIntro" xml:space="preserve">
+    <value>Γραμμένα από τη Resgrid: μόνο κωδικοί θέσεων, αριθμοί και σύντομα ονόματα εργασιών. Εισαγάγετε το κείμενο κάθε εργασίας από το δικό σας αντίτυπο και ευθυγραμμίστε το με την ισχύουσα έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBooksIntro" xml:space="preserve">
+    <value>Βιβλία εργασιών θέσεων: ξεκινούν με ημερομηνία, υπογράφονται εργασία προς εργασία και πιστοποιούνται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskBooksTitle" xml:space="preserve">
+    <value>Βιβλία εργασιών θέσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskEvaluators" xml:space="preserve">
+    <value>Ποιος υπογράφει τις εργασίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TaskNumber" xml:space="preserve">
+    <value>Αρ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Tasks" xml:space="preserve">
+    <value>Εργασίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TasksComplete" xml:space="preserve">
+    <value>Ολοκληρωμένες εργασίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TemplateLibrary" xml:space="preserve">
+    <value>Βιβλιοθήκη προτύπων φύλλων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TemplateLibraryIntro" xml:space="preserve">
+    <value>Σημεία εκκίνησης από τη Resgrid, μόνο δομή. Προσαρμόστε τα στον εξοπλισμό και τις διαδικασίες σας πριν τη χρήση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.TimeExceededNotice" xml:space="preserve">
+    <value>Ξεπεράστηκε το χρονικό όριο: η αξιολόγηση δεν περνά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Trainee" xml:space="preserve">
+    <value>Εκπαιδευόμενος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Upload" xml:space="preserve">
+    <value>Μεταφόρτωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.UseTemplate" xml:space="preserve">
+    <value>Χρήση προτύπου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.ValidUntil" xml:space="preserve">
+    <value>Ισχύει έως</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Approved" xml:space="preserve">
+    <value>Εγκρίθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Draft" xml:space="preserve">
+    <value>Πρόχειρο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.InReview" xml:space="preserve">
+    <value>Υπό έλεγχο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Published" xml:space="preserve">
+    <value>Σε ισχύ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Retired" xml:space="preserve">
+    <value>Αποσύρθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VersionStatus.Superseded" xml:space="preserve">
+    <value>Αντικαταστάθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Versions" xml:space="preserve">
+    <value>Εκδόσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Void" xml:space="preserve">
+    <value>Ακύρωση αξιολόγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VoidConfirm" xml:space="preserve">
+    <value>Ακύρωση αυτής της αξιολόγησης; Ακυρώνονται και οι εγγραφές εκπαίδευσής της.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.VoidReason" xml:space="preserve">
+    <value>Αιτία ακύρωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Voided" xml:space="preserve">
+    <value>Η αξιολόγηση ακυρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.Waiting" xml:space="preserve">
+    <value>Σε αναμονή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skl.WholeEvaluation" xml:space="preserve">
+    <value>Ολόκληρη η αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_addon_required" xml:space="preserve">
+    <value>Απαιτείται το πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_answer_unknown_step" xml:space="preserve">
+    <value>Μια απάντηση δεν ανήκει σε αυτή την έκδοση του φύλλου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_attempts_exhausted" xml:space="preserve">
+    <value>Δεν απομένουν προσπάθειες για το μέλος στην περίοδο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_crew_not_allowed" xml:space="preserve">
+    <value>Το φύλλο αξιολογεί ένα μέλος τη φορά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evaluation_closed" xml:space="preserve">
+    <value>Η αξιολόγηση δεν είναι πλέον σε εξέλιξη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evaluation_not_found" xml:space="preserve">
+    <value>Η αξιολόγηση δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evidence_count" xml:space="preserve">
+    <value>Η αξιολόγηση έχει ήδη τον μέγιστο αριθμό τεκμηρίων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evidence_size" xml:space="preserve">
+    <value>Επιλέξτε αρχείο έως 30 MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evidence_step" xml:space="preserve">
+    <value>Το βήμα δεν υπάρχει στο φύλλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_evidence_type" xml:space="preserve">
+    <value>Προσθέστε φωτογραφία, βίντεο, PDF ή αρχείο κειμένου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_idempotency_key_required" xml:space="preserve">
+    <value>Μια υποβολή εκτός σύνδεσης χρειάζεται το κλειδί εξερχομένων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_member_invalid" xml:space="preserve">
+    <value>Επιλέξτε ενεργά μέλη της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_members_required" xml:space="preserve">
+    <value>Επιλέξτε ποιος αξιολογείται (έως 50 μέλη).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_next_signer_not_allowed" xml:space="preserve">
+    <value>Το φύλλο δεν ζητά επόμενο υπογράφοντα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_next_signer_not_eligible" xml:space="preserve">
+    <value>Ο επόμενος υπογράφων πρέπει να είναι άλλο ενεργό μέλος που επιτρέπει ο κανόνας, όχι ο αξιολογητής ή αξιολογούμενος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_next_signer_required" xml:space="preserve">
+    <value>Επιλέξτε τον επόμενο υπογράφοντα που ζητά το φύλλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_not_allowed" xml:space="preserve">
+    <value>Δεν μπορείτε να το κάνετε αυτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_not_eligible" xml:space="preserve">
+    <value>Δεν είστε εξουσιοδοτημένος αξιολογητής για αυτό το φύλλο ή βιβλίο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_not_evaluator" xml:space="preserve">
+    <value>Μόνο ο αξιολογητής μπορεί να αλλάξει την αξιολόγηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_not_found" xml:space="preserve">
+    <value>Δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_self_evaluation" xml:space="preserve">
+    <value>Δεν μπορείτε να αξιολογήσετε τον εαυτό σας σε αυτό το φύλλο ή βιβλίο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_category_invalid" xml:space="preserve">
+    <value>Επιλέξτε κατηγορία εκπαίδευσης της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_change_summary_required" xml:space="preserve">
+    <value>Περιγράψτε τι άλλαξε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_kind_invalid" xml:space="preserve">
+    <value>Επιλέξτε φύλλο δεξιοτήτων ή ημερήσια αναφορά παρατήρησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_no_draft" xml:space="preserve">
+    <value>Δεν υπάρχει πρόχειρο για δημοσίευση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_no_gradable_step" xml:space="preserve">
+    <value>Προσθέστε τουλάχιστον ένα βήμα που απαντά ο αξιολογητής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_not_found" xml:space="preserve">
+    <value>Το φύλλο δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_not_published" xml:space="preserve">
+    <value>Το φύλλο δεν έχει δημοσιευμένη έκδοση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_bounds" xml:space="preserve">
+    <value>Μια ελάχιστη τιμή ξεπερνά τη μέγιστη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_compute" xml:space="preserve">
+    <value>Ένα υπολογιζόμενο βήμα πρέπει να ορίζει προηγούμενα βήματα αριθμού, διάρκειας ή κλίμακας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_count" xml:space="preserve">
+    <value>Ένα φύλλο έχει 1 έως 200 βήματα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_critical" xml:space="preserve">
+    <value>Μόνο βαθμολογούμενα βήματα μπορούν να είναι κρίσιμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_key" xml:space="preserve">
+    <value>Κάθε βήμα χρειάζεται μοναδικό κλειδί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_label" xml:space="preserve">
+    <value>Κάθε βήμα χρειάζεται ετικέτα έως 300 χαρακτήρες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_options" xml:space="preserve">
+    <value>Τα βήματα επιλογής χρειάζονται 2 έως 30 διαφορετικές επιλογές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_rating" xml:space="preserve">
+    <value>Μια κλίμακα χρειάζεται ελάχιστη και μέγιστη τιμή και τη βάση επιτυχίας ανάμεσά τους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_type" xml:space="preserve">
+    <value>Επιλέξτε τύπο ερώτησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_step_weight" xml:space="preserve">
+    <value>Τα βάρη είναι 0 έως 1000· ένα κρίσιμο βήμα χρειάζεται βάρος πάνω από 0.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_sheet_title_required" xml:space="preserve">
+    <value>Εισαγάγετε τίτλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_signature_refused" xml:space="preserve">
+    <value>Το αίτημα υπογραφής δεν δημιουργήθηκε· η αξιολόγηση παραμένει σε εξέλιξη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_split_last_member" xml:space="preserve">
+    <value>Το τελευταίο μέλος μιας ομαδικής αξιολόγησης δεν μπορεί να διαχωριστεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_split_not_crew" xml:space="preserve">
+    <value>Μόνο σε ομαδική αξιολόγηση μπορεί να διαχωριστεί ένα μέλος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_stale" xml:space="preserve">
+    <value>Κάποιος άλλος το άλλαξε στο μεταξύ. Ανανεώστε και ξαναδοκιμάστε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_evidence_required" xml:space="preserve">
+    <value>Ένα βήμα που απέτυχε χρειάζεται τεκμήριο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_invalid" xml:space="preserve">
+    <value>Μια απάντηση δεν είναι έγκυρη για το βήμα της.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_not_applicable" xml:space="preserve">
+    <value>Το «δεν εφαρμόζεται» χρειάζεται αιτία και δεν επιτρέπεται σε κρίσιμα βήματα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_note_required" xml:space="preserve">
+    <value>Ένα βήμα που απέτυχε χρειάζεται σχόλιο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_required" xml:space="preserve">
+    <value>Απαντήστε σε κάθε υποχρεωτικό βήμα πριν την υποβολή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_step_too_long" xml:space="preserve">
+    <value>Μια απάντηση ή σχόλιο είναι πολύ μεγάλο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_template_not_found" xml:space="preserve">
+    <value>Το πρότυπο δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_skill_void_reason_required" xml:space="preserve">
+    <value>Εισαγάγετε αιτία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_already_open" xml:space="preserve">
+    <value>Το μέλος έχει ήδη ανοιχτό βιβλίο αυτού του ορισμού.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_certification_type_invalid" xml:space="preserve">
+    <value>Επιλέξτε τύπο προσωπικής πιστοποίησης της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_certifying_official_not_eligible" xml:space="preserve">
+    <value>Ο υπεύθυνος πιστοποίησης δεν πληροί τον κανόνα του ορισμού.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_certifying_official_required" xml:space="preserve">
+    <value>Επιλέξτε τον υπεύθυνο πιστοποίησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_code_required" xml:space="preserve">
+    <value>Εισαγάγετε τον κωδικό θέσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_date_invalid" xml:space="preserve">
+    <value>Η ημερομηνία έναρξης πρέπει να είναι εντός ισχύος και όχι μελλοντική.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_expired" xml:space="preserve">
+    <value>Η ισχύς του βιβλίου έληξε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_family_invalid" xml:space="preserve">
+    <value>Επιλέξτε κατηγορία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_final_evaluator_not_eligible" xml:space="preserve">
+    <value>Ο τελικός αξιολογητής δεν πληροί τον κανόνα του ορισμού.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_final_evaluator_required" xml:space="preserve">
+    <value>Επιλέξτε τον τελικό αξιολογητή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_member_mismatch" xml:space="preserve">
+    <value>Μια εργασία βιβλίου αξιολογεί μόνο τον εκπαιδευόμενό του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_name_required" xml:space="preserve">
+    <value>Εισαγάγετε το όνομα της θέσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_not_found" xml:space="preserve">
+    <value>Το βιβλίο εργασιών δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_not_open" xml:space="preserve">
+    <value>Το βιβλίο εργασιών δεν είναι ανοιχτό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_sheet_invalid" xml:space="preserve">
+    <value>Μια εργασία ορίζει φύλλο που δεν υπάρχει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_signers_invalid" xml:space="preserve">
+    <value>Ο εκπαιδευόμενος, ο τελικός αξιολογητής και ο υπεύθυνος πρέπει να είναι τρία διαφορετικά μέλη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_task_count" xml:space="preserve">
+    <value>Ένα βιβλίο έχει 1 έως 200 εργασίες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_task_invalid" xml:space="preserve">
+    <value>Κάθε εργασία χρειάζεται τίτλο και 1 έως 50 αξιολογήσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_task_key" xml:space="preserve">
+    <value>Κάθε εργασία χρειάζεται μοναδικό κλειδί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_task_not_found" xml:space="preserve">
+    <value>Η εργασία δεν υπάρχει στο βιβλίο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_task_book_tasks_incomplete" xml:space="preserve">
+    <value>Όλες οι εργασίες πρέπει να ολοκληρωθούν πριν την πιστοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

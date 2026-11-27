@@ -1,0 +1,781 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboveAmountNote" xml:space="preserve">
+    <value>(понад {0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Дії</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Активний</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddDelegateHeading" xml:space="preserve">
+    <value>Додати заступника</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementDeletedMessage" xml:space="preserve">
+    <value>Угоду видалено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementInvalidMessage" xml:space="preserve">
+    <value>Не вдалося зберегти угоду. Перевірте назву й дати; затверджену угоду не можна змінити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementSavedMessage" xml:space="preserve">
+    <value>Угоду збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementTitleLabel" xml:space="preserve">
+    <value>Угода</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementsIntro" xml:space="preserve">
+    <value>Угоди про взаємодопомогу, які ваш підрозділ затверджує й запечатує.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementsTab" xml:space="preserve">
+    <value>Угоди про взаємодопомогу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllMyApprovalsLink" xml:space="preserve">
+    <value>Усі мої затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllowSelfApprovalLabel" xml:space="preserve">
+    <value>Дозволити автору подання затверджувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AmountColumn" xml:space="preserve">
+    <value>Сума</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyErrorNote" xml:space="preserve">
+    <value>Затвердження залишається чинним, але модуль не зміг його застосувати (відмовили його власні правила). Завершіть етап у модулі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsHeading" xml:space="preserve">
+    <value>Затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalsModuleTitle" xml:space="preserve">
+    <value>Затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveButton" xml:space="preserve">
+    <value>Затвердити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovePanelTitle" xml:space="preserve">
+    <value>Ваше затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedByColumn" xml:space="preserve">
+    <value>Ким затверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedMessage" xml:space="preserve">
+    <value>Ваше затвердження записано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedStepsLabel" xml:space="preserve">
+    <value>Затверджені етапи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverColumn" xml:space="preserve">
+    <value>Затверджувач</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Скасувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CandidatesHeading" xml:space="preserve">
+    <value>Готові до подання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CertificationTypeLabel" xml:space="preserve">
+    <value>Тип сертифікації</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainDeactivatedMessage" xml:space="preserve">
+    <value>Ланцюжок вимкнено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainEditorHelp" xml:space="preserve">
+    <value>Етапи з однаковим номером виконуються паралельно, і всі мають затвердити. Поріг обмежує етап сумами, що його перевищують. Збереження створює нову версію; уже подані запити зберігають етапи, з якими вони почалися.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainNameLabel" xml:space="preserve">
+    <value>Назва ланцюжка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainSavedMessage" xml:space="preserve">
+    <value>Ланцюжок затвердження збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainsIntro" xml:space="preserve">
+    <value>Хто що затверджує, у якому порядку, понад які суми і коли завислий етап ескалюється.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChainsTab" xml:space="preserve">
+    <value>Ланцюжки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangedSinceApproval" xml:space="preserve">
+    <value>Це змінили після затвердження. Затвердження більше не дійсне; подайте знову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangedSinceSubmission" xml:space="preserve">
+    <value>Це змінили після подання. Попередні затвердження не переносяться; подайте знову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Код вмісту</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeactivateChainButton" xml:space="preserve">
+    <value>Вимкнути</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DecidedColumn" xml:space="preserve">
+    <value>Дата рішення</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DefineChainButton" xml:space="preserve">
+    <value>Визначити ланцюжок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateForLabel" xml:space="preserve">
+    <value>Учасник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateHelp" xml:space="preserve">
+    <value>Поки учасник у відпустці, його іменні етапи затвердження також надходять його заступникові. Якщо вказано дати, заступник також заміщує його в цей період.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateInvalidMessage" xml:space="preserve">
+    <value>Не вдалося зберегти заступника. Виберіть двох різних активних учасників і правильні дати.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateLabel" xml:space="preserve">
+    <value>Заступник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateRemovedMessage" xml:space="preserve">
+    <value>Заступника видалено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegateSavedMessage" xml:space="preserve">
+    <value>Заступника збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegatedNote" xml:space="preserve">
+    <value>Делеговано: призначений затверджувач відсутній</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegatesIntro" xml:space="preserve">
+    <value>Хто затверджує за учасника, поки він у відпустці.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DelegatesTab" xml:space="preserve">
+    <value>Заступники</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteAgreementButton" xml:space="preserve">
+    <value>Видалити угоду</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DepartmentLinkLabel" xml:space="preserve">
+    <value>Зв'язок підрозділів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DownloadSealedLink" xml:space="preserve">
+    <value>Завантажити запечатаний документ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>до {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Термін</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditChainButton" xml:space="preserve">
+    <value>Редагувати ланцюжок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditChainTitle" xml:space="preserve">
+    <value>Ланцюжок затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EffectiveLabel" xml:space="preserve">
+    <value>Діє з</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EndsLabel" xml:space="preserve">
+    <value>Закінчується</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalatedLabel" xml:space="preserve">
+    <value>Ескальовано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalatesAfterNote" xml:space="preserve">
+    <value>(ескалація через {0} год)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalationColumn" xml:space="preserve">
+    <value>Ескалація</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresInDaysLabel" xml:space="preserve">
+    <value>Спливає через (днів)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Група</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Головна</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HoursPlaceholder" xml:space="preserve">
+    <value>Години (порожньо: ніколи)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Учасник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyApprovalsIntro" xml:space="preserve">
+    <value>Запити, що чекають на ваше затвердження, і ті, які подали ви.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyApprovalsTab" xml:space="preserve">
+    <value>Мої затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyApprovalsTitle" xml:space="preserve">
+    <value>Мої затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MySubmissionsHeader" xml:space="preserve">
+    <value>Мої подання в очікуванні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewAgreementButton" xml:space="preserve">
+    <value>Нова угода</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextApprovalLabel" xml:space="preserve">
+    <value>Наступне на затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAgreements" xml:space="preserve">
+    <value>Угод про взаємодопомогу ще немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoApprovalYet" xml:space="preserve">
+    <value>Ще не подано на затвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCandidates" xml:space="preserve">
+    <value>Ніщо не чекає на подання.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoChainDefined" xml:space="preserve">
+    <value>Немає ланцюжка: ці елементи не потребують затвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDelegates" xml:space="preserve">
+    <value>Немає заступників.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPendingSubmissions" xml:space="preserve">
+    <value>Нічого в очікуванні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRequests" xml:space="preserve">
+    <value>Немає запитів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingToApprove" xml:space="preserve">
+    <value>Ніщо не чекає на ваше затвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnLeaveOnly" xml:space="preserve">
+    <value>Під час відпустки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenInModuleLink" xml:space="preserve">
+    <value>Відкрити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenRequestLink" xml:space="preserve">
+    <value>Відкрити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerLabel" xml:space="preserve">
+    <value>Партнерський підрозділ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerSignatureOwedNote" xml:space="preserve">
+    <value>Ланцюжок вашого підрозділу затверджує й запечатує цю угоду. Контрпідпис партнерського підрозділу через зв'язок підрозділів поки недоступний.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PayrollRunsNote" xml:space="preserve">
+    <value>Нарахування зарплати отримають ланцюжок затвердження, щойно нарахування зарплати з'являться в Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingApprovalsHeader" xml:space="preserve">
+    <value>Чекають на ваше затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingInDepartmentHeader" xml:space="preserve">
+    <value>В очікуванні в підрозділі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingSubmittedLabel" xml:space="preserve">
+    <value>В очікуванні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Відхилити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectHeading" xml:space="preserve">
+    <value>Відхилити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Причина</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Запит відхилено, автора подання повідомлено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Видалити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestsIntro" xml:space="preserve">
+    <value>Усі запити на затвердження в підрозділі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequestsTab" xml:space="preserve">
+    <value>Запити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Переглянути</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RoleLabel" xml:space="preserve">
+    <value>Роль</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveAgreementButton" xml:space="preserve">
+    <value>Зберегти угоду</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveChainButton" xml:space="preserve">
+    <value>Зберегти ланцюжок</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveDelegateButton" xml:space="preserve">
+    <value>Зберегти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealedNote" xml:space="preserve">
+    <value>Затверджено й запечатано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SealingPendingNote" xml:space="preserve">
+    <value>Затверджено. Запечатування очікує: запечатаний документ буде створено, щойно служба запечатування стане доступною.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartsLabel" xml:space="preserve">
+    <value>Починається</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Статус</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepApproved" xml:space="preserve">
+    <value>Затверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Етап</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepLabelPlaceholder" xml:space="preserve">
+    <value>Назва етапу (необов'язково)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepNotYet" xml:space="preserve">
+    <value>Ще ні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepOrderColumn" xml:space="preserve">
+    <value>#</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepRejected" xml:space="preserve">
+    <value>Відхилено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepWaiting" xml:space="preserve">
+    <value>Очікує</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHeading" xml:space="preserve">
+    <value>Етапи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHelp" xml:space="preserve">
+    <value>Етапи виконуються по черзі; етапи з однаковим номером виконуються паралельно. Кожне затвердження підписується на рівні 2 і прив'язується до коду вмісту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectColumn" xml:space="preserve">
+    <value>Предмет</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectGroupOption" xml:space="preserve">
+    <value>Власна група предмета</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubjectHeading" xml:space="preserve">
+    <value>Що затверджується</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitForApprovalButton" xml:space="preserve">
+    <value>Подати на затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitHeading" xml:space="preserve">
+    <value>Подати на затвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedByLine" xml:space="preserve">
+    <value>Подав {0}, {1} UTC</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Подано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Подано на затвердження. Затверджувачів повідомлено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TermsLabel" xml:space="preserve">
+    <value>Умови</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ThresholdColumn" xml:space="preserve">
+    <value>Лише понад суму</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UseStepColumn" xml:space="preserve">
+    <value>Використати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WaitingForMeLabel" xml:space="preserve">
+    <value>Чекають на мене</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WindowColumn" xml:space="preserve">
+    <value>Коли</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Відкликати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Запит відкликано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindPurchaseRequisitionApproval" xml:space="preserve">
+    <value>Заявки на закупівлю</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindIncidentPlanApproval" xml:space="preserve">
+    <value>Плани дій щодо інциденту (IAP)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindInvoiceApproval" xml:space="preserve">
+    <value>Рахунки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindPayrollRunApproval" xml:space="preserve">
+    <value>Нарахування зарплати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindCalOesMarsPackageApproval" xml:space="preserve">
+    <value>Пакети Cal OES MARS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindMutualAidAgreementApproval" xml:space="preserve">
+    <value>Угоди про взаємодопомогу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusPending" xml:space="preserve">
+    <value>В очікуванні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Затверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusRejected" xml:space="preserve">
+    <value>Відхилено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusWithdrawn" xml:space="preserve">
+    <value>Відкликано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSuperseded" xml:space="preserve">
+    <value>Замінено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Термін минув</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverRole" xml:space="preserve">
+    <value>Будь-хто з роллю</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverNamedMember" xml:space="preserve">
+    <value>Визначений учасник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverGroupAdmin" xml:space="preserve">
+    <value>Адміністратори групи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverCertifyingOfficial" xml:space="preserve">
+    <value>Відповідальний за сертифікацію</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproverDepartmentAdmins" xml:space="preserve">
+    <value>Адміністратори підрозділу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalateToDepartmentAdmins" xml:space="preserve">
+    <value>Ескалювати адміністраторам підрозділу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalateToRole" xml:space="preserve">
+    <value>Ескалювати ролі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EscalateToNamedMember" xml:space="preserve">
+    <value>Ескалювати учаснику</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusDraft" xml:space="preserve">
+    <value>Чернетка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusInApproval" xml:space="preserve">
+    <value>На затвердженні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusApproved" xml:space="preserve">
+    <value>Затверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementStatusWithdrawn" xml:space="preserve">
+    <value>Відкликано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNone" xml:space="preserve">
+    <value>Готово.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalInvalidRequest" xml:space="preserve">
+    <value>Не вдалося обробити запит.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSubjectNotFound" xml:space="preserve">
+    <value>Елемент більше не існує.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalModuleUnavailable" xml:space="preserve">
+    <value>Цей модуль або його доповнення не активні для вашого підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNoChain" xml:space="preserve">
+    <value>У вашому підрозділі немає ланцюжка затвердження для цих елементів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalAlreadyPending" xml:space="preserve">
+    <value>Це вже чекає на затвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalUnchanged" xml:space="preserve">
+    <value>Від затвердження чи відхилення нічого не змінилося. Змініть це, перш ніж подавати знову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotSubmittable" xml:space="preserve">
+    <value>Це не можна подати в поточному стані.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalClosed" xml:space="preserve">
+    <value>Цей запит більше не в очікуванні.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSubjectChanged" xml:space="preserve">
+    <value>Це змінили після подання. Подайте знову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotAnApprover" xml:space="preserve">
+    <value>Ви не є затверджувачем цього етапу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotYourTurn" xml:space="preserve">
+    <value>Спершу має затвердити попередній етап.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalStepUpRequired" xml:space="preserve">
+    <value>Підтвердьте особу (двоетапна перевірка або ключ доступу), щоб затвердити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalPasskeyRequired" xml:space="preserve">
+    <value>Ваш підрозділ вимагає ключ доступу для цього затвердження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalReasonRequired" xml:space="preserve">
+    <value>Вкажіть причину відхилення.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNoApprover" xml:space="preserve">
+    <value>Етап не називає нікого, хто може його затвердити. Перевірте ролі та учасників ланцюжка.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotAllowed" xml:space="preserve">
+    <value>Це може зробити лише автор подання або адміністратор підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalSignatureFailed" xml:space="preserve">
+    <value>Не вдалося підписати затвердження. Спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RefusalNotRequired" xml:space="preserve">
+    <value>Жоден етап ланцюжка не стосується цієї суми: затвердження не потрібне.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindMutualAidAgreementCountersignature" xml:space="preserve">
+    <value>Зустрічний підпис угоди про взаємодопомогу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerCountersignNote" xml:space="preserve">
+    <value>Виберіть Зв'язок підрозділів і позначте поле нижче, щоб партнерський підрозділ поставив зустрічний підпис після схвалення вашим ланцюжком погодження.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiresCountersignatureLabel" xml:space="preserve">
+    <value>Партнерський підрозділ ставить зустрічний підпис</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiresCountersignatureHelp" xml:space="preserve">
+    <value>Після схвалення вашим ланцюжком угоду надсилають через зв'язок; будь-хто з адміністраторів партнерського підрозділу ставить на ній зустрічний підпис щодо того самого вмісту.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignNone" xml:space="preserve">
+    <value>Зустрічний підпис партнера буде запитано після схвалення угоди.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignRequested" xml:space="preserve">
+    <value>Очікується зустрічний підпис партнерського підрозділу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignCountersigned" xml:space="preserve">
+    <value>Партнерський підрозділ поставив зустрічний підпис.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignDeclined" xml:space="preserve">
+    <value>Партнерський підрозділ відхилив запит або дозволив йому закінчитися. Скопіюйте угоду в нову чернетку, щоб спробувати ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignLapsed" xml:space="preserve">
+    <value>Зв'язок підрозділів було вимкнено або вилучено до того, як партнер поставив зустрічний підпис.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindRecordDeploymentPartnerAcceptance" xml:space="preserve">
+    <value>Прийняття партнером розгортання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindDepartmentLinkAcceptance" xml:space="preserve">
+    <value>Прийняття зв'язку</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

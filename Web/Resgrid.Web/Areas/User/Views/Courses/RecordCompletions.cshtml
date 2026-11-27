@@ -1,0 +1,26 @@
+@model Resgrid.Web.Areas.User.Models.RecordCompletionsPageView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@*
+    Round 7B (permission 135, LMS add-on): record completions of an LMS course's current version for members who took it together (the
+    enrolment list first). A member without an LMS seat is refused (§17.4).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RecordCompletions.Title"].Value;
+    ViewData["Title"] = localizer["RecordCompletions.Title"].Value;
+    ViewData["Subtitle"] = Model.View.TargetName;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["Section"] = "Courses";
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <partial name="_RecordCompletions" model="Model" />
+    <p><a asp-controller="Courses" asp-action="Course" asp-route-area="User" asp-route-id="@Model.View.TargetId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["RecordCompletions.Back"]</a></p>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

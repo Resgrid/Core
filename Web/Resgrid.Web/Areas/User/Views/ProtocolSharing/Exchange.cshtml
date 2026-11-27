@@ -1,0 +1,108 @@
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model ExchangeBrowseModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@*
+    The community exchange (Protocols P5 / Training T5, decision 7c — free): listed items other departments contributed and Resgrid reviewed.
+    Browse by kind, search, sort by newest, rating or imports; open an item to preview, rate, comment and import it.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["ExchangeHeader"];
+    ViewData["Title"] = text["ExchangeHeader"].Value;
+    ViewData["Subtitle"] = text["ExchangeIntro"].Value;
+    ViewData["Section"] = "Sharing";
+    ViewData["SharingSection"] = "Exchange";
+    ViewData["IsManager"] = Model.IsManager;
+    ViewData["CanCreate"] = Model.CanAuthor;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @await Html.PartialAsync("_SharingTabs", Model)
+
+    <form method="get" class="rgw-toolbar" asp-controller="ProtocolSharing" asp-action="Exchange" asp-route-area="User" role="search">
+        <label class="sr-only" for="exchangeSearch">@text["SearchLabel"]</label>
+        <input id="exchangeSearch" name="q" type="search" class="form-control" maxlength="100" value="@Model.Query.Search" placeholder="@text["SearchPlaceholder"]" />
+        <label class="sr-only" for="exchangeKind">@text["KindLabel"]</label>
+        <select id="exchangeKind" name="kind" class="form-control">
+            <option value="">@text["AllKinds"]</option>
+            @foreach (var kind in Model.Kinds)
+            {
+                <option value="@((int)kind)" selected="@(Model.Query.ItemKind == (int)kind)">@text["ItemKind" + kind]</option>
+            }
+        </select>
+        <label class="sr-only" for="exchangeSort">@text["SortLabel"]</label>
+        <select id="exchangeSort" name="sort" class="form-control">
+            <option value="newest" selected="@(Model.Query.Sort == "newest")">@text["SortNewest"]</option>
+            <option value="rating" selected="@(Model.Query.Sort == "rating")">@text["SortRating"]</option>
+            <option value="imports" selected="@(Model.Query.Sort == "imports")">@text["SortImports"]</option>
+        </select>
+        <button type="submit" class="btn btn-default"><i class="fa fa-search" aria-hidden="true"></i> @text["SearchButton"]</button>
+    </form>
+
+    <div class="ibox">
+        <div class="ibox-title"><h5><i class="fa fa-exchange" aria-hidden="true"></i> @string.Format(text["ExchangeCount"].Value, Model.Total)</h5></div>
+        <div class="ibox-content">
+            @if (Model.Items.Count == 0)
+            {
+                <p class="text-muted">@text["ExchangeEmpty"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">@text["ColumnTitle"]</th>
+                                <th scope="col">@text["ColumnKind"]</th>
+                                <th scope="col">@text["ColumnContributor"]</th>
+                                <th scope="col">@text["ColumnRating"]</th>
+                                <th scope="col">@text["ColumnImports"]</th>
+                                <th scope="col">@text["ColumnListed"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-controller="ProtocolSharing" asp-action="Listing" asp-route-id="@item.ExchangeListingId" asp-route-area="User">@item.Title</a>
+                                        @if (!string.IsNullOrWhiteSpace(item.Summary))
+                                        {
+                                            <div class="rgw-sub">@(item.Summary.Length > 160 ? item.Summary.Substring(0, 160) + "…" : item.Summary)</div>
+                                        }
+                                    </td>
+                                    <td>@text["ItemKind" + (ExchangeItemKinds)item.ItemKind]</td>
+                                    <td>@item.AttributionName</td>
+                                    <td>@(item.AverageRating.HasValue ? string.Format(text["RatingValue"].Value, item.AverageRating.Value.ToString("0.0"), item.RatingCount) : text["NotRated"].Value)</td>
+                                    <td>@item.ImportCount</td>
+                                    <td>@item.ListedOn?.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                @if (Model.Pages > 1)
+                {
+                    <nav aria-label="@text["PagingLabel"]">
+                        <ul class="pagination">
+                            @for (var p = 1; p <= Model.Pages && p <= 50; p++)
+                            {
+                                <li class="@(p == Model.Page ? "active" : null)">
+                                    <a asp-controller="ProtocolSharing" asp-action="Exchange" asp-route-area="User" asp-route-q="@Model.Query.Search" asp-route-kind="@Model.Query.ItemKind"
+                                       asp-route-sort="@Model.Query.Sort" asp-route-page="@p" aria-current="@(p == Model.Page ? "page" : "false")">@p</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            }
+        </div>
+    </div>
+    <p class="text-muted small">@text["ExchangeFreeNote"]</p>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

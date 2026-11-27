@@ -163,4 +163,156 @@
   <data name="ViewDepartmentLinkTitle" xml:space="preserve">
     <value>Wyświetl Łącze Wydziałowe</value>
   </data>
+  <data name="AgreementFrom" xml:space="preserve">
+    <value>Od</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementRequested" xml:space="preserve">
+    <value>Data prośby</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AgreementTitle" xml:space="preserve">
+    <value>Porozumienie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Przejrzyj i kontrasygnuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CourseSetsLink" xml:space="preserve">
+    <value>Zestawy kursów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditSharing" xml:space="preserve">
+    <value>Udostępnianie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolChange" xml:space="preserve">
+    <value>Co się zmieniło:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolReadOnly" xml:space="preserve">
+    <value>Tylko do odczytu: to obowiązująca wersja powiązanego działu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolSubtitle" xml:space="preserve">
+    <value>{0}, wersja {1}, obowiązuje od {2}, kod treści {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsHeader" xml:space="preserve">
+    <value>Powiązane protokoły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsIntro" xml:space="preserve">
+    <value>Opublikowane protokoły, które ten powiązany dział udostępnia Państwa działowi. Wyświetlana jest tylko obowiązująca wersja.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedProtocolsTitle" xml:space="preserve">
+    <value>Protokoły: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoLinkedProtocols" xml:space="preserve">
+    <value>Ten dział nie udostępnia żadnych opublikowanych protokołów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerAgreements" xml:space="preserve">
+    <value>Żadne porozumienie nie oczekuje na kontrasygnatę Państwa działu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsIntro" xml:space="preserve">
+    <value>Porozumienia o wzajemnej pomocy, które powiązane działy przekazują Państwa działowi do kontrasygnaty. Kontrasygnować może każdy administrator działu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerAgreementsLink" xml:space="preserve">
+    <value>Porozumienia do kontrasygnaty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolCategory" xml:space="preserve">
+    <value>Kategoria</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolEffective" xml:space="preserve">
+    <value>Obowiązuje od</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolName" xml:space="preserve">
+    <value>Protokół</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolNumber" xml:space="preserve">
+    <value>Numer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSetsLink" xml:space="preserve">
+    <value>Zestawy protokołów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolVersion" xml:space="preserve">
+    <value>Wersja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocols" xml:space="preserve">
+    <value>Protokoły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetsIntro" xml:space="preserve">
+    <value>Tutaj można udostępniać powiązanym działom protokoły i kursy jako zestawy, sponsorować ich miejsca LMS i kontrasygnować ich porozumienia o wzajemnej pomocy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocols" xml:space="preserve">
+    <value>Udostępniaj protokoły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareProtocolsHelp" xml:space="preserve">
+    <value>Drugi dział może czytać Państwa opublikowane protokoły i subskrybować Państwa zestawy protokołów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTraining" xml:space="preserve">
+    <value>Udostępniaj szkolenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShareTrainingHelp" xml:space="preserve">
+    <value>Drugi dział może subskrybować Państwa zestawy kursów, a Państwo mogą sponsorować jego miejsca LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharedBack" xml:space="preserve">
+    <value>Druga strona udostępnia:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingIntro" xml:space="preserve">
+    <value>Proszę wybrać, co Państwa dział udostępnia działowi {0}. Nigdy nie zmieniają Państwo tego, co druga strona udostępnia Państwu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SharingRevokeHelp" xml:space="preserve">
+    <value>Wyłączenie udostępniania natychmiast odcina dostęp: odczyt ustaje, subskrypcje Państwa zestawów zostają zawieszone, a sponsorowanie przez to powiązanie się kończy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Szkolenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ViewProtocols" xml:space="preserve">
+    <value>Protokoły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentsTitle" xml:space="preserve">
+    <value>Przydziały oddelegowań do przyjęcia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPartnerDeployments" xml:space="preserve">
+    <value>Żadna powiązana organizacja nie prosi o przyjęcie przydziału oddelegowania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAssignment" xml:space="preserve">
+    <value>Przydział</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PartnerDeploymentAccept" xml:space="preserve">
+    <value>Przejrzyj i zaakceptuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkAcceptanceSignatureNote" xml:space="preserve">
+    <value>Zaakceptowanie tego połączenia jest podpisaną decyzją: zostaniesz poproszony o ponowne potwierdzenie tożsamości, a Twój podpis zapisuje obie organizacje i to, co każda z nich udostępnia.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

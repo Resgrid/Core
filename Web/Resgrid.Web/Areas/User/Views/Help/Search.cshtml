@@ -1,0 +1,128 @@
+@using Resgrid.Model
+@using Resgrid.Model.Academy
+@using Resgrid.Web.Areas.User.Models.Help
+@model HelpSearchModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Academy.AcademyGuidance> localizer
+@*
+    The Help center search (A3, plan §15): free keyword search over the Resgrid Academy lessons this department can see and the Admin Assist
+    reference (features and reviewed articles) — no AI. "How do I…?" asks the Academy corpus through knowledge answers (K1) and shows only
+    when the department has them (Enhanced AI); Admin Assist's own questions stay in Admin Assist.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["SearchTitle"];
+    ViewData["Title"] = localizer["SearchTitle"].Value;
+    ViewData["Subtitle"] = localizer["SearchIntro"].Value;
+    ViewData["Section"] = "Search";
+    var result = Model.Result;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form method="get" asp-controller="Help" asp-action="Search" asp-route-area="User" class="rgw-toolbar m-b-sm" role="search">
+        <label class="sr-only" for="help-q">@localizer["SearchLabel"]</label>
+        <input id="help-q" name="q" type="search" class="form-control" value="@Model.Query" maxlength="200" placeholder="@localizer["SearchPlaceholder"]" autofocus style="max-width:480px" />
+        <button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> @localizer["SearchButton"]</button>
+    </form>
+
+    @await Html.PartialAsync("_KnowledgeAsk", new Resgrid.Web.Areas.User.Models.Knowledge.KnowledgeAskPanelModel
+    {
+        Surface = (int)KnowledgeAskSurfaces.Help,
+        ScopeKind = (int)KnowledgeSourceKinds.Academy,
+        PanelId = "kask-help",
+        Header = localizer["HowDoIHeader"].Value,
+        HelpText = localizer["HowDoIHelp"].Value
+    })
+
+    @if (Model.Searched)
+    {
+        <div class="row">
+            <div class="col-md-6">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["LessonsHeader"]</h5></div>
+                    <div class="ibox-content">
+                        @if (result == null || result.Lessons.Count == 0)
+                        {
+                            <p class="text-muted">@localizer["NoLessons"]</p>
+                        }
+                        else
+                        {
+                            <ul class="list-unstyled rgw-help-results">
+                                @foreach (var hit in result.Lessons)
+                                {
+                                    <li class="m-b-sm">
+                                        @if (!string.IsNullOrWhiteSpace(hit.Url))
+                                        {
+                                            <a href="@hit.Url" target="_blank" rel="noopener"><i class="fa fa-play-circle" aria-hidden="true"></i> @hit.Title</a>
+                                        }
+                                        else
+                                        {
+                                            <strong>@hit.Title</strong>
+                                        }
+                                        <span class="rgw-sub text-muted">@string.Format(localizer["LessonMinutes"].Value, hit.Minutes.ToString("0.#", System.Globalization.CultureInfo.CurrentCulture)) · @hit.Excerpt</span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-book" aria-hidden="true"></i> @localizer["DocsHeader"]</h5></div>
+                    <div class="ibox-content">
+                        @if (result == null || result.Docs.Count == 0)
+                        {
+                            <p class="text-muted">@localizer["NoDocs"]</p>
+                        }
+                        else
+                        {
+                            <ul class="list-unstyled rgw-help-results">
+                                @foreach (var hit in result.Docs)
+                                {
+                                    <li class="m-b-sm">
+                                        <strong>@hit.Title</strong>
+                                        <span class="label label-default">@(hit.Kind == AcademyHelpHitKinds.Feature ? localizer["FeatureBadge"] : localizer["ReferenceBadge"])</span>
+                                        @if (!string.IsNullOrWhiteSpace(hit.Excerpt))
+                                        {
+                                            <div class="rgw-sub text-muted">@hit.Excerpt</div>
+                                        }
+                                        <div class="rgw-row-actions">
+                                            @if (!string.IsNullOrWhiteSpace(hit.PageUrl))
+                                            {
+                                                <a class="btn btn-white btn-xs" href="@hit.PageUrl"><i class="fa fa-external-link-square" aria-hidden="true"></i> @localizer["OpenPage"]</a>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(hit.Url))
+                                            {
+                                                <a class="btn btn-white btn-xs" href="@hit.Url" target="_blank" rel="noopener"><i class="fa fa-book" aria-hidden="true"></i> @localizer["OpenDocs"]</a>
+                                            }
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="rgw-next-action">
+            <p>@localizer["SearchEmptyHelp"]</p>
+            <p>
+                <a class="btn btn-white" asp-controller="Help" asp-action="Tours" asp-route-area="User"><i class="fa fa-map-signs" aria-hidden="true"></i> @localizer["ToursTab"]</a>
+                <a class="btn btn-white" asp-controller="Help" asp-action="WhatsNew" asp-route-area="User"><i class="fa fa-bullhorn" aria-hidden="true"></i> @localizer["WhatsNewTab"]</a>
+                @if (!string.IsNullOrWhiteSpace(Model.AcademyHome))
+                {
+                    <a class="btn btn-white" href="@Model.AcademyHome" target="_blank" rel="noopener"><i class="fa fa-play-circle" aria-hidden="true"></i> @commonLocalizer["ResgridAcademy"]</a>
+                }
+            </p>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

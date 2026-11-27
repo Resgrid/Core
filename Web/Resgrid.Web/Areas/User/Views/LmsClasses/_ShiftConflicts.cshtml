@@ -1,0 +1,48 @@
+@using System.Globalization
+@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Model.Lms
+@model List<LmsClassShiftConflict>
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsClasses.LmsClasses> localizer
+@* Training on the shift calendar (§13a, T4): upcoming classes and the enrolled members on shift at that time (the conflict flag). *@
+@{
+    var culture = CultureInfo.CurrentCulture;
+    var names = ViewData["LmsClassNames"] as Dictionary<string, string> ?? new Dictionary<string, string>();
+    var department = ViewData["LmsClassDepartment"] as Department;
+    DateTime Local(DateTime utc) => department == null ? utc : DateTime.SpecifyKind(utc, DateTimeKind.Utc).TimeConverter(department);
+}
+<div class="row">
+    <div class="col-xs-12">
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["ShiftPanelHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead><tr><th>@localizer["Col.Date"]</th><th>@localizer["Col.Class"]</th><th>@localizer["Col.Enrolled"]</th><th>@localizer["OnShift"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@Local(item.Session.StartsOn).ToString("g", culture)</td>
+                                    <td><a asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@item.Session.LmsClassSessionId">@item.Session.Title</a></td>
+                                    <td>@item.Enrolled</td>
+                                    <td>
+                                        @if (item.OnShiftUserIds.Count > 0)
+                                        {
+                                            <span class="label label-warning"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @item.OnShiftUserIds.Count</span>
+                                            <span class="rgw-sub">@string.Join(", ", item.OnShiftUserIds.Select(u => names.TryGetValue(u, out var n) ? n : u))</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">@localizer["NoConflicts"]</span>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

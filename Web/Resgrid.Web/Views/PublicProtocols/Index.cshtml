@@ -1,0 +1,125 @@
+@model Resgrid.Model.PublicProtocolPage
+@using Resgrid.Web.Helpers
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ProtocolSharing.ProtocolSharing> text
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolText
+@*
+    A public protocol page (Protocols P5, decision 6): one protocol's version in force, or a category as a set, as the department chose to
+    publish it. Only the PublicProtocolEntry fields are on the page (no owner, audience, approvers, triggers or ids). No scripts at all (the
+    CSP forbids them); the body HTML is the sanitized display HTML of the version (or its approved translation).
+*@
+@{
+    Layout = null;
+    var embedded = ViewData["Embedded"] as bool? ?? false;
+    var title = string.IsNullOrWhiteSpace(Model.Title) ? text["PublicPageTitle"].Value : Model.Title;
+    string Kind(string name) { var value = protocolText["Kind" + name].Value; return string.IsNullOrEmpty(value) || value == "Kind" + name ? name : value; }
+}
+<!DOCTYPE html>
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="referrer" content="no-referrer" />
+    <title>@title · @Model.DepartmentName</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/protocol-content.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/public-protocols.css" asp-append-version="true" />
+</head>
+<body class="rgpub @(embedded ? "rgpub-embedded" : null)">
+    <main class="rgpub-page">
+        <header class="rgpub-header">
+            <p class="rgpub-department">@Model.DepartmentName</p>
+            <h1>@title</h1>
+            @if (Model.IsSet)
+            {
+                <p class="rgpub-muted">@string.Format(text["PublicSetCount"].Value, Model.Entries.Count)</p>
+            }
+        </header>
+
+        @if (Model.Superseded)
+        {
+            <div class="alert alert-warning" role="status">@text["PublicSuperseded"]</div>
+        }
+        else if (Model.Entries.Count == 0)
+        {
+            <div class="alert alert-info" role="status">@text["PublicNothingPublished"]</div>
+        }
+        else
+        {
+            @if (Model.IsSet && Model.Entries.Count > 1)
+            {
+                <nav class="rgpub-toc" aria-label="@text["PublicContents"]">
+                    <h2>@text["PublicContents"]</h2>
+                    <ol>
+                        @for (var i = 0; i < Model.Entries.Count; i++)
+                        {
+                            var entry = Model.Entries[i];
+                            <li><a href="#p@(i + 1)">@(string.IsNullOrWhiteSpace(entry.Number) ? null : entry.Number + " ")@entry.Title</a></li>
+                        }
+                    </ol>
+                </nav>
+            }
+
+            @for (var i = 0; i < Model.Entries.Count; i++)
+            {
+                var entry = Model.Entries[i];
+                <article class="rgpub-protocol" id="p@(i + 1)" lang="@entry.Locale">
+                    @if (Model.IsSet)
+                    {
+                        <h2>@(string.IsNullOrWhiteSpace(entry.Number) ? null : entry.Number + " ")@entry.Title</h2>
+                    }
+                    <p class="rgpub-stamp">
+                        @if (!Model.IsSet && !string.IsNullOrWhiteSpace(entry.Number))
+                        {
+                            <span>@entry.Number</span><span aria-hidden="true"> · </span>
+                        }
+                        <span>@Kind(entry.KindName)</span>
+                        @if (!string.IsNullOrWhiteSpace(entry.CategoryName))
+                        {
+                            <span aria-hidden="true"> · </span><span>@entry.CategoryName</span>
+                        }
+                        <span aria-hidden="true"> · </span><span>@string.Format(text["PublicVersion"].Value, entry.VersionLabel)</span>
+                        @if (entry.EffectiveOn.HasValue)
+                        {
+                            <span aria-hidden="true"> · </span><span>@string.Format(text["PublicEffective"].Value, entry.EffectiveOn.Value.ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture))</span>
+                        }
+                        <span aria-hidden="true"> · </span><span class="rgpub-code" title="@text["PublicContentCodeHelp"]">@entry.ContentShortCode</span>
+                    </p>
+                    <div class="rgp-content rgpub-body">@Html.ProtocolContent(entry.BodyHtml)</div>
+                    @if (entry.Attribution != null)
+                    {
+                        <p class="rgpub-attribution">
+                            @text["AttributionSource"] @entry.Attribution.SourceName
+                            @if (!string.IsNullOrWhiteSpace(entry.Attribution.Author))
+                            {
+                                <span> · @entry.Attribution.Author</span>
+                            }
+                            @if (!string.IsNullOrWhiteSpace(entry.Attribution.License))
+                            {
+                                <span> · @text["AttributionLicense"] </span>
+                                @if (!string.IsNullOrWhiteSpace(entry.Attribution.LicenseUrl))
+                                {
+                                    <a href="@entry.Attribution.LicenseUrl" rel="license noopener noreferrer nofollow" target="_blank">@entry.Attribution.License</a>
+                                }
+                                else
+                                {
+                                    <span>@entry.Attribution.License</span>
+                                }
+                            }
+                            @if (!string.IsNullOrWhiteSpace(entry.Attribution.SourceVersion))
+                            {
+                                <span> · @string.Format(text["PublicVersion"].Value, entry.Attribution.SourceVersion)</span>
+                            }
+                        </p>
+                    }
+                </article>
+            }
+        }
+
+        <footer class="rgpub-footer">
+            <p>@string.Format(text["PublicDisclaimer"].Value, Model.DepartmentName)</p>
+            <p class="rgpub-muted">@text["PublicPoweredBy"] · @Model.GeneratedOn.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture) UTC</p>
+        </footer>
+    </main>
+</body>
+</html>

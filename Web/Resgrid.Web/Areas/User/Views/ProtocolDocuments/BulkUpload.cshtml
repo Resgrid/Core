@@ -1,0 +1,104 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolBulkUploadModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    Bulk upload (P1 R-P5): a binder of PDF and DOCX files, or a zip, lands as draft document-backed protocols for one review-and-publish
+    pass. File names supply number and title ("SOG-204 Mayday.pdf"); zip folders become categories. A result line per file.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["BulkUploadTab"];
+    ViewData["Title"] = localizer["BulkUploadTab"].Value;
+    ViewData["Subtitle"] = localizer["BulkUploadIntro"].Value;
+    Func<dynamic, Microsoft.AspNetCore.Html.IHtmlContent> headerActions = @<text>
+        <a class="btn btn-default" asp-controller="ProtocolDocuments" asp-action="New" asp-route-area="User"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["NewDocumentProtocolHeader"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    @if (Model.Results != null)
+    {
+        var created = Model.Results.Count(r => r.Succeeded);
+        <div class="rgw-next-action" role="status"><i class="fa fa-check" aria-hidden="true"></i> @string.Format(localizer["BulkUploadResultSummary"].Value, created, Model.Results.Count)</div>
+        <div class="ibox">
+            <div class="ibox-content">
+                <table class="table rgw-table">
+                    <thead><tr><th scope="col">@localizer["DocumentFileLabel"]</th><th scope="col">@localizer["NumberLabel"]</th><th scope="col">@localizer["DocumentTitleLabel"]</th><th scope="col">@localizer["CategoryLabel"]</th><th scope="col">@localizer["ResultLabel"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var item in Model.Results)
+                        {
+                            <tr>
+                                <td>@item.FileName</td>
+                                <td>@item.Number</td>
+                                <td>@item.Title</td>
+                                <td>@item.Category</td>
+                                <td>
+                                    @if (item.Succeeded)
+                                    {
+                                        <a class="label label-primary" asp-controller="Protocols" asp-action="View" asp-route-area="User" asp-route-id="@item.ProtocolId"><i class="fa fa-check" aria-hidden="true"></i> @localizer["BulkUploadCreatedDraft"]</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="label label-danger"><i class="fa fa-times" aria-hidden="true"></i> @(item.Error == "duplicate" ? localizer["BulkUploadDuplicate"].Value : localizer["LifecycleError" + item.Error].Value)</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    <div class="ibox">
+        <div class="ibox-content">
+            <form method="post" enctype="multipart/form-data" asp-controller="ProtocolDocuments" asp-action="BulkUpload" asp-route-area="User">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="control-label required" for="bulkFiles">@localizer["BulkUploadFilesLabel"]</label>
+                    <input id="bulkFiles" name="files" type="file" multiple accept=".pdf,.docx,.zip" required />
+                    <span class="help-block">@string.Format(localizer["BulkUploadFilesHelp"].Value, ProtocolDocumentRules.MaxBulkFiles)</span>
+                </div>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label class="control-label" for="Kind">@localizer["KindLabel"]</label>
+                        <select id="Kind" name="Kind" class="form-control">
+                            @foreach (ProtocolKinds kind in ProtocolKindRules.AuthorableKinds)
+                            {
+                                <option value="@((int)kind)" selected="@(Model.Kind == (int)kind)">@ProtocolDisplay.KindName((int)kind, localizer)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="CategoryId">@localizer["CategoryLabel"]</label>
+                        <select id="CategoryId" name="CategoryId" class="form-control">
+                            <option value="">@localizer["NoCategoryOption"]</option>
+                            @foreach (var category in Model.Categories)
+                            {
+                                <option value="@category.ProtocolCategoryId" selected="@(Model.CategoryId == category.ProtocolCategoryId)">@category.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="FoldersAsCategories" value="true" checked="@Model.FoldersAsCategories" /> @localizer["FoldersAsCategoriesLabel"]</label>
+                    <input type="hidden" name="FoldersAsCategories" value="false" />
+                </div>
+                <div class="rgw-wizard-actions">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["BulkUploadButton"]</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

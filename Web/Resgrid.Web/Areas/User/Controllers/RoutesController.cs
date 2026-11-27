@@ -352,6 +352,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Plan = plan;
 			model.Instances = filtered;
 			model.LinkedCalls = await LinkedCallsAsync(filtered);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.UnitNames = await UnitNamesAsync();
 			return View(model);
 		}
@@ -368,6 +369,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Instances = active;
 			model.Plans = plans;
 			model.LinkedCalls = await LinkedCallsAsync(active);
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.UnitNames = await UnitNamesAsync();
 			return View(model);
 		}
@@ -640,6 +642,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.LinkedCall = linkedCall;
 			(await UnitNamesAsync()).TryGetValue(instance.UnitId, out var unitName);
 			model.UnitName = unitName;
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			return View(model);
 		}
 

@@ -1,0 +1,405 @@
+@using Resgrid.Model
+@model Resgrid.WebCore.Areas.User.Models.Protocols.DispatchCaseReviewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.DispatchCaseReviews.DispatchCaseReviews> L
+@*
+    Protocols P5 QA: one dispatch case review. Left: the case as recorded on the call (questions asked with the answers, instructions given,
+    determinant and override, timestamps) and, for a reviewer, the scoring form (each question and instruction, the rubric's hand-scored
+    criteria, comments; save as draft or send). Right: the cited version's case flow with the path taken marked. The dispatcher reads the
+    sent review, acknowledges it once and may reply once.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    var detail = Model.Detail;
+    var review = detail.Review;
+    var record = detail.Case;
+    var title = string.Format(L["ReviewTitle"].Value, review.CallNumber ?? review.CallId.ToString());
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = (review.ProtocolCode + " " + review.ProtocolName).Trim() + (string.IsNullOrEmpty(review.VersionLabel) ? "" : " · v" + review.VersionLabel);
+    ViewData["CaseReviewPage"] = "Queue";
+    var scores = new[] { 100, 75, 50, 25, 0 };
+    var compliances = new[] { DispatchCaseCompliance.Compliant, DispatchCaseCompliance.Partial, DispatchCaseCompliance.NotCompliant, DispatchCaseCompliance.NotApplicable };
+    string ComplianceCss(int value) => (DispatchCaseCompliance)value switch
+    {
+        DispatchCaseCompliance.Compliant => "label-primary",
+        DispatchCaseCompliance.Partial => "label-warning",
+        DispatchCaseCompliance.NotCompliant => "label-danger",
+        _ => "label-default"
+    };
+    string ComplianceIcon(int value) => (DispatchCaseCompliance)value switch
+    {
+        DispatchCaseCompliance.Compliant => "fa-check",
+        DispatchCaseCompliance.Partial => "fa-adjust",
+        DispatchCaseCompliance.NotCompliant => "fa-times",
+        DispatchCaseCompliance.NotApplicable => "fa-minus",
+        _ => "fa-question"
+    };
+    string KindLabel(DispatchCaseReviewItem item) => item.IsInstruction ? L["KindInstruction"].Value
+        : item.Stage == (int)ProtocolCaseStages.Entry ? L["KindEntryQuestion"].Value : L["KindKeyQuestion"].Value;
+    string Percent(double? value) => value.HasValue ? value.Value.ToString("0.#") + "%" : L["NotApplicableShort"].Value;
+    // ADP catalog 39: a sealed case reads withheld on a page load; step-up posts the grant to ReviewRevealed, which renders the answers and
+    // carries the grant in the scoring form, so a score is saved against the case the reviewer could read.
+    var protectedPage = detail.CaseWithheld || Model.ProtectedGrant != null;
+    var adpReveal = new Resgrid.Web.Areas.User.Models.AdpRevealView
+    {
+        BannerTitle = commonLocalizer["AdpProtectedCall"],
+        GrantExpiresOnUtc = Model.ProtectedGrantExpiresOnUtc,
+        BindForms = detail.CanScore ? new List<string> { "#review-score-form" } : new List<string>()
+    };
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (detail.IsReviewer)
+    {
+        @await Html.PartialAsync("_CaseReviewNav")
+    }
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    @if (detail.CaseWithheld)
+    {
+        <partial name="_AdpRevealBanner" model="adpReveal" />
+        <form id="adp-review-reveal-form" method="post" action="@Url.Action("ReviewRevealed", "DispatchCaseReviews", new { area = "User", id = review.DispatchCaseReviewId })">@Html.AntiForgeryToken()</form>
+    }
+    @if (detail.IsReviewer && detail.IsOwnCase && DispatchCaseReviewRules.IsOpen(review))
+    {
+        <div class="rgw-next-action" role="status"><i class="fa fa-ban text-danger" aria-hidden="true"></i> @L["OwnCaseNotice"]</div>
+    }
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["StatusColumn"]</div><div class="rgw-stat-value" style="font-size:16px">@await Html.PartialAsync("_Status", review.Status)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["ScoreLabel"]</div><div class="rgw-stat-value">@(review.Score.HasValue ? review.Score.Value.ToString() : "–")</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["QuestionComplianceLabel"]</div><div class="rgw-stat-value">@Percent(detail.QuestionCompliance)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label">@L["InstructionComplianceLabel"]</div><div class="rgw-stat-value">@Percent(detail.InstructionCompliance)</div></div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-phone" aria-hidden="true"></i> @L["CaseHeader"]</h5></div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@L["CallColumn"]</dt>
+                        <dd>
+                            @if (detail.IsReviewer)
+                            {
+                                <a asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@review.CallId">@(review.CallNumber ?? review.CallId.ToString())</a>
+                            }
+                            else
+                            {
+                                @(review.CallNumber ?? review.CallId.ToString())
+                            }
+                            · @review.CallName
+                        </dd>
+                        <dt>@L["DispatcherColumn"]</dt><dd>@Model.DispatcherName</dd>
+                        <dt>@L["DeterminantLabel"]</dt>
+                        <dd>
+                            <span class="rgw-mono">@(record?.Determinant ?? review.Determinant ?? "–")</span>
+                            @if (record?.Overridden == true)
+                            {
+                                <span class="label label-warning"><i class="fa fa-exchange" aria-hidden="true"></i> @L["OverriddenLabel"]</span>
+                                <div class="rgw-sub">@string.Format(L["OverrideDetail"].Value, record.ComputedDeterminant ?? "–", Model.OverriddenByName ?? "", departmentTime.Format(record.OverriddenOn))</div>
+                                <div class="rgw-sub"><strong>@L["OverrideReasonLabel"]:</strong> @record.OverrideReason</div>
+                            }
+                        </dd>
+                        @if (!string.IsNullOrEmpty(record?.SuggestedPriorityName))
+                        {
+                            <dt>@L["PriorityLabel"]</dt><dd>@record.SuggestedPriorityName</dd>
+                        }
+                        @if (record?.Source == (int)CallProtocolSources.Ai)
+                        {
+                            <dt>@L["SourceLabel"]</dt><dd><span class="label label-info"><i class="fa fa-magic" aria-hidden="true"></i> @L["SourceAi"]</span></dd>
+                        }
+                        <dt>@L["RubricLabel"]</dt><dd>@review.RubricName</dd>
+                        @if (!string.IsNullOrEmpty(review.AssignedToUserId))
+                        {
+                            <dt>@L["AssignedColumn"]</dt><dd>@Model.AssigneeName</dd>
+                        }
+                    </dl>
+
+                    <h4>@L["TimelineHeader"]</h4>
+                    <ul class="list-unstyled small">
+                        <li><i class="fa fa-clock-o" aria-hidden="true"></i> @L["TimelineCallLogged"]: @departmentTime.Format(review.CallLoggedOn)</li>
+                        @if (detail.AttachedOn.HasValue)
+                        {
+                            <li><i class="fa fa-paperclip" aria-hidden="true"></i> @L["TimelineAttached"]: @departmentTime.Format(detail.AttachedOn)</li>
+                        }
+                        @if (record?.CompletedOn != null)
+                        {
+                            <li><i class="fa fa-flag-checkered" aria-hidden="true"></i> @L["TimelineCaseCompleted"]: @departmentTime.Format(record.CompletedOn)</li>
+                        }
+                        else if (record != null)
+                        {
+                            <li><i class="fa fa-hourglass-half" aria-hidden="true"></i> @L["TimelineCaseNotCompleted"]</li>
+                        }
+                        @if (record?.OverriddenOn != null)
+                        {
+                            <li><i class="fa fa-exchange" aria-hidden="true"></i> @L["TimelineOverridden"]: @departmentTime.Format(record.OverriddenOn)</li>
+                        }
+                        @foreach (var message in record?.CallerMessages ?? new List<ProtocolCallerMessage>())
+                        {
+                            <li><i class="fa fa-comment-o" aria-hidden="true"></i> @L["TimelineCallerText"]: @departmentTime.Format(message.SentOn) — @message.Text</li>
+                        }
+                        @if (detail.StepLog != null)
+                        {
+                            <li><i class="fa fa-list-ol" aria-hidden="true"></i> @L["TimelineStepsStarted"]: @departmentTime.Format(detail.StepLog.StartedOn)
+                                @if (detail.StepLog.CompletedOn.HasValue) { <text> · @L["TimelineStepsCompleted"]: @departmentTime.Format(detail.StepLog.CompletedOn)</text> }</li>
+                        }
+                        <li><i class="fa fa-random" aria-hidden="true"></i> @L["TimelineSampled"]: @departmentTime.Format(review.SampledOn)</li>
+                        @if (review.SentOn.HasValue)
+                        {
+                            <li><i class="fa fa-paper-plane" aria-hidden="true"></i> @L["TimelineSent"]: @departmentTime.Format(review.SentOn) · @Model.ReviewerName</li>
+                        }
+                        @if (review.AcknowledgedOn.HasValue)
+                        {
+                            <li><i class="fa fa-check" aria-hidden="true"></i> @L["TimelineAcknowledged"]: @departmentTime.Format(review.AcknowledgedOn)</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            @if (detail.CanScore)
+            {
+                <form id="review-score-form" method="post" asp-action="Score" asp-route-area="User" asp-route-id="@review.DispatchCaseReviewId">
+                    @Html.AntiForgeryToken()
+                    @if (Model.ProtectedGrant != null)
+                    {
+                        <input type="hidden" name="@Resgrid.Web.Helpers.HttpProtectedGrantContext.FormFieldName" value="@Model.ProtectedGrant" />
+                        <input type="hidden" name="@Resgrid.Web.Helpers.HttpProtectedGrantContext.ExpiresOnFormFieldName" value="@(Model.ProtectedGrantExpiresOnUtc?.ToString("o"))" />
+                    }
+                    <div class="ibox">
+                        <div class="ibox-title"><h5><i class="fa fa-list-ol" aria-hidden="true"></i> @L["ItemsHeader"]</h5></div>
+                        <div class="ibox-content">
+                            @if (detail.Items.Count == 0)
+                            {
+                                <p class="text-muted">@L["NoItems"]</p>
+                            }
+                            @for (var i = 0; i < detail.Items.Count; i++)
+                            {
+                                var item = detail.Items[i];
+                                <fieldset class="rgw-builder-item" style="margin-bottom:12px">
+                                    <legend class="small" style="font-size:13px;margin-bottom:4px"><strong>@(i + 1). @KindLabel(item)</strong></legend>
+                                    <p>@item.Text</p>
+                                    @if (!string.IsNullOrEmpty(item.Answer))
+                                    {
+                                        <p class="small"><strong>@L["AnswerLabel"]:</strong> @item.Answer</p>
+                                    }
+                                    <input type="hidden" name="Items[@i].Key" value="@item.NodeKey" />
+                                    <div role="radiogroup" aria-label="@L["ComplianceLabel"]">
+                                        @foreach (var compliance in compliances)
+                                        {
+                                            <label class="radio-inline"><input type="radio" name="Items[@i].Compliance" value="@((int)compliance)" checked="@(item.Compliance == (int)compliance)" /> @L["Compliance" + compliance]</label>
+                                        }
+                                    </div>
+                                    <input type="text" class="form-control input-sm m-t-xs" name="Items[@i].Note" value="@item.Note" maxlength="@DispatchCaseReview.NoteMaxLength" placeholder="@L["NotePlaceholder"]" aria-label="@L["NotePlaceholder"]" />
+                                </fieldset>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="ibox">
+                        <div class="ibox-title"><h5><i class="fa fa-check-square-o" aria-hidden="true"></i> @L["CriteriaHeader"]</h5></div>
+                        <div class="ibox-content">
+                            @{ var f = 0; }
+                            @foreach (var criterion in detail.Criteria)
+                            {
+                                if (DispatchCaseRubrics.IsDerived(criterion.Key))
+                                {
+                                    <div class="form-group">
+                                        <strong>@criterion.Text</strong> <span class="text-muted small">(@string.Format(L["WeightLabel"].Value, criterion.Weight))</span>
+                                        <div class="rgw-sub">@L["DerivedCriterionHelp"]</div>
+                                    </div>
+                                    continue;
+                                }
+                                var finding = detail.Findings.FirstOrDefault(x => x.Key == criterion.Key);
+                                <div class="form-group">
+                                    <label for="Findings_@(f)_Score"><strong>@criterion.Text</strong> <span class="text-muted small">(@string.Format(L["WeightLabel"].Value, criterion.Weight))</span></label>
+                                    <input type="hidden" name="Findings[@f].Key" value="@criterion.Key" />
+                                    <div class="row">
+                                        <div class="col-sm-4">
+                                            <select class="form-control input-sm" id="Findings_@(f)_Score" name="Findings[@f].Score">
+                                                <option value="">@L["NotScoredOption"]</option>
+                                                @foreach (var score in scores)
+                                                {
+                                                    <option value="@score" selected="@(finding?.Score == score)">@L["Score" + score]</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-8"><input type="text" class="form-control input-sm" name="Findings[@f].Note" value="@finding?.Note" maxlength="@DispatchCaseReview.NoteMaxLength" placeholder="@L["NotePlaceholder"]" aria-label="@L["NotePlaceholder"]" /></div>
+                                    </div>
+                                </div>
+                                f++;
+                            }
+                            <div class="form-group">
+                                <label for="Comments">@L["CommentsLabel"]</label>
+                                <textarea class="form-control" id="Comments" name="Comments" rows="4" maxlength="@DispatchCaseReview.CommentsMaxLength">@review.ReviewerComments</textarea>
+                                <span class="help-block">@L["CommentsHelp"]</span>
+                            </div>
+                            <div class="rgw-wizard-actions">
+                                <button type="submit" class="btn btn-default"><i class="fa fa-floppy-o" aria-hidden="true"></i> @L["SaveDraftButton"]</button>
+                                <button type="submit" name="send" value="1" class="btn btn-primary"><i class="fa fa-paper-plane" aria-hidden="true"></i> @L["SendButton"]</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            }
+            else
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-list-ol" aria-hidden="true"></i> @L["ItemsHeader"]</h5></div>
+                    <div class="ibox-content">
+                        @if (detail.Items.Count == 0)
+                        {
+                            <p class="text-muted">@L["NoItems"]</p>
+                        }
+                        <ol>
+                            @foreach (var item in detail.Items)
+                            {
+                                <li style="margin-bottom:8px">
+                                    <span class="text-muted small">@KindLabel(item)</span>
+                                    @if (review.IsSent || detail.IsReviewer)
+                                    {
+                                        <span class="label @ComplianceCss(item.Compliance)"><i class="fa @ComplianceIcon(item.Compliance)" aria-hidden="true"></i> @L["Compliance" + (DispatchCaseCompliance)item.Compliance]</span>
+                                    }
+                                    <div>@item.Text</div>
+                                    @if (!string.IsNullOrEmpty(item.Answer)) { <div class="rgw-sub"><strong>@L["AnswerLabel"]:</strong> @item.Answer</div> }
+                                    @if (!string.IsNullOrEmpty(item.Note)) { <div class="rgw-sub"><i class="fa fa-comment-o" aria-hidden="true"></i> @item.Note</div> }
+                                </li>
+                            }
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-check-square-o" aria-hidden="true"></i> @L["CriteriaHeader"]</h5></div>
+                    <div class="ibox-content">
+                        <table class="table rgw-table">
+                            <thead><tr><th scope="col">@L["CriterionColumn"]</th><th scope="col">@L["WeightColumn"]</th><th scope="col">@L["ScoreLabel"]</th></tr></thead>
+                            <tbody>
+                                @foreach (var criterion in detail.Criteria)
+                                {
+                                    var finding = detail.Findings.FirstOrDefault(x => x.Key == criterion.Key);
+                                    <tr>
+                                        <td>@criterion.Text @if (!string.IsNullOrEmpty(finding?.Note)) { <div class="rgw-sub">@finding.Note</div> }</td>
+                                        <td>@criterion.Weight</td>
+                                        <td>@(finding == null ? "–" : finding.Score.ToString())</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @if (!string.IsNullOrEmpty(review.ReviewerComments))
+                        {
+                            <h4>@L["CommentsLabel"]</h4>
+                            <p style="white-space:pre-line">@review.ReviewerComments</p>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (review.IsSent && (detail.IsDispatcher || detail.IsReviewer))
+            {
+                <div class="ibox">
+                    <div class="ibox-title"><h5><i class="fa fa-commenting-o" aria-hidden="true"></i> @L["FeedbackHeader"]</h5></div>
+                    <div class="ibox-content">
+                        @if (review.AcknowledgedOn.HasValue)
+                        {
+                            <p><i class="fa fa-check text-success" aria-hidden="true"></i> @string.Format(L["AcknowledgedOn"].Value, departmentTime.Format(review.AcknowledgedOn))</p>
+                        }
+                        else
+                        {
+                            <p class="text-muted"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @L["NotAcknowledgedYet"]</p>
+                        }
+                        @if (!string.IsNullOrEmpty(review.DispatcherComment))
+                        {
+                            <h4>@L["DispatcherReplyHeader"]</h4>
+                            <p style="white-space:pre-line">@review.DispatcherComment</p>
+                            <p class="rgw-sub">@departmentTime.Format(review.DispatcherCommentOn)</p>
+                        }
+
+                        @if (detail.CanAcknowledge)
+                        {
+                            <form method="post" asp-action="Acknowledge" asp-route-area="User" asp-route-id="@review.DispatchCaseReviewId">
+                                @Html.AntiForgeryToken()
+                                @if (detail.CanComment)
+                                {
+                                    <div class="form-group">
+                                        <label for="AckComment">@L["ReplyOptionalLabel"]</label>
+                                        <textarea class="form-control" id="AckComment" name="comment" rows="3" maxlength="@DispatchCaseReview.DispatcherCommentMaxLength"></textarea>
+                                        <span class="help-block">@L["ReplyOnceHelp"]</span>
+                                    </div>
+                                }
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @L["AcknowledgeButton"]</button>
+                            </form>
+                        }
+                        else if (detail.CanComment)
+                        {
+                            <form method="post" asp-action="Reply" asp-route-area="User" asp-route-id="@review.DispatchCaseReviewId">
+                                @Html.AntiForgeryToken()
+                                <div class="form-group">
+                                    <label for="ReplyComment">@L["ReplyLabel"]</label>
+                                    <textarea class="form-control" id="ReplyComment" name="comment" rows="3" maxlength="@DispatchCaseReview.DispatcherCommentMaxLength" required></textarea>
+                                    <span class="help-block">@L["ReplyOnceHelp"]</span>
+                                </div>
+                                <button type="submit" class="btn btn-default"><i class="fa fa-reply" aria-hidden="true"></i> @L["ReplyButton"]</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-5">
+            <div class="ibox">
+                <div class="ibox-title"><h5><i class="fa fa-sitemap" aria-hidden="true"></i> @L["GraphHeader"]</h5></div>
+                <div class="ibox-content rgw-case-graph">
+                    @if (string.IsNullOrEmpty(Model.GraphHtml))
+                    {
+                        <p class="text-muted">@L["NoGraph"]</p>
+                    }
+                    else
+                    {
+                        <p class="small"><span class="rgw-path-swatch" aria-hidden="true"></span> @L["PathLegend"]</p>
+                        @* The renderer encodes every authored string (ProtocolDecisionGraphs.RenderHtml); ids are validated node keys. *@
+                        @Html.Raw(Model.GraphHtml)
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (protectedPage)
+    {
+        @if (detail.CaseWithheld)
+        {
+            <script type="text/javascript">
+                window.resgridAdpPageRevealed = function () {
+                    resgridAdpReveal.submitWithGrant(document.getElementById('adp-review-reveal-form'));
+                };
+            </script>
+        }
+        <partial name="_AdpRevealScripts" model="adpReveal" />
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .rgw-case-graph ol.rgp-graph-steps { padding-left: 20px; }
+        .rgw-case-graph .rgp-graph-step { padding: 4px 8px; border-left: 4px solid transparent; margin-bottom: 6px; }
+        .rgw-path-swatch { display: inline-block; width: 12px; height: 12px; border-left: 4px solid #1a7f64; background: #e6f4ef; vertical-align: middle; }
+        @foreach (var key in Model.PathKeys)
+        {
+            <text>.rgw-case-graph #b-g-@(key) { border-left-color: #1a7f64; background: #e6f4ef; }</text>
+        }
+    </style>
+}

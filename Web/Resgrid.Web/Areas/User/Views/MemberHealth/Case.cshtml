@@ -1,0 +1,327 @@
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model ExposureCaseView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> localizer
+@*
+    One BBP / infectious-disease exposure case (member wellness WL1): the journey from report through the source follow-up request and the
+    Ryan White notification to post-exposure follow-up and closure. Only the designated officer moves it. It points at the call and never
+    holds patient identity. The member's BBP training status sits beside it (§13b.3). Notes are protected (ADP catalog 38).
+*@
+@{
+    var c = Model.Case;
+    var title = localizer["CaseTitle"].Value + " · " + Model.MemberName;
+    ViewBag.Title = "Resgrid | " + localizer["CaseTitle"].Value;
+    ViewData["Section"] = "Health";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["CaseIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var journeyIndex = MemberHealthPresentation.JourneyIndex(c.Stage);
+    string Shown(string value) => WellnessPresentation.IsWithheld(value) ? localizer["WithheldValue"].Value : value;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Wellness/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.ProtectedWithheld)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["ProtectedWithheldNotice"]</div>
+    }
+
+    @if (c.Stage == (int)ExposureIncidentStages.Withdrawn)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["Stage.Withdrawn"]</div>
+    }
+    @if (ExposureIncidentWorkflow.IsNotificationOverdue(c, DateTime.UtcNow))
+    {
+        <div class="alert alert-danger" role="status"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["NotificationOverdueHelp"]</div>
+    }
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-tint" aria-hidden="true"></i> @localizer["CaseFactsHeader"]</h5></div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@localizer["MemberLabel"]</dt><dd>@Model.MemberName</dd>
+                        <dt>@localizer["OccurredLabel"]</dt><dd>@WellnessPresentation.LocalDateTime(c.OccurredOn, Model.Department)</dd>
+                        <dt>@localizer["RouteColumn"]</dt><dd>@localizer[MemberHealthPresentation.RouteKey(c.Route)]</dd>
+                        <dt>@localizer["CallLabel"]</dt><dd>@(Model.CallName ?? "—")</dd>
+                        <dt>@localizer["ReportedLabel"]</dt><dd>@WellnessPresentation.LocalDateTime(c.ReportedOn, Model.Department)</dd>
+                        @if (!string.IsNullOrWhiteSpace(c.SourceFacility))
+                        {
+                            <dt>@localizer["SourceFacilityLabel"]</dt><dd>@c.SourceFacility</dd>
+                        }
+                        @if (c.SourceRequestedOn.HasValue)
+                        {
+                            <dt>@localizer["Stage.SourceFollowUpRequested"]</dt><dd>@WellnessPresentation.LocalDateTime(c.SourceRequestedOn, Model.Department)</dd>
+                        }
+                        @if (c.NotificationRequestedOn.HasValue)
+                        {
+                            <dt>@localizer["Stage.NotificationRequested"]</dt><dd>@WellnessPresentation.LocalDateTime(c.NotificationRequestedOn, Model.Department)</dd>
+                            <dt>@localizer["NotificationDueLabel"]</dt><dd>@WellnessPresentation.LocalDateTime(c.NotificationDueOn, Model.Department)</dd>
+                        }
+                        @if (c.NotificationReceivedOn.HasValue)
+                        {
+                            <dt>@localizer["Stage.NotificationReceived"]</dt><dd>@WellnessPresentation.LocalDateTime(c.NotificationReceivedOn, Model.Department)</dd>
+                        }
+                        @if (c.ClosedOn.HasValue)
+                        {
+                            <dt>@localizer["Stage.Closed"]</dt><dd>@WellnessPresentation.LocalDateTime(c.ClosedOn, Model.Department)</dd>
+                        }
+                    </dl>
+                    <p class="text-muted small"><i class="fa fa-user-secret" aria-hidden="true"></i> @localizer["NoPatientIdentityNote"]</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-road" aria-hidden="true"></i> @localizer["StageColumn"]</h5></div>
+                <div class="ibox-content">
+                    <ul class="rgw-journey">
+                        @foreach (var stage in ExposureIncidentWorkflow.Journey)
+                        {
+                            var index = MemberHealthPresentation.JourneyIndex((int)stage);
+                            var done = c.Stage != (int)ExposureIncidentStages.Withdrawn && index < journeyIndex;
+                            var current = index == journeyIndex;
+                            <li aria-current="@(current ? "step" : null)">
+                                <span class="@(current ? "font-bold" : done ? null : "text-muted")"><i class="fa @(done ? "fa-check-circle text-navy" : current ? "fa-dot-circle-o" : "fa-circle-o")" aria-hidden="true"></i> @localizer[MemberHealthPresentation.StageKey((int)stage)]</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["BbpTrainingHeader"]</h5></div>
+                <div class="ibox-content">
+                    <p>
+                        <span class="@(Model.BbpTraining.State == BbpTrainingStates.Current ? "label label-primary" : Model.BbpTraining.State == BbpTrainingStates.NotTracked ? "label label-default" : "label label-warning")">@localizer[MemberHealthPresentation.BbpKey(Model.BbpTraining.State)]</span>
+                        @if (!string.IsNullOrWhiteSpace(Model.BbpTraining.TypeName))
+                        {
+                            <span class="text-muted">@Model.BbpTraining.TypeName</span>
+                        }
+                    </p>
+                    @if (Model.BbpTraining.ExpiresOn.HasValue)
+                    {
+                        <p class="small">@localizer["ExpiresLabel"]: @MemberHealthPresentation.CalendarDate(Model.BbpTraining.ExpiresOn)</p>
+                    }
+                </div>
+            </div>
+            @if (Model.IsDesignatedOfficer)
+            {
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title"><h5><i class="fa fa-medkit" aria-hidden="true"></i> @localizer["RecordInjuryButton"]</h5></div>
+                    <div class="ibox-content">
+                        <p class="small text-muted">@localizer["RecordInjuryHelp"]</p>
+                        <a class="btn btn-default btn-sm" asp-controller="MemberHealth" asp-action="ReportInjury" asp-route-area="User" asp-route-exposureIncidentId="@c.RmsExposureIncidentId"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["RecordInjuryButton"]</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (Model.IsDesignatedOfficer && Model.NextStages.Count > 0)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["NextStepHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted small">@localizer["NextStepHelp"]</p>
+                <form method="post" asp-controller="MemberHealth" asp-action="AdvanceCase" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@c.RmsExposureIncidentId" />
+                    <input type="hidden" name="rowVersion" value="@c.RowVersion" />
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="step-on">@localizer["StepDateLabel"]</label>
+                            <input id="step-on" name="on" type="datetime-local" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label for="step-facility">@localizer["SourceFacilityLabel"]</label>
+                            <input id="step-facility" name="sourceFacility" type="text" maxlength="200" class="form-control" value="@c.SourceFacility" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="step-notes">@localizer["StepNotesLabel"]</label>
+                        <textarea id="step-notes" name="notes" class="form-control" rows="2" maxlength="4000"></textarea>
+                        <small class="text-muted">@localizer["ProtectedFieldHelp"]</small>
+                    </div>
+                    <div class="rgw-toolbar">
+                        @foreach (var next in Model.NextStages)
+                        {
+                            <button type="submit" name="toStage" value="@((int)next)" class="btn btn-sm @(next == ExposureIncidentStages.Withdrawn ? "btn-default" : "btn-primary")">
+                                <i class="fa @(next == ExposureIncidentStages.Withdrawn ? "fa-ban" : "fa-arrow-right")" aria-hidden="true"></i> @string.Format(localizer["MoveToFormat"].Value, localizer[MemberHealthPresentation.StageKey((int)next)].Value)
+                            </button>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    }
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-lock" aria-hidden="true"></i> @localizer["NotesHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.IsDesignatedOfficer && c.Stage != (int)ExposureIncidentStages.Withdrawn)
+            {
+                <form method="post" asp-controller="MemberHealth" asp-action="SaveCaseNotes" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@c.RmsExposureIncidentId" />
+                    <input type="hidden" name="rowVersion" value="@c.RowVersion" />
+                    <input type="hidden" name="sourceFacility" value="@c.SourceFacility" />
+                    <div class="form-group">
+                        <label for="notes-source">@localizer["SourceFollowUpNotesLabel"]</label>
+                        @if (WellnessPresentation.IsWithheld(c.SourceFollowUpNotes))
+                        {
+                            <input type="hidden" name="sourceFollowUpNotes" value="@c.SourceFollowUpNotes" />
+                            <p class="form-control-static text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["WithheldValue"]</p>
+                        }
+                        else
+                        {
+                            <textarea id="notes-source" name="sourceFollowUpNotes" class="form-control" rows="2" maxlength="4000">@c.SourceFollowUpNotes</textarea>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label for="notes-response">@localizer["NotificationResponseLabel"]</label>
+                        @if (WellnessPresentation.IsWithheld(c.NotificationResponse))
+                        {
+                            <input type="hidden" name="notificationResponse" value="@c.NotificationResponse" />
+                            <p class="form-control-static text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["WithheldValue"]</p>
+                        }
+                        else
+                        {
+                            <textarea id="notes-response" name="notificationResponse" class="form-control" rows="2" maxlength="4000">@c.NotificationResponse</textarea>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <label for="notes-medical">@localizer["MedicalNotesLabel"]</label>
+                        @if (WellnessPresentation.IsWithheld(c.MedicalNotes))
+                        {
+                            <input type="hidden" name="medicalNotes" value="@c.MedicalNotes" />
+                            <p class="form-control-static text-muted"><i class="fa fa-lock" aria-hidden="true"></i> @localizer["WithheldValue"]</p>
+                        }
+                        else
+                        {
+                            <textarea id="notes-medical" name="medicalNotes" class="form-control" rows="3" maxlength="4000">@c.MedicalNotes</textarea>
+                        }
+                        <small class="text-muted">@localizer["ProtectedFieldHelp"]</small>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(c.ClosureNotes))
+                    {
+                        <p><strong>@localizer["ClosureNotesLabel"]:</strong> @Shown(c.ClosureNotes)</p>
+                    }
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-save" aria-hidden="true"></i> @localizer["SaveButton"]</button>
+                </form>
+            }
+            else
+            {
+                <dl>
+                    <dt>@localizer["SourceFollowUpNotesLabel"]</dt><dd>@(Shown(c.SourceFollowUpNotes) ?? "—")</dd>
+                    <dt>@localizer["NotificationResponseLabel"]</dt><dd>@(Shown(c.NotificationResponse) ?? "—")</dd>
+                    <dt>@localizer["MedicalNotesLabel"]</dt><dd>@(Shown(c.MedicalNotes) ?? "—")</dd>
+                    <dt>@localizer["ClosureNotesLabel"]</dt><dd>@(Shown(c.ClosureNotes) ?? "—")</dd>
+                </dl>
+            }
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-list-ul" aria-hidden="true"></i> @localizer["FollowUpsHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.FollowUps.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoFollowUps"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["FollowUpColumn"]</th>
+                                <th>@localizer["AssigneeColumn"]</th>
+                                <th>@localizer["DueColumn"]</th>
+                                <th>@localizer["StateColumn"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var task in Model.FollowUps)
+                            {
+                                var mine = Model.IsDesignatedOfficer || string.Equals(task.AssigneeUserId, Model.ViewerUserId, StringComparison.OrdinalIgnoreCase);
+                                <tr class="@(task.IsOpen ? null : "text-muted")">
+                                    <td>@localizer[MemberHealthPresentation.FollowUpKindKey(task.Note)]</td>
+                                    <td>@Model.NameOf(task.AssigneeUserId)</td>
+                                    <td class="text-nowrap">@WellnessPresentation.LocalDate(task.DueOn, Model.Department)</td>
+                                    <td>@localizer[MemberHealthPresentation.FollowUpStateKey(task.State)]</td>
+                                    <td class="rgw-row-actions">
+                                        @if (task.IsOpen && mine)
+                                        {
+                                            <form method="post" asp-controller="MemberHealth" asp-action="CompleteCaseFollowUp" asp-route-area="User" class="health-inline-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@c.RmsExposureIncidentId" />
+                                                <input type="hidden" name="assignmentId" value="@task.RmsRecordWorkAssignmentId" />
+                                                <button type="submit" class="btn btn-xs btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["CompleteButton"]</button>
+                                            </form>
+                                        }
+                                        @if (task.IsOpen && Model.IsDesignatedOfficer)
+                                        {
+                                            <form method="post" asp-controller="MemberHealth" asp-action="CancelCaseFollowUp" asp-route-area="User" class="health-inline-form">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@c.RmsExposureIncidentId" />
+                                                <input type="hidden" name="assignmentId" value="@task.RmsRecordWorkAssignmentId" />
+                                                <button type="submit" class="btn btn-xs btn-default"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["CancelButton"]</button>
+                                            </form>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+
+            @if (Model.IsDesignatedOfficer && c.IsOpen)
+            {
+                <hr />
+                <form method="post" asp-controller="MemberHealth" asp-action="AddCaseFollowUp" asp-route-area="User">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@c.RmsExposureIncidentId" />
+                    <div class="rgw-grid">
+                        <div class="form-group">
+                            <label for="follow-up-kind">@localizer["FollowUpColumn"]</label>
+                            <select id="follow-up-kind" name="kind" class="form-control" required>
+                                @foreach (var kind in ExposureCaseFollowUpKinds.All)
+                                {
+                                    <option value="@kind">@localizer[MemberHealthPresentation.FollowUpKindKey(kind)]</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="follow-up-assignee">@localizer["AssigneeColumn"]</label>
+                            <select id="follow-up-assignee" name="assigneeUserId" class="form-control">
+                                @foreach (var person in Model.FollowUpAssignees)
+                                {
+                                    <option value="@person.UserId" selected="@(string.Equals(person.UserId, c.UserId, StringComparison.OrdinalIgnoreCase))">@person.Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="follow-up-due">@localizer["DueColumn"]</label>
+                            <input id="follow-up-due" name="dueOn" type="date" class="form-control" />
+                        </div>
+                    </div>
+                    <small class="text-muted d-block m-b-sm">@localizer["FollowUpPrivacyHelp"]</small>
+                    <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-plus" aria-hidden="true"></i> @localizer["AddFollowUpButton"]</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .health-inline-form { display: inline-block; }
+    </style>
+}

@@ -146,6 +146,36 @@ namespace Resgrid.Web.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Create);
 		}
 
+		/// <summary>Holds Author Protocols (128): create protocols and write drafts.</summary>
+		public static bool CanAuthorProtocols()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Create);
+		}
+
+		/// <summary>Holds Approve Protocols (129): approve, publish, schedule and retire versions.</summary>
+		public static bool CanApproveProtocols()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Protocols, ResgridClaimTypes.Actions.Approve);
+		}
+
+		/// <summary>Holds the Assign Training right somewhere (assign and report; scoped per training).</summary>
+		public static bool CanAssignTraining()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Update);
+		}
+
+		/// <summary>Round 7B: holds Record Training Completions (135) somewhere (which members is decided per member by the recording service).</summary>
+		public static bool CanApplyTrainingCompletions()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.RecordCompletions);
+		}
+
+		/// <summary>Holds the Delete Training right somewhere (archive and delete; scoped per training).</summary>
+		public static bool CanDeleteTraining()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Training, ResgridClaimTypes.Actions.Delete);
+		}
+
 		public static bool CanCreateDocument()
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Documents, ResgridClaimTypes.Actions.Create);

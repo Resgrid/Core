@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Account.Greeting" xml:space="preserve">
+    <value>مرحبًا {0}،</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Subject" xml:space="preserve">
+    <value>{0} يدعوك إلى التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Body" xml:space="preserve">
+    <value>يدعوك {0} إلى حضور تدريب على بوابة التعلم الخاصة به. اختر كلمة المرور من هنا:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Invite.Lifetime" xml:space="preserve">
+    <value>يظل الرابط صالحًا لعدد الأيام التالي: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Subject" xml:space="preserve">
+    <value>أكّد عنوان بريدك الإلكتروني</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Body" xml:space="preserve">
+    <value>أكّد عنوان بريدك الإلكتروني لإكمال إنشاء حساب التدريب:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Verify.Lifetime" xml:space="preserve">
+    <value>يظل الرابط صالحًا لعدد الساعات التالي: {0}. إذا لم تطلب هذا الحساب، فتجاهل هذه الرسالة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Subject" xml:space="preserve">
+    <value>أعد تعيين كلمة مرور التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Body" xml:space="preserve">
+    <value>اختر كلمة مرور جديدة من هنا:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Reset.Lifetime" xml:space="preserve">
+    <value>يظل الرابط صالحًا لعدد الساعات التالي: {0}. إذا لم تطلب ذلك، فتجاهل هذه الرسالة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Subject" xml:space="preserve">
+    <value>حساب التدريب الخاص بك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Body" xml:space="preserve">
+    <value>طلب شخص ما إنشاء حساب تدريب بهذا العنوان، لكن يوجد حساب بالفعل. سجّل الدخول أو أعد تعيين كلمة المرور من هنا:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.Exists.Ignore" xml:space="preserve">
+    <value>إذا لم تكن أنت من طلب ذلك، يمكنك تجاهل هذه الرسالة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Account.SignIn.Body" xml:space="preserve">
+    <value>لديك بالفعل حساب تدريب بهذا العنوان. سجّل الدخول أو أعد تعيين كلمة المرور من هنا:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bulletin.Title" xml:space="preserve">
+    <value>نشرة ذات أولوية</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bulletin.Message" xml:space="preserve">
+    <value>{0}: اقرأ هذه النشرة وأقرّ بالاطلاع عليها. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.Title" xml:space="preserve">
+    <value>بروتوكول بانتظار الإقرار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.Message" xml:space="preserve">
+    <value>يُرجى قراءة البروتوكول {0} {1} والإقرار بالاطلاع عليه. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Assigned.MessageVersion" xml:space="preserve">
+    <value>يُرجى قراءة البروتوكول {0} {1}، الإصدار {2}، والإقرار بالاطلاع عليه. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.Title" xml:space="preserve">
+    <value>بروتوكولات بانتظار الإقرار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.One" xml:space="preserve">
+    <value>لديك بروتوكول للقراءة والإقرار. {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Bundle.Many" xml:space="preserve">
+    <value>عدد البروتوكولات التي تنتظر قراءتك وإقرارك: {0}. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.DueTitle" xml:space="preserve">
+    <value>موعد الإقرار بالبروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.OverdueTitle" xml:space="preserve">
+    <value>تأخر الإقرار بالبروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.Due" xml:space="preserve">
+    <value>يجب الإقرار بالبروتوكول {0} {1}. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.DueOn" xml:space="preserve">
+    <value>يجب الإقرار بالبروتوكول {0} {1} بحلول {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.Overdue" xml:space="preserve">
+    <value>انقضى موعد الإقرار بالبروتوكول {0} {1}. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Reminder.OverdueOn" xml:space="preserve">
+    <value>كان موعد الإقرار بالبروتوكول {0} {1} في {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Escalation.Message" xml:space="preserve">
+    <value>لم يُقرّ {0} بالبروتوكول {1} {2}، وقد انقضى الموعد. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Review.Title" xml:space="preserve">
+    <value>بروتوكول بانتظار المراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.Review.Message" xml:space="preserve">
+    <value>البروتوكول {0} {1} بانتظار مراجعتك (الخطوة {2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewDue.Title" xml:space="preserve">
+    <value>موعد مراجعة البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewDue.Message" xml:space="preserve">
+    <value>يجب مراجعة البروتوكول {0} {1} في {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewOverdue.Title" xml:space="preserve">
+    <value>تأخرت مراجعة البروتوكول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Protocol.ReviewOverdue.Message" xml:space="preserve">
+    <value>كان موعد مراجعة البروتوكول {0} {1} في {2}. سجّل المراجعة في مكتبة البروتوكولات، مع إصدار جديد أو بدونه.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.Title" xml:space="preserve">
+    <value>متطلب تدريبي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.Message" xml:space="preserve">
+    <value>متطلب تدريبي جديد: {0} ({1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Assigned.MessageDue" xml:space="preserve">
+    <value>متطلب تدريبي جديد: {0} ({1})، الموعد {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.Title" xml:space="preserve">
+    <value>تأخر متطلب تدريبي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.Message" xml:space="preserve">
+    <value>انقضى موعد {0} ({1}) وأصبح متأخرًا. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Overdue.MessageOn" xml:space="preserve">
+    <value>كان موعد {0} ({1}) في {2} وأصبح متأخرًا. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.Title" xml:space="preserve">
+    <value>يقترب موعد متطلب تدريبي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.Message" xml:space="preserve">
+    <value>يحين موعد {0} ({1}) قريبًا. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.DueSoon.MessageOn" xml:space="preserve">
+    <value>يحين موعد {0} ({1}) في {2}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.CompletedTitle" xml:space="preserve">
+    <value>اكتمل متطلب تدريبي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.Completed" xml:space="preserve">
+    <value>أكمل {0} المتطلب {1} ({2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Supervisor.Overdue" xml:space="preserve">
+    <value>تأخر {0} في المتطلب {1} ({2}). {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.AMember" xml:space="preserve">
+    <value>أحد الأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Met.Title" xml:space="preserve">
+    <value>تم استيفاء متطلب تدريبي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Met.Message" xml:space="preserve">
+    <value>أعاد إكمالك لـ {0} الشهادة والأدوار التي تأثرت. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Title" xml:space="preserve">
+    <value>انتهت الشهادة بسبب متطلب تدريبي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Message" xml:space="preserve">
+    <value>{0} متأخر، لذا انتهت صلاحية {1} الخاصة بك. أكمله لاستعادة الشهادة. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Enforced.Certification" xml:space="preserve">
+    <value>الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Title" xml:space="preserve">
+    <value>رُفض التطبيق القائم على التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Message" xml:space="preserve">
+    <value>لم يُنفَّذ التطبيق القائم على التدريب اليوم: كان سيزيل أكثر من {0}% من أعضاء أحد الأدوار ({1}). راجع المتطلبات ومعاينة التطبيق. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Role" xml:space="preserve">
+    <value>الدور {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Requirement.Refused.Breach" xml:space="preserve">
+    <value>{0}: {1} من {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.Title" xml:space="preserve">
+    <value>مهارات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.DigestTitle" xml:space="preserve">
+    <value>ملخص مهارات التدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.Digest" xml:space="preserve">
+    <value>ملخص مهارات التدريب: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.DigestMore" xml:space="preserve">
+    <value>+{0} أخرى</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationPassed" xml:space="preserve">
+    <value>تقييم المهارة {0}: ناجح. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationPassedScore" xml:space="preserve">
+    <value>تقييم المهارة {0}: ناجح (النتيجة {1:0.#}%). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationNotPassed" xml:space="preserve">
+    <value>تقييم المهارة {0}: غير ناجح. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.EvaluationNotPassedScore" xml:space="preserve">
+    <value>تقييم المهارة {0}: غير ناجح (النتيجة {1:0.#}%). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookInitiated" xml:space="preserve">
+    <value>بدأ دفتر المهام {0} ({1})، وهو صالح حتى {2:d}. {3}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookCertificationRequested" xml:space="preserve">
+    <value>اكتمل دفتر المهام {0} وهو بانتظار المقيّم النهائي والمسؤول عن الاعتماد. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookCertified" xml:space="preserve">
+    <value>اعتُمد دفتر المهام {0} ({1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskBookExpired" xml:space="preserve">
+    <value>انتهت صلاحية دفتر المهام {0} ({1}) قبل اعتماده. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskSigned" xml:space="preserve">
+    <value>دفتر المهام {0}: وُقّعت المهمة {1} ({2} من {3})؛ المهام المكتملة: {4} من {5}. {6}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Skill.TaskSignedReady" xml:space="preserve">
+    <value>دفتر المهام {0}: وُقّعت المهمة {1} ({2} من {3})؛ المهام المكتملة: {4} من {5}، وهو جاهز للاعتماد. {6}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Needed.Title" xml:space="preserve">
+    <value>التوقيع مطلوب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Reminder.Title" xml:space="preserve">
+    <value>تذكير بالتوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Needed.Message" xml:space="preserve">
+    <value>توقيعك مطلوب على {0} (رمز المحتوى {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Reminder.Message" xml:space="preserve">
+    <value>تذكير: لا يزال توقيعك مطلوبًا على {0} (رمز المحتوى {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Title" xml:space="preserve">
+    <value>أُغلق طلب التوقيع</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Completed" xml:space="preserve">
+    <value>وقّع الجميع على طلب التوقيع الخاص بـ {0}. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Declined" xml:space="preserve">
+    <value>رُفض طلب التوقيع الخاص بـ {0}. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Expired" xml:space="preserve">
+    <value>انتهت صلاحية طلب التوقيع الخاص بـ {0} قبل أن يوقّع الجميع. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Voided" xml:space="preserve">
+    <value>سُحب طلب التوقيع الخاص بـ {0}. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Signature.Closed.Other" xml:space="preserve">
+    <value>أُغلق طلب التوقيع الخاص بـ {0}. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Needed.Title" xml:space="preserve">
+    <value>الموافقة مطلوبة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Escalated.Title" xml:space="preserve">
+    <value>تم تصعيد الموافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Needed.Message" xml:space="preserve">
+    <value>موافقتك مطلوبة على {0} (رمز المحتوى {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Escalated.Message" xml:space="preserve">
+    <value>تصعيد: موافقتك مطلوبة على {0} (رمز المحتوى {1}). {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Title" xml:space="preserve">
+    <value>صدر قرار الموافقة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Approved" xml:space="preserve">
+    <value>تمت الموافقة على طلب الموافقة الخاص بـ {0}. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Rejected" xml:space="preserve">
+    <value>رُفض طلب الموافقة الخاص بـ {0}: {1} {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Expired" xml:space="preserve">
+    <value>انتهت صلاحية طلب الموافقة الخاص بـ {0} قبل الموافقة عليه. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Approval.Decided.Other" xml:space="preserve">
+    <value>أُغلق طلب الموافقة الخاص بـ {0}. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Subject" xml:space="preserve">
+    <value>البلاغ {0}، البروتوكول {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Sent.Title" xml:space="preserve">
+    <value>تمت مراجعة حالة الإرسال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Sent.Message" xml:space="preserve">
+    <value>تمت مراجعة حالة الإرسال الخاصة بك ({0}). اقرأ الملاحظات وأقرّ بها: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Reply.Title" xml:space="preserve">
+    <value>ردّ موظف الإرسال على مراجعة حالة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseReview.Reply.Message" xml:space="preserve">
+    <value>ردّ موظف الإرسال على مراجعة الحالة الخاصة بك ({0}): {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Suggestion.Title" xml:space="preserve">
+    <value>يُرجى مراجعة سجل التعرض الخاص بك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Suggestion.Message" xml:space="preserve">
+    <value>اقتُرح إدخال للبلاغ {0} بتاريخ {1} استنادًا إلى سجلات الإرسال. لا يُسجَّل شيء حتى تراجعه في تعرضاتي.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.Title" xml:space="preserve">
+    <value>نفكر فيك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.OneYear" xml:space="preserve">
+    <value>يصادف {0:D} مرور عام على بلاغ صعب شاركت فيه. فريق دعم الأقران وموارد الرفاه متاحة لك متى شئت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.Anniversary.Years" xml:space="preserve">
+    <value>يصادف {0:D} الذكرى رقم {1} لبلاغ صعب شاركت فيه. فريق دعم الأقران وموارد الرفاه متاحة لك متى شئت.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.Title" xml:space="preserve">
+    <value>تذكير لفريق دعم الأقران</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.OneYear" xml:space="preserve">
+    <value>طلب {0} أن يعلم فريق دعم الأقران أن {1:D} يصادف مرور عام على حادث حرج شارك فيه. قد يكون التواصل موضع ترحيب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.PeerReminder.Years" xml:space="preserve">
+    <value>طلب {0} أن يعلم فريق دعم الأقران أن {1:D} يصادف الذكرى رقم {2} لحادث حرج شارك فيه. قد يكون التواصل موضع ترحيب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Wellness.AMember" xml:space="preserve">
+    <value>أحد الأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.AMember" xml:space="preserve">
+    <value>أحد الأعضاء</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ExposureReported.Title" xml:space="preserve">
+    <value>تم الإبلاغ عن تعرض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ExposureReported.Message" xml:space="preserve">
+    <value>أبلغ {0} عن تعرض محتمل لمسببات أمراض منقولة بالدم أو لمرض معدٍ في {1:d}. يُرجى فتح حالة التعرض: {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.InjuryReported.Title" xml:space="preserve">
+    <value>تم الإبلاغ عن إصابة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.InjuryReported.Message" xml:space="preserve">
+    <value>يوجد تقرير إصابة لـ {0} بتاريخ {1:d} بانتظار المراجعة. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.Title" xml:space="preserve">
+    <value>تأخر إشعار التعرض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.Message" xml:space="preserve">
+    <value>لم ترد المنشأة الطبية على طلب إشعار التعرض الخاص بـ {0}. يتطلب قانون Ryan White ردًا خلال 48 ساعة. {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.NotificationOverdue.MessageSent" xml:space="preserve">
+    <value>لم ترد المنشأة الطبية على طلب إشعار التعرض الخاص بـ {0} المرسل في {1:d}. يتطلب قانون Ryan White ردًا خلال 48 ساعة. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ReturnReview.Title" xml:space="preserve">
+    <value>مراجعة العودة إلى الخدمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Health.ReturnReview.Message" xml:space="preserve">
+    <value>كان من المتوقع عودة {0} في {1:d}. يُرجى مراجعة حالة الخدمة. {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.Title" xml:space="preserve">
+    <value>إشعار تدريب جديد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.Message" xml:space="preserve">
+    <value>أُسند إليك تدريب جديد ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.New.MessageDue" xml:space="preserve">
+    <value>تدريب جديد ({0}) موعده {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.Title" xml:space="preserve">
+    <value>إشعار موعد تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.OneDay" xml:space="preserve">
+    <value>يحين موعد التدريب ({0}) خلال يوم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.OneDayOn" xml:space="preserve">
+    <value>يحين موعد التدريب ({0}) خلال يوم ({1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.Days" xml:space="preserve">
+    <value>يحين موعد التدريب ({0}) خلال عدد الأيام التالي: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Due.DaysOn" xml:space="preserve">
+    <value>يحين موعد التدريب ({0}) خلال عدد الأيام التالي: {1} ({2})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.Title" xml:space="preserve">
+    <value>إشعار تدريب متأخر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.Message" xml:space="preserve">
+    <value>التدريب ({0}) متأخر</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.Overdue.MessageDue" xml:space="preserve">
+    <value>التدريب ({0}) متأخر (كان موعده {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.CreatorOverdue" xml:space="preserve">
+    <value>عدد الأعضاء المتأخرين في التدريب ({1}): {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.QuestionFlagged.Title" xml:space="preserve">
+    <value>تم وضع علامة على سؤال تدريب</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Training.QuestionFlagged.Message" xml:space="preserve">
+    <value>وُضعت علامة على سؤال في التدريب ({0}) للمراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Title" xml:space="preserve">
+    <value>الشهادة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Expiring.Body" xml:space="preserve">
+    <value>تنتهي صلاحية شهادة {0} الخاصة بك في {2} (الأيام المتبقية: {1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Expiring.BodyOne" xml:space="preserve">
+    <value>تنتهي صلاحية شهادة {0} الخاصة بك خلال يوم واحد ({1}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.RoleRemoved.Body" xml:space="preserve">
+    <value>تمت إزالتك من دور {0}: شهادة {1} المطلوبة لم تعد صالحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.RemovalPending.Body" xml:space="preserve">
+    <value>تنتهي عضويتك في دور {0} في {1} ما لم يتم تجديد شهادة {2} الخاصة بك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Title" xml:space="preserve">
+    <value>ملخص الشهادات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Summary" xml:space="preserve">
+    <value>ملخص الشهادات ليوم {0}: منتهية: {1}، على وشك الانتهاء: {2}، في فترة السماح: {3}، أزيلوا من الأدوار: {4}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Expired" xml:space="preserve">
+    <value>منتهية: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Expiring" xml:space="preserve">
+    <value>على وشك الانتهاء: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.InGrace" xml:space="preserve">
+    <value>في فترة السماح: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.Removed" xml:space="preserve">
+    <value>تمت إزالتهم: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.ExpiringEntry" xml:space="preserve">
+    <value>{0} – {1} ({2} يوم)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.InGraceEntry" xml:space="preserve">
+    <value>{0} – {1} ({2}، حتى {3})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Certification.Digest.UnknownUnit" xml:space="preserve">
+    <value>الوحدة {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

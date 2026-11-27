@@ -250,4 +250,3844 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Protokoły</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Biblioteka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Protokoły dyspozytorskie: pytania i instrukcje według scenariusza, które uruchamia typ i priorytet zgłoszenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Biblioteka protokołów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Protokoły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Wyłączone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Użyte w zgłoszeniach (30 dni)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Szukaj protokołów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Nazwa lub kod</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>Wszystkie statusy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filtruj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Wyczyść</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>Nie ma jeszcze protokołów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>Żaden protokół nie pasuje do filtra.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>Pytania: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>Brak wyzwalaczy (tylko wybór ręczny)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>i jeszcze {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Zgłoszenia (30 dni)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Ostatnia zmiana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Edytuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Włącz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Wyłącz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>Protokół zniknie z biblioteki i nowych zgłoszeń; zgłoszenia, w których go użyto, nadal będą go pokazywać. Usunąć protokół</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Usunięty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>Ten protokół został usunięty. Jest przechowywany, bo odwołują się do niego zgłoszenia; nie jest proponowany ani dołączany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>Ten protokół jest wyłączony: nie jest proponowany w zgłoszeniach ani do nich dołączany. Włącz go, aby znowu z niego korzystać.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Szczegóły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Pasuje do</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>Brak wyzwalaczy: protokół nigdy nie jest proponowany, ale można go ręcznie dodać do zgłoszenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>Brak pytań: gdy wyzwalacz pasuje, protokół obowiązuje od razu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>Gdy wyzwalacz pasuje, protokół obowiązuje, jeśli wagi odpowiedzi sumują się co najmniej do {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Pobierz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Brak załączników.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>Brak tekstu protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>Protokół został zapisany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>Protokół został wyłączony.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>Protokół został włączony.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Edytuj protokół</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Nazwij protokół, napisz jego treść, a potem dodaj wyzwalacze, które go proponują, i pytania, które decydują, czy obowiązuje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Podstawowe dane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Do {0} liter, cyfr, spacji i znaków . _ / - (na przykład 09-E-01 lub SOG-204).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>Łączna waga odpowiedzi potrzebna, by proponowany protokół obowiązywał. Przy 0 obowiązuje niezależnie od odpowiedzi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Wyłączony</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>Wyłączony protokół zostaje w bibliotece, ale nie jest proponowany w zgłoszeniach ani do nich dołączany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Treść</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>Krótkie podsumowanie, do {0} znaków tekstu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Godziny rozpoczęcia i zakończenia są w strefie czasowej jednostki ({0}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Wyzwalacz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Usuń wyzwalacz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>Bez typu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>Ten wyzwalacz wskazuje typ zgłoszenia "{0}", który już nie istnieje. Wybierz typ zgłoszenia, aby nadal pasował.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (usunięty)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Usunięty priorytet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Usuń pytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Dodaj odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Usuń odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Usuń przy zapisie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Usuń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Dodaj pliki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>Do {0} plików na zapis, po {1} MB i łącznie {2} MB: obrazy, PDF, dokumenty Office, tekst i wideo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>Jeśli zapis się nie powiedzie, wybierz pliki ponownie: przeglądarka ich nie zachowuje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Zapisz protokół</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Priorytet: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Typ: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · priorytet {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Pasuje: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>Nie udało się odczytać protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>Nazwa protokołu jest wymagana.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>Nazwa może mieć najwyżej 100 znaków.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>Kod protokołu jest wymagany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>Kod może mieć do 16 liter, cyfr, spacji i znaków . _ / -.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>Opis może mieć najwyżej 500 znaków tekstu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>Minimalna waga musi wynosić od 0 do 1000.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>Wyzwalacz ma nieznany typ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>Wyzwalacz kończy się, zanim się zaczyna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>Wyzwalacz priorytetu wymaga jednego z priorytetów zgłoszeń jednostki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>Wyzwalacz typu wskazuje typ zgłoszenia, który nie należy do jednostki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>Nie udało się odczytać godziny rozpoczęcia lub zakończenia wyzwalacza.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Każde pytanie musi mieć treść.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Każde pytanie musi mieć co najmniej jedną odpowiedź.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Każda odpowiedź musi mieć treść.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Dodaj naraz najwyżej {0} plików.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>Protokół może mieć najwyżej {0} załączników.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>Pliki razem muszą mieć mniej niż {0} MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>Nie można dołączać plików typu ({0}).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>{0} jest za duży: każdy plik musi mieć mniej niż {1} MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>Zmiana wskazuje wyzwalacze, pytania lub odpowiedzi, które nie należą do tego protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>Wyzwalacze protokołów używające tego typu zgłoszenia ({0}) nadal pasują i pokazują nową nazwę: {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>Wyzwalacze protokołów używające usuniętego typu zgłoszenia ({0}) nie będą pasować, dopóki nie zostaną zmienione: {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>Wyzwalacze protokołów używające usuniętego priorytetu ({0}) nie będą pasować, dopóki nie zostaną zmienione: {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>To zgłoszenie nie ma protokołów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Zaproponowany przez wyzwalacz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Dodany ręcznie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Dołączony, zanim zaczęto zapisywać odpowiedzi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Usunięty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Usunięty przez {0} dnia {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Powód</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Wynik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} przy minimum {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Wynik {0} przy minimum {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Obowiązuje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>Nie na wszystkie pytania odpowiedziano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Poniżej minimum</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Bez odpowiedzi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>Dla tego protokołu nie zapisano odpowiedzi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Dołączony przez {0} dnia {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Tekst w chwili zadysponowania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Zmieniony od zadysponowania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Dołączony, zanim zaczęto zapisywać tekst w chwili zadysponowania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Aktualny tekst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Usuń ze zgłoszenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Dlaczego nie ma zastosowania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>Protokół został usunięty ze zgłoszenia. Pozostaje w zapisie wraz z powodem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Podaj powód, aby usunąć protokół ze zgłoszenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Protokoły proponowane przez typ i priorytet zgłoszenia, z wyzwalaczem, który pasuje. Odpowiedz na pytania każdego protokołu; możesz też dodać protokół ręcznie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>Żaden protokół nie pasuje do typu i priorytetu tego zgłoszenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Dodaj protokół ręcznie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Dodaj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Odpowiedz na wszystkie pytania, aby sprawdzić, czy ten protokół obowiązuje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Obowiązuje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>Nie obowiązuje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Pytanie {0} z {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Wstecz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Dalej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Wybierz protokół…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgmentLabel" xml:space="preserve">
+    <value>Potwierdzenie zapoznania się</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddCategoryHeader" xml:space="preserve">
+    <value>Dodaj kategorię</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddCommentButton" xml:space="preserve">
+    <value>Dodaj komentarz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiLabel" xml:space="preserve">
+    <value>AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>Wszystkie rodzaje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllProtocols" xml:space="preserve">
+    <value>Wszystkie protokoły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyApproverLabel" xml:space="preserve">
+    <value>Dowolny zatwierdzający</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyAudience" xml:space="preserve">
+    <value>Dowolni odbiorcy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyKindLabel" xml:space="preserve">
+    <value>Dowolny rodzaj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyOwner" xml:space="preserve">
+    <value>Dowolny opiekun</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalStepsHeader" xml:space="preserve">
+    <value>Etapy zatwierdzania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovalStepsHelp" xml:space="preserve">
+    <value>Wybierz role lub członków, którzy zatwierdzają, w odpowiedniej kolejności. Pozostaw puste, aby utworzyć jeden etap, o którym może zdecydować każdy członek z uprawnieniem do zatwierdzania protokołów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveHeader" xml:space="preserve">
+    <value>Zatwierdź tę wersję</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedLabel" xml:space="preserve">
+    <value>Zatwierdzono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceCertificationLabel" xml:space="preserve">
+    <value>Certyfikat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceEveryoneLabel" xml:space="preserve">
+    <value>Wszyscy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceEveryoneOption" xml:space="preserve">
+    <value>Wszyscy w dziale</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceGroupLabel" xml:space="preserve">
+    <value>Grupa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Tylko członkowie, dla których przeznaczony jest ten protokół, mogą go czytać — w bibliotece, aplikacjach i wyszukiwarce. Dyspozytorzy zawsze mogą czytać protokoły dyspozytorskie, a autorzy i zatwierdzający — wszystkie protokoły.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceLabel" xml:space="preserve">
+    <value>Odbiorcy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceRestrictedLabel" xml:space="preserve">
+    <value>Ograniczeni odbiorcy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceRestrictedOption" xml:space="preserve">
+    <value>Tylko członkowie tych grup, ról, zmian, typów jednostek lub certyfikatów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceRoleLabel" xml:space="preserve">
+    <value>Rola</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceShiftLabel" xml:space="preserve">
+    <value>Zmiana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AudienceUnitTypeLabel" xml:space="preserve">
+    <value>Typ jednostki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutosaveFailed" xml:space="preserve">
+    <value>Nie udało się automatycznie zapisać wersji roboczej. Zapisz stronę, aby zachować zmiany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutosaveSaved" xml:space="preserve">
+    <value>Wersja robocza zapisana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AutosaveSaving" xml:space="preserve">
+    <value>Zapisywanie wersji roboczej...</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Wstecz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToProtocolButton" xml:space="preserve">
+    <value>Wróć do protokołu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Zgłoszenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallsColumn" xml:space="preserve">
+    <value>Zgłoszenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoriesHeader" xml:space="preserve">
+    <value>Kategorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoriesIntro" xml:space="preserve">
+    <value>Uporządkuj bibliotekę w zagnieżdżone kategorie i określ, kto zatwierdza wersje w każdej z nich.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoriesTab" xml:space="preserve">
+    <value>Kategorie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Kategoria</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangeSummaryHelp" xml:space="preserve">
+    <value>Co się zmieniło i dlaczego. Jest wymagane do publikacji i przechowywane razem z wersją.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Podsumowanie zmian</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ChangesSinceHeader" xml:space="preserve">
+    <value>Zmiany od {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CitedVersionLabel" xml:space="preserve">
+    <value>Tekst w chwili dysponowania ({0})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentRefused" xml:space="preserve">
+    <value>Nie udało się zapisać komentarza.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompareButton" xml:space="preserve">
+    <value>Porównaj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompareFromLabel" xml:space="preserve">
+    <value>Od</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompareHeader" xml:space="preserve">
+    <value>Porównaj wersje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompareToLabel" xml:space="preserve">
+    <value>Do</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Kod treści</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentLockedNotice" xml:space="preserve">
+    <value>Ta wersja jest w weryfikacji lub została zatwierdzona, więc jej tekst jest zablokowany. Cofnij ją do wersji roboczej, aby ponownie edytować tekst.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Kopiuj jako nowy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateDraftButton" xml:space="preserve">
+    <value>Utwórz wersję roboczą</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DefaultApprovalStep" xml:space="preserve">
+    <value>Jeden etap, dowolny zatwierdzający</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DefaultReviewIntervalHelp" xml:space="preserve">
+    <value>Nowe protokoły otrzymują ten interwał przeglądu w dniach. 0 oznacza brak cyklu przeglądów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DefaultReviewIntervalLabel" xml:space="preserve">
+    <value>Domyślny interwał przeglądu (dni)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeleteCategoryConfirm" xml:space="preserve">
+    <value>Usuń kategorię</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeletedTextLabel" xml:space="preserve">
+    <value>Usunięty tekst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DepartmentLegalHoldCheckbox" xml:space="preserve">
+    <value>Blokada prawna całej biblioteki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DepartmentLegalHoldHelp" xml:space="preserve">
+    <value>Dopóki jest włączona, żadna wersja nie zostanie trwale usunięta, niezależnie od okresów przechowywania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscardDraftButton" xml:space="preserve">
+    <value>Porzuć wersję roboczą</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiscardDraftConfirm" xml:space="preserve">
+    <value>Porzucić tę wersję roboczą? Jej tekst zostanie usunięty.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftDiscardedMessage" xml:space="preserve">
+    <value>Wersja robocza została porzucona.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Edytuj wersję roboczą</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditingDraftCallout" xml:space="preserve">
+    <value>Edytujesz wersję roboczą ({0}), ostatnio zapisaną przez {1} dnia {2}. Obowiązujący tekst nie zmieni się, dopóki ta wersja nie zostanie zatwierdzona i opublikowana.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditingNoDraftCallout" xml:space="preserve">
+    <value>Obowiązuje wersja {0}. Zmiana tekstu i zapisanie rozpoczyna nową wersję roboczą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EffectiveColumn" xml:space="preserve">
+    <value>Obowiązuje od</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EffectiveOnHelp" xml:space="preserve">
+    <value>Pozostaw puste, aby opublikować od razu. Późniejsza data i godzina ({0}) planuje wersję; wejdzie ona w życie automatycznie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EffectiveOnLabel" xml:space="preserve">
+    <value>Obowiązuje od</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorCategoryName" xml:space="preserve">
+    <value>Wprowadź nazwę kategorii.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorKind" xml:space="preserve">
+    <value>Wybierz rodzaj protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExcludeFromAiCheckbox" xml:space="preserve">
+    <value>Wyklucz z AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExcludeFromAiHelp" xml:space="preserve">
+    <value>Nie uwzględniaj tego protokołu w żadnym indeksie ani odpowiedzi AI (dla treści licencjonowanych lub wrażliwych).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExcludedFromAi" xml:space="preserve">
+    <value>Wykluczony z AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Wygasa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresOnLabel" xml:space="preserve">
+    <value>Data wygaśnięcia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportButton" xml:space="preserve">
+    <value>Eksportuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FavoriteButton" xml:space="preserve">
+    <value>Dodaj do ulubionych</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FavoriteLabel" xml:space="preserve">
+    <value>Ulubiony</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FavoritesHeader" xml:space="preserve">
+    <value>Ulubione</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FirstVersionHeader" xml:space="preserve">
+    <value>Pierwsza wersja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FormerMemberOption" xml:space="preserve">
+    <value>Były członek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FullTextToggle" xml:space="preserve">
+    <value>Pokaż pełny tekst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Importuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportErrorFile" xml:space="preserve">
+    <value>Wybierz plik JSON o rozmiarze do 10 MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportErrorFormat" xml:space="preserve">
+    <value>Plik nie jest eksportem protokołów Resgrid (format resgrid-protocols, wersja 1).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportErrorNotAuthorized" xml:space="preserve">
+    <value>Nie masz uprawnień do tworzenia protokołów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportErrorTooMany" xml:space="preserve">
+    <value>Plik zawiera zbyt wiele protokołów. Importuj maksymalnie 500 naraz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportFileLabel" xml:space="preserve">
+    <value>Plik eksportu protokołów (JSON)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Importuj protokoły wyeksportowane z Resgrid lub zapisane w tym samym otwartym formacie. Każdy protokół jest tworzony jako wersja robocza do weryfikacji i publikacji; import niczego nie publikuje. Priorytety, typy zgłoszeń, kategorie, grupy, role i zmiany są dopasowywane po nazwie do tych w tym dziale.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportIntro" xml:space="preserve">
+    <value>Wczytaj protokoły z eksportu JSON.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportSkippedHeader" xml:space="preserve">
+    <value>Nie zaimportowano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportTab" xml:space="preserve">
+    <value>Importowanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportWarningsHeader" xml:space="preserve">
+    <value>Zaimportowano ze zmianami</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>Zaimportowano protokoły jako wersje robocze: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InForceLabel" xml:space="preserve">
+    <value>Obowiązuje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InsertedLabel" xml:space="preserve">
+    <value>Dodany tekst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindClinicalGuideline" xml:space="preserve">
+    <value>Wytyczne kliniczne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindDispatch" xml:space="preserve">
+    <value>Protokół dyspozytorski</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindHelp" xml:space="preserve">
+    <value>Protokoły dyspozytorskie i procedury mogą być proponowane przy zgłoszeniach na podstawie wyzwalaczy. Regulaminy i SOP domyślnie wymagają od członków potwierdzenia zapoznania się.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindHelpClinicalGuideline" xml:space="preserve">
+    <value>Wytyczne kliniczne dotyczące opieki nad pacjentem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindHelpDispatch" xml:space="preserve">
+    <value>Dopasowywany do zgłoszeń według typu, priorytetu i godziny, z kluczowymi pytaniami.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindHelpPolicy" xml:space="preserve">
+    <value>Regulamin działu, z którym członkowie muszą potwierdzić zapoznanie się.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindHelpProcedure" xml:space="preserve">
+    <value>Procedura krok po kroku lub lista kontrolna; może być proponowana przy zgłoszeniach.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindHelpReference" xml:space="preserve">
+    <value>Materiały referencyjne: mapy, kontakty, tabele.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindHelpSog" xml:space="preserve">
+    <value>Standardowa procedura operacyjna lub wytyczne operacyjne.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Rodzaj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindPolicy" xml:space="preserve">
+    <value>Regulamin</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindProcedure" xml:space="preserve">
+    <value>Procedura lub lista kontrolna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindReference" xml:space="preserve">
+    <value>Materiał referencyjny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindSog" xml:space="preserve">
+    <value>SOP / wytyczne operacyjne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KpiDueForReview" xml:space="preserve">
+    <value>Do przeglądu (30 dni)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KpiInReview" xml:space="preserve">
+    <value>W weryfikacji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KpiPublished" xml:space="preserve">
+    <value>Opublikowane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LastReviewedLabel" xml:space="preserve">
+    <value>Ostatni przegląd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LegalHoldCheckbox" xml:space="preserve">
+    <value>Blokada prawna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LegalHoldHelp" xml:space="preserve">
+    <value>Dopóki obowiązuje blokada prawna, żadna wersja tego protokołu nie zostanie trwale usunięta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LegalHoldLabel" xml:space="preserve">
+    <value>Blokada prawna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>Licencja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicensedContentCheckbox" xml:space="preserve">
+    <value>Treść licencjonowana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicensedContentHelp" xml:space="preserve">
+    <value>Treść podmiotu zewnętrznego objęta licencją: nigdy nie jest udostępniana poza działem ani upubliczniana.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LicensedContentLabel" xml:space="preserve">
+    <value>Treść licencjonowana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorAlreadyDecided" xml:space="preserve">
+    <value>O tym etapie już zdecydowano albo wcześniejszy etap tej weryfikacji został już przez Ciebie zatwierdzony.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorArtifactChanged" xml:space="preserve">
+    <value>Tekst nie odpowiada już temu, co zostało podpisane. Wersja musi zostać ponownie zweryfikowana.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorChangeSummaryRequired" xml:space="preserve">
+    <value>Wprowadź podsumowanie zmian, aby opublikować.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorDraftExists" xml:space="preserve">
+    <value>Ten protokół ma już otwartą wersję roboczą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorEffectiveDateInPast" xml:space="preserve">
+    <value>Data wejścia w życie jest w przeszłości.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorEmptyContent" xml:space="preserve">
+    <value>Wersja robocza nie zawiera tekstu. Napisz protokół, zanim go prześlesz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorInvalidInput" xml:space="preserve">
+    <value>Niektóre wartości są nieprawidłowe.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorNotApproved" xml:space="preserve">
+    <value>Opublikować można tylko zatwierdzoną wersję.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorNotAuthorized" xml:space="preserve">
+    <value>Nie masz uprawnień do wykonania tej czynności.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorNotDraft" xml:space="preserve">
+    <value>Zmienić lub przesłać można tylko wersję roboczą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorNotFound" xml:space="preserve">
+    <value>Nie znaleziono protokołu ani wersji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorNotInReview" xml:space="preserve">
+    <value>Ta wersja nie oczekuje na weryfikację.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorNotPublished" xml:space="preserve">
+    <value>Ten protokół nie ma obowiązującej wersji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorOpenComments" xml:space="preserve">
+    <value>Przed zatwierdzeniem rozwiąż otwarte komentarze weryfikacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorPasskeyRequired" xml:space="preserve">
+    <value>Twój dział wymaga klucza dostępu do tego podpisu. Użyj opcji Podpisz kluczem dostępu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorRetentionProtected" xml:space="preserve">
+    <value>Przesłane i opublikowane wersje są przechowywane i nie można ich usunąć.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorSignatureRequired" xml:space="preserve">
+    <value>Ten podpis wymaga ponownej weryfikacji tożsamości. Potwierdź ją drugim składnikiem lub kluczem dostępu i podpisz ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorStaleCopy" xml:space="preserve">
+    <value>Ktoś inny zmienił ten protokół po jego otwarciu przez Ciebie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleLabel" xml:space="preserve">
+    <value>Cykl życia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LoggedColumn" xml:space="preserve">
+    <value>Zarejestrowano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Główna (następna liczba całkowita)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Członkowie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MessageLabel" xml:space="preserve">
+    <value>Wiadomość</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Podrzędna (następne miejsce po przecinku)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>Nowa wersja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Dalej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCallsYet" xml:space="preserve">
+    <value>Żadne zgłoszenie nie powołało się jeszcze na ten protokół.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCategoriesYet" xml:space="preserve">
+    <value>Brak kategorii.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>Bez kategorii</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoOutline" xml:space="preserve">
+    <value>Nagłówki w tekście tworzą tutaj spis treści.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoReviewCycle" xml:space="preserve">
+    <value>Brak cyklu przeglądów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoTextChanges" xml:space="preserve">
+    <value>Tekst jest taki sam.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotCurrentVersionNotice" xml:space="preserve">
+    <value>Czytasz {0}. Obowiązująca wersja to {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotPublishedYet" xml:space="preserve">
+    <value>Nieopublikowany</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotRequiredLabel" xml:space="preserve">
+    <value>Niewymagane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotSubmittedYet" xml:space="preserve">
+    <value>Jeszcze nie przesłano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NumberHelp" xml:space="preserve">
+    <value>Własny numer, np. SOP-204. Jeśli pole pozostanie puste, numer nada wzorzec numeracji protokołów działu (Dział, Numeracja dokumentów).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NumberLabel" xml:space="preserve">
+    <value>Numer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OnHoldLabel" xml:space="preserve">
+    <value>Objęty blokadą prawną</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Otwórz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenDraftNote" xml:space="preserve">
+    <value>Następna wersja: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>otwarte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenReviewButton" xml:space="preserve">
+    <value>Otwórz weryfikację</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenVersionCallout" xml:space="preserve">
+    <value>Trwają prace nad nową wersją: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutlineHeader" xml:space="preserve">
+    <value>Spis treści</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnerHelp" xml:space="preserve">
+    <value>Opiekun dba o aktualność protokołu: trafiają do niego przypomnienia o przeglądach i sugestie członków.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnerLabel" xml:space="preserve">
+    <value>Opiekun</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ParentCategoryLabel" xml:space="preserve">
+    <value>Kategoria nadrzędna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Oczekuje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewAsMemberButton" xml:space="preserve">
+    <value>Podgląd jako członek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewAsMemberNotice" xml:space="preserve">
+    <value>Tak członkowie zobaczą tę wersję po jej opublikowaniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintButton" xml:space="preserve">
+    <value>Drukuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolCopiedMessage" xml:space="preserve">
+    <value>Utworzono kopię jako nowy protokół w wersji roboczej.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolCreatedMessage" xml:space="preserve">
+    <value>Protokół został utworzony jako wersja robocza. Dokończ go tutaj, a następnie prześlij do weryfikacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolTextHeadingsHelp" xml:space="preserve">
+    <value>Używaj nagłówków do porządkowania tekstu: tworzą spis treści i kotwice, do których odnoszą się komentarze weryfikacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Opublikuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Publikacja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionOption" xml:space="preserve">
+    <value>Pytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadAndSignStepUpCheckbox" xml:space="preserve">
+    <value>Potwierdzenia zapoznania się z podpisem wymagają ponownej weryfikacji tożsamości (L2) zamiast zalogowanej sesji (L1)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>Ostatnio otwierane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordReviewHeader" xml:space="preserve">
+    <value>Przejrzano, bez zmian</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordReviewHelp" xml:space="preserve">
+    <value>Odnotuj, że obowiązująca wersja została przejrzana i nadal jest poprawna. Data następnego przeglądu przesuwa się; nie powstaje nowa wersja i nikt nie musi ponownie potwierdzać zapoznania się.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordedBeforeVersions" xml:space="preserve">
+    <value>Zapisano przed wprowadzeniem wersji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Odrzuć</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectHeader" xml:space="preserve">
+    <value>Odrzucenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Powód</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectedLabel" xml:space="preserve">
+    <value>Odrzucono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>Wersja została zwrócona autorom jako wersja robocza.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Odpowiedz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>Odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequirePasskeyForApprovalCheckbox" xml:space="preserve">
+    <value>Zatwierdzenia i potwierdzenia przeglądu muszą być podpisywane kluczem dostępu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Wymagane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiresAcknowledgmentCheckbox" xml:space="preserve">
+    <value>Członkowie muszą potwierdzić zapoznanie się z tą wersją</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiresAcknowledgmentHelp" xml:space="preserve">
+    <value>Domyślnie włączone dla regulaminów i SOP. Przydziały zapoznania się z podpisem pojawią się w późniejszej aktualizacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Rozwiąż</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResolvedLabel" xml:space="preserve">
+    <value>Rozwiązane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetentionHeader" xml:space="preserve">
+    <value>Przechowywanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetentionHelp" xml:space="preserve">
+    <value>Zastąpione i wycofane z obiegu wersje są domyślnie przechowywane. Wprowadź liczbę dni, przez które dany rodzaj je przechowuje, zanim będzie można je trwale usunąć; 0 oznacza ich zachowanie. Wersja, na którą powołuje się zgłoszenie, ani nic objętego blokadą prawną nigdy nie jest trwale usuwane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Wycofaj z obiegu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Wycofaj protokół z obiegu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>Protokół został wycofany z obiegu. Jego wersje pozostają dla zgłoszeń i historii, które się na nie powołują.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewAny" xml:space="preserve">
+    <value>Dowolna data przeglądu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewCommentLabel" xml:space="preserve">
+    <value>Komentarz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewCommentsHeader" xml:space="preserve">
+    <value>Komentarze weryfikacji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewDue30" xml:space="preserve">
+    <value>Termin w ciągu 30 dni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewDueCallout" xml:space="preserve">
+    <value>Termin przeglądu tego protokołu: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewDueLabel" xml:space="preserve">
+    <value>Termin przeglądu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>Przegląd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewIntervalHelp" xml:space="preserve">
+    <value>Liczba dni między przeglądami. Opiekun otrzymuje przypomnienie 30 i 7 dni wcześniej oraz po upływie terminu. Puste pole oznacza brak cyklu przeglądów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewIntervalLabel" xml:space="preserve">
+    <value>Interwał przeglądu (dni)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewNowButton" xml:space="preserve">
+    <value>Przejrzyj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewOverdue" xml:space="preserve">
+    <value>Po terminie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewOverdueCallout" xml:space="preserve">
+    <value>Termin przeglądu tego protokołu upłynął {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewQueueCallout" xml:space="preserve">
+    <value>Wersje oczekujące na Twoje zatwierdzenie: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewQueueEmpty" xml:space="preserve">
+    <value>Nic nie oczekuje na weryfikację.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewQueueIntro" xml:space="preserve">
+    <value>Wersje przesłane do weryfikacji wraz z etapami, o których możesz zdecydować.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewQueueTab" xml:space="preserve">
+    <value>Kolejka weryfikacji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewRecordedMessage" xml:space="preserve">
+    <value>Przegląd został zapisany i podpisany. Data następnego przeglądu została przesunięta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewSettingsHeader" xml:space="preserve">
+    <value>Cykl przeglądów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveAndSubmitButton" xml:space="preserve">
+    <value>Zapisz i prześlij do weryfikacji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveCategoryButton" xml:space="preserve">
+    <value>Zapisz kategorię</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Zapisz ustawienia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>Wersja {0} wejdzie w życie zgodnie z planem dnia {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SectionLabel" xml:space="preserve">
+    <value>Sekcja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendSuggestionButton" xml:space="preserve">
+    <value>Wyślij</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Poziomy podpisu, cykle przeglądów i przechowywanie dla biblioteki protokołów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsSavedMessage" xml:space="preserve">
+    <value>Ustawienia protokołów zostały zapisane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Ustawienia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Pokaż</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignatureFloorsHelp" xml:space="preserve">
+    <value>Zatwierdzenia i potwierdzenia przeglądu zawsze wymagają ponownej weryfikacji tożsamości (L2); zapoznanie się z podpisem wymaga co najmniej zalogowanej sesji (L1). Możesz wymagać więcej, nigdy mniej.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignatureSettingsHeader" xml:space="preserve">
+    <value>Podpisy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignaturesTab" xml:space="preserve">
+    <value>Podpisy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SortOrderLabel" xml:space="preserve">
+    <value>Kolejność sortowania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StaleProtocolMessage" xml:space="preserve">
+    <value>Ten protokół został zmieniony przez {0} dnia {1}, już po jego otwarciu przez Ciebie. Odśwież stronę, aby zobaczyć te zmiany, a następnie wprowadź swoje ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Zatwierdzony</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Wersja robocza</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>W weryfikacji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusPublished" xml:space="preserve">
+    <value>Opublikowany</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusRetired" xml:space="preserve">
+    <value>Wycofany z obiegu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>Zaplanowany</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Etap</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>Prześlij do weryfikacji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Przesłano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>Wersja została przesłana do weryfikacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SuggestHeader" xml:space="preserve">
+    <value>Zaproponuj zmianę lub zadaj pytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SuggestHelp" xml:space="preserve">
+    <value>Twoja wiadomość trafi do opiekuna protokołu i zostanie zachowana razem z następną wersją roboczą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SuggestKindLabel" xml:space="preserve">
+    <value>Typ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SuggestionOption" xml:space="preserve">
+    <value>Sugestia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TagsHelp" xml:space="preserve">
+    <value>Oddziel tagi przecinkami.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Tagi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ThreadsHeader" xml:space="preserve">
+    <value>Sugestie i pytania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggersKindHelp" xml:space="preserve">
+    <value>Przy zgłoszeniach proponowane są tylko protokoły dyspozytorskie i procedury, dlatego ten rodzaj nie ma wyzwalaczy ani kluczowych pytań.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UnfavoriteButton" xml:space="preserve">
+    <value>Usuń z ulubionych</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsageHelp" xml:space="preserve">
+    <value>Liczba zgłoszeń z ostatnich 30 dni, w których go użyto: {0}. Najnowsze zgłoszenia, które się na niego powołują:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UsageTab" xml:space="preserve">
+    <value>Użycie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Wersja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionKindLabel" xml:space="preserve">
+    <value>Numer wersji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Wersja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatusApproved" xml:space="preserve">
+    <value>Zatwierdzona</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatusDraft" xml:space="preserve">
+    <value>Robocza</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatusInReview" xml:space="preserve">
+    <value>W weryfikacji</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatusLegacy" xml:space="preserve">
+    <value>Tekst historyczny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatusPublished" xml:space="preserve">
+    <value>Opublikowana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatusRetired" xml:space="preserve">
+    <value>Wycofana z obiegu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionStatusSuperseded" xml:space="preserve">
+    <value>Zastąpiona</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionsTab" xml:space="preserve">
+    <value>Wersje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WholeProtocolOption" xml:space="preserve">
+    <value>Cały protokół</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Cofnij do wersji roboczej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnLabel" xml:space="preserve">
+    <value>Cofnięta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>Wersja została cofnięta i ponownie jest wersją roboczą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardAudienceStep" xml:space="preserve">
+    <value>Odbiorcy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardBasicsStep" xml:space="preserve">
+    <value>Informacje podstawowe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardContentStep" xml:space="preserve">
+    <value>Treść</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardKindHelp" xml:space="preserve">
+    <value>Jakiego rodzaju jest to protokół? Rodzaj decyduje, czy może być proponowany przy zgłoszeniach i czy członkowie domyślnie potwierdzają zapoznanie się z nim.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardKindStep" xml:space="preserve">
+    <value>Rodzaj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardReviewHelp" xml:space="preserve">
+    <value>Sprawdź wprowadzone dane. Protokół zostanie utworzony jako wersja robocza; możesz go dalej edytować przed przesłaniem do weryfikacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardReviewStep" xml:space="preserve">
+    <value>Podsumowanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardTriggersStep" xml:space="preserve">
+    <value>Wyzwalacze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WordsAdded" xml:space="preserve">
+    <value>Dodane słowa: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WordsRemoved" xml:space="preserve">
+    <value>Usunięte słowa: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckAwaitingQuizLabel" xml:space="preserve">
+    <value>Podpisano; oczekuje na quiz w {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckBundleOrderHelp" xml:space="preserve">
+    <value>Miejsce tego protokołu w pakiecie wdrożeniowym nowego członka: niższe liczby są pierwsze.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckBundleOrderLabel" xml:space="preserve">
+    <value>Kolejność wdrożenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckCannotSignNotice" xml:space="preserve">
+    <value>Tej wersji nie można teraz potwierdzić. Przeczytaj obowiązującą wersję.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckCarriedForwardLabel" xml:space="preserve">
+    <value>Przeniesione z poprzedniej wersji pomocniczej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckCompletedHeader" xml:space="preserve">
+    <value>Potwierdzone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckDueDaysHelp" xml:space="preserve">
+    <value>Liczba dni na potwierdzenie, liczona od przypisania lub dołączenia do odbiorców. Puste oznacza {0} dni.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckDueDaysLabel" xml:space="preserve">
+    <value>Dni na potwierdzenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckDueLabel" xml:space="preserve">
+    <value>Termin {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckDueWasLabel" xml:space="preserve">
+    <value>Termin minął {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckFutureVersionNotice" xml:space="preserve">
+    <value>Ta wersja obowiązuje od {0}. Możesz ją potwierdzić już teraz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckNoQuizOption" xml:space="preserve">
+    <value>Bez quizu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckNotAssignedNotice" xml:space="preserve">
+    <value>Nie musisz potwierdzać tej wersji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckOfflineLabel" xml:space="preserve">
+    <value>Podpisano offline</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckOutstandingLabel" xml:space="preserve">
+    <value>Do potwierdzenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckPromptAwaitingQuiz" xml:space="preserve">
+    <value>Podpisano ten protokół. Zostanie ukończony po zaliczeniu quizu w {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckPromptDue" xml:space="preserve">
+    <value>Przeczytaj i podpisz {0} do {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckPromptOverdue" xml:space="preserve">
+    <value>Potwierdzenie {0} było wymagane do {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckQuizRequiredNotice" xml:space="preserve">
+    <value>Po podpisaniu zalicz quiz w {0}, aby ukończyć potwierdzenie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckQuizTrainingHelp" xml:space="preserve">
+    <value>Szkolenie z quizem. Jest przypisywane razem z protokołem, a potwierdzenie kończy się dopiero po zaliczeniu quizu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckQuizTrainingLabel" xml:space="preserve">
+    <value>Szkolenie z quizem</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckSettingsButton" xml:space="preserve">
+    <value>Ustawienia potwierdzeń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckSettingsHeader" xml:space="preserve">
+    <value>Ustawienia potwierdzania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckSettingsInvalidTraining" xml:space="preserve">
+    <value>Wybierz szkolenie tej jednostki z quizem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckSettingsSavedMessage" xml:space="preserve">
+    <value>Zapisano ustawienia potwierdzeń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckSignedNotice" xml:space="preserve">
+    <value>Podpisano tę wersję {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckSourceAudienceEntry" xml:space="preserve">
+    <value>Przypisane po dołączeniu do odbiorców</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckState_acknowledged" xml:space="preserve">
+    <value>Potwierdzone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckState_awaiting_quiz" xml:space="preserve">
+    <value>Oczekuje na quiz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckState_open" xml:space="preserve">
+    <value>Jeszcze niepodpisane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckState_overdue" xml:space="preserve">
+    <value>Po terminie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckState_withdrawn" xml:space="preserve">
+    <value>Wycofane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckState_superseded" xml:space="preserve">
+    <value>Zastąpione nowszą wersją</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedLabel" xml:space="preserve">
+    <value>Potwierdzone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Dziękujemy. Potwierdzenie zostało zapisane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedAwaitingQuizMessage" xml:space="preserve">
+    <value>Podpis został zapisany. Zalicz quiz, aby ukończyć potwierdzenie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeOutcomeAcknowledged" xml:space="preserve">
+    <value>Potwierdzono.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeOutcomeAwaitingQuiz" xml:space="preserve">
+    <value>Podpisano. Zalicz quiz, aby ukończyć.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeOutcomeNotAssigned" xml:space="preserve">
+    <value>Ta wersja nie wymaga od Ciebie potwierdzenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeOutcomeNotOpened" xml:space="preserve">
+    <value>Otwórz i przeczytaj wersję przed podpisaniem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeOutcomeReadNewerVersion" xml:space="preserve">
+    <value>Obowiązuje nowsza wersja. Przeczytaj ją i podpisz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeOutcomeContentChanged" xml:space="preserve">
+    <value>Treść zmieniła się od otwarcia. Przeczytaj ją ponownie przed podpisaniem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeOutcomeStepUpRequired" xml:space="preserve">
+    <value>Twoja jednostka wymaga drugiego kroku weryfikacji do podpisu. Spróbuj ponownie i go ukończ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeOutcomeAlreadyAcknowledged" xml:space="preserve">
+    <value>Ta wersja została już potwierdzona.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeOutcomeInvalidRequest" xml:space="preserve">
+    <value>Nie udało się zapisać potwierdzenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsLabel" xml:space="preserve">
+    <value>Działania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllGroupsOption" xml:space="preserve">
+    <value>Wszystkie grupy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AllProtocolsOption" xml:space="preserve">
+    <value>Wszystkie protokoły (przegląd)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedLabel" xml:space="preserve">
+    <value>Przypisane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AvailableLabel" xml:space="preserve">
+    <value>Dostępne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BankQuizzesLabel" xml:space="preserve">
+    <value>Quizy potwierdzające z banków pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulkUploadButton" xml:space="preserve">
+    <value>Prześlij jako wersje robocze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulkUploadCreatedDraft" xml:space="preserve">
+    <value>Utworzono wersję roboczą</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulkUploadDuplicate" xml:space="preserve">
+    <value>Ten sam plik przesłano dwukrotnie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulkUploadFilesHelp" xml:space="preserve">
+    <value>Pliki PDF i Word (DOCX) lub archiwum zip, do {0} plików. Nazwa typu "SOG-204 Mayday.pdf" daje numer i tytuł.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulkUploadFilesLabel" xml:space="preserve">
+    <value>Pliki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulkUploadIntro" xml:space="preserve">
+    <value>Wczytaj od razu cały segregator procedur i polityk. Każdy plik staje się wersją roboczą do jednego przeglądu i publikacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulkUploadNoFiles" xml:space="preserve">
+    <value>Wybierz co najmniej jeden plik PDF, DOCX lub zip.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulkUploadResultSummary" xml:space="preserve">
+    <value>{0} z {1} plików stało się roboczymi protokołami.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulkUploadTab" xml:space="preserve">
+    <value>Przesyłanie zbiorcze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinApprovalLabel" xml:space="preserve">
+    <value>Zatwierdzenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinAudienceHelp" xml:space="preserve">
+    <value>Bez wybranej grupy lub roli komunikat trafia do całej jednostki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinAwaitingApproval" xml:space="preserve">
+    <value>Oczekuje na kontrasygnatę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinContentHelp" xml:space="preserve">
+    <value>Krótko: do {0} znaków. Dłuższe polecenie powinno być protokołem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinContentLabel" xml:space="preserve">
+    <value>Treść komunikatu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinCountersignedBy" xml:space="preserve">
+    <value>Kontrasygnowane przez {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinCountersignedMessage" xml:space="preserve">
+    <value>Komunikat został kontrasygnowany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinExpiredLabel" xml:space="preserve">
+    <value>Wygasło</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinExpiresHelp" xml:space="preserve">
+    <value>Opuszcza bibliotekę sam o tej godzinie; najwyżej {0} dni naprzód.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinExpiresLabel" xml:space="preserve">
+    <value>Wygasa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinInvalidMessage" xml:space="preserve">
+    <value>Sprawdź tytuł, treść i wygaśnięcie (w przyszłości, w dozwolonym limicie dni).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinIssuedBy" xml:space="preserve">
+    <value>Wydane przez {0} dnia {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinIssuedMessage" xml:space="preserve">
+    <value>Komunikat obowiązuje i został wysłany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinMustReadLabel" xml:space="preserve">
+    <value>Obowiązkowa lektura: każdy odbiorca musi ją potwierdzić</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinTitleLabel" xml:space="preserve">
+    <value>Tytuł</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinWithdrawReasonLabel" xml:space="preserve">
+    <value>Powód</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinWithdrawnLabel" xml:space="preserve">
+    <value>Wycofany</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinWithdrawnMessage" xml:space="preserve">
+    <value>Komunikat został wycofany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinsIntro" xml:space="preserve">
+    <value>Komunikaty bezpieczeństwa i polecenia tymczasowe, które nie mogą czekać na przegląd. Obowiązują od razu i są zatwierdzane później.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinsListHeader" xml:space="preserve">
+    <value>Komunikaty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BulletinsTab" xml:space="preserve">
+    <value>Komunikaty</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComingWithCoursesLabel" xml:space="preserve">
+    <value>Pojawi się wraz z kursami LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceHeader" xml:space="preserve">
+    <value>Zgodność potwierdzeń protokołów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceIntro" xml:space="preserve">
+    <value>Kto przeczytał i podpisał każdą wersję protokołu, według grup.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceTab" xml:space="preserve">
+    <value>Zgodność</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Kontrasygnuj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CurrentDocumentLabel" xml:space="preserve">
+    <value>Obowiązuje: {0} (wersja {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentFileHelp" xml:space="preserve">
+    <value>PDF lub Word (DOCX), do 30 MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentFileLabel" xml:space="preserve">
+    <value>Plik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentMissingNotice" xml:space="preserve">
+    <value>Ta wersja nie ma pliku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentProtocolCreatedMessage" xml:space="preserve">
+    <value>Protokół utworzono z pliku jako wersję roboczą.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentTitleHelp" xml:space="preserve">
+    <value>Puste pole bierze tytuł z nazwy pliku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentTitleLabel" xml:space="preserve">
+    <value>Tytuł</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocumentVersionUploadedMessage" xml:space="preserve">
+    <value>Plik stanowi treść nowej wersji roboczej.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DocxNoViewerNotice" xml:space="preserve">
+    <value>Pliki Word otwierają się w Wordzie. Pobierz go lub przeczytaj tekst poniżej.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DownloadDocumentButton" xml:space="preserve">
+    <value>Pobierz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueLabel" xml:space="preserve">
+    <value>Termin</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Eksportuj CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Eksportuj PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExtractedTextHeader" xml:space="preserve">
+    <value>Tekst dokumentu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExtractedTextNone_encrypted" xml:space="preserve">
+    <value>Dokument jest zabezpieczony, więc nie odczytano tekstu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExtractedTextNone_scanned" xml:space="preserve">
+    <value>Dokument nie ma warstwy tekstowej (wygląda na skan).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExtractedTextNone_too_large" xml:space="preserve">
+    <value>Dokument jest za duży, aby odczytać tekst.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExtractedTextNone_unsupported" xml:space="preserve">
+    <value>Z tego rodzaju pliku nie da się odczytać tekstu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExtractedTextNone_unreadable" xml:space="preserve">
+    <value>Nie udało się odczytać tekstu dokumentu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExtractedTextNone_timeout" xml:space="preserve">
+    <value>Odczyt tekstu trwał zbyt długo i został przerwany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExtractedTextPending" xml:space="preserve">
+    <value>Tekst jest odczytywany i wkrótce się tu pojawi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FoldersAsCategoriesLabel" xml:space="preserve">
+    <value>Foldery w zip stają się kategoriami</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Grupa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HideCompletedButton" xml:space="preserve">
+    <value>Ukryj potwierdzone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportCreatedListHeader" xml:space="preserve">
+    <value>Utworzone jako wersje robocze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportPreviewButton" xml:space="preserve">
+    <value>Podgląd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportPreviewListHeader" xml:space="preserve">
+    <value>Zostałyby utworzone jako wersje robocze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ImportPreviewMessage" xml:space="preserve">
+    <value>Podgląd {1}: utworzono by {0} protokołów jako wersje robocze. Niczego nie zapisano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueBulletinButton" xml:space="preserve">
+    <value>Wydaj komunikat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueBulletinConfirm" xml:space="preserve">
+    <value>Wydać teraz ten komunikat i wysłać go odbiorcom?</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueBulletinHeader" xml:space="preserve">
+    <value>Nowy komunikat priorytetowy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IssueBulletinHelp" xml:space="preserve">
+    <value>Komunikat obowiązuje od razu i trafia jako powiadomienie push. Potem zatwierdzający kontrasygnuje go lub wycofuje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindBulletin" xml:space="preserve">
+    <value>Komunikat priorytetowy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorFileRequired" xml:space="preserve">
+    <value>Najpierw prześlij dokument.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorFileTypeNotAllowed" xml:space="preserve">
+    <value>Treścią protokołu mogą być tylko pliki PDF i Word (DOCX).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorFileTooLarge" xml:space="preserve">
+    <value>Plik jest większy niż 30 MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LmsAcknowledgmentExtrasHeader" xml:space="preserve">
+    <value>Z dodatkiem LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Członek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MicroLearningLabel" xml:space="preserve">
+    <value>Cotygodniowe pytania scenariuszowe z wybranych protokołów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoveCategoryToProtocolsLabel" xml:space="preserve">
+    <value>Przenieś tę kategorię do protokołów jako</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoveDocumentFailedError" xml:space="preserve">
+    <value>Nie udało się przenieść dokumentu do protokołów. Można przenosić tylko pliki PDF i Word (DOCX) do 30 MB.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoveProtectedDocumentError" xml:space="preserve">
+    <value>Chroniony dokument pozostaje w dokumentach.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoveToProtocolsButton" xml:space="preserve">
+    <value>Przenieś do protokołów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoveToProtocolsConfirm" xml:space="preserve">
+    <value>Przenieść do protokołów? Stanie się roboczym protokołem do przeglądu, a stary link otworzy protokół.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MovedCategoryMessage" xml:space="preserve">
+    <value>Przeniesiono do protokołów: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MustReadHeader" xml:space="preserve">
+    <value>Obowiązkowa lektura</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyAcknowledgmentsIntro" xml:space="preserve">
+    <value>Protokoły i komunikaty do przeczytania i podpisania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyAcknowledgmentsTab" xml:space="preserve">
+    <value>Moje potwierdzenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Nazwa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewDocumentProtocolHeader" xml:space="preserve">
+    <value>Nowy protokół z dokumentu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewDocumentProtocolIntro" xml:space="preserve">
+    <value>Prześlij plik PDF lub Word. Stanie się treścią protokołu, z tym samym przeglądem, publikacją i potwierdzaniem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAcknowledgmentVersion" xml:space="preserve">
+    <value>Żadna opublikowana wersja tego protokołu nie wymaga potwierdzenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoAcknowledgmentsYet" xml:space="preserve">
+    <value>Brak jeszcze potwierdzeń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoBulletins" xml:space="preserve">
+    <value>Brak jeszcze komunikatów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCompletedAcknowledgments" xml:space="preserve">
+    <value>Jeszcze nic nie potwierdzono.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NothingToAcknowledge" xml:space="preserve">
+    <value>Nie masz nic do potwierdzenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Otwórz w nowej karcie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverdueLabel" xml:space="preserve">
+    <value>Po terminie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PageNumberLabel" xml:space="preserve">
+    <value>Strona {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadAndSignButton" xml:space="preserve">
+    <value>Przeczytaj i podpisz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadAndSignHeader" xml:space="preserve">
+    <value>Potwierdź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadAndSignHelp" xml:space="preserve">
+    <value>Podpis zapisuje Twoje imię i nazwisko, czas oraz dokładnie tę wersję.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadAndSignStatement" xml:space="preserve">
+    <value>Przeczytałem(-am) protokół {0} "{1}" w wersji {2} (treść {3}), rozumiem go i będę go przestrzegać.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadBulletinButton" xml:space="preserve">
+    <value>Czytaj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RequiresAcknowledgmentLabel" xml:space="preserve">
+    <value>Członkowie muszą go przeczytać i podpisać</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultLabel" xml:space="preserve">
+    <value>Wynik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Zapisz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowCompletedButton" xml:space="preserve">
+    <value>Pokaż potwierdzone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignAcknowledgmentButton" xml:space="preserve">
+    <value>Podpisz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SignedLabel" xml:space="preserve">
+    <value>Podpisano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StandardsReportButton" xml:space="preserve">
+    <value>Dowód zgodności</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StandardsReportEmpty" xml:space="preserve">
+    <value>Żaden protokół nie ma jeszcze przypisanego standardu. Dodaj standardy w ustawieniach potwierdzeń protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StandardsReportIntro" xml:space="preserve">
+    <value>Protokoły według standardu (CFAI, CAAS, CALEA, NFPA, ISO 45001 i własne), z dowodami potwierdzeń i zatwierdzeń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StandardsReportLmsOnly" xml:space="preserve">
+    <value>Raport dowodu zgodności jest częścią dodatku LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StandardsTagsHelp" xml:space="preserve">
+    <value>Oddzielone przecinkami, np. CFAI, CALEA.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StandardsTagsLabel" xml:space="preserve">
+    <value>Standardy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StandardsTagsLmsOnly" xml:space="preserve">
+    <value>Mapowanie standardów jest częścią dodatku LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>Stan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakeQuizButton" xml:space="preserve">
+    <value>Rozwiąż quiz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadBlockedByReview" xml:space="preserve">
+    <value>Wersja tego protokołu jest w przeglądzie. Wycofaj ją lub zakończ przegląd przed przesłaniem nowego pliku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadDocumentButton" xml:space="preserve">
+    <value>Prześlij</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadNewVersionButton" xml:space="preserve">
+    <value>Prześlij nową wersję</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="UploadNewVersionHelp" xml:space="preserve">
+    <value>Plik stanie się treścią kolejnej wersji, roboczej do przeglądu i publikacji. Do tego czasu obowiązuje obecna wersja.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VerifiedApprovalsLabel" xml:space="preserve">
+    <value>{0} zweryfikowanych zatwierdzeń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawBulletinButton" xml:space="preserve">
+    <value>Wycofaj</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawBulletinConfirm" xml:space="preserve">
+    <value>Wycofać komunikat? Przestanie obowiązywać od razu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardProtocolsFileHelp" xml:space="preserve">
+    <value>Plik wyeksportowany z biblioteki protokołów Resgrid (format resgrid-protocols, wersja 1), do 10 MB i 500 protokołów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WizardProtocolsHelp" xml:space="preserve">
+    <value>Przenieś protokoły w otwartym formacie wymiany. Najpierw podgląd; import tworzy wersje robocze do jednego przeglądu i publikacji. Nic nie jest publikowane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelCaution" xml:space="preserve">
+    <value>Ostrożnie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelWarning" xml:space="preserve">
+    <value>Ostrzeżenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelContactMedicalControl" xml:space="preserve">
+    <value>Skontaktuj się z nadzorem medycznym</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelContact" xml:space="preserve">
+    <value>Kontakt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelScopeOfPractice" xml:space="preserve">
+    <value>Zakres uprawnień</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelMedication" xml:space="preserve">
+    <value>Lek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelIndication" xml:space="preserve">
+    <value>Wskazanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelConcentration" xml:space="preserve">
+    <value>Stężenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelDosePerKg" xml:space="preserve">
+    <value>Dawka na kg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelMaxSingleDose" xml:space="preserve">
+    <value>Maksymalna dawka jednorazowa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelMaxTotalDose" xml:space="preserve">
+    <value>Maksymalna dawka całkowita</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelRoute" xml:space="preserve">
+    <value>Droga podania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelRepeatInterval" xml:space="preserve">
+    <value>Odstęp między dawkami</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelInventoryItem" xml:space="preserve">
+    <value>Pozycja magazynowa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelDoseAsAuthored" xml:space="preserve">
+    <value>Dawki są wyświetlane tak, jak je zapisano. Nic nie jest obliczane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelVideo" xml:space="preserve">
+    <value>Link do wideo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelAttachment" xml:space="preserve">
+    <value>Załączony plik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelLinkProtocol" xml:space="preserve">
+    <value>Powiązany protokół</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelLinkPoi" xml:space="preserve">
+    <value>Punkt orientacyjny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelLinkInventory" xml:space="preserve">
+    <value>Powiązana pozycja magazynowa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelLinkChecklist" xml:space="preserve">
+    <value>Powiązana lista kontrolna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelLinkTraining" xml:space="preserve">
+    <value>Powiązane szkolenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLabelLinkUrl" xml:space="preserve">
+    <value>Strona internetowa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeHeading" xml:space="preserve">
+    <value>Nagłówek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeParagraph" xml:space="preserve">
+    <value>Akapit</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeSteps" xml:space="preserve">
+    <value>Kroki w kolejności</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeCaution" xml:space="preserve">
+    <value>Ostrożnie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeWarning" xml:space="preserve">
+    <value>Ostrzeżenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeGate" xml:space="preserve">
+    <value>Skontaktuj się z nadzorem medycznym</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeTable" xml:space="preserve">
+    <value>Tabela</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeImage" xml:space="preserve">
+    <value>Obraz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeVideo" xml:space="preserve">
+    <value>Link do wideo</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeAttachment" xml:space="preserve">
+    <value>Załącznik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeLink" xml:space="preserve">
+    <value>Odnośnik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeMedication" xml:space="preserve">
+    <value>Lek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeVariants" xml:space="preserve">
+    <value>Warianty dorosły / dziecko</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockTypeHtml" xml:space="preserve">
+    <value>Tekst sformatowany</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockMoveUp" xml:space="preserve">
+    <value>Przesuń w górę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockMoveDown" xml:space="preserve">
+    <value>Przesuń w dół</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockRemove" xml:space="preserve">
+    <value>Usuń blok</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockAddStep" xml:space="preserve">
+    <value>Dodaj krok</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockRemoveStep" xml:space="preserve">
+    <value>Usuń krok</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockAddRow" xml:space="preserve">
+    <value>Dodaj wiersz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockAddColumn" xml:space="preserve">
+    <value>Dodaj kolumnę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockRemoveRow" xml:space="preserve">
+    <value>Usuń ostatni wiersz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockRemoveColumn" xml:space="preserve">
+    <value>Usuń ostatnią kolumnę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockAddVariant" xml:space="preserve">
+    <value>Dodaj wariant</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockRemoveVariant" xml:space="preserve">
+    <value>Usuń wariant</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockAddBlock" xml:space="preserve">
+    <value>Dodaj blok</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockEditorEmpty" xml:space="preserve">
+    <value>Brak bloków. Dodaj poniżej nagłówek, kroki lub lek.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockSelectNone" xml:space="preserve">
+    <value>Nic nie wybrano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockPreviewFailed" xml:space="preserve">
+    <value>Nie udało się wczytać podglądu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldText" xml:space="preserve">
+    <value>Tekst nagłówka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldLevel" xml:space="preserve">
+    <value>Poziom nagłówka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldTitle" xml:space="preserve">
+    <value>Tytuł (opcjonalnie)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldBody" xml:space="preserve">
+    <value>Tekst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldStep" xml:space="preserve">
+    <value>Krok</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldContact" xml:space="preserve">
+    <value>Z kim i jak się kontaktować</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldCaption" xml:space="preserve">
+    <value>Podpis</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldHeaderRow" xml:space="preserve">
+    <value>Pierwszy wiersz to nagłówek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldCell" xml:space="preserve">
+    <value>Komórka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldUrl" xml:space="preserve">
+    <value>Adres internetowy (https)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldAttachment" xml:space="preserve">
+    <value>Załącznik protokołu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldAlt" xml:space="preserve">
+    <value>Opis dla czytników ekranu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldLabel" xml:space="preserve">
+    <value>Tekst odnośnika</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldLinkKind" xml:space="preserve">
+    <value>Odnośnik do</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldLinkTarget" xml:space="preserve">
+    <value>Powiązany element</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldLinkId" xml:space="preserve">
+    <value>Numer lub identyfikator elementu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldScopes" xml:space="preserve">
+    <value>Zakres uprawnień (rodzaje certyfikatów)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldVariantLabel" xml:space="preserve">
+    <value>Nazwa wariantu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldDrug" xml:space="preserve">
+    <value>Substancja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldInventoryItemId" xml:space="preserve">
+    <value>Identyfikator pozycji magazynowej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldInventoryItemName" xml:space="preserve">
+    <value>Nazwa pozycji magazynowej</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockFieldNotes" xml:space="preserve">
+    <value>Uwagi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLevel2" xml:space="preserve">
+    <value>Sekcja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLevel3" xml:space="preserve">
+    <value>Podsekcja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockLevel4" xml:space="preserve">
+    <value>Mniejszy nagłówek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockAdultLabel" xml:space="preserve">
+    <value>Dorosły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockPediatricLabel" xml:space="preserve">
+    <value>Dziecko</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockDoseNoticeEditor" xml:space="preserve">
+    <value>Dawki są wyświetlane dokładnie tak, jak je tu zapisano. Resgrid nigdy nie oblicza dawki; przy każdym leku widać odnośnik do narzędzia dawkowania jednostki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RichBold" xml:space="preserve">
+    <value>Pogrubienie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RichItalic" xml:space="preserve">
+    <value>Kursywa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RichBullets" xml:space="preserve">
+    <value>Lista punktowana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RichNumbers" xml:space="preserve">
+    <value>Lista numerowana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockEditorHelp" xml:space="preserve">
+    <value>Zbuduj protokół z bloków: nagłówki tworzą konspekt, kroki w kolejności i punkty kontaktu z nadzorem medycznym można odhaczać podczas zdarzenia, a każdy blok ma stałą kotwicę dla komentarzy recenzji i cytatów AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockEditorNeedsScript" xml:space="preserve">
+    <value>Edytor bloków wymaga JavaScript. Włącz go, aby edytować ten szkic.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockPreviewButton" xml:space="preserve">
+    <value>Odśwież podgląd</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockPreviewHeader" xml:space="preserve">
+    <value>Podgląd tak, jak przeczytają go członkowie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BlockPreviewHelp" xml:space="preserve">
+    <value>Wybierz Odśwież podgląd, aby zobaczyć bloki dokładnie tak, jak przeczytają je członkowie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConvertToBlocksCallout" xml:space="preserve">
+    <value>Ten szkic to tekst sformatowany. Przekształć go w bloki, aby dodać kroki, ostrzeżenia, leki i inne treści strukturalne; opublikowane wersje się nie zmieniają.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConvertToBlocksButton" xml:space="preserve">
+    <value>Przekształć w bloki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConvertToBlocksConfirm" xml:space="preserve">
+    <value>Przekształcić tekst tego szkicu w bloki? Opublikowane wersje się nie zmienią.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConvertedToBlocksMessage" xml:space="preserve">
+    <value>Szkic przekształcono w bloki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DosingToolLinkText" xml:space="preserve">
+    <value>Otwórz narzędzie dawkowania jednostki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepThroughHeader" xml:space="preserve">
+    <value>Krok po kroku</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepThroughSubtitle" xml:space="preserve">
+    <value>Zgłoszenie {0} · {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepProgressLabel" xml:space="preserve">
+    <value>Wykonane kroki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepProgressFormat" xml:space="preserve">
+    <value>{0} z {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepStartedLabel" xml:space="preserve">
+    <value>Rozpoczęto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepNotStarted" xml:space="preserve">
+    <value>Nie rozpoczęto</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CitedVersionColumn" xml:space="preserve">
+    <value>Użyta wersja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsCompletedBy" xml:space="preserve">
+    <value>Zakończone przez {0}: {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsHeader" xml:space="preserve">
+    <value>Kroki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepStateDone" xml:space="preserve">
+    <value>Wykonane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepStateSkipped" xml:space="preserve">
+    <value>Pominięte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepStateNotApplicable" xml:space="preserve">
+    <value>Nie dotyczy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepStatePending" xml:space="preserve">
+    <value>Jeszcze niewykonane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepMarkDone" xml:space="preserve">
+    <value>Wykonane</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepMarkSkipped" xml:space="preserve">
+    <value>Pomiń</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepMarkNotApplicable" xml:space="preserve">
+    <value>Nie dotyczy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepMarkPending" xml:space="preserve">
+    <value>Cofnij</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Powrót do zgłoszenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompleteStepsButton" xml:space="preserve">
+    <value>Zakończ listę kontrolną</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompleteStepsConfirm" xml:space="preserve">
+    <value>Zakończyć tę listę? Niewykonane kroki pozostaną zapisane jako niewykonane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepSaveFailed" xml:space="preserve">
+    <value>Nie udało się zapisać kroku. Spróbuj ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsCompletedMessage" xml:space="preserve">
+    <value>Lista kontrolna została zakończona.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepsCompletedLabel" xml:space="preserve">
+    <value>Zakończona</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SopChecklistsHeader" xml:space="preserve">
+    <value>Krok po kroku i listy kontrolne procedur</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="IncidentSopLabel" xml:space="preserve">
+    <value>Procedura zdarzenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartSopLabel" xml:space="preserve">
+    <value>Rozpocznij listę procedury</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartSopButton" xml:space="preserve">
+    <value>Rozpocznij listę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepErrorNotFound" xml:space="preserve">
+    <value>Tego protokołu nie ma w tym zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepErrorNotAuthorized" xml:space="preserve">
+    <value>Nie możesz zmienić tej listy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepErrorNoSteps" xml:space="preserve">
+    <value>Ten protokół nie ma kroków do wykonania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepErrorUnknownStep" xml:space="preserve">
+    <value>Tego kroku nie ma w wersji używanej w tym zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepErrorCompleted" xml:space="preserve">
+    <value>Ta lista jest zakończona.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepErrorConflict" xml:space="preserve">
+    <value>Ktoś inny zapisywał w tym samym momencie. Spróbuj ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepErrorNotAttachable" xml:space="preserve">
+    <value>Tego protokołu nie można dodać do zgłoszenia (jest wyłączony, usunięty lub został zdjęty ze zgłoszenia).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrCodeHeader" xml:space="preserve">
+    <value>Plakat z kodem QR</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrCodeButton" xml:space="preserve">
+    <value>Kod QR</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrCodeAlt" xml:space="preserve">
+    <value>Kod QR dla {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrCodeUnavailable" xml:space="preserve">
+    <value>Nie udało się wygenerować kodu QR.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QrCodeHelp" xml:space="preserve">
+    <value>Wydrukuj ten plakat do pojazdu, strażnicy lub na dowolną ścianę w miejscu pracy. Zeskanowanie go otwiera obowiązującą wersję dla członków, którzy mogą czytać protokół.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeepLinkLabel" xml:space="preserve">
+    <value>Bezpośredni odnośnik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrintViewButton" xml:space="preserve">
+    <value>Widok wydruku</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookTab" xml:space="preserve">
+    <value>Książka PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookHeader" xml:space="preserve">
+    <value>Książka PDF protokołów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookHelp" xml:space="preserve">
+    <value>Pobierz całą bibliotekę lub jedną kategorię (z podkategoriami) jako jeden plik PDF: spis treści, a potem każdy obowiązujący protokół z wersją, datą obowiązywania i zatwierdzającym. Uwzględniane są tylko protokoły, które możesz czytać.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookReadableCount" xml:space="preserve">
+    <value>Protokoły, które możesz czytać</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookSealingLabel" xml:space="preserve">
+    <value>Pieczęć elektroniczna</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookSealingReady" xml:space="preserve">
+    <value>Opieczętowane (L3)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookSealingPending" xml:space="preserve">
+    <value>Bez pieczęci, pieczętowanie oczekuje</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookUnsealedNotice" xml:space="preserve">
+    <value>Pieczętowanie nie jest skonfigurowane, więc PDF nie jest opieczętowany. Eksport jest zapisany jako oczekujący na pieczęć i zostanie opieczętowany po konfiguracji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookWholeLibrary" xml:space="preserve">
+    <value>Cała biblioteka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookDownloadButton" xml:space="preserve">
+    <value>Pobierz PDF</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookLibraryTitle" xml:space="preserve">
+    <value>Biblioteka protokołów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookContents" xml:space="preserve">
+    <value>Spis treści</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookVersion" xml:space="preserve">
+    <value>Wersja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookEffective" xml:space="preserve">
+    <value>Obowiązuje od</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookApprovedBy" xml:space="preserve">
+    <value>Zatwierdził</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookContent" xml:space="preserve">
+    <value>Treść</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookGenerated" xml:space="preserve">
+    <value>Wygenerowano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookDocumentBacked" xml:space="preserve">
+    <value>Ten protokół jest dokumentem; otwórz go w Resgrid, aby przeczytać plik.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookEmpty" xml:space="preserve">
+    <value>Brak opublikowanych protokołów.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookUncategorized" xml:space="preserve">
+    <value>Bez kategorii</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BookFailed" xml:space="preserve">
+    <value>Nie udało się utworzyć książki PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationsButton" xml:space="preserve">
+    <value>Tłumaczenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationsHeader" xml:space="preserve">
+    <value>Tłumaczenia treści</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationHeader" xml:space="preserve">
+    <value>Tłumaczenie: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationsSourceCallout" xml:space="preserve">
+    <value>Ta wersja jest napisana w języku: {0}. Każde tłumaczenie jest zatwierdzane osobno; wersja, jej skrót i podpisy nigdy się nie zmieniają.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoTranslations" xml:space="preserve">
+    <value>Brak tłumaczeń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationLanguageColumn" xml:space="preserve">
+    <value>Język</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationUpdatedColumn" xml:space="preserve">
+    <value>Ostatnia zmiana</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Działania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationStatusDraft" xml:space="preserve">
+    <value>Szkic tłumaczenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationStatusApproved" xml:space="preserve">
+    <value>Zatwierdzone tłumaczenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationStatusWithdrawn" xml:space="preserve">
+    <value>Wycofane tłumaczenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationSourceChanged" xml:space="preserve">
+    <value>Źródło się zmieniło</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationSourceChangedNotice" xml:space="preserve">
+    <value>Treść źródłowa zmieniła się po wykonaniu tego tłumaczenia. Nie można go zatwierdzić i nie jest pokazywane członkom; rozpocznij nowe tłumaczenie bieżącej wersji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawTranslationButton" xml:space="preserve">
+    <value>Wycofaj tłumaczenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithdrawTranslationConfirm" xml:space="preserve">
+    <value>Wycofać to tłumaczenie? Członkowie czytający w tym języku zobaczą źródło.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StartTranslationButton" xml:space="preserve">
+    <value>Rozpocznij tłumaczenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationRulesCallout" xml:space="preserve">
+    <value>Tłumaczone jest tylko brzmienie. Dawki, odnośniki, załączniki i struktura pozostają dokładnie jak w źródle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationWordingHeader" xml:space="preserve">
+    <value>Przetłumaczone brzmienie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationSourceColumn" xml:space="preserve">
+    <value>Źródło</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationTranslatedColumn" xml:space="preserve">
+    <value>Tłumaczenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationDosesLocked" xml:space="preserve">
+    <value>Dawki nie są tłumaczone</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveTranslationButton" xml:space="preserve">
+    <value>Zapisz tłumaczenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationPreviewHeader" xml:space="preserve">
+    <value>Tłumaczenie tak, jak przeczytają je członkowie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveTranslationHeader" xml:space="preserve">
+    <value>Zatwierdź tłumaczenie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveTranslationHelp" xml:space="preserve">
+    <value>Zatwierdzenie podpisuje to tłumaczenie na poziomie L2 (dodatkowa weryfikacja), powiązane z treścią samego tłumaczenia. Wersja źródłowa się nie zmienia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApproveTranslationButton" xml:space="preserve">
+    <value>Zatwierdź z dodatkową weryfikacją</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationApprovalStatement" xml:space="preserve">
+    <value>Zatwierdzam tłumaczenie ({3}) protokołu {0} „{1}” w wersji {2} (treść tłumaczenia {4}) dla członków czytających w tym języku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationSavedMessage" xml:space="preserve">
+    <value>Tłumaczenie zostało zapisane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationApprovedMessage" xml:space="preserve">
+    <value>Tłumaczenie zostało zatwierdzone; członkowie czytający w tym języku widzą je teraz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationWithdrawnMessage" xml:space="preserve">
+    <value>Tłumaczenie zostało wycofane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationShownNotice" xml:space="preserve">
+    <value>Wyświetlane w języku: {0} (zatwierdzone tłumaczenie).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationFallbackNotice" xml:space="preserve">
+    <value>Nie ma zatwierdzonego tłumaczenia w Twoim języku, więc treść jest wyświetlana w języku jednostki.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ContentLanguageLabel" xml:space="preserve">
+    <value>Język treści</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorNotFound" xml:space="preserve">
+    <value>Nie znaleziono tego tłumaczenia ani wersji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorNotAuthorized" xml:space="preserve">
+    <value>Nie możesz tego zrobić z tłumaczeniami.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorSourceNotLocked" xml:space="preserve">
+    <value>Przetłumaczyć można tylko wersję przesłaną, zatwierdzoną lub opublikowaną.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorInvalidLocale" xml:space="preserve">
+    <value>Wybierz język inny niż język wersji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorAlreadyExists" xml:space="preserve">
+    <value>Ta wersja ma już tłumaczenie w tym języku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorStaleCopy" xml:space="preserve">
+    <value>Ktoś inny zapisał to tłumaczenie po jego otwarciu. Odśwież, aby zobaczyć zmiany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorNotDraft" xml:space="preserve">
+    <value>Zmienić lub zatwierdzić można tylko szkic tłumaczenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorEmptyContent" xml:space="preserve">
+    <value>Tłumaczenie jest puste.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorSignatureRequired" xml:space="preserve">
+    <value>Zatwierdzenie wymaga świeżej dodatkowej weryfikacji.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorPasskeyRequired" xml:space="preserve">
+    <value>Twoja jednostka wymaga klucza dostępu do zatwierdzeń.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TranslationErrorSourceChanged" xml:space="preserve">
+    <value>Treść źródłowa zmieniła się po wykonaniu tłumaczenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StaleVersionMessage" xml:space="preserve">
+    <value>Oglądasz {0}. {1} obowiązuje od {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StaleRetiredMessage" xml:space="preserve">
+    <value>Oglądasz {0}. Ten protokół już nie obowiązuje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DefaultContentLocaleLabel" xml:space="preserve">
+    <value>Język, w którym pisane są protokoły</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DefaultContentLocaleBlank" xml:space="preserve">
+    <value>Angielski (domyślnie)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DefaultContentLocaleHelp" xml:space="preserve">
+    <value>Członkowie, dla których języka nie ma zatwierdzonego tłumaczenia wersji, czytają ją w tym języku; w nim zapisywane są też etykiety bloków, np. Ostrożnie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BankQuizHeader" xml:space="preserve">
+    <value>Quiz do protokołu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AckAwaitingBankQuizLabel" xml:space="preserve">
+    <value>Podpisano; oczekuje na quiz do protokołu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakeBankQuizButton" xml:space="preserve">
+    <value>Rozwiąż quiz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResumeBankQuizButton" xml:space="preserve">
+    <value>Wznów quiz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BankQuizRequiredNotice" xml:space="preserve">
+    <value>Potwierdzenie zostanie zakończone, gdy zaliczysz quiz z {0} pytań (próg zaliczenia {1}%).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BankQuizPassedNotice" xml:space="preserve">
+    <value>Quiz zaliczony ({0}%).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} pytań, próg zaliczenia {1}%. Odpowiedzi są oceniane na serwerze; poprawne odpowiedzi nie są pokazywane.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizChooseAll" xml:space="preserve">
+    <value>Wybierz wszystkie pasujące odpowiedzi.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitQuizButton" xml:space="preserve">
+    <value>Wyślij odpowiedzi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizResultPassed" xml:space="preserve">
+    <value>Zaliczono: {0}% ({1} z {2} poprawnych, próg {3}%).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizResultFailed" xml:space="preserve">
+    <value>Nie zaliczono: {0}% ({1} z {2} poprawnych, próg {3}%). Możesz rozwiązać nowy quiz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizAckCompletedMessage" xml:space="preserve">
+    <value>Potwierdzenie jest zakończone.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizError_NotAssigned" xml:space="preserve">
+    <value>Nie musisz potwierdzać tej wersji albo nie wymaga ona quizu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizError_NoQuestions" xml:space="preserve">
+    <value>Bank pytań nie ma jeszcze pytań do losowania. Powiadom osobę odpowiedzialną za szkolenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizError_AlreadySubmitted" xml:space="preserve">
+    <value>Ten quiz jest już rozwiązany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizError_NotAuthorized" xml:space="preserve">
+    <value>Nie możesz rozwiązać tego quizu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuizError_NotFound" xml:space="preserve">
+    <value>Nie znaleziono quizu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningSettingsHeader" xml:space="preserve">
+    <value>Quiz z banku pytań i mikronauka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningBankLabel" xml:space="preserve">
+    <value>Bank pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningNoBankOption" xml:space="preserve">
+    <value>Brak banku pytań</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningBankHelp" xml:space="preserve">
+    <value>Udostępniony w jednostce bank pytań powiązany z tym protokołem (w nawiasie liczba pytań do losowania). Quizy i cotygodniowa mikronauka losują z niego pytania jednokrotnego wyboru, wielokrotnego wyboru oraz prawda/fałsz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningQuizRequiredLabel" xml:space="preserve">
+    <value>Potwierdzenie wymaga zaliczenia quizu wylosowanego z banku</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningQuestionCountLabel" xml:space="preserve">
+    <value>Pytań w quizie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningPassMarkLabel" xml:space="preserve">
+    <value>Próg zaliczenia (%)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningTagsLabel" xml:space="preserve">
+    <value>Tylko pytania z tagami</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningTagsHelp" xml:space="preserve">
+    <value>Opcjonalnie, rozdzielone przecinkami. Pozostaw puste, aby losować z całego banku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningMicroLabel" xml:space="preserve">
+    <value>Uwzględnij w cotygodniowej mikronauce</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningLmsOnly" xml:space="preserve">
+    <value>Dostępne w dodatku LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningSettingsError_InvalidInput" xml:space="preserve">
+    <value>Dla obowiązkowego quizu wybierz bank pytań udostępniony w jednostce.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningSettingsError_NoQuestions" xml:space="preserve">
+    <value>Bank pytań nie zawiera pytań jednokrotnego wyboru, wielokrotnego wyboru ani prawda/fałsz do losowania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningSettingsError_AddonRequired" xml:space="preserve">
+    <value>Quizy z banków pytań i mikronauka wymagają dodatku LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningSettingsError_NotAuthorized" xml:space="preserve">
+    <value>Nie możesz zmieniać ustawień nauki tego protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LearningSettingsError_NotFound" xml:space="preserve">
+    <value>Nie znaleziono protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MicroLearningSelectionHeader" xml:space="preserve">
+    <value>Cotygodniowa mikronauka</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MicroLearningSelectionHelp" xml:space="preserve">
+    <value>W każdy poniedziałek o 09:00 czasu jednostki każdy aktywny członek z miejscem LMS w odbiorcach wybranego protokołu otrzymuje jedno pytanie scenariuszowe z przypisanych do niego banków pytań: powiązanego banku albo udostępnionego banku oznaczonego kodem lub numerem protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MicroLearningSaveButton" xml:space="preserve">
+    <value>Zapisz wybór</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MicroLearningSavedMessage" xml:space="preserve">
+    <value>Zapisano wybór mikronauki: protokoły: {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyQuestionsHeader" xml:space="preserve">
+    <value>Cotygodniowe pytania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyQuestionsIntro" xml:space="preserve">
+    <value>Jedno pytanie scenariuszowe tygodniowo z protokołów Twojej jednostki. Odpowiedz raz, a potem zobacz poprawną odpowiedź i uzasadnienie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyNoQuestions" xml:space="preserve">
+    <value>Nie ma jeszcze cotygodniowych pytań.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyAnswerButton" xml:space="preserve">
+    <value>Odpowiedz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyCorrect" xml:space="preserve">
+    <value>Dobrze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyIncorrect" xml:space="preserve">
+    <value>Nie do końca</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyCorrectAnswerLabel" xml:space="preserve">
+    <value>(poprawna odpowiedź)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyExplanationLabel" xml:space="preserve">
+    <value>Dlaczego:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyWeekLabel" xml:space="preserve">
+    <value>Tydzień {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeeklyChooseAnswer" xml:space="preserve">
+    <value>Najpierw wybierz odpowiedź.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorDecisionGraphInvalid" xml:space="preserve">
+    <value>Przebieg zgłoszenia ma błędy: potrzebny jest dokładnie jeden pierwszy krok, każda ścieżka musi kończyć się wynikiem z determinantą i nie może tworzyć pętli. Popraw to przed przeglądem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorDecisionGraphNotAllowed" xml:space="preserve">
+    <value>Przebieg zgłoszenia należy do napisanego protokołu dysponowania, a nie do innego rodzaju ani przesłanego dokumentu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelCaseFlow" xml:space="preserve">
+    <value>Przebieg zgłoszenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelEntryQuestion" xml:space="preserve">
+    <value>Pytanie wstępne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelKeyQuestion" xml:space="preserve">
+    <value>Pytanie kluczowe</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelInstruction" xml:space="preserve">
+    <value>Instrukcja</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelOutcome" xml:space="preserve">
+    <value>Wynik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelDeterminant" xml:space="preserve">
+    <value>Determinanta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelPriority" xml:space="preserve">
+    <value>Priorytet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelResponse" xml:space="preserve">
+    <value>Odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelPostDispatch" xml:space="preserve">
+    <value>Po zadysponowaniu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelGoTo" xml:space="preserve">
+    <value>przejdź do kroku {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelAnyAnswer" xml:space="preserve">
+    <value>Dowolna odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelYes" xml:space="preserve">
+    <value>Tak</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelNo" xml:space="preserve">
+    <value>Nie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphLabelStart" xml:space="preserve">
+    <value>Początek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestSuggested" xml:space="preserve">
+    <value>Zasugerowano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestNotEntitled" xml:space="preserve">
+    <value>Sugestie protokołów AI wymagają dodatku Enhanced AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestProtectionUnsupported" xml:space="preserve">
+    <value>Sugestie AI są wyłączone, gdy włączona jest zaawansowana ochrona danych.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestUnconfigured" xml:space="preserve">
+    <value>W tej instalacji nie skonfigurowano modelu AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestNoCandidates" xml:space="preserve">
+    <value>Żaden opublikowany protokół dysponowania z przebiegiem zgłoszenia nie może być użyty z AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestNoInput" xml:space="preserve">
+    <value>Zgłoszenie nie ma jeszcze tekstu ani wątku SMS do odczytania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestNoMatch" xml:space="preserve">
+    <value>AI nie znalazła pasującego protokołu. Wybierz go ręcznie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestUnavailable" xml:space="preserve">
+    <value>AI teraz nie odpowiada. Spróbuj ponownie lub wybierz protokół ręcznie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestNotFound" xml:space="preserve">
+    <value>Nie znaleziono zgłoszenia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseDone" xml:space="preserve">
+    <value>Zapisano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseNotFound" xml:space="preserve">
+    <value>Tego protokołu nie ma w tym zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseNoCase" xml:space="preserve">
+    <value>Ten protokół nie ma zapisanego przebiegu w zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseOverrideReasonRequired" xml:space="preserve">
+    <value>Inna determinanta wymaga uzasadnienia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseDeterminantInvalid" xml:space="preserve">
+    <value>Determinanta to litery, cyfry, spacje oraz . _ / - (maksymalnie 32).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseNotAnInstruction" xml:space="preserve">
+    <value>Ten krok nie jest instrukcją, którą można wysłać dzwoniącemu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseNoThread" xml:space="preserve">
+    <value>Zgłoszenie nie ma otwartego wątku SMS z dzwoniącym.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseOptedOut" xml:space="preserve">
+    <value>Dzwoniący zrezygnował z SMS (STOP); nic nie wysłano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Inny dyspozytor jest połączony z wątkiem dzwoniącego.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseSendFailed" xml:space="preserve">
+    <value>Nie udało się wysłać wiadomości. Zapisano ją w zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerDone" xml:space="preserve">
+    <value>Wysłano do dzwoniącego i zapisano w zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerNotFound" xml:space="preserve">
+    <value>Tego protokołu nie ma w tym zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerNoCase" xml:space="preserve">
+    <value>Ten protokół nie ma zapisanego przebiegu w zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerOverrideReasonRequired" xml:space="preserve">
+    <value>Inna determinanta wymaga uzasadnienia.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerDeterminantInvalid" xml:space="preserve">
+    <value>Determinanta to litery, cyfry, spacje oraz . _ / - (maksymalnie 32).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerNotAnInstruction" xml:space="preserve">
+    <value>Ten krok nie jest instrukcją, którą można wysłać dzwoniącemu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerNoThread" xml:space="preserve">
+    <value>Zgłoszenie nie ma otwartego wątku SMS z dzwoniącym.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerOptedOut" xml:space="preserve">
+    <value>Dzwoniący zrezygnował z SMS (STOP); nic nie wysłano.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Inny dyspozytor jest połączony z wątkiem dzwoniącego.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerSendFailed" xml:space="preserve">
+    <value>Nie udało się wysłać wiadomości. Zapisano ją w zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerConditionsLabel" xml:space="preserve">
+    <value>Warunki</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerConditionsHelp" xml:space="preserve">
+    <value>Każdy ustawiony warunek też musi być spełniony: zgłoszenie w obszarze jednostki lub grupy, w te dni i godziny (czas jednostki), ze słowem w opisie lub notatkach, w punkcie tego typu lub z tych źródeł. Wyzwalacz dla dowolnego zgłoszenia wymaga co najmniej jednego.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerKeywordsLabel" xml:space="preserve">
+    <value>Słowa w opisie lub notatkach</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerKeywordsPlaceholder" xml:space="preserve">
+    <value>ból w klatce, nie oddycha</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerZoneLabel" xml:space="preserve">
+    <value>W obszarze</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerAnyOption" xml:space="preserve">
+    <value>Dowolny</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerPoiTypeLabel" xml:space="preserve">
+    <value>Typ punktu w miejscu zdarzenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerFromLabel" xml:space="preserve">
+    <value>Od (godzina)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerToLabel" xml:space="preserve">
+    <value>Do (godzina)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerDaysLabel" xml:space="preserve">
+    <value>Dni</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TriggerSourcesLabel" xml:space="preserve">
+    <value>Wpłynęło przez</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallSourceUser" xml:space="preserve">
+    <value>Dyspozytor (formularz)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallSourceEmailImport" xml:space="preserve">
+    <value>Import e-mail</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallSourceAudioImport" xml:space="preserve">
+    <value>Import audio</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallSourceChatbot" xml:space="preserve">
+    <value>Czatbot</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallSourceIntake" xml:space="preserve">
+    <value>Kanał zgłoszeń (SMS, e-mail, czat, webhook)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallSourceVoiceIntake" xml:space="preserve">
+    <value>Przyjęcie głosowe (AI)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ErrorTriggerConditions" xml:space="preserve">
+    <value>Warunek wyzwalacza jest nieprawidłowy: sprawdź obszar, typ punktu, przedział czasu (obie godziny) oraz to, że wyzwalacz dla dowolnego zgłoszenia ma co najmniej jeden warunek.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ConditionsTrigger" xml:space="preserve">
+    <value>Dowolne zgłoszenie (tylko warunki)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>Teksty dysponowania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowDeterminantInDispatchCheckbox" xml:space="preserve">
+    <value>Dodawaj determinantę i nazwę protokołu do powiadomień, SMS-ów i wiadomości głosowych dysponowania</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowDeterminantInDispatchHelp" xml:space="preserve">
+    <value>Domyślnie wyłączone. Po włączeniu ratownicy widzą determinantę i protokół po nazwie zgłoszenia; starsze aplikacje pokazują je w treści.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowHeader" xml:space="preserve">
+    <value>Przebieg zgłoszenia (drzewo decyzyjne)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowLockedNotice" xml:space="preserve">
+    <value>Przebieg zgłoszenia jest częścią wersji w przeglądzie i nie zmieni się, dopóki nie zostanie wycofana lub opublikowana.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowHelp" xml:space="preserve">
+    <value>Dyspozytorzy przechodzą te kroki w formularzu: pytania wstępne, kluczowe i instrukcje prowadzą do wyniku z determinantą, proponowanym priorytetem i tym, co powiedzieć dzwoniącemu. Przebieg zapisuje się z wersją roboczą, widać go w treści i zatwierdza się go z wersją.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowLicensingNotice" xml:space="preserve">
+    <value>Pisz własne pytania i kody. Licencjonowane treści protokołów (np. MPDS) mogą być tylko w Twojej jednostce z zaznaczonym „Treść licencjonowana”; nigdy nie są udostępniane, publikowane ani używane przez AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowAddQuestion" xml:space="preserve">
+    <value>Dodaj pytanie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowAddInstruction" xml:space="preserve">
+    <value>Dodaj instrukcję</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowAddOutcome" xml:space="preserve">
+    <value>Dodaj wynik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowEmpty" xml:space="preserve">
+    <value>Brak przebiegu zgłoszenia. Bez niego protokół dołącza się do zgłoszeń jak dotąd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowFirstStep" xml:space="preserve">
+    <value>Pierwszy krok</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowMakeFirst" xml:space="preserve">
+    <value>Ustaw jako pierwszy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowStepLabel" xml:space="preserve">
+    <value>Krótka nazwa</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowStepText" xml:space="preserve">
+    <value>Pytanie odczytywane dzwoniącemu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowInstructionText" xml:space="preserve">
+    <value>Tekst do odczytania na głos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowStage" xml:space="preserve">
+    <value>Etap</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowAnswerType" xml:space="preserve">
+    <value>Odpowiedź</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowTypeYesNo" xml:space="preserve">
+    <value>Tak / nie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowTypeChoice" xml:space="preserve">
+    <value>Jedna z kilku odpowiedzi</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowTypeNumber" xml:space="preserve">
+    <value>Liczba</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowTypeFreeText" xml:space="preserve">
+    <value>Dowolny tekst</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowMin" xml:space="preserve">
+    <value>Wartość min.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowMax" xml:space="preserve">
+    <value>Wartość maks.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowNext" xml:space="preserve">
+    <value>Następnie</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowChooseStep" xml:space="preserve">
+    <value>Wybierz krok…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowSpeak" xml:space="preserve">
+    <value>Udostępnij dyspozytorowi „Odtwórz” (zamiana tekstu na mowę)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowSendToCaller" xml:space="preserve">
+    <value>Może zostać wysłane SMS-em do dzwoniącego</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowNoPriority" xml:space="preserve">
+    <value>Bez sugestii</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowProblems" xml:space="preserve">
+    <value>Do poprawy przed przeglądem:</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowProblemRoot" xml:space="preserve">
+    <value>Dokładnie jeden krok musi być pierwszy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowProblemNext" xml:space="preserve">
+    <value>każda odpowiedź wymaga następnego kroku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowProblemDeterminant" xml:space="preserve">
+    <value>wynik wymaga determinanty.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowProblemLoop" xml:space="preserve">
+    <value>Przebieg zgłoszenia zapętla się.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFlowProblemUnreachable" xml:space="preserve">
+    <value>jest nieosiągalny z pierwszego kroku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseAiSuggestButton" xml:space="preserve">
+    <value>Zasugeruj z AI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CasePlayButton" xml:space="preserve">
+    <value>Odtwórz</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseChangeAnswer" xml:space="preserve">
+    <value>Zmień</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseOverridden" xml:space="preserve">
+    <value>Zmieniono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CasePriorityApplied" xml:space="preserve">
+    <value>zastosowano do zgłoszenia</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseOverrideDeterminant" xml:space="preserve">
+    <value>Zmień determinantę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseOverrideReason" xml:space="preserve">
+    <value>Powód (wymagany)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseInvalid" xml:space="preserve">
+    <value>Nie można przejść tego przebiegu. Dołącz protokół bez niego lub powiadom jego właściciela.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseAiPrefilled" xml:space="preserve">
+    <value>Zasugerowane przez Enhanced AI. Sprawdź każdą odpowiedź przed zapisem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseAiAsking" xml:space="preserve">
+    <value>Pytanie Enhanced AI…</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseAiFailed" xml:space="preserve">
+    <value>Nie udało się przygotować sugestii.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseSourceAi" xml:space="preserve">
+    <value>Sugestia Enhanced AI potwierdzona przez dyspozytora</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseOverrideFrom" xml:space="preserve">
+    <value>wyliczona {0}; powód: {1}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseNotComplete" xml:space="preserve">
+    <value>Przebieg nie doszedł do wyniku.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerTexts" xml:space="preserve">
+    <value>Wysłano do dzwoniącego</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseSendToCallerButton" xml:space="preserve">
+    <value>Wyślij dzwoniącemu: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseOverrideSave" xml:space="preserve">
+    <value>Zapisz determinantę</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseOverrideHelp" xml:space="preserve">
+    <value>Zostaw determinantę pustą, aby wrócić do wyniku przebiegu. Każda inna wymaga powodu zapisanego w zgłoszeniu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseExportSection" xml:space="preserve">
+    <value>Przebiegi protokołów</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestBudgetExhausted" xml:space="preserve">
+    <value>Miesięczny budżet Enhanced AI Twojej jednostki został wyczerpany, więc nie ma sugestii AI. Wybierz protokół ręcznie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AiSuggestBusy" xml:space="preserve">
+    <value>AI jest teraz zajęta innymi zadaniami. Spróbuj ponownie lub wybierz protokół ręcznie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseProtectedDataRequired" xml:space="preserve">
+    <value>Ten przypadek jest chroniony przez Advanced Data Protection. Potwierdź swoją tożsamość, aby wyświetlić chronione dane, i spróbuj ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseCallerProtectedDataRequired" xml:space="preserve">
+    <value>Ten przypadek jest chroniony przez Advanced Data Protection. Potwierdź swoją tożsamość, aby wyświetlić chronione dane, i wyślij wiadomość ponownie.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedAllMessage" xml:space="preserve">
+    <value>Zatwierdzono i podpisano. Wszystkie etapy zatwierdzania są zakończone, więc wersję można opublikować.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApprovedStepMessage" xml:space="preserve">
+    <value>Zatwierdzono i podpisano. Wersja przechodzi do następnego etapu zatwierdzania.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Wersja {0} jest opublikowana i obowiązuje od {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScheduledMessage" xml:space="preserve">
+    <value>Wersja {0} jest zatwierdzona i zaczyna obowiązywać {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategorySavedMessage" xml:space="preserve">
+    <value>Kategoria została zapisana.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoryDeletedMessage" xml:space="preserve">
+    <value>Kategoria została usunięta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CategoryInUseMessage" xml:space="preserve">
+    <value>Kategoria nie została usunięta: nadal używają jej protokoły lub inne kategorie. Najpierw je przenieś.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewCommentSaved" xml:space="preserve">
+    <value>Twój komentarz do przeglądu został dodany.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SuggestionSaved" xml:space="preserve">
+    <value>Dziękujemy. Twoja sugestia została dodana dla autorów protokołu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LifecycleErrorManagedBySet" xml:space="preserve">
+    <value>Ten protokół jest kopią zarządzaną przez subskrybowany zestaw protokołów. Jego treść zmienia się przez skrzynkę aktualizacji i stronę dostosowania zestawu; aby stał się Państwa własnym, należy anulować subskrypcję.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

@@ -1,0 +1,125 @@
+/* Public protocol pages (Protocols P5): a plain, printable reading page with no scripts. Responsive to phone width, no horizontal scroll. */
+body.rgpub {
+    background: #f4f5f7;
+    color: #222;
+    font-family: "Open Sans", Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+body.rgpub-embedded {
+    background: #fff;
+}
+
+.rgpub-page {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 24px 16px 32px;
+    overflow-wrap: anywhere;
+}
+
+.rgpub-embedded .rgpub-page {
+    padding-top: 12px;
+}
+
+.rgpub-header {
+    border-bottom: 1px solid #d9dce1;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+}
+
+.rgpub-header h1 {
+    font-size: 26px;
+    margin: 2px 0 4px;
+}
+
+.rgpub-department {
+    color: #555;
+    font-size: 13px;
+    letter-spacing: .02em;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.rgpub-muted,
+.rgpub-stamp {
+    color: #5b6068;
+    font-size: 13px;
+}
+
+.rgpub-code {
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.rgpub-toc {
+    background: #fff;
+    border: 1px solid #d9dce1;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 10px 16px;
+}
+
+.rgpub-toc h2 {
+    font-size: 16px;
+    margin: 4px 0 8px;
+}
+
+.rgpub-protocol {
+    background: #fff;
+    border: 1px solid #d9dce1;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+}
+
+.rgpub-embedded .rgpub-protocol {
+    border: 0;
+    padding: 0;
+}
+
+.rgpub-protocol h2 {
+    font-size: 21px;
+    margin-top: 0;
+}
+
+.rgpub-body img {
+    height: auto;
+    max-width: 100%;
+}
+
+.rgpub-body table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.rgpub-attribution {
+    border-top: 1px dashed #c9ccd1;
+    color: #5b6068;
+    font-size: 12px;
+    margin: 14px 0 0;
+    padding-top: 8px;
+}
+
+.rgpub-footer {
+    color: #5b6068;
+    font-size: 12px;
+    margin-top: 24px;
+}
+
+@media print {
+    body.rgpub {
+        background: #fff;
+    }
+
+    .rgpub-protocol {
+        border: 0;
+        page-break-inside: auto;
+        padding: 0;
+    }
+
+    .rgpub-toc {
+        border: 0;
+    }
+}

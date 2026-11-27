@@ -1,0 +1,244 @@
+@using Microsoft.AspNetCore.Html
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Wellness
+@model MemberHealthIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Wellness.MemberHealth> localizer
+@*
+    Health records (member wellness WL1): the member's own exposure cases, injuries, duty status and medical clearance; the designated
+    officer's open exposure cases; the health officers' open injuries; and the duty board supervisors see (duty and clearance status only,
+    never why). Department administration alone opens no record.
+*@
+@{
+    var title = localizer["HealthRecordsTitle"].Value;
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Health";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["HealthRecordsIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var status = Model.MyStatus ?? new MemberDutyStatus();
+
+    Func<dynamic, IHtmlContent> headerActions = @<text>
+        <a class="btn btn-primary" asp-controller="MemberHealth" asp-action="ReportExposure" asp-route-area="User"><i class="fa fa-tint" aria-hidden="true"></i> @localizer["ReportExposureButton"]</a>
+        <a class="btn btn-default" asp-controller="MemberHealth" asp-action="ReportInjury" asp-route-area="User"><i class="fa fa-medkit" aria-hidden="true"></i> @localizer["ReportInjuryButton"]</a>
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Wellness/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-user" aria-hidden="true"></i> @localizer["DutyStatusLabel"]</div>
+            <div class="rgw-stat-value"><span class="@MemberHealthPresentation.DutyBadge((int)status.DutyStatus)">@localizer[MemberHealthPresentation.DutyKey((int)status.DutyStatus)]</span></div>
+            @if (status.ExpectedReturnOn.HasValue)
+            {
+                <div class="rgw-sub text-muted">@localizer["ExpectedReturnLabel"]: @MemberHealthPresentation.CalendarDate(status.ExpectedReturnOn)</div>
+            }
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-stethoscope" aria-hidden="true"></i> @localizer["ClearanceStatusLabel"]</div>
+            <div class="rgw-stat-value">
+                @if (status.ClearanceStatus.HasValue)
+                {
+                    <span class="@MemberHealthPresentation.ClearanceBadge((int)status.ClearanceStatus.Value)">@localizer[MemberHealthPresentation.ClearanceKey((int)status.ClearanceStatus.Value)]</span>
+                }
+                else
+                {
+                    <span class="text-muted">@localizer["NoClearance"]</span>
+                }
+            </div>
+            @if (status.ClearanceValidUntil.HasValue)
+            {
+                <div class="rgw-sub text-muted">@localizer["ValidUntilLabel"]: @MemberHealthPresentation.CalendarDate(status.ClearanceValidUntil)</div>
+            }
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-tint" aria-hidden="true"></i> @localizer["OpenCasesLabel"]</div>
+            <div class="rgw-stat-value">@Model.MyCases.Count(c => c.IsOpen)</div>
+        </div>
+        <div class="rgw-stat-tile" role="listitem">
+            <div class="rgw-stat-label"><i class="fa fa-medkit" aria-hidden="true"></i> @localizer["OpenInjuriesLabel"]</div>
+            <div class="rgw-stat-value">@Model.MyInjuries.Count(i => i.IsOpen)</div>
+        </div>
+    </div>
+
+    @if (Model.Access.IsDesignatedOfficer)
+    {
+        <div class="ibox float-e-margins m-t-sm">
+            <div class="ibox-title"><h5><i class="fa fa-tint" aria-hidden="true"></i> @localizer["OpenCasesHeader"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.OpenCases.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoOpenCases"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["MemberColumn"]</th>
+                                    <th>@localizer["DateColumn"]</th>
+                                    <th>@localizer["RouteColumn"]</th>
+                                    <th>@localizer["StageColumn"]</th>
+                                    <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OpenCases)
+                                {
+                                    <tr>
+                                        <td>@Model.NameOf(item.UserId)</td>
+                                        <td class="text-nowrap">@WellnessPresentation.LocalDateTime(item.OccurredOn, Model.Department)</td>
+                                        <td>@localizer[MemberHealthPresentation.RouteKey(item.Route)]</td>
+                                        <td>
+                                            @localizer[MemberHealthPresentation.StageKey(item.Stage)]
+                                            @if (ExposureIncidentWorkflow.IsNotificationOverdue(item, DateTime.UtcNow))
+                                            {
+                                                <span class="label label-danger">@localizer["NotificationOverdue"]</span>
+                                            }
+                                        </td>
+                                        <td class="rgw-row-actions"><a class="btn btn-xs btn-default" asp-controller="MemberHealth" asp-action="Case" asp-route-area="User" asp-route-id="@item.RmsExposureIncidentId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["OpenButton"]</a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (Model.Access.IsHealthOfficer)
+    {
+        <div class="ibox float-e-margins m-t-sm">
+            <div class="ibox-title"><h5><i class="fa fa-medkit" aria-hidden="true"></i> @localizer["OpenInjuriesHeader"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.OpenInjuries.Count == 0)
+                {
+                    <p class="text-muted">@localizer["NoOpenInjuries"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["CaseNumberColumn"]</th>
+                                    <th>@localizer["MemberColumn"]</th>
+                                    <th>@localizer["DateColumn"]</th>
+                                    <th>@localizer["DutyStatusLabel"]</th>
+                                    <th>@localizer["ExpectedReturnLabel"]</th>
+                                    <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.OpenInjuries)
+                                {
+                                    <tr>
+                                        <td class="text-nowrap">@OshaRules.CaseNumber(item.OshaYear, item.OshaCaseNumber)</td>
+                                        <td>@Model.NameOf(item.UserId)</td>
+                                        <td class="text-nowrap">@WellnessPresentation.LocalDate(item.OccurredOn, Model.Department)</td>
+                                        <td><span class="@MemberHealthPresentation.DutyBadge(item.DutyStatus)">@localizer[MemberHealthPresentation.DutyKey(item.DutyStatus)]</span></td>
+                                        <td class="text-nowrap">@MemberHealthPresentation.CalendarDate(item.ExpectedReturnOn)</td>
+                                        <td class="rgw-row-actions"><a class="btn btn-xs btn-default" asp-controller="MemberHealth" asp-action="Injury" asp-route-area="User" asp-route-id="@item.RmsMemberInjuryId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["OpenButton"]</a></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    @if (Model.Access.IsHealthOfficer || Model.Access.IsSupervisor)
+    {
+        @await Html.PartialAsync("~/Areas/User/Views/MemberHealth/_DutyBoard.cshtml", new DutyBoardView { Rows = Model.DutyBoard, Names = Model.Names, Department = Model.Department })
+    }
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-title"><h5><i class="fa fa-tint" aria-hidden="true"></i> @localizer["MyCasesHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.MyCases.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoCasesSelf"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["DateColumn"]</th>
+                                <th>@localizer["RouteColumn"]</th>
+                                <th>@localizer["StageColumn"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.MyCases)
+                            {
+                                <tr class="@(item.IsOpen ? null : "text-muted")">
+                                    <td class="text-nowrap">@WellnessPresentation.LocalDateTime(item.OccurredOn, Model.Department)</td>
+                                    <td>@localizer[MemberHealthPresentation.RouteKey(item.Route)]</td>
+                                    <td>@localizer[MemberHealthPresentation.StageKey(item.Stage)]</td>
+                                    <td class="rgw-row-actions"><a class="btn btn-xs btn-default" asp-controller="MemberHealth" asp-action="Case" asp-route-area="User" asp-route-id="@item.RmsExposureIncidentId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["OpenButton"]</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-title"><h5><i class="fa fa-medkit" aria-hidden="true"></i> @localizer["MyInjuriesHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.MyInjuries.Count == 0)
+            {
+                <p class="text-muted">@localizer["NoInjuriesSelf"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["CaseNumberColumn"]</th>
+                                <th>@localizer["DateColumn"]</th>
+                                <th>@localizer["StateColumn"]</th>
+                                <th>@localizer["DutyStatusLabel"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionsColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.MyInjuries)
+                            {
+                                <tr class="@(item.State == (int)MemberInjuryStates.Voided ? "text-muted" : null)">
+                                    <td class="text-nowrap">@OshaRules.CaseNumber(item.OshaYear, item.OshaCaseNumber)</td>
+                                    <td class="text-nowrap">@WellnessPresentation.LocalDate(item.OccurredOn, Model.Department)</td>
+                                    <td>@localizer[MemberHealthPresentation.InjuryStateKey(item.State)]</td>
+                                    <td><span class="@MemberHealthPresentation.DutyBadge(item.DutyStatus)">@localizer[MemberHealthPresentation.DutyKey(item.DutyStatus)]</span></td>
+                                    <td class="rgw-row-actions"><a class="btn btn-xs btn-default" asp-controller="MemberHealth" asp-action="Injury" asp-route-area="User" asp-route-id="@item.RmsMemberInjuryId"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["OpenButton"]</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="rgw-next-action m-t-sm" role="note">
+        <i class="fa fa-lock" aria-hidden="true"></i> @localizer["PrivacyNote"]
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

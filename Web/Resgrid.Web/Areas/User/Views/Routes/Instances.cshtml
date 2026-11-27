@@ -39,8 +39,8 @@
                                 <tr>
                                     <td>@((Resgrid.Model.RouteInstanceStatus)instance.Status)</td>
                                     <td>@(Model.UnitNames.TryGetValue(instance.UnitId, out var unitName) ? unitName : instance.UnitId.ToString())</td>
-                                    <td>@(instance.ActualStartOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
-                                    <td>@(instance.ActualEndOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                                    <td>@(instance.ActualStartOn?.TimeConverter(Model.Department).ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                                    <td>@(instance.ActualEndOn?.TimeConverter(Model.Department).ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
                                     <td>@instance.StopsCompleted / @instance.StopsTotal</td>
                                     <td>
                                         @if (instance.CallId.HasValue && Model.LinkedCalls.TryGetValue(instance.CallId.Value, out var linkedCall))

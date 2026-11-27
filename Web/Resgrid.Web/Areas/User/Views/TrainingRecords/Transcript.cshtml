@@ -1,0 +1,295 @@
+@using Microsoft.AspNetCore.Html
+@using Resgrid.Model
+@using Resgrid.Web.Areas.User.Models.Training
+@model TrainingTranscriptView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.TrainingReviews.TrainingReviews> reviewText
+@*
+    One member's transcript (Training T1, R-T1): every learning record from every source, its verification state, hours and
+    category. Members read their own; an officer who reviews the member reads theirs (former members included) and opens the audit
+    view (voided records and the supersede chain). Pending, rejected and voided records show but never count.
+*@
+@{
+    var title = Model.IsSelf ? localizer["Rec.MyTranscriptTitle"].Value : string.Format(localizer["Rec.MemberTranscriptTitle"].Value, Model.MemberName);
+    ViewBag.Title = "Resgrid | " + title;
+    ViewData["Section"] = "Transcript";
+    ViewData["Title"] = title;
+    ViewData["Subtitle"] = localizer["Rec.TranscriptIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var routeUser = Model.IsSelf ? null : Model.UserId;
+
+    Func<dynamic, IHtmlContent> headerActions = @<text>
+        @if (Model.CanSubmit)
+        {
+            <a class="btn btn-primary" asp-controller="TrainingRecords" asp-action="Submit" asp-route-area="User"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["Rec.SubmitButton"]</a>
+        }
+        @if (Model.IsSelf)
+        {
+            <a class="btn btn-default" asp-controller="TrainingReviews" asp-action="Mine" asp-route-area="User"><i class="fa fa-list" aria-hidden="true"></i> @reviewText["Inbox.MySubmissionsLink"]</a>
+        }
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="TranscriptPdf" asp-route-area="User" asp-route-userId="@routeUser" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-categoryId="@Model.CategoryId" asp-route-source="@Model.Source"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Rec.ExportPdfButton"]</a>
+        <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="TranscriptCsv" asp-route-area="User" asp-route-userId="@routeUser" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-categoryId="@Model.CategoryId" asp-route-source="@Model.Source"><i class="fa fa-file-excel-o" aria-hidden="true"></i> @localizer["Rec.ExportCsvButton"]</a>
+        @if (Model.CanAudit)
+        {
+            if (Model.Audit)
+            {
+                <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" asp-route-userId="@routeUser" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-categoryId="@Model.CategoryId" asp-route-source="@Model.Source"><i class="fa fa-eye-slash" aria-hidden="true"></i> @localizer["Rec.HideAuditButton"]</a>
+            }
+            else
+            {
+                <a class="btn btn-default" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" asp-route-userId="@routeUser" asp-route-from="@Model.From" asp-route-to="@Model.To" asp-route-categoryId="@Model.CategoryId" asp-route-source="@Model.Source" asp-route-audit="true"><i class="fa fa-history" aria-hidden="true"></i> @localizer["Rec.ShowAuditButton"]</a>
+            }
+        }
+    </text>;
+    ViewData["HeaderActions"] = headerActions;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (Model.Members.Count > 0)
+    {
+        <form method="get" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" class="rgw-toolbar m-b-sm" role="search">
+            <label for="transcript-member" class="m-b-none">@localizer["Rec.MemberPickerLabel"]</label>
+            <select id="transcript-member" name="userId" class="form-control input-sm transcript-member-select">
+                @foreach (var member in Model.Members)
+                {
+                    <option value="@member.UserId" selected="@(string.Equals(member.UserId, Model.UserId, StringComparison.OrdinalIgnoreCase))">@member.Name@(member.IsFormer ? " (" + localizer["FormerMemberLabel"].Value + ")" : null)</option>
+                }
+            </select>
+            <button type="submit" class="btn btn-default btn-sm"><i class="fa fa-user" aria-hidden="true"></i> @localizer["Rec.OpenTranscriptButton"]</button>
+            @if (!Model.IsSelf)
+            {
+                <a class="btn btn-link btn-sm" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User"><i class="fa fa-id-card-o" aria-hidden="true"></i> @localizer["Rec.MyTranscriptLink"]</a>
+            }
+        </form>
+    }
+
+    @if (Model.IsFormerMember)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-user-times" aria-hidden="true"></i> @localizer["Rec.FormerMemberNotice"]</div>
+    }
+
+    <form method="get" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" class="rgw-filter" role="search" aria-label="@localizer["Rec.FilterLabel"]">
+        @if (!Model.IsSelf)
+        {
+            <input type="hidden" name="userId" value="@Model.UserId" />
+        }
+        @if (Model.Audit)
+        {
+            <input type="hidden" name="audit" value="true" />
+        }
+        <div class="rgw-grid">
+            <div class="form-group">
+                <label for="transcript-from">@localizer["Rec.FromLabel"]</label>
+                <input id="transcript-from" name="from" type="date" class="form-control" value="@Model.From" />
+            </div>
+            <div class="form-group">
+                <label for="transcript-to">@localizer["Rec.ToLabel"]</label>
+                <input id="transcript-to" name="to" type="date" class="form-control" value="@Model.To" />
+            </div>
+            <div class="form-group">
+                <label for="transcript-category">@localizer["Doc.Category"]</label>
+                <select id="transcript-category" name="categoryId" class="form-control">
+                    <option value="">@localizer["Rec.AllCategories"]</option>
+                    @foreach (var category in Model.LiveCategories)
+                    {
+                        <option value="@category.TrainingCategoryId" selected="@(Model.CategoryId == category.TrainingCategoryId)">@category.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="transcript-source">@localizer["Doc.Source"]</label>
+                <select id="transcript-source" name="source" class="form-control">
+                    <option value="">@localizer["Rec.AllSources"]</option>
+                    @* The sources T1 writes; reserved kinds (class sessions, skill sheets, task books, Academy) join when they ship. *@
+                    @foreach (var kind in new[] { LearningRecordSourceKinds.CourseCompletion, LearningRecordSourceKinds.TrainingRecord, LearningRecordSourceKinds.CalendarAttendance,
+                        LearningRecordSourceKinds.ExternalSubmission, LearningRecordSourceKinds.ManualCredit, LearningRecordSourceKinds.Import })
+                    {
+                        <option value="@((int)kind)" selected="@(Model.Source == (int)kind)">@localizer[LearningRecordPresentation.SourceKey((int)kind)]</option>
+                    }
+                </select>
+            </div>
+        </div>
+        <div class="rgw-filter-actions">
+            <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-filter" aria-hidden="true"></i> @localizer["FilterButton"]</button>
+            @if (Model.HasFilter)
+            {
+                <a class="btn btn-default btn-sm" asp-controller="TrainingRecords" asp-action="Transcript" asp-route-area="User" asp-route-userId="@routeUser" asp-route-audit="@(Model.Audit ? "true" : null)"><i class="fa fa-times" aria-hidden="true"></i> @localizer["Rec.ClearFilterButton"]</a>
+            }
+        </div>
+    </form>
+
+    <div class="rgw-stat-tiles" role="list">
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-clock-o" aria-hidden="true"></i> @localizer["Doc.TotalHours"]</div><div class="rgw-stat-value">@LearningRecordPresentation.Hours(Model.TotalHours)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-list" aria-hidden="true"></i> @localizer["Doc.Records"]</div><div class="rgw-stat-value">@Model.Records.Count(r => !r.IsVoided)</div></div>
+        <div class="rgw-stat-tile" role="listitem"><div class="rgw-stat-label"><i class="fa fa-hourglass-half" aria-hidden="true"></i> @localizer["LearningStatus.Pending"]</div><div class="rgw-stat-value">@Model.PendingCount</div></div>
+        @foreach (var total in Model.Totals)
+        {
+            <div class="rgw-stat-tile" role="listitem">
+                <div class="rgw-stat-label"><i class="fa fa-tag" aria-hidden="true"></i> @(total.Name ?? localizer["Doc.Uncategorized"].Value)@(total.IsRemoved ? " (" + localizer["Rec.RemovedLabel"].Value + ")" : null)</div>
+                <div class="rgw-stat-value">@LearningRecordPresentation.Hours(total.Hours)</div>
+                @if (total.TargetHours.HasValue)
+                {
+                    <small class="rgw-sub text-muted">@string.Format(localizer["Rec.TargetValue"].Value, LearningRecordPresentation.Hours(total.TargetHours), localizer[LearningRecordPresentation.TargetPeriodKey(total.TargetPeriod)].Value)</small>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="ibox float-e-margins m-t-sm">
+        <div class="ibox-title"><h5><i class="fa fa-id-card-o" aria-hidden="true"></i> @localizer["Rec.RecordsHeader"]</h5></div>
+        <div class="ibox-content">
+            @if (Model.Records.Count == 0)
+            {
+                <p class="text-muted">@localizer[Model.HasFilter ? "Rec.NoRecordsFiltered" : "Rec.NoRecords"]</p>
+            }
+            else
+            {
+                <p class="text-muted small">@localizer["Rec.CountedHelp"]</p>
+                <div class="table-responsive">
+                    <table class="table table-striped rgw-table">
+                        <thead>
+                            <tr>
+                                <th>@localizer["Doc.Date"]</th>
+                                <th>@localizer["Doc.Course"]</th>
+                                <th>@localizer["Doc.Source"]</th>
+                                <th>@localizer["Doc.Category"]</th>
+                                <th class="text-right">@localizer["Doc.Hours"]</th>
+                                <th>@localizer["Doc.Status"]</th>
+                                <th class="rgw-row-actions">@localizer["ActionColumn"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var record in Model.Records)
+                            {
+                                var category = Model.CategoryOf(record.CategoryId);
+                                var methodKey = LearningRecordPresentation.MethodKey(record.MethodOfTraining);
+                                <tr class="@(record.Counts ? null : "text-muted")">
+                                    <td class="text-nowrap">@TrainingStatePresentation.LocalDate(record.CompletedOn, Model.Department)</td>
+                                    <td>
+                                        @record.Title
+                                        <small class="rgw-sub text-muted">
+                                            @if (!string.IsNullOrWhiteSpace(record.CourseCode))
+                                            {
+                                                <span>@localizer["Doc.Code"]: @record.CourseCode</span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(record.CeProvider) || !string.IsNullOrWhiteSpace(record.CeCourseNumber) || record.CeHours.HasValue)
+                                            {
+                                                <span><i class="fa fa-certificate" aria-hidden="true"></i> @localizer["Doc.CeProvider"]: @record.CeProvider @(string.IsNullOrWhiteSpace(record.CeCourseNumber) ? null : "· " + localizer["Doc.CeCourseNumber"].Value + ": " + record.CeCourseNumber) @(record.CeHours.HasValue ? "· " + localizer["Doc.CeHours"].Value + ": " + LearningRecordPresentation.Hours(record.CeHours) : null)</span>
+                                            }
+                                            @if (methodKey != null)
+                                            {
+                                                <span>@localizer["Doc.Method"]: @localizer[methodKey]</span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(record.InstructorNames))
+                                            {
+                                                <span>@localizer["Doc.Instructors"]: @record.InstructorNames</span>
+                                            }
+                                            @if (record.IsRecordedByOther)
+                                            {
+                                                var recording = Model.RecordingOf(record);
+                                                var recordedOn = record.RecordedOn ?? recording?.RecordedOn;
+                                                <span class="label label-primary"><i class="fa fa-user-circle-o" aria-hidden="true"></i> @localizer["RecordCompletions.Method"]</span>
+                                                <span>@string.Format(System.Globalization.CultureInfo.CurrentCulture, localizer["RecordCompletions.RecordedByFormat"].Value, Model.RecorderName(record.RecordedByUserId ?? recording?.RecordedByUserId), recordedOn.HasValue ? TrainingStatePresentation.LocalDate(recordedOn.Value, Model.Department) : string.Empty)</span>
+                                                @if (recording != null)
+                                                {
+                                                    <span>@localizer["RecordCompletions.Source." + (TrainingCompletionRecordingSources)recording.SourceKind]@if (recording.QuizWaived) { <text> · @localizer["RecordCompletions.QuizWaived"]</text> }</span>
+                                                    @if (!string.IsNullOrWhiteSpace(recording.Note))
+                                                    {
+                                                        <span><i class="fa fa-comment-o" aria-hidden="true"></i> @recording.Note</span>
+                                                    }
+                                                }
+                                            }
+                                            @if (record.IsBackfill)
+                                            {
+                                                <span><i class="fa fa-history" aria-hidden="true"></i> @localizer["Rec.BackfilledLabel"]</span>
+                                            }
+                                            @if (record.HasUnresolvedDuplicate)
+                                            {
+                                                <span class="text-warning"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Rec.PossibleDuplicateLabel"]</span>
+                                            }
+                                            @if (!string.IsNullOrWhiteSpace(record.ReviewNote))
+                                            {
+                                                <span><i class="fa fa-comment-o" aria-hidden="true"></i> @localizer["Rec.ReviewNoteLabel"]: @record.ReviewNote</span>
+                                            }
+                                            @if (record.IsVoided && !string.IsNullOrWhiteSpace(record.VoidReason))
+                                            {
+                                                <span><i class="fa fa-ban" aria-hidden="true"></i> @localizer["Rec.VoidReasonLabel"]: @record.VoidReason</span>
+                                            }
+                                        </small>
+                                        @if (Model.Audit && Model.Chains.TryGetValue(record.LearningRecordId, out var chain))
+                                        {
+                                            <details class="transcript-chain">
+                                                <summary><i class="fa fa-code-fork" aria-hidden="true"></i> @string.Format(localizer["Rec.HistoryChainSummary"].Value, chain.Count)</summary>
+                                                <ol class="rgw-journey">
+                                                    @foreach (var link in chain)
+                                                    {
+                                                        <li class="@(link.LearningRecordId == record.LearningRecordId ? "transcript-chain-current" : null)">
+                                                            <span>@TrainingStatePresentation.LocalDateTime(link.CreatedOn, Model.Department) · @link.Title · @string.Format(localizer["HoursValue"].Value, LearningRecordPresentation.Hours(link.Hours))@(string.IsNullOrWhiteSpace(link.VoidReason) ? null : " · " + link.VoidReason)</span>
+                                                            @await Html.PartialAsync("_RecordStatus", link.Status)
+                                                        </li>
+                                                    }
+                                                </ol>
+                                            </details>
+                                        }
+                                    </td>
+                                    <td>
+                                        @await Html.PartialAsync("_RecordSource", record.SourceKind)
+                                        @{ var provenance = TrainingSubmissionRules.ProvenanceOf(record); }
+                                        @* Round 9B: self-reported vs reviewed vs recorded by an instructor, never left to guesswork. *@
+                                        <small class="rgw-sub text-muted"><i class="fa @TrainingReviewPresentation.ProvenanceIcon(provenance)" aria-hidden="true"></i> @reviewText[TrainingReviewPresentation.ProvenanceKey(provenance)]</small>
+                                    </td>
+                                    <td>@(category == null ? localizer["Doc.Uncategorized"].Value : category.IsDeleted ? string.Format(localizer["Rec.RemovedCategory"].Value, category.Name) : category.Name)</td>
+                                    <td class="text-right">@LearningRecordPresentation.Hours(record.Hours)</td>
+                                    <td>@await Html.PartialAsync("_RecordStatus", record.Status)</td>
+                                    <td class="rgw-row-actions">
+                                        @if (record.Status == (int)LearningRecordStatuses.Verified)
+                                        {
+                                            <a class="btn btn-xs btn-default" asp-controller="TrainingRecords" asp-action="Certificate" asp-route-area="User" asp-route-id="@record.LearningRecordId"><i class="fa fa-file-pdf-o" aria-hidden="true"></i> @localizer["Rec.CertificateButton"]</a>
+                                        }
+                                        @if (TrainingSubmissionRules.IsSubmission(record) && !record.IsVoided)
+                                        {
+                                            @* Round 9B: a submission's page carries every evidence file, its review and the member's resubmission. *@
+                                            <a class="btn btn-xs btn-default" asp-controller="TrainingReviews" asp-action="@(Model.IsSelf ? "Submission" : "Review")" asp-route-area="User" asp-route-id="@record.LearningRecordId"><i class="fa fa-paperclip" aria-hidden="true"></i> @reviewText["Transcript.SubmissionButton"]</a>
+                                        }
+                                        else if (record.EvidenceFileId.HasValue)
+                                        {
+                                            <a class="btn btn-xs btn-default" asp-controller="TrainingRecords" asp-action="Evidence" asp-route-area="User" asp-route-fileId="@record.EvidenceFileId"><i class="fa fa-paperclip" aria-hidden="true"></i> @localizer["Rec.EvidenceButton"]</a>
+                                        }
+                                        @if (Model.CanReview && !record.IsVoided)
+                                        {
+                                            <details class="transcript-row-action">
+                                                <summary class="btn btn-xs btn-danger"><i class="fa fa-ban" aria-hidden="true"></i> @localizer["Rec.VoidButton"]</summary>
+                                                <form method="post" asp-controller="TrainingRecords" asp-action="Void" asp-route-area="User" asp-route-id="@record.LearningRecordId" class="m-t-xs">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="fromTranscript" value="true" />
+                                                    <label>@localizer["ReasonLabel"] <input type="text" name="reason" class="form-control input-sm" maxlength="500" required /></label>
+                                                    <button type="submit" class="btn btn-xs btn-danger"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Rec.VoidConfirmButton"]</button>
+                                                </form>
+                                            </details>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+    <style>
+        .transcript-member-select { max-width: 320px; display: inline-block; width: auto; }
+        .transcript-row-action { display: inline-block; vertical-align: top; }
+        .transcript-row-action[open] form { display: block; min-width: 220px; white-space: normal; }
+        .transcript-row-action summary, .transcript-chain summary { list-style: none; cursor: pointer; }
+        .transcript-chain { margin-top: 4px; }
+        .transcript-chain-current { font-weight: 600; }
+    </style>
+}

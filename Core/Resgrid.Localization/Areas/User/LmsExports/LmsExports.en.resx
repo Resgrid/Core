@@ -1,0 +1,502 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Exit.Tab" xml:space="preserve">
+    <value>Data export</value>
+  </data>
+  <data name="Exit.Title" xml:space="preserve">
+    <value>Training data export</value>
+  </data>
+  <data name="Exit.Intro" xml:space="preserve">
+    <value>Export everything your department put into Training: courses, question banks, records, attempts and certificates.</value>
+  </data>
+  <data name="Exit.LapsedNotice" xml:space="preserve">
+    <value>The LMS add-on is not active. Exports keep working: your records and content stay yours.</value>
+  </data>
+  <data name="Exit.NewExport" xml:space="preserve">
+    <value>New export</value>
+  </data>
+  <data name="Exit.ScopeLabel" xml:space="preserve">
+    <value>What to include</value>
+  </data>
+  <data name="Exit.Scope.Full" xml:space="preserve">
+    <value>Everything</value>
+  </data>
+  <data name="Exit.Scope.FullHelp" xml:space="preserve">
+    <value>Courses with their versions, lessons and media, question banks with answer keys, assessment answers, lesson plans, skill sheets, requirements, plans, and every record.</value>
+  </data>
+  <data name="Exit.Scope.RecordsOnly" xml:space="preserve">
+    <value>Records only</value>
+  </data>
+  <data name="Exit.Scope.RecordsOnlyHelp" xml:space="preserve">
+    <value>Learning records, enrollments, assessment scores, certificates, members and categories as CSV, plus xAPI statements. No course content and no answer keys.</value>
+  </data>
+  <data name="Exit.IncludeMedia" xml:space="preserve">
+    <value>Copy hosted videos into the zip (otherwise the zip lists download links)</value>
+  </data>
+  <data name="Exit.LinkHelp" xml:space="preserve">
+    <value>The export is built in the background. Its download link works for {0} days.</value>
+  </data>
+  <data name="Exit.KeysWarning" xml:space="preserve">
+    <value>A full export contains your question banks with their answer keys and learners' answers. Keep it private.</value>
+  </data>
+  <data name="Exit.Queue" xml:space="preserve">
+    <value>Start export</value>
+  </data>
+  <data name="Exit.Queued" xml:space="preserve">
+    <value>The export was queued. This page shows when it is ready.</value>
+  </data>
+  <data name="Exit.Error.TooManyActive" xml:space="preserve">
+    <value>Two exports are already being built. Wait for one to finish.</value>
+  </data>
+  <data name="Exit.Error.NotAuthorized" xml:space="preserve">
+    <value>Only the department's owner and administrators can export training data.</value>
+  </data>
+  <data name="Exit.Error.NotFound" xml:space="preserve">
+    <value>That export was not found.</value>
+  </data>
+  <data name="Exit.Error.NotReady" xml:space="preserve">
+    <value>That export is not ready yet.</value>
+  </data>
+  <data name="Exit.Error.Expired" xml:space="preserve">
+    <value>That export's download link has expired. Start a new export.</value>
+  </data>
+  <data name="Exit.History" xml:space="preserve">
+    <value>Exports</value>
+  </data>
+  <data name="Exit.None" xml:space="preserve">
+    <value>No exports yet.</value>
+  </data>
+  <data name="Exit.Col.Requested" xml:space="preserve">
+    <value>Requested</value>
+  </data>
+  <data name="Exit.Col.Scope" xml:space="preserve">
+    <value>Included</value>
+  </data>
+  <data name="Exit.Col.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Exit.Col.Contents" xml:space="preserve">
+    <value>Size and counts</value>
+  </data>
+  <data name="Exit.Col.Expires" xml:space="preserve">
+    <value>Link expires</value>
+  </data>
+  <data name="Exit.Col.Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Exit.WithMedia" xml:space="preserve">
+    <value>with hosted videos</value>
+  </data>
+  <data name="Exit.Status.Queued" xml:space="preserve">
+    <value>Queued</value>
+  </data>
+  <data name="Exit.Status.Running" xml:space="preserve">
+    <value>Building</value>
+  </data>
+  <data name="Exit.Status.Completed" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Exit.Status.Failed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="Exit.Status.Expired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="Exit.CountsLine" xml:space="preserve">
+    <value>{0} records, {1} courses, {2} attempts</value>
+  </data>
+  <data name="Exit.Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Exit.FormatHelp" xml:space="preserve">
+    <value>The zip holds manifest.json with the count of every entity and a checksum of every file. CSV files are UTF-8; times are UTC.</value>
+  </data>
+  <data name="Scorm.Complete" xml:space="preserve">
+    <value>Mark this course complete</value>
+  </data>
+  <data name="Scorm.Completed" xml:space="preserve">
+    <value>This course is marked complete.</value>
+  </data>
+  <data name="Scorm.VideoNotIncluded" xml:space="preserve">
+    <value>This video is not included in the package.</value>
+  </data>
+  <data name="Scorm.Transcript" xml:space="preserve">
+    <value>Transcript</value>
+  </data>
+  <data name="Ce.Tab" xml:space="preserve">
+    <value>CE / CPD reporting</value>
+  </data>
+  <data name="Ce.Title" xml:space="preserve">
+    <value>CE / CPD reporting</value>
+  </data>
+  <data name="Ce.Intro" xml:space="preserve">
+    <value>Training hours and CE / CPD files for any regulator, professional body or employer, plus US files: CAPCE, state CE offices and a state-ready roster.</value>
+  </data>
+  <data name="Ce.LapsedNotice" xml:space="preserve">
+    <value>The LMS add-on is not active: files can still be built from your records, but the settings cannot be changed.</value>
+  </data>
+  <data name="Ce.Disclaimer" xml:space="preserve">
+    <value>Resgrid builds the files; it does not submit them and is not an accreditor. Check each file before you upload it to a regulator, professional body or other reporting body.</value>
+  </data>
+  <data name="Ce.BuildTitle" xml:space="preserve">
+    <value>Build a file</value>
+  </data>
+  <data name="Ce.ExporterLabel" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Ce.From" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="Ce.To" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="Ce.Category" xml:space="preserve">
+    <value>Training category</value>
+  </data>
+  <data name="Ce.AllCategories" xml:space="preserve">
+    <value>All categories</value>
+  </data>
+  <data name="Ce.IncludeFormer" xml:space="preserve">
+    <value>Include removed, disabled and hidden members</value>
+  </data>
+  <data name="Ce.Preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="Ce.Download" xml:space="preserve">
+    <value>Download CSV</value>
+  </data>
+  <data name="Ce.PreviewCount" xml:space="preserve">
+    <value>{0} rows in the file; the first {1} are shown.</value>
+  </data>
+  <data name="Ce.NoHeaderRow" xml:space="preserve">
+    <value>This layout has no header row; the headings above are for reference only.</value>
+  </data>
+  <data name="Ce.Missing" xml:space="preserve">
+    <value>{0} rows have no value for "{1}".</value>
+  </data>
+  <data name="Ce.ExportersTitle" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="Ce.LayoutVerified" xml:space="preserve">
+    <value>Published layout</value>
+  </data>
+  <data name="Ce.LayoutFallback" xml:space="preserve">
+    <value>Configurable CSV</value>
+  </data>
+  <data name="Ce.CustomColumns" xml:space="preserve">
+    <value>Custom columns</value>
+  </data>
+  <data name="Ce.Columns" xml:space="preserve">
+    <value>Columns</value>
+  </data>
+  <data name="Ce.SettingsTitle" xml:space="preserve">
+    <value>CE / CPD reporting settings</value>
+  </data>
+  <data name="Ce.SettingsIntro" xml:space="preserve">
+    <value>Provider numbers for the US files, and which certification types hold the license or registration numbers the files need.</value>
+  </data>
+  <data name="Ce.Set.CapceProviderNumber" xml:space="preserve">
+    <value>CAPCE provider number</value>
+  </data>
+  <data name="Ce.Set.CapceProviderName" xml:space="preserve">
+    <value>CAPCE provider name (as entered on courses)</value>
+  </data>
+  <data name="Ce.Set.CeBrokerProviderNumber" xml:space="preserve">
+    <value>CE Broker provider tracking number (Florida)</value>
+  </data>
+  <data name="Ce.Set.IdentifiersHelp" xml:space="preserve">
+    <value>The files read these numbers from each member's certifications of the chosen type: the number, the area as the state, province or region, the type as the level, and the expiry date.</value>
+  </data>
+  <data name="Ce.Set.LicenseType" xml:space="preserve">
+    <value>License or registration certification type (state, province or regulator)</value>
+  </data>
+  <data name="Ce.Set.NremtType" xml:space="preserve">
+    <value>NREMT registration certification type</value>
+  </data>
+  <data name="Ce.Set.NemsidType" xml:space="preserve">
+    <value>National EMS ID certification type</value>
+  </data>
+  <data name="Ce.Set.NoType" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Ce.Save" xml:space="preserve">
+    <value>Save settings</value>
+  </data>
+  <data name="Ce.Saved" xml:space="preserve">
+    <value>The CE / CPD reporting settings were saved.</value>
+  </data>
+  <data name="Ce.ActionFailed" xml:space="preserve">
+    <value>That could not be saved.</value>
+  </data>
+  <data name="Ce.AddonRequired" xml:space="preserve">
+    <value>Changing the CE / CPD reporting settings needs an active LMS add-on.</value>
+  </data>
+  <data name="Ce.ColumnsTitle" xml:space="preserve">
+    <value>File columns</value>
+  </data>
+  <data name="Ce.ColumnsIntro" xml:space="preserve">
+    <value>Choose the heading, the value and the format of each column.</value>
+  </data>
+  <data name="Ce.Back" xml:space="preserve">
+    <value>Back to CE / CPD reporting</value>
+  </data>
+  <data name="Ce.ColumnsCustom" xml:space="preserve">
+    <value>Your department's own columns are in use.</value>
+  </data>
+  <data name="Ce.ColumnsDefault" xml:space="preserve">
+    <value>The default columns are in use.</value>
+  </data>
+  <data name="Ce.Col.Header" xml:space="preserve">
+    <value>Heading</value>
+  </data>
+  <data name="Ce.Col.Source" xml:space="preserve">
+    <value>Value</value>
+  </data>
+  <data name="Ce.Col.Argument" xml:space="preserve">
+    <value>Format or text</value>
+  </data>
+  <data name="Ce.ColumnsHelp" xml:space="preserve">
+    <value>For dates, use yyyy-MM-dd (ISO 8601) unless your reporting body asks for another format, such as dd.MM.yyyy or MM/dd/yyyy; for hours, 0.##; for fixed text, choose Fixed text and type it. Leave a heading empty to remove the column.</value>
+  </data>
+  <data name="Ce.SaveColumns" xml:space="preserve">
+    <value>Save columns</value>
+  </data>
+  <data name="Ce.ResetColumns" xml:space="preserve">
+    <value>Restore default columns</value>
+  </data>
+  <data name="Ce.ColumnsSaved" xml:space="preserve">
+    <value>The columns were saved.</value>
+  </data>
+  <data name="Ce.ColumnsReset" xml:space="preserve">
+    <value>The default columns were restored.</value>
+  </data>
+  <data name="Ce.Source.Constant" xml:space="preserve">
+    <value>Fixed text</value>
+  </data>
+  <data name="Ce.Source.FirstName" xml:space="preserve">
+    <value>First name</value>
+  </data>
+  <data name="Ce.Source.LastName" xml:space="preserve">
+    <value>Last name</value>
+  </data>
+  <data name="Ce.Source.FullName" xml:space="preserve">
+    <value>Full name</value>
+  </data>
+  <data name="Ce.Source.Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Ce.Source.MemberId" xml:space="preserve">
+    <value>Resgrid user ID</value>
+  </data>
+  <data name="Ce.Source.IdentificationNumber" xml:space="preserve">
+    <value>Member number</value>
+  </data>
+  <data name="Ce.Source.CompletedOn" xml:space="preserve">
+    <value>Completion date</value>
+  </data>
+  <data name="Ce.Source.StartedOn" xml:space="preserve">
+    <value>Start date</value>
+  </data>
+  <data name="Ce.Source.EndedOn" xml:space="preserve">
+    <value>End date</value>
+  </data>
+  <data name="Ce.Source.Title" xml:space="preserve">
+    <value>Course title</value>
+  </data>
+  <data name="Ce.Source.CourseCode" xml:space="preserve">
+    <value>Course code</value>
+  </data>
+  <data name="Ce.Source.CeProvider" xml:space="preserve">
+    <value>Training provider</value>
+  </data>
+  <data name="Ce.Source.CeCourseNumber" xml:space="preserve">
+    <value>CE / CPD activity number</value>
+  </data>
+  <data name="Ce.Source.CeCourseNumberSuffix" xml:space="preserve">
+    <value>CE / CPD activity number without prefix</value>
+  </data>
+  <data name="Ce.Source.CeHours" xml:space="preserve">
+    <value>CE / CPD hours</value>
+  </data>
+  <data name="Ce.Source.Hours" xml:space="preserve">
+    <value>Hours</value>
+  </data>
+  <data name="Ce.Source.CategoryName" xml:space="preserve">
+    <value>Category name</value>
+  </data>
+  <data name="Ce.Source.CategoryCode" xml:space="preserve">
+    <value>Category code</value>
+  </data>
+  <data name="Ce.Source.Method" xml:space="preserve">
+    <value>Method of training</value>
+  </data>
+  <data name="Ce.Source.Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="Ce.Source.Instructors" xml:space="preserve">
+    <value>Instructors</value>
+  </data>
+  <data name="Ce.Source.LicenseNumber" xml:space="preserve">
+    <value>License or registration number</value>
+  </data>
+  <data name="Ce.Source.LicenseState" xml:space="preserve">
+    <value>Licensing state, province or region</value>
+  </data>
+  <data name="Ce.Source.LicenseLevel" xml:space="preserve">
+    <value>License level</value>
+  </data>
+  <data name="Ce.Source.LicenseExpiresOn" xml:space="preserve">
+    <value>License expiration date</value>
+  </data>
+  <data name="Ce.Source.NremtNumber" xml:space="preserve">
+    <value>NREMT number</value>
+  </data>
+  <data name="Ce.Source.NremtExpiresOn" xml:space="preserve">
+    <value>NREMT re-registration date</value>
+  </data>
+  <data name="Ce.Source.Nemsid" xml:space="preserve">
+    <value>National EMS ID</value>
+  </data>
+  <data name="Ce.Source.CapceProviderNumber" xml:space="preserve">
+    <value>CAPCE provider number</value>
+  </data>
+  <data name="Ce.Source.CeBrokerProviderNumber" xml:space="preserve">
+    <value>CE Broker provider number</value>
+  </data>
+  <data name="Ce.Source.RecordId" xml:space="preserve">
+    <value>Learning record ID</value>
+  </data>
+  <data name="Ce.Source.VerificationCode" xml:space="preserve">
+    <value>Certificate verification code</value>
+  </data>
+  <data name="Ce.Source.SourceKind" xml:space="preserve">
+    <value>Record source</value>
+  </data>
+  <data name="Ce.Exporter.capce" xml:space="preserve">
+    <value>CAPCE completion file</value>
+  </data>
+  <data name="Ce.Exporter.fl-ems" xml:space="preserve">
+    <value>Florida EMS (CE Broker)</value>
+  </data>
+  <data name="Ce.Exporter.va-ems" xml:space="preserve">
+    <value>Virginia EMS</value>
+  </data>
+  <data name="Ce.Exporter.nj-ems" xml:space="preserve">
+    <value>New Jersey EMS</value>
+  </data>
+  <data name="Ce.Exporter.fl-fire" xml:space="preserve">
+    <value>Florida fire training</value>
+  </data>
+  <data name="Ce.Exporter.state-ce" xml:space="preserve">
+    <value>Other US state CE (CSV)</value>
+  </data>
+  <data name="Ce.Exporter.state-roster" xml:space="preserve">
+    <value>US state-ready roster (Acadis and others)</value>
+  </data>
+  <data name="Ce.Note.capce" xml:space="preserve">
+    <value>For departments that are CAPCE-accredited providers: verified completions of your own CE courses. CAPCE does not publish its upload column order; the columns follow the data CAPCE requires, in its order, and can be changed.</value>
+  </data>
+  <data name="Ce.Note.fl-ems" xml:space="preserve">
+    <value>CE Broker's Easy Excel provider upload (columns A to H, no header row). Open the CSV in a spreadsheet and save it as an Excel workbook before uploading.</value>
+  </data>
+  <data name="Ce.Note.va-ems" xml:space="preserve">
+    <value>Virginia OEMS takes CE through its CE Scanner application and publishes no file layout, so this is a configurable CSV.</value>
+  </data>
+  <data name="Ce.Note.nj-ems" xml:space="preserve">
+    <value>New Jersey OEMS takes CE per student in NJLincs and publishes no file layout, so this is a configurable CSV.</value>
+  </data>
+  <data name="Ce.Note.fl-fire" xml:space="preserve">
+    <value>Florida's Bureau of Fire Standards and Training publishes no upload layout for training hours, so this is a configurable CSV.</value>
+  </data>
+  <data name="Ce.Note.state-ce" xml:space="preserve">
+    <value>A configurable CSV for any other US state's CE office.</value>
+  </data>
+  <data name="Ce.Note.state-roster" xml:space="preserve">
+    <value>A course completion roster with configurable columns for state systems such as Acadis, which publish no import template.</value>
+  </data>
+  <data name="Ce.Problem.UnknownExporter" xml:space="preserve">
+    <value>That file type is not known.</value>
+  </data>
+  <data name="Ce.Problem.NotAuthorized" xml:space="preserve">
+    <value>Only training officers can build CE files.</value>
+  </data>
+  <data name="Ce.Problem.NoCapceProvider" xml:space="preserve">
+    <value>Enter your CAPCE provider number in the settings below first.</value>
+  </data>
+  <data name="Ce.Problem.NoCeBrokerProvider" xml:space="preserve">
+    <value>Enter your CE Broker provider tracking number in the settings below first.</value>
+  </data>
+  <data name="lms_ce_not_authorized" xml:space="preserve">
+    <value>Only department administrators can change the CE reporting settings.</value>
+  </data>
+  <data name="lms_ce_certification_type_invalid" xml:space="preserve">
+    <value>Choose certification types of this department.</value>
+  </data>
+  <data name="lms_ce_exporter_unknown" xml:space="preserve">
+    <value>That file type is not known.</value>
+  </data>
+  <data name="Ce.Exporter.training-hours" xml:space="preserve">
+    <value>Training hours / CE / CPD file (any reporting body)</value>
+  </data>
+  <data name="Ce.Note.training-hours" xml:space="preserve">
+    <value>For any regulator, professional body, employer or insurer, in any country: one row per verified completion, dates as yyyy-MM-dd, hours with a full stop as the decimal separator, and headings in your language. Choose and order the columns your reporting body asks for.</value>
+  </data>
+</root>

@@ -1,0 +1,48 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@model Resgrid.Web.Models.LmsLearn.LmsLearnVerifyModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    Security review M2 (2026-11-25): the e-mail verification link. Opening the link only shows this page (a mail gateway or link preview never
+    activates an account); the form posts the link's token with antiforgery, and that POST activates the account. The registration's name and
+    date are shown so someone who did not register can tell and simply close the page. Follow-up (M1, attacker-first order): the person who
+    opened the link chooses the password here and confirms the name; a password typed when the account was registered is not kept.
+*@
+@{
+    ViewData["Title"] = localizer["Portal.VerifyTitle"].Value;
+    var key = ViewData["PortalKey"] as string;
+    var branding = ViewData["Branding"] as LmsLearnerPortalBranding;
+    var culture = CultureInfo.CurrentCulture;
+    var registeredOn = (branding?.Local(Model.RegisteredOn) ?? Model.RegisteredOn).ToString("d", culture);
+}
+<div class="rgl-panel" style="max-width: 560px; margin: 0 auto;">
+    <h2><i class="fa fa-envelope-o" aria-hidden="true"></i> @localizer["Portal.VerifyTitle"]</h2>
+    <p>@string.Format(culture, localizer["Portal.VerifyHelp"].Value, registeredOn, Model.RegisteredName)</p>
+    <form method="post" action="~/Learn/@key/Verify" data-submit-once>
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Token" />
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+        <div class="row">
+            <div class="form-group col-sm-6">
+                <label asp-for="FirstName">@localizer["FirstName"]</label>
+                <input asp-for="FirstName" class="form-control" autocomplete="given-name" required />
+            </div>
+            <div class="form-group col-sm-6">
+                <label asp-for="LastName">@localizer["LastName"]</label>
+                <input asp-for="LastName" class="form-control" autocomplete="family-name" required />
+            </div>
+        </div>
+        <p class="help-block">@localizer["Portal.VerifyPasswordHelp"]</p>
+        <div class="form-group">
+            <label asp-for="Password">@localizer["Portal.Password"]</label>
+            <input asp-for="Password" class="form-control" autocomplete="new-password" aria-describedby="rgl-pwd-help" required />
+            <span id="rgl-pwd-help" class="help-block">@localizer["Portal.PasswordHelp"]</span>
+        </div>
+        <div class="form-group">
+            <label asp-for="ConfirmPassword">@localizer["Portal.ConfirmPassword"]</label>
+            <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" required />
+        </div>
+        <button type="submit" class="btn btn-rgl"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Portal.VerifyConfirm"]</button>
+    </form>
+    <p class="m-t"><a href="~/Learn/@key"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["Portal.Back"]</a></p>
+</div>

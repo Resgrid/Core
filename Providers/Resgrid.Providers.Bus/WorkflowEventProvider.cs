@@ -146,6 +146,47 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener<RecurringCallOccurrenceEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
 			_eventAggregator.AddListener<RecurringCallAlertEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
 
+			// e-Signature S2 (220-223): requested, completed, declined, expired. The payload carries no signer contact details.
+			_eventAggregator.AddListener<SignatureRequestEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+
+			// Training T3 (224-229): LMS assigned, completed, failed, overdue, at risk and enforced. No contact data in the payload.
+			_eventAggregator.AddListener<TrainingWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+
+			// e-Signature S4 (236-239): approval requested, granted, rejected and escalated. No contact data in the payload.
+			_eventAggregator.AddListener<ApprovalWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+
+			// Protocols, Training/LMS, signing and knowledge (round 7C: 218-219, 230-235, 248-269). Producers use SendMessage, so these
+			// are on the synchronous rail. No contact, protected, wellness or answer-key data in any of the payloads.
+			_eventAggregator.AddListener<ProtocolWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<ProtocolAcknowledgmentWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<DispatchCaseWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<ExchangeListingWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<KnowledgeGapWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<DocumentSealingWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<CourseWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<SkillWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<RequirementEnforcementWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<TrainingRequestWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<TrainingAdminWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<SignatureStepWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			// Round 9A (275-278): certifications issued, renewed, taken back by a void, and requirements due. No contact data in the payload.
+			_eventAggregator.AddListener<CertificationTrainingWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			// Round 7B (240-247): class sessions scheduled, cancelled, signed off and waitlist promotions; completions recorded by an instructor;
+			// external learners registered, enrolled and completed. No contact data in the payloads.
+			_eventAggregator.AddListener<TrainingClassWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<TrainingCompletionRecordedEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<ExternalLearnerWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			// Round 9B (280-285): training hours submissions received, approved, denied, sent back or resubmitted, and recorded completions
+			// voided. Produced with SendMessage; ids, titles, hours and states only.
+			_eventAggregator.AddListener<TrainingSubmissionWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<TrainingCompletionVoidedWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			// Round 10 A3 (286-295): protocol and course sets over Department Links, LMS sponsorship and mutual-aid countersignature. Produced with
+			// SendMessage; ids, names of sets, items and departments, labels and states only.
+			_eventAggregator.AddListener<ContentSetWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<LmsSponsorshipWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<MutualAidCountersignWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+			_eventAggregator.AddListener<RecordDeploymentPartnerWorkflowEvent>(e => HandleEvent(e.DepartmentId, e.Trigger, e));
+
 			// Records (RMS) lifecycle triggers 100-107 arrive through the DomainEventOutbox dispatcher (post-commit in
 			// the producing process, or worker command 40's sweep), never straight from the Records transaction
 			// (plan section 5.6). The legacy LogAdded compatibility projection rides the same road with

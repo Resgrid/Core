@@ -194,7 +194,7 @@ namespace Resgrid.Repositories.DataRepository
 		private static readonly string MetadataColumns = Cols("RmsExternalOrderId", "DepartmentId", "ProtectionId", "RecordId", "ProfileKey", "ProfileVersion", "HomeProfileKey", "HostProfileKey", "SourceScheme", "SourceSystem",
 			"OrderNumber", "IncidentName", "IncidentNumber", "IncidentCountry", "IncidentSubdivision", "OrderingOffice", "DispatchOffice", "RequestingAgency", "ReceivingAgency", "SendingAgency", "DepartmentRole", "CostCode",
 			"AgreementReference", "CurrencyCode", "MeasurementSystem", "TimeZoneId", "CapturedOffsetMinutes", "SourceCapturedOn", "SourceVersion", "ArtifactFileName", "ArtifactContentType", "ArtifactChecksum", "ArtifactSafeUrl",
-			"ConnectorId", "OwnershipMarker",
+			"ConnectorId", "OwnershipMarker", "PartnerDepartmentLinkId", "PartnerDepartmentId",
 			"Status", "MobilizedOn", "ReleasedOn", "ClosedOutOn", "ClosedOutByUserId", "CloseoutNotes", "IsProtected", "ProtectedCatalogVersion", "CreatedOn", "CreatedByUserId", "ModifiedOn", "ModifiedByUserId", "RowVersion", "DeletedOn");
 
 		public RmsExternalOrdersRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
@@ -217,6 +217,15 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string orderId, long expectedVersion, CancellationToken cancellationToken = default)
 			=> await ExecuteAsync($"UPDATE {Tbl("RmsExternalOrders")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExternalOrderId")} = {P}Id AND {Col("RowVersion")} = {P}Version AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, Id = orderId, Version = expectedVersion }, cancellationToken) == 1;
+
+		public async Task<bool> TrySetPartnerAsync(int departmentId, string orderId, int? departmentLinkId, int? partnerDepartmentId, string userId, long expectedVersion,
+			CancellationToken cancellationToken = default)
+			=> await ExecuteAsync(
+				$"UPDATE {Tbl("RmsExternalOrders")} SET {Col("PartnerDepartmentLinkId")} = {P}LinkId, {Col("PartnerDepartmentId")} = {P}PartnerId, {Col("ModifiedOn")} = {P}Now, " +
+				$"{Col("ModifiedByUserId")} = {P}UserId, {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExternalOrderId")} = {P}Id " +
+				$"AND {Col("RowVersion")} = {P}Version AND {Col("DeletedOn")} IS NULL",
+				new { LinkId = departmentLinkId, PartnerId = partnerDepartmentId, Now = DatabaseTimestamp(DateTime.UtcNow), UserId = userId, DepartmentId = departmentId, Id = orderId, Version = expectedVersion },
+				cancellationToken) == 1;
 	}
 
 	public class RmsExternalOrderFillsRepository : RmsRepositoryBase<RmsExternalOrderFill>, IRmsExternalOrderFillsRepository
@@ -242,5 +251,33 @@ namespace Resgrid.Repositories.DataRepository
 
 		public async Task<bool> TryBumpRowVersionAsync(int departmentId, string fillId, long expectedVersion, CancellationToken cancellationToken = default)
 			=> await ExecuteAsync($"UPDATE {Tbl("RmsExternalOrderFills")} SET {Col("RowVersion")} = {Col("RowVersion")} + 1 WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExternalOrderFillId")} = {P}Id AND {Col("RowVersion")} = {P}Version AND {Col("DeletedOn")} IS NULL", new { DepartmentId = departmentId, Id = fillId, Version = expectedVersion }, cancellationToken) == 1;
+
+		private static DateTime? Stamp(DateTime? value) => value.HasValue ? DatabaseTimestamp(value.Value) : (DateTime?)null;
+
+		public async Task<bool> UpdatePartnerSignAsync(RmsExternalOrderFill fill, CancellationToken cancellationToken = default)
+		{
+			if (fill == null)
+				return false;
+			return await ExecuteAsync(
+				$"UPDATE {Tbl("RmsExternalOrderFills")} SET {Col("PartnerDepartmentId")} = {P}PartnerDepartmentId, {Col("PartnerSignStatus")} = {P}PartnerSignStatus, " +
+				$"{Col("PartnerSignRequestId")} = {P}PartnerSignRequestId, {Col("PartnerSignRequestedOn")} = {P}PartnerSignRequestedOn, {Col("PartnerSignedOn")} = {P}PartnerSignedOn, " +
+				$"{Col("PartnerSignedByUserId")} = {P}PartnerSignedByUserId WHERE {Col("DepartmentId")} = {P}DepartmentId AND {Col("RmsExternalOrderFillId")} = {P}Id",
+				new
+				{
+					fill.PartnerDepartmentId, fill.PartnerSignStatus, fill.PartnerSignRequestId,
+					PartnerSignRequestedOn = Stamp(fill.PartnerSignRequestedOn), PartnerSignedOn = Stamp(fill.PartnerSignedOn), fill.PartnerSignedByUserId,
+					fill.DepartmentId, Id = fill.RmsExternalOrderFillId
+				}, cancellationToken) == 1;
+		}
+
+		public Task<IEnumerable<RmsExternalOrderFill>> GetPartnerSignRequestedAsync(int partnerDepartmentId)
+			=> QueryAsync<RmsExternalOrderFill>($"SELECT * FROM {Tbl("RmsExternalOrderFills")} WHERE {Col("PartnerDepartmentId")} = {P}PartnerDepartmentId AND {Col("PartnerSignStatus")} = {(int)RmsDeploymentPartnerSignStatuses.Requested} AND {Col("DeletedOn")} IS NULL ORDER BY {Col("PartnerSignRequestedOn")}",
+				new { PartnerDepartmentId = partnerDepartmentId });
+
+		public Task<IEnumerable<RmsExternalOrderFill>> GetAllPartnerSignRequestedAsync(int max)
+			=> QueryAsync<RmsExternalOrderFill>(IsPostgres
+				? $"SELECT * FROM {Tbl("RmsExternalOrderFills")} WHERE {Col("PartnerSignStatus")} = {(int)RmsDeploymentPartnerSignStatuses.Requested} AND {Col("DeletedOn")} IS NULL ORDER BY {Col("PartnerSignRequestedOn")} LIMIT {Math.Max(1, max)}"
+				: $"SELECT TOP ({Math.Max(1, max)}) * FROM {Tbl("RmsExternalOrderFills")} WHERE {Col("PartnerSignStatus")} = {(int)RmsDeploymentPartnerSignStatuses.Requested} AND {Col("DeletedOn")} IS NULL ORDER BY {Col("PartnerSignRequestedOn")}",
+				null);
 	}
 }

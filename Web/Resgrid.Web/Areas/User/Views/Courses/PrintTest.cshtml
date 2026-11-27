@@ -1,0 +1,65 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Courses
+@model PrintTestModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* A printable test (§13a): one draw from the lesson's pool; the key only on the author's copy. *@
+@{
+    Layout = null;
+    var test = Model.Test;
+    var number = 0;
+}
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentUICulture.Name" dir="@(CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft ? "rtl" : "ltr")">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@test.Lesson.Title</title>
+    <style>
+        body { font-family: Arial, Helvetica, sans-serif; margin: 24px; color: #222; }
+        h1 { font-size: 20px; margin-bottom: 4px; }
+        .meta { color: #555; font-size: 12px; margin-bottom: 16px; }
+        .question { margin-bottom: 18px; page-break-inside: avoid; }
+        .options { list-style: none; padding-left: 16px; }
+        .options li::before { content: "\25A1  "; }
+        .key { color: #1a7f5a; font-weight: bold; }
+        .lines { border-bottom: 1px solid #999; height: 28px; }
+        @@media print { .no-print { display: none; } }
+    </style>
+</head>
+<body>
+    <p class="no-print meta">@localizer["PrintHint"]</p>
+    <h1>@(test.Course.Title) — @(test.Lesson.Title)</h1>
+    <div class="meta">
+        @Model.DepartmentName · @string.Format(localizer["PassMarkFormat"].Value, test.Lesson.PassMark)
+        @if (test.IncludesKey) { <span class="key">· @localizer["AnswerKeyCopy"]</span> }
+    </div>
+    <p>@localizer["NameLine"] ____________________________ &nbsp; @localizer["DateLine"] ______________</p>
+    @foreach (var question in test.Questions)
+    {
+        number++;
+        <div class="question">
+            <strong>@number. @question.Text</strong> <span class="meta">(@question.Points.ToString("0.##") @localizer["PointsShort"])</span>
+            @if (question.Kind == (int)LmsQuestionKinds.ShortAnswer)
+            {
+                <div class="lines"></div><div class="lines"></div>
+                @if (test.IncludesKey && !string.IsNullOrWhiteSpace(question.Explanation)) { <p class="key">@question.Explanation</p> }
+            }
+            else
+            {
+                @if (question.Kind == (int)LmsQuestionKinds.Ordering) { <div class="meta">@localizer["OrderHelp"]</div> }
+                <ul class="options">
+                    @foreach (var option in question.Options)
+                    {
+                        <li class="@(test.IncludesKey && question.CorrectKeys.Contains(option.Key) ? "key" : "")">@option.Text</li>
+                    }
+                </ul>
+                @if (test.IncludesKey && question.Kind == (int)LmsQuestionKinds.Ordering)
+                {
+                    <p class="key">@string.Join(" → ", question.CorrectOrder.Select(k => question.Options.FirstOrDefault(o => o.Key == k)?.Text))</p>
+                }
+            }
+        </div>
+    }
+</body>
+</html>

@@ -1,0 +1,282 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.Lms
+@model LmsRequirementEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsPrograms.LmsPrograms> localizer
+@* The requirement editor (T3 items 1, 3, 6): what, who, how often, due days and grace, onboarding auto-assignment, alerts, and the
+   certification a requirement can back for training-backed enforcement. *@
+@{
+    var form = Model.Form ?? new LmsRequirementForm();
+    ViewBag.Title = "Resgrid | " + localizer["RequirementTitle"];
+    ViewData["Title"] = Model.IsNew ? localizer[form.IsOnboarding ? "NewOnboarding" : "NewRequirement"].Value : form.Name;
+    ViewData["Subtitle"] = localizer["RequirementIntro"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    ViewData["Scope"] = Model.Scope;
+    ViewData["Sub"] = form.IsOnboarding ? "Onboarding" : "Requirements";
+    ViewData["CanManage"] = Model.Actor?.MayManage == true;
+    ViewData["CanPaths"] = Model.Actor?.MayAssignAcademy == true;
+    ViewData["Paused"] = Model.Paused;
+    bool In(List<int> list, string value) => list != null && int.TryParse(value, out var id) && list.Contains(id);
+    bool InText(List<string> list, string value) => list != null && list.Any(v => string.Equals(v, value, StringComparison.OrdinalIgnoreCase));
+    string Selected(int? current, string value) => current?.ToString() == value ? "selected" : null;
+}
+
+@await Html.PartialAsync("_Heading")
+
+<div class="wrapper wrapper-content rgw-page">
+    <form id="lms-requirement-form" method="post" asp-controller="LmsRequirements" asp-action="SaveRequirement" asp-route-area="User">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="LmsRequirementId" value="@form.LmsRequirementId" />
+        <input type="hidden" name="IsOnboarding" value="@(form.IsOnboarding ? "true" : "false")" />
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-list-ul" aria-hidden="true"></i> @localizer["WhatHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="req-name">@localizer["NameLabel"]</label>
+                        <input id="req-name" name="Name" class="form-control" maxlength="200" required value="@form.Name" />
+                    </div>
+                    <div class="form-group">
+                        <label for="req-kind">@localizer["KindLabel"]</label>
+                        <select id="req-kind" name="Kind" class="form-control">
+                            @foreach (var kind in Enum.GetValues<LmsRequirementKinds>())
+                            {
+                                <option value="@((int)kind)" selected="@(form.Kind == (int)kind)">@localizer["Kind." + kind]</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="req-description">@localizer["DescriptionLabel"]</label>
+                    <textarea id="req-description" name="Description" class="form-control" rows="2" maxlength="2000">@form.Description</textarea>
+                </div>
+                <div class="rgw-grid">
+                    <div class="form-group" data-kind="0">
+                        <label for="req-course">@localizer["CourseLabel"]</label>
+                        <select id="req-course" name="CourseId" class="form-control">
+                            <option value="">@localizer["ChooseOption"]</option>
+                            @foreach (var option in Model.Courses)
+                            {
+                                <option value="@option.Value" selected="@Selected(form.CourseId, option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" data-kind="1">
+                        <label for="req-training">@localizer["TrainingLabel"]</label>
+                        <select id="req-training" name="TrainingId" class="form-control">
+                            <option value="">@localizer["ChooseOption"]</option>
+                            @foreach (var option in Model.Trainings)
+                            {
+                                <option value="@option.Value" selected="@Selected(form.TrainingId, option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" data-kind="2">
+                        <label for="req-category">@localizer["CategoryLabel"]</label>
+                        <select id="req-category" name="CategoryId" class="form-control">
+                            <option value="">@localizer["ChooseOption"]</option>
+                            @foreach (var option in Model.Categories)
+                            {
+                                <option value="@option.Value" selected="@Selected(form.CategoryId, option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" data-kind="2">
+                        <label for="req-hours">@localizer["HoursLabel"]</label>
+                        <input id="req-hours" name="RequiredHours" type="number" min="0.25" max="10000" step="0.25" class="form-control" value="@form.RequiredHours" />
+                    </div>
+                    <div class="form-group" data-kind="3">
+                        <label for="req-path">@localizer["PathLabel"]</label>
+                        <select id="req-path" name="PathId" class="form-control">
+                            <option value="">@localizer["ChooseOption"]</option>
+                            @foreach (var option in Model.Paths)
+                            {
+                                <option value="@option.Value" selected="@Selected(form.PathId, option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" data-kind="4">
+                        <label for="req-skill">@localizer["SkillCodeLabel"]</label>
+                        <input id="req-skill" name="SkillCode" class="form-control" maxlength="100" value="@form.SkillCode" aria-describedby="req-skill-help" />
+                        <span id="req-skill-help" class="help-block">@localizer["SkillCodeHelp"]</span>
+                    </div>
+                    <div class="form-group" data-kind="4">
+                        <label for="req-count">@localizer["CountLabel"]</label>
+                        <input id="req-count" name="RequiredCount" type="number" min="1" max="1000" class="form-control" value="@form.RequiredCount" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-calendar" aria-hidden="true"></i> @localizer["WhenHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="req-recurrence">@localizer["RecurrenceLabel"]</label>
+                        <select id="req-recurrence" name="Recurrence" class="form-control">
+                            @foreach (var recurrence in Enum.GetValues<LmsRequirementRecurrences>())
+                            {
+                                <option value="@((int)recurrence)" selected="@(form.Recurrence == (int)recurrence)">@localizer["Recurrence." + recurrence]</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group" data-recurrence="1">
+                        <label for="req-interval">@localizer["IntervalLabel"]</label>
+                        <input id="req-interval" name="IntervalMonths" type="number" min="1" max="120" class="form-control" value="@form.IntervalMonths" />
+                    </div>
+                    <div class="form-group">
+                        <label for="req-due">@localizer["DueDaysLabel"]</label>
+                        <input id="req-due" name="DueDays" type="number" min="0" max="3650" class="form-control" value="@form.DueDays" aria-describedby="req-due-help" />
+                        <span id="req-due-help" class="help-block">@localizer["DueDaysHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="req-grace">@localizer["GraceDaysLabel"]</label>
+                        <input id="req-grace" name="GraceDays" type="number" min="0" max="365" class="form-control" value="@form.GraceDays" aria-describedby="req-grace-help" />
+                        <span id="req-grace-help" class="help-block">@localizer["GraceDaysHelp"]</span>
+                    </div>
+                    <div class="form-group">
+                        <label for="req-atrisk">@localizer["AtRiskDaysLabel"]</label>
+                        <input id="req-atrisk" name="AtRiskDays" type="number" min="0" max="365" class="form-control" value="@form.AtRiskDays" />
+                    </div>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="NewMembersOnly" value="true" checked="@form.NewMembersOnly" /> @localizer["NewMembersOnlyLabel"]</label>
+                </div>
+                <div class="checkbox" data-kind="0 3">
+                    <label><input type="checkbox" name="AutoAssign" value="true" checked="@form.AutoAssign" /> @localizer["AutoAssignLabel"]</label>
+                </div>
+                <div class="form-group" data-kind="0 3">
+                    <label for="req-academy-update">@localizer["AcademyUpdatePolicyLabel"]</label>
+                    <select id="req-academy-update" name="AcademyUpdatePolicy" class="form-control" style="max-width: 420px;" aria-describedby="req-academy-update-help">
+                        <option value="1" selected="@(form.AcademyUpdatePolicy == 1)">@localizer["AcademyUpdatePolicy.Notify"]</option>
+                        <option value="2" selected="@(form.AcademyUpdatePolicy == 2)">@localizer["AcademyUpdatePolicy.Reassign"]</option>
+                        <option value="0" selected="@(form.AcademyUpdatePolicy == 0)">@localizer["AcademyUpdatePolicy.Nothing"]</option>
+                    </select>
+                    <span id="req-academy-update-help" class="help-block">@localizer["AcademyUpdatePolicyHelp"]</span>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="IsActive" value="true" checked="@form.IsActive" /> @localizer["ActiveLabel"]</label>
+                    <input type="hidden" name="IsActive" value="false" />
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-users" aria-hidden="true"></i> @localizer["WhoHeader"]</h5></div>
+            <div class="ibox-content">
+                <p class="text-muted">@localizer["AudienceHelp"]</p>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="Everyone" value="true" checked="@form.Everyone" /> @localizer["Everyone"]</label>
+                </div>
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="req-roles">@localizer["RolesLabel"]</label>
+                        <select id="req-roles" name="Roles" class="form-control" multiple size="6">
+                            @foreach (var option in Model.Roles)
+                            {
+                                <option value="@option.Value" selected="@In(form.Roles, option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="req-groups">@localizer["GroupsLabel"]</label>
+                        <select id="req-groups" name="Groups" class="form-control" multiple size="6">
+                            @foreach (var option in Model.Groups)
+                            {
+                                <option value="@option.Value" selected="@In(form.Groups, option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="req-certs">@localizer["CertificationsLabel"]</label>
+                        <select id="req-certs" name="CertificationTypes" class="form-control" multiple size="6">
+                            @foreach (var option in Model.CertificationTypes)
+                            {
+                                <option value="@option.Value" selected="@In(form.CertificationTypes, option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="req-shifts">@localizer["ShiftsLabel"]</label>
+                        <select id="req-shifts" name="Shifts" class="form-control" multiple size="6">
+                            @foreach (var option in Model.Shifts)
+                            {
+                                <option value="@option.Value" selected="@In(form.Shifts, option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="req-members">@localizer["MembersLabel"]</label>
+                        <select id="req-members" name="Members" class="form-control" multiple size="6">
+                            @foreach (var option in Model.Members)
+                            {
+                                <option value="@option.Value" selected="@InText(form.Members, option.Value)">@option.Text</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-bell" aria-hidden="true"></i> @localizer["AlertsHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="checkbox">
+                    <label><input type="checkbox" name="AlertSupervisors" value="true" checked="@form.AlertSupervisors" /> @localizer["AlertSupervisorsLabel"]</label>
+                </div>
+                <div class="form-group">
+                    <label for="req-alert-users">@localizer["AlertUsersLabel"]</label>
+                    <select id="req-alert-users" name="AlertUserIds" class="form-control" multiple size="4">
+                        @foreach (var option in Model.Members)
+                        {
+                            <option value="@option.Value" selected="@InText(form.AlertUserIds, option.Value)">@option.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="AlertOnCompletion" value="true" checked="@form.AlertOnCompletion" /> @localizer["AlertOnCompletionLabel"]</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-shield" aria-hidden="true"></i> @localizer["EnforcementHeader"]</h5></div>
+            <div class="ibox-content">
+                <div class="form-group">
+                    <label for="req-backs">@localizer["BacksLabel"]</label>
+                    <select id="req-backs" name="BacksCertificationTypeId" class="form-control" aria-describedby="req-backs-help">
+                        <option value="">@localizer["NoneOption"]</option>
+                        @foreach (var option in Model.ExpiringCertificationTypes)
+                        {
+                            <option value="@option.Value" selected="@Selected(form.BacksCertificationTypeId, option.Value)">@option.Text</option>
+                        }
+                    </select>
+                    <span id="req-backs-help" class="help-block">@localizer["BacksHelp"]</span>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" name="EnforcementEnabled" value="true" checked="@form.EnforcementEnabled" /> @localizer["EnforceLabel"]</label>
+                </div>
+                <p class="text-muted small">@localizer["EnforceHelp"]</p>
+            </div>
+        </div>
+
+        <div class="rgw-toolbar">
+            @if (Model.CanEdit)
+            {
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["Save"]</button>
+            }
+            <a class="btn btn-white" asp-controller="LmsRequirements" asp-action="@(form.IsOnboarding ? "Onboarding" : "Index")" asp-route-area="User">@localizer["Cancel"]</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script src="~/js/app/internal/lms/resgrid.lms.programs.js" asp-append-version="true"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -250,4 +250,2884 @@
   <data name="ProtocolsLabel" xml:space="preserve">
     <value>Protocols</value>
   </data>
+  <data name="LibraryTab" xml:space="preserve">
+    <value>Library</value>
+  </data>
+  <data name="LibraryIntro" xml:space="preserve">
+    <value>Dispatch protocols: the scripted questions and instructions a call's type and priority bring up.</value>
+  </data>
+  <data name="LibraryHeader" xml:space="preserve">
+    <value>Protocol library</value>
+  </data>
+  <data name="KpiTotal" xml:space="preserve">
+    <value>Protocols</value>
+  </data>
+  <data name="KpiDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="KpiUsedOnCalls" xml:space="preserve">
+    <value>Used on calls (30 days)</value>
+  </data>
+  <data name="SearchLabel" xml:space="preserve">
+    <value>Search protocols</value>
+  </data>
+  <data name="SearchPlaceholder" xml:space="preserve">
+    <value>Name or code</value>
+  </data>
+  <data name="StatusAll" xml:space="preserve">
+    <value>All statuses</value>
+  </data>
+  <data name="FilterButton" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="ClearFilterButton" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="NoProtocolsYet" xml:space="preserve">
+    <value>No protocols yet.</value>
+  </data>
+  <data name="NoProtocolsMatch" xml:space="preserve">
+    <value>No protocols match the filter.</value>
+  </data>
+  <data name="QuestionsCount" xml:space="preserve">
+    <value>{0} questions</value>
+  </data>
+  <data name="NoTriggers" xml:space="preserve">
+    <value>No triggers (picked by hand only)</value>
+  </data>
+  <data name="MoreTriggers" xml:space="preserve">
+    <value>and {0} more</value>
+  </data>
+  <data name="UsedOnCallsColumn" xml:space="preserve">
+    <value>Calls (30 days)</value>
+  </data>
+  <data name="LastUpdatedColumn" xml:space="preserve">
+    <value>Last updated</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="EnableButton" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="DisableButton" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="DeleteProtocolConfirm" xml:space="preserve">
+    <value>The protocol leaves the library and new calls; calls that used it keep showing it. Delete the protocol</value>
+  </data>
+  <data name="DeletedLabel" xml:space="preserve">
+    <value>Deleted</value>
+  </data>
+  <data name="DeletedProtocolNotice" xml:space="preserve">
+    <value>This protocol was deleted. It is kept because calls cite it; it is not suggested or attached.</value>
+  </data>
+  <data name="DisabledProtocolNotice" xml:space="preserve">
+    <value>This protocol is disabled: it is not suggested on calls or attached to them. Enable it to use it again.</value>
+  </data>
+  <data name="DetailsHeader" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="TriggerMatchesColumn" xml:space="preserve">
+    <value>Matches</value>
+  </data>
+  <data name="NoTriggersHelp" xml:space="preserve">
+    <value>No triggers: the protocol is never suggested, but it can be added to a call by hand.</value>
+  </data>
+  <data name="NoQuestionsHelp" xml:space="preserve">
+    <value>No questions: when a trigger matches, the protocol applies at once.</value>
+  </data>
+  <data name="MinimumWeightHelp" xml:space="preserve">
+    <value>When a trigger matches, the protocol applies once the answers' weights add up to at least {0}.</value>
+  </data>
+  <data name="DownloadButton" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>No attachments.</value>
+  </data>
+  <data name="NoProtocolText" xml:space="preserve">
+    <value>No protocol text.</value>
+  </data>
+  <data name="ProtocolSavedMessage" xml:space="preserve">
+    <value>The protocol was saved.</value>
+  </data>
+  <data name="ProtocolDisabledMessage" xml:space="preserve">
+    <value>The protocol was disabled.</value>
+  </data>
+  <data name="ProtocolEnabledMessage" xml:space="preserve">
+    <value>The protocol was enabled.</value>
+  </data>
+  <data name="EditProtocolHeader" xml:space="preserve">
+    <value>Edit Protocol</value>
+  </data>
+  <data name="EditorIntroNew" xml:space="preserve">
+    <value>Name the protocol, write its content, then add the triggers that suggest it and the questions that decide whether it applies.</value>
+  </data>
+  <data name="BasicsHeader" xml:space="preserve">
+    <value>Basics</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Up to {0} letters, digits, spaces and . _ / - (for example 09-E-01 or SOG-204).</value>
+  </data>
+  <data name="MinimumWeightEditorHelp" xml:space="preserve">
+    <value>The total answer weight a suggested protocol needs to apply. 0 applies it whatever the answers.</value>
+  </data>
+  <data name="DisabledCheckbox" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="DisabledCheckboxHelp" xml:space="preserve">
+    <value>A disabled protocol stays in the library but is not suggested on calls or attached to them.</value>
+  </data>
+  <data name="ContentHeader" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="DescriptionHelp" xml:space="preserve">
+    <value>A short summary, up to {0} characters of text.</value>
+  </data>
+  <data name="TriggerTimeZoneHelp" xml:space="preserve">
+    <value>Start and end times are in the department's time zone ({0}).</value>
+  </data>
+  <data name="TriggerLabel" xml:space="preserve">
+    <value>Trigger</value>
+  </data>
+  <data name="RemoveTriggerButton" xml:space="preserve">
+    <value>Remove trigger</value>
+  </data>
+  <data name="NoTypeOption" xml:space="preserve">
+    <value>No type</value>
+  </data>
+  <data name="LegacyTypeHelp" xml:space="preserve">
+    <value>This trigger names the call type "{0}", which no longer exists. Choose a call type to keep it matching.</value>
+  </data>
+  <data name="RemovedNamed" xml:space="preserve">
+    <value>{0} (removed)</value>
+  </data>
+  <data name="RemovedPriority" xml:space="preserve">
+    <value>Removed priority</value>
+  </data>
+  <data name="RemoveQuestionButton" xml:space="preserve">
+    <value>Remove question</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Add answer</value>
+  </data>
+  <data name="RemoveAnswerButton" xml:space="preserve">
+    <value>Remove answer</value>
+  </data>
+  <data name="RemoveOnSaveColumn" xml:space="preserve">
+    <value>Remove on save</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="AddFilesLabel" xml:space="preserve">
+    <value>Add files</value>
+  </data>
+  <data name="AttachmentsLimitsHelp" xml:space="preserve">
+    <value>Up to {0} files per save, {1} MB each and {2} MB together: images, PDF, Office documents, text and video.</value>
+  </data>
+  <data name="AttachmentsReselectHelp" xml:space="preserve">
+    <value>If the save fails, choose the files again: a browser never keeps them.</value>
+  </data>
+  <data name="SaveProtocolButton" xml:space="preserve">
+    <value>Save Protocol</value>
+  </data>
+  <data name="TriggerSummaryPriority" xml:space="preserve">
+    <value>Priority: {0}</value>
+  </data>
+  <data name="TriggerSummaryType" xml:space="preserve">
+    <value>Type: {0}</value>
+  </data>
+  <data name="TriggerSummaryPriorityAndType" xml:space="preserve">
+    <value>{0} · priority {1}</value>
+  </data>
+  <data name="ReasonMatched" xml:space="preserve">
+    <value>Matched: {0}</value>
+  </data>
+  <data name="ErrorProtocolMissing" xml:space="preserve">
+    <value>The protocol could not be read.</value>
+  </data>
+  <data name="ErrorNameRequired" xml:space="preserve">
+    <value>A protocol name is required.</value>
+  </data>
+  <data name="ErrorNameTooLong" xml:space="preserve">
+    <value>The name can be at most 100 characters.</value>
+  </data>
+  <data name="ErrorCodeRequired" xml:space="preserve">
+    <value>A protocol code is required.</value>
+  </data>
+  <data name="ErrorCodeInvalid" xml:space="preserve">
+    <value>The code can be up to 16 letters, digits, spaces and . _ / - characters.</value>
+  </data>
+  <data name="ErrorDescriptionTooLong" xml:space="preserve">
+    <value>The description can be at most 500 characters of text.</value>
+  </data>
+  <data name="ErrorMinimumWeightRange" xml:space="preserve">
+    <value>The minimum weight must be between 0 and 1000.</value>
+  </data>
+  <data name="ErrorTriggerType" xml:space="preserve">
+    <value>A trigger has an unknown type.</value>
+  </data>
+  <data name="ErrorTriggerWindow" xml:space="preserve">
+    <value>A trigger ends before it starts.</value>
+  </data>
+  <data name="ErrorTriggerPriority" xml:space="preserve">
+    <value>A priority trigger needs one of the department's call priorities.</value>
+  </data>
+  <data name="ErrorTriggerCallType" xml:space="preserve">
+    <value>A type trigger names a call type that is not the department's.</value>
+  </data>
+  <data name="ErrorTriggerDate" xml:space="preserve">
+    <value>A trigger's start or end time could not be read.</value>
+  </data>
+  <data name="ErrorQuestionText" xml:space="preserve">
+    <value>Every question needs its text.</value>
+  </data>
+  <data name="ErrorQuestionAnswers" xml:space="preserve">
+    <value>Every question needs at least one answer.</value>
+  </data>
+  <data name="ErrorAnswerText" xml:space="preserve">
+    <value>Every answer needs its text.</value>
+  </data>
+  <data name="ErrorTooManyFiles" xml:space="preserve">
+    <value>Add at most {0} files at a time.</value>
+  </data>
+  <data name="ErrorTooManyAttachments" xml:space="preserve">
+    <value>A protocol can have at most {0} attachments.</value>
+  </data>
+  <data name="ErrorUploadTooLarge" xml:space="preserve">
+    <value>The files together must be smaller than {0} MB.</value>
+  </data>
+  <data name="ErrorFileType" xml:space="preserve">
+    <value>Files of type ({0}) cannot be attached.</value>
+  </data>
+  <data name="ErrorFileTooLarge" xml:space="preserve">
+    <value>{0} is too large: each file must be smaller than {1} MB.</value>
+  </data>
+  <data name="ErrorForeignRows" xml:space="preserve">
+    <value>The edit names triggers, questions or answers that are not this protocol's.</value>
+  </data>
+  <data name="TriggersRenamedType" xml:space="preserve">
+    <value>{0} protocol triggers use this call type; they keep matching and show the new name: {1}.</value>
+  </data>
+  <data name="TriggersDeletedType" xml:space="preserve">
+    <value>{0} protocol triggers used the deleted call type and no longer match until they are changed: {1}.</value>
+  </data>
+  <data name="TriggersRemovedPriority" xml:space="preserve">
+    <value>{0} protocol triggers used the removed priority and no longer match until they are changed: {1}.</value>
+  </data>
+  <data name="NoProtocolsOnCall" xml:space="preserve">
+    <value>No protocols are on this call.</value>
+  </data>
+  <data name="SourceTrigger" xml:space="preserve">
+    <value>Suggested by a trigger</value>
+  </data>
+  <data name="SourceManual" xml:space="preserve">
+    <value>Added by hand</value>
+  </data>
+  <data name="SourceUnknown" xml:space="preserve">
+    <value>Attached before answers were kept</value>
+  </data>
+  <data name="RemovedFromCallLabel" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="RemovedByOn" xml:space="preserve">
+    <value>Removed by {0} on {1}.</value>
+  </data>
+  <data name="RemovalReasonLabel" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Score</value>
+  </data>
+  <data name="ScoreOfMinimum" xml:space="preserve">
+    <value>{0} of minimum {1}</value>
+  </data>
+  <data name="PanelScore" xml:space="preserve">
+    <value>Score {0} of minimum {1}</value>
+  </data>
+  <data name="QuestionsPassed" xml:space="preserve">
+    <value>Applies</value>
+  </data>
+  <data name="QuestionsIncomplete" xml:space="preserve">
+    <value>Not every question answered</value>
+  </data>
+  <data name="QuestionsBelowMinimum" xml:space="preserve">
+    <value>Below the minimum</value>
+  </data>
+  <data name="NotAnswered" xml:space="preserve">
+    <value>Not answered</value>
+  </data>
+  <data name="NoAnswersRecorded" xml:space="preserve">
+    <value>No answers were recorded for this protocol.</value>
+  </data>
+  <data name="AttachedByOn" xml:space="preserve">
+    <value>Attached by {0} on {1}.</value>
+  </data>
+  <data name="TextAsDispatched" xml:space="preserve">
+    <value>Text as dispatched</value>
+  </data>
+  <data name="ChangedSinceDispatch" xml:space="preserve">
+    <value>Changed since dispatch</value>
+  </data>
+  <data name="NoSnapshotRecorded" xml:space="preserve">
+    <value>Attached before the text as dispatched was kept.</value>
+  </data>
+  <data name="CurrentTextLink" xml:space="preserve">
+    <value>Current text</value>
+  </data>
+  <data name="RemoveFromCallButton" xml:space="preserve">
+    <value>Remove from call</value>
+  </data>
+  <data name="RemovalReasonPlaceholder" xml:space="preserve">
+    <value>Why it does not apply</value>
+  </data>
+  <data name="CallProtocolRemovedMessage" xml:space="preserve">
+    <value>The protocol was removed from the call. It stays on the record with the reason.</value>
+  </data>
+  <data name="RemovalReasonRequired" xml:space="preserve">
+    <value>Give a reason to remove a protocol from the call.</value>
+  </data>
+  <data name="PanelIntro" xml:space="preserve">
+    <value>Protocols the call's type and priority suggest, with the trigger that matched. Answer each protocol's questions; you can also add one by hand.</value>
+  </data>
+  <data name="PanelNoSuggestions" xml:space="preserve">
+    <value>No protocol matches this call's type and priority.</value>
+  </data>
+  <data name="PanelAddByHand" xml:space="preserve">
+    <value>Add a protocol by hand</value>
+  </data>
+  <data name="PanelAddButton" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="PanelAnswerToContinue" xml:space="preserve">
+    <value>Answer every question to see whether this protocol applies.</value>
+  </data>
+  <data name="PanelApplies" xml:space="preserve">
+    <value>Applies</value>
+  </data>
+  <data name="PanelDoesNotApply" xml:space="preserve">
+    <value>Does not apply</value>
+  </data>
+  <data name="PanelQuestionOf" xml:space="preserve">
+    <value>Question {0} of {1}</value>
+  </data>
+  <data name="PanelBack" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="PanelNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="PanelChoose" xml:space="preserve">
+    <value>Choose a protocol…</value>
+  </data>
+  <data name="AcknowledgmentLabel" xml:space="preserve">
+    <value>Acknowledgment</value>
+  </data>
+  <data name="AddCategoryHeader" xml:space="preserve">
+    <value>Add a category</value>
+  </data>
+  <data name="AddCommentButton" xml:space="preserve">
+    <value>Add comment</value>
+  </data>
+  <data name="AiLabel" xml:space="preserve">
+    <value>AI</value>
+  </data>
+  <data name="AllKinds" xml:space="preserve">
+    <value>All kinds</value>
+  </data>
+  <data name="AllProtocols" xml:space="preserve">
+    <value>All protocols</value>
+  </data>
+  <data name="AnyApproverLabel" xml:space="preserve">
+    <value>Any approver</value>
+  </data>
+  <data name="AnyAudience" xml:space="preserve">
+    <value>Any audience</value>
+  </data>
+  <data name="AnyKindLabel" xml:space="preserve">
+    <value>Any kind</value>
+  </data>
+  <data name="AnyOwner" xml:space="preserve">
+    <value>Any owner</value>
+  </data>
+  <data name="ApprovalStepsHeader" xml:space="preserve">
+    <value>Approval steps</value>
+  </data>
+  <data name="ApprovalStepsHelp" xml:space="preserve">
+    <value>Pick the roles or members who approve, in order. Leave empty for one step that any member with Approve Protocols can decide.</value>
+  </data>
+  <data name="ApproveHeader" xml:space="preserve">
+    <value>Approve this version</value>
+  </data>
+  <data name="ApprovedLabel" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="AudienceCertificationLabel" xml:space="preserve">
+    <value>Certification</value>
+  </data>
+  <data name="AudienceEveryoneLabel" xml:space="preserve">
+    <value>Everyone</value>
+  </data>
+  <data name="AudienceEveryoneOption" xml:space="preserve">
+    <value>Everyone in the department</value>
+  </data>
+  <data name="AudienceGroupLabel" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="AudienceHelp" xml:space="preserve">
+    <value>Only the members this protocol is for can read it, in the library, the apps and search. Dispatchers always read dispatch protocols, and authors and approvers read every protocol.</value>
+  </data>
+  <data name="AudienceLabel" xml:space="preserve">
+    <value>Audience</value>
+  </data>
+  <data name="AudienceRestrictedLabel" xml:space="preserve">
+    <value>Restricted audience</value>
+  </data>
+  <data name="AudienceRestrictedOption" xml:space="preserve">
+    <value>Only members of these groups, roles, shifts, unit types or certifications</value>
+  </data>
+  <data name="AudienceRoleLabel" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="AudienceShiftLabel" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="AudienceUnitTypeLabel" xml:space="preserve">
+    <value>Unit type</value>
+  </data>
+  <data name="AutosaveFailed" xml:space="preserve">
+    <value>The draft could not be saved automatically. Save the page to keep your changes.</value>
+  </data>
+  <data name="AutosaveSaved" xml:space="preserve">
+    <value>Draft saved</value>
+  </data>
+  <data name="AutosaveSaving" xml:space="preserve">
+    <value>Saving the draft...</value>
+  </data>
+  <data name="BackButton" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="BackToProtocolButton" xml:space="preserve">
+    <value>Back to the protocol</value>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="CallsColumn" xml:space="preserve">
+    <value>Calls</value>
+  </data>
+  <data name="CategoriesHeader" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="CategoriesIntro" xml:space="preserve">
+    <value>Organize the library in nested categories and set who approves each one's versions.</value>
+  </data>
+  <data name="CategoriesTab" xml:space="preserve">
+    <value>Categories</value>
+  </data>
+  <data name="CategoryLabel" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="ChangeSummaryHelp" xml:space="preserve">
+    <value>What changed and why. It is required to publish and is kept with the version.</value>
+  </data>
+  <data name="ChangeSummaryLabel" xml:space="preserve">
+    <value>Change summary</value>
+  </data>
+  <data name="ChangesSinceHeader" xml:space="preserve">
+    <value>Changes since {0}</value>
+  </data>
+  <data name="CitedVersionLabel" xml:space="preserve">
+    <value>Text as dispatched ({0})</value>
+  </data>
+  <data name="CommentRefused" xml:space="preserve">
+    <value>The comment could not be saved.</value>
+  </data>
+  <data name="CompareButton" xml:space="preserve">
+    <value>Compare</value>
+  </data>
+  <data name="CompareFromLabel" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="CompareHeader" xml:space="preserve">
+    <value>Compare versions</value>
+  </data>
+  <data name="CompareToLabel" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="ContentCodeLabel" xml:space="preserve">
+    <value>Content code</value>
+  </data>
+  <data name="ContentLockedNotice" xml:space="preserve">
+    <value>This version is in review or approved, so its text is locked. Withdraw it to edit the text again.</value>
+  </data>
+  <data name="CopyButton" xml:space="preserve">
+    <value>Copy as new</value>
+  </data>
+  <data name="CreateDraftButton" xml:space="preserve">
+    <value>Create draft</value>
+  </data>
+  <data name="DefaultApprovalStep" xml:space="preserve">
+    <value>One step, any approver</value>
+  </data>
+  <data name="DefaultReviewIntervalHelp" xml:space="preserve">
+    <value>New protocols start with this review interval in days. 0 means no review cycle.</value>
+  </data>
+  <data name="DefaultReviewIntervalLabel" xml:space="preserve">
+    <value>Default review interval (days)</value>
+  </data>
+  <data name="DeleteCategoryConfirm" xml:space="preserve">
+    <value>Delete the category</value>
+  </data>
+  <data name="DeletedTextLabel" xml:space="preserve">
+    <value>Removed text</value>
+  </data>
+  <data name="DepartmentLegalHoldCheckbox" xml:space="preserve">
+    <value>Legal hold on the whole library</value>
+  </data>
+  <data name="DepartmentLegalHoldHelp" xml:space="preserve">
+    <value>While it is on, no version is purged, whatever the retention periods say.</value>
+  </data>
+  <data name="DiscardDraftButton" xml:space="preserve">
+    <value>Discard draft</value>
+  </data>
+  <data name="DiscardDraftConfirm" xml:space="preserve">
+    <value>Discard this draft? Its text is deleted.</value>
+  </data>
+  <data name="DraftDiscardedMessage" xml:space="preserve">
+    <value>The draft was discarded.</value>
+  </data>
+  <data name="EditDraftButton" xml:space="preserve">
+    <value>Edit the draft</value>
+  </data>
+  <data name="EditingDraftCallout" xml:space="preserve">
+    <value>You are editing the draft ({0}), last saved by {1} on {2}. The text in force does not change until this version is approved and published.</value>
+  </data>
+  <data name="EditingNoDraftCallout" xml:space="preserve">
+    <value>Version {0} is in force. Changing the text and saving starts a new draft version.</value>
+  </data>
+  <data name="EffectiveColumn" xml:space="preserve">
+    <value>Effective</value>
+  </data>
+  <data name="EffectiveOnHelp" xml:space="preserve">
+    <value>Leave empty to publish now. A later date and time ({0}) schedules the version; it takes effect automatically.</value>
+  </data>
+  <data name="EffectiveOnLabel" xml:space="preserve">
+    <value>Effective on</value>
+  </data>
+  <data name="ErrorCategoryName" xml:space="preserve">
+    <value>Enter a category name.</value>
+  </data>
+  <data name="ErrorKind" xml:space="preserve">
+    <value>Choose a protocol kind.</value>
+  </data>
+  <data name="ExcludeFromAiCheckbox" xml:space="preserve">
+    <value>Exclude from AI</value>
+  </data>
+  <data name="ExcludeFromAiHelp" xml:space="preserve">
+    <value>Keep this protocol out of every AI index and answer (for licensed or sensitive content).</value>
+  </data>
+  <data name="ExcludedFromAi" xml:space="preserve">
+    <value>Excluded from AI</value>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="ExpiresOnLabel" xml:space="preserve">
+    <value>Expires on</value>
+  </data>
+  <data name="ExportButton" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="FavoriteButton" xml:space="preserve">
+    <value>Add to favorites</value>
+  </data>
+  <data name="FavoriteLabel" xml:space="preserve">
+    <value>Favorite</value>
+  </data>
+  <data name="FavoritesHeader" xml:space="preserve">
+    <value>Favorites</value>
+  </data>
+  <data name="FirstVersionHeader" xml:space="preserve">
+    <value>First version</value>
+  </data>
+  <data name="FormerMemberOption" xml:space="preserve">
+    <value>Former member</value>
+  </data>
+  <data name="FullTextToggle" xml:space="preserve">
+    <value>Show the full text</value>
+  </data>
+  <data name="ImportButton" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportErrorFile" xml:space="preserve">
+    <value>Choose a JSON file of 10 MB or less.</value>
+  </data>
+  <data name="ImportErrorFormat" xml:space="preserve">
+    <value>The file is not a Resgrid protocol export (format resgrid-protocols, version 1).</value>
+  </data>
+  <data name="ImportErrorNotAuthorized" xml:space="preserve">
+    <value>You do not have permission to author protocols.</value>
+  </data>
+  <data name="ImportErrorTooMany" xml:space="preserve">
+    <value>The file has too many protocols. Import at most 500 at a time.</value>
+  </data>
+  <data name="ImportFileLabel" xml:space="preserve">
+    <value>Protocol export file (JSON)</value>
+  </data>
+  <data name="ImportHelp" xml:space="preserve">
+    <value>Import protocols exported from Resgrid or written in the same open format. Every protocol is created as a draft for review and publishing; nothing is published by an import. Priorities, call types, categories, groups, roles and shifts are matched to this department's by name.</value>
+  </data>
+  <data name="ImportIntro" xml:space="preserve">
+    <value>Bring protocols in from a JSON export.</value>
+  </data>
+  <data name="ImportSkippedHeader" xml:space="preserve">
+    <value>Not imported</value>
+  </data>
+  <data name="ImportTab" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportWarningsHeader" xml:space="preserve">
+    <value>Imported with changes</value>
+  </data>
+  <data name="ImportedMessage" xml:space="preserve">
+    <value>{0} protocols were imported as drafts.</value>
+  </data>
+  <data name="InForceLabel" xml:space="preserve">
+    <value>In force</value>
+  </data>
+  <data name="InsertedLabel" xml:space="preserve">
+    <value>Added text</value>
+  </data>
+  <data name="KindClinicalGuideline" xml:space="preserve">
+    <value>Clinical guideline</value>
+  </data>
+  <data name="KindDispatch" xml:space="preserve">
+    <value>Dispatch protocol</value>
+  </data>
+  <data name="KindHelp" xml:space="preserve">
+    <value>Dispatch and procedure protocols can be suggested on calls by their triggers. Policies and SOGs ask members to acknowledge them by default.</value>
+  </data>
+  <data name="KindHelpClinicalGuideline" xml:space="preserve">
+    <value>Clinical guidance for patient care.</value>
+  </data>
+  <data name="KindHelpDispatch" xml:space="preserve">
+    <value>Matched to calls by type, priority and time, with key questions.</value>
+  </data>
+  <data name="KindHelpPolicy" xml:space="preserve">
+    <value>A department policy members are expected to acknowledge.</value>
+  </data>
+  <data name="KindHelpProcedure" xml:space="preserve">
+    <value>A step-by-step procedure or checklist; it can be suggested on calls.</value>
+  </data>
+  <data name="KindHelpReference" xml:space="preserve">
+    <value>Reference material: maps, contacts, tables.</value>
+  </data>
+  <data name="KindHelpSog" xml:space="preserve">
+    <value>A standard operating procedure or guideline.</value>
+  </data>
+  <data name="KindLabel" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="KindPolicy" xml:space="preserve">
+    <value>Policy</value>
+  </data>
+  <data name="KindProcedure" xml:space="preserve">
+    <value>Procedure or checklist</value>
+  </data>
+  <data name="KindReference" xml:space="preserve">
+    <value>Reference</value>
+  </data>
+  <data name="KindSog" xml:space="preserve">
+    <value>SOP / SOG</value>
+  </data>
+  <data name="KpiDueForReview" xml:space="preserve">
+    <value>Due for review (30 days)</value>
+  </data>
+  <data name="KpiInReview" xml:space="preserve">
+    <value>In review</value>
+  </data>
+  <data name="KpiPublished" xml:space="preserve">
+    <value>Published</value>
+  </data>
+  <data name="LastReviewedLabel" xml:space="preserve">
+    <value>Last reviewed</value>
+  </data>
+  <data name="LegalHoldCheckbox" xml:space="preserve">
+    <value>Legal hold</value>
+  </data>
+  <data name="LegalHoldHelp" xml:space="preserve">
+    <value>None of this protocol's versions is purged while it is on hold.</value>
+  </data>
+  <data name="LegalHoldLabel" xml:space="preserve">
+    <value>Legal hold</value>
+  </data>
+  <data name="LicenseLabel" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="LicensedContentCheckbox" xml:space="preserve">
+    <value>Licensed content</value>
+  </data>
+  <data name="LicensedContentHelp" xml:space="preserve">
+    <value>Third-party content under license: it is never shared outside the department or made public.</value>
+  </data>
+  <data name="LicensedContentLabel" xml:space="preserve">
+    <value>Licensed content</value>
+  </data>
+  <data name="LifecycleErrorAlreadyDecided" xml:space="preserve">
+    <value>This step was already decided, or you approved an earlier step of this review.</value>
+  </data>
+  <data name="LifecycleErrorArtifactChanged" xml:space="preserve">
+    <value>The text no longer matches what was signed. The version must be reviewed again.</value>
+  </data>
+  <data name="LifecycleErrorChangeSummaryRequired" xml:space="preserve">
+    <value>Enter a change summary to publish.</value>
+  </data>
+  <data name="LifecycleErrorDraftExists" xml:space="preserve">
+    <value>This protocol already has an open draft.</value>
+  </data>
+  <data name="LifecycleErrorEffectiveDateInPast" xml:space="preserve">
+    <value>The effective date is in the past.</value>
+  </data>
+  <data name="LifecycleErrorEmptyContent" xml:space="preserve">
+    <value>The draft has no text. Write the protocol before submitting it.</value>
+  </data>
+  <data name="LifecycleErrorInvalidInput" xml:space="preserve">
+    <value>Some of the values are not valid.</value>
+  </data>
+  <data name="LifecycleErrorNotApproved" xml:space="preserve">
+    <value>Only an approved version can be published.</value>
+  </data>
+  <data name="LifecycleErrorNotAuthorized" xml:space="preserve">
+    <value>You do not have permission to do this.</value>
+  </data>
+  <data name="LifecycleErrorNotDraft" xml:space="preserve">
+    <value>Only a draft can be changed or submitted.</value>
+  </data>
+  <data name="LifecycleErrorNotFound" xml:space="preserve">
+    <value>The protocol or version was not found.</value>
+  </data>
+  <data name="LifecycleErrorNotInReview" xml:space="preserve">
+    <value>This version is not waiting for review.</value>
+  </data>
+  <data name="LifecycleErrorNotPublished" xml:space="preserve">
+    <value>This protocol has no version in force.</value>
+  </data>
+  <data name="LifecycleErrorOpenComments" xml:space="preserve">
+    <value>Resolve the open review comments before approving.</value>
+  </data>
+  <data name="LifecycleErrorPasskeyRequired" xml:space="preserve">
+    <value>Your department requires a passkey for this signature. Use Sign with passkey.</value>
+  </data>
+  <data name="LifecycleErrorRetentionProtected" xml:space="preserve">
+    <value>Submitted and published versions are kept and cannot be deleted.</value>
+  </data>
+  <data name="LifecycleErrorSignatureRequired" xml:space="preserve">
+    <value>This signature needs a fresh identity check. Verify with your second factor or a passkey and sign again.</value>
+  </data>
+  <data name="LifecycleErrorStaleCopy" xml:space="preserve">
+    <value>Someone else changed this protocol since you opened it.</value>
+  </data>
+  <data name="LifecycleLabel" xml:space="preserve">
+    <value>Lifecycle</value>
+  </data>
+  <data name="LoggedColumn" xml:space="preserve">
+    <value>Logged</value>
+  </data>
+  <data name="MajorVersionOption" xml:space="preserve">
+    <value>Major (next whole number)</value>
+  </data>
+  <data name="MembersLabel" xml:space="preserve">
+    <value>Members</value>
+  </data>
+  <data name="MessageLabel" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="MinorVersionOption" xml:space="preserve">
+    <value>Minor (next decimal)</value>
+  </data>
+  <data name="NewVersionButton" xml:space="preserve">
+    <value>New version</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="NoCallsYet" xml:space="preserve">
+    <value>No calls have cited this protocol yet.</value>
+  </data>
+  <data name="NoCategoriesYet" xml:space="preserve">
+    <value>No categories yet.</value>
+  </data>
+  <data name="NoCategoryOption" xml:space="preserve">
+    <value>No category</value>
+  </data>
+  <data name="NoOutline" xml:space="preserve">
+    <value>Headings in the text make an outline here.</value>
+  </data>
+  <data name="NoReviewCycle" xml:space="preserve">
+    <value>No review cycle</value>
+  </data>
+  <data name="NoTextChanges" xml:space="preserve">
+    <value>The text is the same.</value>
+  </data>
+  <data name="NotCurrentVersionNotice" xml:space="preserve">
+    <value>You are reading {0}. The version in force is {1}.</value>
+  </data>
+  <data name="NotPublishedYet" xml:space="preserve">
+    <value>Not published</value>
+  </data>
+  <data name="NotRequiredLabel" xml:space="preserve">
+    <value>Not required</value>
+  </data>
+  <data name="NotSubmittedYet" xml:space="preserve">
+    <value>Not submitted yet.</value>
+  </data>
+  <data name="NumberHelp" xml:space="preserve">
+    <value>Your own number for it, such as SOG-204. Left empty, the department's protocol number pattern issues one (Department, Document Numbering).</value>
+  </data>
+  <data name="NumberLabel" xml:space="preserve">
+    <value>Number</value>
+  </data>
+  <data name="OnHoldLabel" xml:space="preserve">
+    <value>On hold</value>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="OpenDraftNote" xml:space="preserve">
+    <value>Next version: {0}</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>open</value>
+  </data>
+  <data name="OpenReviewButton" xml:space="preserve">
+    <value>Open the review</value>
+  </data>
+  <data name="OpenVersionCallout" xml:space="preserve">
+    <value>A new version is in progress: {0}.</value>
+  </data>
+  <data name="OutlineHeader" xml:space="preserve">
+    <value>Outline</value>
+  </data>
+  <data name="OwnerHelp" xml:space="preserve">
+    <value>The owner keeps the protocol current: review reminders and member suggestions go to them.</value>
+  </data>
+  <data name="OwnerLabel" xml:space="preserve">
+    <value>Owner</value>
+  </data>
+  <data name="ParentCategoryLabel" xml:space="preserve">
+    <value>Parent category</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="PreviewAsMemberButton" xml:space="preserve">
+    <value>Preview as member</value>
+  </data>
+  <data name="PreviewAsMemberNotice" xml:space="preserve">
+    <value>This is how members will see this version once it is published.</value>
+  </data>
+  <data name="PrintButton" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="ProtocolCopiedMessage" xml:space="preserve">
+    <value>A copy was created as a new draft protocol.</value>
+  </data>
+  <data name="ProtocolCreatedMessage" xml:space="preserve">
+    <value>The protocol was created as a draft. Finish it here, then submit it for review.</value>
+  </data>
+  <data name="ProtocolTextHeadingsHelp" xml:space="preserve">
+    <value>Use headings to structure the text: they make the outline and the anchors review comments point at.</value>
+  </data>
+  <data name="PublishButton" xml:space="preserve">
+    <value>Publish</value>
+  </data>
+  <data name="PublishHeader" xml:space="preserve">
+    <value>Publish</value>
+  </data>
+  <data name="QuestionOption" xml:space="preserve">
+    <value>Question</value>
+  </data>
+  <data name="ReadAndSignStepUpCheckbox" xml:space="preserve">
+    <value>Read-and-sign acknowledgments need a fresh identity check (L2) instead of the signed-in session (L1)</value>
+  </data>
+  <data name="RecentHeader" xml:space="preserve">
+    <value>Recently opened</value>
+  </data>
+  <data name="RecordReviewHeader" xml:space="preserve">
+    <value>Reviewed, no change</value>
+  </data>
+  <data name="RecordReviewHelp" xml:space="preserve">
+    <value>Record that the version in force was reviewed and is still correct. The next review date moves; no new version is made and nobody acknowledges it again.</value>
+  </data>
+  <data name="RecordedBeforeVersions" xml:space="preserve">
+    <value>Recorded before versions</value>
+  </data>
+  <data name="RejectButton" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="RejectHeader" xml:space="preserve">
+    <value>Reject</value>
+  </data>
+  <data name="RejectReasonLabel" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="RejectedLabel" xml:space="preserve">
+    <value>Rejected</value>
+  </data>
+  <data name="RejectedMessage" xml:space="preserve">
+    <value>The version was returned to its authors as a draft.</value>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="RequirePasskeyForApprovalCheckbox" xml:space="preserve">
+    <value>Approvals and review stamps must be signed with a passkey</value>
+  </data>
+  <data name="RequiredLabel" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="RequiresAcknowledgmentCheckbox" xml:space="preserve">
+    <value>Members must acknowledge this version</value>
+  </data>
+  <data name="RequiresAcknowledgmentHelp" xml:space="preserve">
+    <value>On by default for policies and SOGs. Read-and-sign assignments arrive with a later release.</value>
+  </data>
+  <data name="ResolveButton" xml:space="preserve">
+    <value>Resolve</value>
+  </data>
+  <data name="ResolvedLabel" xml:space="preserve">
+    <value>Resolved</value>
+  </data>
+  <data name="RetentionHeader" xml:space="preserve">
+    <value>Retention</value>
+  </data>
+  <data name="RetentionHelp" xml:space="preserve">
+    <value>Superseded and retired versions are kept by default. Enter the days a kind keeps them before they may be purged; 0 keeps them. A version a call cites, and anything on legal hold, is never purged.</value>
+  </data>
+  <data name="RetireButton" xml:space="preserve">
+    <value>Retire</value>
+  </data>
+  <data name="RetireConfirm" xml:space="preserve">
+    <value>Retire the protocol</value>
+  </data>
+  <data name="RetiredMessage" xml:space="preserve">
+    <value>The protocol was retired. Its versions stay for the calls and the history that cite them.</value>
+  </data>
+  <data name="ReviewAny" xml:space="preserve">
+    <value>Any review date</value>
+  </data>
+  <data name="ReviewCommentLabel" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="ReviewCommentsHeader" xml:space="preserve">
+    <value>Review comments</value>
+  </data>
+  <data name="ReviewDue30" xml:space="preserve">
+    <value>Due within 30 days</value>
+  </data>
+  <data name="ReviewDueCallout" xml:space="preserve">
+    <value>This protocol is due for review on {0}.</value>
+  </data>
+  <data name="ReviewDueLabel" xml:space="preserve">
+    <value>Review due</value>
+  </data>
+  <data name="ReviewHeader" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="ReviewIntervalHelp" xml:space="preserve">
+    <value>Days between reviews. The owner is reminded 30 and 7 days before, and when it is overdue. Empty means no review cycle.</value>
+  </data>
+  <data name="ReviewIntervalLabel" xml:space="preserve">
+    <value>Review interval (days)</value>
+  </data>
+  <data name="ReviewNowButton" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="ReviewOverdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="ReviewOverdueCallout" xml:space="preserve">
+    <value>The review of this protocol was due on {0}.</value>
+  </data>
+  <data name="ReviewQueueCallout" xml:space="preserve">
+    <value>{0} versions are waiting for your approval.</value>
+  </data>
+  <data name="ReviewQueueEmpty" xml:space="preserve">
+    <value>Nothing is waiting for review.</value>
+  </data>
+  <data name="ReviewQueueIntro" xml:space="preserve">
+    <value>Versions submitted for review, with the steps you can decide.</value>
+  </data>
+  <data name="ReviewQueueTab" xml:space="preserve">
+    <value>Review queue</value>
+  </data>
+  <data name="ReviewRecordedMessage" xml:space="preserve">
+    <value>The review was recorded and signed. The next review date has moved.</value>
+  </data>
+  <data name="ReviewSettingsHeader" xml:space="preserve">
+    <value>Review cycle</value>
+  </data>
+  <data name="SaveAndSubmitButton" xml:space="preserve">
+    <value>Save and submit for review</value>
+  </data>
+  <data name="SaveCategoryButton" xml:space="preserve">
+    <value>Save category</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Save settings</value>
+  </data>
+  <data name="ScheduledNotice" xml:space="preserve">
+    <value>Version {0} is scheduled to take effect on {1}.</value>
+  </data>
+  <data name="SectionLabel" xml:space="preserve">
+    <value>Section</value>
+  </data>
+  <data name="SendSuggestionButton" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="SettingsIntro" xml:space="preserve">
+    <value>Signature levels, review cycles and retention for the protocol library.</value>
+  </data>
+  <data name="SettingsSavedMessage" xml:space="preserve">
+    <value>The protocol settings were saved.</value>
+  </data>
+  <data name="SettingsTab" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="SignatureFloorsHelp" xml:space="preserve">
+    <value>Approvals and review stamps always need a fresh identity check (L2); read-and-sign needs at least the signed-in session (L1). You can require more, never less.</value>
+  </data>
+  <data name="SignatureSettingsHeader" xml:space="preserve">
+    <value>Signatures</value>
+  </data>
+  <data name="SignaturesTab" xml:space="preserve">
+    <value>Signatures</value>
+  </data>
+  <data name="SortOrderLabel" xml:space="preserve">
+    <value>Sort order</value>
+  </data>
+  <data name="StaleProtocolMessage" xml:space="preserve">
+    <value>{0} changed this protocol on {1}, after you opened it. Reload the page to see their changes, then make yours again.</value>
+  </data>
+  <data name="StatusApproved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>In review</value>
+  </data>
+  <data name="StatusPublished" xml:space="preserve">
+    <value>Published</value>
+  </data>
+  <data name="StatusRetired" xml:space="preserve">
+    <value>Retired</value>
+  </data>
+  <data name="StatusScheduled" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="StepColumn" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="SubmitHeader" xml:space="preserve">
+    <value>Submit for review</value>
+  </data>
+  <data name="SubmittedColumn" xml:space="preserve">
+    <value>Submitted</value>
+  </data>
+  <data name="SubmittedMessage" xml:space="preserve">
+    <value>The version was submitted for review.</value>
+  </data>
+  <data name="SuggestHeader" xml:space="preserve">
+    <value>Suggest a change or ask a question</value>
+  </data>
+  <data name="SuggestHelp" xml:space="preserve">
+    <value>Your message reaches the protocol's owner and is kept with the next draft.</value>
+  </data>
+  <data name="SuggestKindLabel" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="SuggestionOption" xml:space="preserve">
+    <value>Suggestion</value>
+  </data>
+  <data name="TagsHelp" xml:space="preserve">
+    <value>Separate tags with commas.</value>
+  </data>
+  <data name="TagsLabel" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="ThreadsHeader" xml:space="preserve">
+    <value>Suggestions and questions</value>
+  </data>
+  <data name="TriggersKindHelp" xml:space="preserve">
+    <value>Only dispatch protocols and procedures are suggested on calls, so this kind has no triggers or key questions.</value>
+  </data>
+  <data name="UnfavoriteButton" xml:space="preserve">
+    <value>Remove from favorites</value>
+  </data>
+  <data name="UsageHelp" xml:space="preserve">
+    <value>Used on {0} calls in the last 30 days. The most recent calls that cite it:</value>
+  </data>
+  <data name="UsageTab" xml:space="preserve">
+    <value>Usage</value>
+  </data>
+  <data name="VersionColumn" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="VersionKindLabel" xml:space="preserve">
+    <value>Version number</value>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="VersionStatusApproved" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="VersionStatusDraft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="VersionStatusInReview" xml:space="preserve">
+    <value>In review</value>
+  </data>
+  <data name="VersionStatusLegacy" xml:space="preserve">
+    <value>Legacy text</value>
+  </data>
+  <data name="VersionStatusPublished" xml:space="preserve">
+    <value>Published</value>
+  </data>
+  <data name="VersionStatusRetired" xml:space="preserve">
+    <value>Retired</value>
+  </data>
+  <data name="VersionStatusSuperseded" xml:space="preserve">
+    <value>Superseded</value>
+  </data>
+  <data name="VersionsTab" xml:space="preserve">
+    <value>Versions</value>
+  </data>
+  <data name="WholeProtocolOption" xml:space="preserve">
+    <value>The whole protocol</value>
+  </data>
+  <data name="WithdrawButton" xml:space="preserve">
+    <value>Withdraw to draft</value>
+  </data>
+  <data name="WithdrawnLabel" xml:space="preserve">
+    <value>Withdrawn</value>
+  </data>
+  <data name="WithdrawnMessage" xml:space="preserve">
+    <value>The version was withdrawn and is a draft again.</value>
+  </data>
+  <data name="WizardAudienceStep" xml:space="preserve">
+    <value>Audience</value>
+  </data>
+  <data name="WizardBasicsStep" xml:space="preserve">
+    <value>Basics</value>
+  </data>
+  <data name="WizardContentStep" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="WizardKindHelp" xml:space="preserve">
+    <value>What kind of protocol is it? The kind decides whether it can be suggested on calls and whether members acknowledge it by default.</value>
+  </data>
+  <data name="WizardKindStep" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="WizardReviewHelp" xml:space="preserve">
+    <value>Check what you entered. The protocol is created as a draft; you can keep editing it before submitting it for review.</value>
+  </data>
+  <data name="WizardReviewStep" xml:space="preserve">
+    <value>Review</value>
+  </data>
+  <data name="WizardTriggersStep" xml:space="preserve">
+    <value>Triggers</value>
+  </data>
+  <data name="WordsAdded" xml:space="preserve">
+    <value>{0} words added</value>
+  </data>
+  <data name="WordsRemoved" xml:space="preserve">
+    <value>{0} words removed</value>
+  </data>
+  <data name="AckAwaitingQuizLabel" xml:space="preserve">
+    <value>Signed; waiting for the quiz in {0}</value>
+  </data>
+  <data name="AckBundleOrderHelp" xml:space="preserve">
+    <value>Where this protocol sits in a new member's onboarding bundle: lower numbers come first.</value>
+  </data>
+  <data name="AckBundleOrderLabel" xml:space="preserve">
+    <value>Onboarding order</value>
+  </data>
+  <data name="AckCannotSignNotice" xml:space="preserve">
+    <value>This version cannot be acknowledged now. Read the version in force instead.</value>
+  </data>
+  <data name="AckCarriedForwardLabel" xml:space="preserve">
+    <value>Carried forward from the previous minor version</value>
+  </data>
+  <data name="AckCompletedHeader" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
+  <data name="AckDueDaysHelp" xml:space="preserve">
+    <value>Days a member has to acknowledge, counted from the day they are assigned or join the audience. Empty for {0} days.</value>
+  </data>
+  <data name="AckDueDaysLabel" xml:space="preserve">
+    <value>Days to acknowledge</value>
+  </data>
+  <data name="AckDueLabel" xml:space="preserve">
+    <value>Due {0}</value>
+  </data>
+  <data name="AckDueWasLabel" xml:space="preserve">
+    <value>Was due {0}</value>
+  </data>
+  <data name="AckFutureVersionNotice" xml:space="preserve">
+    <value>This version takes effect on {0}. You can acknowledge it now.</value>
+  </data>
+  <data name="AckNoQuizOption" xml:space="preserve">
+    <value>No quiz</value>
+  </data>
+  <data name="AckNotAssignedNotice" xml:space="preserve">
+    <value>You are not asked to acknowledge this version.</value>
+  </data>
+  <data name="AckOfflineLabel" xml:space="preserve">
+    <value>Signed offline</value>
+  </data>
+  <data name="AckOutstandingLabel" xml:space="preserve">
+    <value>To acknowledge</value>
+  </data>
+  <data name="AckPromptAwaitingQuiz" xml:space="preserve">
+    <value>You signed this protocol. It is complete once you pass the quiz in {0}.</value>
+  </data>
+  <data name="AckPromptDue" xml:space="preserve">
+    <value>You are asked to read and sign {0} by {1}.</value>
+  </data>
+  <data name="AckPromptOverdue" xml:space="preserve">
+    <value>Your acknowledgment of {0} was due on {1}.</value>
+  </data>
+  <data name="AckQuizRequiredNotice" xml:space="preserve">
+    <value>After signing, pass the quiz in {0} to complete the acknowledgment.</value>
+  </data>
+  <data name="AckQuizTrainingHelp" xml:space="preserve">
+    <value>A training with a quiz. Members are assigned it with the protocol, and the acknowledgment is complete only when the quiz is passed.</value>
+  </data>
+  <data name="AckQuizTrainingLabel" xml:space="preserve">
+    <value>Quiz training</value>
+  </data>
+  <data name="AckSettingsButton" xml:space="preserve">
+    <value>Acknowledgment settings</value>
+  </data>
+  <data name="AckSettingsHeader" xml:space="preserve">
+    <value>Acknowledgment settings</value>
+  </data>
+  <data name="AckSettingsInvalidTraining" xml:space="preserve">
+    <value>Choose a training of this department that has a quiz.</value>
+  </data>
+  <data name="AckSettingsSavedMessage" xml:space="preserve">
+    <value>Acknowledgment settings saved.</value>
+  </data>
+  <data name="AckSignedNotice" xml:space="preserve">
+    <value>You signed this version on {0}.</value>
+  </data>
+  <data name="AckSourceAudienceEntry" xml:space="preserve">
+    <value>Assigned on joining the audience</value>
+  </data>
+  <data name="AckState_acknowledged" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
+  <data name="AckState_awaiting_quiz" xml:space="preserve">
+    <value>Waiting for quiz</value>
+  </data>
+  <data name="AckState_open" xml:space="preserve">
+    <value>Not yet signed</value>
+  </data>
+  <data name="AckState_overdue" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="AckState_withdrawn" xml:space="preserve">
+    <value>Withdrawn</value>
+  </data>
+  <data name="AckState_superseded" xml:space="preserve">
+    <value>Replaced by a newer version</value>
+  </data>
+  <data name="AcknowledgedLabel" xml:space="preserve">
+    <value>Acknowledged</value>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Thank you. Your acknowledgment is recorded.</value>
+  </data>
+  <data name="AcknowledgedAwaitingQuizMessage" xml:space="preserve">
+    <value>Your signature is recorded. Pass the quiz to complete the acknowledgment.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAcknowledged" xml:space="preserve">
+    <value>Acknowledged.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAwaitingQuiz" xml:space="preserve">
+    <value>Signed. Pass the quiz to complete it.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotAssigned" xml:space="preserve">
+    <value>You are not asked to acknowledge this version.</value>
+  </data>
+  <data name="AcknowledgeOutcomeNotOpened" xml:space="preserve">
+    <value>Open and read the version before signing it.</value>
+  </data>
+  <data name="AcknowledgeOutcomeReadNewerVersion" xml:space="preserve">
+    <value>A newer version is in force. Read it and sign that one.</value>
+  </data>
+  <data name="AcknowledgeOutcomeContentChanged" xml:space="preserve">
+    <value>The content changed since you opened it. Read it again before signing.</value>
+  </data>
+  <data name="AcknowledgeOutcomeStepUpRequired" xml:space="preserve">
+    <value>Your department asks for a second verification step to sign. Try again and complete it.</value>
+  </data>
+  <data name="AcknowledgeOutcomeAlreadyAcknowledged" xml:space="preserve">
+    <value>You already acknowledged this version.</value>
+  </data>
+  <data name="AcknowledgeOutcomeInvalidRequest" xml:space="preserve">
+    <value>The acknowledgment could not be recorded.</value>
+  </data>
+  <data name="ActionsLabel" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="AllGroupsOption" xml:space="preserve">
+    <value>All groups</value>
+  </data>
+  <data name="AllProtocolsOption" xml:space="preserve">
+    <value>All protocols (overview)</value>
+  </data>
+  <data name="AssignedLabel" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="AvailableLabel" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="BankQuizzesLabel" xml:space="preserve">
+    <value>Acknowledgment quizzes from question banks</value>
+  </data>
+  <data name="BulkUploadButton" xml:space="preserve">
+    <value>Upload as drafts</value>
+  </data>
+  <data name="BulkUploadCreatedDraft" xml:space="preserve">
+    <value>Draft created</value>
+  </data>
+  <data name="BulkUploadDuplicate" xml:space="preserve">
+    <value>Same file uploaded twice</value>
+  </data>
+  <data name="BulkUploadFilesHelp" xml:space="preserve">
+    <value>PDF and Word (DOCX) files, or a zip of them, up to {0} files. A name like "SOG-204 Mayday.pdf" gives the number and title.</value>
+  </data>
+  <data name="BulkUploadFilesLabel" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="BulkUploadIntro" xml:space="preserve">
+    <value>Bring a binder of SOGs and policies in at once. Every file becomes a draft for one review-and-publish pass.</value>
+  </data>
+  <data name="BulkUploadNoFiles" xml:space="preserve">
+    <value>Choose at least one PDF, DOCX or zip file.</value>
+  </data>
+  <data name="BulkUploadResultSummary" xml:space="preserve">
+    <value>{0} of {1} files became draft protocols.</value>
+  </data>
+  <data name="BulkUploadTab" xml:space="preserve">
+    <value>Bulk upload</value>
+  </data>
+  <data name="BulletinApprovalLabel" xml:space="preserve">
+    <value>Approval</value>
+  </data>
+  <data name="BulletinAudienceHelp" xml:space="preserve">
+    <value>No group or role chosen sends the bulletin to the whole department.</value>
+  </data>
+  <data name="BulletinAwaitingApproval" xml:space="preserve">
+    <value>Waiting for countersign</value>
+  </data>
+  <data name="BulletinContentHelp" xml:space="preserve">
+    <value>Keep it short: up to {0} characters. A longer directive belongs in a protocol.</value>
+  </data>
+  <data name="BulletinContentLabel" xml:space="preserve">
+    <value>Bulletin</value>
+  </data>
+  <data name="BulletinCountersignedBy" xml:space="preserve">
+    <value>Countersigned by {0}</value>
+  </data>
+  <data name="BulletinCountersignedMessage" xml:space="preserve">
+    <value>The bulletin is countersigned.</value>
+  </data>
+  <data name="BulletinExpiredLabel" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="BulletinExpiresHelp" xml:space="preserve">
+    <value>It leaves the library by itself at this time; at most {0} days ahead.</value>
+  </data>
+  <data name="BulletinExpiresLabel" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="BulletinInvalidMessage" xml:space="preserve">
+    <value>Check the title, the text and the expiry (in the future, within the allowed days).</value>
+  </data>
+  <data name="BulletinIssuedBy" xml:space="preserve">
+    <value>Issued by {0} on {1}</value>
+  </data>
+  <data name="BulletinIssuedMessage" xml:space="preserve">
+    <value>The bulletin is in force and has been sent.</value>
+  </data>
+  <data name="BulletinMustReadLabel" xml:space="preserve">
+    <value>Must read: every member of the audience must acknowledge it</value>
+  </data>
+  <data name="BulletinTitleLabel" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="BulletinWithdrawReasonLabel" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="BulletinWithdrawnLabel" xml:space="preserve">
+    <value>Withdrawn</value>
+  </data>
+  <data name="BulletinWithdrawnMessage" xml:space="preserve">
+    <value>The bulletin is withdrawn.</value>
+  </data>
+  <data name="BulletinsIntro" xml:space="preserve">
+    <value>Safety notices and interim directives that cannot wait for a review cycle. They take effect at once and are approved afterwards.</value>
+  </data>
+  <data name="BulletinsListHeader" xml:space="preserve">
+    <value>Bulletins</value>
+  </data>
+  <data name="BulletinsTab" xml:space="preserve">
+    <value>Bulletins</value>
+  </data>
+  <data name="ComingWithCoursesLabel" xml:space="preserve">
+    <value>Coming with LMS courses</value>
+  </data>
+  <data name="ComplianceHeader" xml:space="preserve">
+    <value>Protocol acknowledgment compliance</value>
+  </data>
+  <data name="ComplianceIntro" xml:space="preserve">
+    <value>Who has read and signed each protocol version, by group.</value>
+  </data>
+  <data name="ComplianceTab" xml:space="preserve">
+    <value>Compliance</value>
+  </data>
+  <data name="CountersignButton" xml:space="preserve">
+    <value>Countersign</value>
+  </data>
+  <data name="CurrentDocumentLabel" xml:space="preserve">
+    <value>In force: {0} (version {1})</value>
+  </data>
+  <data name="DocumentFileHelp" xml:space="preserve">
+    <value>PDF or Word (DOCX), up to 30 MB.</value>
+  </data>
+  <data name="DocumentFileLabel" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="DocumentMissingNotice" xml:space="preserve">
+    <value>This version has no file.</value>
+  </data>
+  <data name="DocumentProtocolCreatedMessage" xml:space="preserve">
+    <value>The protocol was created as a draft from the file.</value>
+  </data>
+  <data name="DocumentTitleHelp" xml:space="preserve">
+    <value>Empty takes the title from the file name.</value>
+  </data>
+  <data name="DocumentTitleLabel" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="DocumentVersionUploadedMessage" xml:space="preserve">
+    <value>The file is the content of the new draft version.</value>
+  </data>
+  <data name="DocxNoViewerNotice" xml:space="preserve">
+    <value>Word files open in Word. Download it, or read the text below.</value>
+  </data>
+  <data name="DownloadDocumentButton" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="DueLabel" xml:space="preserve">
+    <value>Due</value>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Export CSV</value>
+  </data>
+  <data name="ExportPdfButton" xml:space="preserve">
+    <value>Export PDF</value>
+  </data>
+  <data name="ExtractedTextHeader" xml:space="preserve">
+    <value>Text of the document</value>
+  </data>
+  <data name="ExtractedTextNone_encrypted" xml:space="preserve">
+    <value>The document is protected, so its text could not be read.</value>
+  </data>
+  <data name="ExtractedTextNone_scanned" xml:space="preserve">
+    <value>The document has no text layer (it looks scanned).</value>
+  </data>
+  <data name="ExtractedTextNone_too_large" xml:space="preserve">
+    <value>The document is too large for its text to be read.</value>
+  </data>
+  <data name="ExtractedTextNone_unsupported" xml:space="preserve">
+    <value>Text cannot be read from this kind of file.</value>
+  </data>
+  <data name="ExtractedTextNone_unreadable" xml:space="preserve">
+    <value>The text of the document could not be read.</value>
+  </data>
+  <data name="ExtractedTextNone_timeout" xml:space="preserve">
+    <value>Reading the text took too long and was stopped.</value>
+  </data>
+  <data name="ExtractedTextPending" xml:space="preserve">
+    <value>The text is being read and will appear here shortly.</value>
+  </data>
+  <data name="FoldersAsCategoriesLabel" xml:space="preserve">
+    <value>Folders in a zip become categories</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="HideCompletedButton" xml:space="preserve">
+    <value>Hide acknowledged</value>
+  </data>
+  <data name="ImportCreatedListHeader" xml:space="preserve">
+    <value>Created as drafts</value>
+  </data>
+  <data name="ImportPreviewButton" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="ImportPreviewListHeader" xml:space="preserve">
+    <value>Would be created as drafts</value>
+  </data>
+  <data name="ImportPreviewMessage" xml:space="preserve">
+    <value>Preview of {1}: {0} protocols would be created as drafts. Nothing was written.</value>
+  </data>
+  <data name="IssueBulletinButton" xml:space="preserve">
+    <value>Issue bulletin</value>
+  </data>
+  <data name="IssueBulletinConfirm" xml:space="preserve">
+    <value>Issue this bulletin now and send it to the audience?</value>
+  </data>
+  <data name="IssueBulletinHeader" xml:space="preserve">
+    <value>New priority bulletin</value>
+  </data>
+  <data name="IssueBulletinHelp" xml:space="preserve">
+    <value>The bulletin takes effect at once and is sent by push. Approval follows: an approver countersigns it or withdraws it.</value>
+  </data>
+  <data name="KindBulletin" xml:space="preserve">
+    <value>Priority bulletin</value>
+  </data>
+  <data name="LifecycleErrorFileRequired" xml:space="preserve">
+    <value>Upload the document first.</value>
+  </data>
+  <data name="LifecycleErrorFileTypeNotAllowed" xml:space="preserve">
+    <value>Only PDF and Word (DOCX) files can be a protocol's content.</value>
+  </data>
+  <data name="LifecycleErrorFileTooLarge" xml:space="preserve">
+    <value>The file is larger than 30 MB.</value>
+  </data>
+  <data name="LmsAcknowledgmentExtrasHeader" xml:space="preserve">
+    <value>With the LMS add-on</value>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Member</value>
+  </data>
+  <data name="MicroLearningLabel" xml:space="preserve">
+    <value>Weekly scenario questions from selected protocols</value>
+  </data>
+  <data name="MoveCategoryToProtocolsLabel" xml:space="preserve">
+    <value>Move this category to Protocols as</value>
+  </data>
+  <data name="MoveDocumentFailedError" xml:space="preserve">
+    <value>The document could not be moved to Protocols. Only PDF and Word (DOCX) files up to 30 MB can be.</value>
+  </data>
+  <data name="MoveProtectedDocumentError" xml:space="preserve">
+    <value>A protected document stays in Documents.</value>
+  </data>
+  <data name="MoveToProtocolsButton" xml:space="preserve">
+    <value>Move to Protocols</value>
+  </data>
+  <data name="MoveToProtocolsConfirm" xml:space="preserve">
+    <value>Move to Protocols? It becomes a draft protocol for review, and the old link opens the protocol.</value>
+  </data>
+  <data name="MovedCategoryMessage" xml:space="preserve">
+    <value>Moved to Protocols: {0}.</value>
+  </data>
+  <data name="MustReadHeader" xml:space="preserve">
+    <value>Must read</value>
+  </data>
+  <data name="MyAcknowledgmentsIntro" xml:space="preserve">
+    <value>Protocols and bulletins you are asked to read and sign.</value>
+  </data>
+  <data name="MyAcknowledgmentsTab" xml:space="preserve">
+    <value>My acknowledgments</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NewDocumentProtocolHeader" xml:space="preserve">
+    <value>New protocol from a document</value>
+  </data>
+  <data name="NewDocumentProtocolIntro" xml:space="preserve">
+    <value>Upload a PDF or Word file. It becomes the protocol's content, with the same review, publish and acknowledgment.</value>
+  </data>
+  <data name="NoAcknowledgmentVersion" xml:space="preserve">
+    <value>No published version of this protocol needs acknowledgment.</value>
+  </data>
+  <data name="NoAcknowledgmentsYet" xml:space="preserve">
+    <value>No acknowledgments yet.</value>
+  </data>
+  <data name="NoBulletins" xml:space="preserve">
+    <value>No bulletins yet.</value>
+  </data>
+  <data name="NoCompletedAcknowledgments" xml:space="preserve">
+    <value>Nothing acknowledged yet.</value>
+  </data>
+  <data name="NothingToAcknowledge" xml:space="preserve">
+    <value>You have nothing to acknowledge.</value>
+  </data>
+  <data name="OpenDocumentButton" xml:space="preserve">
+    <value>Open in a new tab</value>
+  </data>
+  <data name="OverdueLabel" xml:space="preserve">
+    <value>Overdue</value>
+  </data>
+  <data name="PageNumberLabel" xml:space="preserve">
+    <value>Page {0}</value>
+  </data>
+  <data name="ReadAndSignButton" xml:space="preserve">
+    <value>Read and sign</value>
+  </data>
+  <data name="ReadAndSignHeader" xml:space="preserve">
+    <value>Acknowledge</value>
+  </data>
+  <data name="ReadAndSignHelp" xml:space="preserve">
+    <value>Signing records your name, the time and this exact version.</value>
+  </data>
+  <data name="ReadAndSignStatement" xml:space="preserve">
+    <value>I have read protocol {0} "{1}" version {2} (content {3}), I understand it and I will follow it.</value>
+  </data>
+  <data name="ReadBulletinButton" xml:space="preserve">
+    <value>Read</value>
+  </data>
+  <data name="RequiresAcknowledgmentLabel" xml:space="preserve">
+    <value>Members must read and sign it</value>
+  </data>
+  <data name="ResultLabel" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ShowCompletedButton" xml:space="preserve">
+    <value>Show acknowledged</value>
+  </data>
+  <data name="SignAcknowledgmentButton" xml:space="preserve">
+    <value>Sign</value>
+  </data>
+  <data name="SignedLabel" xml:space="preserve">
+    <value>Signed</value>
+  </data>
+  <data name="StandardsReportButton" xml:space="preserve">
+    <value>Proof of compliance</value>
+  </data>
+  <data name="StandardsReportEmpty" xml:space="preserve">
+    <value>No protocol is tagged with a standard yet. Add standards tags in a protocol's acknowledgment settings.</value>
+  </data>
+  <data name="StandardsReportIntro" xml:space="preserve">
+    <value>Protocols by standard (CFAI, CAAS, CALEA, NFPA, ISO 45001 and your own), with acknowledgment and approval evidence.</value>
+  </data>
+  <data name="StandardsReportLmsOnly" xml:space="preserve">
+    <value>The proof-of-compliance report comes with the LMS add-on.</value>
+  </data>
+  <data name="StandardsTagsHelp" xml:space="preserve">
+    <value>Comma separated, for example CFAI, CALEA.</value>
+  </data>
+  <data name="StandardsTagsLabel" xml:space="preserve">
+    <value>Standards</value>
+  </data>
+  <data name="StandardsTagsLmsOnly" xml:space="preserve">
+    <value>Standards mapping comes with the LMS add-on.</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>State</value>
+  </data>
+  <data name="TakeQuizButton" xml:space="preserve">
+    <value>Take the quiz</value>
+  </data>
+  <data name="UploadBlockedByReview" xml:space="preserve">
+    <value>A version of this protocol is in review. Withdraw it or finish its review before uploading a new file.</value>
+  </data>
+  <data name="UploadDocumentButton" xml:space="preserve">
+    <value>Upload</value>
+  </data>
+  <data name="UploadNewVersionButton" xml:space="preserve">
+    <value>Upload new version</value>
+  </data>
+  <data name="UploadNewVersionHelp" xml:space="preserve">
+    <value>The file becomes the content of the next version, a draft for review and publish. The version in force stays until then.</value>
+  </data>
+  <data name="VerifiedApprovalsLabel" xml:space="preserve">
+    <value>{0} verified approvals</value>
+  </data>
+  <data name="WithdrawBulletinButton" xml:space="preserve">
+    <value>Withdraw</value>
+  </data>
+  <data name="WithdrawBulletinConfirm" xml:space="preserve">
+    <value>Withdraw this bulletin? It leaves force now.</value>
+  </data>
+  <data name="WizardProtocolsFileHelp" xml:space="preserve">
+    <value>A file exported from a Resgrid protocol library (format resgrid-protocols, version 1), up to 10 MB and 500 protocols.</value>
+  </data>
+  <data name="WizardProtocolsHelp" xml:space="preserve">
+    <value>Bring protocols across in the open protocol exchange format. Preview first; importing creates drafts for one review-and-publish pass. Nothing is published.</value>
+  </data>
+  <data name="BlockLabelCaution" xml:space="preserve">
+    <value>Caution</value>
+  </data>
+  <data name="BlockLabelWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="BlockLabelContactMedicalControl" xml:space="preserve">
+    <value>Contact medical control</value>
+  </data>
+  <data name="BlockLabelContact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="BlockLabelScopeOfPractice" xml:space="preserve">
+    <value>Scope of practice</value>
+  </data>
+  <data name="BlockLabelMedication" xml:space="preserve">
+    <value>Medication</value>
+  </data>
+  <data name="BlockLabelIndication" xml:space="preserve">
+    <value>Indication</value>
+  </data>
+  <data name="BlockLabelConcentration" xml:space="preserve">
+    <value>Concentration</value>
+  </data>
+  <data name="BlockLabelDosePerKg" xml:space="preserve">
+    <value>Dose per kg</value>
+  </data>
+  <data name="BlockLabelMaxSingleDose" xml:space="preserve">
+    <value>Maximum single dose</value>
+  </data>
+  <data name="BlockLabelMaxTotalDose" xml:space="preserve">
+    <value>Maximum total dose</value>
+  </data>
+  <data name="BlockLabelRoute" xml:space="preserve">
+    <value>Route of administration</value>
+  </data>
+  <data name="BlockLabelRepeatInterval" xml:space="preserve">
+    <value>Repeat interval</value>
+  </data>
+  <data name="BlockLabelInventoryItem" xml:space="preserve">
+    <value>Inventory item</value>
+  </data>
+  <data name="BlockLabelDoseAsAuthored" xml:space="preserve">
+    <value>Doses are shown as authored. Nothing is calculated.</value>
+  </data>
+  <data name="BlockLabelVideo" xml:space="preserve">
+    <value>Video link</value>
+  </data>
+  <data name="BlockLabelAttachment" xml:space="preserve">
+    <value>Attached file</value>
+  </data>
+  <data name="BlockLabelLinkProtocol" xml:space="preserve">
+    <value>Related protocol</value>
+  </data>
+  <data name="BlockLabelLinkPoi" xml:space="preserve">
+    <value>Point of interest</value>
+  </data>
+  <data name="BlockLabelLinkInventory" xml:space="preserve">
+    <value>Linked inventory item</value>
+  </data>
+  <data name="BlockLabelLinkChecklist" xml:space="preserve">
+    <value>Related checklist</value>
+  </data>
+  <data name="BlockLabelLinkTraining" xml:space="preserve">
+    <value>Related training</value>
+  </data>
+  <data name="BlockLabelLinkUrl" xml:space="preserve">
+    <value>Web page</value>
+  </data>
+  <data name="BlockTypeHeading" xml:space="preserve">
+    <value>Heading</value>
+  </data>
+  <data name="BlockTypeParagraph" xml:space="preserve">
+    <value>Paragraph</value>
+  </data>
+  <data name="BlockTypeSteps" xml:space="preserve">
+    <value>Ordered steps</value>
+  </data>
+  <data name="BlockTypeCaution" xml:space="preserve">
+    <value>Caution</value>
+  </data>
+  <data name="BlockTypeWarning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="BlockTypeGate" xml:space="preserve">
+    <value>Contact medical control</value>
+  </data>
+  <data name="BlockTypeTable" xml:space="preserve">
+    <value>Table</value>
+  </data>
+  <data name="BlockTypeImage" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="BlockTypeVideo" xml:space="preserve">
+    <value>Video link</value>
+  </data>
+  <data name="BlockTypeAttachment" xml:space="preserve">
+    <value>Attachment</value>
+  </data>
+  <data name="BlockTypeLink" xml:space="preserve">
+    <value>Link</value>
+  </data>
+  <data name="BlockTypeMedication" xml:space="preserve">
+    <value>Medication</value>
+  </data>
+  <data name="BlockTypeVariants" xml:space="preserve">
+    <value>Adult / pediatric variants</value>
+  </data>
+  <data name="BlockTypeHtml" xml:space="preserve">
+    <value>Rich text</value>
+  </data>
+  <data name="BlockMoveUp" xml:space="preserve">
+    <value>Move up</value>
+  </data>
+  <data name="BlockMoveDown" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="BlockRemove" xml:space="preserve">
+    <value>Remove block</value>
+  </data>
+  <data name="BlockAddStep" xml:space="preserve">
+    <value>Add step</value>
+  </data>
+  <data name="BlockRemoveStep" xml:space="preserve">
+    <value>Remove step</value>
+  </data>
+  <data name="BlockAddRow" xml:space="preserve">
+    <value>Add row</value>
+  </data>
+  <data name="BlockAddColumn" xml:space="preserve">
+    <value>Add column</value>
+  </data>
+  <data name="BlockRemoveRow" xml:space="preserve">
+    <value>Remove last row</value>
+  </data>
+  <data name="BlockRemoveColumn" xml:space="preserve">
+    <value>Remove last column</value>
+  </data>
+  <data name="BlockAddVariant" xml:space="preserve">
+    <value>Add variant</value>
+  </data>
+  <data name="BlockRemoveVariant" xml:space="preserve">
+    <value>Remove variant</value>
+  </data>
+  <data name="BlockAddBlock" xml:space="preserve">
+    <value>Add a block</value>
+  </data>
+  <data name="BlockEditorEmpty" xml:space="preserve">
+    <value>No blocks yet. Add a heading, steps or a medication below.</value>
+  </data>
+  <data name="BlockSelectNone" xml:space="preserve">
+    <value>None selected</value>
+  </data>
+  <data name="BlockPreviewFailed" xml:space="preserve">
+    <value>The preview could not be loaded.</value>
+  </data>
+  <data name="BlockFieldText" xml:space="preserve">
+    <value>Heading text</value>
+  </data>
+  <data name="BlockFieldLevel" xml:space="preserve">
+    <value>Heading level</value>
+  </data>
+  <data name="BlockFieldTitle" xml:space="preserve">
+    <value>Title (optional)</value>
+  </data>
+  <data name="BlockFieldBody" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="BlockFieldStep" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="BlockFieldContact" xml:space="preserve">
+    <value>Who and how to contact</value>
+  </data>
+  <data name="BlockFieldCaption" xml:space="preserve">
+    <value>Caption</value>
+  </data>
+  <data name="BlockFieldHeaderRow" xml:space="preserve">
+    <value>First row is a header</value>
+  </data>
+  <data name="BlockFieldCell" xml:space="preserve">
+    <value>Cell</value>
+  </data>
+  <data name="BlockFieldUrl" xml:space="preserve">
+    <value>Web address (https)</value>
+  </data>
+  <data name="BlockFieldAttachment" xml:space="preserve">
+    <value>Protocol attachment</value>
+  </data>
+  <data name="BlockFieldAlt" xml:space="preserve">
+    <value>Description for screen readers</value>
+  </data>
+  <data name="BlockFieldLabel" xml:space="preserve">
+    <value>Link text</value>
+  </data>
+  <data name="BlockFieldLinkKind" xml:space="preserve">
+    <value>Link to</value>
+  </data>
+  <data name="BlockFieldLinkTarget" xml:space="preserve">
+    <value>Linked item</value>
+  </data>
+  <data name="BlockFieldLinkId" xml:space="preserve">
+    <value>Item number or id</value>
+  </data>
+  <data name="BlockFieldScopes" xml:space="preserve">
+    <value>Scope of practice (certification types)</value>
+  </data>
+  <data name="BlockFieldVariantLabel" xml:space="preserve">
+    <value>Variant name</value>
+  </data>
+  <data name="BlockFieldDrug" xml:space="preserve">
+    <value>Drug</value>
+  </data>
+  <data name="BlockFieldInventoryItemId" xml:space="preserve">
+    <value>Inventory item id</value>
+  </data>
+  <data name="BlockFieldInventoryItemName" xml:space="preserve">
+    <value>Inventory item name</value>
+  </data>
+  <data name="BlockFieldNotes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="BlockLevel2" xml:space="preserve">
+    <value>Section</value>
+  </data>
+  <data name="BlockLevel3" xml:space="preserve">
+    <value>Subsection</value>
+  </data>
+  <data name="BlockLevel4" xml:space="preserve">
+    <value>Minor heading</value>
+  </data>
+  <data name="BlockAdultLabel" xml:space="preserve">
+    <value>Adult</value>
+  </data>
+  <data name="BlockPediatricLabel" xml:space="preserve">
+    <value>Pediatric</value>
+  </data>
+  <data name="BlockDoseNoticeEditor" xml:space="preserve">
+    <value>Doses are shown exactly as written here. Resgrid never calculates a dose; the department dosing tool link is shown with every medication.</value>
+  </data>
+  <data name="RichBold" xml:space="preserve">
+    <value>Bold</value>
+  </data>
+  <data name="RichItalic" xml:space="preserve">
+    <value>Italic</value>
+  </data>
+  <data name="RichBullets" xml:space="preserve">
+    <value>Bulleted list</value>
+  </data>
+  <data name="RichNumbers" xml:space="preserve">
+    <value>Numbered list</value>
+  </data>
+  <data name="BlockEditorHelp" xml:space="preserve">
+    <value>Build the protocol from blocks: headings make the outline, ordered steps and contact medical control gates can be stepped through on a call, and every block gets a stable anchor that review comments and AI citations point at.</value>
+  </data>
+  <data name="BlockEditorNeedsScript" xml:space="preserve">
+    <value>The block editor needs JavaScript. Turn it on to edit this draft.</value>
+  </data>
+  <data name="BlockPreviewButton" xml:space="preserve">
+    <value>Refresh preview</value>
+  </data>
+  <data name="BlockPreviewHeader" xml:space="preserve">
+    <value>Preview as members will read it</value>
+  </data>
+  <data name="BlockPreviewHelp" xml:space="preserve">
+    <value>Select Refresh preview to see the blocks exactly as members will read them.</value>
+  </data>
+  <data name="ConvertToBlocksCallout" xml:space="preserve">
+    <value>This draft is rich text. Convert it to blocks to add steps, cautions, medications and other structured content; published versions are not changed.</value>
+  </data>
+  <data name="ConvertToBlocksButton" xml:space="preserve">
+    <value>Convert to blocks</value>
+  </data>
+  <data name="ConvertToBlocksConfirm" xml:space="preserve">
+    <value>Convert this draft's text to blocks? The published versions are not changed.</value>
+  </data>
+  <data name="ConvertedToBlocksMessage" xml:space="preserve">
+    <value>The draft was converted to blocks.</value>
+  </data>
+  <data name="DosingToolLinkText" xml:space="preserve">
+    <value>Open the department's dosing tool</value>
+  </data>
+  <data name="StepThroughHeader" xml:space="preserve">
+    <value>Step through</value>
+  </data>
+  <data name="StepThroughSubtitle" xml:space="preserve">
+    <value>Call {0} · {1}</value>
+  </data>
+  <data name="StepProgressLabel" xml:space="preserve">
+    <value>Steps done</value>
+  </data>
+  <data name="StepProgressFormat" xml:space="preserve">
+    <value>{0} of {1}</value>
+  </data>
+  <data name="StepStartedLabel" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="StepNotStarted" xml:space="preserve">
+    <value>Not started</value>
+  </data>
+  <data name="CitedVersionColumn" xml:space="preserve">
+    <value>Version used</value>
+  </data>
+  <data name="StepsCompletedBy" xml:space="preserve">
+    <value>Finished by {0} at {1}.</value>
+  </data>
+  <data name="StepsHeader" xml:space="preserve">
+    <value>Steps</value>
+  </data>
+  <data name="StepStateDone" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="StepStateSkipped" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
+  <data name="StepStateNotApplicable" xml:space="preserve">
+    <value>Not applicable</value>
+  </data>
+  <data name="StepStatePending" xml:space="preserve">
+    <value>Not done yet</value>
+  </data>
+  <data name="StepMarkDone" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="StepMarkSkipped" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="StepMarkNotApplicable" xml:space="preserve">
+    <value>Not applicable</value>
+  </data>
+  <data name="StepMarkPending" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="BackToCallButton" xml:space="preserve">
+    <value>Back to the call</value>
+  </data>
+  <data name="CompleteStepsButton" xml:space="preserve">
+    <value>Finish checklist</value>
+  </data>
+  <data name="CompleteStepsConfirm" xml:space="preserve">
+    <value>Finish this checklist? Steps not done stay recorded as not done.</value>
+  </data>
+  <data name="StepSaveFailed" xml:space="preserve">
+    <value>The step could not be saved. Try again.</value>
+  </data>
+  <data name="StepsCompletedMessage" xml:space="preserve">
+    <value>The checklist was finished.</value>
+  </data>
+  <data name="StepsCompletedLabel" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="SopChecklistsHeader" xml:space="preserve">
+    <value>Step-through and SOP checklists</value>
+  </data>
+  <data name="IncidentSopLabel" xml:space="preserve">
+    <value>Incident SOP</value>
+  </data>
+  <data name="StartSopLabel" xml:space="preserve">
+    <value>Start an SOP checklist</value>
+  </data>
+  <data name="StartSopButton" xml:space="preserve">
+    <value>Start checklist</value>
+  </data>
+  <data name="StepErrorNotFound" xml:space="preserve">
+    <value>That protocol is not on this call.</value>
+  </data>
+  <data name="StepErrorNotAuthorized" xml:space="preserve">
+    <value>You cannot change this checklist.</value>
+  </data>
+  <data name="StepErrorNoSteps" xml:space="preserve">
+    <value>This protocol has no steps to work through.</value>
+  </data>
+  <data name="StepErrorUnknownStep" xml:space="preserve">
+    <value>That step is not in the version this call uses.</value>
+  </data>
+  <data name="StepErrorCompleted" xml:space="preserve">
+    <value>This checklist is finished.</value>
+  </data>
+  <data name="StepErrorConflict" xml:space="preserve">
+    <value>Someone else was saving at the same moment. Try again.</value>
+  </data>
+  <data name="StepErrorNotAttachable" xml:space="preserve">
+    <value>This protocol cannot be added to the call (it is disabled, deleted or was removed from the call).</value>
+  </data>
+  <data name="QrCodeHeader" xml:space="preserve">
+    <value>QR code poster</value>
+  </data>
+  <data name="QrCodeButton" xml:space="preserve">
+    <value>QR code</value>
+  </data>
+  <data name="QrCodeAlt" xml:space="preserve">
+    <value>QR code for {0}</value>
+  </data>
+  <data name="QrCodeUnavailable" xml:space="preserve">
+    <value>The QR code could not be drawn.</value>
+  </data>
+  <data name="QrCodeHelp" xml:space="preserve">
+    <value>Print this poster for a vehicle, a station or any workplace wall. Scanning it opens the version in force for members who may read the protocol.</value>
+  </data>
+  <data name="DeepLinkLabel" xml:space="preserve">
+    <value>Direct link</value>
+  </data>
+  <data name="PrintViewButton" xml:space="preserve">
+    <value>Print view</value>
+  </data>
+  <data name="BookTab" xml:space="preserve">
+    <value>PDF book</value>
+  </data>
+  <data name="BookHeader" xml:space="preserve">
+    <value>PDF book of protocols</value>
+  </data>
+  <data name="BookHelp" xml:space="preserve">
+    <value>Download the whole library or one category (with its sub-categories) as one PDF: a table of contents, then each protocol in force with its version, effective date and approver. Only protocols you may read are included.</value>
+  </data>
+  <data name="BookReadableCount" xml:space="preserve">
+    <value>Protocols you can read</value>
+  </data>
+  <data name="BookSealingLabel" xml:space="preserve">
+    <value>Electronic seal</value>
+  </data>
+  <data name="BookSealingReady" xml:space="preserve">
+    <value>Sealed (L3)</value>
+  </data>
+  <data name="BookSealingPending" xml:space="preserve">
+    <value>Unsealed, sealing pending</value>
+  </data>
+  <data name="BookUnsealedNotice" xml:space="preserve">
+    <value>Sealing is not configured, so the PDF is not sealed. The export is recorded as sealing pending and is sealed once sealing is configured.</value>
+  </data>
+  <data name="BookWholeLibrary" xml:space="preserve">
+    <value>Whole library</value>
+  </data>
+  <data name="BookDownloadButton" xml:space="preserve">
+    <value>Download PDF</value>
+  </data>
+  <data name="BookLibraryTitle" xml:space="preserve">
+    <value>Protocol library</value>
+  </data>
+  <data name="BookContents" xml:space="preserve">
+    <value>Contents</value>
+  </data>
+  <data name="BookVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="BookEffective" xml:space="preserve">
+    <value>Effective</value>
+  </data>
+  <data name="BookApprovedBy" xml:space="preserve">
+    <value>Approved by</value>
+  </data>
+  <data name="BookContent" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="BookGenerated" xml:space="preserve">
+    <value>Generated</value>
+  </data>
+  <data name="BookDocumentBacked" xml:space="preserve">
+    <value>This protocol is a document; open it in Resgrid to read the file.</value>
+  </data>
+  <data name="BookEmpty" xml:space="preserve">
+    <value>No published protocols.</value>
+  </data>
+  <data name="BookUncategorized" xml:space="preserve">
+    <value>Uncategorized</value>
+  </data>
+  <data name="BookFailed" xml:space="preserve">
+    <value>The PDF book could not be produced.</value>
+  </data>
+  <data name="TranslationsButton" xml:space="preserve">
+    <value>Translations</value>
+  </data>
+  <data name="TranslationsHeader" xml:space="preserve">
+    <value>Content translations</value>
+  </data>
+  <data name="TranslationHeader" xml:space="preserve">
+    <value>Translation: {0}</value>
+  </data>
+  <data name="TranslationsSourceCallout" xml:space="preserve">
+    <value>This version is written in {0}. Each translation is approved on its own; the version, its hash and its signatures never change.</value>
+  </data>
+  <data name="NoTranslations" xml:space="preserve">
+    <value>No translations yet.</value>
+  </data>
+  <data name="TranslationLanguageColumn" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="TranslationUpdatedColumn" xml:space="preserve">
+    <value>Last change</value>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="TranslationStatusDraft" xml:space="preserve">
+    <value>Draft translation</value>
+  </data>
+  <data name="TranslationStatusApproved" xml:space="preserve">
+    <value>Approved translation</value>
+  </data>
+  <data name="TranslationStatusWithdrawn" xml:space="preserve">
+    <value>Withdrawn translation</value>
+  </data>
+  <data name="TranslationSourceChanged" xml:space="preserve">
+    <value>Source changed</value>
+  </data>
+  <data name="TranslationSourceChangedNotice" xml:space="preserve">
+    <value>The source content changed after this translation was made. It cannot be approved and is not shown to members; start a new translation of the current version.</value>
+  </data>
+  <data name="WithdrawTranslationButton" xml:space="preserve">
+    <value>Withdraw translation</value>
+  </data>
+  <data name="WithdrawTranslationConfirm" xml:space="preserve">
+    <value>Withdraw this translation? Members reading in this language will see the source.</value>
+  </data>
+  <data name="StartTranslationButton" xml:space="preserve">
+    <value>Start translation</value>
+  </data>
+  <data name="TranslationRulesCallout" xml:space="preserve">
+    <value>Only the wording is translated. Doses, links, attachments and the structure stay exactly as in the source.</value>
+  </data>
+  <data name="TranslationWordingHeader" xml:space="preserve">
+    <value>Translated wording</value>
+  </data>
+  <data name="TranslationSourceColumn" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="TranslationTranslatedColumn" xml:space="preserve">
+    <value>Translation</value>
+  </data>
+  <data name="TranslationDosesLocked" xml:space="preserve">
+    <value>Doses are not translated</value>
+  </data>
+  <data name="SaveTranslationButton" xml:space="preserve">
+    <value>Save translation</value>
+  </data>
+  <data name="TranslationPreviewHeader" xml:space="preserve">
+    <value>The translation as members will read it</value>
+  </data>
+  <data name="ApproveTranslationHeader" xml:space="preserve">
+    <value>Approve the translation</value>
+  </data>
+  <data name="ApproveTranslationHelp" xml:space="preserve">
+    <value>Approving signs this translation at L2 (step-up), bound to the translation's own content. The source version is not changed.</value>
+  </data>
+  <data name="ApproveTranslationButton" xml:space="preserve">
+    <value>Approve with step-up</value>
+  </data>
+  <data name="TranslationApprovalStatement" xml:space="preserve">
+    <value>I approve the {3} translation of protocol {0} "{1}" version {2} (translation content {4}) for members reading in that language.</value>
+  </data>
+  <data name="TranslationSavedMessage" xml:space="preserve">
+    <value>The translation was saved.</value>
+  </data>
+  <data name="TranslationApprovedMessage" xml:space="preserve">
+    <value>The translation was approved; members reading in that language now see it.</value>
+  </data>
+  <data name="TranslationWithdrawnMessage" xml:space="preserve">
+    <value>The translation was withdrawn.</value>
+  </data>
+  <data name="TranslationShownNotice" xml:space="preserve">
+    <value>Shown in {0} (an approved translation).</value>
+  </data>
+  <data name="TranslationFallbackNotice" xml:space="preserve">
+    <value>There is no approved translation in your language, so this is shown in the department's language.</value>
+  </data>
+  <data name="ContentLanguageLabel" xml:space="preserve">
+    <value>Content language</value>
+  </data>
+  <data name="TranslationErrorNotFound" xml:space="preserve">
+    <value>That translation or version was not found.</value>
+  </data>
+  <data name="TranslationErrorNotAuthorized" xml:space="preserve">
+    <value>You cannot do that with translations.</value>
+  </data>
+  <data name="TranslationErrorSourceNotLocked" xml:space="preserve">
+    <value>Only a submitted, approved or published version can be translated.</value>
+  </data>
+  <data name="TranslationErrorInvalidLocale" xml:space="preserve">
+    <value>Choose a language other than the version's own.</value>
+  </data>
+  <data name="TranslationErrorAlreadyExists" xml:space="preserve">
+    <value>This version already has a translation in that language.</value>
+  </data>
+  <data name="TranslationErrorStaleCopy" xml:space="preserve">
+    <value>Someone else saved this translation since you opened it. Reload to see their changes.</value>
+  </data>
+  <data name="TranslationErrorNotDraft" xml:space="preserve">
+    <value>Only a draft translation can be changed or approved.</value>
+  </data>
+  <data name="TranslationErrorEmptyContent" xml:space="preserve">
+    <value>The translation is empty.</value>
+  </data>
+  <data name="TranslationErrorSignatureRequired" xml:space="preserve">
+    <value>Approving needs a fresh step-up verification.</value>
+  </data>
+  <data name="TranslationErrorPasskeyRequired" xml:space="preserve">
+    <value>Your department requires a passkey for approvals.</value>
+  </data>
+  <data name="TranslationErrorSourceChanged" xml:space="preserve">
+    <value>The source content changed after this translation was made.</value>
+  </data>
+  <data name="StaleVersionMessage" xml:space="preserve">
+    <value>You are viewing {0}. {1} is in force since {2}.</value>
+  </data>
+  <data name="StaleRetiredMessage" xml:space="preserve">
+    <value>You are viewing {0}. This protocol is no longer in force.</value>
+  </data>
+  <data name="DefaultContentLocaleLabel" xml:space="preserve">
+    <value>Language protocols are written in</value>
+  </data>
+  <data name="DefaultContentLocaleBlank" xml:space="preserve">
+    <value>English (default)</value>
+  </data>
+  <data name="DefaultContentLocaleHelp" xml:space="preserve">
+    <value>Members whose language has no approved translation of a version read it in this language, and block labels such as Caution are written in it.</value>
+  </data>
+  <data name="BankQuizHeader" xml:space="preserve">
+    <value>Protocol quiz</value>
+  </data>
+  <data name="AckAwaitingBankQuizLabel" xml:space="preserve">
+    <value>Signed; waiting for the protocol quiz</value>
+  </data>
+  <data name="TakeBankQuizButton" xml:space="preserve">
+    <value>Take the quiz</value>
+  </data>
+  <data name="ResumeBankQuizButton" xml:space="preserve">
+    <value>Resume the quiz</value>
+  </data>
+  <data name="BankQuizRequiredNotice" xml:space="preserve">
+    <value>Your acknowledgment completes when you pass a quiz of {0} questions (pass mark {1}%).</value>
+  </data>
+  <data name="BankQuizPassedNotice" xml:space="preserve">
+    <value>Quiz passed ({0}%).</value>
+  </data>
+  <data name="QuizIntro" xml:space="preserve">
+    <value>{0} questions, pass mark {1}%. Your answers are scored on the server; the right answers are not shown.</value>
+  </data>
+  <data name="QuizChooseAll" xml:space="preserve">
+    <value>Choose every answer that applies.</value>
+  </data>
+  <data name="SubmitQuizButton" xml:space="preserve">
+    <value>Submit answers</value>
+  </data>
+  <data name="QuizResultPassed" xml:space="preserve">
+    <value>Passed: {0}% ({1} of {2} correct, pass mark {3}%).</value>
+  </data>
+  <data name="QuizResultFailed" xml:space="preserve">
+    <value>Not passed: {0}% ({1} of {2} correct, pass mark {3}%). You can take a new quiz.</value>
+  </data>
+  <data name="QuizAckCompletedMessage" xml:space="preserve">
+    <value>Your acknowledgment is complete.</value>
+  </data>
+  <data name="QuizError_NotAssigned" xml:space="preserve">
+    <value>You do not owe an acknowledgment of this version, or it does not ask for a quiz.</value>
+  </data>
+  <data name="QuizError_NoQuestions" xml:space="preserve">
+    <value>The question bank has no questions to draw yet. Tell your training officer.</value>
+  </data>
+  <data name="QuizError_AlreadySubmitted" xml:space="preserve">
+    <value>This quiz is already done.</value>
+  </data>
+  <data name="QuizError_NotAuthorized" xml:space="preserve">
+    <value>You cannot take this quiz.</value>
+  </data>
+  <data name="QuizError_NotFound" xml:space="preserve">
+    <value>The quiz could not be found.</value>
+  </data>
+  <data name="LearningSettingsHeader" xml:space="preserve">
+    <value>Question-bank quiz and micro-learning</value>
+  </data>
+  <data name="LearningBankLabel" xml:space="preserve">
+    <value>Question bank</value>
+  </data>
+  <data name="LearningNoBankOption" xml:space="preserve">
+    <value>No question bank</value>
+  </data>
+  <data name="LearningBankHelp" xml:space="preserve">
+    <value>A department-shared question bank linked to this protocol (questions that can be drawn in brackets). Quizzes and the weekly micro-learning draw its single-choice, multiple-choice and true/false questions.</value>
+  </data>
+  <data name="LearningQuizRequiredLabel" xml:space="preserve">
+    <value>Acknowledgment requires passing a quiz drawn from the bank</value>
+  </data>
+  <data name="LearningQuestionCountLabel" xml:space="preserve">
+    <value>Questions per quiz</value>
+  </data>
+  <data name="LearningPassMarkLabel" xml:space="preserve">
+    <value>Pass mark (%)</value>
+  </data>
+  <data name="LearningTagsLabel" xml:space="preserve">
+    <value>Only questions tagged</value>
+  </data>
+  <data name="LearningTagsHelp" xml:space="preserve">
+    <value>Optional, comma-separated. Leave blank to draw from the whole bank.</value>
+  </data>
+  <data name="LearningMicroLabel" xml:space="preserve">
+    <value>Include in the weekly micro-learning</value>
+  </data>
+  <data name="LearningLmsOnly" xml:space="preserve">
+    <value>Comes with the LMS add-on.</value>
+  </data>
+  <data name="LearningSettingsError_InvalidInput" xml:space="preserve">
+    <value>Choose a department-shared question bank for a required quiz.</value>
+  </data>
+  <data name="LearningSettingsError_NoQuestions" xml:space="preserve">
+    <value>The question bank has no single-choice, multiple-choice or true/false questions to draw.</value>
+  </data>
+  <data name="LearningSettingsError_AddonRequired" xml:space="preserve">
+    <value>Question-bank quizzes and micro-learning need the LMS add-on.</value>
+  </data>
+  <data name="LearningSettingsError_NotAuthorized" xml:space="preserve">
+    <value>You cannot change this protocol's learning settings.</value>
+  </data>
+  <data name="LearningSettingsError_NotFound" xml:space="preserve">
+    <value>The protocol could not be found.</value>
+  </data>
+  <data name="MicroLearningSelectionHeader" xml:space="preserve">
+    <value>Weekly micro-learning</value>
+  </data>
+  <data name="MicroLearningSelectionHelp" xml:space="preserve">
+    <value>Every Monday at 09:00 department time, each active member with an LMS seat in a selected protocol's audience gets one scenario question from the question banks tagged to it: its linked bank, or a shared bank tagged with the protocol's code or number.</value>
+  </data>
+  <data name="MicroLearningSaveButton" xml:space="preserve">
+    <value>Save selection</value>
+  </data>
+  <data name="MicroLearningSavedMessage" xml:space="preserve">
+    <value>Micro-learning selection saved: {0} protocols.</value>
+  </data>
+  <data name="WeeklyQuestionsHeader" xml:space="preserve">
+    <value>Weekly questions</value>
+  </data>
+  <data name="WeeklyQuestionsIntro" xml:space="preserve">
+    <value>One scenario question a week from your department's protocols. Answer it once, then see the right answer and why.</value>
+  </data>
+  <data name="WeeklyNoQuestions" xml:space="preserve">
+    <value>No weekly questions yet.</value>
+  </data>
+  <data name="WeeklyAnswerButton" xml:space="preserve">
+    <value>Answer</value>
+  </data>
+  <data name="WeeklyCorrect" xml:space="preserve">
+    <value>Correct</value>
+  </data>
+  <data name="WeeklyIncorrect" xml:space="preserve">
+    <value>Not quite</value>
+  </data>
+  <data name="WeeklyCorrectAnswerLabel" xml:space="preserve">
+    <value>(the right answer)</value>
+  </data>
+  <data name="WeeklyExplanationLabel" xml:space="preserve">
+    <value>Why:</value>
+  </data>
+  <data name="WeeklyWeekLabel" xml:space="preserve">
+    <value>Week {0}</value>
+  </data>
+  <data name="WeeklyChooseAnswer" xml:space="preserve">
+    <value>Choose an answer first.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphInvalid" xml:space="preserve">
+    <value>The case flow has problems: it needs exactly one first step, every path must end at an outcome with a determinant, and it must not loop. Fix it before review.</value>
+  </data>
+  <data name="LifecycleErrorDecisionGraphNotAllowed" xml:space="preserve">
+    <value>A case flow belongs to an authored Dispatch protocol, not to another kind or an uploaded document.</value>
+  </data>
+  <data name="GraphLabelCaseFlow" xml:space="preserve">
+    <value>Case flow</value>
+  </data>
+  <data name="GraphLabelEntryQuestion" xml:space="preserve">
+    <value>Entry question</value>
+  </data>
+  <data name="GraphLabelKeyQuestion" xml:space="preserve">
+    <value>Key question</value>
+  </data>
+  <data name="GraphLabelInstruction" xml:space="preserve">
+    <value>Instruction</value>
+  </data>
+  <data name="GraphLabelOutcome" xml:space="preserve">
+    <value>Outcome</value>
+  </data>
+  <data name="GraphLabelDeterminant" xml:space="preserve">
+    <value>Determinant</value>
+  </data>
+  <data name="GraphLabelPriority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="GraphLabelResponse" xml:space="preserve">
+    <value>Response</value>
+  </data>
+  <data name="GraphLabelPostDispatch" xml:space="preserve">
+    <value>After dispatch</value>
+  </data>
+  <data name="GraphLabelGoTo" xml:space="preserve">
+    <value>go to step {0}</value>
+  </data>
+  <data name="GraphLabelAnyAnswer" xml:space="preserve">
+    <value>Any answer</value>
+  </data>
+  <data name="GraphLabelYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="GraphLabelNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="GraphLabelStart" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="AiSuggestSuggested" xml:space="preserve">
+    <value>Suggested.</value>
+  </data>
+  <data name="AiSuggestNotEntitled" xml:space="preserve">
+    <value>AI protocol suggestions need the Enhanced AI add-on.</value>
+  </data>
+  <data name="AiSuggestProtectionUnsupported" xml:space="preserve">
+    <value>AI suggestions are off while Advanced Data Protection is on.</value>
+  </data>
+  <data name="AiSuggestUnconfigured" xml:space="preserve">
+    <value>No AI model is configured on this installation.</value>
+  </data>
+  <data name="AiSuggestNoCandidates" xml:space="preserve">
+    <value>No published Dispatch protocol with a case flow can be used with AI.</value>
+  </data>
+  <data name="AiSuggestNoInput" xml:space="preserve">
+    <value>The call has no text or SMS thread to read yet.</value>
+  </data>
+  <data name="AiSuggestNoMatch" xml:space="preserve">
+    <value>AI did not find a protocol that fits. Pick one by hand.</value>
+  </data>
+  <data name="AiSuggestUnavailable" xml:space="preserve">
+    <value>AI is not answering right now. Try again or pick a protocol by hand.</value>
+  </data>
+  <data name="AiSuggestNotFound" xml:space="preserve">
+    <value>The call was not found.</value>
+  </data>
+  <data name="CaseDone" xml:space="preserve">
+    <value>Saved.</value>
+  </data>
+  <data name="CaseNotFound" xml:space="preserve">
+    <value>That protocol is not on this call.</value>
+  </data>
+  <data name="CaseNoCase" xml:space="preserve">
+    <value>This protocol has no case recorded on the call.</value>
+  </data>
+  <data name="CaseOverrideReasonRequired" xml:space="preserve">
+    <value>A different determinant needs a reason.</value>
+  </data>
+  <data name="CaseDeterminantInvalid" xml:space="preserve">
+    <value>A determinant is letters, digits, spaces and . _ / - (at most 32).</value>
+  </data>
+  <data name="CaseNotAnInstruction" xml:space="preserve">
+    <value>That step is not an instruction that can be texted to the caller.</value>
+  </data>
+  <data name="CaseNoThread" xml:space="preserve">
+    <value>The call has no open SMS thread with the caller.</value>
+  </data>
+  <data name="CaseOptedOut" xml:space="preserve">
+    <value>The caller opted out of texts (STOP); nothing was sent.</value>
+  </data>
+  <data name="CaseHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Another dispatcher is connected to the caller’s thread.</value>
+  </data>
+  <data name="CaseSendFailed" xml:space="preserve">
+    <value>The text could not be sent. It is logged on the call.</value>
+  </data>
+  <data name="CaseCallerDone" xml:space="preserve">
+    <value>Texted to the caller and logged on the call.</value>
+  </data>
+  <data name="CaseCallerNotFound" xml:space="preserve">
+    <value>That protocol is not on this call.</value>
+  </data>
+  <data name="CaseCallerNoCase" xml:space="preserve">
+    <value>This protocol has no case recorded on the call.</value>
+  </data>
+  <data name="CaseCallerOverrideReasonRequired" xml:space="preserve">
+    <value>A different determinant needs a reason.</value>
+  </data>
+  <data name="CaseCallerDeterminantInvalid" xml:space="preserve">
+    <value>A determinant is letters, digits, spaces and . _ / - (at most 32).</value>
+  </data>
+  <data name="CaseCallerNotAnInstruction" xml:space="preserve">
+    <value>That step is not an instruction that can be texted to the caller.</value>
+  </data>
+  <data name="CaseCallerNoThread" xml:space="preserve">
+    <value>The call has no open SMS thread with the caller.</value>
+  </data>
+  <data name="CaseCallerOptedOut" xml:space="preserve">
+    <value>The caller opted out of texts (STOP); nothing was sent.</value>
+  </data>
+  <data name="CaseCallerHeldByAnotherDispatcher" xml:space="preserve">
+    <value>Another dispatcher is connected to the caller’s thread.</value>
+  </data>
+  <data name="CaseCallerSendFailed" xml:space="preserve">
+    <value>The text could not be sent. It is logged on the call.</value>
+  </data>
+  <data name="TriggerConditionsLabel" xml:space="preserve">
+    <value>Conditions</value>
+  </data>
+  <data name="TriggerConditionsHelp" xml:space="preserve">
+    <value>Every condition you set must also hold: the call inside a station or group area, on these days and hours (department time), with a word in the nature or notes, at a point of interest of this type, or from these sources. A trigger for any call needs at least one.</value>
+  </data>
+  <data name="TriggerKeywordsLabel" xml:space="preserve">
+    <value>Words in the nature or notes</value>
+  </data>
+  <data name="TriggerKeywordsPlaceholder" xml:space="preserve">
+    <value>chest pain, not breathing</value>
+  </data>
+  <data name="TriggerZoneLabel" xml:space="preserve">
+    <value>Inside the area of</value>
+  </data>
+  <data name="TriggerAnyOption" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="TriggerPoiTypeLabel" xml:space="preserve">
+    <value>Point of interest type at the location</value>
+  </data>
+  <data name="TriggerFromLabel" xml:space="preserve">
+    <value>From (time)</value>
+  </data>
+  <data name="TriggerToLabel" xml:space="preserve">
+    <value>Until (time)</value>
+  </data>
+  <data name="TriggerDaysLabel" xml:space="preserve">
+    <value>Days</value>
+  </data>
+  <data name="TriggerSourcesLabel" xml:space="preserve">
+    <value>Came in by</value>
+  </data>
+  <data name="CallSourceUser" xml:space="preserve">
+    <value>Dispatcher (call form)</value>
+  </data>
+  <data name="CallSourceEmailImport" xml:space="preserve">
+    <value>E-mail import</value>
+  </data>
+  <data name="CallSourceAudioImport" xml:space="preserve">
+    <value>Audio import</value>
+  </data>
+  <data name="CallSourceChatbot" xml:space="preserve">
+    <value>Chatbot</value>
+  </data>
+  <data name="CallSourceIntake" xml:space="preserve">
+    <value>Intake channel (SMS, e-mail, chat, webhook)</value>
+  </data>
+  <data name="CallSourceVoiceIntake" xml:space="preserve">
+    <value>Voice intake (AI)</value>
+  </data>
+  <data name="ErrorTriggerConditions" xml:space="preserve">
+    <value>A trigger condition is not valid: check the area, the point of interest type, the time window (both times) and that a trigger for any call has at least one condition.</value>
+  </data>
+  <data name="ConditionsTrigger" xml:space="preserve">
+    <value>Any call (conditions only)</value>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>Dispatch texts</value>
+  </data>
+  <data name="ShowDeterminantInDispatchCheckbox" xml:space="preserve">
+    <value>Put the determinant and the protocol name in dispatch push, text and voice messages</value>
+  </data>
+  <data name="ShowDeterminantInDispatchHelp" xml:space="preserve">
+    <value>Off by default. When on, responders see the call’s determinant and protocol after the call name; the older apps show it as part of the text.</value>
+  </data>
+  <data name="CaseFlowHeader" xml:space="preserve">
+    <value>Case flow (decision graph)</value>
+  </data>
+  <data name="CaseFlowLockedNotice" xml:space="preserve">
+    <value>The case flow is part of the version under review and cannot change until it is withdrawn or published.</value>
+  </data>
+  <data name="CaseFlowHelp" xml:space="preserve">
+    <value>Dispatchers walk these steps on the call form: entry questions, key questions and instructions lead to an outcome with a determinant, a suggested priority and what to tell the caller. The flow is saved with the draft, shown in the protocol text and approved with the version.</value>
+  </data>
+  <data name="CaseFlowLicensingNotice" xml:space="preserve">
+    <value>Write your own questions and codes. Licensed protocol content (for example MPDS) may be held only in your department, with “Licensed content” ticked; it is never shared, published or used by AI.</value>
+  </data>
+  <data name="CaseFlowAddQuestion" xml:space="preserve">
+    <value>Add question</value>
+  </data>
+  <data name="CaseFlowAddInstruction" xml:space="preserve">
+    <value>Add instruction</value>
+  </data>
+  <data name="CaseFlowAddOutcome" xml:space="preserve">
+    <value>Add outcome</value>
+  </data>
+  <data name="CaseFlowEmpty" xml:space="preserve">
+    <value>No case flow yet. Without one, the protocol is attached to calls as before.</value>
+  </data>
+  <data name="CaseFlowFirstStep" xml:space="preserve">
+    <value>First step</value>
+  </data>
+  <data name="CaseFlowMakeFirst" xml:space="preserve">
+    <value>Make first</value>
+  </data>
+  <data name="CaseFlowStepLabel" xml:space="preserve">
+    <value>Short name</value>
+  </data>
+  <data name="CaseFlowStepText" xml:space="preserve">
+    <value>Question as read to the caller</value>
+  </data>
+  <data name="CaseFlowInstructionText" xml:space="preserve">
+    <value>Script to read aloud</value>
+  </data>
+  <data name="CaseFlowStage" xml:space="preserve">
+    <value>Stage</value>
+  </data>
+  <data name="CaseFlowAnswerType" xml:space="preserve">
+    <value>Answered with</value>
+  </data>
+  <data name="CaseFlowTypeYesNo" xml:space="preserve">
+    <value>Yes / no</value>
+  </data>
+  <data name="CaseFlowTypeChoice" xml:space="preserve">
+    <value>One of several answers</value>
+  </data>
+  <data name="CaseFlowTypeNumber" xml:space="preserve">
+    <value>A number</value>
+  </data>
+  <data name="CaseFlowTypeFreeText" xml:space="preserve">
+    <value>Free text</value>
+  </data>
+  <data name="CaseFlowMin" xml:space="preserve">
+    <value>Lowest value</value>
+  </data>
+  <data name="CaseFlowMax" xml:space="preserve">
+    <value>Highest value</value>
+  </data>
+  <data name="CaseFlowNext" xml:space="preserve">
+    <value>Then</value>
+  </data>
+  <data name="CaseFlowChooseStep" xml:space="preserve">
+    <value>Choose a step…</value>
+  </data>
+  <data name="CaseFlowSpeak" xml:space="preserve">
+    <value>Offer “Play” (text to speech) to the dispatcher</value>
+  </data>
+  <data name="CaseFlowSendToCaller" xml:space="preserve">
+    <value>May be texted to the caller</value>
+  </data>
+  <data name="CaseFlowNoPriority" xml:space="preserve">
+    <value>No suggestion</value>
+  </data>
+  <data name="CaseFlowProblems" xml:space="preserve">
+    <value>To fix before review:</value>
+  </data>
+  <data name="CaseFlowProblemRoot" xml:space="preserve">
+    <value>Exactly one step must be the first step.</value>
+  </data>
+  <data name="CaseFlowProblemNext" xml:space="preserve">
+    <value>every answer needs a next step.</value>
+  </data>
+  <data name="CaseFlowProblemDeterminant" xml:space="preserve">
+    <value>an outcome needs a determinant code.</value>
+  </data>
+  <data name="CaseFlowProblemLoop" xml:space="preserve">
+    <value>The case flow loops back on itself.</value>
+  </data>
+  <data name="CaseFlowProblemUnreachable" xml:space="preserve">
+    <value>cannot be reached from the first step.</value>
+  </data>
+  <data name="CaseAiSuggestButton" xml:space="preserve">
+    <value>Suggest with AI</value>
+  </data>
+  <data name="CasePlayButton" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="CaseChangeAnswer" xml:space="preserve">
+    <value>Change</value>
+  </data>
+  <data name="CaseOverridden" xml:space="preserve">
+    <value>Overridden</value>
+  </data>
+  <data name="CasePriorityApplied" xml:space="preserve">
+    <value>applied to the call</value>
+  </data>
+  <data name="CaseOverrideDeterminant" xml:space="preserve">
+    <value>Override the determinant</value>
+  </data>
+  <data name="CaseOverrideReason" xml:space="preserve">
+    <value>Reason (required)</value>
+  </data>
+  <data name="CaseInvalid" xml:space="preserve">
+    <value>This case flow could not be walked. Attach the protocol without it, or tell the protocol’s owner.</value>
+  </data>
+  <data name="CaseAiPrefilled" xml:space="preserve">
+    <value>Suggested by Enhanced AI. Check every answer before you save.</value>
+  </data>
+  <data name="CaseAiAsking" xml:space="preserve">
+    <value>Asking Enhanced AI…</value>
+  </data>
+  <data name="CaseAiFailed" xml:space="preserve">
+    <value>The suggestion could not be made.</value>
+  </data>
+  <data name="CaseSourceAi" xml:space="preserve">
+    <value>Enhanced AI suggestion, confirmed by the dispatcher</value>
+  </data>
+  <data name="CaseOverrideFrom" xml:space="preserve">
+    <value>computed {0}; reason: {1}</value>
+  </data>
+  <data name="CaseNotComplete" xml:space="preserve">
+    <value>The case did not reach an outcome.</value>
+  </data>
+  <data name="CaseCallerTexts" xml:space="preserve">
+    <value>Texted to the caller</value>
+  </data>
+  <data name="CaseSendToCallerButton" xml:space="preserve">
+    <value>Text to caller: {0}</value>
+  </data>
+  <data name="CaseOverrideSave" xml:space="preserve">
+    <value>Save determinant</value>
+  </data>
+  <data name="CaseOverrideHelp" xml:space="preserve">
+    <value>Leave the determinant blank to go back to the one the case flow reached. Any other determinant needs a reason, kept on the call.</value>
+  </data>
+  <data name="CaseExportSection" xml:space="preserve">
+    <value>Protocol cases</value>
+  </data>
+  <data name="AiSuggestBudgetExhausted" xml:space="preserve">
+    <value>Your department's monthly Enhanced AI budget is used up, so there is no AI suggestion. Pick a protocol by hand.</value>
+  </data>
+  <data name="AiSuggestBusy" xml:space="preserve">
+    <value>AI is busy with other work right now. Try again or pick a protocol by hand.</value>
+  </data>
+  <data name="CaseProtectedDataRequired" xml:space="preserve">
+    <value>This case is protected by Advanced Data Protection. Verify your identity to view protected data, then try again.</value>
+  </data>
+  <data name="CaseCallerProtectedDataRequired" xml:space="preserve">
+    <value>This case is protected by Advanced Data Protection. Verify your identity to view protected data, then send the text again.</value>
+  </data>
+  <data name="ApprovedAllMessage" xml:space="preserve">
+    <value>Approved and signed. Every approval step is done, so the version can be published.</value>
+  </data>
+  <data name="ApprovedStepMessage" xml:space="preserve">
+    <value>Approved and signed. The version moves on to the next approval step.</value>
+  </data>
+  <data name="PublishedMessage" xml:space="preserve">
+    <value>Version {0} is published and in force from {1}.</value>
+  </data>
+  <data name="ScheduledMessage" xml:space="preserve">
+    <value>Version {0} is approved and comes into force on {1}.</value>
+  </data>
+  <data name="CategorySavedMessage" xml:space="preserve">
+    <value>The category was saved.</value>
+  </data>
+  <data name="CategoryDeletedMessage" xml:space="preserve">
+    <value>The category was deleted.</value>
+  </data>
+  <data name="CategoryInUseMessage" xml:space="preserve">
+    <value>The category was not deleted: protocols or other categories still use it. Move them first.</value>
+  </data>
+  <data name="ReviewCommentSaved" xml:space="preserve">
+    <value>Your review comment was added.</value>
+  </data>
+  <data name="SuggestionSaved" xml:space="preserve">
+    <value>Thank you. Your suggestion was added for the protocol's authors.</value>
+  </data>
+  <data name="LifecycleErrorManagedBySet" xml:space="preserve">
+    <value>This protocol is a copy managed by a subscribed protocol set. Its content changes through the set's update inbox and customize page; unsubscribe to make it your own.</value>
+  </data>
 </root>

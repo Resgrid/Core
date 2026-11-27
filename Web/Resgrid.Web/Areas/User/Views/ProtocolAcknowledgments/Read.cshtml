@@ -1,0 +1,148 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.Protocols
+@model Resgrid.WebCore.Areas.User.Models.Protocols.ReadAndSignModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@inject Resgrid.Model.Services.IAiKnowledgeService knowledgeService
+@*
+    Read-and-sign (P2): the version as it is in force (authored content, or the document with its extracted text), then the signature
+    bound to this exact content's hash. Opening this page is what records that the member read it; the sign form posts the hash
+    shown here, and the server refuses it when the content changed or a newer version came into force.
+*@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    var p = Model.Protocol;
+    var v = Model.Version;
+    var ack = Model.Acknowledgment;
+    ViewBag.Title = "Resgrid | " + p.Name;
+    ViewData["Title"] = p.Name;
+    ViewData["Subtitle"] = (p.IsBulletin ? localizer["KindBulletin"].Value : p.Code) + (string.IsNullOrEmpty(v.Label) ? "" : " · v" + v.Label);
+    var stepUp = Model.RequiredLevel >= (int)SignatureLevels.StepUp;
+    var signAction = stepUp ? "SignWithStepUp" : "Sign";
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Protocols/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrEmpty(Model.Message))
+    {
+        <div class="alert alert-success" role="status"><i class="fa fa-check" aria-hidden="true"></i> @Model.Message</div>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <div class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> @Model.Error</div>
+    }
+    @if (v.Status == (int)ProtocolVersionStatuses.Approved && v.EffectiveOn.HasValue)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-calendar" aria-hidden="true"></i> @string.Format(localizer["AckFutureVersionNotice"].Value, departmentTime.Format(v.EffectiveOn))</div>
+    }
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>@(p.IsBulletin ? localizer["KindBulletin"] : localizer["ProtocolTextDtLabel"])</h5>
+                    @if (!string.IsNullOrEmpty(v.Label))
+                    {
+                        <div class="ibox-tools"><span class="label label-primary">v@(v.Label)</span></div>
+                    }
+                </div>
+                <div class="ibox-content">
+                    @if (v.IsDocument)
+                    {
+                        @await Component.InvokeAsync("ProtocolDocumentContent", new { versionId = v.ProtocolVersionId, title = p.Name })
+                    }
+                    else
+                    {
+                        string dosingToolUrl = null;
+                        try { dosingToolUrl = (await knowledgeService.GetSettingsAsync(ClaimsAuthorizationHelper.GetDepartmentId()))?.DosingToolUrl; } catch (Exception) { dosingToolUrl = null; }
+                        <div class="protocol-content rgp-reader">@Html.ProtocolContent(v.ContentHtml, dosingToolUrl, localizer["DosingToolLinkText"].Value)</div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            @if (ack == null)
+            {
+                <div class="rgw-next-action" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["AckNotAssignedNotice"]</div>
+            }
+            else if (ack.IsSigned)
+            {
+                <div class="rgw-next-action" role="status">
+                    <i class="fa fa-check-circle text-success" aria-hidden="true"></i>
+                    @string.Format(localizer["AckSignedNotice"].Value, departmentTime.Format(ack.SignedOn))
+                    @if (ack.Status == (int)ProtocolAcknowledgmentStatuses.AwaitingQuiz && Model.BankQuiz != null && !Model.BankQuiz.Passed)
+                    {
+                        <div class="m-t-xs">@localizer["AckAwaitingBankQuizLabel"]
+                            <a class="btn btn-xs btn-primary" asp-controller="ProtocolAcknowledgments" asp-action="Quiz" asp-route-area="User" asp-route-versionId="@v.ProtocolVersionId"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer[Model.BankQuiz.OpenAttemptId.HasValue ? "ResumeBankQuizButton" : "TakeBankQuizButton"]</a>
+                        </div>
+                    }
+                    @if (ack.Status == (int)ProtocolAcknowledgmentStatuses.AwaitingQuiz && ack.QuizTrainingId.HasValue)
+                    {
+                        <div class="m-t-xs">@string.Format(localizer["AckAwaitingQuizLabel"].Value, Model.QuizTrainingName ?? "")
+                            @if (ack.QuizTrainingId.HasValue)
+                            {
+                                <a class="btn btn-xs btn-default" asp-controller="Trainings" asp-action="View" asp-route-area="User" asp-route-trainingId="@ack.QuizTrainingId"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer["TakeQuizButton"]</a>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else if (!Model.CanSign)
+            {
+                <div class="rgw-next-action" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["AckCannotSignNotice"]</div>
+            }
+            else
+            {
+                <div class="panel panel-default rg-signature-panel">
+                    <div class="panel-heading">
+                        <strong><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["ReadAndSignHeader"]</strong>
+                        <span class="label label-info pull-right"><i class="fa fa-shield" aria-hidden="true"></i> @string.Format(signatureText["LevelBadge"].Value, Model.RequiredLevel, stepUp ? signatureText["LevelStepUp"].Value : signatureText["LevelAttest"].Value)</span>
+                    </div>
+                    <div class="panel-body">
+                        @if (ack.DueOn.HasValue)
+                        {
+                            <p class="@(ProtocolAcknowledgmentRules.IsOverdue(ack, DateTime.UtcNow) ? "text-danger" : "text-muted") small"><i class="fa fa-calendar" aria-hidden="true"></i> @string.Format(localizer["AckDueLabel"].Value, departmentTime.Date(ack.DueOn))</p>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.QuizTrainingName))
+                        {
+                            <p class="small"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @string.Format(localizer["AckQuizRequiredNotice"].Value, Model.QuizTrainingName)</p>
+                        }
+                        @if (Model.BankQuiz != null)
+                        {
+                            <p class="small"><i class="fa fa-graduation-cap" aria-hidden="true"></i>
+                                @if (Model.BankQuiz.Passed)
+                                {
+                                    @string.Format(localizer["BankQuizPassedNotice"].Value, (Model.BankQuiz.BestPercent ?? 0).ToString("0.#"))
+                                }
+                                else
+                                {
+                                    @string.Format(localizer["BankQuizRequiredNotice"].Value, Model.BankQuiz.QuestionCount, Model.BankQuiz.PassMark)
+                                    <a class="btn btn-xs btn-default" asp-controller="ProtocolAcknowledgments" asp-action="Quiz" asp-route-area="User" asp-route-versionId="@v.ProtocolVersionId"><i class="fa fa-graduation-cap" aria-hidden="true"></i> @localizer[Model.BankQuiz.OpenAttemptId.HasValue ? "ResumeBankQuizButton" : "TakeBankQuizButton"]</a>
+                                }
+                            </p>
+                        }
+                        <p class="m-b-xs"><strong>@signatureText["StatementLabel"]</strong></p>
+                        <blockquote class="m-b-sm" style="font-size: 14px;">@Model.Statement</blockquote>
+                        <p class="text-muted small"><i class="fa fa-hashtag" aria-hidden="true"></i> @signatureText["ContentCodeLabel"] <span class="rgw-mono">@SignaturePolicy.ShortCode(v.ContentHash)</span> · @signatureText["BindsToContentHelp"]</p>
+                        <form method="post" asp-controller="ProtocolAcknowledgments" asp-action="@signAction" asp-route-area="User">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="versionId" value="@v.ProtocolVersionId" />
+                            <input type="hidden" name="contentHash" value="@v.ContentHash" />
+                            <div class="rgw-wizard-actions">
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["SignAcknowledgmentButton"]</button>
+                            </div>
+                            <p class="help-block small">@(stepUp ? signatureText["StepUpHelp"] : localizer["ReadAndSignHelp"])</p>
+                        </form>
+                    </div>
+                </div>
+            }
+            <a class="btn btn-default btn-block" asp-controller="ProtocolAcknowledgments" asp-action="Mine" asp-route-area="User"><i class="fa fa-arrow-left" aria-hidden="true"></i> @localizer["MyAcknowledgmentsTab"]</a>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

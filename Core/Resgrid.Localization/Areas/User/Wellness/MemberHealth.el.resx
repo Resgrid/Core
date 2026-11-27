@@ -1,0 +1,1149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HealthRecordsTab" xml:space="preserve">
+    <value>Αρχεία υγείας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearancesTab" xml:space="preserve">
+    <value>Ιατρική έγκριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaTab" xml:space="preserve">
+    <value>Μητρώο OSHA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HealthRecordsTitle" xml:space="preserve">
+    <value>Αρχεία υγείας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HealthRecordsIntro" xml:space="preserve">
+    <value>Οι περιπτώσεις έκθεσης, οι τραυματισμοί, η κατάσταση υπηρεσίας και η ιατρική σας έγκριση. Μόνο εσείς και οι υπεύθυνοι υγείας του φορέα σας τα βλέπετε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportExposureButton" xml:space="preserve">
+    <value>Αναφορά έκθεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportInjuryButton" xml:space="preserve">
+    <value>Αναφορά τραυματισμού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DutyStatusLabel" xml:space="preserve">
+    <value>Κατάσταση υπηρεσίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpectedReturnLabel" xml:space="preserve">
+    <value>Αναμενόμενη επιστροφή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceStatusLabel" xml:space="preserve">
+    <value>Ιατρική έγκριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoClearance" xml:space="preserve">
+    <value>Καμία καταχώριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ValidUntilLabel" xml:space="preserve">
+    <value>Επόμενη αξιολόγηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenCasesLabel" xml:space="preserve">
+    <value>Ανοιχτές περιπτώσεις έκθεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenInjuriesLabel" xml:space="preserve">
+    <value>Ανοιχτοί τραυματισμοί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenCasesHeader" xml:space="preserve">
+    <value>Ανοιχτές περιπτώσεις έκθεσης (ορισμένος υπεύθυνος)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoOpenCases" xml:space="preserve">
+    <value>Δεν υπάρχει ανοιχτή περίπτωση έκθεσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberColumn" xml:space="preserve">
+    <value>Μέλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MemberLabel" xml:space="preserve">
+    <value>Μέλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Ημερομηνία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RouteColumn" xml:space="preserve">
+    <value>Τρόπος έκθεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StageColumn" xml:space="preserve">
+    <value>Στάδιο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenButton" xml:space="preserve">
+    <value>Άνοιγμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotificationOverdue" xml:space="preserve">
+    <value>Η απάντηση καθυστερεί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OpenInjuriesHeader" xml:space="preserve">
+    <value>Ανοιχτοί τραυματισμοί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoOpenInjuries" xml:space="preserve">
+    <value>Δεν υπάρχει ανοιχτός τραυματισμός.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseNumberColumn" xml:space="preserve">
+    <value>Αρ. υπόθεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCasesHeader" xml:space="preserve">
+    <value>Οι περιπτώσεις έκθεσής μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCasesSelf" xml:space="preserve">
+    <value>Δεν έχετε περίπτωση έκθεσης. Αναφέρετε εδώ έκθεση σε αιματογενή παθογόνα ή λοιμώδη νόσο ή από μια καταχώριση έκθεσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyInjuriesHeader" xml:space="preserve">
+    <value>Οι τραυματισμοί μου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoInjuriesSelf" xml:space="preserve">
+    <value>Δεν έχετε καταγεγραμμένο τραυματισμό.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StateColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DutyBoardHeader" xml:space="preserve">
+    <value>Πίνακας κατάστασης υπηρεσίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DutyBoardHelp" xml:space="preserve">
+    <value>Μέλη σε περιορισμένη υπηρεσία, εκτός υπηρεσίας ή χωρίς πλήρη έγκριση. Δείχνει μόνο την κατάσταση, ποτέ τον λόγο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoDutyBoard" xml:space="preserve">
+    <value>Όλοι όσοι εποπτεύετε είναι σε πλήρη υπηρεσία και εγκεκριμένοι.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SinceLabel" xml:space="preserve">
+    <value>Από</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivacyNote" xml:space="preserve">
+    <value>Αυτά τα αρχεία είναι περιορισμένα: τα βλέπετε εσείς, ο ορισμένος υπεύθυνος και οι υπεύθυνοι ευεξίας. Οι διαχειριστές και οι επόπτες βλέπουν μόνο την κατάσταση υπηρεσίας, ποτέ ιατρικά στοιχεία. Δεν αναζητούνται ποτέ και δεν χρησιμοποιούνται από τεχνητή νοημοσύνη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Duty.FullDuty" xml:space="preserve">
+    <value>Πλήρης υπηρεσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Duty.RestrictedDuty" xml:space="preserve">
+    <value>Περιορισμένη υπηρεσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Duty.OffDuty" xml:space="preserve">
+    <value>Εκτός υπηρεσίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Clearance.Cleared" xml:space="preserve">
+    <value>Εγκεκριμένος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Clearance.ClearedWithRestrictions" xml:space="preserve">
+    <value>Εγκεκριμένος με περιορισμούς</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Clearance.NotCleared" xml:space="preserve">
+    <value>Μη εγκεκριμένος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryState.Open" xml:space="preserve">
+    <value>Ανοιχτός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryState.Cleared" xml:space="preserve">
+    <value>Επέστρεψε στην υπηρεσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryState.Voided" xml:space="preserve">
+    <value>Καταχωρίστηκε εκ παραδρομής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.Reported" xml:space="preserve">
+    <value>Αναφέρθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.SourceFollowUpRequested" xml:space="preserve">
+    <value>Ζητήθηκε παρακολούθηση της πηγής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.NotificationRequested" xml:space="preserve">
+    <value>Ζητήθηκε ειδοποίηση (Ryan White)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.NotificationReceived" xml:space="preserve">
+    <value>Η ειδοποίηση απαντήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.FollowUp" xml:space="preserve">
+    <value>Παρακολούθηση μετά την έκθεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.Closed" xml:space="preserve">
+    <value>Κλειστή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Stage.Withdrawn" xml:space="preserve">
+    <value>Καταχωρίστηκε εκ παραδρομής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.Percutaneous" xml:space="preserve">
+    <value>Τρύπημα από βελόνα ή αιχμηρό αντικείμενο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.MucousMembrane" xml:space="preserve">
+    <value>Πιτσίλισμα σε μάτια, μύτη ή στόμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.NonIntactSkin" xml:space="preserve">
+    <value>Επαφή με τραυματισμένο δέρμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.Airborne" xml:space="preserve">
+    <value>Αερογενής λοιμώδης νόσος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Route.Other" xml:space="preserve">
+    <value>Άλλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseTitle" xml:space="preserve">
+    <value>Περίπτωση έκθεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseIntro" xml:space="preserve">
+    <value>Έκθεση σε αιματογενή παθογόνα ή λοιμώδη νόσο, από την αναφορά έως το κλείσιμο. Ο ορισμένος υπεύθυνος την προωθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtectedWithheldNotice" xml:space="preserve">
+    <value>Ορισμένα στοιχεία είναι προστατευμένα και αποκρύπτονται χωρίς άδεια Προστατευμένων Δεδομένων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotificationOverdueHelp" xml:space="preserve">
+    <value>Η υγειονομική μονάδα δεν απάντησε στο αίτημα ειδοποίησης εντός 48 ωρών. Επικοινωνήστε με τη μονάδα ή ξεκινήστε ούτως ή άλλως την παρακολούθηση μετά την έκθεση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseFactsHeader" xml:space="preserve">
+    <value>Η έκθεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OccurredLabel" xml:space="preserve">
+    <value>Πότε συνέβη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallLabel" xml:space="preserve">
+    <value>Κλήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportedLabel" xml:space="preserve">
+    <value>Αναφέρθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceFacilityLabel" xml:space="preserve">
+    <value>Υγειονομική μονάδα υποδοχής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotificationDueLabel" xml:space="preserve">
+    <value>Προθεσμία απάντησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPatientIdentityNote" xml:space="preserve">
+    <value>Μην καταχωρίζετε ποτέ το όνομα ή τον αριθμό φακέλου του ασθενούς-πηγής. Η περίπτωση παραπέμπει στην κλήση· η μονάδα υποδοχής εντοπίζει την πηγή από αυτήν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BbpTrainingHeader" xml:space="preserve">
+    <value>Εκπαίδευση για αιματογενή παθογόνα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExpiresLabel" xml:space="preserve">
+    <value>Λήγει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.NotTracked" xml:space="preserve">
+    <value>Δεν παρακολουθείται από τον φορέα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.Current" xml:space="preserve">
+    <value>Σε ισχύ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.ExpiringSoon" xml:space="preserve">
+    <value>Λήγει σύντομα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.Expired" xml:space="preserve">
+    <value>Έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Bbp.None" xml:space="preserve">
+    <value>Καμία καταχώριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordInjuryButton" xml:space="preserve">
+    <value>Καταχώριση ως τραυματισμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordInjuryHelp" xml:space="preserve">
+    <value>Ένα τρύπημα από βελόνα ή αιχμηρό αντικείμενο μολυσμένο με αίμα είναι περίπτωση απορρήτου καταγραφόμενη στο OSHA. Καταχωρίστε την ως τραυματισμό ώστε να μπει στο μητρώο OSHA χωρίς το όνομα του μέλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextStepHeader" xml:space="preserve">
+    <value>Επόμενο βήμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NextStepHelp" xml:space="preserve">
+    <value>Καταγράψτε πότε έγινε το βήμα και τυχόν σημειώσεις και επιλέξτε το βήμα. Για το αίτημα παρακολούθησης της πηγής απαιτείται η μονάδα υποδοχής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepDateLabel" xml:space="preserve">
+    <value>Πότε (κενό = τώρα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StepNotesLabel" xml:space="preserve">
+    <value>Σημειώσεις για αυτό το βήμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtectedFieldHelp" xml:space="preserve">
+    <value>Προστατευμένο: το διαβάζουν μόνο το μέλος και οι υπεύθυνοι.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MoveToFormat" xml:space="preserve">
+    <value>Μετάβαση σε: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotesHeader" xml:space="preserve">
+    <value>Προστατευμένες σημειώσεις</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceFollowUpNotesLabel" xml:space="preserve">
+    <value>Παρακολούθηση πηγής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotificationResponseLabel" xml:space="preserve">
+    <value>Απάντηση στην ειδοποίηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MedicalNotesLabel" xml:space="preserve">
+    <value>Σημειώσεις εξετάσεων και θεραπείας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClosureNotesLabel" xml:space="preserve">
+    <value>Σημειώσεις κλεισίματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveButton" xml:space="preserve">
+    <value>Αποθήκευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WithheldValue" xml:space="preserve">
+    <value>Αποκρύπτεται (προστατευμένο)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpsHeader" xml:space="preserve">
+    <value>Εργασίες παρακολούθησης μετά την έκθεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoFollowUps" xml:space="preserve">
+    <value>Δεν υπάρχει ακόμη εργασία παρακολούθησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpColumn" xml:space="preserve">
+    <value>Εργασία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssigneeColumn" xml:space="preserve">
+    <value>Ανατέθηκε σε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DueColumn" xml:space="preserve">
+    <value>Προθεσμία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompleteButton" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AddFollowUpButton" xml:space="preserve">
+    <value>Προσθήκη εργασίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpPrivacyHelp" xml:space="preserve">
+    <value>Η εργασία αναφέρει μόνο το είδος της, ποτέ αποτέλεσμα· ανατίθεται στο μέλος ή σε ορισμένο υπεύθυνο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.baseline_testing" xml:space="preserve">
+    <value>Εξετάσεις αναφοράς</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.prophylaxis_review" xml:space="preserve">
+    <value>Αξιολόγηση προφύλαξης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.six_week_test" xml:space="preserve">
+    <value>Εξέταση έξι εβδομάδων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.three_month_test" xml:space="preserve">
+    <value>Εξέταση τριών μηνών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.six_month_test" xml:space="preserve">
+    <value>Εξέταση έξι μηνών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.counselling" xml:space="preserve">
+    <value>Συμβουλευτική</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpKind.other" xml:space="preserve">
+    <value>Άλλο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpState.Open" xml:space="preserve">
+    <value>Ανοιχτή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpState.Acknowledged" xml:space="preserve">
+    <value>Επιβεβαιώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpState.Completed" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FollowUpState.Cancelled" xml:space="preserve">
+    <value>Ακυρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportExposureTitle" xml:space="preserve">
+    <value>Αναφορά έκθεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportExposureIntro" xml:space="preserve">
+    <value>Έκθεση σε αιματογενή παθογόνα ή λοιμώδη νόσο. Ο ορισμένος υπεύθυνος ενημερώνεται αμέσως και αναλαμβάνει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExistingEntryLabel" xml:space="preserve">
+    <value>Από μια καταχώριση έκθεσής σας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExistingEntryHelp" xml:space="preserve">
+    <value>Επιλέξτε μια καταχώριση που ήδη κάνατε ή αφήστε το για νέα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewEntryOption" xml:space="preserve">
+    <value>Νέα έκθεση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCallOption" xml:space="preserve">
+    <value>Χωρίς κλήση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>Τι συνέβη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PpeWornLabel" xml:space="preserve">
+    <value>Μέσα ατομικής προστασίας που φορούσατε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SubmitReportButton" xml:space="preserve">
+    <value>Αποστολή αναφοράς</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportInjuryTitle" xml:space="preserve">
+    <value>Αναφορά τραυματισμού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryTitle" xml:space="preserve">
+    <value>Τραυματισμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryIntro" xml:space="preserve">
+    <value>Τι συνέβη, η κατάσταση υπηρεσίας με ημερομηνίες, οι περιορισμοί και η έγκριση επιστροφής στην υπηρεσία. Οι επόπτες βλέπουν μόνο την κατάσταση υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReturnedOnLabel" xml:space="preserve">
+    <value>Επιστροφή σε πλήρη υπηρεσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LinkedCaseLabel" xml:space="preserve">
+    <value>Άνοιγμα της περίπτωσης έκθεσης από την οποία προήλθε ο τραυματισμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WhatHappenedHeader" xml:space="preserve">
+    <value>Τι συνέβη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Πού συνέβη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="JobTitleLabel" xml:space="preserve">
+    <value>Θέση εργασίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Τι έκανε το μέλος και τι συνέβη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryDetailsLabel" xml:space="preserve">
+    <value>Ο τραυματισμός, το μέρος του σώματος και η αιτία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TreatmentLabel" xml:space="preserve">
+    <value>Ιατρός, μονάδα και θεραπεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaHeader" xml:space="preserve">
+    <value>Ταξινόμηση OSHA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaHelp" xml:space="preserve">
+    <value>Μια καταγραφόμενη περίπτωση μπαίνει στο μητρώο OSHA 300 του έτους και αποκτά αναφορά 301. Οι ημέρες προκύπτουν από το ιστορικό κατάστασης υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaTypeLabel" xml:space="preserve">
+    <value>Είδος τραυματισμού ή ασθένειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DiedOnLabel" xml:space="preserve">
+    <value>Ημερομηνία θανάτου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordableLabel" xml:space="preserve">
+    <value>Περίπτωση καταγραφόμενη στο OSHA</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivacyCaseLabel" xml:space="preserve">
+    <value>Περίπτωση απορρήτου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivacyCaseHelp" xml:space="preserve">
+    <value>Το όνομα αποκρύπτεται από το μητρώο 300 (29 CFR 1904.29(b)).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EmergencyRoomLabel" xml:space="preserve">
+    <value>Νοσηλεύτηκε στα επείγοντα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HospitalizedLabel" xml:space="preserve">
+    <value>Νοσηλεύτηκε κατά τη νύχτα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaOfficerOnlyNote" xml:space="preserve">
+    <value>Οι υπεύθυνοι υγείας του φορέα σας ελέγχουν την αναφορά και συμπληρώνουν την ταξινόμηση OSHA.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DutyHistoryHeader" xml:space="preserve">
+    <value>Ιστορικό κατάστασης υπηρεσίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RestrictionsLabel" xml:space="preserve">
+    <value>Περιορισμοί</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoPeriods" xml:space="preserve">
+    <value>Πλήρης υπηρεσία καθ' όλη τη διάρκεια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromColumn" xml:space="preserve">
+    <value>Από</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToColumn" xml:space="preserve">
+    <value>Έως</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OngoingLabel" xml:space="preserve">
+    <value>Σε εξέλιξη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDutyStatusHeader" xml:space="preserve">
+    <value>Περιορισμένη υπηρεσία ή εκτός υπηρεσίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RestrictionsHelp" xml:space="preserve">
+    <value>Προστατευμένο. Οι επόπτες βλέπουν μόνο ότι το μέλος είναι σε περιορισμένη υπηρεσία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SetDutyStatusButton" xml:space="preserve">
+    <value>Ορισμός κατάστασης υπηρεσίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReturnHeader" xml:space="preserve">
+    <value>Επιστροφή στην υπηρεσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReturnHelp" xml:space="preserve">
+    <value>Η έγκριση επιστροφής σε πλήρη υπηρεσία κλείνει τις περιόδους υπηρεσίας του τραυματισμού.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceNotesLabel" xml:space="preserve">
+    <value>Σημειώσεις έγκρισης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearReturnButton" xml:space="preserve">
+    <value>Έγκριση για πλήρη υπηρεσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidInjuryButton" xml:space="preserve">
+    <value>Καταχωρίστηκε εκ παραδρομής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidInjuryHelp" xml:space="preserve">
+    <value>Η εγγραφή διατηρείται για την περίοδο διατήρησης και αφαιρείται από το μητρώο OSHA.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearancesTitle" xml:space="preserve">
+    <value>Ιατρική έγκριση (NFPA 1582)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearancesIntro" xml:space="preserve">
+    <value>Ιατρικές αξιολογήσεις εργασίας με την κατάσταση περιορισμών τους. Οι υπεύθυνοι και η στελέχωση βλέπουν την κατάσταση· οι λεπτομέρειες περιορισμών προστατεύονται.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceTypeMissingNote" xml:space="preserve">
+    <value>Ορίστε στις ρυθμίσεις ευεξίας έναν τύπο πιστοποίησης για την ιατρική έγκριση (από το πρότυπο "Medical Clearance (NFPA 1582)") ώστε κάθε αξιολόγηση να καταγράφεται και ως πιστοποίηση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CurrentClearancesHeader" xml:space="preserve">
+    <value>Τρέχουσα έγκριση ανά μέλος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoClearances" xml:space="preserve">
+    <value>Δεν έχει καταγραφεί ακόμη έγκριση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EvaluatedOnLabel" xml:space="preserve">
+    <value>Αξιολογήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HistoryButton" xml:space="preserve">
+    <value>Ιστορικό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordClearanceHeader" xml:space="preserve">
+    <value>Καταγραφή αξιολόγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RestrictionDetailLabel" xml:space="preserve">
+    <value>Περιορισμοί και αιτίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceDetailHelp" xml:space="preserve">
+    <value>Προστατευμένο (ADP). Οι υπεύθυνοι και η στελέχωση βλέπουν μόνο Εγκεκριμένος, Εγκεκριμένος με περιορισμούς ή Μη εγκεκριμένος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RecordClearanceButton" xml:space="preserve">
+    <value>Καταγραφή αξιολόγησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HistoryHeaderFormat" xml:space="preserve">
+    <value>Ιστορικό εγκρίσεων: {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidedLabel" xml:space="preserve">
+    <value>Ακυρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VoidButton" xml:space="preserve">
+    <value>Ακύρωση εγγραφής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HealthSettingsHeader" xml:space="preserve">
+    <value>Περιπτώσεις έκθεσης, τραυματισμοί και ιατρική έγκριση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerRoleLabel" xml:space="preserve">
+    <value>Ρόλος ορισμένου υπευθύνου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerRoleHelp" xml:space="preserve">
+    <value>Τα μέλη αυτού του ρόλου λαμβάνουν αναφορές έκθεσης σε αιματογενή παθογόνα και λοιμώδη νοσήματα (Ryan White Part G) και διαχειρίζονται τις περιπτώσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SameAsWellnessOfficerOption" xml:space="preserve">
+    <value>Ο ρόλος υπευθύνου ευεξίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BbpTrainingTypeLabel" xml:space="preserve">
+    <value>Πιστοποίηση εκπαίδευσης για αιματογενή παθογόνα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="BbpTrainingTypeHelp" xml:space="preserve">
+    <value>Κάθε περίπτωση έκθεσης δείχνει την τρέχουσα κατάσταση του μέλους σε αυτή την ετήσια εκπαίδευση (OSHA 1910.1030).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceTypeLabel" xml:space="preserve">
+    <value>Πιστοποίηση ιατρικής έγκρισης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ClearanceTypeHelp" xml:space="preserve">
+    <value>Κάθε αξιολόγηση NFPA 1582 καταγράφεται και ως πιστοποίηση αυτού του τύπου· το Μη εγκεκριμένος την αναστέλλει.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryRetentionYearsLabel" xml:space="preserve">
+    <value>Διατήρηση αρχείων τραυματισμών (έτη)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InjuryRetentionYearsHelp" xml:space="preserve">
+    <value>Μετά το τέλος του έτους του τραυματισμού: τουλάχιστον 5 (OSHA 1904.33). Οι περιπτώσεις έκθεσης και οι εγκρίσεις ακολουθούν τη διατήρηση 30 ετών για εκθέσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaTitle" xml:space="preserve">
+    <value>OSHA 300 και 301</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OshaIntro" xml:space="preserve">
+    <value>Το ετήσιο μητρώο των καταγραφόμενων τραυματισμών και οι αναφορές συμβάντων, από τα αρχεία τραυματισμών. Οι περιπτώσεις απορρήτου εμφανίζονται χωρίς όνομα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowButton" xml:space="preserve">
+    <value>Εμφάνιση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Export300Csv" xml:space="preserve">
+    <value>Μητρώο 300 (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Export300Pdf" xml:space="preserve">
+    <value>Μητρώο 300 (PDF)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Export301Csv" xml:space="preserve">
+    <value>Αναφορές 301 (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Export301Pdf" xml:space="preserve">
+    <value>Αναφορές 301 (PDF)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoCasesOnLog" xml:space="preserve">
+    <value>Καμία καταγραφόμενη περίπτωση φέτος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PrivacyMaskNote" xml:space="preserve">
+    <value>Μια περίπτωση απορρήτου εμφανίζει "Περίπτωση απορρήτου" αντί για το όνομα, εδώ και σε κάθε εξαγωγή του μητρώου 300.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OutcomeColumn" xml:space="preserve">
+    <value>Έκβαση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.Death" xml:space="preserve">
+    <value>Θάνατος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.DaysAwayFromWork" xml:space="preserve">
+    <value>Ημέρες απουσίας από την εργασία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.JobTransferOrRestriction" xml:space="preserve">
+    <value>Μετάθεση ή περιορισμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Outcome.OtherRecordable" xml:space="preserve">
+    <value>Άλλη καταγραφόμενη περίπτωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.LogTitle" xml:space="preserve">
+    <value>Μητρώο τραυματισμών και ασθενειών που σχετίζονται με την εργασία (μορφή εντύπου OSHA 300)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.ReportTitle" xml:space="preserve">
+    <value>Αναφορά συμβάντος τραυματισμού ή ασθένειας (μορφή εντύπου OSHA 301)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Establishment" xml:space="preserve">
+    <value>Εγκατάσταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Year" xml:space="preserve">
+    <value>Έτος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.CaseNumber" xml:space="preserve">
+    <value>Αρ. υπόθεσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.EmployeeName" xml:space="preserve">
+    <value>Όνομα εργαζομένου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.JobTitle" xml:space="preserve">
+    <value>Θέση εργασίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DateOfInjury" xml:space="preserve">
+    <value>Ημερομηνία τραυματισμού ή έναρξης ασθένειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Where" xml:space="preserve">
+    <value>Τόπος του συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Description" xml:space="preserve">
+    <value>Τραυματισμός ή ασθένεια, μέρη του σώματος που επηρεάστηκαν και αντικείμενο ή ουσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Death" xml:space="preserve">
+    <value>Θάνατος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DaysAwayCase" xml:space="preserve">
+    <value>Ημέρες απουσίας από την εργασία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.RestrictedCase" xml:space="preserve">
+    <value>Μετάθεση ή περιορισμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.OtherRecordable" xml:space="preserve">
+    <value>Άλλη καταγραφόμενη περίπτωση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DaysAway" xml:space="preserve">
+    <value>Απουσία από την εργασία (ημέρες)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DaysRestricted" xml:space="preserve">
+    <value>Σε μετάθεση ή περιορισμό (ημέρες)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.Injury" xml:space="preserve">
+    <value>Τραυματισμός</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.SkinDisorder" xml:space="preserve">
+    <value>Δερματική πάθηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.RespiratoryCondition" xml:space="preserve">
+    <value>Αναπνευστική πάθηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.Poisoning" xml:space="preserve">
+    <value>Δηλητηρίαση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.HearingLoss" xml:space="preserve">
+    <value>Απώλεια ακοής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Type.AllOtherIllnesses" xml:space="preserve">
+    <value>Όλες οι άλλες ασθένειες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Totals" xml:space="preserve">
+    <value>Σύνολα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.TimeOfEvent" xml:space="preserve">
+    <value>Ώρα του συμβάντος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.WhatHappened" xml:space="preserve">
+    <value>Τι έκανε ο εργαζόμενος και τι συνέβη;</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.InjuryDetails" xml:space="preserve">
+    <value>Ποιος ήταν ο τραυματισμός ή η ασθένεια και τι έβλαψε τον εργαζόμενο;</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Treatment" xml:space="preserve">
+    <value>Ιατρός, μονάδα και θεραπεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.EmergencyRoom" xml:space="preserve">
+    <value>Νοσηλεύτηκε στα επείγοντα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Hospitalized" xml:space="preserve">
+    <value>Νοσηλεύτηκε κατά τη νύχτα ως εσωτερικός ασθενής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.DateOfDeath" xml:space="preserve">
+    <value>Ημερομηνία θανάτου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.PrivacyCase" xml:space="preserve">
+    <value>Περίπτωση απορρήτου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.PrivacyCaseName" xml:space="preserve">
+    <value>Περίπτωση απορρήτου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.EmployeeDetailsNote" xml:space="preserve">
+    <value>Η διεύθυνση, η ημερομηνία γέννησης, η ημερομηνία πρόσληψης και το φύλο του εργαζομένου συμπληρώνονται από τον ατομικό φάκελο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Withheld" xml:space="preserve">
+    <value>Αποκρύπτεται (προστατευμένο)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Yes" xml:space="preserve">
+    <value>Ναι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.No" xml:space="preserve">
+    <value>Όχι</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Retention" xml:space="preserve">
+    <value>Διατηρήστε αυτά τα αρχεία για πέντε έτη μετά το τέλος του έτους που καλύπτουν (29 CFR 1904.33).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Osha.Generated" xml:space="preserve">
+    <value>Δημιουργήθηκε {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.ExposureReported" xml:space="preserve">
+    <value>Η έκθεση αναφέρθηκε και ο ορισμένος υπεύθυνος ενημερώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.CaseMoved" xml:space="preserve">
+    <value>Η περίπτωση πέρασε στο επόμενο βήμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.Saved" xml:space="preserve">
+    <value>Αποθηκεύτηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.FollowUpAdded" xml:space="preserve">
+    <value>Η εργασία παρακολούθησης προστέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.FollowUpCompleted" xml:space="preserve">
+    <value>Η εργασία παρακολούθησης ολοκληρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.FollowUpCancelled" xml:space="preserve">
+    <value>Η εργασία παρακολούθησης ακυρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.InjuryReported" xml:space="preserve">
+    <value>Ο τραυματισμός αναφέρθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.DutyStatusSaved" xml:space="preserve">
+    <value>Η κατάσταση υπηρεσίας ορίστηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.ReturnedToDuty" xml:space="preserve">
+    <value>Το μέλος εγκρίθηκε για πλήρη υπηρεσία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.InjuryVoided" xml:space="preserve">
+    <value>Ο τραυματισμός σημειώθηκε ως καταχωρισμένος εκ παραδρομής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.ClearanceRecorded" xml:space="preserve">
+    <value>Η αξιολόγηση καταγράφηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Msg.ClearanceVoided" xml:space="preserve">
+    <value>Η αξιολόγηση ακυρώθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.Generic" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση. Ελέγξτε τη φόρμα και δοκιμάστε ξανά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.NotAllowed" xml:space="preserve">
+    <value>Δεν έχετε δικαίωμα για αυτή την ενέργεια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.ExportFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η εξαγωγή. Δοκιμάστε αργότερα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.date_invalid" xml:space="preserve">
+    <value>Εισαγάγετε έγκυρη ημερομηνία (όχι μελλοντική).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.member_not_found" xml:space="preserve">
+    <value>Αυτό το μέλος δεν είναι τρέχον μέλος του φορέα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.route_required" xml:space="preserve">
+    <value>Επιλέξτε τον τρόπο έκθεσης του μέλους.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.entry_not_bloodborne" xml:space="preserve">
+    <value>Περίπτωση μπορεί να ανοίξει μόνο από επιβεβαιωμένη καταχώριση έκθεσης σε αιματογενή παθογόνα (ή άλλο).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.case_exists" xml:space="preserve">
+    <value>Αυτή η καταχώριση έχει ήδη ανοιχτή περίπτωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.call_not_found" xml:space="preserve">
+    <value>Η κλήση δεν βρέθηκε σε αυτόν τον φορέα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.case_changed" xml:space="preserve">
+    <value>Κάποιος άλλος άλλαξε την περίπτωση. Φορτώστε τη ξανά και δοκιμάστε πάλι.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.stage_not_allowed" xml:space="preserve">
+    <value>Η περίπτωση δεν μπορεί να περάσει σε αυτό το βήμα από το τρέχον.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.facility_required" xml:space="preserve">
+    <value>Εισαγάγετε την υγειονομική μονάδα υποδοχής για να ζητήσετε παρακολούθηση της πηγής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.follow_ups_open" xml:space="preserve">
+    <value>Ολοκληρώστε ή ακυρώστε τις ανοιχτές εργασίες παρακολούθησης πριν κλείσετε την περίπτωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.case_closed" xml:space="preserve">
+    <value>Η περίπτωση είναι κλειστή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.follow_up_assignee_invalid" xml:space="preserve">
+    <value>Η εργασία ανατίθεται στο εκτεθειμένο μέλος ή σε ορισμένο υπεύθυνο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.duty_status_required" xml:space="preserve">
+    <value>Επιλέξτε περιορισμένη υπηρεσία ή εκτός υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.return_date_invalid" xml:space="preserve">
+    <value>Η αναμενόμενη επιστροφή πρέπει να είναι μετά την ημερομηνία έναρξης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.date_before_current_status" xml:space="preserve">
+    <value>Η ημερομηνία είναι πριν από την έναρξη της τρέχουσας κατάστασης υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.injury_not_open" xml:space="preserve">
+    <value>Μόνο ανοιχτός τραυματισμός μπορεί να εγκριθεί για υπηρεσία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.clearance_status_required" xml:space="preserve">
+    <value>Επιλέξτε την κατάσταση έγκρισης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.valid_until_invalid" xml:space="preserve">
+    <value>Η επόμενη αξιολόγηση πρέπει να είναι μετά την ημερομηνία αξιολόγησης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.injury_changed" xml:space="preserve">
+    <value>Κάποιος άλλος άλλαξε τον τραυματισμό. Φορτώστε τον ξανά και δοκιμάστε πάλι.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.protected_write_refused" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση των προστατευμένων στοιχείων τώρα. Δοκιμάστε αργότερα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerCertificationLabel" xml:space="preserve">
+    <value>Πιστοποίηση ορισμένου υπευθύνου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DesignatedOfficerCertificationHelp" xml:space="preserve">
+    <value>Προαιρετικό. Ένας από τους τύπους πιστοποίησής σας, για παράδειγμα από το πρότυπο Ορισμένος υπεύθυνος ελέγχου εκθέσεων. Χωρίς ρόλο ορισμένου υπευθύνου, ενεργούν ο ρόλος υπευθύνου ευεξίας και η πιστοποίησή του.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_required" xml:space="preserve">
+    <value>Η προσθήκη ή αλλαγή αρχείων ευεξίας απαιτεί το πρόσθετο Workforce Pro. Τα υπάρχοντα αρχεία παραμένουν αναγνώσιμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_seat_required" xml:space="preserve">
+    <value>Το Workforce Pro δεν είναι ενεργό για αυτό το μέλος, οπότε τα αρχεία του είναι μόνο για ανάγνωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Error.workforce_pro_unavailable" xml:space="preserve">
+    <value>Η ευεξία μελών δεν είναι διαθέσιμη για αυτόν τον οργανισμό.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

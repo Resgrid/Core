@@ -1,0 +1,55 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolsLocalizer
+@*
+    The call forms' protocol panel (resgrid.dispatch.protocolpanel.js): suggested protocols with the trigger that matched,
+    each protocol's questions as an inline stepper (no answer chosen in advance), and a picker to add one by hand.
+*@
+<div id="protocolPanel" class="protocol-panel" aria-live="polite">
+    <p class="text-muted small">@protocolsLocalizer["PanelIntro"]</p>
+    <div class="protocol-panel-rows"></div>
+    @* P4: Enhanced AI protocol suggestion for a saved call (shown only when the department has it); the dispatcher confirms by saving. *@
+    <div id="protocolCaseAi" class="rgw-toolbar m-b-sm" hidden>
+        <button type="button" class="btn btn-default btn-sm" id="protocolCaseAiButton"><i class="fa fa-magic" aria-hidden="true"></i> @protocolsLocalizer["CaseAiSuggestButton"]</button>
+        <span id="protocolCaseAiStatus" class="text-muted small" role="status"></span>
+    </div>
+    <p class="text-muted protocol-panel-empty" hidden>@protocolsLocalizer["PanelNoSuggestions"]</p>
+    <div class="form-inline protocol-panel-manual" hidden>
+        <label for="protocolManualPick">@protocolsLocalizer["PanelAddByHand"]</label>
+        <select id="protocolManualPick" class="form-control"></select>
+        <button type="button" class="btn btn-default btn-sm" id="protocolManualAdd"><i class="fa fa-plus" aria-hidden="true"></i> @protocolsLocalizer["PanelAddButton"]</button>
+    </div>
+</div>
+<script type="text/javascript">
+    window.resgridProtocolPanelStrings = @Html.ScriptJson(new
+    {
+        addedByHand = protocolsLocalizer["SourceManual"].Value,
+        answerToContinue = protocolsLocalizer["PanelAnswerToContinue"].Value,
+        applies = protocolsLocalizer["PanelApplies"].Value,
+        doesNotApply = protocolsLocalizer["PanelDoesNotApply"].Value,
+        scoreOfMinimum = protocolsLocalizer["PanelScore"].Value,
+        questionOf = protocolsLocalizer["PanelQuestionOf"].Value,
+        back = protocolsLocalizer["PanelBack"].Value,
+        next = protocolsLocalizer["PanelNext"].Value,
+        remove = protocolsLocalizer["RemoveButton"].Value,
+        choose = protocolsLocalizer["PanelChoose"].Value,
+        caseFlow = protocolsLocalizer["GraphLabelCaseFlow"].Value,
+        entryQuestion = protocolsLocalizer["GraphLabelEntryQuestion"].Value,
+        keyQuestion = protocolsLocalizer["GraphLabelKeyQuestion"].Value,
+        instruction = protocolsLocalizer["GraphLabelInstruction"].Value,
+        determinant = protocolsLocalizer["GraphLabelDeterminant"].Value,
+        priority = protocolsLocalizer["GraphLabelPriority"].Value,
+        postDispatch = protocolsLocalizer["GraphLabelPostDispatch"].Value,
+        yes = protocolsLocalizer["GraphLabelYes"].Value,
+        no = protocolsLocalizer["GraphLabelNo"].Value,
+        play = protocolsLocalizer["CasePlayButton"].Value,
+        change = protocolsLocalizer["CaseChangeAnswer"].Value,
+        overridden = protocolsLocalizer["CaseOverridden"].Value,
+        priorityApplied = protocolsLocalizer["CasePriorityApplied"].Value,
+        overrideDeterminant = protocolsLocalizer["CaseOverrideDeterminant"].Value,
+        overrideReason = protocolsLocalizer["CaseOverrideReason"].Value,
+        caseInvalid = protocolsLocalizer["CaseInvalid"].Value,
+        aiPrefilled = protocolsLocalizer["CaseAiPrefilled"].Value,
+        aiAsking = protocolsLocalizer["CaseAiAsking"].Value,
+        aiFailed = protocolsLocalizer["CaseAiFailed"].Value
+    });
+</script>
+<script src="~/js/app/internal/dispatch/resgrid.dispatch.protocolcase.js" asp-append-version="true"></script>

@@ -1,6 +1,7 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Documents.IndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Documents.Documents> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> protocolText
 @{
     var moduleTitle = await departmentTerms.NameAsync(DepartmentTerms.Documents, commonLocalizer["DocumentsModule"]);
     ViewBag.Title = "Resgrid | " + moduleTitle;
@@ -53,6 +54,25 @@
                             }
                         </ul>
                         <div class="clearfix"></div>
+                        @if (Model.CanMoveToProtocols)
+                        {
+                            @* P1 R-P6: a whole category of SOGs moves to Protocols at once (protected documents stay). *@
+                            <div class="hr-line-dashed"></div>
+                            <form asp-controller="Documents" asp-action="MoveCategoryToProtocols" asp-route-area="User" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="category" value="@Model.SelectedCategory" />
+                                <label class="control-label" for="moveCategoryKind">@protocolText["MoveCategoryToProtocolsLabel"]</label>
+                                <select id="moveCategoryKind" name="kind" class="form-control input-sm">
+                                    <option value="@((int)Resgrid.Model.ProtocolKinds.Policy)">@protocolText["KindPolicy"]</option>
+                                    <option value="@((int)Resgrid.Model.ProtocolKinds.Reference)">@protocolText["KindReference"]</option>
+                                </select>
+                                <button type="submit" class="btn btn-warning btn-block btn-sm m-t-xs" data-confirm="@protocolText["MoveToProtocolsConfirm"]"><i class="fa fa-book" aria-hidden="true"></i> @protocolText["MoveToProtocolsButton"]</button>
+                            </form>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.Message))
+                        {
+                            <p class="text-success small m-t-xs" role="status"><i class="fa fa-check" aria-hidden="true"></i> @string.Format(protocolText["MovedCategoryMessage"].Value, Model.Message)</p>
+                        }
                     </div>
                 </div>
             </div>

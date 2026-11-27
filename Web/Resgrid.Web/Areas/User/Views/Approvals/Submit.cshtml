@@ -1,0 +1,83 @@
+@using Resgrid.Model
+@using Resgrid.Model.Approvals
+@model Resgrid.Web.Areas.User.Models.Approvals.ApprovalSubmitView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Approvals.Approvals> approvalText
+@*
+    Submit for approval (e-Signature S4): one subject's approval state with "Submit for approval", or the subjects of a kind that could
+    be submitted now (submitted requisitions, assembled plans, draft invoices, MARS packages, draft agreements).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + approvalText["SubmitHeading"];
+    ViewData["Title"] = approvalText["SubmitHeading"].Value;
+    ViewData["Subtitle"] = approvalText["Kind" + Model.Kind].Value;
+    ViewData["Section"] = "Index";
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Approvals/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.Available)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @approvalText["RefusalModuleUnavailable"]</div>
+    }
+    else if (!Model.ChainActive && Model.Status == null)
+    {
+        <div class="alert alert-info" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @approvalText["RefusalNoChain"]</div>
+    }
+    else if (Model.Status != null)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-file-text-o" aria-hidden="true"></i> @Model.Status.Subject.Title</h5></div>
+            <div class="ibox-content">
+                <p>@approvalText["AmountColumn"]: @(Model.Status.Subject.Amount.HasValue ? ApprovalRouting.AmountText(Model.Status.Subject.Amount, Model.Status.Subject.Currency) : "—")
+                    · @approvalText["ContentCodeLabel"] <span class="rgw-mono">@SignaturePolicy.ShortCode(Model.Status.Subject.ContentSha256)</span></p>
+                <iframe title="@Model.Status.Subject.Title" sandbox="" srcdoc="@Model.Status.Subject.DocumentHtml" style="width:100%;min-height:300px;border:1px solid #e7eaec"></iframe>
+            </div>
+        </div>
+        @await Html.PartialAsync("~/Areas/User/Views/Shared/_ApprovalPanel.cshtml", Model.Status)
+    }
+    else
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-paper-plane" aria-hidden="true"></i> @approvalText["CandidatesHeading"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.Candidates.Count == 0)
+                {
+                    <p class="text-muted">@approvalText["NoCandidates"]</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">@approvalText["SubjectColumn"]</th>
+                                    <th scope="col">@approvalText["AmountColumn"]</th>
+                                    <th scope="col"><span class="sr-only">@approvalText["ActionsColumn"]</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var candidate in Model.Candidates)
+                                {
+                                    <tr>
+                                        <td>@candidate.Title<div class="rgw-sub rgw-mono">@SignaturePolicy.ShortCode(candidate.ContentSha256)</div></td>
+                                        <td>@ApprovalRouting.AmountText(candidate.Amount, candidate.Currency)</td>
+                                        <td class="rgw-row-actions">
+                                            <a class="btn btn-default btn-xs" asp-area="User" asp-controller="Approvals" asp-action="Submit" asp-route-kind="@((int)Model.Kind)" asp-route-subjectId="@candidate.SubjectId"><i class="fa fa-eye" aria-hidden="true"></i> @approvalText["ReviewButton"]</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

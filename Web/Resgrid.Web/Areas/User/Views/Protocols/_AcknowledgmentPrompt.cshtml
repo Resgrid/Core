@@ -1,0 +1,23 @@
+@using Resgrid.Model
+@model Resgrid.Model.ProtocolAcknowledgmentItem
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@* The member owes this protocol's acknowledgment (P2): the way to read and sign it. *@
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    var awaitingQuiz = Model.Acknowledgment.Status == (int)ProtocolAcknowledgmentStatuses.AwaitingQuiz;
+}
+<div class="rgw-next-action hidden-print" role="status">
+    <i class="fa @(Model.IsOverdue ? "fa-exclamation-triangle text-danger" : "fa-pencil-square-o")" aria-hidden="true"></i>
+    @if (awaitingQuiz)
+    {
+        @string.Format(localizer["AckPromptAwaitingQuiz"].Value, Model.QuizTrainingName ?? "")
+    }
+    else
+    {
+        @string.Format(localizer[Model.IsOverdue ? "AckPromptOverdue" : "AckPromptDue"].Value, "v" + Model.VersionLabel, departmentTime?.Date(Model.Acknowledgment.DueOn) ?? "")
+    }
+    @if (!awaitingQuiz)
+    {
+        <a class="btn btn-xs btn-primary" asp-controller="ProtocolAcknowledgments" asp-action="Read" asp-route-area="User" asp-route-versionId="@Model.Acknowledgment.ProtocolVersionId"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> @localizer["ReadAndSignButton"]</a>
+    }
+</div>

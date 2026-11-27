@@ -61,5 +61,19 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<PasskeyAssertionResult> CompleteAssertionAsync(PasskeyCaller caller, AuthenticationChallengePurpose purpose, string requestId,
 			string credentialJson, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Signing (S0, L2): assertion options for the caller's passkeys whose WebAuthn challenge is 16 random bytes followed by
+		/// <paramref name="artifactSha256"/>, so the authenticator's signature covers exactly the content being signed.
+		/// </summary>
+		Task<PasskeyCeremonyStart> BeginSigningAssertionAsync(PasskeyCaller caller, string artifactSha256, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Verifies a signing assertion: the stored challenge must embed <paramref name="artifactSha256"/> (content signed is the
+		/// content shown), then the assertion is verified and spent as any step-up assertion. Recording evidence is not done here;
+		/// the signature record is the evidence.
+		/// </summary>
+		Task<PasskeyAssertionResult> CompleteSigningAssertionAsync(PasskeyCaller caller, string requestId, string credentialJson, string artifactSha256,
+			CancellationToken cancellationToken = default);
 	}
 }

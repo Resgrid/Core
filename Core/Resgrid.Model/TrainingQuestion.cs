@@ -21,6 +21,9 @@ namespace Resgrid.Model
 
 		public string Question { get; set; }
 
+		/// <summary><see cref="TrainingQuestionTypes"/>: single choice (default), multiple choice (all-or-nothing) or true/false.</summary>
+		public int Type { get; set; }
+
 		public virtual ICollection<TrainingQuestionAnswer> Answers { get; set; }
 
 		[NotMapped]

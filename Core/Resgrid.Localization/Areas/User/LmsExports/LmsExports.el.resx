@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Exit.Tab" xml:space="preserve">
+    <value>Εξαγωγή δεδομένων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Title" xml:space="preserve">
+    <value>Εξαγωγή δεδομένων εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Intro" xml:space="preserve">
+    <value>Εξάγετε ό,τι έχει καταχωρίσει η υπηρεσία σας στην Εκπαίδευση: μαθήματα, τράπεζες ερωτήσεων, εγγραφές, προσπάθειες και πιστοποιητικά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.LapsedNotice" xml:space="preserve">
+    <value>Το πρόσθετο LMS δεν είναι ενεργό. Οι εξαγωγές συνεχίζουν να λειτουργούν: οι εγγραφές και το περιεχόμενό σας παραμένουν δικά σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.NewExport" xml:space="preserve">
+    <value>Νέα εξαγωγή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.ScopeLabel" xml:space="preserve">
+    <value>Τι θα περιλαμβάνει</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.Full" xml:space="preserve">
+    <value>Τα πάντα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.FullHelp" xml:space="preserve">
+    <value>Μαθήματα με τις εκδόσεις, τα μαθήματα και τα πολυμέσα τους, τράπεζες ερωτήσεων με τα κλειδιά απαντήσεων, απαντήσεις αξιολογήσεων, σχέδια μαθημάτων, φύλλα δεξιοτήτων, απαιτήσεις, πλάνα και κάθε εγγραφή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.RecordsOnly" xml:space="preserve">
+    <value>Μόνο εγγραφές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Scope.RecordsOnlyHelp" xml:space="preserve">
+    <value>Εγγραφές μάθησης, εγγραφές σε μαθήματα, βαθμολογίες αξιολογήσεων, πιστοποιητικά, μέλη και κατηγορίες σε CSV, καθώς και δηλώσεις xAPI. Χωρίς περιεχόμενο μαθημάτων και χωρίς κλειδιά απαντήσεων.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.IncludeMedia" xml:space="preserve">
+    <value>Αντιγραφή των φιλοξενούμενων βίντεο στο zip (διαφορετικά το zip περιέχει συνδέσμους λήψης)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.LinkHelp" xml:space="preserve">
+    <value>Η εξαγωγή δημιουργείται στο παρασκήνιο. Ο σύνδεσμος λήψης λειτουργεί για {0} ημέρες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.KeysWarning" xml:space="preserve">
+    <value>Μια πλήρης εξαγωγή περιέχει τις τράπεζες ερωτήσεων με τα κλειδιά απαντήσεων και τις απαντήσεις των εκπαιδευόμενων. Κρατήστε την ιδιωτική.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Queue" xml:space="preserve">
+    <value>Έναρξη εξαγωγής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Queued" xml:space="preserve">
+    <value>Η εξαγωγή μπήκε στην ουρά. Αυτή η σελίδα δείχνει πότε είναι έτοιμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.TooManyActive" xml:space="preserve">
+    <value>Ήδη δημιουργούνται δύο εξαγωγές. Περιμένετε να ολοκληρωθεί μία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.NotAuthorized" xml:space="preserve">
+    <value>Μόνο ο κάτοχος και οι διαχειριστές της υπηρεσίας μπορούν να εξάγουν δεδομένα εκπαίδευσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.NotFound" xml:space="preserve">
+    <value>Η εξαγωγή αυτή δεν βρέθηκε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.NotReady" xml:space="preserve">
+    <value>Η εξαγωγή αυτή δεν είναι ακόμη έτοιμη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Error.Expired" xml:space="preserve">
+    <value>Ο σύνδεσμος λήψης αυτής της εξαγωγής έληξε. Ξεκινήστε νέα εξαγωγή.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.History" xml:space="preserve">
+    <value>Εξαγωγές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.None" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη εξαγωγές.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Requested" xml:space="preserve">
+    <value>Ζητήθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Scope" xml:space="preserve">
+    <value>Περιεχόμενο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Contents" xml:space="preserve">
+    <value>Μέγεθος και πλήθος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Expires" xml:space="preserve">
+    <value>Λήξη συνδέσμου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Col.Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.WithMedia" xml:space="preserve">
+    <value>με φιλοξενούμενα βίντεο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Queued" xml:space="preserve">
+    <value>Σε αναμονή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Running" xml:space="preserve">
+    <value>Δημιουργείται</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Completed" xml:space="preserve">
+    <value>Έτοιμη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Failed" xml:space="preserve">
+    <value>Απέτυχε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Status.Expired" xml:space="preserve">
+    <value>Έληξε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.CountsLine" xml:space="preserve">
+    <value>{0} εγγραφές, {1} μαθήματα, {2} προσπάθειες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.Download" xml:space="preserve">
+    <value>Λήψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Exit.FormatHelp" xml:space="preserve">
+    <value>Το zip περιέχει το manifest.json με το πλήθος κάθε οντότητας και ένα άθροισμα ελέγχου για κάθε αρχείο. Τα αρχεία CSV είναι UTF-8· οι ώρες είναι σε UTC.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.Complete" xml:space="preserve">
+    <value>Σήμανση του μαθήματος ως ολοκληρωμένου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.Completed" xml:space="preserve">
+    <value>Το μάθημα σημειώθηκε ως ολοκληρωμένο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.VideoNotIncluded" xml:space="preserve">
+    <value>Αυτό το βίντεο δεν περιλαμβάνεται στο πακέτο.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Scorm.Transcript" xml:space="preserve">
+    <value>Απομαγνητοφώνηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Tab" xml:space="preserve">
+    <value>Αναφορές συνεχιζόμενης εκπαίδευσης (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Title" xml:space="preserve">
+    <value>Αναφορές συνεχιζόμενης εκπαίδευσης (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Intro" xml:space="preserve">
+    <value>Αρχεία με ώρες εκπαίδευσης και συνεχιζόμενη εκπαίδευση (CE / CPD) για κάθε ρυθμιστική αρχή, επαγγελματικό φορέα ή εργοδότη, καθώς και αρχεία για τις ΗΠΑ: CAPCE, γραφεία συνεχιζόμενης εκπαίδευσης των πολιτειών και κατάσταση συμμετεχόντων έτοιμη για την πολιτεία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.LapsedNotice" xml:space="preserve">
+    <value>Το πρόσθετο LMS δεν είναι ενεργό: τα αρχεία δημιουργούνται ακόμη από τις εγγραφές σας, αλλά οι ρυθμίσεις δεν μπορούν να αλλάξουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Disclaimer" xml:space="preserve">
+    <value>Το Resgrid δημιουργεί τα αρχεία· δεν τα υποβάλλει και δεν είναι φορέας διαπίστευσης. Ελέγξτε κάθε αρχείο πριν το ανεβάσετε σε ρυθμιστική αρχή, επαγγελματικό φορέα ή άλλο φορέα αναφορών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.BuildTitle" xml:space="preserve">
+    <value>Δημιουργία αρχείου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ExporterLabel" xml:space="preserve">
+    <value>Αρχείο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.From" xml:space="preserve">
+    <value>Από</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.To" xml:space="preserve">
+    <value>Έως</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Category" xml:space="preserve">
+    <value>Κατηγορία εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.AllCategories" xml:space="preserve">
+    <value>Όλες οι κατηγορίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.IncludeFormer" xml:space="preserve">
+    <value>Συμπερίληψη μελών που αφαιρέθηκαν, απενεργοποιήθηκαν ή αποκρύφθηκαν</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Preview" xml:space="preserve">
+    <value>Προεπισκόπηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Download" xml:space="preserve">
+    <value>Λήψη CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.PreviewCount" xml:space="preserve">
+    <value>{0} γραμμές στο αρχείο· εμφανίζονται οι πρώτες {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.NoHeaderRow" xml:space="preserve">
+    <value>Αυτή η διάταξη δεν έχει γραμμή επικεφαλίδων· οι επικεφαλίδες παραπάνω είναι μόνο για αναφορά.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Missing" xml:space="preserve">
+    <value>{0} γραμμές δεν έχουν τιμή για "{1}".</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ExportersTitle" xml:space="preserve">
+    <value>Αρχεία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.LayoutVerified" xml:space="preserve">
+    <value>Δημοσιευμένη διάταξη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.LayoutFallback" xml:space="preserve">
+    <value>Παραμετροποιήσιμο CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.CustomColumns" xml:space="preserve">
+    <value>Προσαρμοσμένες στήλες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Columns" xml:space="preserve">
+    <value>Στήλες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.SettingsTitle" xml:space="preserve">
+    <value>Ρυθμίσεις αναφορών συνεχιζόμενης εκπαίδευσης (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.SettingsIntro" xml:space="preserve">
+    <value>Αριθμοί παρόχου για τα αρχεία των ΗΠΑ και ποιοι τύποι πιστοποίησης περιέχουν τους αριθμούς άδειας ή εγγραφής που χρειάζονται τα αρχεία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.CapceProviderNumber" xml:space="preserve">
+    <value>Αριθμός παρόχου CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.CapceProviderName" xml:space="preserve">
+    <value>Όνομα παρόχου CAPCE (όπως καταχωρίστηκε στα μαθήματα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.CeBrokerProviderNumber" xml:space="preserve">
+    <value>Αριθμός παρακολούθησης παρόχου CE Broker (Φλόριντα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.IdentifiersHelp" xml:space="preserve">
+    <value>Τα αρχεία διαβάζουν αυτούς τους αριθμούς από τις πιστοποιήσεις του επιλεγμένου τύπου κάθε μέλους: τον αριθμό, την περιοχή ως πολιτεία, επαρχία ή περιφέρεια, τον τύπο ως επίπεδο και την ημερομηνία λήξης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.LicenseType" xml:space="preserve">
+    <value>Τύπος πιστοποίησης άδειας ή εγγραφής (πολιτεία, επαρχία ή ρυθμιστική αρχή)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.NremtType" xml:space="preserve">
+    <value>Τύπος πιστοποίησης εγγραφής NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.NemsidType" xml:space="preserve">
+    <value>Τύπος πιστοποίησης εθνικού αναγνωριστικού EMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Set.NoType" xml:space="preserve">
+    <value>Κανένας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Save" xml:space="preserve">
+    <value>Αποθήκευση ρυθμίσεων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Saved" xml:space="preserve">
+    <value>Οι ρυθμίσεις αναφορών συνεχιζόμενης εκπαίδευσης (CE / CPD) αποθηκεύτηκαν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ActionFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η αποθήκευση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.AddonRequired" xml:space="preserve">
+    <value>Η αλλαγή των ρυθμίσεων αναφορών συνεχιζόμενης εκπαίδευσης (CE / CPD) απαιτεί ενεργό πρόσθετο LMS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsTitle" xml:space="preserve">
+    <value>Στήλες αρχείου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsIntro" xml:space="preserve">
+    <value>Επιλέξτε την επικεφαλίδα, την τιμή και τη μορφή κάθε στήλης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Back" xml:space="preserve">
+    <value>Επιστροφή στις αναφορές συνεχιζόμενης εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsCustom" xml:space="preserve">
+    <value>Χρησιμοποιούνται οι στήλες της υπηρεσίας σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsDefault" xml:space="preserve">
+    <value>Χρησιμοποιούνται οι προεπιλεγμένες στήλες.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Col.Header" xml:space="preserve">
+    <value>Επικεφαλίδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Col.Source" xml:space="preserve">
+    <value>Τιμή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Col.Argument" xml:space="preserve">
+    <value>Μορφή ή κείμενο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsHelp" xml:space="preserve">
+    <value>Για ημερομηνίες χρησιμοποιήστε yyyy-MM-dd (ISO 8601), εκτός αν ο φορέας σας ζητά άλλη μορφή, όπως dd/MM/yyyy ή MM/dd/yyyy· για ώρες 0.##· για σταθερό κείμενο επιλέξτε «Σταθερό κείμενο» και πληκτρολογήστε το. Κενή επικεφαλίδα αφαιρεί τη στήλη.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.SaveColumns" xml:space="preserve">
+    <value>Αποθήκευση στηλών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ResetColumns" xml:space="preserve">
+    <value>Επαναφορά προεπιλεγμένων στηλών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsSaved" xml:space="preserve">
+    <value>Οι στήλες αποθηκεύτηκαν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.ColumnsReset" xml:space="preserve">
+    <value>Οι προεπιλεγμένες στήλες επανήλθαν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Constant" xml:space="preserve">
+    <value>Σταθερό κείμενο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.FirstName" xml:space="preserve">
+    <value>Όνομα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LastName" xml:space="preserve">
+    <value>Επώνυμο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.FullName" xml:space="preserve">
+    <value>Ονοματεπώνυμο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Email" xml:space="preserve">
+    <value>Ηλεκτρονικό ταχυδρομείο</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.MemberId" xml:space="preserve">
+    <value>Αναγνωριστικό χρήστη Resgrid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.IdentificationNumber" xml:space="preserve">
+    <value>Αριθμός μέλους</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CompletedOn" xml:space="preserve">
+    <value>Ημερομηνία ολοκλήρωσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.StartedOn" xml:space="preserve">
+    <value>Ημερομηνία έναρξης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.EndedOn" xml:space="preserve">
+    <value>Ημερομηνία λήξης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Title" xml:space="preserve">
+    <value>Τίτλος μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CourseCode" xml:space="preserve">
+    <value>Κωδικός μαθήματος</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeProvider" xml:space="preserve">
+    <value>Πάροχος εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeCourseNumber" xml:space="preserve">
+    <value>Αριθμός δραστηριότητας συνεχιζόμενης εκπαίδευσης (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeCourseNumberSuffix" xml:space="preserve">
+    <value>Αριθμός δραστηριότητας χωρίς πρόθεμα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeHours" xml:space="preserve">
+    <value>Ώρες συνεχιζόμενης εκπαίδευσης (CE / CPD)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Hours" xml:space="preserve">
+    <value>Ώρες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CategoryName" xml:space="preserve">
+    <value>Όνομα κατηγορίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CategoryCode" xml:space="preserve">
+    <value>Κωδικός κατηγορίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Method" xml:space="preserve">
+    <value>Μέθοδος εκπαίδευσης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Location" xml:space="preserve">
+    <value>Τοποθεσία</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Instructors" xml:space="preserve">
+    <value>Εκπαιδευτές</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseNumber" xml:space="preserve">
+    <value>Αριθμός άδειας ή εγγραφής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseState" xml:space="preserve">
+    <value>Πολιτεία, επαρχία ή περιφέρεια αδειοδότησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseLevel" xml:space="preserve">
+    <value>Επίπεδο άδειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.LicenseExpiresOn" xml:space="preserve">
+    <value>Ημερομηνία λήξης άδειας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.NremtNumber" xml:space="preserve">
+    <value>Αριθμός NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.NremtExpiresOn" xml:space="preserve">
+    <value>Ημερομηνία επανεγγραφής NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.Nemsid" xml:space="preserve">
+    <value>Εθνικό αναγνωριστικό EMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CapceProviderNumber" xml:space="preserve">
+    <value>Αριθμός παρόχου CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.CeBrokerProviderNumber" xml:space="preserve">
+    <value>Αριθμός παρόχου CE Broker</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.RecordId" xml:space="preserve">
+    <value>Αναγνωριστικό εγγραφής μάθησης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.VerificationCode" xml:space="preserve">
+    <value>Κωδικός επαλήθευσης πιστοποιητικού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Source.SourceKind" xml:space="preserve">
+    <value>Προέλευση εγγραφής</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.capce" xml:space="preserve">
+    <value>Αρχείο ολοκληρώσεων CAPCE</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.fl-ems" xml:space="preserve">
+    <value>EMS Φλόριντα (CE Broker)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.va-ems" xml:space="preserve">
+    <value>EMS Βιρτζίνια</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.nj-ems" xml:space="preserve">
+    <value>EMS Νιου Τζέρσεϊ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.fl-fire" xml:space="preserve">
+    <value>Πυροσβεστική εκπαίδευση Φλόριντα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.state-ce" xml:space="preserve">
+    <value>Συνεχιζόμενη εκπαίδευση άλλης πολιτείας των ΗΠΑ (CSV)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.state-roster" xml:space="preserve">
+    <value>Κατάσταση για πολιτείες των ΗΠΑ (Acadis και άλλα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.capce" xml:space="preserve">
+    <value>Για υπηρεσίες που είναι διαπιστευμένοι πάροχοι CAPCE: επαληθευμένες ολοκληρώσεις των δικών σας μαθημάτων. Το CAPCE δεν δημοσιεύει τη σειρά στηλών της μεταφόρτωσης· οι στήλες ακολουθούν τα δεδομένα που ζητά το CAPCE, με τη σειρά του, και μπορούν να αλλάξουν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.fl-ems" xml:space="preserve">
+    <value>Η μεταφόρτωση παρόχου Easy Excel του CE Broker (στήλες A έως H, χωρίς γραμμή επικεφαλίδων). Ανοίξτε το CSV σε υπολογιστικό φύλλο και αποθηκεύστε το ως βιβλίο Excel πριν τη μεταφόρτωση.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.va-ems" xml:space="preserve">
+    <value>Το OEMS της Βιρτζίνια δέχεται συνεχιζόμενη εκπαίδευση μέσω της εφαρμογής CE Scanner και δεν δημοσιεύει διάταξη αρχείου, οπότε αυτό είναι παραμετροποιήσιμο CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.nj-ems" xml:space="preserve">
+    <value>Το OEMS του Νιου Τζέρσεϊ δέχεται συνεχιζόμενη εκπαίδευση ανά εκπαιδευόμενο στο NJLincs και δεν δημοσιεύει διάταξη αρχείου, οπότε αυτό είναι παραμετροποιήσιμο CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.fl-fire" xml:space="preserve">
+    <value>Το γραφείο προτύπων πυρόσβεσης και εκπαίδευσης της Φλόριντα δεν δημοσιεύει διάταξη μεταφόρτωσης για ώρες εκπαίδευσης, οπότε αυτό είναι παραμετροποιήσιμο CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.state-ce" xml:space="preserve">
+    <value>Παραμετροποιήσιμο CSV για το γραφείο συνεχιζόμενης εκπαίδευσης οποιασδήποτε άλλης πολιτείας των ΗΠΑ.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.state-roster" xml:space="preserve">
+    <value>Κατάσταση ολοκλήρωσης μαθημάτων με παραμετροποιήσιμες στήλες για πολιτειακά συστήματα όπως το Acadis, που δεν δημοσιεύουν πρότυπο εισαγωγής.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.UnknownExporter" xml:space="preserve">
+    <value>Αυτός ο τύπος αρχείου είναι άγνωστος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.NotAuthorized" xml:space="preserve">
+    <value>Μόνο οι υπεύθυνοι εκπαίδευσης μπορούν να δημιουργούν αρχεία συνεχιζόμενης εκπαίδευσης.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.NoCapceProvider" xml:space="preserve">
+    <value>Καταχωρίστε πρώτα τον αριθμό παρόχου CAPCE στις παρακάτω ρυθμίσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Problem.NoCeBrokerProvider" xml:space="preserve">
+    <value>Καταχωρίστε πρώτα τον αριθμό παρακολούθησης παρόχου CE Broker στις παρακάτω ρυθμίσεις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_ce_not_authorized" xml:space="preserve">
+    <value>Μόνο οι διαχειριστές της υπηρεσίας μπορούν να αλλάξουν τις ρυθμίσεις αναφορών.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_ce_certification_type_invalid" xml:space="preserve">
+    <value>Επιλέξτε τύπους πιστοποίησης αυτής της υπηρεσίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="lms_ce_exporter_unknown" xml:space="preserve">
+    <value>Αυτός ο τύπος αρχείου είναι άγνωστος.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Exporter.training-hours" xml:space="preserve">
+    <value>Αρχείο ωρών εκπαίδευσης (CE / CPD, για κάθε φορέα)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Ce.Note.training-hours" xml:space="preserve">
+    <value>Για κάθε ρυθμιστική αρχή, επαγγελματικό φορέα, εργοδότη ή ασφαλιστή, σε κάθε χώρα: μία γραμμή ανά επαληθευμένη ολοκλήρωση, ημερομηνίες ως yyyy-MM-dd, ώρες με τελεία ως δεκαδικό διαχωριστικό και επικεφαλίδες στη γλώσσα σας. Επιλέξτε και ταξινομήστε τις στήλες που ζητά ο φορέας σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

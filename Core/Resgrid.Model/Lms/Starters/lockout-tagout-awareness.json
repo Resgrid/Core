@@ -1,0 +1,55 @@
+{
+  "key": "lockout-tagout-awareness",
+  "revision": 1,
+  "kind": "course",
+  "title": "Lockout/tagout awareness",
+  "code": "RG-LOTO",
+  "summary": "Awareness of hazardous energy control for everyone who works around machines and plant: what lockout/tagout is, why you never remove someone else's lock, and what to do when you find equipment locked out. Authorized employees also need your site's full procedure and practical training.",
+  "tags": "lockout, tagout, energy isolation, industrial, starter",
+  "hours": 0.5,
+  "license": "resgrid-starter",
+  "overview": "<p>A starter course written by Resgrid in plain language for affected employees. It does not authorize anyone to apply locks. Your site's energy control procedure and the occupational safety rules where you operate come first.</p>",
+  "modules": [
+    {
+      "title": "Hazardous energy",
+      "lessons": [
+        {
+          "title": "Why equipment is locked out",
+          "html": "<p>Machines and plant store energy: electrical, mechanical, hydraulic, pneumatic, chemical and thermal. Before anyone services or repairs them, that energy is isolated and locked so that the equipment cannot start or release it.</p>"
+        },
+        {
+          "title": "When you find a lock or a tag",
+          "html": "<ul><li>Never remove, bypass or operate equipment that carries someone else's lock or tag.</li><li>Never try to start locked-out equipment to check it.</li><li>Ask the person named on the tag or your supervisor when you need the equipment back.</li></ul><p><em>Add your site's lock and tag colours and who may apply them.</em></p>"
+        }
+      ]
+    }
+  ],
+  "check": {
+    "module": "Check your understanding",
+    "title": "Lockout/tagout awareness check",
+    "passMark": 80,
+    "questions": [
+      {
+        "text": "You need a machine that carries another worker's lock. What do you do?",
+        "kind": "single",
+        "options": [ "Ask the person named on the tag or your supervisor", "Remove the lock carefully", "Start the machine to see if it works" ],
+        "correct": 0,
+        "explanation": "Ask the person named on the tag or your supervisor when you need the equipment back."
+      },
+      {
+        "text": "Lockout only matters for electrical equipment.",
+        "kind": "truefalse",
+        "options": [ "True", "False" ],
+        "correct": 1,
+        "explanation": "Machines and plant store electrical, mechanical, hydraulic, pneumatic, chemical and thermal energy."
+      },
+      {
+        "text": "Which of these is never allowed?",
+        "kind": "single",
+        "options": [ "Bypassing another person's lock", "Reporting a missing tag", "Asking who applied a lock" ],
+        "correct": 0,
+        "explanation": "Never remove, bypass or operate equipment that carries someone else's lock or tag."
+      }
+    ]
+  }
+}

@@ -240,17 +240,29 @@
   <data name="PoiImportPending" xml:space="preserve">
     <value>{0} entradas por importar.</value>
   </data>
+  <data name="PoiImportPendingOne" xml:space="preserve">
+    <value>{0} entrada por importar.</value>
+  </data>
   <data name="PoiImportSummary" xml:space="preserve">
     <value>{0} de {1} entradas importadas.</value>
   </data>
   <data name="PoiImportGeocoded" xml:space="preserve">
     <value>{0} se localizaron a partir de su dirección; compruebe su posición en el mapa.</value>
   </data>
+  <data name="PoiImportGeocodedOne" xml:space="preserve">
+    <value>{0} se localizó a partir de su dirección; compruebe su posición en el mapa.</value>
+  </data>
   <data name="PoiImportSkipped" xml:space="preserve">
     <value>{0} se omitieron porque no tienen coordenadas ni dirección.</value>
   </data>
+  <data name="PoiImportSkippedOne" xml:space="preserve">
+    <value>{0} se omitió porque no tiene coordenadas ni dirección.</value>
+  </data>
   <data name="PoiImportUnlocated" xml:space="preserve">
     <value>{0} no se importaron porque no se pudo localizar su dirección:</value>
+  </data>
+  <data name="PoiImportUnlocatedOne" xml:space="preserve">
+    <value>{0} no se importó porque no se pudo localizar su dirección:</value>
   </data>
   <data name="PoiImportUnlocatedMore" xml:space="preserve">
     <value>y {0} más.</value>
@@ -264,8 +276,14 @@
   <data name="PoiImportRetrying" xml:space="preserve">
     <value>El servicio de búsqueda de direcciones no respondió para {0} entradas; se volverán a intentar después de las {1}.</value>
   </data>
+  <data name="PoiImportRetryingOne" xml:space="preserve">
+    <value>El servicio de búsqueda de direcciones no respondió para {0} entrada; se volverá a intentar después de las {1}.</value>
+  </data>
   <data name="PoiImportLookupFailed" xml:space="preserve">
     <value>{0} no se importaron porque el servicio de búsqueda de direcciones no respondió, ni siquiera tras reintentarlo:</value>
+  </data>
+  <data name="PoiImportLookupFailedOne" xml:space="preserve">
+    <value>{0} no se importó porque el servicio de búsqueda de direcciones no respondió, ni siquiera tras reintentarlo:</value>
   </data>
   <data name="PoiImportLookupFailedHint" xml:space="preserve">
     <value>Suele ser temporal: vuelva a importar solo esas entradas más tarde.</value>
@@ -273,11 +291,17 @@
   <data name="PoiImportLookupNotConfigured" xml:space="preserve">
     <value>{0} no se importaron porque la búsqueda de direcciones no está configurada en este servidor:</value>
   </data>
+  <data name="PoiImportLookupNotConfiguredOne" xml:space="preserve">
+    <value>{0} no se importó porque la búsqueda de direcciones no está configurada en este servidor:</value>
+  </data>
   <data name="PoiImportLookupNotConfiguredHint" xml:space="preserve">
     <value>Añada columnas de latitud y longitud a esas entradas e impórtelas de nuevo.</value>
   </data>
   <data name="PoiImportNotTried" xml:space="preserve">
     <value>{0} no se importaron porque el archivo tiene más direcciones de las que busca una importación:</value>
+  </data>
+  <data name="PoiImportNotTriedOne" xml:space="preserve">
+    <value>{0} no se importó porque el archivo tiene más direcciones de las que busca una importación:</value>
   </data>
   <!-- Layers -->
   <data name="LayersPageTitle" xml:space="preserve">

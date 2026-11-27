@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "key": "administrator",
+  "revision": 1,
+  "title": {
+    "en": "Set up your department",
+    "ar": "إعداد قسمك",
+    "de": "Richten Sie Ihre Abteilung ein",
+    "el": "Ρυθμίστε την υπηρεσία σας",
+    "es": "Configure su departamento",
+    "fr": "Configurez votre service",
+    "it": "Configura il tuo dipartimento",
+    "pl": "Skonfiguruj swoją jednostkę",
+    "sv": "Konfigurera din organisation",
+    "uk": "Налаштуйте свій підрозділ"
+  },
+  "intro": {
+    "en": "Four first steps for a department administrator. Each links to its page and to a short Academy walkthrough.",
+    "ar": "أربع خطوات أولى لمسؤول القسم. كل خطوة ترتبط بصفحتها وبشرح قصير من الأكاديمية.",
+    "de": "Vier erste Schritte für Abteilungsadministratoren. Jeder Schritt verlinkt seine Seite und eine kurze Academy-Anleitung.",
+    "el": "Τέσσερα πρώτα βήματα για τον διαχειριστή της υπηρεσίας. Το καθένα οδηγεί στη σελίδα του και σε μια σύντομη περιήγηση της Academy.",
+    "es": "Cuatro primeros pasos para el administrador del departamento. Cada uno enlaza con su página y con un breve recorrido de la Academy.",
+    "fr": "Quatre premières étapes pour l'administrateur du service. Chacune renvoie à sa page et à un court tutoriel de l'Academy.",
+    "it": "Quattro primi passi per l'amministratore del dipartimento. Ognuno rimanda alla sua pagina e a una breve guida dell'Academy.",
+    "pl": "Cztery pierwsze kroki dla administratora jednostki. Każdy prowadzi do swojej strony i krótkiego przewodnika Academy.",
+    "sv": "Fyra första steg för organisationens administratör. Varje steg länkar till sin sida och till en kort genomgång i Academy.",
+    "uk": "Чотири перші кроки для адміністратора підрозділу. Кожен веде на свою сторінку та до короткого огляду в Academy."
+  },
+  "tasks": [
+    {
+      "key": "setup",
+      "lessonId": "01-setup-wizard",
+      "page": {
+        "controller": "AdminAssist",
+        "action": "Index"
+      },
+      "title": {
+        "en": "Run the Admin Assist setup",
+        "ar": "شغّل إعداد Admin Assist",
+        "de": "Admin-Assist-Einrichtung durchlaufen",
+        "el": "Εκτελέστε τη ρύθμιση του Admin Assist",
+        "es": "Ejecute la configuración de Admin Assist",
+        "fr": "Lancez la configuration d'Admin Assist",
+        "it": "Esegui la configurazione di Admin Assist",
+        "pl": "Uruchom konfigurację Admin Assist",
+        "sv": "Kör konfigurationen i Admin Assist",
+        "uk": "Пройдіть налаштування Admin Assist"
+      },
+      "hint": {
+        "en": "Choose the modules you use and follow the guided checklist.",
+        "ar": "اختر الوحدات التي تستخدمها واتبع قائمة التحقق الموجّهة.",
+        "de": "Wählen Sie die genutzten Module und folgen Sie der geführten Checkliste.",
+        "el": "Επιλέξτε τις ενότητες που χρησιμοποιείτε και ακολουθήστε την καθοδηγούμενη λίστα.",
+        "es": "Elija los módulos que usa y siga la lista de comprobación guiada.",
+        "fr": "Choisissez les modules que vous utilisez et suivez la liste de contrôle guidée.",
+        "it": "Scegli i moduli che usi e segui la checklist guidata.",
+        "pl": "Wybierz używane moduły i postępuj zgodnie z listą kontrolną.",
+        "sv": "Välj de moduler ni använder och följ den guidade checklistan.",
+        "uk": "Виберіть модулі, якими користуєтеся, і пройдіть контрольний список."
+      },
+      "visibility": []
+    },
+    {
+      "key": "settings",
+      "lessonId": "02-department-settings",
+      "page": {
+        "controller": "Department",
+        "action": "Settings"
+      },
+      "title": {
+        "en": "Review department settings",
+        "ar": "راجع إعدادات القسم",
+        "de": "Abteilungseinstellungen prüfen",
+        "el": "Ελέγξτε τις ρυθμίσεις της υπηρεσίας",
+        "es": "Revise los ajustes del departamento",
+        "fr": "Vérifiez les paramètres du service",
+        "it": "Controlla le impostazioni del dipartimento",
+        "pl": "Sprawdź ustawienia jednostki",
+        "sv": "Gå igenom organisationens inställningar",
+        "uk": "Перевірте налаштування підрозділу"
+      },
+      "hint": {
+        "en": "Set your time zone, address and call options.",
+        "ar": "اضبط المنطقة الزمنية والعنوان وخيارات البلاغات.",
+        "de": "Legen Sie Zeitzone, Adresse und Einsatzoptionen fest.",
+        "el": "Ορίστε ζώνη ώρας, διεύθυνση και επιλογές συμβάντων.",
+        "es": "Defina la zona horaria, la dirección y las opciones de llamadas.",
+        "fr": "Définissez le fuseau horaire, l'adresse et les options d'appel.",
+        "it": "Imposta fuso orario, indirizzo e opzioni delle chiamate.",
+        "pl": "Ustaw strefę czasową, adres i opcje zgłoszeń.",
+        "sv": "Ange tidszon, adress och alternativ för larm.",
+        "uk": "Укажіть часовий пояс, адресу та параметри викликів."
+      },
+      "visibility": []
+    },
+    {
+      "key": "people",
+      "lessonId": "01-people",
+      "page": {
+        "controller": "Personnel",
+        "action": "Index"
+      },
+      "title": {
+        "en": "Invite your people",
+        "ar": "ادعُ أفراد فريقك",
+        "de": "Laden Sie Ihre Mitglieder ein",
+        "el": "Προσκαλέστε τα μέλη σας",
+        "es": "Invite a su personal",
+        "fr": "Invitez vos membres",
+        "it": "Invita il tuo personale",
+        "pl": "Zaproś swoich ludzi",
+        "sv": "Bjud in era medlemmar",
+        "uk": "Запросіть своїх людей"
+      },
+      "hint": {
+        "en": "Add members and put them in groups and roles.",
+        "ar": "أضف الأعضاء وضعهم في مجموعات وأدوار.",
+        "de": "Fügen Sie Mitglieder hinzu und ordnen Sie sie Gruppen und Rollen zu.",
+        "el": "Προσθέστε μέλη και εντάξτε τα σε ομάδες και ρόλους.",
+        "es": "Añada miembros y asígnelos a grupos y roles.",
+        "fr": "Ajoutez des membres et placez-les dans des groupes et des rôles.",
+        "it": "Aggiungi membri e assegnali a gruppi e ruoli.",
+        "pl": "Dodaj członków i przypisz ich do grup i ról.",
+        "sv": "Lägg till medlemmar och placera dem i grupper och roller.",
+        "uk": "Додайте учасників і розподіліть їх за групами та ролями."
+      },
+      "visibility": []
+    },
+    {
+      "key": "statuses",
+      "lessonId": "03-custom-statuses",
+      "page": {
+        "controller": "CustomStatuses",
+        "action": "Index"
+      },
+      "title": {
+        "en": "Set up statuses",
+        "ar": "إعداد الحالات",
+        "de": "Status einrichten",
+        "el": "Ρυθμίστε τις καταστάσεις",
+        "es": "Configure los estados",
+        "fr": "Configurez les statuts",
+        "it": "Configura gli stati",
+        "pl": "Skonfiguruj statusy",
+        "sv": "Konfigurera statusar",
+        "uk": "Налаштуйте статуси"
+      },
+      "hint": {
+        "en": "Decide which statuses and staffing levels members and units can set.",
+        "ar": "حدد الحالات ومستويات الجاهزية التي يمكن للأعضاء والوحدات ضبطها.",
+        "de": "Legen Sie fest, welche Status und Verfügbarkeiten Mitglieder und Einheiten setzen können.",
+        "el": "Αποφασίστε ποιες καταστάσεις και διαθεσιμότητες μπορούν να ορίζουν μέλη και οχήματα.",
+        "es": "Decida qué estados y niveles de disponibilidad pueden indicar miembros y unidades.",
+        "fr": "Choisissez les statuts et disponibilités que les membres et les unités peuvent indiquer.",
+        "it": "Decidi quali stati e disponibilità possono impostare membri e mezzi.",
+        "pl": "Zdecyduj, jakie statusy i gotowość mogą ustawiać członkowie i pojazdy.",
+        "sv": "Bestäm vilka statusar och bemanningsnivåer medlemmar och enheter kan ange.",
+        "uk": "Визначте, які статуси та рівні готовності можуть встановлювати учасники й підрозділи."
+      },
+      "visibility": []
+    }
+  ]
+}

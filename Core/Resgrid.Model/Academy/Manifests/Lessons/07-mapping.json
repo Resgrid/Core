@@ -1,0 +1,219 @@
+{
+  "schema": 1,
+  "id": "07-mapping",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Mapping",
+  "minutes": 3.6,
+  "walkthrough": false,
+  "audience": [
+    "dispatcher",
+    "officer"
+  ],
+  "visibility": [
+    "module:Mapping"
+  ],
+  "pages": [
+    "Mapping",
+    "CustomMaps",
+    "IndoorMaps",
+    "EventLayers",
+    "MapVisualizations",
+    "Routes",
+    "RoadClosures"
+  ],
+  "adminAssist": {
+    "areas": [
+      "mapping"
+    ],
+    "capabilities": [
+      "mapping",
+      "pois",
+      "weather",
+      "map-layers",
+      "custom-maps",
+      "indoor-maps",
+      "routes",
+      "road-closures",
+      "live-routing",
+      "destination-rules"
+    ]
+  },
+  "media": {
+    "video": "media/07-mapping.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/07-mapping.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Make location information useful and current",
+    "ar": "اجعل معلومات الموقع مفيدة ومحدّثة",
+    "de": "Ortsinformationen nützlich und aktuell halten",
+    "el": "Κάντε τις πληροφορίες τοποθεσίας χρήσιμες και επίκαιρες",
+    "es": "Mantener la información de ubicación útil y actual",
+    "fr": "Rendre les informations de localisation utiles et à jour",
+    "it": "Rendere le informazioni di posizione utili e aggiornate",
+    "pl": "Dbaj o przydatne i aktualne dane o lokalizacji",
+    "sv": "Håll platsinformationen användbar och aktuell",
+    "uk": "Зробіть інформацію про місцезнаходження корисною й актуальною"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "Why keep points of interest such as hydrants on the map?",
+        "ar": "لماذا تُبقى نقاط مثل صنابير الحريق على الخريطة؟",
+        "de": "Warum Orte wie Hydranten auf der Karte führen?",
+        "el": "Γιατί να υπάρχουν στον χάρτη σημεία όπως οι κρουνοί;",
+        "es": "¿Por qué mantener puntos de interés como hidrantes en el mapa?",
+        "fr": "Pourquoi garder des points d’intérêt comme les poteaux d’incendie sur la carte ?",
+        "it": "Perché tenere sulla mappa punti di interesse come gli idranti?",
+        "pl": "Po co trzymać na mapie punkty takie jak hydranty?",
+        "sv": "Varför ha platser som brandposter på kartan?",
+        "uk": "Навіщо тримати на мапі такі об’єкти, як гідранти?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "To decorate the map",
+            "ar": "لتزيين الخريطة",
+            "de": "Um die Karte zu verschönern",
+            "el": "Για να διακοσμηθεί ο χάρτης",
+            "es": "Para decorar el mapa",
+            "fr": "Pour décorer la carte",
+            "it": "Per decorare la mappa",
+            "pl": "Dla ozdoby mapy",
+            "sv": "För att pynta kartan",
+            "uk": "Щоб прикрасити мапу"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "So responders can find them quickly",
+            "ar": "ليجدها المستجيبون بسرعة",
+            "de": "Damit Einsatzkräfte sie schnell finden",
+            "el": "Για να τα βρίσκει γρήγορα το προσωπικό",
+            "es": "Para que el personal los encuentre rápido",
+            "fr": "Pour que les intervenants les trouvent vite",
+            "it": "Perché i soccorritori li trovino in fretta",
+            "pl": "Aby ratownicy szybko je znaleźli",
+            "sv": "Så att personalen hittar dem snabbt",
+            "uk": "Щоб рятувальники швидко їх знаходили"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To slow down dispatch",
+            "ar": "لإبطاء الإرسال",
+            "de": "Um die Alarmierung zu verlangsamen",
+            "el": "Για να καθυστερήσει η διασπορά",
+            "es": "Para ralentizar el despacho",
+            "fr": "Pour ralentir l’engagement",
+            "it": "Per rallentare l’invio",
+            "pl": "Aby spowolnić dysponowanie",
+            "sv": "För att sakta ner larmningen",
+            "uk": "Щоб сповільнити відправлення"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What makes map information trustworthy?",
+        "ar": "ما الذي يجعل معلومات الخريطة موثوقة؟",
+        "de": "Was macht Karteninformationen verlässlich?",
+        "el": "Τι κάνει αξιόπιστες τις πληροφορίες του χάρτη;",
+        "es": "¿Qué hace fiable la información del mapa?",
+        "fr": "Qu’est-ce qui rend les informations cartographiques fiables ?",
+        "it": "Che cosa rende affidabili le informazioni della mappa?",
+        "pl": "Co sprawia, że dane na mapie są wiarygodne?",
+        "sv": "Vad gör kartinformation pålitlig?",
+        "uk": "Що робить інформацію на мапі надійною?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Never changing it",
+            "ar": "عدم تغييرها أبدًا",
+            "de": "Sie nie zu ändern",
+            "el": "Να μην αλλάζουν ποτέ",
+            "es": "No cambiarla nunca",
+            "fr": "Ne jamais les modifier",
+            "it": "Non cambiarle mai",
+            "pl": "Nigdy ich nie zmieniać",
+            "sv": "Att aldrig ändra den",
+            "uk": "Ніколи її не змінювати"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Copying it only from old paper maps",
+            "ar": "نسخها من الخرائط الورقية القديمة فقط",
+            "de": "Sie nur von alten Papierkarten abzuschreiben",
+            "el": "Αντιγραφή μόνο από παλιούς έντυπους χάρτες",
+            "es": "Copiarla solo de mapas de papel antiguos",
+            "fr": "Les recopier uniquement depuis de vieilles cartes papier",
+            "it": "Copiarle solo da vecchie mappe cartacee",
+            "pl": "Przepisywać je tylko ze starych map papierowych",
+            "sv": "Att bara kopiera den från gamla papperskartor",
+            "uk": "Копіювати лише зі старих паперових мап"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Keeping it current and reviewed",
+            "ar": "إبقاؤها محدّثة ومراجعة",
+            "de": "Sie aktuell und geprüft zu halten",
+            "el": "Να διατηρούνται επίκαιρες και ελεγμένες",
+            "es": "Mantenerla actualizada y revisada",
+            "fr": "Les tenir à jour et vérifiées",
+            "it": "Mantenerle aggiornate e verificate",
+            "pl": "Utrzymywać je aktualne i sprawdzone",
+            "sv": "Att hålla den aktuell och granskad",
+            "uk": "Підтримувати її актуальною й перевіреною"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Calls with an address or coordinates appear on the map.",
+        "ar": "تظهر البلاغات التي لها عنوان أو إحداثيات على الخريطة.",
+        "de": "Einsätze mit Adresse oder Koordinaten erscheinen auf der Karte.",
+        "el": "Οι κλήσεις με διεύθυνση ή συντεταγμένες εμφανίζονται στον χάρτη.",
+        "es": "Las llamadas con dirección o coordenadas aparecen en el mapa.",
+        "fr": "Les interventions avec une adresse ou des coordonnées apparaissent sur la carte.",
+        "it": "Le chiamate con indirizzo o coordinate compaiono sulla mappa.",
+        "pl": "Zgłoszenia z adresem lub współrzędnymi pojawiają się na mapie.",
+        "sv": "Larm med adress eller koordinater visas på kartan.",
+        "uk": "Виклики з адресою або координатами з’являються на мапі."
+      }
+    }
+  ]
+}

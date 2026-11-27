@@ -31,6 +31,66 @@
         }, 5000);
     }
 
+    // Pack add-ons: every packs field previews its price before the form is sent (PreviewPacks answers from the same graduated
+    // schedule the Billing API bills). The text is set with textContent only.
+    function format(template, values) {
+        return String(template).replace(/\{(\d+)\}/g, function (match, index) {
+            var value = values[Number(index)];
+            return value === undefined || value === null ? '' : String(value);
+        });
+    }
+
+    function money(amount) {
+        var value = Number(amount) || 0;
+        return config.packs.symbol + value.toLocaleString(undefined, { minimumFractionDigits: value % 1 === 0 ? 0 : 2, maximumFractionDigits: 2 });
+    }
+
+    function describe(quote) {
+        if (quote.refusal === 'below_enabled_seats') return format(config.packs.belowSeats, [quote.minimumPacks]);
+        if (quote.refusal) return format(config.packs.range, [1, '']);
+        if (quote.currentPacks === 0) return format(config.packs.first, [quote.packs, quote.seats, money(quote.nextMonthly)]);
+        if (quote.increase) return format(config.packs.increase, [quote.packs, quote.seats, money(quote.nextMonthly), money(quote.proratedNow)]);
+        if (quote.decrease) return format(config.packs.decrease, [quote.packs, quote.seats, money(quote.nextMonthly), quote.effectiveOn]);
+        return config.packs.same;
+    }
+
+    if (config.packs && config.packs.previewUrl) {
+        Array.prototype.forEach.call(document.querySelectorAll('input[data-pack-preview]'), function (input) {
+            var target = document.getElementById(input.getAttribute('data-pack-preview'));
+            var timer = null;
+            var sequence = 0;
+            if (!target) return;
+            input.addEventListener('input', function () {
+                window.clearTimeout(timer);
+                timer = window.setTimeout(async function () {
+                    var packs = parseInt(input.value, 10);
+                    var min = parseInt(input.min, 10);
+                    var max = parseInt(input.max, 10);
+                    if (isNaN(packs) || packs < min || packs > max) {
+                        target.textContent = format(config.packs.range, [min, max]);
+                        return;
+                    }
+                    var mine = ++sequence;
+                    try {
+                        var url = new URL(config.packs.previewUrl, window.location.href);
+                        url.searchParams.set('packs', String(packs));
+                        var response = await fetch(url.href, { credentials: 'same-origin', cache: 'no-store', headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                        if (!response.ok) throw new Error();
+                        var quote = await response.json();
+                        if (mine !== sequence) return;
+                        if (quote.refusal === 'above_maximum' || quote.refusal === 'below_minimum') {
+                            target.textContent = format(config.packs.range, [min, max]);
+                            return;
+                        }
+                        target.textContent = describe(quote);
+                    } catch (_) {
+                        if (mine === sequence) target.textContent = config.packs.failed;
+                    }
+                }, 300);
+            });
+        });
+    }
+
     var form = document.getElementById('addon-checkout');
     if (!form) return;
     var paddleInitialized = false;

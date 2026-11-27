@@ -1,0 +1,55 @@
+@using Resgrid.Web.Areas.User.Models.Courses
+@model CrewViewingModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* The shared screen of a crew viewing (R-C4): a QR that rotates every 30 seconds, and who has scanned it. *@
+@{
+    ViewBag.Title = "Resgrid | " + localizer["CrewViewingTitle"];
+    ViewData["Section"] = "Courses";
+    ViewData["Title"] = localizer["CrewViewingTitle"].Value;
+    ViewData["Subtitle"] = Model.CourseTitle + " — " + Model.LessonTitle;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page" id="lms-crew" data-code-url="@Url.Action("CrewCode", "Courses", new { area = "User", id = Model.Viewing.LmsCrewViewingId })">
+    <div class="row">
+        <div class="col-md-6 text-center">
+            @if (Model.Open)
+            {
+                <p class="lead">@localizer["CrewScanInstruction"]</p>
+                <img id="lms-crew-qr" src="@Model.QrSvg" alt="@localizer["CrewQrAlt"]" style="max-width:360px;width:100%" />
+                <p class="small text-muted m-t-sm">@localizer["CrewQrRotates"]</p>
+            }
+            else
+            {
+                <p class="lead text-muted"><i class="fa fa-stop-circle" aria-hidden="true"></i> @localizer["CrewEndedMessage"]</p>
+            }
+        </div>
+        <div class="col-md-6">
+            <h3>@localizer["PresentHeader"] <span class="badge" id="lms-crew-count">@Model.Attendees.Count</span></h3>
+            <ul id="lms-crew-list" aria-live="polite">
+                @foreach (var attendee in Model.Attendees)
+                {
+                    <li>@(Model.Names.TryGetValue(attendee.UserId, out var name) ? name : attendee.UserId)</li>
+                }
+            </ul>
+            @if (Model.Open)
+            {
+                <form method="post" asp-controller="Courses" asp-action="EndCrewViewing" asp-route-area="User" asp-route-id="@Model.Viewing.LmsCrewViewingId">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-white"><i class="fa fa-stop" aria-hidden="true"></i> @localizer["EndCrewViewingButton"]</button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/app/internal/courses/resgrid.courses.player.js" asp-append-version="true"></script>
+}

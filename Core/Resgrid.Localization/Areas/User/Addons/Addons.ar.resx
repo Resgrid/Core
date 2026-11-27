@@ -115,4 +115,204 @@
   <data name="MessageAffiliateApplied" xml:space="preserve"><value>تم حفظ رمز الشريك/الحساب لقسمك.</value></data>
   <data name="MessageAffiliateInvalid" xml:space="preserve"><value>رمز الشريك/الحساب هذا غير صالح أو لم يعد نشطًا.</value></data>
   <data name="MessageAffiliateAlreadySet" xml:space="preserve"><value>لدى قسمك رمز شريك/حساب بالفعل. تواصل معنا إذا احتاج إلى تغيير.</value></data>
+  <data name="LmsTitle" xml:space="preserve"><value>LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsTagline" xml:space="preserve"><value>دورات وتقارير تدريب رسمية وشهادات قابلة للتحقق</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature1" xml:space="preserve"><value>دورات بدروس وبنوك أسئلة واختبارات قصيرة</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature2" xml:space="preserve"><value>دروس فيديو مستضافة، مع 100 غيغابايت لكل قسم</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature3" xml:space="preserve"><value>تقارير تدريب رسمية وفق ISO FSRS وNREMT NCCP</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature4" xml:space="preserve"><value>شهادات برمز تحقق ورمز QR وصفحة تحقق عامة، على قالبك الخاص</value><comment>machine-translated</comment></data>
+  <data name="LmsFeature5" xml:space="preserve"><value>مقاعد فقط للأعضاء الذين تفعّلهم؛ ويحتفظ الجميع بالتدريب المجاني</value><comment>machine-translated</comment></data>
+  <data name="LmsNote" xml:space="preserve"><value>السعر لكل حزمة من 25 عضوًا، بأسعار متدرجة: أول 4 حزم بالسعر الكامل ثم بسعر أقل. تُفوتر شهريًا لكل قسم؛ دون فترة تجريبية. يتطلب خطة Resgrid مدفوعة.</value><comment>machine-translated</comment></data>
+  <data name="PerMemberPack" xml:space="preserve"><value>لكل حزمة من {0} عضوًا</value><comment>machine-translated</comment></data>
+  <data name="PackTierLine" xml:space="preserve"><value>الحزم {0}–{1}: {2} لكل حزمة</value><comment>machine-translated</comment></data>
+  <data name="PackTierLineOpen" xml:space="preserve"><value>الحزم من {0} فما فوق: {1} لكل حزمة</value><comment>machine-translated</comment></data>
+  <data name="LmsRequiresPaidPlan" xml:space="preserve"><value>يُباع نظام LMS مع خطة Resgrid مدفوعة. اختر خطة من صفحة الاشتراك أولًا.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingPacksNote" xml:space="preserve"><value>كل حزمة تتسع لـ 25 عضوًا. تُسعّر الحزم بشرائح: تُفوتر كل حزمة بسعر شريحتها، لذا لا تجعل إضافة الحزم الحزم السابقة أرخص أو أغلى. الفوترة شهرية؛ دون فترة تجريبية ودون اشتراك سنوي.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingSeatsNote" xml:space="preserve"><value>تُحتسب الحزم المضافة فورًا بشكل تناسبي حتى تاريخ الفوترة. تسري إزالة الحزم في تاريخ الفوترة التالي، وفقط حتى عدد الأعضاء المفعّل لهم LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsBillingFreeNote" xml:space="preserve"><value>يحتفظ الأعضاء غير المفعّل لهم LMS بوحدة التدريب المجانية وسجل تدريبهم وAcademy. لا يحتاج المدربون والمقيّمون والضباط إلى مقعد.</value><comment>machine-translated</comment></data>
+  <data name="LmsManageSeats" xml:space="preserve"><value>إدارة مقاعد LMS من صفحة الأفراد</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksAdded" xml:space="preserve"><value>أُضيفت الحزم. وصدرت فاتورة بالمبلغ التناسبي لبقية فترة الفوترة الحالية.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksScheduled" xml:space="preserve"><value>جُدول تقليل الحزم لتاريخ الفوترة التالي. تبقى مقاعدك حتى ذلك الحين.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksBelowSeats" xml:space="preserve"><value>سيترك ذلك مقاعد أقل من عدد الأعضاء المفعّل لهم LMS. ألغِ تفعيل أعضاء من صفحة الأفراد أولًا.</value><comment>machine-translated</comment></data>
+  <data name="BillingPacksFailed" xml:space="preserve"><value>تعذّر تغيير عدد الحزم ولم يُحتسب أي مبلغ. حاول مرة أخرى أو تواصل معنا.</value><comment>machine-translated</comment></data>
+  <data name="PacksHeading" xml:space="preserve"><value>الحزم والمقاعد</value><comment>machine-translated</comment></data>
+  <data name="PacksInForce" xml:space="preserve"><value>الحزم: {0}، المقاعد: {1}، المستخدمة: {2}</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonth" xml:space="preserve"><value>سعر الشهر القادم: {0}</value><comment>machine-translated</comment></data>
+  <data name="PacksNextMonthLabel" xml:space="preserve"><value>الشهر القادم</value><comment>machine-translated</comment></data>
+  <data name="PacksScheduledNote" xml:space="preserve"><value>اعتبارًا من {0}: {1} حزمة.</value><comment>machine-translated</comment></data>
+  <data name="PacksLabel" xml:space="preserve"><value>الحزم</value><comment>machine-translated</comment></data>
+  <data name="PacksUpdate" xml:space="preserve"><value>تحديث الحزم</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFirst" xml:space="preserve"><value>الحزم: {0} (المقاعد: {1}): {2} شهريًا.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewIncrease" xml:space="preserve"><value>الحزم: {0} (المقاعد: {1}): {2} شهريًا من الآن. يُحتسب الآن نحو {3} لبقية فترة الفوترة الحالية.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewDecrease" xml:space="preserve"><value>الحزم: {0} (المقاعد: {1}): {2} شهريًا اعتبارًا من {3}. لا يُسترد أي مبلغ وتبقى مقاعدك حتى ذلك الحين.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewSame" xml:space="preserve"><value>هذا هو عدد الحزم لديك الآن.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedBelowSeats" xml:space="preserve"><value>يلزم {0} حزمة على الأقل للأعضاء المفعّل لهم LMS. ألغِ تفعيل بعضهم من صفحة الأفراد أولًا.</value><comment>machine-translated</comment></data>
+  <data name="PackRefusedRange" xml:space="preserve"><value>اختر بين {0} و{1} حزمة.</value><comment>machine-translated</comment></data>
+  <data name="PackPreviewFailed" xml:space="preserve"><value>تعذّر عرض السعر. حاول مرة أخرى.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatHeading" xml:space="preserve"><value>مقعد LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledLabel" xml:space="preserve"><value>مفعّل في LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnabledHelp" xml:space="preserve"><value>يمكن تدريب هذا العضو عبر دورات LMS ومتطلباته.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledLabel" xml:space="preserve"><value>غير مفعّل في LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisabledHelp" xml:space="preserve"><value>يحتفظ هذا العضو بوحدة التدريب المجانية وسجل تدريبه وAcademy.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotLicensed" xml:space="preserve"><value>غير مرخّص</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatCounter" xml:space="preserve"><value>{0} من {1} مقاعد مستخدمة</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatEnable" xml:space="preserve"><value>تفعيل LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDisable" xml:space="preserve"><value>إلغاء تفعيل LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatsFull" xml:space="preserve"><value>جميع المقاعد ({0}) مستخدمة. الحزم المطلوب إضافتها: {1}.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatNotActive" xml:space="preserve"><value>لا يمكن إلا للأعضاء النشطين شغل مقعد LMS؛ وليس للأعضاء المحذوفين أو المعطّلين أو المخفيين.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatAddonInactive" xml:space="preserve"><value>ليس لدى قسمك إضافة LMS نشطة، لذا لا يمكن تفعيل LMS لأي عضو.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatFailed" xml:space="preserve"><value>تعذّر تغيير مقعد LMS. حاول مرة أخرى.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatSaved" xml:space="preserve"><value>تم تحديث مقعد LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsAddPack" xml:space="preserve"><value>إضافة حزمة</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkHeading" xml:space="preserve"><value>مقاعد LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkGroup" xml:space="preserve"><value>المجموعة</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkEnable" xml:space="preserve"><value>تفعيل المجموعة</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkDisable" xml:space="preserve"><value>إلغاء تفعيل المجموعة</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatBulkResult" xml:space="preserve"><value>تم تغيير {0}، و{1} مضبوطة مسبقًا، وتخطي {2} لأنهم غير نشطين، ورفض {3} لعدم توفر مقاعد.</value><comment>machine-translated</comment></data>
+  <data name="LmsSeatDormant" xml:space="preserve"><value>{0} مقاعد تعود لأعضاء لم يعودوا نشطين ولا تُحتسب.</value><comment>machine-translated</comment></data>
+  <data name="LmsManagePacks" xml:space="preserve"><value>إدارة الحزم</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsHeading" xml:space="preserve"><value>حزم ومقاعد LMS</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsNotPurchased" xml:space="preserve"><value>لم يشترِ قسمك إضافة LMS.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsLapsed" xml:space="preserve"><value>انتهت إضافة LMS. تبقى السجلات والشهادات وسجلات التدريب متاحة وقابلة للتصدير.</value><comment>machine-translated</comment></data>
+  <data name="LmsSettingsGrace" xml:space="preserve"><value>فشلت عملية دفع. يستمر LMS في العمل حتى {0} أثناء إعادة محاولة الدفع.</value><comment>machine-translated</comment></data>
+  <data name="EnhancedAiFeature7" xml:space="preserve">
+    <value>مسودات البروتوكولات والتدريبات والترجمات والبطاقات والتدريب العملي</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EnhancedAiFeature8" xml:space="preserve">
+    <value>مسودات الدورات والمدرّس وبطاقات الدورات مع إضافة LMS</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTitle" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProTagline" xml:space="preserve">
+    <value>سجلات صحة الأعضاء والتعرّض في مكان العمل، للأعضاء الذين تختارهم</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature1" xml:space="preserve">
+    <value>سجل التعرّض للمواد المسرطنة ومسببات الأمراض المنقولة بالدم والمواد الخطرة والحوادث الحرجة، مع إدخالات مقترحة بعد تمييز البلاغ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature2" xml:space="preserve">
+    <value>حالات التعرّض مع سير عمل للمسؤول المعيّن ومتابعة ما بعد التعرّض</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature3" xml:space="preserve">
+    <value>الإصابات مع حالة الخدمة والعودة إلى العمل وتصدير سجل الإصابات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature4" xml:space="preserve">
+    <value>التصاريح الطبية مع حالة القيود، وأدوار الصحة التي تسمّيها منظمتك</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProFeature5" xml:space="preserve">
+    <value>مقاعد فقط للأعضاء الذين تفعّلهم؛ وتبقى السجلات قابلة للعرض إذا توقفت</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProNote" xml:space="preserve">
+    <value>السعر لكل حزمة من 25 عضوًا، بشكل متدرّج: الحزم الأربع الأولى بالسعر الكامل، ثم بسعر أقل. تُحتسب شهريًا لكل قسم؛ دون رسوم إعداد. يتطلب خطة Resgrid مدفوعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProRequiresPaidPlan" xml:space="preserve">
+    <value>يُباع Workforce Pro مع خطة Resgrid مدفوعة. اختر خطة من صفحة الاشتراك أولًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingPacksNote" xml:space="preserve">
+    <value>تتسع كل حزمة لـ 25 عضوًا. تُسعّر الحزم على شرائح: تُحتسب كل حزمة بسعر شريحتها، لذا لا تجعل إضافة الحزم الحزم السابقة أرخص أو أغلى. تُحتسب شهريًا؛ دون رسوم إعداد ودون مدة سنوية.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingSeatsNote" xml:space="preserve">
+    <value>تُحتسب إضافة الحزم فورًا، بشكل تناسبي حتى تاريخ الفوترة. تسري إزالة الحزم في تاريخ الفوترة التالي، وفقط حتى عدد الأعضاء المفعّل لهم Workforce Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProBillingFreeNote" xml:space="preserve">
+    <value>المقاعد مخصصة للأعضاء الذين تحتفظ بسجلاتهم؛ يحتاج المسؤولون والمديرون الذين يتصرفون نيابةً عن الآخرين إلى صلاحيتهم، لا إلى مقعد. إذا انتهت الإضافة، تبقى السجلات الحالية قابلة للعرض والتصدير.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProManageSeats" xml:space="preserve">
+    <value>إدارة مقاعد Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsTitle" xml:space="preserve">
+    <value>مقاعد Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsIntro" xml:space="preserve">
+    <value>فعّل Workforce Pro للأعضاء الذين تحتفظ منظمتك بسجلات صحتهم وتعرّضهم في مكان العمل. إيقاف عضو لا يحذف أي سجل أبدًا: تصبح سجلاته للقراءة فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatCounter" xml:space="preserve">
+    <value>{0} من {1} مقعدًا قيد الاستخدام، {2} متاحة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatMember" xml:space="preserve">
+    <value>العضو</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatState" xml:space="preserve">
+    <value>مقعد Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOn" xml:space="preserve">
+    <value>مفعّل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatOff" xml:space="preserve">
+    <value>متوقف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotLicensed" xml:space="preserve">
+    <value>مفعّل، غير مرخّص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatEnable" xml:space="preserve">
+    <value>تفعيل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDisable" xml:space="preserve">
+    <value>إيقاف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsFull" xml:space="preserve">
+    <value>جميع المقاعد الـ {0} قيد الاستخدام. الحزم المطلوب إضافتها: {1}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatNotActive" xml:space="preserve">
+    <value>يمكن للأعضاء النشطين فقط شغل مقعد Workforce Pro؛ ولا يمكن ذلك للأعضاء المحذوفين أو المعطّلين أو المخفيين.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatAddonInactive" xml:space="preserve">
+    <value>لا تملك منظمتك إضافة Workforce Pro نشطة، لذا لا يمكن تفعيل Workforce Pro لأي أحد. تبقى السجلات الحالية للقراءة فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatFailed" xml:space="preserve">
+    <value>تعذّر تغيير مقعد Workforce Pro. يُرجى المحاولة مرة أخرى.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatSaved" xml:space="preserve">
+    <value>تم تحديث مقعد Workforce Pro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatDormant" xml:space="preserve">
+    <value>{0} مقاعد تعود لأعضاء لم يعودوا نشطين ولا تُحتسب.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProAddPack" xml:space="preserve">
+    <value>إضافة حزمة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsNotPurchased" xml:space="preserve">
+    <value>لا تملك منظمتك إضافة Workforce Pro حاليًا. تبقى سجلات الصحة الحالية قابلة للعرض؛ اشترِ حزمًا لإضافة السجلات أو تغييرها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsGrace" xml:space="preserve">
+    <value>فشلت عملية دفع. يستمر Workforce Pro في العمل حتى {0} أثناء إعادة محاولة الدفع.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WorkforceProSeatsBilling" xml:space="preserve">
+    <value>شراء الحزم أو تغييرها</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

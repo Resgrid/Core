@@ -1,0 +1,150 @@
+@using System.Globalization
+@using Resgrid.Model.Lms
+@model Resgrid.Web.Areas.User.Models.LmsExternalLearners.LmsPublicClassModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsExternalLearners.LmsExternalLearners> localizer
+@*
+    A class session as a paid public class (R-C13): the portal listing, the fee per external learner and its rate item; the roster with each
+    external learner's fee (waive, sponsoring organization); the roster export (always) and Business Operations invoices (when active).
+*@
+@{
+    var billing = Model.Billing;
+    var session = billing.Session;
+    var publicClass = billing.PublicClass;
+    ViewBag.Title = "Resgrid | " + localizer["Class.Header"];
+    ViewData["Title"] = session.Title;
+    ViewData["Subtitle"] = localizer["Class.Header"].Value;
+    ViewData["Message"] = Model.Message;
+    ViewData["Error"] = Model.Error;
+    var culture = CultureInfo.CurrentCulture;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Trainings/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="rgw-toolbar m-b-sm">
+        <a class="btn btn-white btn-sm" asp-controller="LmsClasses" asp-action="Session" asp-route-area="User" asp-route-id="@session.LmsClassSessionId"><i class="fa fa-arrow-left" aria-hidden="true"></i> @session.Title</a>
+        <span class="text-muted">@(Model.Local(session.StartsOn).ToString("f", culture))</span>
+        <a class="btn btn-white btn-sm" asp-controller="LmsExternalLearners" asp-action="ExportRoster" asp-route-area="User" asp-route-id="@session.LmsClassSessionId"><i class="fa fa-file-excel-o" aria-hidden="true"></i> @localizer["Class.Export"]</a>
+    </div>
+
+    <div class="rgw-stat-tiles m-b-sm">
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Class.Due"]</div><div class="rgw-stat-value">@LmsTrainingCurrency.Format(billing.DueTotal, publicClass?.Currency ?? session.Currency ?? Model.DefaultCurrency, culture)</div></div>
+        <div class="rgw-stat-tile"><div class="rgw-stat-label">@localizer["Class.Invoiced"]</div><div class="rgw-stat-value">@LmsTrainingCurrency.Format(billing.InvoicedTotal, publicClass?.Currency ?? session.Currency ?? Model.DefaultCurrency, culture)</div></div>
+    </div>
+
+    <div class="ibox"><div class="ibox-content">
+        <h3>@localizer["Class.Header"]</h3>
+        <form method="post" asp-controller="LmsExternalLearners" asp-action="SaveClass" asp-route-area="User" asp-route-id="@session.LmsClassSessionId">
+            @Html.AntiForgeryToken()
+            <div class="checkbox"><label><input type="checkbox" name="isPublic" value="true" checked="@(publicClass?.IsPublic == true)" /> @localizer["Class.Public"]</label></div>
+            <div class="row">
+                <div class="form-group col-sm-4">
+                    <label for="xl-fee">@localizer["Class.Fee"]</label>
+                    <input id="xl-fee" name="fee" class="form-control" inputmode="decimal" value="@(publicClass?.FeeAmount?.ToString("0.00", culture))" aria-describedby="xl-fee-help" />
+                </div>
+                <div class="form-group col-sm-2">
+                    <label for="xl-currency">@localizer["Class.Currency"]</label>
+                    <input id="xl-currency" name="currency" class="form-control" maxlength="3" value="@(publicClass?.Currency ?? session.Currency ?? Model.DefaultCurrency)" />
+                </div>
+                @if (Model.RateItems.Count > 0)
+                {
+                    <div class="form-group col-sm-6">
+                        <label for="xl-rate">@localizer["Class.RateItem"]</label>
+                        <select id="xl-rate" name="rateCardItemId" class="form-control">
+                            <option value="">@localizer["None"]</option>
+                            @foreach (var item in Model.RateItems)
+                            {
+                                <option value="@item.RateCardItemId" selected="@(string.Equals(item.RateCardItemId, publicClass?.RateCardItemId, StringComparison.OrdinalIgnoreCase))">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                }
+            </div>
+            <p id="xl-fee-help" class="help-block">@localizer["Class.FeeHelp"]</p>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Save"]</button>
+        </form>
+    </div></div>
+
+    <div class="ibox"><div class="ibox-content">
+        <h3>@localizer["Class.Roster"]</h3>
+        @if (!billing.InvoicingAvailable)
+        {
+            <p class="text-muted"><i class="fa fa-info-circle" aria-hidden="true"></i> @localizer["Class.NoInvoicing"]</p>
+        }
+        else if (Model.CanInvoice)
+        {
+            <form method="post" asp-controller="LmsExternalLearners" asp-action="RaiseInvoices" asp-route-area="User" asp-route-id="@session.LmsClassSessionId" class="form-inline m-b-sm">
+                @Html.AntiForgeryToken()
+                <label for="xl-mode" class="sr-only">@localizer["Class.RaiseInvoices"]</label>
+                <select id="xl-mode" name="mode" class="form-control input-sm">
+                    <option value="@LmsClassInvoiceModes.PerLearner">@localizer["Class.Mode.PerLearner"]</option>
+                    <option value="@LmsClassInvoiceModes.PerOrganization">@localizer["Class.Mode.PerOrganization"]</option>
+                </select>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="fa fa-file-text-o" aria-hidden="true"></i> @localizer["Class.RaiseInvoices"]</button>
+            </form>
+        }
+        <div class="table-responsive">
+            <table class="table rgw-table">
+                <thead><tr><th>@localizer["Name"]</th><th>@localizer["Kind"]</th><th>@localizer["Roster"]</th><th>@localizer["Attendance"]</th><th>@localizer["Fee"]</th><th>@localizer["FeeStatus"]</th><th class="rgw-row-actions">@localizer["Actions"]</th></tr></thead>
+                <tbody>
+                    @foreach (var row in billing.Rows)
+                    {
+                        var fee = row.Fee;
+                        <tr>
+                            <td>@row.Name<span class="rgw-sub">@row.Organization</span></td>
+                            <td>@localizer[row.IsExternal ? "Kind.External" : "Kind.Member"]</td>
+                            <td>@localizer["Roster." + (LmsClassEnrollmentStatuses)row.Enrollment.Status]</td>
+                            <td>@localizer["Attendance." + (LmsClassAttendanceStates)row.Enrollment.Attendance]</td>
+                            <td>@(fee == null ? string.Empty : LmsTrainingCurrency.Format(fee.Amount, fee.Currency, culture))</td>
+                            <td>
+                                @if (fee != null)
+                                {
+                                    @(fee.Waived ? localizer["FeeStatus.Waived"] : fee.IsInvoiced ? localizer["FeeStatus.Invoiced"] : row.Billable ? localizer["FeeStatus.Due"] : localizer["FeeStatus.NotDue"])
+                                    @if (fee.IsInvoiced && !string.IsNullOrEmpty(row.InvoiceLabel))
+                                    {
+                                        <span class="rgw-sub">#@row.InvoiceLabel</span>
+                                    }
+                                    @if (!string.IsNullOrEmpty(fee.SponsorContactId) && Model.CustomerNames.TryGetValue(fee.SponsorContactId, out var sponsor))
+                                    {
+                                        <span class="rgw-sub">@sponsor</span>
+                                    }
+                                }
+                            </td>
+                            <td class="rgw-row-actions">
+                                @if (fee != null && string.IsNullOrEmpty(fee.InvoiceId))
+                                {
+                                    <form method="post" asp-controller="LmsExternalLearners" asp-action="SetFee" asp-route-area="User" asp-route-id="@session.LmsClassSessionId" class="form-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="enrollmentId" value="@row.Enrollment.LmsClassEnrollmentId" />
+                                        @if (Model.Customers.Count > 0)
+                                        {
+                                            <label class="sr-only" for="xl-sp-@row.Enrollment.LmsClassEnrollmentId">@localizer["Sponsor"]</label>
+                                            <select id="xl-sp-@row.Enrollment.LmsClassEnrollmentId" name="sponsorContactId" class="form-control input-sm">
+                                                <option value="">@localizer["None"]</option>
+                                                @foreach (var customer in Model.Customers)
+                                                {
+                                                    <option value="@customer.ContactId" selected="@(string.Equals(customer.ContactId, fee.SponsorContactId, StringComparison.OrdinalIgnoreCase))">@Model.CustomerNames[customer.ContactId]</option>
+                                                }
+                                            </select>
+                                        }
+                                        else
+                                        {
+                                            <input type="hidden" name="sponsorContactId" value="@fee.SponsorContactId" />
+                                        }
+                                        <label class="checkbox-inline"><input type="checkbox" name="waived" value="true" checked="@fee.Waived" /> @localizer["Waive"]</label>
+                                        <button type="submit" class="btn btn-white btn-xs"><i class="fa fa-save" aria-hidden="true"></i> @localizer["Save"]</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div></div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

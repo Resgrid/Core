@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CaseReviewsTab" xml:space="preserve">
+    <value>Перевірки викликів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MyCaseReviewsTab" xml:space="preserve">
+    <value>Мої перевірки викликів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueLink" xml:space="preserve">
+    <value>Черга</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleLink" xml:space="preserve">
+    <value>Вибірка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsLink" xml:space="preserve">
+    <value>Звіти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsLink" xml:space="preserve">
+    <value>Шкали оцінювання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueIntro" xml:space="preserve">
+    <value>Відібрані виклики диспетчерської, що чекають на перевірку, найстаріші першими.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueCaption" xml:space="preserve">
+    <value>Виклики диспетчерської, що чекають на перевірку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QueueEmpty" xml:space="preserve">
+    <value>Черга порожня. Зробіть вибірку, щоб почати перевірку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileQueued" xml:space="preserve">
+    <value>У черзі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileInReview" xml:space="preserve">
+    <value>Чернетки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAssignedToMe" xml:space="preserve">
+    <value>Призначені мені</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAwaitingAcknowledgment" xml:space="preserve">
+    <value>Чекають на диспетчера</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAcknowledged" xml:space="preserve">
+    <value>Підтверджені</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileReviews" xml:space="preserve">
+    <value>Перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileAverageScore" xml:space="preserve">
+    <value>Середня оцінка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileOverrides" xml:space="preserve">
+    <value>Ручні зміни</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TileToAcknowledge" xml:space="preserve">
+    <value>До підтвердження</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowWholeQueue" xml:space="preserve">
+    <value>Уся черга</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ShowMineOnly" xml:space="preserve">
+    <value>Призначені мені</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleCallsButton" xml:space="preserve">
+    <value>Відібрати виклики</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CallColumn" xml:space="preserve">
+    <value>Виклик</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolColumn" xml:space="preserve">
+    <value>Протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherColumn" xml:space="preserve">
+    <value>Диспетчер</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignedColumn" xml:space="preserve">
+    <value>Призначено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Стан</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActionsColumn" xml:space="preserve">
+    <value>Дії</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverriddenLabel" xml:space="preserve">
+    <value>Змінено вручну</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Unassigned" xml:space="preserve">
+    <value>Не призначено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnCaseShort" xml:space="preserve">
+    <value>Ваш виклик</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewButton" xml:space="preserve">
+    <value>Перевірити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakeButton" xml:space="preserve">
+    <value>Взяти</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Прибрати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemoveConfirm" xml:space="preserve">
+    <value>Прибрати цей виклик із черги? Його можна буде відібрати знову пізніше.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusQueued" xml:space="preserve">
+    <value>У черзі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusInReview" xml:space="preserve">
+    <value>Чернетка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusSent" xml:space="preserve">
+    <value>Надіслано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="StatusAcknowledged" xml:space="preserve">
+    <value>Підтверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleTitle" xml:space="preserve">
+    <value>Вибірка викликів для перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleIntro" xml:space="preserve">
+    <value>Випадково виберіть виклики для перевірки за протоколом, версією, детермінантою, диспетчером і датами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewHeader" xml:space="preserve">
+    <value>Попередній перегляд вибірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewCandidates" xml:space="preserve">
+    <value>Відповідні виклики</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewAlreadyReviewed" xml:space="preserve">
+    <value>Уже перевірені</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewExcluded" xml:space="preserve">
+    <value>Пропущені</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewEligible" xml:space="preserve">
+    <value>Придатні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewSampleSize" xml:space="preserve">
+    <value>Буде відібрано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewCapped" xml:space="preserve">
+    <value>Пораховано лише {0} найновіших відповідних викликів. Звузьте дати, щоб порахувати всі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WhichCallsLegend" xml:space="preserve">
+    <value>Які виклики</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FromLabel" xml:space="preserve">
+    <value>З</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ToLabel" xml:space="preserve">
+    <value>По</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ProtocolLabel" xml:space="preserve">
+    <value>Протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="VersionLabel" xml:space="preserve">
+    <value>Версія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantLabel" xml:space="preserve">
+    <value>Детермінанта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DeterminantHelp" xml:space="preserve">
+    <value>Детермінанта або її початок, наприклад 09-E.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherLabel" xml:space="preserve">
+    <value>Диспетчер</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="HowManyLegend" xml:space="preserve">
+    <value>Скільки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModeCount" xml:space="preserve">
+    <value>Кількість викликів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModePercent" xml:space="preserve">
+    <value>Відсоток придатних викликів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampleSizeHelp" xml:space="preserve">
+    <value>Не більше {0} викликів на вибірку. Відсоток округлюється вгору. Уже перевірені виклики ніколи не відбираються знову.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricLabel" xml:space="preserve">
+    <value>Шкала оцінювання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignToLabel" xml:space="preserve">
+    <value>Призначити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssignHelp" xml:space="preserve">
+    <value>Власні виклики цієї особи не потрапляють у вибірку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Порахувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DrawSampleButton" xml:space="preserve">
+    <value>Зробити вибірку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyProtocol" xml:space="preserve">
+    <value>Будь-який протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyVersion" xml:space="preserve">
+    <value>Будь-яка версія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnyDispatcher" xml:space="preserve">
+    <value>Будь-який диспетчер</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRubricWillBeCreated" xml:space="preserve">
+    <value>Стандартна шкала (створюється з першою вибіркою)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SampledMessage" xml:space="preserve">
+    <value>{0} викликів поставлено в чергу на перевірку ({1} придатних, {2} уже перевірених).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReviewTitle" xml:space="preserve">
+    <value>Перевірка виклику {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OwnCaseNotice" xml:space="preserve">
+    <value>Це ваш власний виклик: його має оцінити інший перевіряльник.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ScoreLabel" xml:space="preserve">
+    <value>Оцінка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="QuestionComplianceLabel" xml:space="preserve">
+    <value>Дотримання запитань</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InstructionComplianceLabel" xml:space="preserve">
+    <value>Дотримання інструкцій</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotApplicableShort" xml:space="preserve">
+    <value>н/з</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CaseHeader" xml:space="preserve">
+    <value>Виклик у записаному вигляді</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverrideDetail" xml:space="preserve">
+    <value>Обчислено {0}; змінено вручну: {1}, {2}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="OverrideReasonLabel" xml:space="preserve">
+    <value>Причина</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PriorityLabel" xml:space="preserve">
+    <value>Запропонований пріоритет</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceLabel" xml:space="preserve">
+    <value>Джерело</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SourceAi" xml:space="preserve">
+    <value>Пропозиція Enhanced AI, підтверджена</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineHeader" xml:space="preserve">
+    <value>Хронологія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCallLogged" xml:space="preserve">
+    <value>Виклик зареєстровано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineAttached" xml:space="preserve">
+    <value>Протокол додано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCaseCompleted" xml:space="preserve">
+    <value>Перебіг виклику завершено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCaseNotCompleted" xml:space="preserve">
+    <value>Перебіг виклику не завершено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineOverridden" xml:space="preserve">
+    <value>Детермінанту змінено вручну</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineCallerText" xml:space="preserve">
+    <value>Повідомлення абоненту</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineStepsStarted" xml:space="preserve">
+    <value>Покрокове виконання розпочато</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineStepsCompleted" xml:space="preserve">
+    <value>завершено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineSampled" xml:space="preserve">
+    <value>Відібрано для перевірки</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineSent" xml:space="preserve">
+    <value>Перевірку надіслано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TimelineAcknowledged" xml:space="preserve">
+    <value>Підтверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ItemsHeader" xml:space="preserve">
+    <value>Запитання та інструкції</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoItems" xml:space="preserve">
+    <value>Для цього виклику не записано запитань чи інструкцій.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindEntryQuestion" xml:space="preserve">
+    <value>Вступне запитання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindKeyQuestion" xml:space="preserve">
+    <value>Ключове запитання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="KindInstruction" xml:space="preserve">
+    <value>Інструкція</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AnswerLabel" xml:space="preserve">
+    <value>Відповідь</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceLabel" xml:space="preserve">
+    <value>Дотримання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotScored" xml:space="preserve">
+    <value>Не оцінено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceCompliant" xml:space="preserve">
+    <value>Дотримано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CompliancePartial" xml:space="preserve">
+    <value>Частково</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotCompliant" xml:space="preserve">
+    <value>Не дотримано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ComplianceNotApplicable" xml:space="preserve">
+    <value>Не застосовується</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Примітка (необов'язково)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriteriaHeader" xml:space="preserve">
+    <value>Критерії шкали</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeightLabel" xml:space="preserve">
+    <value>вага {0}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DerivedCriterionHelp" xml:space="preserve">
+    <value>Оцінюється за запитаннями та інструкціями вище.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotScoredOption" xml:space="preserve">
+    <value>Не оцінено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score100" xml:space="preserve">
+    <value>100 - виконано повністю</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score75" xml:space="preserve">
+    <value>75 - виконано здебільшого</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score50" xml:space="preserve">
+    <value>50 - виконано частково</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score25" xml:space="preserve">
+    <value>25 - ледве виконано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Score0" xml:space="preserve">
+    <value>0 - не виконано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsLabel" xml:space="preserve">
+    <value>Коментарі для диспетчера</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CommentsHelp" xml:space="preserve">
+    <value>Диспетчер читає ці коментарі разом з оцінками.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveDraftButton" xml:space="preserve">
+    <value>Зберегти чернетку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SendButton" xml:space="preserve">
+    <value>Надіслати диспетчеру</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriterionColumn" xml:space="preserve">
+    <value>Критерій</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="WeightColumn" xml:space="preserve">
+    <value>Вага</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeedbackHeader" xml:space="preserve">
+    <value>Відгук диспетчера</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedOn" xml:space="preserve">
+    <value>Підтверджено {0}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotAcknowledgedYet" xml:space="preserve">
+    <value>Ще не підтверджено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DispatcherReplyHeader" xml:space="preserve">
+    <value>Відповідь диспетчера</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyOptionalLabel" xml:space="preserve">
+    <value>Відповідь (необов'язково)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyOnceHelp" xml:space="preserve">
+    <value>Ви можете відповісти один раз; перевіряльника буде сповіщено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgeButton" xml:space="preserve">
+    <value>Підтвердити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyLabel" xml:space="preserve">
+    <value>Ваша відповідь</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReplyButton" xml:space="preserve">
+    <value>Надіслати відповідь</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GraphHeader" xml:space="preserve">
+    <value>Перебіг виклику в протоколі</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoGraph" xml:space="preserve">
+    <value>Цитована версія не має перебігу виклику для показу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PathLegend" xml:space="preserve">
+    <value>Кроки на шляху цього виклику</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MineIntro" xml:space="preserve">
+    <value>Перевірки викликів, які ви обробляли. Прочитайте й підтвердьте кожну; ви можете відповісти один раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="MineEmpty" xml:space="preserve">
+    <value>Для вас ще немає перевірок викликів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReadAndAcknowledgeButton" xml:space="preserve">
+    <value>Прочитати й підтвердити</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RepliedLabel" xml:space="preserve">
+    <value>Ви відповіли</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsTitle" xml:space="preserve">
+    <value>Звіти перевірок викликів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportsIntro" xml:space="preserve">
+    <value>Дотримання в перевірених викликах диспетчерської за протоколом, версією, диспетчером і місяцем.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ApplyButton" xml:space="preserve">
+    <value>Застосувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ExportCsvButton" xml:space="preserve">
+    <value>Експортувати в CSV</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ReportEmpty" xml:space="preserve">
+    <value>Немає надісланих перевірок викликів за цей період.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByMonthHeader" xml:space="preserve">
+    <value>За місяцем</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByProtocolHeader" xml:space="preserve">
+    <value>За протоколом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByVersionHeader" xml:space="preserve">
+    <value>За версією</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByDispatcherHeader" xml:space="preserve">
+    <value>За диспетчером</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ByItemHeader" xml:space="preserve">
+    <value>За запитанням та інструкцією</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Група</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCall" xml:space="preserve">
+    <value>Виклик</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvCallDate" xml:space="preserve">
+    <value>Дата виклику</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvProtocol" xml:space="preserve">
+    <value>Протокол</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvVersion" xml:space="preserve">
+    <value>Версія</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDeterminant" xml:space="preserve">
+    <value>Детермінанта</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvOverridden" xml:space="preserve">
+    <value>Змінено вручну</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvDispatcher" xml:space="preserve">
+    <value>Диспетчер</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvReviewer" xml:space="preserve">
+    <value>Перевіряльник</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvScore" xml:space="preserve">
+    <value>Оцінка</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvQuestionCompliance" xml:space="preserve">
+    <value>Дотримання запитань %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvInstructionCompliance" xml:space="preserve">
+    <value>Дотримання інструкцій %</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvSent" xml:space="preserve">
+    <value>Надіслано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CsvAcknowledged" xml:space="preserve">
+    <value>Підтверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Так</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ні</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsTitle" xml:space="preserve">
+    <value>Шкали оцінювання викликів</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricsIntro" xml:space="preserve">
+    <value>Шкали контролю якості Records для оцінювання викликів диспетчерської. Кожна перевірка зберігає критерії, з якими її відібрали.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NoRubrics" xml:space="preserve">
+    <value>Шкали оцінювання викликів ще немає.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CreateTemplateButton" xml:space="preserve">
+    <value>Створити стандартну шкалу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="InactiveLabel" xml:space="preserve">
+    <value>Неактивна</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DerivedLabel" xml:space="preserve">
+    <value>за пунктами</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Редагувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NewRubricHeader" xml:space="preserve">
+    <value>Нова шкала</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="EditRubricHeader" xml:space="preserve">
+    <value>Редагувати шкалу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricNameLabel" xml:space="preserve">
+    <value>Назва</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Активна</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriteriaHelp" xml:space="preserve">
+    <value>Ключі "questions" та "instructions" беруть оцінку із запитань та інструкцій; інші критерії оцінюються вручну. Вага від 1 до 10.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CriterionKeyColumn" xml:space="preserve">
+    <value>Ключ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Скасувати</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SaveRubricButton" xml:space="preserve">
+    <value>Зберегти шкалу</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricSavedMessage" xml:space="preserve">
+    <value>Шкалу збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RubricNotSaved" xml:space="preserve">
+    <value>Шкалу не збережено. Потрібні назва й принаймні один критерій з унікальними ключами.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRubricName" xml:space="preserve">
+    <value>Перевірка викликів диспетчерської</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCaseEntry" xml:space="preserve">
+    <value>Прийом виклику: адресу, номер для зворотного дзвінка й основну скаргу підтверджено</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateQuestions" xml:space="preserve">
+    <value>Запитання поставлено як написано, у порядку</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateDeterminant" xml:space="preserve">
+    <value>Правильна детермінанта (ручна зміна має вагому причину)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateInstructions" xml:space="preserve">
+    <value>Інструкції надано як написано</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateCallerCare" xml:space="preserve">
+    <value>Спокійно, чітко й ввічливо з абонентом</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TakenMessage" xml:space="preserve">
+    <value>Виклик у вашій черзі.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RemovedMessage" xml:space="preserve">
+    <value>Виклик прибрано з черги.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SentMessage" xml:space="preserve">
+    <value>Перевірку надіслано диспетчеру.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="DraftSavedMessage" xml:space="preserve">
+    <value>Чернетку збережено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AcknowledgedMessage" xml:space="preserve">
+    <value>Перевірку підтверджено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RepliedMessage" xml:space="preserve">
+    <value>Вашу відповідь надіслано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultDone" xml:space="preserve">
+    <value>Готово.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNotFound" xml:space="preserve">
+    <value>Цю перевірку не знайдено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultForbidden" xml:space="preserve">
+    <value>У вас немає на це права.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultOwnCase" xml:space="preserve">
+    <value>Ви не можете перевіряти власний виклик.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadySent" xml:space="preserve">
+    <value>Перевірку вже надіслано диспетчеру, і її більше не можна змінити.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultIncomplete" xml:space="preserve">
+    <value>Перед надсиланням оцініть кожне запитання, інструкцію та критерій.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadyAcknowledged" xml:space="preserve">
+    <value>Цю перевірку вже підтверджено.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultAlreadyCommented" xml:space="preserve">
+    <value>Ви вже відповіли на цю перевірку.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNotSent" xml:space="preserve">
+    <value>Цю перевірку ще не надіслано.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultConflict" xml:space="preserve">
+    <value>Хтось інший змінив або взяв цю перевірку. Перезавантажте сторінку й спробуйте ще раз.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultCommentRequired" xml:space="preserve">
+    <value>Спершу напишіть відповідь.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultNoRubric" xml:space="preserve">
+    <value>Виберіть активну шкалу оцінювання викликів.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ResultInvalid" xml:space="preserve">
+    <value>Перевірте дати й розмір вибірки.</value>
+    <comment>machine-translated</comment>
+  </data>
+</root>

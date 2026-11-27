@@ -65,6 +65,7 @@
 @await Html.PartialAsync("_Shell")
 
 <div class="wrapper wrapper-content rgw-page">
+    @await Component.InvokeAsync("ApprovalPanel", new { kind = Resgrid.Model.SignatureSubjectKinds.InvoiceApproval, subjectId = invoice.InvoiceId })
     @if (!string.IsNullOrWhiteSpace(Model.Message))
     {
         <div class="alert alert-info">@Model.Message</div>

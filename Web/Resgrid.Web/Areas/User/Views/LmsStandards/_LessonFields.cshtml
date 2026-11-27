@@ -1,0 +1,52 @@
+@using Resgrid.Model.Lms
+@using Resgrid.Web.Areas.User.Models.LmsStandards
+@model LmsStandardsLessonFieldsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.LmsStandards.LmsStandards> localizer
+@* The course builder's fields of a Scorm, Cmi5 or LtiLink lesson (inside the lesson editor's form; the course service checks them again). *@
+@{
+    var lesson = Model.Lesson;
+}
+@if (Model.Kind == (int)LmsLessonKinds.LtiLink)
+{
+    <div class="rgw-grid">
+        <div class="form-group">
+            <label for="l-tool">@localizer["Std.Lesson.Tool"]</label>
+            <select id="l-tool" name="LmsLtiToolId" class="form-control" required>
+                <option value="">@localizer["Std.Choose"]</option>
+                @foreach (var tool in Model.Tools)
+                {
+                    <option value="@tool.LmsLtiToolId" selected="@(lesson.LmsLtiToolId == tool.LmsLtiToolId)">@tool.Name@(tool.AllowGradePassback ? "" : " · " + localizer["Std.Lesson.NoPassback"].Value)</option>
+                }
+            </select>
+        </div>
+        <div class="form-group"><label for="l-target">@localizer["Std.Lesson.Target"]</label><input id="l-target" name="LtiTargetLinkUri" type="url" class="form-control" value="@lesson.LtiTargetLinkUri" maxlength="2000" /></div>
+        <div class="form-group"><label for="l-passmark">@localizer["Std.Lesson.PassMark"]</label><input id="l-passmark" name="PassMark" type="number" min="0" max="100" class="form-control" value="@lesson.PassMark" /></div>
+    </div>
+    <div class="form-group">
+        <label for="l-custom">@localizer["Std.Field.Custom"]</label>
+        <textarea id="l-custom" name="LtiCustomParameters" class="form-control" rows="2" maxlength="4000" spellcheck="false">@lesson.LtiCustomParameters</textarea>
+    </div>
+    <p class="help-block">@localizer["Std.Lesson.LtiHelp"]</p>
+    @if (Model.Tools.Count == 0)
+    {
+        <p class="text-muted"><a asp-controller="LmsStandards" asp-action="Tools" asp-route-area="User">@localizer["Std.Lesson.NoTools"]</a></p>
+    }
+}
+else
+{
+    <div class="form-group">
+        <label for="l-package">@localizer["Std.Lesson.Package"]</label>
+        <select id="l-package" name="LmsContentPackageId" class="form-control" required>
+            <option value="">@localizer["Std.Choose"]</option>
+            @foreach (var package in Model.Packages)
+            {
+                <option value="@package.LmsContentPackageId" selected="@(lesson.LmsContentPackageId == package.LmsContentPackageId)">@package.Title (@localizer["Std.Standard." + (LmsContentStandards)package.Standard], @localizer["Std.PackageStatus." + (LmsContentPackageStatuses)package.Status])</option>
+            }
+        </select>
+        <span class="help-block">@localizer["Std.Lesson.PackageHelp"]</span>
+    </div>
+    @if (Model.Packages.Count == 0)
+    {
+        <p class="text-muted"><a asp-controller="LmsStandards" asp-action="Index" asp-route-area="User">@localizer["Std.Lesson.NoPackages"]</a></p>
+    }
+}

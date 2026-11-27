@@ -1,0 +1,202 @@
+{
+  "schema": 1,
+  "id": "03-custom-statuses",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Custom statuses",
+  "minutes": 7.1,
+  "walkthrough": true,
+  "audience": [
+    "dispatcher",
+    "administrator"
+  ],
+  "visibility": [],
+  "pages": [
+    "CustomStatuses"
+  ],
+  "adminAssist": {
+    "areas": [
+      "calls"
+    ],
+    "capabilities": [
+      "custom-statuses"
+    ]
+  },
+  "media": {
+    "video": "deep-dive/media/03-custom-statuses.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "deep-dive/lessons/03-custom-statuses/captions.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Create statuses with useful operational meaning",
+    "ar": "أنشئ حالات ذات معنى تشغيلي مفيد",
+    "de": "Status mit nützlicher Einsatzbedeutung anlegen",
+    "el": "Δημιουργήστε καταστάσεις με χρήσιμο επιχειρησιακό νόημα",
+    "es": "Crear estados con un significado operativo útil",
+    "fr": "Créer des statuts au sens opérationnel utile",
+    "it": "Creare stati con un significato operativo utile",
+    "pl": "Twórz statusy o przydatnym znaczeniu operacyjnym",
+    "sv": "Skapa statusar med användbar operativ betydelse",
+    "uk": "Створюйте статуси з корисним оперативним значенням"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "c",
+      "text": {
+        "en": "What makes a good custom status?",
+        "ar": "ما الذي يجعل الحالة المخصصة جيدة؟",
+        "de": "Was macht einen guten eigenen Status aus?",
+        "el": "Τι κάνει καλή μια προσαρμοσμένη κατάσταση;",
+        "es": "¿Qué hace bueno a un estado personalizado?",
+        "fr": "Qu’est-ce qu’un bon statut personnalisé ?",
+        "it": "Che cosa rende valido uno stato personalizzato?",
+        "pl": "Co cechuje dobry status niestandardowy?",
+        "sv": "Vad kännetecknar en bra egen status?",
+        "uk": "Що робить власний статус вдалим?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "A long joke",
+            "ar": "نكتة طويلة",
+            "de": "Ein langer Witz",
+            "el": "Ένα μεγάλο αστείο",
+            "es": "Un chiste largo",
+            "fr": "Une longue blague",
+            "it": "Una lunga battuta",
+            "pl": "Długi żart",
+            "sv": "Ett långt skämt",
+            "uk": "Довгий жарт"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "A status nobody uses",
+            "ar": "حالة لا يستخدمها أحد",
+            "de": "Ein Status, den niemand nutzt",
+            "el": "Μια κατάσταση που κανείς δεν χρησιμοποιεί",
+            "es": "Un estado que nadie usa",
+            "fr": "Un statut que personne n’utilise",
+            "it": "Uno stato che nessuno usa",
+            "pl": "Status, którego nikt nie używa",
+            "sv": "En status som ingen använder",
+            "uk": "Статус, яким ніхто не користується"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "A clear label that tells dispatch something useful",
+            "ar": "تسمية واضحة تخبر مركز الإرسال بشيء مفيد",
+            "de": "Eine klare Bezeichnung, die der Leitstelle etwas Nützliches sagt",
+            "el": "Σαφής ετικέτα που λέει κάτι χρήσιμο στη διασπορά",
+            "es": "Una etiqueta clara que dice algo útil a la central",
+            "fr": "Un libellé clair qui apprend quelque chose d’utile au centre d’alerte",
+            "it": "Un’etichetta chiara che dice qualcosa di utile alla centrale",
+            "pl": "Jasna etykieta, która mówi dyspozytorni coś przydatnego",
+            "sv": "En tydlig etikett som säger larmcentralen något användbart",
+            "uk": "Чітка назва, що повідомляє диспетчеру щось корисне"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "What can custom statuses be set for?",
+        "ar": "لماذا يمكن تعيين الحالات المخصصة؟",
+        "de": "Wofür lassen sich eigene Status festlegen?",
+        "el": "Για τι μπορούν να οριστούν προσαρμοσμένες καταστάσεις;",
+        "es": "¿Para qué se pueden definir estados personalizados?",
+        "fr": "Pour quoi peut-on définir des statuts personnalisés ?",
+        "it": "Per che cosa si possono definire stati personalizzati?",
+        "pl": "Dla czego można ustawić statusy niestandardowe?",
+        "sv": "Vad kan egna statusar anges för?",
+        "uk": "Для чого можна задати власні статуси?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Invoices",
+            "ar": "الفواتير",
+            "de": "Rechnungen",
+            "el": "Τιμολόγια",
+            "es": "Facturas",
+            "fr": "Les factures",
+            "it": "Fatture",
+            "pl": "Faktur",
+            "sv": "Fakturor",
+            "uk": "Рахунків"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "Personnel and units",
+            "ar": "الأفراد والوحدات",
+            "de": "Personal und Einheiten",
+            "el": "Προσωπικό και μονάδες",
+            "es": "Personal y unidades",
+            "fr": "Le personnel et les unités",
+            "it": "Personale e mezzi",
+            "pl": "Personelu i jednostek",
+            "sv": "Personal och enheter",
+            "uk": "Персоналу та підрозділів"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "Question banks",
+            "ar": "بنوك الأسئلة",
+            "de": "Fragenpools",
+            "el": "Τράπεζες ερωτήσεων",
+            "es": "Bancos de preguntas",
+            "fr": "Les banques de questions",
+            "it": "Banche di domande",
+            "pl": "Banków pytań",
+            "sv": "Frågebanker",
+            "uk": "Банків питань"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Custom statuses can replace the default status buttons in the apps.",
+        "ar": "يمكن للحالات المخصصة أن تحل محل أزرار الحالة الافتراضية في التطبيقات.",
+        "de": "Eigene Status können die Standard-Statustasten in den Apps ersetzen.",
+        "el": "Οι προσαρμοσμένες καταστάσεις μπορούν να αντικαταστήσουν τα προεπιλεγμένα κουμπιά κατάστασης στις εφαρμογές.",
+        "es": "Los estados personalizados pueden sustituir a los botones de estado predeterminados en las aplicaciones.",
+        "fr": "Les statuts personnalisés peuvent remplacer les boutons de statut par défaut dans les applications.",
+        "it": "Gli stati personalizzati possono sostituire i pulsanti di stato predefiniti nelle app.",
+        "pl": "Statusy niestandardowe mogą zastąpić domyślne przyciski statusu w aplikacjach.",
+        "sv": "Egna statusar kan ersätta standardknapparna för status i apparna.",
+        "uk": "Власні статуси можуть замінити стандартні кнопки статусу в застосунках."
+      }
+    }
+  ]
+}

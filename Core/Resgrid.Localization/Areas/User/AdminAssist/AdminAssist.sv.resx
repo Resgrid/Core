@@ -3243,6 +3243,26 @@
   <data xml:space="preserve" name="Permission.CreateTraining">
     <value>Skapa utbildning</value>
   </data>
+  <data xml:space="preserve" name="Permission.AssignTraining">
+    <value>Tilldela utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.DeleteTraining">
+    <value>Ta bort utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.AuthorProtocols">
+    <value>Skriva protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ApproveProtocols">
+    <value>Godkänna protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageProtocolAcknowledgments">
+    <value>Hantera protokollbekräftelser</value>
+    <comment>machine-translated</comment>
+  </data>
   <data xml:space="preserve" name="Permission.CreateWorkflow">
     <value>Skapa arbetsflöde</value>
   </data>
@@ -3487,7 +3507,44 @@
     <value>Tillåter att skift och arbetsskift skapas, redigeras och tas bort samt att anmälningar hanteras för alla grupper. Gruppadministratörer hanterar alltid anmälningar för sina egna grupper. Medlemmar som anmäler sig – på webben, i apparna eller via chattboten – måste följa skiftets regler (inga passerade dagar, tilldelade skift kräver en tilldelning, gruppskift kräver medlemmens grupp). Alla kan fortfarande visa skift. Utan sparad regel får endast avdelningsadministratörer ändra skift.</value>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateTraining">
-    <value>Tillåter att utbildningar skapas, redigeras och tas bort samt att medlemmars utbildningsframsteg återställs. Alla kan fortfarande visa och genomföra utbildningar. Utan sparad regel får endast avdelningsadministratörer göra detta.</value>
+    <value>Tillåter att skapa utbildningar och skriva deras innehåll och quiz, inklusive facit. Tilldelning och rapporter (Tilldela utbildning) samt arkivering eller borttagning (Ta bort utbildning) är egna regler som följer den här tills de sparas. Alla kan fortfarande visa och slutföra de utbildningar som tilldelats dem eller är öppna för dem. Utan sparad regel får bara avdelningsadministratörer göra detta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AssignTraining">
+    <value>Tillåter att tilldela medlemmar utbildningar, ange förfallodatum, förlängningar och undantag, återställa medlemmar och läsa utbildningsrapporten och försökshistoriken. Gruppadministratörer agerar bara för medlemmar i sin egen grupp. Tills den sparas följer den Skapa utbildning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.DeleteTraining">
+    <value>Tillåter att arkivera, återställa och ta bort utbildningar. En utbildning som någon har slutfört arkiveras i stället för att tas bort, så att dess slutföranden finns kvar. Tills den sparas följer den Skapa utbildning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.AuthorProtocols">
+    <value>Tillåter att skapa, kopiera och importera protokoll, redigera deras biblioteksfält, utlösare, frågor och målgrupp, skriva utkast och skicka dem för godkännande, inaktivera protokoll och exportera biblioteket. Författare ser också utkast, granskningskön och alla protokoll oavsett målgrupp. Att godkänna och publicera kräver Godkänna protokoll. Utan sparad regel får bara avdelningsadministratörer göra detta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ApproveProtocols">
+    <value>Tillåter att godkänna eller avslå inskickade protokollversioner, publicera dem direkt eller ett bestämt datum, registrera ”granskad, ingen ändring”, dra tillbaka och ta bort protokoll, lägga ett protokolls juridiska spärr samt hantera kategorier och deras godkännandesteg. Varje godkännande signeras med en ny förstärkt verifiering eller en lösennyckel. Utan sparad regel får bara avdelningsadministratörer göra detta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ManageCourses">
+    <value>Hantera kurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageCourses">
+    <value>Tillåter att skapa kurser och frågebanker, ladda upp kursvideor, skicka in, godkänna och publicera kursversioner, tilldela kurser och läsa kursresultat. Varje godkännande signeras med en färsk extra verifiering. Kurser ingår i LMS-tillägget, som inte är tillgängligt än; lektioner i Resgrid Academy kan tilldelas med denna behörighet eller med Tilldela utbildning. Utan sparad regel får bara organisationens administratörer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.GradeAssessments">
+    <value>Bedöma prov</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.GradeAssessments">
+    <value>Tillåter att bedöma fritextsvar som väntar i bedömningskön och läsa frågeanalysen. Ingen bedömer sitt eget försök. Ingår i LMS-tillägget, som inte är tillgängligt än. Utan sparad regel får bara organisationens administratörer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ManageProtocolAcknowledgments">
+    <value>Reserverad för läs- och signeringsbekräftelser: vem som ska tilldela medlemmar protokoll att läsa och signera, undanta medlemmar och läsa bekräftelserapporten. Läs och signera finns inte än, så att spara regeln ändrar ingenting i dag. Utan sparad regel får bara avdelningsadministratörer göra detta.</value>
+    <comment>machine-translated</comment>
   </data>
   <data xml:space="preserve" name="PermissionHelp.CreateWorkflow">
     <value>Tillåter att arbetsflöden skapas, redigeras och tas bort, att deras villkor förhandsgranskas, att stegkonfigurationen läses i apparna och API:t och att den renderade utdatan från arbetsflödeskörningar visas. Utan sparad regel kan endast avdelningsadministratörer ändra arbetsflöden, men alla medlemmar kan öppna sidan Arbetsflöden och läsa definitioner; om du sparar Avdelningsadministratörer döljs arbetsflödena även för alla andra. Steg som skickar en export från Poster kräver också Exportera poster och Hantera rapportsammanställningar. Gratisplaner är begränsade i hur många arbetsflöden de kan ha.</value>
@@ -8267,5 +8324,2201 @@
   </data>
   <data name="SettingHelp.EmailLabeledFields" xml:space="preserve">
     <value>Används när ert e-postformat är "Labeled fields". Ange etiketten som ert CAD skriver framför varje värde. Skilj alternativ åt med |.</value>
+  </data>
+  <data name="Feature.protocol-edit" xml:space="preserve">
+    <value>Redigera protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-edit" xml:space="preserve">
+    <value>Ändra ett protokolls innehåll, utlösare och frågor på plats; larm behåller texten de larmades med.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-disable" xml:space="preserve">
+    <value>Inaktivera protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-disable" xml:space="preserve">
+    <value>Sluta föreslå och bifoga ett protokoll utan att ta bort det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.call-protocol-removal" xml:space="preserve">
+    <value>Ta bort ett protokoll från ett larm</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.call-protocol-removal" xml:space="preserve">
+    <value>Ta bort ett felaktigt bifogat protokoll från ett larm med en orsak; registret behåller det, markerat som borttaget.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ProtocolLibrarySettings" xml:space="preserve">
+    <value>Avdelningsövergripande regler på sidan Inställningar för protokoll: om godkännanden kräver en lösennyckel och läs och signera en förstärkt verifiering, vilket granskningsintervall nya protokoll börjar med och hur länge ersatta och tillbakadragna versioner sparas, med en juridisk spärr som stoppar all borttagning. Saknas den gäller standardnivåerna för signering, inget standardintervall och alla versioner sparas. Bara avdelningsadministratörer kan ändra den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Kräv lösennyckel för godkännande</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.RequirePasskeyForApproval" xml:space="preserve">
+    <value>Godkännanden och stämplar med ”granskad, ingen ändring” måste signeras med en lösennyckel; en förstärkt verifiering med autentiseringskod eller inloggningsleverantör räcker inte längre. Godkännare utan registrerad lösennyckel kan inte signera förrän de lägger till en. Avstängd signerar varje ny förstärkt verifiering eller lösennyckel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Läs och signera kräver förstärkt verifiering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ReadAndSignRequiresStepUp" xml:space="preserve">
+    <value>Läs- och signeringsbekräftelser kommer att kräva en ny förstärkt verifiering i stället för bara den inloggade sessionen. Läs och signera finns inte än; valet sparas tills det gör det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Standardintervall för granskning i dagar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultReviewIntervalDays" xml:space="preserve">
+    <value>Dagar mellan granskningar för nya och importerade protokoll som inte anger ett eget intervall, 0 till 3650; 0 anger inget. Befintliga protokoll behåller sitt. Att publicera en version eller registrera ”granskad, ingen ändring” startar om intervallet, och protokollets ägare, eller avdelningsadministratörerna om ägare saknas, påminns 30 och 7 dagar innan granskningen förfaller och igen när den är försenad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Juridisk spärr</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.LegalHold" xml:space="preserve">
+    <value>En juridisk spärr för hela avdelningen: så länge den är på tas ingen ersatt eller tillbakadragen protokollversion bort, oavsett antal sparade dagar. En godkännare kan också spärra ett enskilt protokoll från dess redigeringssida.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Lagringstid</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.Retention" xml:space="preserve">
+    <value>Dagar som varje protokolltyp (Utlarmning, SOG, Klinisk riktlinje, Policy, Procedur, Referens) sparar en version efter att den ersatts eller dragits tillbaka, upp till 36500; därefter tar en bakgrundsprocess bort den. 0 sparar den typens versioner. En version som fortfarande är bifogad till ett larm tas aldrig bort, och inget tas bort medan en juridisk spärr är på.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Lagringstid per protokolltyp / Typ</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.Kind" xml:space="preserve">
+    <value>Den protokolltyp som posten gäller: 0 Utlarmning, 1 SOG, 2 Klinisk riktlinje, 3 Policy, 4 Procedur, 5 Referens. En post per typ; en typ utan post sparar alla versioner.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Lagringstid per protokolltyp / Antal dagar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolKindRetention.KeepDays" xml:space="preserve">
+    <value>Dagar efter att en version av den typen ersatts eller dragits tillbaka innan den får tas bort, 1 till 36500. En post med 0 tas bort när den sparas, så typen behåller sina versioner.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-queue" xml:space="preserve">
+    <value>Granskningskö för protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-queue" xml:space="preserve">
+    <value>Godkänn med signatur eller avslå inskickade protokollversioner och publicera dem sedan direkt eller ett bestämt datum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-review-stamp" xml:space="preserve">
+    <value>Registrera en protokollgranskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-review-stamp" xml:space="preserve">
+    <value>Markera ett publicerat protokoll som ”granskad, ingen ändring” med en signerad stämpel, utan ny version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compare" xml:space="preserve">
+    <value>Jämför protokollversioner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compare" xml:space="preserve">
+    <value>Se vad som ändrats mellan två versioner av ett protokoll med markerade ändringar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-categories" xml:space="preserve">
+    <value>Protokollkategorier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-categories" xml:space="preserve">
+    <value>Dela in biblioteket i kategorier och ange de godkännandesteg varje kategori kräver.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-settings" xml:space="preserve">
+    <value>Protokollinställningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-settings" xml:space="preserve">
+    <value>Ange signeringskrav, standardintervallet för granskning, lagringstid för versioner och avdelningens juridiska spärr.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-import" xml:space="preserve">
+    <value>Importera protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-import" xml:space="preserve">
+    <value>Hämta in protokoll från en Resgrid-fil för protokollutbyte som utkast att granska.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.TrainingRecordSettings" xml:space="preserve">
+    <value>Inställningar för utbildningsposter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.TrainingRecordSettings" xml:space="preserve">
+    <value>Hur utbildningsposter förs: avrundning av incheckningstimmar från kalendern, om medlemmar själva får skicka in extern utbildning och hur många år posterna minst sparas efter att en medlem slutat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Inställningar för utbildningsposter / Avrunda incheckningstimmar till</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMinutes" xml:space="preserve">
+    <value>Timmarna från incheckning till utcheckning vid kalenderhändelser som räknas som utbildning avrundas till detta steg: 5, 6, 10, 15, 30 eller 60 minuter, eller 0 för exakt minut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Inställningar för utbildningsposter / Avrundningsriktning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.HoursRoundingMode" xml:space="preserve">
+    <value>Om incheckningstimmar avrundas till närmaste steg, nedåt eller uppåt. Ingen effekt så länge timmar förs på exakt minut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>Inställningar för utbildningsposter / Medlemmar får inte skicka in extern utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.MemberSubmissionsDisabled" xml:space="preserve">
+    <value>När det är på kan medlemmar inte själva skicka in extern utbildning. Befäl kan fortfarande registrera den via en import eller ett tillgodoräknande för en certifiering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Inställningar för utbildningsposter / Spara poster efter att en medlem slutat (år)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.DefaultRetentionYears" xml:space="preserve">
+    <value>Minsta antal år som en tidigare medlems utbildningsposter sparas när deras kategori inte anger något. 0 innebär inget minimum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-transcript" xml:space="preserve">
+    <value>Utbildningsregister</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-transcript" xml:space="preserve">
+    <value>Varje medlems genomförda kurser, utbildningsposter, närvaro i kalendern, importer och externa intyg, med timmar och om de räknas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-transcript" xml:space="preserve">
+    <value>Ett samlat register över varje medlems utbildning och timmar för förnyelser och granskningar, utan att summera närvarolistor för hand.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-transcript" xml:space="preserve">
+    <value>Inför förnyelsen av en certifiering laddar en medlem ner sitt register som PDF med timmar per kategori, och utbildningsansvarig öppnar samma register från medlemmens namn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-transcript" xml:space="preserve">
+    <value>Öppna Utbildningar och välj Mitt utbildningsregister. Befäl som granskar en medlems poster väljer medlemmen i registret. Bara verifierade poster räknas till timmarna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-external-submissions" xml:space="preserve">
+    <value>Inskickad extern utbildning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-external-submissions" xml:space="preserve">
+    <value>Medlemmar skickar in kurser de genomfört utanför organisationen, med timmar och underlag (ett intyg, foto, dokument eller kvitto); en granskare godkänner eller avslår var och en i Utbildningsgranskningar, om inte organisationen godtar dem som egenrapporterade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-external-submissions" xml:space="preserve">
+    <value>Externa kurser och vidareutbildning hamnar i registret med bifogat underlag, granskade när organisationen vill det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-external-submissions" xml:space="preserve">
+    <value>En medlem slutför en säkerhetskurs online och skickar in den med intyget och 4 timmar; utbildningsansvarig godkänner den i Utbildningsgranskningar och timmarna räknas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-external-submissions" xml:space="preserve">
+    <value>Medlemmar väljer Skicka in extern utbildning i sitt register. Granskare öppnar Utbildningsgranskningar för att godkänna, avslå eller begära mer information; möjliga dubbletter ligger kvar i kön med poster. Inskick kan stängas av i inställningarna för utbildningsposter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-categories" xml:space="preserve">
+    <value>Utbildningskategorier</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-categories" xml:space="preserve">
+    <value>Gruppera utbildningstimmar i kategorier med valfria timmål och lagringstid, utgå från mallar för brand (ISO), ambulanssjukvård (NCCP), arbetsmiljö (OSHA), industri, sök och räddning, polisverksamhet, bevakning, CPD, Kanada eller EU, och kategorisera befintliga poster i bulk.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-categories" xml:space="preserve">
+    <value>Timmarna summeras på det sätt som er tillsynsmyndighet, tillståndsmyndighet, försäkringsgivare eller ackrediteringsorgan begär, och målen visar vem som ligger efter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-categories" xml:space="preserve">
+    <value>En organisation använder ISO-mallen, sätter ett årsmål för styrkornas utbildning och kategoriserar sedan förra årets övningsposter i en omgång efter kursnamn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-categories" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Utbildningskategorier. Använd en mall eller lägg till egna och använd sedan Kategorisera historik för poster utan kategori.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-credit-mappings" xml:space="preserve">
+    <value>Kopplingar för tillgodoräknanden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-credit-mappings" xml:space="preserve">
+    <value>Räkna en utbildningskategoris verifierade timmar mot förnyelsen av en certifiering, för hela kategorin eller bara en del av den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-credit-mappings" xml:space="preserve">
+    <value>Förnyelsetimmar fylls i från utbildning som medlemmarna redan gör, i stället för att skrivas in på varje certifiering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-credit-mappings" xml:space="preserve">
+    <value>Timmar i kategorin ambulansfortbildning räknas mot certifieringen som ambulanssjukvårdare, så en medlems förnyelse går framåt så snart ett pass verifierats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-credit-mappings" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Tillgodoräknanden för certifieringar och kopplar en kategori till en certifieringstyp. Poster som genomförts innan kopplingen slogs på blir tillgodoräknanden först när du tillämpar historik.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-backfill" xml:space="preserve">
+    <value>Ifyllnad av utbildningshistorik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-backfill" xml:space="preserve">
+    <value>För över genomförda kurser och utbildningsposter från tiden före registret till medlemmarnas register, med en provkörning som räknar vad som skulle skrivas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-backfill" xml:space="preserve">
+    <value>Registren börjar med den historik organisationen redan har i Resgrid i stället för tomma.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-backfill" xml:space="preserve">
+    <value>Ett befäl gör en provkörning, ser hur många tidigare genomföranden och utbildningsposter som hittades och startar sedan ifyllnaden, som fortsätter i bakgrunden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-backfill" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Fyll i historik och gör först en provkörning. Ifyllda poster blir tillgodoräknanden först när du tillämpar historik på en certifieringstyp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-history-import" xml:space="preserve">
+    <value>Import av utbildningshistorik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-history-import" xml:space="preserve">
+    <value>Importera genomföranden från ett annat system med en CSV-fil: kontrollera hur varje rad matchades mot en medlem, rätta raderna som inte matchade och importera sedan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-history-import" xml:space="preserve">
+    <value>Flera års poster från ett kalkylark eller ett tidigare utbildningssystem hamnar i medlemmarnas register utan att skrivas in igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-history-import" xml:space="preserve">
+    <value>En organisation som lämnar sitt gamla system exporterar sina genomföranden, importerar dem och väljer rätt medlem för de få rader som bara matchades på namn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-history-import" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Importera utbildningshistorik. Ladda ner mallen, fyll i en rad per genomförande med medlem, kurs, datum och timmar, ladda upp den och granska kontrollen innan du importerar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-hours-report" xml:space="preserve">
+    <value>Rapport över utbildningstimmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-hours-report" xml:space="preserve">
+    <value>Verifierade utbildningstimmar per kategori, medlem eller månad, med export till CSV och PDF och tidigare medlemmar på begäran.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-hours-report" xml:space="preserve">
+    <value>Svara på hur många timmar organisationen utbildat sig, och i vad, för budget, bidrag och årsrapporter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-hours-report" xml:space="preserve">
+    <value>Till årsrapporten exporterar chefen förra årets utbildningstimmar per kategori som PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-hours-report" xml:space="preserve">
+    <value>Under Utbildningar öppnar du Utbildningsposter och sedan Utbildningstimmar. Välj period och gruppering och exportera sedan till CSV eller PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.my-courses" xml:space="preserve">
+    <value>Mina kurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.my-courses" xml:space="preserve">
+    <value>Kurserna som tilldelats en medlem, kurser medlemmen kan gå med i och lektionerna i Resgrid Academy, med framsteg och förfallodatum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.my-courses" xml:space="preserve">
+    <value>Medlemmar ser vad de ska slutföra härnäst och fortsätter där de slutade, på webbplatsen eller i appen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.my-courses" xml:space="preserve">
+    <value>En ny medlem öppnar Mina kurser, slutför introduktionslektionen och dess korta kontroll, och slutförandet syns i utbildningsöversikten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.my-courses" xml:space="preserve">
+    <value>Öppna Utbildningar och välj Kurser. Tilldelade kurser visas först; lektionerna i Resgrid Academy finns alltid så länge utbildningsmodulen är på.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy" xml:space="preserve">
+    <value>Resgrid Academy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy" xml:space="preserve">
+    <value>Korta videolektioner om Resgrid, var och en med en kontroll på tre frågor, publicerade kostnadsfritt av Resgrid för alla organisationer, plus rollspår för medlemmar, larmoperatörer, befäl och administratörer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy" xml:space="preserve">
+    <value>Nya medlemmar och befäl lär sig systemet på samma sätt, och varje slutförd lektion räknas i utbildningsöversikten som systemutbildning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy" xml:space="preserve">
+    <value>Utbildningsansvarig tilldelar nya larmoperatörer spåret Larmoperatör och följer vilka lektioner var och en har slutfört.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy" xml:space="preserve">
+    <value>Öppna Utbildningar och välj Academy. Den som får tilldela utbildning tilldelar en lektion eller ett rollspår till medlemmar, roller eller grupper. Lektioner för moduler eller tillägg som organisationen inte använder förblir dolda.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-builder" xml:space="preserve">
+    <value>Kursbyggare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-builder" xml:space="preserve">
+    <value>Organisationens egna kurser med moduler, video, dokument, protokollektioner, prov från frågebanker och enkäter, godkända och versionshanterade som protokoll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-course-builder" xml:space="preserve">
+    <value>Genomför organisationens egen utbildning online, med poängsatta prov, studietid och slutföranden som utfärdar eller förnyar certifieringar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-course-builder" xml:space="preserve">
+    <value>Ambulanssamordnaren bygger en årlig repetition med en video och ett prov med 20 frågor från en frågebank med godkäntgräns 80 % och tilldelar den till alla ambulanssjukvårdare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-course-builder" xml:space="preserve">
+    <value>Inget att ställa in ännu: kursbyggaren ingår i LMS-tillägget, som inte är tillgängligt än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-grading" xml:space="preserve">
+    <value>Provbedömning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-grading" xml:space="preserve">
+    <value>En kö med fritextsvar som väntar på bedömning, och en frågeanalys som visar hur svår varje fråga är och hur väl den skiljer starka resultat från svaga.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-grading" xml:space="preserve">
+    <value>Skriftliga svar får en rättvis, registrerad bedömning, och svaga frågor hittas och rättas till.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-grading" xml:space="preserve">
+    <value>En utbildningsansvarig bedömer tre korta svar på förra veckans prov om farliga ämnen; analysen visar en fråga som nästan alla svarar fel på, så den skrivs om.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-grading" xml:space="preserve">
+    <value>Inget att ställa in ännu: bedömningen ingår i LMS-tillägget, som inte är tillgängligt än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.lms" xml:space="preserve">
+    <value>Lärplattform (LMS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.lms" xml:space="preserve">
+    <value>Kurser, utbildningskrav, lektionstillfällen och formella utbildningsrapporter. Inte tillgängligt än.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.lms" xml:space="preserve">
+    <value>Strukturerade kurser och formella rapporter utöver det kostnadsfria utbildningsregistret, när det släpps.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.lms" xml:space="preserve">
+    <value>Inget att prova än: tillägget för lärplattform utvecklas fortfarande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.lms" xml:space="preserve">
+    <value>Inget att ställa in än; det kostnadsfria utbildningsregistret fungerar utan det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-lms" xml:space="preserve">
+    <value>LMS-tillägg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-lms" xml:space="preserve">
+    <value>Tillägget för utbildningshantering, i paket om 25 medlemmar: kurser, formella utbildningsrapporter och verifierbara intyg. Erbjuds när Resgrid aktiverar det för er avdelning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-lms" xml:space="preserve">
+    <value>Lägger till kurser, formella rapporter och verifierbara intyg till det kostnadsfria utbildningsregistret, för de medlemmar ni aktiverar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-lms" xml:space="preserve">
+    <value>En avdelning köper 2 paket, aktiverar sina 40 heltidsanställda och tar fram ISO FSRS-rapporten; deltidspersonalen behåller den kostnadsfria utbildningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-lms" xml:space="preserve">
+    <value>Under Prenumeration öppnar ni LMS-kortet och väljer antal paket, och aktiverar sedan medlemmar på personalsidan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-seats" xml:space="preserve">
+    <value>LMS-platser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-seats" xml:space="preserve">
+    <value>Aktivera LMS för en medlem i taget på medlemmens personalsida, eller för en hel grupp på en gång, inom de platser era paket ger.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-seats" xml:space="preserve">
+    <value>Ni betalar bara för de medlemmar ni utbildar genom LMS; alla andra behåller den kostnadsfria utbildningsmodulen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-seats" xml:space="preserve">
+    <value>En kombinerad räddningstjänst aktiverar sina 40 heltidsanställda för LMS-kurser och låter deltidspersonalen ha kvar den kostnadsfria utbildningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-seats" xml:space="preserve">
+    <value>Under Personal använder ni LMS-platser för att aktivera en grupp, eller öppnar en medlem och väljer Aktivera LMS. Bara aktiva medlemmar kan ha en plats; lägg till ett paket när platserna tar slut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-packs" xml:space="preserve">
+    <value>LMS-paket</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-packs" xml:space="preserve">
+    <value>Köp LMS-tillägget i paket om 25 medlemmar och ändra antalet paket, med priset synligt före varje ändring.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-packs" xml:space="preserve">
+    <value>Fakturan följer de platser ni behöver: trappade nivåer gör stora styrkor billigare per medlem, och tillagda paket debiteras proportionellt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-packs" xml:space="preserve">
+    <value>En avdelning med 110 LMS-aktiverade medlemmar har 5 paket; när den passerar 125 lägger den till ett sjätte paket och betalar den proportionella skillnaden direkt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-packs" xml:space="preserve">
+    <value>Under Prenumeration öppnar ni LMS-kortet, väljer antal paket och slutför köpet. Borttagna paket gäller från nästa faktureringsdatum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.WellnessSettings" xml:space="preserve">
+    <value>Inställningar för välmående</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.WellnessSettings" xml:space="preserve">
+    <value>Vem som läser medlemmarnas loggar över exponeringar och kritiska händelser (rollen välmåendeansvarig), vilka de utsedda ansvariga och kamratstödsteamet är, vilken certifiering varje välmåenderoll kan ha och hur många år poster sparas. Medlemmarnas välmående ingår i tillägget Workforce Pro, inte LMS-tillägget: utan det är befintliga register skrivskyddade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Inställningar för välmående / Roll för välmåendeansvarig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerRoleId" xml:space="preserve">
+    <value>Medlemmar i rollen läser varje medlems exponeringslogg och hanterar markeringar för hälsokontroll och uppföljningar. Administratörer ser inte loggarna utan rollen. Ingen lämnar varje logg åt medlemmen själv.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Inställningar för välmående / Certifiering för kamratstödsteam</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamCertificationTypeId" xml:space="preserve">
+    <value>Kamratstödsteamets certifieringstyp. Med en roll för kamratstödsteamet visas den som varje teammedlems status; utan roll utgör medlemmarna med en giltig certifiering av typen teamet och får de påminnelser om årsdagar som en medlem väljer att dela. Utan någondera finns inget team.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Inställningar för välmående / Spara poster (år)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RetentionYears" xml:space="preserve">
+    <value>Antal år en exponeringspost sparas efter händelsen, från 30 (minimum enligt OSHA 29 CFR 1910.1020) till 100. Ett rättsligt bevarandekrav sparar poster längre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.member-wellness" xml:space="preserve">
+    <value>Mina exponeringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.member-wellness" xml:space="preserve">
+    <value>Varje medlems egen logg över exponeringar för cancerframkallande ämnen, blodburen smitta, farliga ämnen och kritiska händelser, med poster som föreslås från larmdata när ett larm markerats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.member-wellness" xml:space="preserve">
+    <value>Exponeringsunderlag för cancerpresumtion och arbetsskadeersättning, sparat i 30 år och läsbart bara för medlemmen och välmåendeansvariga.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.member-wellness" xml:space="preserve">
+    <value>Efter en byggnadsbrand markerar befälet larmet; varje medlem på platsen bekräftar en föreslagen post om cancerframkallande ämnen och lägger till skyddsutrustning och sanering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.member-wellness" xml:space="preserve">
+    <value>Välj rollen välmåendeansvarig under Personal, Mina exponeringar, Inställningar och eventuellt en certifieringstyp för varje välmåenderoll. Medlemmar öppnar Mina exponeringar från Personal; befäl markerar ett larm med knappen Välmåendeuppföljning. Medlemmarnas välmående ingår i tillägget Workforce Pro (inte LMS-tillägget): register förs för medlemmar med Workforce Pro påslaget, och utan tillägget är befintliga register skrivskyddade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-knowledge" xml:space="preserve">
+    <value>Kunskapssvar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-knowledge" xml:space="preserve">
+    <value>Medlemmar ställer en fråga och får ett svar som bara bygger på avdelningens publicerade protokoll och utbildningar och Resgrid Academy, där varje del länkar till sin källa.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-knowledge" xml:space="preserve">
+    <value>Medlemmar hittar på några sekunder vad era protokoll säger, och de som skriver dem ser frågorna som innehållet inte besvarar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-knowledge" xml:space="preserve">
+    <value>En medlem frågar vilken skyddsutrustning riktlinjen för farliga ämnen kräver och får svaret med en länk till det avsnittet i den gällande versionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-knowledge" xml:space="preserve">
+    <value>Kräver tillägget Enhanced AI med kunskapssvar aktiverade för avdelningen. Publicera era protokoll och starta era utbildningar; medlemmar använder sedan Fråga i protokollbiblioteket, i ett protokoll, en utbildning eller ett larm. Utbildningsansvariga ser obesvarade frågor under Kunskapsluckor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.KnowledgeSettings" xml:space="preserve">
+    <value>Kunskapsinställningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.KnowledgeSettings" xml:space="preserve">
+    <value>Avdelningsövergripande regler för kunskapssvar på sidan Kunskapsinställningar: om modulen Dokument används och länken till avdelningens doseringsverktyg. Saknas inställningen används inga dokument och det finns ingen doseringslänk. Bara avdelningens administratörer kan ändra den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Kunskapsinställningar / Ta med dokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.IncludeDocuments" xml:space="preserve">
+    <value>Dokument blir källor för kunskapssvaren. Dokument endast för administratörer används bara för administratörer, och inga dokument används medan Advanced Data Protection är på. En ändring bygger om avdelningens kunskapsindex i bakgrunden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>Kunskapsinställningar / Länk till doseringsverktyg</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.KnowledgeSettings.DosingToolUrl" xml:space="preserve">
+    <value>En https-länk till avdelningens doseringsverktyg. Svar som citerar en dos visar den; doser citeras bara från en källa, och varken modellen eller Resgrid räknar ut någon. Allt annat än en https-länk avvisas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.document-sealing" xml:space="preserve">
+    <value>Förseglade dokument och dokumentverifiering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.document-sealing" xml:space="preserve">
+    <value>Intyg, utdrag, PDF-filer med rutiner och signerade dokument förseglas med tidsstämpel så att alla kan kontrollera att de inte har ändrats; befäl kan kontrollera valfri PDF under Verifiera ett dokument.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.document-sealing" xml:space="preserve">
+    <value>Lämna ut dokument som andra myndigheter och domstolar kan lita på, och upptäck ändrade kopior.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.document-sealing" xml:space="preserve">
+    <value>En inspektör kontrollerar att ett intyg som en medlem har med sig från en annan organisation är utfärdat av Resgrid och inte redigerat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.document-sealing" xml:space="preserve">
+    <value>Öppna Verifiera ett dokument och ladda upp en PDF. Förseglingen konfigureras av den som driver installationen; till dess markeras dokument som försegling väntar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.external-signatures" xml:space="preserve">
+    <value>Externa signaturer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.external-signatures" xml:space="preserve">
+    <value>Kunder, nyttjare och externa parter signerar tidrapporter, anbud, avtal, inspektioner och överlämningar av bevis på plats på en medlems enhet, eller via en Resgrid-länk med engångskod.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.external-signatures" xml:space="preserve">
+    <value>Ersätt inskrivna namn med signaturer som motparten kan verifiera, förseglade med en granskningssida.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.external-signatures" xml:space="preserve">
+    <value>En arbetsledare ger surfplattan till kundens representant som signerar dagens tidrapport innan laget lämnar insatsen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.external-signatures" xml:space="preserve">
+    <value>Öppna dokumentet och använd Lämna enheten till undertecknaren, eller begär en signatur via länk. För länkar lägger en administratör in organisationens Documenso-teamtoken under E-signering; länkar ingår i tillägget som dokumentet hör till.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-acknowledgments" xml:space="preserve">
+    <value>Mina bekräftelser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-acknowledgments" xml:space="preserve">
+    <value>Läs och signera de protokoll och meddelanden du ombeds bekräfta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-compliance" xml:space="preserve">
+    <value>Efterlevnad av bekräftelser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-compliance" xml:space="preserve">
+    <value>Se vem som har läst och signerat varje protokollversion, per grupp, och exportera det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulletins" xml:space="preserve">
+    <value>Prioriterade meddelanden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulletins" xml:space="preserve">
+    <value>Utfärda ett kort meddelande som måste läsas, gäller direkt och godkänns i efterhand.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-bulk-upload" xml:space="preserve">
+    <value>Ladda upp protokolldokument</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-bulk-upload" xml:space="preserve">
+    <value>Ta in PDF- och Word-protokoll på en gång som utkast, med sökbar text.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Innehållets språk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.DefaultContentLocale" xml:space="preserve">
+    <value>Språket som protokollen skrivs på. Medlemmar utan godkänd översättning på sitt språk läser versionen på det här språket, och blocketiketter som Försiktighet skrivs på det. Tomt betyder engelska.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-block-editor" xml:space="preserve">
+    <value>Strukturerat protokollinnehåll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-block-editor" xml:space="preserve">
+    <value>Skriv protokoll som block: steg, varningar, kontakt med medicinsk ledning, tabeller, läkemedel och varianter för vuxna och barn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-step-through" xml:space="preserve">
+    <value>Protokoll steg för steg på larm</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-step-through" xml:space="preserve">
+    <value>Gå igenom ett procedur- eller larmprotokoll på ett larm som en checklista, varje steg tidsstämplat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-book" xml:space="preserve">
+    <value>PDF-bok med protokoll, QR-kod och utskriftsvy</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-book" xml:space="preserve">
+    <value>Exportera en kategori eller hela biblioteket som en PDF-bok, skriv ut ett protokoll eller sätt upp dess QR-kod.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-translations" xml:space="preserve">
+    <value>Översättningar av protokollinnehåll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-translations" xml:space="preserve">
+    <value>Översätt en protokollversion till medlemmarnas språk, varje översättning godkänd för sig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Friskvårdsinställningar / Roll för utsedd ansvarig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerRoleId" xml:space="preserve">
+    <value>Medlemmar i rollen tar emot rapporter om exponering för blodburen smitta och smittsamma sjukdomar (Ryan White del G) och driver exponeringsärendena. Ingen betyder att rollen för friskvårdsansvarig sköter det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Friskvårdsinställningar / Certifikat för utbildning i blodburen smitta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.BbpTrainingCertificationTypeId" xml:space="preserve">
+    <value>Certifikattypen för den årliga utbildningen i blodburen smitta (OSHA 1910.1030). Varje exponeringsärende visar medlemmens aktuella status. Ingen lämnar den ouppföljd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Friskvårdsinställningar / Certifikat för medicinsk klarering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.MedicalClearanceCertificationTypeId" xml:space="preserve">
+    <value>Certifikattypen som en medicinsk bedömning enligt NFPA 1582 också registreras som (från mallen Medical Clearance (NFPA 1582)). Inte klarerad stänger av den. Ingen behåller klareringarna bara i Friskvård.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Friskvårdsinställningar / Spara skadejournaler (år)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.InjuryRetentionYears" xml:space="preserve">
+    <value>Antal år en skadejournal sparas efter utgången av sitt år, från 5 (OSHA 29 CFR 1904.33) till 100. Ett rättsligt kvarhållande sparar journaler längre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-authoring-aids" xml:space="preserve">
+    <value>Utkasthjälp</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-authoring-aids" xml:space="preserve">
+    <value>Utkast till quizfrågor, kursupplägg och ändringssammanfattningar från organisationens eget innehåll, som författarna granskar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-authoring-aids" xml:space="preserve">
+    <value>Författare börjar från ett förankrat utkast i stället för en tom sida, och inget sparas förrän de godkänner det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-authoring-aids" xml:space="preserve">
+    <value>En utbildningsansvarig skapar fem quizfrågor från den nya rökdykarutbildningen och behåller tre.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-authoring-aids" xml:space="preserve">
+    <value>Aktivera kunskapssvar med Enhanced AI; hjälpen visas sedan i utbildningsredigeraren och kursbyggaren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.help-search" xml:space="preserve">
+    <value>Sökning i hjälpcentret</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.help-search" xml:space="preserve">
+    <value>Gratis nyckelordssökning i Resgrid Academy och produktreferensen från hjälpmenyn.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.help-search" xml:space="preserve">
+    <value>Medlemmar hittar lektionen eller inställningen de behöver utan att lämna Resgrid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.help-search" xml:space="preserve">
+    <value>En ny medlem söker på "status" och öppnar introduktionslektionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.help-search" xml:space="preserve">
+    <value>Inget att konfigurera: öppna Hjälp och sedan Sök hjälp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.academy-guidance" xml:space="preserve">
+    <value>Guidade turer och nyheter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.academy-guidance" xml:space="preserve">
+    <value>Första uppgifter för varje roll byggda på genomgångarna i Academy, och en kort lektion om varje version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.academy-guidance" xml:space="preserve">
+    <value>Nya medlemmar och administratörer vet vad de ska göra först, och alla ser vad som har ändrats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.academy-guidance" xml:space="preserve">
+    <value>En ny larmoperatör bockar av larmlistan, enheterna och kartan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.academy-guidance" xml:space="preserve">
+    <value>Inget att konfigurera: varje medlem ser turen för sin roll på översikten och kan dölja den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.multi-signer-signatures" xml:space="preserve">
+    <value>Signaturer från flera undertecknare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.multi-signer-signatures" xml:space="preserve">
+    <value>Flera personer signerar ett dokument i tur och ordning: medlemmar på nivå 1 eller 2, vittnen, certifierande ansvariga, bedömare och externa parter, med påminnelser tills alla har signerat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.multi-signer-signatures" xml:space="preserve">
+    <value>Godkännanden som kräver mer än en person registreras i rätt ordning, knyts till exakt innehåll och förseglas med en granskningssida när de är klara.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.multi-signer-signatures" xml:space="preserve">
+    <value>En utbildningsansvarig bedömer en färdighet på nivå 2, därefter signerar den certifierande ansvariga; var och en påminns när det är deras tur.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.multi-signer-signatures" xml:space="preserve">
+    <value>Medlemmar hittar det som väntar på dem under Mina signaturer och på sin startsida; begäranden startas från dokumentet som ska signeras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.checklist-witness-signature" xml:space="preserve">
+    <value>Vittnessignatur för checklistor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.checklist-witness-signature" xml:space="preserve">
+    <value>En checklista kan kräva att dess oberoende vittne signerar på nivå 2 (en ny identitetskontroll eller en nyckel) i stället för att intyga med enbart text.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.checklist-witness-signature" xml:space="preserve">
+    <value>Kontroller av kontrollerade substanser och säkerhetskontroller får en vittnessignatur knuten till de registrerade resultaten, som ingår i Checklistor utan extra kostnad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.checklist-witness-signature" xml:space="preserve">
+    <value>Efter en kontroll av läkemedelsväskan signerar en andra ambulanssjuksköterska som vittne med sin nyckel innan kontrollen räknas som klar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.checklist-witness-signature" xml:space="preserve">
+    <value>Redigera checklistan, aktivera det oberoende vittnet och vittnessignaturen och publicera den nya versionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.readiness-signatures" xml:space="preserve">
+    <value>Leverantörens godtagande och utlämningskvitton</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.readiness-signatures" xml:space="preserve">
+    <value>Leverantörer godtar slutförda arbetsordrar, och medlemmar eller mottagare signerar kvitton på utlämnad utrustning, på plats eller via en Resgrid-länk.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.readiness-signatures" xml:space="preserve">
+    <value>Ersätt muntliga överlämningar med signerade godtaganden och kvitton som motparten kan verifiera.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.readiness-signatures" xml:space="preserve">
+    <value>Teknikern från pumpverkstaden signerar den slutförda arbetsordern på stationens surfplatta innan hen åker.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.readiness-signatures" xml:space="preserve">
+    <value>Öppna en slutförd arbetsorder, eller Kvitto för en utlämnad artikel, och begär signaturen. Fjärrlänkar kräver Readiness Pro och avdelningens inställningar för e-signering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsProgramSettings" xml:space="preserve">
+    <value>Inställningar för utbildningsprogram</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsProgramSettings" xml:space="preserve">
+    <value>Hur utbildningsansökningar godkänns och i vilken valuta deras kostnader anges, och om tillsyner och granskningar av insatsplaner i Journaler tillgodoräknas som objektkännedom.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Närmaste chef godkänner utbildningsansökningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestSupervisorApproval" xml:space="preserve">
+    <value>Administratörerna för medlemmens grupp (eller organisationens administratörer) godkänner en utbildningsansökan först.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>Utbildningsansvarig godkänner utbildningsansökningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestTrainingOfficerApproval" xml:space="preserve">
+    <value>En medlem som hanterar utbildningsposter för hela organisationen godkänner ansökan, efter närmaste chef när båda är på.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Utbildningsvaluta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.RequestCurrency" xml:space="preserve">
+    <value>Den valutakod med tre bokstäver (EUR, CAD, USD …) som kostnader för utbildningsansökningar, kurstillfällen och kursavgifter anges och summeras i. Ett kurstillfälle kan ange en egen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Tillgodoräkna objektkännedom</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationEnabled" xml:space="preserve">
+    <value>Slutförda objektstillsyner och granskningar av insatsplaner i Journaler förs in i utbildningsregistret för den som utförde dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Kategori för objektkännedom</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationCategoryId" xml:space="preserve">
+    <value>Den utbildningskategori som objektkännedom tillgodoräknas i, till exempel ISO-kategorin för insatsplanering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>Minuter per besök</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationMinutes" xml:space="preserve">
+    <value>De minuter som tillgodoräknas för ett besök utan start- och sluttid. Ett besök med egna tider tillgodoräknas med sin verkliga längd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Tillgodoräkna från tillsyner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromInspections" xml:space="preserve">
+    <value>Slutförda objektstillsyner tillgodoräknas den som utförde tillsynen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Tillgodoräkna från granskningar av insatsplaner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsProgramSettings.FamiliarizationFromPreplanReviews" xml:space="preserve">
+    <value>Granskningar av insatsplaner för objekt och kontakter tillgodoräknas granskaren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-plan" xml:space="preserve">
+    <value>Årlig utbildningsplan</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-plan" xml:space="preserve">
+    <value>Ett års planerade pass och timmar per kategori och månad för hela organisationen, en grupp eller ett skift, jämfört med de timmar som faktiskt har registrerats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-plan" xml:space="preserve">
+    <value>Den skriftliga plan som revisorer, tillsynsmyndigheter och ackrediteringsorgan begär, och ett underskott mot årsmålen som syns i juni, inte vid revisionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-plan" xml:space="preserve">
+    <value>Den utbildningsansvariga planerar 16 timmars styrkeövning varje månad; i juni visar prognosen att organisationen kommer att missa målet på 192 timmar med 20 timmar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-plan" xml:space="preserve">
+    <value>Inget att konfigurera ännu: årsplanen ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-competency-frameworks" xml:space="preserve">
+    <value>Kompetensramverk</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-competency-frameworks" xml:space="preserve">
+    <value>Funktionskrav, befattningar och färdigheter, taggade på de kurser, utbildningar och certifieringar som styrker dem, med en luckrapport per medlem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-competency-frameworks" xml:space="preserve">
+    <value>Visar för varje medlem vilka krav som har underlag, hur gammalt det är och vilka som saknar underlag.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-competency-frameworks" xml:space="preserve">
+    <value>En organisation importerar sin tillsynsmyndighets kompetensramverk, taggar sina kurser och ser att en rekryt fortfarande saknar belägg för tre krav.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-competency-frameworks" xml:space="preserve">
+    <value>Inget att konfigurera ännu: kompetensramverk ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-requests" xml:space="preserve">
+    <value>Utbildningsansökningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-requests" xml:space="preserve">
+    <value>Medlemmar ansöker om att gå en extern kurs och anger kostnaden; närmaste chef och en utbildningsansvarig godkänner den, och kursen förs in i utbildningsregistret när den är genomförd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-requests" xml:space="preserve">
+    <value>En godkänd post med kostnader per extern kurs, och summerade kostnader per medlem, kurs och år.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-requests" xml:space="preserve">
+    <value>En ambulanssjuksköterska ansöker om att gå en kurs på 16 timmar som kostar 450 dollar; styrkeledaren och den utbildningsansvariga godkänner den, och intyget verifieras efteråt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-requests" xml:space="preserve">
+    <value>Inget att konfigurera ännu: utbildningsansökningar ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-report-catalog" xml:space="preserve">
+    <value>Katalog över utbildningsrapporter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-report-catalog" xml:space="preserve">
+    <value>Alla utbildningsrapporter på ett ställe, sparade med sina inställningar i mappar och skickade enligt ett dagligt, veckovis eller månatligt schema som CSV eller PDF.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-report-catalog" xml:space="preserve">
+    <value>Rapporterna som en granskning kräver kommer av sig själva, filtrerade på samma sätt varje gång.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-report-catalog" xml:space="preserve">
+    <value>ISO-utbildningsrapporten skickas som PDF till räddningschefen och den utbildningsansvariga den första i varje månad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-report-catalog" xml:space="preserve">
+    <value>Inget att konfigurera ännu: sparade och schemalagda rapporter ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-cycles" xml:space="preserve">
+    <value>Certifieringscykler</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-cycles" xml:space="preserve">
+    <value>En certifierings nästa cykel startar automatiskt när förnyelsetimmarna är uppnådda, och chefer, administratörer eller namngivna medlemmar aviseras när en cykel slutförs, startar, närmar sig utgångsdatum eller går ut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-cycles" xml:space="preserve">
+    <value>Återkommande behörigheter fortsätter att räkna timmar utan att någon behöver mata in dem igen, och rätt personer får veta i tid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-cycles" xml:space="preserve">
+    <value>När en EMT når förnyelsetimmarna startar nästa tvååriga cykel vid nuvarande utgångsdatum och ambulanschefen får ett meddelande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-cycles" xml:space="preserve">
+    <value>Inget att konfigurera ännu: regler för certifieringscykler ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-credential-audiences" xml:space="preserve">
+    <value>Meddelanden efter certifieringsstatus</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-credential-audiences" xml:space="preserve">
+    <value>Skicka ett meddelande till de medlemmar vars certifiering har gått ut, går ut inom ett visst antal dagar, eller som aldrig har haft den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-credential-audiences" xml:space="preserve">
+    <value>Påminnelser når exakt de personer som behöver dem, utan att någon behöver bygga en lista för hand.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-credential-audiences" xml:space="preserve">
+    <value>Den utbildningsansvariga skickar ett meddelande med datumet för nästa kurs till alla vars CPR-kort går ut inom 30 dagar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-credential-audiences" xml:space="preserve">
+    <value>Inget att konfigurera ännu: mottagare efter certifieringsstatus ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LearningRequirementSettings" xml:space="preserve">
+    <value>Inställningar för utbildningskrav</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LearningRequirementSettings" xml:space="preserve">
+    <value>Utbildningsbaserad tillämpning för avdelningen (av som standard), den största andel av en rolls medlemmar som en tillämpningskörning får ta bort och standardvarningen för riskzonen för nya krav.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>Inställningar för utbildningskrav / Utbildningsbaserad tillämpning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.EnforcementEnabled" xml:space="preserve">
+    <value>När den är på kan ett krav som aktiverats för det låta den kopplade certifieringen gå ut när en medlem är försenad längre än respittiden; certifieringsmodulen tar sedan bort roller efter sin egen respittid. Av som standard, aldrig medan LMS-tillägget är inaktivt, och när den slås på visas först vem som skulle förlora vilken roll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>Inställningar för utbildningskrav / Största andel av en roll som tas bort i en körning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.MaxRoleRemovalSharePercent" xml:space="preserve">
+    <value>En körning som skulle ta bort mer än den här procentandelen av en rolls aktiva medlemmar avvisas, och avdelningens administratörer meddelas. Standard 20.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Inställningar för utbildningskrav / Standardvarning för riskzonen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LearningRequirementSettings.DefaultAtRiskDays" xml:space="preserve">
+    <value>Dagar före förfallodatum då ett nytt krav börjar visa medlemmar i riskzonen. Standard 14.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-requirements" xml:space="preserve">
+    <value>Utbildningskrav</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-requirements" xml:space="preserve">
+    <value>Återkommande och engångsutbildningskrav per roll, grupp, certifiering eller skift: kurser, utbildningar, timmar per kategori, lärvägar och godkända färdighetsbedömningar, med förfallodatum räknat från när medlemmar ansluter eller får en roll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-requirements" xml:space="preserve">
+    <value>Alla vet vad de ska göra och när, och befälen ser vem som är i riskzonen före en revision.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-requirements" xml:space="preserve">
+    <value>Varje maskinist slutför kursen i pumphantering var 12:e månad, och varje medlem registrerar 24 timmars utbildning i sin styrka per kalenderår.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-requirements" xml:space="preserve">
+    <value>Öppna Utbildningar, välj Program och lägg till ett krav.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-compliance-matrix" xml:space="preserve">
+    <value>Efterlevnadsmatris</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-compliance-matrix" xml:space="preserve">
+    <value>Varje medlem mot varje krav: uppfyller, förfaller senare, i riskzonen, försenad, undantagen, tjänstledig eller ej licensierad, med export till CSV och PDF och gruppadministratörens egen grupp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-compliance-matrix" xml:space="preserve">
+    <value>En enda sida visar vem som inte uppfyller kraven och vad som förfaller härnäst.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-compliance-matrix" xml:space="preserve">
+    <value>En styrkeledare filtrerar matrisen på sin station och undantar en medlem som är tjänstledig för militärtjänst.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-compliance-matrix" xml:space="preserve">
+    <value>Öppna Utbildningar, välj Program och sedan Efterlevnad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learning-paths" xml:space="preserve">
+    <value>Lärvägar och introduktion</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learning-paths" xml:space="preserve">
+    <value>Kurser, Academy-lektioner och utbildningar i ordning med förkunskapskrav och valfria steg; att slutföra en lärväg kan utfärda en certifiering. En lärväg per roll kan tilldelas automatiskt när någon ansluter eller får rollen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learning-paths" xml:space="preserve">
+    <value>Nya medlemmar följer samma introduktion med ett förfallodatum, utan att någon behöver komma ihåg att tilldela den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learning-paths" xml:space="preserve">
+    <value>Nya larmoperatörer får lärvägen Larmoperatör med 30 dagar att slutföra den, och när den är slutförd utfärdas avdelningens larmoperatörscertifiering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learning-paths" xml:space="preserve">
+    <value>Öppna Utbildningar, välj Program och sedan Lärvägar för att bygga en lärväg och Introduktion för att tilldela den per roll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-call-answers" xml:space="preserve">
+    <value>Frågor om ett larm</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-call-answers" xml:space="preserve">
+    <value>Medlemmar ställer en fråga i Visa larm och får ett svar som bara bygger på de protokollversioner larmet hänvisar till och dess typ, prioritet, determinant och platstyp, där varje del länkar till sitt avsnitt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-call-answers" xml:space="preserve">
+    <value>Besättningar och larmoperatörer ser på några sekunder vad larmets protokoll säger för just det här larmet, och uppgifter om patient eller inringare skickas aldrig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-call-answers" xml:space="preserve">
+    <value>Vid en byggnadsbrand i en skola frågar en styrkeledare var besättningarna ska stå och får svaret från det citerade avsnittet i skolprotokollet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-call-answers" xml:space="preserve">
+    <value>Aktivera kunskapssvar med Enhanced AI och koppla protokoll till larm; Fråga om det här larmet visas sedan på fliken Protokoll i Visa larm.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-tutor" xml:space="preserve">
+    <value>Handledare och scenarioövning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-tutor" xml:space="preserve">
+    <value>Deltagare ställer frågor om kursen de går, och medlemmar övar på ett kort scenario skrivet utifrån ett protokoll, där deras egna svar bedöms mot protokollet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-tutor" xml:space="preserve">
+    <value>Medlemmar kontrollerar sin förståelse mellan övningar, och varje svar och resultat pekar på exakt avsnitt, utan att något registreras i utbildningshistoriken.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-tutor" xml:space="preserve">
+    <value>En ny ambulanssjukvårdare övar på protokollet för hjärtstopp: ett kort scenario, tre frågor och återkoppling som citerar protokollets steg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-tutor" xml:space="preserve">
+    <value>Aktivera kunskapssvar med Enhanced AI; då visas Öva på varje protokoll. Fråga om kursen i kursspelaren kräver även LMS-tillägget.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-recommendations" xml:space="preserve">
+    <value>Utbildningsrekommendationer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-recommendations" xml:space="preserve">
+    <value>Rekommenderar lärvägar och kurser till varje medlem utifrån öppna krav, pågående lärvägar, kompetensluckor och de kurser som erbjuds medlemmens roller.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-recommendations" xml:space="preserve">
+    <value>Medlemmar ser vad de ska ta härnäst och varför, och befäl ser detsamma för de medlemmar de ansvarar för.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-recommendations" xml:space="preserve">
+    <value>En brandman utan belägg för stegkompetensen ser kursen i stegarbete rekommenderad under Min utbildning, med skälet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-recommendations" xml:space="preserve">
+    <value>Öppna Utbildningar, välj Program och sedan Rekommendationer; medlemmar ser också Rekommenderat för dig under Min utbildning. Förklara med AI kräver Enhanced AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.approval-chains" xml:space="preserve">
+    <value>Godkännandekedjor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.approval-chains" xml:space="preserve">
+    <value>Inköp, handlingsplaner för händelser, fakturor, Cal OES MARS-paket och avtal om ömsesidigt bistånd godkänns av en kedja av personer i tur och ordning, med beloppströsklar, parallella steg, ersättare när någon är ledig och eskalering när ett steg står still.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.approval-chains" xml:space="preserve">
+    <value>Varje godkännande är en signatur på nivå 2 bunden till exakt innehåll: en ändring gör den ogiltig, ett avslag kräver en orsak och den slutförda kedjan förseglar dokumentet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.approval-chains" xml:space="preserve">
+    <value>Inköp över 5 000 kräver ekonomichefen efter logistiksektionens chef; om ekonomichefen inte agerar inom 24 timmar tillfrågas avdelningsadministratörerna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.approval-chains" xml:space="preserve">
+    <value>En avdelningsadministratör definierar en kedja per typ under Godkännanden, Kedjor; medlemmar skickar in från postens sida eller från Godkännanden, och godkännare hittar begäranden under Mina godkännanden och på sin startsida.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-protocol-learning" xml:space="preserve">
+    <value>Protokollquiz och mikroinlärning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-protocol-learning" xml:space="preserve">
+    <value>Låt bekräftelsen av ett protokoll vänta på ett quiz ur en frågebank, och skicka medlemmarna en scenariofråga i veckan ur valda protokoll.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-protocol-learning" xml:space="preserve">
+    <value>Medlemmarna visar att de har förstått ett protokoll, inte bara öppnat det, och håller det levande mellan granskningarna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-protocol-learning" xml:space="preserve">
+    <value>Ett nytt maydayförfarande kräver fem frågor godkända på 80 % innan bekräftelsen räknas, och varje måndag svarar varje brandman på ett scenario ur det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-protocol-learning" xml:space="preserve">
+    <value>Inget att ställa in ännu: protokollquiz och mikroinlärning ingår i LMS-tillägget, som inte är tillgängligt ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-class-sessions" xml:space="preserve">
+    <value>Lektionstillfällen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-class-sessions" xml:space="preserve">
+    <value>Lärarledda lektioner i kalendern med kapacitet, väntelista, anmälningsregler, incheckning med roterande QR och GPS, och lärarens signering som skriver varje deltagares utbildningspost.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-class-sessions" xml:space="preserve">
+    <value>En deltagarlista per lektion som är underlaget: vem som undervisade, vem som deltog, vad som gicks igenom och hur länge, sparad under kategorins lagringstid.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-class-sessions" xml:space="preserve">
+    <value>En repetition om blodburen smitta med 20 platser blir full; tre medlemmar väntar, och när någon avanmäler sig blir nästa anmäld och meddelad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-class-sessions" xml:space="preserve">
+    <value>Inget att ställa in ännu: lektionstillfällen ingår i LMS-tillägget, som inte är tillgängligt ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-lesson-plans" xml:space="preserve">
+    <value>Lektionsplaner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-lesson-plans" xml:space="preserve">
+    <value>Återanvändbara planer för lärarledda lektioner: mål, kompetenser, material och övningsutrustning, lärartäthet, säkerhetsplan och checklista för genomgång, versionerade och godkända före användning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-lesson-plans" xml:space="preserve">
+    <value>Varmövningar, körning och andningsskydd lärs ut efter en godkänd plan, och deltagarlistan visar vilken version som användes.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-lesson-plans" xml:space="preserve">
+    <value>Utbildningsansvarig kopierar mallen för varmövning, lägger till avdelningens brandhus och lärartäthet, och en chef godkänner den före första övningen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-lesson-plans" xml:space="preserve">
+    <value>Inget att ställa in ännu: lektionsplaner ingår i LMS-tillägget, som inte är tillgängligt ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-training-resources" xml:space="preserve">
+    <value>Bokning av lokaler och övningsutrustning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-training-resources" xml:space="preserve">
+    <value>Organisationens övningsfält, lektionssalar, övningsobjekt, fordon och utrustning, bokade för lektionstider så att inget dubbelbokas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-training-resources" xml:space="preserve">
+    <value>Två lektioner räknar aldrig med samma brandhus eller fordon samma eftermiddag.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-training-resources" xml:space="preserve">
+    <value>Stegövningen bokar övningstornet och Släckbil 3 på lördagsförmiddagen; en andra lektion som vill ha tornet då nekas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-training-resources" xml:space="preserve">
+    <value>Inget att ställa in ännu: bokning av lokaler ingår i LMS-tillägget, som inte är tillgängligt ännu.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Inställningar för protokollbiblioteket / Bestämningskod i larmtexter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.ProtocolLibrarySettings.ShowDeterminantInDispatch" xml:space="preserve">
+    <value>Lägger till bestämningskod och protokollnamn från ett larms ärendeflöde i pushrubriken, larm-sms:et och röstlarmet. Av som standard; då är alla larmtexter som förut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-case-flow" xml:space="preserve">
+    <value>Protokollets ärendeflöde (beslutsmotor för larm)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-case-flow" xml:space="preserve">
+    <value>Ett larmprotokoll kan ha ett ärendeflöde: inledande frågor och nyckelfrågor, instruktioner att läsa upp och utfall med bestämningskod och föreslagen prioritet. Larmoperatörer går igenom det i Nytt larm, ändrar bestämningskoden bara med ett skäl, skickar instruktioner via sms och får med Enhanced AI ett föreslaget protokoll att bekräfta. Insatskort kan reagera på bestämningskoden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-sheets" xml:space="preserve">
+    <value>Färdighetsblad</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-sheets" xml:space="preserve">
+    <value>Färdighetsblad efter prestationskrav med ordnade steg, kritiska kriterier som underkänner bedömningen, skalor, tidtagning och underlag, versionshanterade och med ett bibliotek av Resgrid-mallar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-sheets" xml:space="preserve">
+    <value>Alla bedömare bedömer samma färdighet på samma sätt, och avdelningen kan visa exakt vad som kontrollerades.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-sheets" xml:space="preserve">
+    <value>Bladet för påtagning av andningsskydd underkänner den som tar längre än 60 sekunder eller missar täthetskontrollen av masken.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-sheets" xml:space="preserve">
+    <value>Öppna Utbildning, välj Färdigheter och sedan Färdighetsblad, och börja från en mall.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-skill-evaluations" xml:space="preserve">
+    <value>Färdighetsbedömningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-skill-evaluations" xml:space="preserve">
+    <value>Bedömarläge: bedöm en medlem eller en hel besättning på ett blad, med godkänn alla, kommentarer och underlag, och signera sedan på nivå L2; godkända bedömningar hamnar i utbildningsregistret och posten förseglas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-skill-evaluations" xml:space="preserve">
+    <value>Färdigheter som kontrollerats på övningsfältet blir signerade, förseglade bevis som krav och certifieringar kan räkna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-skill-evaluations" xml:space="preserve">
+    <value>En styrkeledare bedömer besättningen på Släckbil 2 vid slangutläggning på ett formulär, bryter ut medlemmen som hade svårt och signerar på en surfplatta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-skill-evaluations" xml:space="preserve">
+    <value>Publicera ett blad, ange vem som får bedöma med det och välj sedan Starta en bedömning under Utbildning, Färdigheter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-task-books" xml:space="preserve">
+    <value>Uppgiftsböcker för befattningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-task-books" xml:space="preserve">
+    <value>Uppgiftsböcker enligt NWCG-modellen: startas med befattningskod och datum, uppgifter signeras av behöriga bedömare vid olika tillfällen och ärenden, rekommenderas av en slutbedömare och certifieras av den certifierande; certifieringen aktiverar elevens certifiering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-task-books" xml:space="preserve">
+    <value>Elever blir behöriga med ett komplett, signerat spår i stället för en pappersbok i ett skåp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-task-books" xml:space="preserve">
+    <value>En elevs FFT2-bok startas i mars, två ärendeuppgifter signeras vid skogsbränder under sommaren och den certifierande certifierar den i september.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-task-books" xml:space="preserve">
+    <value>Öppna Utbildning, välj Färdigheter och sedan Mallar, börja från en mall för uppgiftsbok, ange vem som signerar och certifierar och starta böcker under Uppgiftsböcker.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsSkillSettings" xml:space="preserve">
+    <value>Inställningar för färdighetsmeddelanden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsSkillSettings" xml:space="preserve">
+    <value>Hur meddelanden om bedömningar och uppgiftsböcker levereras, direkt eller som daglig eller veckovis sammanfattning, och om bedömda medlemmar och administratörer får dem.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Leverans av färdighetsmeddelanden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestMode" xml:space="preserve">
+    <value>Direkt, som daglig eller veckovis sammanfattning (ett meddelande per person med alla meddelanden) eller av.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Tid för färdighetssammanfattning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestHour" xml:space="preserve">
+    <value>Avdelningens lokala klockslag då dagliga och veckovisa sammanfattningar skickas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>Dag för veckosammanfattning om färdigheter</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.DigestWeekday" xml:space="preserve">
+    <value>Veckodagen då veckosammanfattningar skickas.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Meddela bedömda medlemmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyMembers" xml:space="preserve">
+    <value>Bedömda medlemmar och elever får meddelanden om sina egna bedömningar och böcker.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Meddela administratörer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsSkillSettings.NotifyOfficers" xml:space="preserve">
+    <value>Avdelningens aktiva administratörer får ett meddelande om varje bedömning och bok.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Permission.ReviewDispatchCases">
+    <value>Granska utlarmningsärenden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="PermissionHelp.ReviewDispatchCases">
+    <value>Tillåter att dra larm för ärendegranskning, bedöma det registrerade ärendet med en bedömningsmall, skicka granskningen till larmoperatören och läsa följsamhetsrapporten. Ingen granskar sina egna larm. Utan sparad regel får bara avdelningens administratörer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.dispatch-case-review">
+    <value>Granskning av utlarmningsärenden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.dispatch-case-review">
+    <value>Ansvariga drar larm efter protokoll, utgåva, determinant, larmoperatör och datum, bedömer varje registrerat ärende fråga för fråga och instruktion för instruktion med en bedömningsmall från Records kvalitetsgranskning bredvid protokollets ärendeflöde och skickar granskningen till larmoperatören. Rapporterna visar följsamhet per protokoll, utgåva, larmoperatör och månad, med CSV.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="Feature.my-case-reviews">
+    <value>Mina ärendegranskningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data xml:space="preserve" name="FeaturePurpose.my-case-reviews">
+    <value>Larmoperatörer läser granskningarna av larm de hanterade, med varje fråga och instruktion bedömd och granskarens kommentarer, kvitterar varje granskning en gång och kan svara en gång; granskaren aviseras om svaret.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsCeReportingSettings" xml:space="preserve">
+    <value>Inställningar för fortbildningsrapportering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsCeReportingSettings" xml:space="preserve">
+    <value>Leverantörsnumren för CAPCE och CE Broker, de certifieringstyper som innehåller medlemmarnas licens-, NREMT- och National EMS ID-nummer, samt kolumnlistorna för filen med CE-/CPD-utbildningstimmar och för CAPCE-filen, de delstatliga CE-filerna och de delstatliga deltagarlistorna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>CAPCE-leverantörsnummer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderNumber" xml:space="preserve">
+    <value>Avdelningens CAPCE-leverantörsnummer när den är en CAPCE-ackrediterad leverantör. Utan det skapas ingen CAPCE-slutförandefil.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>CAPCE-leverantörsnamn</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CapceProviderName" xml:space="preserve">
+    <value>Leverantörsnamnet så som avdelningen anger det på kurser och poster; slutföranden som anger det räknas som avdelningens egen fortbildning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>Certifieringstyp för delstatens licens</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.LicenseCertificationTypeId" xml:space="preserve">
+    <value>Certifieringstypen vars nummer, område, typ och utgångsdatum filerna anger som medlemmens delstatslicens.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>Certifieringstyp för NREMT</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NremtCertificationTypeId" xml:space="preserve">
+    <value>Certifieringstypen vars nummer och utgångsdatum filerna anger som NREMT-nummer och nästa omregistreringsdatum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>Certifieringstyp för nationellt EMS-id</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.NemsidCertificationTypeId" xml:space="preserve">
+    <value>Certifieringstypen vars nummer filerna anger som medlemmens nationella EMS-id (NEMSID).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>CE Broker-leverantörsnummer</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.CeBrokerProviderNumber" xml:space="preserve">
+    <value>CE Brokers spårningsnummer för leverantören (Florida) som skrivs i kolumn A i CE Broker-filen utan prefixet 50-.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>Kolumnlistor för fortbildningsfiler</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeReportingSettings.ColumnMaps" xml:space="preserve">
+    <value>Avdelningens egna kolumnlistor, en per filtyp; en filtyp utan egen lista använder sina standardkolumner.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>Typ av fortbildningsfil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.ExporterKey" xml:space="preserve">
+    <value>Vilken fil en kolumnlista tillhör: training-hours, capce, fl-ems, va-ems, nj-ems, fl-fire, state-ce eller state-roster.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>Fortbildningsfilens kolumner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumnMap.Columns" xml:space="preserve">
+    <value>Filens kolumner i ordning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Header" xml:space="preserve">
+    <value>Kolumnrubrik</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Header" xml:space="preserve">
+    <value>Rubriken som skrivs i filens rubrikrad; filer utan rubrikrad utelämnar den.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Source" xml:space="preserve">
+    <value>Kolumnvärde</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Source" xml:space="preserve">
+    <value>Vilket värde kolumnen innehåller: ett fält från medlemmen, posten, certifieringen eller leverantören, eller fast text.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsCeColumn.Argument" xml:space="preserve">
+    <value>Kolumnformat</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsCeColumn.Argument" xml:space="preserve">
+    <value>Ett datum- eller talformat för värdet, eller texten i en kolumn med fast text.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-data-export" xml:space="preserve">
+    <value>Export av utbildningsdata</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-data-export" xml:space="preserve">
+    <value>Ägare och administratörer exporterar allt avdelningen har lagt in i Utbildning: kurser med versioner, lektioner och media, frågebanker med facit samt varje utbildningspost, försök och intyg som CSV och xAPI-uttryck, med ett SCORM 1.2-paket per kurs där lektionerna tillåter det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-data-export" xml:space="preserve">
+    <value>En avdelning kan alltid ta med sig sitt utbildningsinnehåll och sina belägg, även efter att LMS-tillägget har upphört.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-data-export" xml:space="preserve">
+    <value>Innan avdelningen flyttar till en regional akademis system exporterar utbildningsansvarig allt, laddar in xAPI-uttrycken i det nya postlagret och sparar CSV-posterna för revisionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-data-export" xml:space="preserve">
+    <value>Öppna Utbildning, välj Program och sedan Dataexport, välj Allt eller Endast poster och starta exporten; ladda ned zip-filen när den är klar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-ce-reporting" xml:space="preserve">
+    <value>Filer för fortbildningsrapportering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-ce-reporting" xml:space="preserve">
+    <value>Skapar en fil med CE-/CPD-utbildningstimmar med de kolumner som er tillsynsmyndighet eller ert yrkesorgan begär, och för amerikanska organisationer CAPCE-filen för slutföranden, delstatliga CE-filer (Floridas CE Broker-format och en konfigurerbar CSV för andra delstater) och en deltagarlista klar för delstaten för system som Acadis, med förhandsgranskning och kolumner per organisation.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-ce-reporting" xml:space="preserve">
+    <value>Slutföranden når er tillsynsmyndighet, ert yrkesorgan, CAPCE eller delstatskontoret utan att en deltagarlista behöver skrivas om, och inget skickas in innan någon har kontrollerat filen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-ce-reporting" xml:space="preserve">
+    <value>Varje månad förhandsgranskar EMS-samordnaren förra månadens CAPCE-fil, rättar två medlemmar som saknar licensnummer och laddar upp CSV-filen till CAPCE.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-ce-reporting" xml:space="preserve">
+    <value>Öppna Utbildning, välj Program och sedan Rapportering av fortbildning, ange leverantörsnumren och certifieringstyperna med licensnumren och skapa sedan en fil för ett datumintervall.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-public-pages" xml:space="preserve">
+    <value>Publika protokollsidor</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-public-pages" xml:space="preserve">
+    <value>Publicera ett protokolls gällande version, eller en kategori som ett paket, på en publik adress som aktiveras vid behov, med inbäddningskod. Utkast samt målgruppsbegränsat och licensierat innehåll visas aldrig, och en sida kan återkallas när som helst.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-template-library" xml:space="preserve">
+    <value>Mallbibliotek för protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-template-library" xml:space="preserve">
+    <value>Klona startpaket skrivna av Resgrid (insatsriktlinjer för räddningstjänst, sök och räddning, industririsker, kontinuitetsplanering, policyer för polisverksamhet, postinstruktioner för bevakning, arbetsplatspolicyer och en disposition för ambulanssjukvård utan medicinsk text) till biblioteket som utkast på ert språk, med källa, licens och version sparade på varje version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.community-exchange" xml:space="preserve">
+    <value>Gemensamt utbyte</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.community-exchange" xml:space="preserve">
+    <value>Dela protokoll och utbildningar kostnadsfritt med andra avdelningar. Avdelningsuppgifter tas bort, licensierat innehåll nekas, Resgrid granskar varje bidrag innan det listas och andra avdelningar kan betygsätta, kommentera och importera en kopia med erkännandet bevarat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-open-format" xml:space="preserve">
+    <value>Öppet protokollformat och export</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-open-format" xml:space="preserve">
+    <value>Exportera biblioteket eller en kategori i det dokumenterade öppna JSON-formatet (block, versionshistorik, beslutsträd, översättningar och en bilagelista), som en enda HTML-fil eller som PDF-boken. Filer i det äldre formatet kan fortfarande importeras.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-analytics" xml:space="preserve">
+    <value>Protokollanalys</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-analytics" xml:space="preserve">
+    <value>Se hur protokoll används på larm per version, fördelningen av bestämningskoder och andelen ändrade, tid i protokollet, kvitteringsgrad och sökningar utan träffar, med CSV-export.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-external-learners" xml:space="preserve">
+    <value>Externa deltagare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-external-learners" xml:space="preserve">
+    <value>Utbilda personer som inte är medlemmar: partner i ömsesidig hjälp, entreprenörer, frivilliga och allmänheten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-external-learners" xml:space="preserve">
+    <value>Partner och allmänhet går kurser och klasser utan medlemskonto och utan åtkomst till något annat.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-external-learners" xml:space="preserve">
+    <value>Entreprenörer går er säkerhetsintroduktion för anläggningen, en angränsande frivillig brandkår går er kurs för maskinister, och CERT-frivilliga anmäler sig till ett kurstillfälle.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-external-learners" xml:space="preserve">
+    <value>Slå på deltagarportalen, öppna kurser för externa deltagare och bjud in dem via e-post. Upp till 25 % av platserna (minst 25) ingår.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-learner-portal" xml:space="preserve">
+    <value>Deltagarportal med er profil</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-learner-portal" xml:space="preserve">
+    <value>Inloggningssida och katalog för externa deltagare med avdelningens logotyp och färg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-learner-portal" xml:space="preserve">
+    <value>Deltagarna ser er avdelning, inte Resgrid, och bara sin egen utbildning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-learner-portal" xml:space="preserve">
+    <value>Allmänheten hittar era HLR-klasser i portalen och anmäler sig efter att ha bekräftat e-posten.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-learner-portal" xml:space="preserve">
+    <value>Ladda upp en logotyp i avdelningsprofilen, välj färg och bestäm om självregistrering och öppen lista tillåts.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-public-class-fees" xml:space="preserve">
+    <value>Avgiftsbelagda öppna klasser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-public-class-fees" xml:space="preserve">
+    <value>Valfri avgift per extern deltagare, med export av listan och fakturor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-public-class-fees" xml:space="preserve">
+    <value>Ta betalt för HLR-, första hjälpen- och CERT-klasser: exportera listan eller skapa fakturor med Business Ops.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-public-class-fees" xml:space="preserve">
+    <value>En HLR-klass kostar 45 per person; en faktura går till arbetsgivaren som skickade sex anställda.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-public-class-fees" xml:space="preserve">
+    <value>Öppna Öppen klass och avgifter, visa klassen, sätt avgiften och exportera listan eller fakturera per deltagare eller organisation. Resgrid tar aldrig emot betalning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-course-drafts" xml:space="preserve">
+    <value>Kursutkast från protokoll och rutiner</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-course-drafts" xml:space="preserve">
+    <value>Skapa ett utkast till en onlinekurs från ett publicerat protokoll eller ett uppladdat rutindokument: moduler, lektioner som citerar avsnitten de lär ut och en frågebank att granska.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-course-drafts" xml:space="preserve">
+    <value>Utbildningsansvariga börjar från ett komplett utkast som följer avdelningens egen rutin i stället för en tom sida, och varje lektion visar källtexten den bygger på.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-course-drafts" xml:space="preserve">
+    <value>En utbildningsansvarig gör om den nya maydayrutinen till ett kursutkast med fyra moduler och fem quizfrågor, kontrollerar varje lektion mot dess avsnitt och skickar det för godkännande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-course-drafts" xml:space="preserve">
+    <value>Kräver Enhanced AI med kunskapssvar och LMS-tillägget; öppna Utbildning, Kursbibliotek, Utkast med AI. Utkast publiceras aldrig av sig själva, varje tal måste finnas i de citerade avsnitten, innehåll markerat ingen AI skickas aldrig och avdelningar med Advanced Data Protection får inga utkast.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-flashcards" xml:space="preserve">
+    <value>Övningskort för kurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-flashcards" xml:space="preserve">
+    <value>Övningskort skapade från en kurs eller protokollet den bygger på; författare behåller de kort de vill ha och deltagarna övar på dem i kursspelaren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-flashcards" xml:space="preserve">
+    <value>Medlemmarna repeterar mellan övningarna de steg och kriterier de måste minnas, och ett kort döljs och flaggas för granskning så snart källan får en ny version.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-flashcards" xml:space="preserve">
+    <value>När protokollet för hjärtstopp får en ny version försvinner dess övningskort ur spelaren tills den utbildningsansvarige har kontrollerat dem mot den nya versionen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-flashcards" xml:space="preserve">
+    <value>Kräver Enhanced AI med kunskapssvar och LMS-tillägget; öppna en kurs och välj Övningskort. Övningen bedöms eller registreras aldrig i utbildningsregistret.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-starter-courses" xml:space="preserve">
+    <value>Startkurser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-starter-courses" xml:space="preserve">
+    <value>Kurser skrivna av Resgrid (kom igång med Resgrid, grunderna i säkerhet vid insats, en disposition om farliga ämnen, förargrunder) att kopiera till avdelningen som utkast.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-starter-courses" xml:space="preserve">
+    <value>En avdelning får en strukturerad första kurs på några minuter och anpassar den till sina rutiner; kopian behåller källangivelsen och partnerplatserna visar var ackrediterat innehåll kopplas in.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-starter-courses" xml:space="preserve">
+    <value>En deltidsstation kopierar Kom igång med Resgrid, lägger till sina radiokanaler och stationsnamn och tilldelar kursen varje ny medlem efter godkännande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-starter-courses" xml:space="preserve">
+    <value>Kräver LMS-tillägget och Hantera kurser; öppna Utbildning, Kursbibliotek, Startkurser. Startkurserna innehåller ingen standardtext och ingen ackreditering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.LmsStandardsSettings" xml:space="preserve">
+    <value>xAPI-inställningar (LRS)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.LmsStandardsSettings" xml:space="preserve">
+    <value>Om LMS-kurs- och lektionsresultat skickas som xAPI-uttryck till avdelningens Learning Record Store, med vilken nyckel och hemlighet, och om medlemmar identifieras med e-postadress.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>Skicka xAPI-uttryck</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.XapiEnabled" xml:space="preserve">
+    <value>Kurs- och lektionsresultat (attempted, completed, passed, failed) köas och skickas till LRS av standardprocessen, med nya försök.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>LRS-slutpunkt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsEndpoint" xml:space="preserve">
+    <value>Https-adressen till Learning Record Stores xAPI-slutpunkt; uttryck skickas till dess statements-resurs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>LRS-nyckel</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsKey" xml:space="preserve">
+    <value>Nyckeln för basic-auth (användarnamn) som LRS utfärdade.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>LRS-hemlighet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.LrsSecretEncrypted" xml:space="preserve">
+    <value>Hemligheten för basic-auth, lagrad krypterad för avdelningen och visas aldrig igen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Identifiera medlemmar med e-post</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.LmsStandardsSettings.ShareEmailInActor" xml:space="preserve">
+    <value>Av: varje medlem är ett pseudonymt avdelningskonto. På: medlemmens e-postadress skickas som uttryckets aktör.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-content-standards" xml:space="preserve">
+    <value>SCORM, cmi5, xAPI och LTI</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-content-standards" xml:space="preserve">
+    <value>Importera SCORM 1.2/2004- och cmi5-paket som spelas upp i en isolerad spelare, starta vidareutbildningskurser från tredje part via LTI 1.3 med poängåterföring och skicka resultat till ett externt LRS som xAPI-uttryck.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-content-standards" xml:space="preserve">
+    <value>E-learning från partner och köpt innehåll körs i Resgrid och hamnar i utbildningsintyget, och resultaten kan gå till avdelningens egen LRS.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-content-standards" xml:space="preserve">
+    <value>En hjärtkurs från en CAPCE-leverantör startar från en lektion via LTI; poängen kommer tillbaka, lektionen slutförs och poängen hamnar i medlemmens intyg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-content-standards" xml:space="preserve">
+    <value>Öppna Utbildningar, välj Standarder, ladda upp ett paket eller registrera ett LTI-verktyg och lägg sedan till en SCORM-, cmi5- eller LTI-lektion i en kurs.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.ai-protocol-tools" xml:space="preserve">
+    <value>Övningskort, utbildnings- och översättningsutkast för protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.ai-protocol-tools" xml:space="preserve">
+    <value>Skapa övningskort, en utbildning med quiz och översättningar från en publicerad protokollversion för författarna att granska; medlemmarna övar korten på protokollet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.ai-protocol-tools" xml:space="preserve">
+    <value>Protokollförfattare får, med enbart Enhanced AI, utkast som bygger på avdelningens egna protokoll, och varje del hänvisar till avsnittet den kommer från.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.ai-protocol-tools" xml:space="preserve">
+    <value>När strokeprotokollet har publicerats skapar ambulanssamordnaren tio övningskort, en utbildning med fem quizfrågor för bekräftelsen och en spansk översättning att granska.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.ai-protocol-tools" xml:space="preserve">
+    <value>Aktivera kunskapssvar med Enhanced AI; öppna ett publicerat protokoll och välj Övningskort eller Skapa en utbildning, eller öppna ett översättningsutkast och välj Skapa översättningsutkast med AI.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.RecordTrainingCompletions" xml:space="preserve">
+    <value>Registrera slutförda utbildningar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.RecordTrainingCompletions" xml:space="preserve">
+    <value>Tillåter att registrera att medlemmar slutförde en utbildning eller LMS-kurs tillsammans (från ett pass deltagarlista, eller med en anteckning från en kurs inskrivningslista eller en utbildnings tilldelningslista). Varje register visar att en instruktör registrerade det, och den som registrerade kan makulera det med en anledning. Gruppadministratörer registrerar bara för medlemmar i sin egen grupp. Utan sparad regel får bara organisationens administratörer.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-record-completions" xml:space="preserve">
+    <value>Registrera slutförda utbildningar för medlemmar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-record-completions" xml:space="preserve">
+    <value>En instruktör eller utbildningsansvarig registrerar att medlemmar slutförde en utbildning eller kurs de gick tillsammans.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-record-completions" xml:space="preserve">
+    <value>Gruppträning (ett HLR-pass, ett skiftlag som tittar på filmerna tillsammans) hamnar i varje medlems register, certifieringen förnyas och registret visar vem som registrerade det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-record-completions" xml:space="preserve">
+    <value>Efter ett HLR-pass bockar utbildningsledaren för de närvarande på passets deltagarlista och registrerar HLR-kursen som slutförd för alla.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-record-completions" xml:space="preserve">
+    <value>Ge rätt roller behörigheten Registrera slutförda utbildningar på säkerhetssidan och koppla passet till dess kurs eller utbildning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.law-enforcement" xml:space="preserve">
+    <value>Polisverksamhet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.law-enforcement" xml:space="preserve">
+    <value>Granska passtäckning, behörigheter, fortbildning, policybekräftelser och registergranskning.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.law-enforcement" xml:space="preserve">
+    <value>Paketet kan granska passtäckning, behörigheter, utbildning och inställningar för registergranskning. Lagkrav, regler från tillståndsmyndigheter, granskning av våldsanvändning och bevissystem utvärderas inte. Ansvarigt befäl eller utbildningsansvarig måste kontrollera dessa källor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Pack.business" xml:space="preserve">
+    <value>Företag och arbetsplats</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackPurpose.business" xml:space="preserve">
+    <value>Granska personalgrupper, behörigheter, utbildning, checklistor och policybekräftelser för en arbetsplats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PackGap.business" xml:space="preserve">
+    <value>Paketet kan granska grupper, behörigheter, utbildning, checklistor och spärrar av utrustning. Arbetsrätt, arbetsmiljöregler, försäkringar och krav på entreprenörer utvärderas inte. Ansvarig chef måste kontrollera dessa källor.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-certification-requirements" xml:space="preserve">
+    <value>Kravuppsättningar för certifieringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-certification-requirements" xml:space="preserve">
+    <value>En certifiering utfärdas eller förnyas automatiskt när en medlem slutför alla delar i dess uppsättning inom cykeln: LMS-kurser, en kursserie, utbildningar, en övervakad praktisk övning som en instruktör registrerat, färdighetsbedömningar eller fortbildningstimmar. Om ett slutförande den bygger på makuleras tas certifieringen tillbaka.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.lms-certification-requirements" xml:space="preserve">
+    <value>Medlemmar och ansvariga ser exakt vad som återstår ("3 av 4 klara"), ingen för in förnyelser för hand och ett felaktigt slutförande lämnar aldrig en certifiering utan grund.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.lms-certification-requirements" xml:space="preserve">
+    <value>En förarcertifiering kräver den årliga körkursen, kursen i fordonskontroll och en lågfartsbana som en instruktör godkänner; när den sista registreras förnyas certifieringen till nästa 31 december.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.lms-certification-requirements" xml:space="preserve">
+    <value>Inget att ställa in än: kravuppsättningar för certifieringar ingår i LMS-tillägget, som ännu inte är tillgängligt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.certification-validity-rules" xml:space="preserve">
+    <value>Giltighetsregler för certifieringar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.certification-validity-rules" xml:space="preserve">
+    <value>En certifieringstyp går ut ett antal månader efter utfärdandet, vid slutet av varje kalenderår, vid slutet av organisationens eget år eller på ett fast datum, med valfri respitperiod och förnyelsefönster.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.certification-validity-rules" xml:space="preserve">
+    <value>Årliga behörigheter och räkenskapsårsbehörigheter går ut samma dag för alla, förnyelser hamnar i rätt år och datum följer organisationens tidszon.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.certification-validity-rules" xml:space="preserve">
+    <value>En truckbehörighet som går ut den 31 mars varje år förnyas till följande 31 mars när repetitionsutbildningen slutförs i februari.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.certification-validity-rules" xml:space="preserve">
+    <value>Öppna Certifieringar, sedan en certifieringstyp, och välj hur den går ut.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-read-and-confirm" xml:space="preserve">
+    <value>Utbildningar att läsa och bekräfta</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-read-and-confirm" xml:space="preserve">
+    <value>En utbildning utan quiz kan be varje medlem bekräfta att de läst och granskat den före förfallodatumet och upprepas varje år: en personalhandbok, en uppförandekod eller en platsregel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-read-and-confirm" xml:space="preserve">
+    <value>Att öppna ett dokument räknas inte längre som att läsa det: posten visar vem som bekräftade och när, redo för revision.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-read-and-confirm" xml:space="preserve">
+    <value>Personalhandboken tilldelas varje januari med förfallodatum 31 januari; varje medlem kryssar i "Jag har läst och granskat den här utbildningen" och utdraget visar datumet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-read-and-confirm" xml:space="preserve">
+    <value>Skapa en utbildning, bifoga eller skriv dokumentet, kryssa i "Medlemmarna bekräftar att de har läst och granskat den", ange ett förfallodatum och upprepa var 12:e månad.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Inställningar för utbildningsregister / Granskning av medlemmarnas inskick</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.SubmissionReviewMode" xml:space="preserve">
+    <value>Om utbildningstimmar som medlemmar skickar in ska vänta på en granskare innan de räknas: varje inskick (standard), inga (godtas vid inskick och visas som egenrapporterade) eller endast valda kategorier eller över en timgräns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>Inställningar för utbildningsregister / Kategorier som kräver granskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewCategoryIds" xml:space="preserve">
+    <value>Vid granskning av valda inskick väntar inskick i dessa utbildningskategorier på en granskare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>Inställningar för utbildningsregister / Granska inskick över (timmar)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewAboveHours" xml:space="preserve">
+    <value>Vid granskning av valda inskick väntar inskick med fler timmar än detta värde på en granskare. 0 betyder ingen gräns.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>Inställningar för utbildningsregister / Rollgranskare endast för den egna gruppen</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.RoleReviewersOwnGroupOnly" xml:space="preserve">
+    <value>När det är på granskar granskare som utsetts via roll (Registrera genomförda utbildningar eller Tilldela utbildning) endast medlemmarna i sin grupp. Organisationens administratörer granskar fortfarande alla och gruppadministratörer sin egen grupp.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>Inställningar för utbildningsregister / Meddelanden till granskare</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.TrainingRecordSettings.ReviewerNotices" xml:space="preserve">
+    <value>Hur granskare får veta om nya inskick: ett meddelande per inskick (standard), en sammanfattning per dag eller inga (endast inkorgen i Utbildningsgranskningar och posten på startsidan).</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.training-submission-reviews" xml:space="preserve">
+    <value>Utbildningsgranskningar (medlemmarnas utbildningstimmar med underlag)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.training-submission-reviews" xml:space="preserve">
+    <value>Medlemmar registrerar fortbildnings- eller utbildningstimmar som genomförts på annat håll med intyg, foto, dokument eller kvitto; granskare godkänner, avslår eller ber om mer information.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.training-submission-reviews" xml:space="preserve">
+    <value>Extern utbildning når utbildningsregistret med sitt underlag, granskad när organisationen vill det, och medlemmen får besked i varje steg.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.training-submission-reviews" xml:space="preserve">
+    <value>En medlem laddar upp ett foto av intyget från en åtta timmar lång repetition om farliga ämnen; utbildningsansvarig ser det i Utbildningsgranskningar, öppnar fotot och godkänner det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.training-submission-reviews" xml:space="preserve">
+    <value>Välj granskning i inställningarna för utbildningsregister och ge utbildningsansvariga och instruktörer behörigheten Registrera genomförda utbildningar på sidan Säkerhet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>Inställningar för välmående / Certifiering för välmåendeansvarig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.WellnessOfficerCertificationTypeId" xml:space="preserve">
+    <value>En certifieringstyp i organisationen, till exempel tillagd från mallen Välmåendeansvarig, vars krav och giltighet organisationen bestämmer. Varje välmåendeansvarigs status (giltig, går snart ut, utgången, saknas) visas på inställningssidan och i medlemmarnas exponeringsrapport. Den avgör vem som verkar bara när certifieringsreglaget är på. Ingen visar ingen status.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>Inställningar för välmående / Certifiering för utsedd ansvarig</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.DesignatedOfficerCertificationTypeId" xml:space="preserve">
+    <value>En certifieringstyp i organisationen, till exempel tillagd från mallen Utsedd ansvarig för exponeringskontroll, som visas som varje utsedd ansvarigs status. Ingen: så länge ingen roll för utsedd ansvarig är vald gäller certifieringen för välmåendeansvarig.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Inställningar för välmående / Roll för kamratstödsteamet</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.PeerTeamRoleId" xml:space="preserve">
+    <value>Medlemmarna i personalrollen utgör kamratstödsteamet och får de påminnelser om årsdagar som en medlem väljer att dela. Ingen: medlemmarna med en giltig certifiering för kamratstödsteamet utgör teamet.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Inställningar för välmående / Endast medlemmar med giltig certifiering verkar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.WellnessSettings.RequireCurrentCertification" xml:space="preserve">
+    <value>Av (standard): rollerna välmåendeansvarig, utsedd ansvarig och kamratstöd avgör ensamma vem som verkar, och varje kopplad certifiering visas som status. På: en rollmedlem behöver också en giltig certifiering av rollens kopplade typ; en roll utan kopplad typ påverkas inte. Det går inte att slå på så länge ingen i rollen välmåendeansvarig eller utsedd ansvarig har en giltig certifiering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Permission.ManageContentSets" xml:space="preserve">
+    <value>Hantera innehållssamlingar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="PermissionHelp.ManageContentSets" xml:space="preserve">
+    <value>Tillåter att publicera protokoll- och kurssamlingar till länkade avdelningar, prenumerera på deras, besluta i uppdateringsinkorgen, anpassa de block som en utgivare har lämnat öppna, besvara förslag och sponsra en länkad avdelnings LMS-platser. Alla medlemmar kan föreslå en ändring till utgivaren. Utan en sparad regel får endast avdelningsadministratörer göra detta.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.ContentSetSettings" xml:space="preserve">
+    <value>Uppdateringstid för samlingar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.ContentSetSettings" xml:space="preserve">
+    <value>Den lokala tid då godkända uppdateringar av protokoll- och kurssamlingar träder i kraft på eller efter sitt ikraftträdandedatum (standard 07:00, så att inget ändras oväntat mitt i ett skift), och vem som meddelas när en uppdatering kommer, ett förslag besvaras, en sponsring ändras eller ett LTI-verktyg behöver registreras: administratörerna (om det inte är avstängt) och medlemmar i de valda rollerna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.protocol-sets" xml:space="preserve">
+    <value>Protokollsamlingar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.protocol-sets" xml:space="preserve">
+    <value>Publicera protokoll till länkade avdelningar som en regional samling, eller prenumerera på en samling från ett län, en medicinsk ledning eller ett företag. Låst innehåll följer utgivaren, anpassningsbara block behåller lokala telefonnummer och resurser, varje ny version kommer med markerade ändringar till uppdateringsinkorgen och träder i kraft vid er uppdateringstid, och medlemmar föreslår ändringar till utgivaren.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.linked-department-protocols" xml:space="preserve">
+    <value>Länkade avdelningars protokoll</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.linked-department-protocols" xml:space="preserve">
+    <value>Läs en biståndspartners publicerade protokoll via en Avdelningslänk som delar protokoll, skrivskyddat och endast den gällande versionen. Begränsade, licensierade och som dokument uppladdade protokoll delas aldrig, och att stänga av delningen bryter åtkomsten direkt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.course-sets" xml:space="preserve">
+    <value>Kurssamlingar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.course-sets" xml:space="preserve">
+    <value>Publicera utbildningar (och, med LMS, kurser och lärvägar) till länkade organisationer som en samling; prenumeranterna får egna kopior, låsta eller öppna enligt utgivarens val, och varje uppdatering hamnar i deras inkorg för att träda i kraft vid deras uppdateringstid. Utbildningar kräver inget tillägg, och ändringar i quiz följer med varje uppdatering.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-sponsorship" xml:space="preserve">
+    <value>Sponsrade LMS-platser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-sponsorship" xml:space="preserve">
+    <value>Betala för en länkad avdelnings LMS-aktiverade medlemmar från era egna paket, valfritt upp till en platsgräns. Den sponsrade avdelningen behöver inget tillägg, kan ha gratisplanen, kör endast era kurssamlingar och ser vem som betalar; när sponsringen eller länken avslutas upphör åtkomsten enligt de vanliga reglerna för upphörande.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Setting.StepUpPolicy" xml:space="preserve">
+    <value>Policy för förnyad verifiering</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SettingHelp.StepUpPolicy" xml:space="preserve">
+    <value>Var medlemmar måste bekräfta att det är de igen (signaturer, läsbekräftelser, godkännanden, skyddade data), om det är valfritt och om ett lösenord eller en inloggning hos identitetsleverantören får användas utöver tvåfaktorsautentisering. Kontrollera medlemmarna utan tvåfaktorsautentisering som sidan listar innan du kräver det.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>Policy för förnyad verifiering / Områden</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.DepartmentStepUpPolicy.Areas" xml:space="preserve">
+    <value>En post per område som skiljer sig från standard. Ett område utan post kräver tvåfaktorsverifiering där det gjorde det tidigare.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Verifieringsområde / Område</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Area" xml:space="preserve">
+    <value>Vilka åtgärder posten gäller: 1 signaturer, 2 läs- och signeringsbekräftelser, 3 godkännandebeslut, 4 skyddade data.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Verifieringsområde / Valfritt</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.Optional" xml:space="preserve">
+    <value>Förnyad verifiering krävs inte för signaturer eller godkännandebeslut: de signeras med den inloggade sessionen om inte medlemmen nyligen har verifierat sig. Läsbekräftelser följer protokollbibliotekets inställning och skyddade data ADP-undantagen.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Field.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Verifieringsområde / Alternativa metoder</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FieldHelp.StepUpAreaSetting.AlternativeMethods" xml:space="preserve">
+    <value>Verifieringar som godtas utöver tvåfaktorsautentisering: 2 en ny inloggning hos identitetsleverantören, 4 kontots lösenord angivet igen. Ingen av dem är en andra faktor; för skyddade data kan bara den ansvariga medlemmen ändra detta, och en ändring avslutar redan utfärdade behörigheter.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.lms-course-sets" xml:space="preserve">
+    <value>LMS-kurser och lärvägar i samlingar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.lms-course-sets" xml:space="preserve">
+    <value>LMS-kurser och lärvägar följer med i kurssamlingar: värdad video och SCORM- eller cmi5-paket delas med prenumeranten, en LTI-lektion använder prenumerantens egen registrering hos verktyget (prenumerantens ansvariga uppmanas att slutföra den), och en lärväg pekar på prenumerantens kopior av dess kurser. Kräver prenumerantens LMS-tillägg eller utgivarens sponsring.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.deployment-partner-acceptance" xml:space="preserve">
+    <value>Partners godkännande av insatser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.deployment-partner-acceptance" xml:space="preserve">
+    <value>När en insatsbeställning fylls för en länkad organisation på Resgrid anger ni den som partner: varje tillsättning ni godkänner ber dess administratörer att godkänna uppdraget med en signatur med förnyad identitetsverifiering (step-up) via länken, och insatsen visar vem som godkände den och när.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.department-link-acceptance" xml:space="preserve">
+    <value>Signerat godkännande av länkar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.department-link-acceptance" xml:space="preserve">
+    <value>Att godkänna en länk från en annan organisation är en signatur med förnyad identitetsverifiering (step-up) av en av era administratörer, bunden till de två organisationerna och till vad var och en delar i det ögonblicket; utan step-up-verifieringen förblir länken ogodkänd.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Area.workforce-pro" xml:space="preserve">
+    <value>Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaPurpose.workforce-pro" xml:space="preserve">
+    <value>Det betalda tillägget per medlem för register över välmående och exponering i arbetet: exponeringslogg, exponeringsärenden, skador och medicinska friskrivningar.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaValue.workforce-pro" xml:space="preserve">
+    <value>Långsiktiga register över exponeringar och skador för de medlemmar som behöver dem, betalda per paket om 25 medlemmar och läsbara även om tillägget upphör.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AreaExample.workforce-pro" xml:space="preserve">
+    <value>En kombinerad avdelning köper två paket för sina 40 heltidsanställda, slår på Workforce Pro för dem och låter de frivilliga vara utan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="ModuleAdoption.workforce-pro" xml:space="preserve">
+    <value>Köp paket på sidan för tillägget Workforce Pro, slå på Workforce Pro för de medlemmar vars register ni för och välj sedan välmåenderollerna i välmåendeinställningarna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.addon-workforce-pro" xml:space="preserve">
+    <value>Tillägget Workforce Pro</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.addon-workforce-pro" xml:space="preserve">
+    <value>Köp Workforce Pro i paket om 25 medlemmar och ändra antalet paket, med priset visat före varje ändring.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.addon-workforce-pro" xml:space="preserve">
+    <value>Trappade nivåer gör stora personalstyrkor billigare per medlem, det finns ingen startavgift och tillagda paket debiteras proportionerligt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.addon-workforce-pro" xml:space="preserve">
+    <value>En avdelning med 60 påslagna medlemmar har 3 paket; vid 76 lägger den till ett fjärde och betalar den proportionerliga skillnaden direkt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureAdoption.addon-workforce-pro" xml:space="preserve">
+    <value>Under Prenumeration öppnar du Workforce Pro-kortet, väljer antal paket och slutför köpet. Borttagna paket gäller från nästa faktureringsdatum.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.workforce-pro-seats" xml:space="preserve">
+    <value>Workforce Pro-platser</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.workforce-pro-seats" xml:space="preserve">
+    <value>Slå på Workforce Pro för de medlemmar vars register över välmående och exponering ni för, inom de platser era paket köper.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.workforce-pro-seats" xml:space="preserve">
+    <value>Ni betalar bara för de medlemmarna; ansvariga och chefer som agerar för andra behöver sin behörighet, inte en plats.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureExample.workforce-pro-seats" xml:space="preserve">
+    <value>En kombinerad avdelning slår på Workforce Pro för sina 40 heltidsanställda och låter de frivilliga vara utan.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.workforce-pro-seats" xml:space="preserve">
+    <value>Öppna Workforce Pro-platserna från sidan för tillägget Workforce Pro och slå på medlemmar. Att slå av en medlem raderar aldrig något: medlemmens register blir skrivskyddade.</value>
+    <comment>machine-translated</comment>
   </data>
 </root>

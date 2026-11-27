@@ -88,6 +88,8 @@ namespace Resgrid.Providers.Claims
 		public const string Training_Update = "Training_Update";
 		public const string Training_Create = "Training_Create";
 		public const string Training_Delete = "Training_Delete";
+		/// <summary>Round 7B (permission 135): record training completions for members (who is decided per member by the recording service).</summary>
+		public const string Training_RecordCompletions = "Training_RecordCompletions";
 
 		public const string PersonalInfo_View = "PersonalInfo_View";
 		public const string PersonalInfo_Update = "PersonalInfo_Update";
@@ -113,6 +115,10 @@ namespace Resgrid.Providers.Claims
 		public const string Protocol_Update = "Protocol_Update";
 		public const string Protocol_Create = "Protocol_Create";
 		public const string Protocol_Delete = "Protocol_Delete";
+		/// <summary>Protocols P1: approve and publish versions (permission 129).</summary>
+		public const string Protocol_Approve = "Protocol_Approve";
+		/// <summary>Protocols P2: manage acknowledgments (permission 130, added with P1).</summary>
+		public const string Protocol_ManageAcknowledgments = "Protocol_ManageAcknowledgments";
 
 		public const string Forms_View = "Forms_View";
 		public const string Forms_Update = "Forms_Update";

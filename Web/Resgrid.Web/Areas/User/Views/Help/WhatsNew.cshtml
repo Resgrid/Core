@@ -1,0 +1,77 @@
+@using Resgrid.Model.Academy
+@using Resgrid.Web.Areas.User.Models.Help
+@model HelpWhatsNewModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Academy.AcademyGuidance> localizer
+@*
+    "What's new" (A3): the release's micro-lesson from its manifest, in the member's language, with the items the department can use (each
+    linking to its page and the Academy lesson that teaches it). Marking it read keeps it off the dashboard for this member.
+*@
+@{
+    var release = Model.Release;
+    ViewBag.Title = "Resgrid | " + localizer["WhatsNewTitle"];
+    ViewData["Title"] = release.Title;
+    ViewData["Subtitle"] = string.Format(localizer["WhatsNewSubtitle"].Value, release.PublishedOn.ToString("d", System.Globalization.CultureInfo.CurrentUICulture),
+        release.Minutes.ToString("0.#", System.Globalization.CultureInfo.CurrentCulture));
+    ViewData["Section"] = "WhatsNew";
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!string.IsNullOrWhiteSpace(release.Summary))
+    {
+        <p class="lead">@release.Summary</p>
+    }
+
+    <ol class="rgw-journey">
+        @foreach (var item in release.Items)
+        {
+            <li>
+                <h4>@item.Title</h4>
+                <p>@item.Body</p>
+                <div class="rgw-row-actions">
+                    @if (!string.IsNullOrWhiteSpace(item.PageUrl))
+                    {
+                        <a class="btn btn-white btn-xs" href="@item.PageUrl"><i class="fa fa-arrow-right" aria-hidden="true"></i> @localizer["TryIt"]</a>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(item.LessonUrl))
+                    {
+                        <a class="btn btn-white btn-xs" href="@item.LessonUrl" target="_blank" rel="noopener"><i class="fa fa-play-circle" aria-hidden="true"></i> @localizer["WatchLesson"]</a>
+                    }
+                </div>
+            </li>
+        }
+    </ol>
+
+    <div class="rgw-toolbar">
+        @if (!release.Dismissed)
+        {
+            <form method="post" asp-controller="Help" asp-action="Dismiss" asp-route-area="User" class="inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="key" value="@(AcademyManifests.WhatsNewKeyPrefix + release.Release)" />
+                <input type="hidden" name="returnUrl" value="@Url.Action("WhatsNew", "Help", new { area = "User", release = release.Release })" />
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> @localizer["MarkRead"]</button>
+            </form>
+        }
+        else
+        {
+            <span class="text-muted"><i class="fa fa-check" aria-hidden="true"></i> @localizer["ReadLabel"]</span>
+        }
+    </div>
+
+    @if (Model.Releases.Count > 1)
+    {
+        <h4 class="m-t-lg">@localizer["EarlierReleases"]</h4>
+        <ul>
+            @foreach (var other in Model.Releases)
+            {
+                <li><a asp-controller="Help" asp-action="WhatsNew" asp-route-area="User" asp-route-release="@other.Release">@AcademyManifests.Text(other.Title, System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)</a></li>
+            }
+        </ul>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -1,0 +1,30 @@
+@using Resgrid.Web.Areas.User.Models.Courses
+@model PracticeCardsPanelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Courses.Courses> localizer
+@* T5 practice cards in the course player: the course's accepted flashcards whose source is still in force, for spaced practice. The deck is read
+   once; which cards a learner knows is kept in this browser only (never sent back, never graded, never a learning record). Hidden when there
+   are no cards (or Enhanced AI or the LMS is off: the deck comes back empty). *@
+<section class="ibox float-e-margins m-t-md" id="lms-practice-cards" hidden aria-labelledby="lms-practice-title"
+         data-deck-url="@Model.DeckUrl" data-course="@Model.CourseId"
+         data-card-format="@localizer["Studio.PracticeCardFormat"]" data-done-text="@localizer["Studio.PracticeDone"]" data-source-text="@localizer["Studio.PracticeSource"]">
+    <div class="ibox-title"><h5 id="lms-practice-title"><i class="fa fa-clone" aria-hidden="true"></i> @localizer["Studio.PracticeHeader"]</h5></div>
+    <div class="ibox-content">
+        <p class="small text-muted">@localizer["Studio.PracticeIntro"]</p>
+        <p class="rgw-progress-honest" id="lms-practice-progress" role="status" aria-live="polite"></p>
+        <div class="well" id="lms-practice-card" tabindex="-1">
+            <p class="lead" id="lms-practice-front"></p>
+            <div id="lms-practice-back" hidden>
+                <hr />
+                <p id="lms-practice-answer"></p>
+                <p class="small text-muted" id="lms-practice-source"></p>
+            </div>
+        </div>
+        <div class="rgw-toolbar">
+            <button type="button" class="btn btn-primary" id="lms-practice-show"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["Studio.PracticeShow"]</button>
+            <button type="button" class="btn btn-white" id="lms-practice-again" hidden><i class="fa fa-repeat" aria-hidden="true"></i> @localizer["Studio.PracticeAgain"]</button>
+            <button type="button" class="btn btn-white" id="lms-practice-known" hidden><i class="fa fa-check" aria-hidden="true"></i> @localizer["Studio.PracticeKnown"]</button>
+            <span class="rgw-toolbar-spacer"></span>
+            <button type="button" class="btn btn-white btn-xs" id="lms-practice-restart"><i class="fa fa-refresh" aria-hidden="true"></i> @localizer["Studio.PracticeRestart"]</button>
+        </div>
+    </div>
+</section>

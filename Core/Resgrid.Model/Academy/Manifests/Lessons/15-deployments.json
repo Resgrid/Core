@@ -1,0 +1,216 @@
+{
+  "schema": 1,
+  "id": "15-deployments",
+  "revision": 1,
+  "version": "1.0",
+  "history": [
+    {
+      "revision": 1,
+      "release": "2026.12",
+      "change": "initial",
+      "note": "Moved from the A1 code seed (AcademyCourseManifest, ManifestVersion 1)."
+    }
+  ],
+  "topic": "Deployments",
+  "minutes": 3.2,
+  "walkthrough": false,
+  "audience": [
+    "officer",
+    "business"
+  ],
+  "visibility": [
+    "module:Deployments"
+  ],
+  "pages": [
+    "Deployments",
+    "DeploymentOrders",
+    "DeploymentWizard",
+    "RecordDeployments",
+    "IncidentBackOffice"
+  ],
+  "adminAssist": {
+    "areas": [
+      "deployments",
+      "incidents"
+    ],
+    "capabilities": [
+      "deployments",
+      "new-deployment",
+      "deployment-from-external-order",
+      "incident-activation",
+      "incident-planning",
+      "incident-logistics",
+      "incident-finance",
+      "coordination-boards"
+    ]
+  },
+  "media": {
+    "video": "media/15-deployments.mp4",
+    "captions": [
+      {
+        "locale": "en",
+        "label": "English",
+        "url": "media/15-deployments.vtt"
+      }
+    ]
+  },
+  "title": {
+    "en": "Keep deployment activity and cost evidence together",
+    "ar": "احتفظ بنشاط الانتشار وأدلة التكاليف معًا",
+    "de": "Einsatzaktivitäten und Kostennachweise zusammenhalten",
+    "el": "Κρατήστε μαζί τη δραστηριότητα αποστολής και τα αποδεικτικά κόστους",
+    "es": "Mantener juntos la actividad del despliegue y los justificantes de costes",
+    "fr": "Réunir l’activité de détachement et les justificatifs de coûts",
+    "it": "Tenere insieme l’attività di dispiegamento e le prove dei costi",
+    "pl": "Trzymaj razem działania delegacji i dowody kosztów",
+    "sv": "Håll utlandsinsatsens aktiviteter och kostnadsunderlag samlade",
+    "uk": "Зберігайте дані про відрядження та підтвердження витрат разом"
+  },
+  "check": [
+    {
+      "key": "q1",
+      "kind": "single",
+      "correct": "a",
+      "text": {
+        "en": "What is a deployment?",
+        "ar": "ما الانتشار؟",
+        "de": "Was ist ein Auswärtseinsatz?",
+        "el": "Τι είναι μια αποστολή;",
+        "es": "¿Qué es un despliegue?",
+        "fr": "Qu’est-ce qu’un détachement ?",
+        "it": "Che cos’è un dispiegamento?",
+        "pl": "Czym jest delegacja?",
+        "sv": "Vad är en utlandsinsats?",
+        "uk": "Що таке відрядження?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "Members and resources sent to an assignment away from home",
+            "ar": "أعضاء وموارد يُرسلون إلى مهمة خارج مقرهم",
+            "de": "Mitglieder und Mittel, die zu einem auswärtigen Auftrag entsandt werden",
+            "el": "Μέλη και πόροι που στέλνονται σε αποστολή εκτός έδρας",
+            "es": "Miembros y recursos enviados a una misión fuera de su base",
+            "fr": "Des membres et moyens envoyés en mission hors de leur secteur",
+            "it": "Membri e risorse inviati in missione lontano dalla sede",
+            "pl": "Członkowie i zasoby wysłani do zadania poza macierzystym terenem",
+            "sv": "Medlemmar och resurser som skickas till ett uppdrag på annan ort",
+            "uk": "Учасники та ресурси, відправлені на завдання за межі бази"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "A software update",
+            "ar": "تحديث برمجي",
+            "de": "Ein Software-Update",
+            "el": "Μια ενημέρωση λογισμικού",
+            "es": "Una actualización de software",
+            "fr": "Une mise à jour logicielle",
+            "it": "Un aggiornamento software",
+            "pl": "Aktualizacja oprogramowania",
+            "sv": "En programuppdatering",
+            "uk": "Оновлення програми"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "A training quiz",
+            "ar": "اختبار تدريبي",
+            "de": "Ein Schulungsquiz",
+            "el": "Ένα κουίζ εκπαίδευσης",
+            "es": "Un cuestionario de formación",
+            "fr": "Un quiz de formation",
+            "it": "Un quiz di formazione",
+            "pl": "Quiz szkoleniowy",
+            "sv": "Ett utbildningsquiz",
+            "uk": "Навчальний тест"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q2",
+      "kind": "single",
+      "correct": "b",
+      "text": {
+        "en": "Why keep cost evidence with the deployment?",
+        "ar": "لماذا تُحفظ أدلة التكاليف مع الانتشار؟",
+        "de": "Warum Kostennachweise beim Auswärtseinsatz aufbewahren?",
+        "el": "Γιατί να φυλάσσονται τα αποδεικτικά κόστους με την αποστολή;",
+        "es": "¿Por qué guardar los justificantes de costes con el despliegue?",
+        "fr": "Pourquoi garder les justificatifs de coûts avec le détachement ?",
+        "it": "Perché tenere le prove dei costi con il dispiegamento?",
+        "pl": "Po co przechowywać dowody kosztów przy delegacji?",
+        "sv": "Varför spara kostnadsunderlag med insatsen?",
+        "uk": "Навіщо зберігати підтвердження витрат разом із відрядженням?"
+      },
+      "options": [
+        {
+          "key": "a",
+          "text": {
+            "en": "It is not needed",
+            "ar": "ليس ذلك ضروريًا",
+            "de": "Das ist nicht nötig",
+            "el": "Δεν χρειάζεται",
+            "es": "No hace falta",
+            "fr": "Ce n’est pas nécessaire",
+            "it": "Non serve",
+            "pl": "Nie jest to potrzebne",
+            "sv": "Det behövs inte",
+            "uk": "Це не потрібно"
+          }
+        },
+        {
+          "key": "b",
+          "text": {
+            "en": "So time and expenses can be claimed or reimbursed",
+            "ar": "ليمكن المطالبة بالوقت والنفقات أو استردادها",
+            "de": "Damit Zeit und Ausgaben abgerechnet oder erstattet werden können",
+            "el": "Ώστε χρόνος και έξοδα να μπορούν να αξιωθούν ή να αποζημιωθούν",
+            "es": "Para poder reclamar o reembolsar tiempo y gastos",
+            "fr": "Pour que le temps et les dépenses puissent être réclamés ou remboursés",
+            "it": "Perché tempo e spese possano essere richiesti o rimborsati",
+            "pl": "Aby można było rozliczyć lub zwrócić czas i wydatki",
+            "sv": "Så att tid och utgifter kan krävas in eller ersättas",
+            "uk": "Щоб час і витрати можна було відшкодувати"
+          }
+        },
+        {
+          "key": "c",
+          "text": {
+            "en": "To hide it from finance",
+            "ar": "لإخفائها عن الشؤون المالية",
+            "de": "Um sie vor der Finanzabteilung zu verbergen",
+            "el": "Για να κρυφτούν από τα οικονομικά",
+            "es": "Para ocultarlos a finanzas",
+            "fr": "Pour les cacher aux finances",
+            "it": "Per nasconderle all’amministrazione",
+            "pl": "Aby ukryć je przed księgowością",
+            "sv": "För att dölja det för ekonomi",
+            "uk": "Щоб приховати від фінансистів"
+          }
+        }
+      ]
+    },
+    {
+      "key": "q3",
+      "kind": "truefalse",
+      "correct": "t",
+      "text": {
+        "en": "Time worked on a deployment should be recorded as it happens.",
+        "ar": "يجب تسجيل وقت العمل في الانتشار أولًا بأول.",
+        "de": "Die Arbeitszeit bei einem Auswärtseinsatz sollte laufend erfasst werden.",
+        "el": "Ο χρόνος εργασίας σε αποστολή πρέπει να καταγράφεται καθώς γίνεται.",
+        "es": "El tiempo trabajado en un despliegue debe registrarse sobre la marcha.",
+        "fr": "Le temps travaillé en détachement doit être consigné au fur et à mesure.",
+        "it": "Il tempo lavorato in un dispiegamento va registrato man mano.",
+        "pl": "Czas pracy na delegacji należy rejestrować na bieżąco.",
+        "sv": "Arbetad tid under en insats ska registreras löpande.",
+        "uk": "Відпрацьований на відрядженні час слід фіксувати одразу."
+      }
+    }
+  ]
+}

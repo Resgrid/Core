@@ -2609,4 +2609,32 @@
   <data name="ShiftOverSignupHelp" xml:space="preserve">
     <value>Учасники можуть записатися до групи, навіть коли всі місця для ролей (обов'язкові й необов'язкові) зайняті. Їм усе одно потрібна одна з ролей групи.</value>
   </data>
+  <data name="DocumentNumberKindProtocol" xml:space="preserve">
+    <value>Протоколи</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RunCardConditionProtocolOutcome" xml:space="preserve">
+    <value>Детермінанта протоколу у виклику</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RunCardDeterminantEquals" xml:space="preserve">
+    <value>дорівнює</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RunCardDeterminantStartsWith" xml:space="preserve">
+    <value>починається з</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="RunCardDeterminantValue" xml:space="preserve">
+    <value>Детермінанта (напр. 09-E)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TerminologyRoles" xml:space="preserve">
+    <value>Ролі та команди</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TerminologyRolesHelp" xml:space="preserve">
+    <value>Ролі, пов'язані з добробутом. Вкажіть форму множини та слово для однієї особи, наприклад Відповідальні з безпеки та Відповідальний з безпеки, щоб сторінки добробуту, довідка Admin Assist і сповіщення використовували ваші слова. Ролі персоналу, які ви призначаєте, зберігають назви, які ви їм дали.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

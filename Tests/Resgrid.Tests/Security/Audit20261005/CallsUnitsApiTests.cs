@@ -299,6 +299,46 @@ namespace Resgrid.Tests.Security.Audit20261005
 			protocols.Should().ContainSingle().Which.Id.Should().Be("5");
 		}
 
+		/// <summary>
+		/// Owner decision 2026-11-26: the legacy call read lists a protocol taken off the call or deleted from the library, with
+		/// the row's removal time (never the reason, which is protected free text) - and still never another department's.
+		/// </summary>
+		[Test]
+		public async Task Call_extra_data_still_lists_removed_and_deleted_protocols_but_never_another_departments()
+		{
+			var removedOn = new DateTime(2026, 11, 20, 14, 30, 0, DateTimeKind.Utc);
+			ArrangeCallActivity();
+			M<ICallsService>().Setup(x => x.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(),
+					It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync((Call c, bool _, bool __, bool ___, bool ____, bool _____, bool ______, bool _______, bool ________, bool _________, bool __________) =>
+				{
+					c.Dispatches = new List<CallDispatch>();
+					c.Protocols = new List<CallProtocol>
+					{
+						new CallProtocol { CallProtocolId = 11, CallId = CallId, DispatchProtocolId = 5 },
+						new CallProtocol { CallProtocolId = 12, CallId = CallId, DispatchProtocolId = 6, RemovedOn = removedOn, RemovedReason = "Caller hung up" },
+						new CallProtocol { CallProtocolId = 13, CallId = CallId, DispatchProtocolId = 7 },
+						new CallProtocol { CallProtocolId = 14, CallId = CallId, DispatchProtocolId = 8, RemovedOn = removedOn }
+					};
+					return c;
+				});
+			var deleted = AttachedProtocol(7, DepartmentId);
+			deleted.IsDeleted = true;
+			M<IProtocolsService>().Setup(x => x.GetProtocolByIdAsync(5)).ReturnsAsync(AttachedProtocol(5, DepartmentId));
+			M<IProtocolsService>().Setup(x => x.GetProtocolByIdAsync(6)).ReturnsAsync(AttachedProtocol(6, DepartmentId));
+			M<IProtocolsService>().Setup(x => x.GetProtocolByIdAsync(7)).ReturnsAsync(deleted);
+			M<IProtocolsService>().Setup(x => x.GetProtocolByIdAsync(8)).ReturnsAsync(AttachedProtocol(8, OtherDepartmentId));
+
+			var protocols = Ok(await Build<CallsController>().GetCallExtraData(CallId)).Data.Protocols;
+
+			protocols.Select(p => p.Id).Should().Equal("5", "6", "7");
+			protocols.Single(p => p.Id == "6").RemovedOn.Should().Be(removedOn);
+			protocols.Single(p => p.Id == "6").CallProtocolId.Should().Be("12");
+			protocols.Single(p => p.Id == "5").RemovedOn.Should().BeNull();
+			protocols.Single(p => p.Id == "7").IsDeleted.Should().BeTrue();
+			Newtonsoft.Json.JsonConvert.SerializeObject(protocols).Should().NotContain("Caller hung up");
+		}
+
 		private static DispatchProtocol AttachedProtocol(int id, int departmentId) => new DispatchProtocol
 		{
 			DispatchProtocolId = id,

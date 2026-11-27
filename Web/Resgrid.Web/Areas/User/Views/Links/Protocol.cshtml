@@ -1,0 +1,38 @@
+@using Resgrid.Web.Helpers
+@model Resgrid.Model.Services.LinkedProtocolPage
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Links.Links> localizer
+@*
+    Round 10 A3: one linked department's protocol, read-only, its version in force (rendered through the protocol allow-list like every
+    protocol page). The page is re-checked against the link on every request.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + Model.Summary.Name;
+    var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+  <div class="col-sm-12">
+    <h2>@Model.Summary.Name <small>@Model.Summary.Number</small></h2>
+    <ol class="breadcrumb">
+      <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a></li>
+      <li><a asp-controller="Links" asp-action="Index" asp-route-area="User">@localizer["DepartmentLinks"]</a></li>
+      <li><a asp-controller="Links" asp-action="Protocols" asp-route-area="User" asp-route-linkId="@Model.DepartmentLinkId">@localizer["LinkedProtocolsHeader"]</a></li>
+      <li class="active"><strong>@Model.Summary.Name</strong></li>
+    </ol>
+    <small class="text-muted">@string.Format(localizer["LinkedProtocolSubtitle"].Value, Model.SharingDepartmentName, Model.Summary.VersionLabel, time.Format(Model.Summary.EffectiveOn), Model.ContentShortCode)</small>
+  </div>
+</div>
+
+<div class="wrapper wrapper-content">
+  <div class="ibox">
+    <div class="ibox-content">
+      <div class="alert alert-info small"><i class="fa fa-eye" aria-hidden="true"></i> @localizer["LinkedProtocolReadOnly"]</div>
+      <div class="rgw-protocol-content">@Html.ProtocolContent(Model.BodyHtml)</div>
+      @if (!string.IsNullOrWhiteSpace(Model.ChangeSummary))
+      {
+        <hr />
+        <p class="small text-muted">@localizer["LinkedProtocolChange"] @Model.ChangeSummary</p>
+      }
+    </div>
+  </div>
+</div>

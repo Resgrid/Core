@@ -83,6 +83,7 @@ Jeśli to nie Ty prosiłeś o eksport, skontaktuj się z pomocą techniczną.
 
 
 Zespół Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="GdprExportWithheldNotice" xml:space="preserve">
     <value>Twoja jednostka korzysta z zaawansowanej ochrony danych, dlatego część wartości w tym eksporcie jest zaszyfrowana i wyświetla się jako REDACTED. Nadal stanowią one część Twoich danych i nie zostały usunięte.</value>
@@ -128,6 +129,7 @@ Kod wygaśnie za {2} minut. Jeśli to nie Ty prosiłeś o kod, zignoruj tę wiad
 
 
 Zespół Resgrid</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="VerificationCodeEmailSubject" xml:space="preserve">
     <value>Kod weryfikacyjny Resgrid</value>
@@ -175,4 +177,41 @@ Zespół Resgrid</value>
   <data name="SecurityNoticeWhere" xml:space="preserve"><value>Gdzie: {0}</value></data>
   <data name="SecurityNoticeNotYou" xml:space="preserve"><value>Jeśli to nie Ty, zresetuj teraz hasło na stronie {0}, a następnie zaloguj się i sprawdź swoje metody logowania. Resgrid nigdy nie prosi o kod ani hasło przez e-mail.</value></data>
   <data name="SecurityNoticeFooter" xml:space="preserve"><value>To jest automatyczne powiadomienie o bezpieczeństwie Twojego konta Resgrid.</value></data>
+  <data name="SigningLinkEmailSubject" xml:space="preserve">
+    <value>{0}: dokument do podpisu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningLinkEmailBody" xml:space="preserve">
+    <value>Dzień dobry {0},
+
+{1} prosi o przejrzenie i podpisanie dokumentu "{2}".
+
+Otwórz ten link, aby podpisać:
+{3}
+
+Link działa jednorazowo i wygasa {4}. Przed podpisaniem potwierdzisz jednorazowy kod.
+
+Jeśli nie spodziewasz się tej wiadomości, możesz ją zignorować.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningLinkSmsBody" xml:space="preserve">
+    <value>{0} prosi o podpisanie "{1}": {2}</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningCodeEmailSubject" xml:space="preserve">
+    <value>{0}: Twój kod do podpisu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningCodeEmailBody" xml:space="preserve">
+    <value>Dzień dobry {0},
+
+Twój kod do podpisania dokumentu od {3} to {1}. Wygasa za {2} min.
+
+Jeśli nie prosiłeś o ten kod, możesz zignorować tę wiadomość.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="SigningCodeSmsBody" xml:space="preserve">
+    <value>Twój kod do podpisu dla {2}: {0}. Wygasa za {1} min.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

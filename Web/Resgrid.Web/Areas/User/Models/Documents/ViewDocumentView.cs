@@ -13,5 +13,10 @@ namespace Resgrid.Web.Areas.User.Models.Documents
 		public string DescriptionHtml { get; set; }
 		public bool CanEdit { get; set; }
 		public bool CanDelete { get; set; }
+
+		/// <summary>The viewer may author protocols and the document is not protected: "Move to Protocols" (P1 R-P6).</summary>
+		public bool CanMoveToProtocols { get; set; }
+
+		public string Error { get; set; }
 	}
 }

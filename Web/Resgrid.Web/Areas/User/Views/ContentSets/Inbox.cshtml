@@ -1,0 +1,62 @@
+@using Resgrid.Model
+@using Resgrid.WebCore.Areas.User.Models.ContentSets
+@model ContentSetInboxModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.ContentSets.ContentSets> text
+@*
+    Round 10 A3, subscriber: the pending-update inbox. Each row is a publisher's new version (or a new item) with its effective date, and for a
+    locked item the deadline it can be deferred to; opening one shows the redline against the department's version.
+*@
+@{
+    ViewBag.Title = "Resgrid | " + text["InboxTab"];
+    ViewData["Title"] = text["InboxTab"].Value;
+    ViewData["Subtitle"] = text["InboxIntro"].Value;
+    ViewData["SetSection"] = "Inbox";
+    var time = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+}
+
+@await Html.PartialAsync("_Shell", Model)
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox">
+        <div class="ibox-content">
+            <p>
+                @if (Model.ShowAll)
+                {
+                    <a asp-action="Inbox">@text["ShowOpen"]</a>
+                }
+                else
+                {
+                    <a asp-action="Inbox" asp-route-all="true">@text["ShowAll"]</a>
+                }
+            </p>
+            @if (Model.Rows.Count == 0)
+            {
+                <p class="text-muted">@text["InboxEmpty"]</p>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table rgw-table">
+                        <thead><tr><th scope="col">@text["ColumnItem"]</th><th scope="col">@text["ColumnSet"]</th><th scope="col">@text["ColumnEffective"]</th><th scope="col">@text["ColumnDeadline"]</th><th scope="col">@text["ColumnStatus"]</th></tr></thead>
+                        <tbody>
+                            @foreach (var row in Model.Rows)
+                            {
+                                var update = row.Update;
+                                <tr>
+                                    <td><a asp-action="Update" asp-route-id="@update.ContentSetUpdateId">@update.Title</a> <span class="small text-muted">@update.SourceVersionLabel</span>
+                                        @if (update.UpdateKind == (int)ContentSetUpdateKinds.NewItem) { <span class="label label-info">@text["NewItemLabel"]</span> }</td>
+                                    <td>@row.SetName <div class="small text-muted">@row.PublisherName</div></td>
+                                    <td>@time.Format(update.SourceEffectiveOn)</td>
+                                    <td>@(update.DeadlineOn.HasValue ? time.Format(update.DeadlineOn) : text["NoDeadline"].Value)</td>
+                                    <td>@text["UpdateStatus" + (ContentSetUpdateStatuses)update.Status]
+                                        @if (update.Status == (int)ContentSetUpdateStatuses.Scheduled && update.ApplyOn.HasValue) { <div class="small text-muted">@time.Format(update.ApplyOn)</div> }
+                                        @if (update.Status == (int)ContentSetUpdateStatuses.Deferred && update.DeferredUntil.HasValue) { <div class="small text-muted">@time.Format(update.DeferredUntil)</div> }</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

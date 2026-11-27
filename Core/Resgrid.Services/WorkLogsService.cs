@@ -28,13 +28,15 @@ namespace Resgrid.Services
 		// Lazy: the Records cutover guard (RMS plan section 4.1) is consulted only on a legacy write.
 		private readonly Lazy<IRecordsCutoverService> _recordsCutoverService;
 		private readonly Lazy<ISearchProjectionService> _searchProjections;
+		private readonly Lazy<ILearningRecordWriter> _learningRecords;
 
 		public WorkLogsService(ILogsRepository logsRepository, ICallLogsRepository callLogsRepository, ILogUsersRepository logUsersRepository,
 			ILogAttachmentRepository logAttachmentRepository, ILogUnitsRepository logUnitsRepository, IDepartmentsService departmentsService,
 			IDepartmentGroupsService departmentGroupsService, ICallsService callsService,
 			Lazy<IProtectedWriteService> protectedWriteService, Lazy<IRecordsCutoverService> recordsCutoverService,
-			Lazy<ISearchProjectionService> searchProjections = null)
+			Lazy<ISearchProjectionService> searchProjections = null, Lazy<ILearningRecordWriter> learningRecords = null)
 		{
+			_learningRecords = learningRecords;
 			_searchProjections = searchProjections;
 			_recordsCutoverService = recordsCutoverService;
 			_logsRepository = logsRepository;
@@ -125,16 +127,18 @@ namespace Resgrid.Services
 
 			var savedLog = await _logsRepository.SaveOrUpdateAsync(log, cancellationToken, true);
 
+			// Awaited: an un-awaited write races the request's unit of work (uow-connection-closed-fire-and-forget), and the
+			// transcript writer below reads the participants right after.
 			foreach (var unit in savedLog.Units)
 			{
 				unit.LogId = savedLog.LogId;
-				var savedLogUnit = _logUnitsRepository.SaveOrUpdateAsync(unit, cancellationToken, true);
+				await _logUnitsRepository.SaveOrUpdateAsync(unit, cancellationToken, true);
 			}
 
 			foreach (var user in savedLog.Users)
 			{
 				user.LogId = savedLog.LogId;
-				var savedLogUser = _logUsersRepository.SaveOrUpdateAsync(user, cancellationToken, true);
+				await _logUsersRepository.SaveOrUpdateAsync(user, cancellationToken, true);
 			}
 
 			// ADP write safety net (plan 4.2/19.2), catalog v3: the incident log's narrative, initial
@@ -149,6 +153,25 @@ namespace Resgrid.Services
 				savedLog = await _logsRepository.SaveOrUpdateAsync(savedLog, cancellationToken, true);
 
 			if (_searchProjections != null) await _searchProjections.Value.ProjectLogAsync(savedLog, cancellationToken);
+
+			// Training T1: a Training Record's participants go on their transcripts; a log that stopped being a training record
+			// voids the records it wrote. Never fails the save.
+			if (_learningRecords != null)
+			{
+				try
+				{
+					await _learningRecords.Value.WriteTrainingLogAsync(savedLog, savedLog.LoggedByUserId, false, cancellationToken);
+				}
+				catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"Transcript records for log {savedLog.LogId} were not written");
+				}
+			}
+
 			return savedLog;
 		}
 
@@ -255,6 +278,17 @@ namespace Resgrid.Services
 				var deleted = await _logsRepository.DeleteAsync(log, cancellationToken);
 				if (deleted && _searchProjections != null)
 					await _searchProjections.Value.RemoveAsync(log.DepartmentId, SearchEntityTypes.Log, log.LogId.ToString(), cancellationToken);
+				if (deleted && _learningRecords != null)
+				{
+					try
+					{
+						await _learningRecords.Value.RemoveTrainingLogAsync(log.DepartmentId, log.LogId, null, cancellationToken);
+					}
+					catch (Exception ex) when (!(ex is OperationCanceledException))
+					{
+						Logging.LogException(ex, $"Transcript records of deleted log {log.LogId} were not voided");
+					}
+				}
 				return deleted;
 			}
 

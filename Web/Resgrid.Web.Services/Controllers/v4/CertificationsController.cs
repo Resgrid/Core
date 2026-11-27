@@ -37,11 +37,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IProtectedReadService _protectedRead;
 		private readonly IDepartmentsService _departments;
 
-		public CertificationsController(ICertificationService certifications, IProtectedReadService protectedRead, IDepartmentsService departments)
+		private readonly ISignatureService _signatures;
+		private readonly IMfaEvidenceService _evidence;
+		private readonly IMfaPolicyService _mfaPolicy;
+
+		private readonly IStepUpPolicyService _stepUpPolicy;
+		private readonly IStepUpCapabilityService _stepUp;
+
+		public CertificationsController(ICertificationService certifications, IProtectedReadService protectedRead, IDepartmentsService departments,
+			IStepUpPolicyService stepUpPolicy, IStepUpCapabilityService stepUp, ISignatureService signatures = null, IMfaEvidenceService evidence = null,
+			IMfaPolicyService mfaPolicy = null)
 		{
+			_stepUpPolicy = stepUpPolicy;
+			_stepUp = stepUp;
 			_certifications = certifications;
 			_protectedRead = protectedRead;
 			_departments = departments;
+			_signatures = signatures;
+			_evidence = evidence;
+			_mfaPolicy = mfaPolicy;
 		}
 
 		private string ProtectedGrantToken => Request.Headers[DataProtectionController.GrantHeader].ToString();
@@ -114,6 +128,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var type = existing ?? new DepartmentCertificationType { DepartmentId = DepartmentId };
 				type.Type = input.Name; type.Code = input.Code; type.Category = input.Category; type.AppliesTo = input.AppliesTo; type.Description = input.Description; type.IssuingAuthority = input.IssuingAuthority;
 				type.DefaultValidityMonths = input.DefaultValidityMonths; type.NeverExpires = input.NeverExpires; type.RenewalCreditHoursRequired = input.RenewalCreditHoursRequired; type.RequiresVerification = input.RequiresVerification; type.IsActive = input.IsActive;
+				// Round 9A: the validity rule only when the client sends one (older clients keep the stored rule).
+				if (input.ValidityRule.HasValue)
+				{
+					type.ValidityRule = input.ValidityRule.Value; type.ValidityYearEndMonth = input.ValidityYearEndMonth; type.ValidityYearEndDay = input.ValidityYearEndDay;
+					type.ValidityFixedDate = input.ValidityFixedDate?.Date; type.RenewalGraceDays = input.RenewalGraceDays; type.RenewalWindowMonths = input.RenewalWindowMonths;
+				}
 				var saved = await _certifications.SaveCertificationTypeAsync(type, UserId, cancellationToken);
 				var result = new CertificationTypeResult { Data = Map(saved), PageSize = 1, Status = ResponseHelper.Success };
 				ResponseHelper.PopulateV4ResponseData(result);
@@ -267,9 +287,33 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<CertificationResult>> VerifyCertification(int id, CancellationToken cancellationToken)
 		{
+			// S0: verifying a certification is an L2 signature (floor). Without a fresh step-up on this session nothing is verified.
+			// The department's signatures rule decides: optional = no step-up needed; otherwise a second factor, or the password / SSO entered
+			// again where the rule allows it, within the window. The refusal is the one step-up shape (403 step_up_required, area signatures).
+			var proof = await ApiSignatureProof.BuildAsync(HttpContext, UserId, DepartmentId, _evidence, _mfaPolicy, cancellationToken);
+			var rule = await _stepUpPolicy.GetRuleAsync(DepartmentId, Model.Security.StepUpArea.Signatures, cancellationToken);
+			if (_signatures != null && rule.Required &&
+				Resgrid.Services.SignatureService.Assess(new SignatureRequest { Use = SignatureUse.CertificationVerification }, proof, DateTime.UtcNow, rule).Level < SignatureLevels.StepUp)
+				return await ApiStepUp.RefuseAsync(HttpContext, _stepUp, DepartmentId, UserId, Model.Security.StepUpArea.Signatures, cancellationToken);
+
 			try
 			{
 				var saved = await _certifications.VerifyCertificationAsync(id, DepartmentId, UserId, cancellationToken);
+				if (_signatures != null)
+				{
+					var signed = await _signatures.SignAsync(new SignatureRequest
+					{
+						DepartmentId = DepartmentId,
+						Use = SignatureUse.CertificationVerification,
+						SubjectId = saved.PersonnelCertificationId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+						RevisionId = saved.VerifiedOn?.ToString("o", System.Globalization.CultureInfo.InvariantCulture),
+						ArtifactSha256 = _signatures.CertificationArtifactSha256(saved),
+						StatementText = CertificationStatements.Verification(saved, saved.DepartmentCertificationTypeId.HasValue
+							? (await _certifications.GetCertificationTypeByIdAsync(saved.DepartmentCertificationTypeId.Value))?.Type : null)
+					}, proof, cancellationToken);
+					if (!signed.Succeeded)
+						Resgrid.Framework.Logging.LogError($"Certification {saved.PersonnelCertificationId} was verified but its signature was refused: {signed.Outcome}");
+				}
 				return await GetCertification(saved.PersonnelCertificationId);
 			}
 			catch (InvalidOperationException ex) when (ex.Message.StartsWith("certifications_", StringComparison.Ordinal)) { return Failed<CertificationResult>(ex.Message); }
@@ -523,7 +567,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private static CertificationTypeData Map(DepartmentCertificationType t) => new CertificationTypeData
 		{
 			Id = t.DepartmentCertificationTypeId, Code = t.Code, Name = t.Type, Category = t.Category, AppliesTo = t.AppliesTo, Description = t.Description, IssuingAuthority = t.IssuingAuthority,
-			DefaultValidityMonths = t.DefaultValidityMonths, NeverExpires = t.NeverExpires, RenewalCreditHoursRequired = t.RenewalCreditHoursRequired, RequiresVerification = t.RequiresVerification, IsActive = t.IsActive, UpdatedOn = t.EditedOn ?? t.AddedOn
+			DefaultValidityMonths = t.DefaultValidityMonths, NeverExpires = t.NeverExpires, RenewalCreditHoursRequired = t.RenewalCreditHoursRequired, RequiresVerification = t.RequiresVerification, IsActive = t.IsActive, UpdatedOn = t.EditedOn ?? t.AddedOn,
+			ValidityRule = t.ValidityRule, ValidityYearEndMonth = t.ValidityYearEndMonth, ValidityYearEndDay = t.ValidityYearEndDay, ValidityFixedDate = t.ValidityFixedDate,
+			RenewalGraceDays = t.RenewalGraceDays, RenewalWindowMonths = t.RenewalWindowMonths
 		};
 
 		private async Task<List<CertificationData>> MapRecordsAsync(List<PersonnelCertification> records)

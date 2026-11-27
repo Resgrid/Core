@@ -191,7 +191,8 @@
     <value>SMS-, E-Mail-, Push- und Sprachbenachrichtigungen senden standardmäßig generische Inhalte („Ein geschützter Einsatz liegt vor — bei Resgrid anmelden“).</value>
   </data>
   <data name="Step1NotCompliance" xml:space="preserve">
-    <value>Der erweiterte Datenschutz allein ist keine HIPAA- oder ePCR-Konformität. Er ist eine Maßnahme innerhalb eines Compliance-Programms, das weiterhin Ihrer Organisation obliegt.</value>
+    <value>Der erweiterte Datenschutz allein ist keine Konformität mit HIPAA oder anderen Gesundheitsdatenvorschriften. Er ist eine Maßnahme innerhalb eines Compliance-Programms, das weiterhin Ihrer Organisation obliegt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step2Header" xml:space="preserve">
     <value>Schritt 2 von 6 — Bestätigungen</value>
@@ -230,7 +231,8 @@
     <value>Ich verstehe, dass der Resgrid-Support geschützte Werte nicht ohne eine ausdrückliche, protokollierte und von der Abteilung genehmigte Support-Freigabe lesen kann und dass ein Schlüsselverlust nur über den dokumentierten Wiederherstellungsprozess behebbar ist.</value>
   </data>
   <data name="AckNotHipaaCompliance" xml:space="preserve">
-    <value>Ich verstehe, dass der erweiterte Datenschutz allein keine HIPAA/ePCR-Konformität darstellt.</value>
+    <value>Ich verstehe, dass der erweiterte Datenschutz allein keine Konformität mit HIPAA oder anderen Gesundheitsdatenvorschriften darstellt.</value>
+    <comment>machine-translated</comment>
   </data>
   <data name="Step3Header" xml:space="preserve">
     <value>Schritt 3 von 6 — Vorabprüfungen</value>

@@ -1,0 +1,67 @@
+@using Resgrid.Model
+@model Resgrid.Web.ViewComponents.ProtocolDocumentContentModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
+@*
+    A document-backed version (P1 R-P5): the PDF inline in the browser's own viewer, the download, and the extracted text below it
+    (search and accessibility). A DOCX has no inline viewer: it downloads, and its text is shown. The file streams only from
+    ProtocolDocuments/Document, behind the per-version read rule.
+*@
+@{
+    var file = Model.Document?.File;
+    var text = Model.Document?.Text;
+    var isPdf = file != null && string.Equals(file.ContentType, ProtocolDocumentRules.PdfContentType, StringComparison.OrdinalIgnoreCase);
+    var viewUrl = Url.Action("Document", "ProtocolDocuments", new { area = "User", versionId = Model.VersionId });
+    var downloadUrl = Url.Action("Document", "ProtocolDocuments", new { area = "User", versionId = Model.VersionId, download = true });
+    var sizeKb = file == null ? 0 : Math.Max(1, (int)Math.Round(file.Size / 1024.0));
+}
+@if (file == null)
+{
+    <div class="alert alert-warning" role="status"><i class="fa fa-file-o" aria-hidden="true"></i> @localizer["DocumentMissingNotice"]</div>
+}
+else
+{
+    <div class="rgw-toolbar hidden-print">
+        <span><i class="fa @(isPdf ? "fa-file-pdf-o" : "fa-file-word-o")" aria-hidden="true"></i> <strong>@file.FileName</strong> <span class="text-muted small">· @sizeKb KB · <span class="rgw-mono">@Resgrid.Model.SignaturePolicy.ShortCode(file.Sha256)</span></span></span>
+        <a class="btn btn-default btn-sm" href="@downloadUrl"><i class="fa fa-download" aria-hidden="true"></i> @localizer["DownloadDocumentButton"]</a>
+        @if (isPdf)
+        {
+            <a class="btn btn-default btn-sm" href="@viewUrl" target="_blank" rel="noopener"><i class="fa fa-external-link" aria-hidden="true"></i> @localizer["OpenDocumentButton"]</a>
+        }
+        @if (Model.ShowUpload && Model.ProtocolId > 0)
+        {
+            <a class="btn btn-primary btn-sm" asp-controller="ProtocolDocuments" asp-action="Upload" asp-route-area="User" asp-route-id="@Model.ProtocolId"><i class="fa fa-upload" aria-hidden="true"></i> @localizer["UploadNewVersionButton"]</a>
+        }
+    </div>
+    @if (isPdf)
+    {
+        <div class="protocol-document-viewer m-b-md">
+            <iframe src="@viewUrl" title="@file.FileName" style="width: 100%; height: 70vh; min-height: 420px; border: 1px solid #e7eaec;" loading="lazy"></iframe>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">@localizer["DocxNoViewerNotice"]</p>
+    }
+
+    <details class="protocol-document-text" open="@(isPdf ? null : "open")">
+        <summary><strong><i class="fa fa-align-left" aria-hidden="true"></i> @localizer["ExtractedTextHeader"]</strong></summary>
+        @if (text == null || text.Status == (int)ProtocolFileTextStatuses.Pending)
+        {
+            <p class="text-muted small m-t-sm">@localizer["ExtractedTextPending"]</p>
+        }
+        else if (text.Status == (int)ProtocolFileTextStatuses.Extracted && Model.Document.Pages.Count > 0)
+        {
+            @foreach (var textPage in Model.Document.Pages)
+            {
+                <section class="m-t-sm" aria-label="@string.Format(localizer["PageNumberLabel"].Value, textPage.PageNumber)">
+                    <h6 class="text-muted">@string.Format(localizer["PageNumberLabel"].Value, textPage.PageNumber)</h6>
+                    <div style="white-space: pre-wrap;">@textPage.Text</div>
+                </section>
+            }
+        }
+        else
+        {
+            <p class="text-muted small m-t-sm">@localizer["ExtractedTextNone_" + (text.Reason ?? "unreadable")]</p>
+        }
+    </details>
+}

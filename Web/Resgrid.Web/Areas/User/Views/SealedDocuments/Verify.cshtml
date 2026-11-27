@@ -1,0 +1,118 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Signatures.VerifyDocumentView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureText
+@*
+    "Verify a document" (e-Signature S1): an officer uploads a PDF; the page shows what the EU DSS validation says about its
+    signatures and timestamps, and whether Resgrid issued exactly these bytes (subject details only for this department's own).
+*@
+@{
+    ViewBag.Title = "Resgrid | " + signatureText["VerifyTitle"];
+    ViewData["Section"] = "Verify";
+    ViewData["Title"] = signatureText["VerifyTitle"].Value;
+    ViewData["Subtitle"] = signatureText["VerifyIntro"].Value;
+    ViewData["Error"] = Model.Message;
+    var result = Model.Result;
+}
+
+@await Html.PartialAsync("~/Areas/User/Views/Signatures/_Shell.cshtml")
+
+<div class="wrapper wrapper-content rgw-page">
+    @if (!Model.Availability.SidecarConfigured)
+    {
+        <div class="alert alert-warning" role="status"><i class="fa fa-info-circle" aria-hidden="true"></i> @signatureText["VerifySidecarMissing"]</div>
+    }
+
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5><i class="fa fa-upload" aria-hidden="true"></i> @signatureText["VerifyUploadHeading"]</h5></div>
+        <div class="ibox-content">
+            <form method="post" asp-area="User" asp-controller="SealedDocuments" asp-action="Verify" enctype="multipart/form-data" class="rgw-toolbar">
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label class="control-label" for="verify-file">@signatureText["VerifyFileLabel"]</label>
+                    <input class="form-control" id="verify-file" name="file" type="file" accept="application/pdf,.pdf" required />
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"></i> @signatureText["VerifyButton"]</button>
+            </form>
+        </div>
+    </div>
+
+    @if (result != null)
+    {
+        <div class="ibox float-e-margins">
+            <div class="ibox-title"><h5><i class="fa fa-shield" aria-hidden="true"></i> @signatureText["VerifyResultHeading"] · @Model.FileName</h5></div>
+            <div class="ibox-content">
+                <div class="rgw-stat-tiles">
+                    <div class="rgw-stat-tile">
+                        <div class="rgw-stat-label">@signatureText["VerifyIssuedLabel"]</div><div class="rgw-stat-value">@(result.IssuedByResgrid ? signatureText["Yes"].Value : signatureText["No"].Value)</div>
+                    </div>
+                    <div class="rgw-stat-tile">
+                        <div class="rgw-stat-label">@signatureText["VerifySignaturesLabel"]</div><div class="rgw-stat-value">@(result.Validation?.Completed == true ? result.Validation.ValidSignaturesCount + " / " + result.Validation.SignaturesCount : "—")</div>
+                    </div>
+                </div>
+
+                <p class="small text-muted rgw-mono" style="word-break:break-all">SHA-256 @result.Sha256</p>
+
+                @if (result.IssuedByResgrid)
+                {
+                    var doc = result.IssuedDocument;
+                    <div class="alert alert-success" role="status">
+                        <i class="fa fa-check-circle" aria-hidden="true"></i>
+                        @(result.IssuedByThisDepartment ? signatureText["VerifyIssuedHere"].Value : signatureText["VerifyIssuedElsewhere"].Value)
+                        @if (result.IssuedByThisDepartment)
+                        {
+                            <span>· @doc.Title · @((SignatureSubjectKinds)doc.SubjectKind)</span>
+                        }
+                        @if (doc.TimestampedOn.HasValue)
+                        {
+                            <span>· @string.Format(signatureText["VerifyTimestampedOn"].Value, doc.TimestampedOn.Value.ToString("yyyy-MM-dd HH:mm") + " UTC")</span>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-warning" role="status"><i class="fa fa-question-circle" aria-hidden="true"></i> @signatureText["VerifyNotIssued"]</div>
+                }
+
+                @if (result.Validation?.Completed == true && result.Validation.Signatures.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@signatureText["VerifyIndicationColumn"]</th>
+                                    <th>@signatureText["VerifyFormatColumn"]</th>
+                                    <th>@signatureText["SignerColumn"]</th>
+                                    <th>@signatureText["VerifyTimestampColumn"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var s in result.Validation.Signatures)
+                                {
+                                    <tr>
+                                        <td><span class="label @(s.Passed ? "label-primary" : s.Indication == "TOTAL_FAILED" ? "label-danger" : "label-warning")">@s.Indication</span> <small class="rgw-sub text-muted">@s.SubIndication</small></td>
+                                        <td>@s.SignatureFormat</td>
+                                        <td>@s.SignedBy</td>
+                                        <td>@(s.TimestampTime.HasValue ? s.TimestampTime.Value.ToString("yyyy-MM-dd HH:mm:ss") + " UTC" : "—") <small class="rgw-sub text-muted">@s.TimestampAuthority</small></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else if (result.Validation?.Completed != true)
+                {
+                    <p class="text-muted">@signatureText["VerifyValidationUnavailable"]</p>
+                }
+                else
+                {
+                    <p class="text-muted">@signatureText["VerifyNoSignatures"]</p>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}

@@ -338,7 +338,13 @@ namespace Resgrid.Services
 			input.Note, input.LocationDescription, input.Latitude, input.Longitude, input.ClientCompletedOn,
 			Answers = input.Answers.OrderBy(a => a.ItemId, StringComparer.Ordinal).ToList(), Files = files.OrderBy(f => f.Id, StringComparer.Ordinal).Select(f => new { f.Id, f.Sha256 }).ToList()
 		}))));
-		private static HashSet<string> Evidence(IEnumerable<ChecklistCompletionFile> files) => files.Where(f => f.ScanState == (int)RmsAttachmentScanState.Clean).Select(f => f.ItemId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+		/// <summary>
+		/// RF-6 / ERT-D13: evidence counts when the scanner passed it (Clean) or when the operator runs without scanning (Skipped,
+		/// shown as "Not scanned"). The bytes are PNG/JPEG already decoded and re-encoded by the media hygiene. Pending (scanning on,
+		/// engine unavailable) and Rejected never count.
+		/// </summary>
+		public static bool IsUsableEvidence(int scanState) => scanState == (int)RmsAttachmentScanState.Clean || scanState == (int)RmsAttachmentScanState.Skipped;
+		private static HashSet<string> Evidence(IEnumerable<ChecklistCompletionFile> files) => files.Where(f => IsUsableEvidence(f.ScanState)).Select(f => f.ItemId).ToHashSet(StringComparer.OrdinalIgnoreCase);
 		public async Task<int> SaveRunAsync(ChecklistActor actor, string id, ChecklistRunInput input, bool submit)
 		{
 			Id(id); await RequireWriteAsync(actor);
@@ -360,6 +366,9 @@ namespace Resgrid.Services
 					if (submit && row.SubmissionHash == hash) return row.Revision;
 					throw new ChecklistException(409, "Submitted answers and evidence are immutable.");
 				}
+				// RF-1: Omni previews a run (revision 0) and queues StartChecklistRun ahead of the first save, so offline that save still
+				// carries the preview's revision. A started run nobody has saved or added evidence to is revision 1; accept it there only.
+				if (input.Revision == 0 && row.Revision == 1) input.Revision = row.Revision;
 				Revision(row, input.Revision);
 				var items = new List<ChecklistCompletionItem>();
 				// The item type travels with the answer so a typed value (pass/fail, reading, choice...) stays plaintext metadata.
@@ -460,7 +469,8 @@ namespace Resgrid.Services
 			{ throw new ChecklistException(400, "Evidence could not be decoded as a supported image."); }
 			if (!clean.IsImage || clean.ContentType != "image/png" && clean.ContentType != "image/jpeg" || clean.Data.Length > 10 * 1024 * 1024) throw new ChecklistException(400, "Evidence must decode as a PNG or JPEG up to 10 MB.");
 			var scan = await _scanner.ScanAsync(clean.FileName, clean.ContentType, clean.Data);
-			if (scan?.State != RmsAttachmentScanState.Clean) throw new ChecklistException(409, "Evidence was not accepted by the scanner. Retry when scanning is available.");
+			// Scanning off (Skipped) stores the re-encoded image marked "Not scanned"; scanning on but unavailable (Pending) or a hit (Rejected) refuses it.
+			if (scan == null || !IsUsableEvidence((int)scan.State)) throw new ChecklistException(409, "Evidence was not accepted by the scanner. Retry when scanning is available.");
 			await TransactionAsync(actor, async events =>
 			{
 				var row = await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, id);
@@ -493,7 +503,7 @@ namespace Resgrid.Services
 			if (file == null) throw new ChecklistException(404, "Evidence is unavailable.");
 			await RequireRunReadAsync(actor, await _store.GetAsync<ChecklistCompletion>(actor.DepartmentId, file.ParentId));
 			file = await RevealAsync(actor, await _store.GetAsync<ChecklistCompletionFile>(actor.DepartmentId, id));
-			if (file.ScanState != (int)RmsAttachmentScanState.Clean) throw new ChecklistException(404, "Evidence is unavailable.");
+			if (!IsUsableEvidence(file.ScanState)) throw new ChecklistException(404, "Evidence is unavailable.");
 			var result = await _read.Value.ResolveRecordsBinaryForReadAsync(actor.DepartmentId, "checklistcompletionfiles.data", file.Id, file.Data, data => file.Data = data, actor.GrantToken, actor.UserId);
 			if (result == null || result.RedactedFields.Count > 0 || file.Data == null) throw new ChecklistException(403, "Unlock protected data to download this evidence.");
 			if (Convert.ToHexString(SHA256.HashData(file.Data)) != file.Sha256) throw new ChecklistException(409, "Evidence failed its integrity check.");

@@ -76,6 +76,8 @@ namespace Resgrid.Web.Areas.User.Models.Certifications
 		public IReadOnlyDictionary<int, int> RequirementCounts { get; set; } = new Dictionary<int, int>();
 		public bool ShowInactive { get; set; }
 		public HashSet<string> ExistingCodes { get; set; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+		/// <summary>G8 CA1: the department's jurisdiction code; the gallery shows templates that fit it first (null: everything).</summary>
+		public string Jurisdiction { get; set; }
 	}
 
 	public class CertificationTypeEditView : CertificationPageView

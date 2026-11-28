@@ -414,4 +414,124 @@
   <data name="HoldReasonOrderOutOfService" xml:space="preserve">
     <value>Τέθηκε εκτός υπηρεσίας από την εντολή εργασίας.</value>
   </data>
+  <data name="FailureReview" xml:space="preserve">
+    <value>Αναθεώρηση αστοχιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewSubtitle" xml:space="preserve">
+    <value>Παλαιότερες αστοχίες λιστών ελέγχου που περιμένουν απόφαση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewHelp" xml:space="preserve">
+    <value>Τα στοιχεία λιστών ελέγχου που δημιουργούν εντολή εργασίας σε αστοχία μετατρέπονται αυτόματα σε εντολές εργασίας και δεσμεύσεις ασφαλείας μόνο για {0} ώρες. Παλαιότερες αστοχίες, όπως όσες καταγράφηκαν πριν ενεργοποιηθεί το Readiness Pro, περιμένουν εδώ: δημιουργήστε εντολή εργασίας (χωρίς δέσμευση) ή απορρίψτε τις.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewEmpty" xml:space="preserve">
+    <value>Δεν εκκρεμούν παλαιότερες αστοχίες λιστών ελέγχου.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewCount" xml:space="preserve">
+    <value>{0} αστοχίες σε αναμονή</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureRecordedOn" xml:space="preserve">
+    <value>Καταγράφηκε</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureConfiguredHolds" xml:space="preserve">
+    <value>Δέσμευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureHoldNotApplied" xml:space="preserve">
+    <value>Χωρίς δέσμευση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureNoHoldHint" xml:space="preserve">
+    <value>Το στοιχείο είχε ρυθμιστεί να θέτει τη μονάδα ή τον εξοπλισμό εκτός υπηρεσίας. Μια παλαιότερη αστοχία δεν εφαρμόζει ποτέ αυτή τη δέσμευση· προσθέστε την από την εντολή εργασίας αν χρειάζεται ακόμα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureViewCheck" xml:space="preserve">
+    <value>Προβολή ελέγχου</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureCreateWorkOrder" xml:space="preserve">
+    <value>Δημιουργία εντολής εργασίας</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureDismiss" xml:space="preserve">
+    <value>Απόρριψη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureTargetOther" xml:space="preserve">
+    <value>Τμήμα ή ομάδα</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewResolved" xml:space="preserve">
+    <value>Αυτή η αστοχία έχει ήδη επιλυθεί. Ανανεώστε τη σελίδα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewNotStale" xml:space="preserve">
+    <value>Αυτή η αστοχία είναι πρόσφατη και θα επεξεργαστεί αυτόματα.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewSourceUnavailable" xml:space="preserve">
+    <value>Ο έλεγχος πίσω από αυτή την αστοχία άλλαξε ή αφαιρέθηκε, οπότε μπορεί μόνο να απορριφθεί.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceSetup" xml:space="preserve">
+    <value>Ρύθμιση συντήρησης εξοπλισμού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceSubtitle" xml:space="preserve">
+    <value>Προγράμματα συντήρησης από τεχνικό για κάθε τεμάχιο ενός είδους</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceHelp" xml:space="preserve">
+    <value>Δημιουργεί ένα πρόγραμμα προληπτικής συντήρησης ανά επιλεγμένη εργασία για κάθε σειριακό τεμάχιο του είδους, όπως κάθε πυροσβεστήρα ενός μοντέλου. Κάθε πρόγραμμα λήγει ξανά από την τελευταία ολοκλήρωσή του. Επιλέξτε μόνο τις εργασίες που χρειάζεται ο τύπος (π.χ. η εξαετής συντήρηση και το διάστημα υδραυλικής δοκιμής εξαρτώνται από τον τύπο πυροσβεστήρα)· ο μηνιαίος οπτικός έλεγχος μένει λίστα ελέγχου. Μια νέα εκτέλεση προσθέτει μόνο προγράμματα για νέα τεμάχια.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceResult" xml:space="preserve">
+    <value>{0} τεμάχια: δημιουργήθηκαν {1} προγράμματα, {2} υπήρχαν ήδη, παραλείφθηκαν {3} τεμάχια (αποσυρμένα, χαμένα ή αναλωμένα), {4} δεν δημιουργήθηκαν.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceTruncated" xml:space="preserve">
+    <value>Αυτό το είδος έχει περισσότερα τεμάχια από όσα χειρίζεται μία εκτέλεση. Εκτελέστε ξανά για να συνεχίσετε.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceItem" xml:space="preserve">
+    <value>Είδος αποθήκης</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceFirstDue" xml:space="preserve">
+    <value>Πρώτη λήξη</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresets" xml:space="preserve">
+    <value>Εργασίες</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetsHint" xml:space="preserve">
+    <value>Επιβεβαιώστε κάθε διάστημα με την ετικέτα του κατασκευαστή και το πρότυπο που ισχύει στην περιοχή σας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceApply" xml:space="preserve">
+    <value>Δημιουργία προγραμμάτων</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetAnnualMaintenance" xml:space="preserve">
+    <value>Ετήσια συντήρηση από εξειδικευμένο τεχνικό</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetSixYearMaintenance" xml:space="preserve">
+    <value>Εξαετής συντήρηση</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetHydrostaticFiveYear" xml:space="preserve">
+    <value>Υδραυλική δοκιμή (5ετής)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetHydrostaticTwelveYear" xml:space="preserve">
+    <value>Υδραυλική δοκιμή (12ετής)</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

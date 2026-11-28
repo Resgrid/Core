@@ -26,6 +26,8 @@ namespace Resgrid.Model
 		/// <summary>Where the targets come from; Resgrid is not an accreditor and the targets are not point values (§10.6, §14).</summary>
 		public string Source { get; set; }
 		public IReadOnlyList<TrainingCategoryTemplateItem> Items { get; set; } = new List<TrainingCategoryTemplateItem>();
+		/// <summary>G8 CA1: where the template applies ("CA", "CA-ON", "US", "EU"...), or null for a generic template (TemplateJurisdictions).</summary>
+		public string Jurisdiction { get; set; }
 	}
 
 	/// <summary>NREMT NCCP hours per component for one certification level (two-year cycle, §10.6).</summary>
@@ -61,6 +63,22 @@ namespace Resgrid.Model
 		public const string CpdHours = "cpd-hours";
 		public const string CanadaWorkplace = "canada-workplace";
 		public const string EuWorkplace = "eu-workplace";
+
+		/// <summary>G8 CA1: region templates (US rating, registry and regulation templates, Canada, EU). The sector templates stay generic.</summary>
+		public static readonly IReadOnlyDictionary<string, string> Jurisdictions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+		{
+			[IsoFsrs] = "US", [NremtNccp] = "US", [OshaAnnual] = "US", [CanadaWorkplace] = "CA", [EuWorkplace] = "EU"
+		};
+
+		static TrainingCategoryTemplateCatalog()
+		{
+			foreach (var template in All)
+				if (template.Jurisdiction == null && Jurisdictions.TryGetValue(template.Key, out var code)) template.Jurisdiction = code;
+		}
+
+		/// <summary>G8 CA1: the templates offered to a department in <paramref name="jurisdiction"/> (generic ones always).</summary>
+		public static IReadOnlyList<TrainingCategoryTemplate> ForJurisdiction(IEnumerable<TrainingCategoryTemplate> templates, string jurisdiction)
+			=> TemplateJurisdictions.Filter(templates, t => t.Jurisdiction, jurisdiction);
 
 		public const string NccpNationalCode = "NCCP-NAT";
 		public const string NccpLocalCode = "NCCP-LOC";

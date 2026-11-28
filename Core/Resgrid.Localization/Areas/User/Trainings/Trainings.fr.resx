@@ -5637,4 +5637,8 @@
     <value>Cette formation est une copie gérée provenant de l'ensemble de cours d'une organisation liée. Son contenu et son quiz ne changent que par l'ensemble ; vous pouvez toujours l'attribuer, établir des rapports à son sujet ou la copier dans une formation qui vous est propre.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Rec.TemplatesOtherRegions" xml:space="preserve">
+    <value>Afficher {0} modèles pour d'autres régions (cette organisation : {1})</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

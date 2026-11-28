@@ -5637,4 +5637,8 @@
     <value>Den här utbildningen är en hanterad kopia från en länkad organisations kurssamling. Dess innehåll och quiz ändras bara via samlingen; ni kan fortfarande tilldela den, rapportera om den eller kopiera den till en egen utbildning.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Rec.TemplatesOtherRegions" xml:space="preserve">
+    <value>Visa {0} mallar för andra regioner (den här organisationen: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

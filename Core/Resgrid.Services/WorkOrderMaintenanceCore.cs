@@ -110,26 +110,91 @@ namespace Resgrid.Services
             {
                 var intent = await _store.GetAsync<WorkOrderFailureIntent>(departmentId, intentId);
                 if (intent == null || intent.ProcessedOn.HasValue) return;
+                // RF-4: an old failure never becomes an unattended work order or hold; it waits for the review queue.
+                if (FailureIntentAging.IsStale(intent, Now)) { result.Stale++; return; }
                 var completion = _checklists == null ? null : await _checklists.GetAsync<ChecklistCompletion>(departmentId, intent.CompletionId);
                 // A submitted failure requires prompt restriction even while its independent checklist witness is pending.
-                if ((completion == null || completion.State != (int)ChecklistRunState.Submitted && completion.State != (int)ChecklistRunState.AwaitingWitness) || completion.VersionId != intent.VersionId) { result.Deferred++; return; }
+                if (!FailureSourceCurrent(intent, completion)) { result.Deferred++; return; }
                 var owner = new ChecklistActor { DepartmentId = departmentId, UserId = intent.AuthorizedBy };
-                var unit = intent.TargetType == (int)ChecklistTargetType.Unit && int.TryParse(intent.TargetId, out var u) ? (int?)u : null;
-                var target = await AutomatedTargetAsync(owner, unit, intent.TargetGroupId, intent.TargetType == (int)ChecklistTargetType.InventoryAsset ? intent.TargetId : null);
-                var request = MaintenanceIdentity("failure:" + departmentId + ":" + intent.CompletionId + ":" + intent.ItemId);
-                var order = await _store.RequestAsync(departmentId, request);
-                if (order == null)
-                {
-                    order = New<WorkOrder>(new ChecklistActor { DepartmentId = departmentId, UserId = completion.CreatedBy });
-                    order.RequestId = request; await NumberAsync(order, departmentId);
-                    order.SourceType = 1; order.SourceChecklistCompletionId = intent.CompletionId; order.SourceChecklistItemId = intent.ItemId; order.SourceOccurrenceId = intent.OccurrenceId;
-                    order.Priority = intent.Priority; order.TargetUnitId = target.TargetUnitId; order.TargetGroupId = target.TargetGroupId; order.InventoryAssetId = target.InventoryAssetId;
-                    order.CurrencyCode = await DepartmentCurrencyAsync(departmentId);
-                    await PinSlaAsync(order); await _store.AllocateAsync(order); await RecordGeneratedCreationAsync(order); await EventAsync(order, WorkflowTriggerEventType.WorkOrderCreated, events); result.Generated++;
-                }
+                var order = await FailureOrderAsync(owner, intent, completion, events, result);
                 if (intent.HoldUnit && order.TargetUnitId.HasValue) { await CreateHoldAsync(owner, order, true, null, events, true); result.Held++; }
                 if (intent.HoldAsset && order.InventoryAssetId != null) { await CreateHoldAsync(owner, order, false, null, events, true); result.Held++; }
                 intent.WorkOrderId = order.Id; intent.ProcessedOn = Now; intent.UpdatedOn = Now; intent.Revision++; await _store.WriteAsync(intent);
+            });
+        }
+        private static bool FailureSourceCurrent(WorkOrderFailureIntent intent, ChecklistCompletion completion) =>
+            completion != null && (completion.State == (int)ChecklistRunState.Submitted || completion.State == (int)ChecklistRunState.AwaitingWitness) && completion.VersionId == intent.VersionId;
+        /// <summary>The failure's work order (idempotent per completion and item), routed by <paramref name="owner"/>'s rights. No holds.</summary>
+        private async Task<WorkOrder> FailureOrderAsync(ChecklistActor owner, WorkOrderFailureIntent intent, ChecklistCompletion completion, List<long> events, WorkOrderMaintenanceSweep result)
+        {
+            var departmentId = owner.DepartmentId;
+            var unit = intent.TargetType == (int)ChecklistTargetType.Unit && int.TryParse(intent.TargetId, out var u) ? (int?)u : null;
+            var target = await AutomatedTargetAsync(owner, unit, intent.TargetGroupId, intent.TargetType == (int)ChecklistTargetType.InventoryAsset ? intent.TargetId : null);
+            var request = MaintenanceIdentity("failure:" + departmentId + ":" + intent.CompletionId + ":" + intent.ItemId);
+            var order = await _store.RequestAsync(departmentId, request);
+            if (order != null) return order;
+            order = New<WorkOrder>(new ChecklistActor { DepartmentId = departmentId, UserId = completion.CreatedBy });
+            order.RequestId = request; await NumberAsync(order, departmentId);
+            order.SourceType = 1; order.SourceChecklistCompletionId = intent.CompletionId; order.SourceChecklistItemId = intent.ItemId; order.SourceOccurrenceId = intent.OccurrenceId;
+            order.Priority = intent.Priority; order.TargetUnitId = target.TargetUnitId; order.TargetGroupId = target.TargetGroupId; order.InventoryAssetId = target.InventoryAssetId;
+            order.CurrencyCode = await DepartmentCurrencyAsync(departmentId);
+            await PinSlaAsync(order); await _store.AllocateAsync(order); await RecordGeneratedCreationAsync(order); await EventAsync(order, WorkflowTriggerEventType.WorkOrderCreated, events); result.Generated++;
+            return order;
+        }
+        public async Task<WorkOrderFailureReviewPage> FailureReviewAsync(ChecklistActor actor, int page = 0)
+        {
+            RequireMaintenanceStore(); await RequireWriteAsync(actor);
+            if (page < 0) throw new WorkOrderException(400, "InvalidInput");
+            if (!await _authorization.CanManageAsync(actor, null)) throw new WorkOrderException(403, "PermissionRequired");
+            var now = Now; var stale = new List<WorkOrderFailureIntent>();
+            for (var skip = 0; ; skip += 500)
+            {
+                var rows = await _maintenance.QueryMaintenanceAsync<WorkOrderFailureIntent>(actor.DepartmentId, skip: skip, pendingOnly: true);
+                stale.AddRange(rows.Where(r => !r.ProcessedOn.HasValue && FailureIntentAging.IsStale(r, now)));
+                if (rows.Count < 500) break;
+            }
+            var result = new WorkOrderFailureReviewPage { Total = stale.Count, MaxAgeHours = Config.ReadinessProConfig.FailureIntentMaxAgeHours };
+            var shown = stale.OrderByDescending(r => r.CreatedOn).ThenBy(r => r.Id, StringComparer.Ordinal).Skip(page * 50).Take(51).ToList();
+            result.HasMore = shown.Count > 50;
+            foreach (var intent in shown.Take(50))
+            {
+                var completion = _checklists == null ? null : await _checklists.GetAsync<ChecklistCompletion>(actor.DepartmentId, intent.CompletionId);
+                var unitId = intent.TargetType == (int)ChecklistTargetType.Unit && int.TryParse(intent.TargetId, out var u) ? (int?)u : null;
+                var unit = unitId.HasValue && _maintenanceUnits != null ? await _maintenanceUnits.GetUnitByIdAsync(unitId.Value) : null;
+                result.Rows.Add(new WorkOrderFailureReviewRow
+                {
+                    IntentId = intent.Id, RecordedOn = intent.CreatedOn, CompletionId = intent.CompletionId, ItemId = intent.ItemId, TargetType = intent.TargetType, TargetId = intent.TargetId,
+                    TargetGroupId = intent.TargetGroupId, UnitId = unitId, UnitName = unit?.DepartmentId == actor.DepartmentId ? unit.Name : null, Priority = intent.Priority,
+                    HoldUnit = intent.HoldUnit, HoldAsset = intent.HoldAsset, CanCreate = FailureSourceCurrent(intent, completion)
+                });
+            }
+            return result;
+        }
+        public Task<string> ResolveFailureReviewAsync(ChecklistActor actor, string intentId, bool createWorkOrder)
+        {
+            if (!Guid.TryParseExact(intentId, "D", out _)) throw new WorkOrderException(404, "Unavailable");
+            RequireMaintenanceStore();
+            return TransactionAsync(actor, async events =>
+            {
+                var intent = await _store.GetAsync<WorkOrderFailureIntent>(actor.DepartmentId, intentId);
+                if (intent == null || intent.ProcessedOn.HasValue) throw new WorkOrderException(409, "FailureReviewResolved");
+                // A fresh intent still belongs to the unattended sweep (with its configured holds).
+                if (!FailureIntentAging.IsStale(intent, Now)) throw new WorkOrderException(409, "FailureReviewNotStale");
+                if (!await _authorization.CanManageAsync(actor, null) || !await _authorization.CanManageAsync(actor, intent.TargetGroupId)) throw new WorkOrderException(403, "PermissionRequired");
+                string orderId = null;
+                if (createWorkOrder)
+                {
+                    var completion = _checklists == null ? null : await _checklists.GetAsync<ChecklistCompletion>(actor.DepartmentId, intent.CompletionId);
+                    if (!FailureSourceCurrent(intent, completion)) throw new WorkOrderException(409, "FailureReviewSourceUnavailable");
+                    // Attended: routed by the reviewing manager's rights, and never a unit or asset hold for an old failure (R-D6).
+                    var order = await FailureOrderAsync(actor, intent, completion, events, new WorkOrderMaintenanceSweep());
+                    orderId = order.Id;
+                }
+                intent.WorkOrderId = orderId; intent.ProcessedOn = Now; intent.UpdatedOn = Now; intent.Revision++; await _store.WriteAsync(intent);
+                await _audit.InsertAsync(new AuditLog { DepartmentId = actor.DepartmentId, ObjectDepartmentId = actor.DepartmentId, UserId = actor.UserId, ObjectId = intent.Id,
+                    LogType = (int)AuditLogTypes.WorkOrderFailureReviewResolved, LoggedOn = Now, Successful = true, Message = createWorkOrder ? "FailureReviewCreated" : "FailureReviewDismissed",
+                    Data = JsonConvert.SerializeObject(new { IntentId = intent.Id, intent.CompletionId, intent.ItemId, WorkOrderId = orderId, Created = createWorkOrder, RecordedOn = intent.CreatedOn }), ServerName = Environment.MachineName }, CancellationToken.None);
+                return orderId;
             });
         }
         public async Task<List<WorkOrderHoldView>> HoldsAsync(ChecklistActor actor, string orderId)

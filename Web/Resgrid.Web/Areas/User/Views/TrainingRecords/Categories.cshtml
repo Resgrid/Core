@@ -163,12 +163,18 @@
         <div class="ibox-title"><h5><i class="fa fa-th-large" aria-hidden="true"></i> @localizer["Rec.TemplatesHeader"]</h5></div>
         <div class="ibox-content">
             <p class="text-muted">@localizer["Rec.TemplatesHelp"]</p>
+            @{ var otherRegions = Model.Templates.Count(t => !Resgrid.Model.TemplateJurisdictions.Fits(t.Jurisdiction, Model.Jurisdiction)); }
+            @if (otherRegions > 0)
+            {
+                <p><a href="#" id="showOtherRegions" onclick="document.querySelectorAll('.rgw-other-region').forEach(function (n) { n.hidden = false; }); this.hidden = true; return false;">@string.Format(localizer["Rec.TemplatesOtherRegions"].Value, otherRegions, Model.Jurisdiction)</a></p>
+            }
             <div class="rgw-card-grid">
                 @foreach (var template in Model.Templates)
                 {
                     var applied = template.Items.Count(i => Model.Codes.Contains(i.Code));
-                    <div class="rgw-card">
-                        <h4>@template.Name</h4>
+                    var fits = Resgrid.Model.TemplateJurisdictions.Fits(template.Jurisdiction, Model.Jurisdiction);
+                    <div class="rgw-card @(fits ? null : "rgw-other-region")" hidden="@(!fits)">
+                        <h4>@template.Name @if (!string.IsNullOrEmpty(template.Jurisdiction)) { <span class="label label-default">@template.Jurisdiction</span> }</h4>
                         @if (Model.Suggested.Contains(template.Key))
                         {
                             <div class="rgw-card-meta"><span class="label label-primary"><i class="fa fa-star" aria-hidden="true"></i> @localizer["Rec.TemplateSuggested"]</span></div>

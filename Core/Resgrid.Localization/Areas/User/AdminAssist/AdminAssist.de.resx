@@ -10521,4 +10521,36 @@
     <value>Öffnen Sie die Workforce-Pro-Plätze auf der Seite des Workforce-Pro-Add-ons und schalten Sie Mitglieder frei. Das Abschalten löscht nie eine Aufzeichnung: Die Aufzeichnungen sind dann nur noch lesbar.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>Fehlerprüfung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>Ältere Checklistenfehler, die nicht automatisch zu Arbeitsaufträgen wurden.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>Das Aktivieren von Readiness Pro erzeugt für alte Fehler keine Flut von Arbeitsaufträgen und stellt keine Einheiten außer Dienst; eine Führungskraft entscheidet jeden Fall.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>Öffnen Sie nach dem Aktivieren von Readiness Pro die Fehlerprüfung und erstellen oder verwerfen Sie jeden älteren Fehler.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>Einrichtung der Anlagenwartung</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>Jährliche, 6-jährige und Druckprüfungs-Wartungspläne für jeden Feuerlöscher oder jedes andere serialisierte Stück eines Artikels auf einmal.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>Hunderte Feuerlöscher erhalten ihre Wartungstermine, ohne dass jeder einzeln eingerichtet werden muss.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>Wählen Sie unter Vorbeugende Wartung „Anlagenwartung einrichten“, dann den Artikel und die Leistungen, die sein Typ braucht.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

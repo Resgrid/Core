@@ -214,6 +214,160 @@ namespace Resgrid.Tests.Services
             _store.All<WorkOrder>().Single().SourceChecklistCompletionId.Should().Be(completion.Id);
             _store.All<WorkOrderFailureIntent>().Single().Content.Should().BeNull();
         }
+        private async Task<ChecklistCompletion> RecordFailure(bool holdUnit = true)
+        {
+            var completion = new ChecklistCompletion { Id = Guid.NewGuid().ToString("D"), VersionId = Guid.NewGuid().ToString("D"), DepartmentId = 77, CreatedBy = "submitter", State = (int)ChecklistRunState.Submitted, TargetType = (int)ChecklistTargetType.Unit, TargetId = "10" };
+            var version = new ChecklistDefinitionVersion { Id = completion.VersionId, DepartmentId = 77, CreatedBy = "manager" };
+            var item = new ChecklistItem { Id = Guid.NewGuid().ToString("D"), CreateWorkOrderOnFail = true, SetUnitStateOnFail = holdUnit };
+            await _uow.Object.CreateOrGetConnectionAsync(); await _service.RecordFailureIntentAsync(_actor, completion, version, item); _uow.Object.CommitChanges();
+            _maintenanceChecklists.Setup(s => s.GetAsync<ChecklistCompletion>(77, completion.Id, CancellationToken.None)).ReturnsAsync(completion);
+            return completion;
+        }
+        [Test]
+        public async Task RF4_a_stale_failure_intent_is_never_replayed_unattended_and_costs_no_billing_call()
+        {
+            // ERT-D5 / R-D6: a failure recorded long before Readiness Pro was bought must not flood work orders and holds on activation.
+            Maintenance(); await RecordFailure();
+            _maintenanceClock.Utc = _maintenanceClock.Utc.AddHours(Resgrid.Config.ReadinessProConfig.FailureIntentMaxAgeHours + 1);
+            _access.Invocations.Clear();
+            var sweep = await _service.GenerateMaintenanceAsync(77);
+            sweep.Generated.Should().Be(0); sweep.Held.Should().Be(0); sweep.Stale.Should().Be(1);
+            _access.Verify(a => a.CanUseMaintenanceAsync(It.IsAny<int>()), Times.Never(), "a stale intent waits for review and must not cost a Billing API call");
+            _store.All<WorkOrder>().Should().BeEmpty(); _store.UnitStates.Should().BeEmpty();
+            _store.All<WorkOrderFailureIntent>().Single().ProcessedOn.Should().BeNull();
+        }
+        [Test]
+        public async Task RF4_a_fresh_failure_intent_is_still_processed_with_its_hold()
+        {
+            Maintenance(); await RecordFailure();
+            _maintenanceClock.Utc = _maintenanceClock.Utc.AddHours(Resgrid.Config.ReadinessProConfig.FailureIntentMaxAgeHours - 1);
+            var sweep = await _service.GenerateMaintenanceAsync(77);
+            sweep.Generated.Should().Be(1); sweep.Held.Should().Be(1); sweep.Stale.Should().Be(0);
+        }
+        [Test]
+        public async Task RF4_review_queue_creates_a_work_order_without_a_hold_and_resolves_once()
+        {
+            Maintenance(); var completion = await RecordFailure();
+            _maintenanceClock.Utc = _maintenanceClock.Utc.AddDays(30);
+            var review = await _service.FailureReviewAsync(_actor);
+            review.Total.Should().Be(1); var row = review.Rows.Single();
+            row.CompletionId.Should().Be(completion.Id); row.HoldUnit.Should().BeTrue(); row.CanCreate.Should().BeTrue(); row.UnitId.Should().Be(10);
+            var orderId = await _service.ResolveFailureReviewAsync(_actor, row.IntentId, true);
+            var order = _store.All<WorkOrder>().Single(); order.Id.Should().Be(orderId); order.SourceChecklistCompletionId.Should().Be(completion.Id);
+            _store.All<WorkOrderSafetyHold>().Should().BeEmpty("an old failure never applies a unit or asset hold");
+            _store.UnitStates.Should().BeEmpty();
+            var intent = _store.All<WorkOrderFailureIntent>().Single(); intent.ProcessedOn.Should().NotBeNull(); intent.WorkOrderId.Should().Be(orderId);
+            (await _service.FailureReviewAsync(_actor)).Total.Should().Be(0);
+            (await FluentActions.Awaiting(() => _service.ResolveFailureReviewAsync(_actor, row.IntentId, false)).Should().ThrowAsync<WorkOrderException>()).Which.Code.Should().Be("FailureReviewResolved");
+        }
+        [Test]
+        public async Task RF4_dismissing_a_stale_failure_creates_nothing()
+        {
+            Maintenance(); await RecordFailure();
+            _maintenanceClock.Utc = _maintenanceClock.Utc.AddDays(5);
+            var id = (await _service.FailureReviewAsync(_actor)).Rows.Single().IntentId;
+            (await _service.ResolveFailureReviewAsync(_actor, id, false)).Should().BeNull();
+            _store.All<WorkOrder>().Should().BeEmpty();
+            var intent = _store.All<WorkOrderFailureIntent>().Single(); intent.ProcessedOn.Should().NotBeNull(); intent.WorkOrderId.Should().BeNull();
+            (await _service.GenerateMaintenanceAsync(77)).Generated.Should().Be(0);
+        }
+        [Test]
+        public async Task RF4_a_fresh_intent_cannot_be_resolved_from_the_queue_and_the_queue_needs_manage_rights()
+        {
+            Maintenance(); await RecordFailure();
+            var id = _store.All<WorkOrderFailureIntent>().Single().Id;
+            (await FluentActions.Awaiting(() => _service.ResolveFailureReviewAsync(_actor, id, true)).Should().ThrowAsync<WorkOrderException>()).Which.Code.Should().Be("FailureReviewNotStale");
+            var member = new ChecklistActor { DepartmentId = 77, UserId = "member" };
+            (await FluentActions.Awaiting(() => _service.FailureReviewAsync(member)).Should().ThrowAsync<WorkOrderException>()).Which.StatusCode.Should().Be(403);
+            _access.Setup(a => a.CanUseMaintenanceAsync(77)).ReturnsAsync(false);
+            (await FluentActions.Awaiting(() => _service.FailureReviewAsync(_actor)).Should().ThrowAsync<WorkOrderException>()).Which.StatusCode.Should().Be(402);
+        }
+        [Test]
+        public async Task RF4_a_stale_failure_whose_run_was_reopened_can_only_be_dismissed()
+        {
+            Maintenance(); var completion = await RecordFailure(); completion.State = (int)ChecklistRunState.InProgress;
+            _maintenanceClock.Utc = _maintenanceClock.Utc.AddDays(5);
+            var row = (await _service.FailureReviewAsync(_actor)).Rows.Single(); row.CanCreate.Should().BeFalse();
+            (await FluentActions.Awaiting(() => _service.ResolveFailureReviewAsync(_actor, row.IntentId, true)).Should().ThrowAsync<WorkOrderException>()).Which.Code.Should().Be("FailureReviewSourceUnavailable");
+            _store.All<WorkOrderFailureIntent>().Single().ProcessedOn.Should().BeNull("a refused create rolls back");
+        }
+        [Test]
+        public async Task RF4_zero_hours_turns_expiry_off()
+        {
+            var saved = Resgrid.Config.ReadinessProConfig.FailureIntentMaxAgeHours;
+            try
+            {
+                Resgrid.Config.ReadinessProConfig.FailureIntentMaxAgeHours = 0;
+                Maintenance(); await RecordFailure(); _maintenanceClock.Utc = _maintenanceClock.Utc.AddDays(365);
+                (await _service.GenerateMaintenanceAsync(77)).Generated.Should().Be(1);
+                FailureIntentAging.StaleBefore(DateTime.UtcNow).Should().BeNull();
+            }
+            finally { Resgrid.Config.ReadinessProConfig.FailureIntentMaxAgeHours = saved; }
+        }
+        private Mock<Resgrid.Model.Services.IInventoryCatalogService> AssetCatalog(params (string Id, Resgrid.Model.Inventories.InventoryAssetStatus Status)[] assets)
+        {
+            Maintenance();
+            var catalog = new Mock<Resgrid.Model.Services.IInventoryCatalogService>();
+            catalog.Setup(c => c.QueryAsync<Resgrid.Model.Inventories.InventoryAsset>(It.IsAny<Resgrid.Model.Inventories.InventoryActor>(), It.Is<Resgrid.Model.Inventories.InventoryQuery>(q => q.ItemId == ExtinguisherItem), 0))
+                .ReturnsAsync(new Resgrid.Model.Inventories.InventoryPage<Resgrid.Model.Inventories.InventoryAsset> { Items = assets.Select((a, i) => new Resgrid.Model.Inventories.InventoryAsset { Id = a.Id, DepartmentId = 77, ItemId = ExtinguisherItem, Status = (int)a.Status, Content = i == 0 ? "{\"SerialNumber\":\"FX-011\",\"AssetTag\":\"CVFR-FX-101\"}" : null }).ToList() });
+            var audit = new Mock<IAuditLogsRepository>();
+            audit.Setup(a => a.InsertAsync(It.IsAny<AuditLog>(), It.IsAny<CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((AuditLog a, CancellationToken c, bool b) => { a.AuditLogId = 1; return a; });
+            _service = new WorkOrdersService(_store, _auth.Object, _access.Object, _uow.Object, audit.Object, _outbox.Object, new(() => _read.Object), new(() => _write.Object), _scanner.Object,
+                _maintenanceClock, _store, checklists: _maintenanceChecklists.Object, maintenanceUnits: _maintenanceUnitsMock.Object, inventoryCatalog: new Lazy<Resgrid.Model.Services.IInventoryCatalogService>(() => catalog.Object));
+            return catalog;
+        }
+        private const string ExtinguisherItem = "6a4c1f0e-3f2d-4c8e-9b7a-1d2e3f4a5b6c";
+        private AssetServiceSetupInput ExtinguisherService() => new() { ItemId = ExtinguisherItem, Presets = new() { AssetServicePreset.AnnualMaintenance, AssetServicePreset.HydrostaticTwelveYear }, AnchorLocal = _maintenanceClock.Utc.AddDays(30), TimeZoneId = "UTC", LeadDays = 30 };
+        [Test]
+        public async Task WE1_asset_service_setup_creates_one_completion_based_schedule_per_asset_and_preset_once()
+        {
+            var a = Guid.NewGuid().ToString("D"); var b = Guid.NewGuid().ToString("D"); var retired = Guid.NewGuid().ToString("D");
+            AssetCatalog((a, Resgrid.Model.Inventories.InventoryAssetStatus.InService), (b, Resgrid.Model.Inventories.InventoryAssetStatus.Issued), (retired, Resgrid.Model.Inventories.InventoryAssetStatus.Retired));
+            var result = await _service.SetupAssetServiceAsync(_actor, ExtinguisherService());
+            result.Assets.Should().Be(3); result.Created.Should().Be(4); result.Skipped.Should().Be(1); result.Failed.Should().Be(0); result.Existing.Should().Be(0);
+            var schedules = _store.All<WorkOrderRecurrence>().ToList();
+            schedules.Should().HaveCount(4).And.OnlyContain(r => r.CompletionBased && r.Calendar == (int)MaintenanceCalendar.Yearly && (r.InventoryAssetId == a || r.InventoryAssetId == b));
+            schedules.Select(r => r.Interval).OrderBy(i => i).Should().Equal(1, 1, 12, 12);
+            schedules.Should().NotContain(r => r.InventoryAssetId == retired);
+            WorkOrdersService.AssetServiceTitle("Annual maintenance", new Resgrid.Model.Inventories.InventoryAsset { Content = "{\"SerialNumber\":\"FX-011\",\"AssetTag\":\"CVFR-FX-101\"}" }).Should().Be("Annual maintenance — CVFR-FX-101", "the tag tells one extinguisher's schedule from another's");
+            WorkOrdersService.AssetServiceTitle("Annual maintenance", new Resgrid.Model.Inventories.InventoryAsset { Content = "{\"SerialNumber\":\"FX-011\"}" }).Should().Be("Annual maintenance — FX-011");
+            WorkOrdersService.AssetServiceTitle("Annual maintenance", new Resgrid.Model.Inventories.InventoryAsset()).Should().Be("Annual maintenance");
+
+            // Running it again (for assets added later) never duplicates a schedule.
+            var again = await _service.SetupAssetServiceAsync(_actor, ExtinguisherService());
+            again.Created.Should().Be(0); again.Existing.Should().Be(4);
+            _store.All<WorkOrderRecurrence>().Should().HaveCount(4);
+        }
+        [Test]
+        public async Task WE1_asset_service_setup_needs_readiness_pro_department_wide_manage_and_valid_presets()
+        {
+            AssetCatalog((Guid.NewGuid().ToString("D"), Resgrid.Model.Inventories.InventoryAssetStatus.InService));
+            var member = new ChecklistActor { DepartmentId = 77, UserId = "member" };
+            (await FluentActions.Awaiting(() => _service.SetupAssetServiceAsync(member, ExtinguisherService())).Should().ThrowAsync<WorkOrderException>()).Which.StatusCode.Should().Be(403);
+            var none = ExtinguisherService(); none.Presets.Clear();
+            (await FluentActions.Awaiting(() => _service.SetupAssetServiceAsync(_actor, none)).Should().ThrowAsync<WorkOrderException>()).Which.StatusCode.Should().Be(400);
+            var twice = ExtinguisherService(); twice.Presets.Add(AssetServicePreset.AnnualMaintenance);
+            (await FluentActions.Awaiting(() => _service.SetupAssetServiceAsync(_actor, twice)).Should().ThrowAsync<WorkOrderException>()).Which.StatusCode.Should().Be(400);
+            _access.Setup(x => x.CanUseMaintenanceAsync(77)).ReturnsAsync(false);
+            (await FluentActions.Awaiting(() => _service.SetupAssetServiceAsync(_actor, ExtinguisherService())).Should().ThrowAsync<WorkOrderException>()).Which.StatusCode.Should().Be(402);
+            _store.All<WorkOrderRecurrence>().Should().BeEmpty();
+        }
+        [Test]
+        public async Task Every_maintenance_outbox_event_fits_the_36_character_aggregate_id_column()
+        {
+            // DomainEventOutbox.AggregateId is nvarchar(36)/varchar(36) (M0153). "recurrence:" + id (47) failed every schedule save on a real database.
+            Maintenance(); var input = Schedule(); input.AnchorLocal = _maintenanceClock.Utc.AddDays(1);
+            var id = await _service.SaveRecurrenceAsync(_actor, input);
+            await _service.GenerateMaintenanceAsync(77);
+            _events.Should().NotBeEmpty();
+            _events.Should().OnlyContain(e => e.AggregateId != null && e.AggregateId.Length <= 36);
+            _events.Should().Contain(e => e.AggregateType == "WorkOrderRecurrence" && e.AggregateId == id);
+        }
+        [TestCase(AssetServicePreset.AnnualMaintenance, 1)]
+        [TestCase(AssetServicePreset.SixYearMaintenance, 6)]
+        [TestCase(AssetServicePreset.HydrostaticFiveYear, 5)]
+        [TestCase(AssetServicePreset.HydrostaticTwelveYear, 12)]
+        public void WE1_presets_are_yearly_intervals(AssetServicePreset preset, int years) => AssetServicePresets.Years(preset).Should().Be(years);
         [Test]
         public async Task Sweeps_with_nothing_due_do_not_call_billing()
         {

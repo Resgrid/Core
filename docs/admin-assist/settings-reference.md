@@ -4181,6 +4181,11 @@ Work Orders Repair and maintenance work orders. Turn a failed check or reported 
 
 Preventive maintenance Recurring maintenance schedules. Plan equipment upkeep and track corrective responsibility. A failed pump test creates a work order, and the engine stays on a safety hold until the repair is approved. Schedule routine service for each apparatus.
 
+<a id="asset-service-setup"></a>
+## Asset service setup
+
+Asset service setup Annual, 6-year and hydrostatic test service schedules for every fire extinguisher or other serialized asset of an inventory item at once. Under Work Orders, Preventive maintenance, Set up asset service, choose the item, the first due date, the lead time, the role and the services its type needs. One completion-based yearly schedule is created per asset and service, named with the asset tag or serial number; running it again only adds assets added since. Keep the monthly visual inspection as a checklist on each extinguisher. Requires the Readiness Pro add-on.
+
 <a id="maintenance-policy"></a>
 ## Maintenance policies and approvals
 
@@ -4196,10 +4201,15 @@ New Work Order Open a work order. Turn a failed check or reported defect into a 
 
 Maintenance history and reports Maintenance history, repair costs and safety holds. Support accountable return-to-service review through the owning workflow. A failed pump test creates a work order, and the engine stays on a safety hold until the repair is approved. Requires the Readiness Pro add-on. Checklists remain available without it.
 
+<a id="failure-review"></a>
+## Failure review
+
+Failure review Older checklist failures that were not turned into work orders automatically. Checklist items set to create a work order on failure are handled automatically only while the failure is less than 72 hours old; older failures, such as those recorded before Readiness Pro was turned on, wait in Work Orders, Failure review. A manager creates a work order for each one (no unit or equipment hold is applied) or dismisses it. Turning on Readiness Pro never floods work orders or takes units out of service for old failures. Requires the Readiness Pro add-on and Manage Work Orders for the whole department.
+
 <a id="addon-readiness"></a>
 ## Readiness Pro
 
-Readiness Pro The Readiness Pro add-on: work orders, preventive maintenance, repair approvals and safety holds. Give equipment defects an owner and a recorded repair and return-to-service review. A failed apparatus check leads to an explicitly created maintenance work order. Checklists do not require this add-on. Maintenance needs its module, permissions and active entitlement. Historical evidence and hold release follow owning-module rules.
+Readiness Pro The Readiness Pro add-on: work orders, preventive maintenance, repair approvals and safety holds. Give equipment defects an owner and a recorded repair and return-to-service review. A failed apparatus check leads to an explicitly created maintenance work order. Checklists do not require this add-on. Maintenance needs its module, permissions and active entitlement. Historical evidence and hold release follow owning-module rules. It also includes Failure review for checklist failures recorded before activation, and Set up asset service for extinguisher and other long-interval service schedules.
 
 <a id="module-businessoperationsdisabled"></a>
 ## Business Ops availability

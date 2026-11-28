@@ -414,4 +414,124 @@
   <data name="HoldReasonOrderOutOfService" xml:space="preserve">
     <value>أُخرجت من الخدمة بموجب أمر العمل.</value>
   </data>
+  <data name="FailureReview" xml:space="preserve">
+    <value>مراجعة الأعطال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewSubtitle" xml:space="preserve">
+    <value>أعطال قوائم تحقق أقدم بانتظار قرار</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewHelp" xml:space="preserve">
+    <value>لا تتحول عناصر قوائم التحقق المعدة لإنشاء أمر عمل عند العطل إلى أوامر عمل وحجوزات سلامة تلقائيًا إلا خلال {0} ساعة. الأعطال الأقدم، مثل المسجلة قبل تفعيل Readiness Pro، تنتظر هنا: أنشئ أمر عمل (دون تطبيق حجز) أو تجاهلها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewEmpty" xml:space="preserve">
+    <value>لا توجد أعطال قديمة في قوائم التحقق بانتظار المراجعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewCount" xml:space="preserve">
+    <value>{0} أعطال بانتظار المراجعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureRecordedOn" xml:space="preserve">
+    <value>سُجّل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureConfiguredHolds" xml:space="preserve">
+    <value>الحجز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureHoldNotApplied" xml:space="preserve">
+    <value>لم يُطبّق الحجز</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureNoHoldHint" xml:space="preserve">
+    <value>كان العنصر معدًا لإخراج الوحدة أو المعدات من الخدمة. العطل الأقدم لا يطبق هذا الحجز أبدًا؛ أضفه من أمر العمل إن كان لا يزال لازمًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureViewCheck" xml:space="preserve">
+    <value>عرض الفحص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureCreateWorkOrder" xml:space="preserve">
+    <value>إنشاء أمر عمل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureDismiss" xml:space="preserve">
+    <value>تجاهل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureTargetOther" xml:space="preserve">
+    <value>القسم أو المجموعة</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewResolved" xml:space="preserve">
+    <value>تمت معالجة هذا العطل مسبقًا. أعد تحميل الصفحة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewNotStale" xml:space="preserve">
+    <value>هذا العطل حديث وستتم معالجته تلقائيًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FailureReviewSourceUnavailable" xml:space="preserve">
+    <value>تم تغيير الفحص المرتبط بهذا العطل أو حذفه، لذا يمكن تجاهله فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceSetup" xml:space="preserve">
+    <value>إعداد صيانة الأصول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceSubtitle" xml:space="preserve">
+    <value>جداول صيانة الفنيين لكل وحدة من صنف</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceHelp" xml:space="preserve">
+    <value>ينشئ جدول صيانة وقائية واحدًا لكل خدمة مختارة لكل أصل متسلسل من الصنف، مثل كل طفاية حريق من طراز واحد. يُحسب موعد كل جدول من آخر إنجاز له. اختر فقط الخدمات التي يحتاجها نوع الأصل (مثلًا تعتمد صيانة السنوات الست وفترة الاختبار الهيدروستاتيكي على نوع الطفاية)؛ وأبقِ الفحص البصري الشهري قائمة تحقق. إعادة التشغيل تضيف جداول للأصول المضافة لاحقًا فقط.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceResult" xml:space="preserve">
+    <value>{0} أصول: أُنشئ {1} جدولًا، {2} معدّة مسبقًا، استُبعد {3} أصلًا (متقاعد أو مفقود أو مستهلك)، وتعذّر إنشاء {4}.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceTruncated" xml:space="preserve">
+    <value>لهذا الصنف أصول أكثر مما يعالجه تشغيل واحد. شغّله مرة أخرى للمتابعة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceItem" xml:space="preserve">
+    <value>صنف المخزون</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceFirstDue" xml:space="preserve">
+    <value>أول موعد استحقاق</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresets" xml:space="preserve">
+    <value>الخدمات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetsHint" xml:space="preserve">
+    <value>تحقق من كل فترة مقابل ملصق الشركة المصنعة والمعيار الذي تعتمده جهتك.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServiceApply" xml:space="preserve">
+    <value>إنشاء الجداول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetAnnualMaintenance" xml:space="preserve">
+    <value>صيانة سنوية بواسطة فني مؤهل</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetSixYearMaintenance" xml:space="preserve">
+    <value>صيانة كل 6 سنوات</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetHydrostaticFiveYear" xml:space="preserve">
+    <value>اختبار هيدروستاتيكي (كل 5 سنوات)</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="AssetServicePresetHydrostaticTwelveYear" xml:space="preserve">
+    <value>اختبار هيدروستاتيكي (كل 12 سنة)</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

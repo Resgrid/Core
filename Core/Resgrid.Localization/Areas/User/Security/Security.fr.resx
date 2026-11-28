@@ -3492,4 +3492,8 @@
     <value>Packs Workforce Pro modifiés</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="AuditLogTypeWorkOrderFailureReviewResolved" xml:space="preserve">
+    <value>Revue des défaillances des bons de travail traitée</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

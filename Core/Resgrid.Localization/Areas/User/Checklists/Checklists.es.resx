@@ -459,8 +459,8 @@
   <data name="No maximum" xml:space="preserve">
     <value>Sin máximo</value>
   </data>
-  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
-    <value>Imagen de evidencia (PNG/JPEG, hasta 10 MB; requiere análisis de seguridad)</value>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB)" xml:space="preserve">
+    <value>Imagen de evidencia (PNG/JPEG, hasta 10 MB)</value>
   </data>
   <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
     <value>Dibuje su firma o cargue una imagen de ella. Si se requiere un testigo independiente, debe iniciar sesión por separado.</value>
@@ -729,6 +729,30 @@
   </data>
   <data name="WitnessSignatureRefused" xml:space="preserve">
     <value>No se registró la firma del testigo, por lo que la lista de verificación sigue pendiente de testigo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Not scanned" xml:space="preserve">
+    <value>No analizado</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotScannedHint" xml:space="preserve">
+    <value>Este servidor funciona sin análisis de adjuntos, así que esta imagen se recodificó y se guardó sin análisis de malware.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesOtherRegions" xml:space="preserve">
+    <value>Mostrar {0} plantillas de otras regiones (este departamento: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewed" xml:space="preserve">
+    <value>Aún sin revisar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewedHint" xml:space="preserve">
+    <value>Redactado por Resgrid para esta región y mostrado solo para revisión. Aún no lo ha aprobado un revisor cualificado.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateBasis" xml:space="preserve">
+    <value>Ayuda a llevar registros para: {0}</value>
     <comment>machine-translated</comment>
   </data>
 </root>

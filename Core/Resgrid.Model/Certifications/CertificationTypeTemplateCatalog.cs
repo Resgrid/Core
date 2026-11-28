@@ -14,7 +14,72 @@ namespace Resgrid.Model.Certifications
 	/// </summary>
 	public static class CertificationTypeTemplateCatalog
 	{
-		public static IReadOnlyList<CertificationTypeTemplate> All { get; } = BuildAll();
+		/// <summary>
+		/// G8 CA1: templates that only make sense in one country or subdivision (US federal regulations and US licensing, Canadian,
+		/// provincial, EU and UK credentials). Everything else, including the NFPA professional qualifications used across North
+		/// America, stays generic.
+		/// </summary>
+		public static readonly IReadOnlyDictionary<string, string> Jurisdictions = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+		{
+			["NREMT-EMR"] = "US", ["NREMT-EMT"] = "US", ["NREMT-AEMT"] = "US", ["NREMT-P"] = "US", ["STATE-EMT"] = "US", ["STATE-AEMT"] = "US", ["STATE-P"] = "US",
+			["NWCG-FFT2"] = "US", ["NWCG-FFT1"] = "US", ["NWCG-CRWB"] = "US", ["NWCG-ENGB"] = "US", ["NWCG-DIVS"] = "US", ["RED-CARD"] = "US", ["RT-130"] = "US", ["WCT"] = "US",
+			["IS-700"] = "US", ["IS-800"] = "US",
+			["OSHA-10"] = "US", ["OSHA-30"] = "US", ["HAZWOPER-40"] = "US", ["HAZWOPER-8"] = "US", ["FORKLIFT"] = "US", ["CONFINED-SPACE"] = "US", ["LOTO"] = "US",
+			["RESP-FIT"] = "US", ["HEARING"] = "US", ["BBP"] = "US", ["TWIC"] = "US", ["NCCCO"] = "US", ["CRANE-INSPECTION"] = "US",
+			["CA-WHMIS"] = "CA", ["CA-SFA"] = "CA", ["CA-JHSC"] = "CA", ["CA-TDG"] = "CA", ["BC-SWL"] = "CA-BC", ["ON-SECURITY"] = "CA-ON",
+			["EU-FAW"] = "EU", ["EU-ATEX"] = "EU", ["EU-ADR"] = "EU", ["EU-CPC"] = "EU", ["EU-FIRE-WARDEN"] = "EU", ["UK-SIA"] = "GB",
+			["GUARD-CARD"] = "US", ["ARMED"] = "US", ["PI-LICENSE"] = "US",
+			["CDL-A"] = "US", ["CDL-B"] = "US", ["CDL-P"] = "US", ["CDL-S"] = "US", ["CDL-H"] = "US", ["CDL-N"] = "US", ["CDL-T"] = "US", ["DOT-MED"] = "US",
+			["MVR-REVIEW"] = "US", ["CLEARINGHOUSE"] = "US", ["ELDT"] = "US", ["ROAD-TEST"] = "US", ["DA-PROGRAM"] = "US", ["SCHOOL-BUS-PERMIT"] = "US",
+			["DOT-INSPECTION"] = "US", ["AMB-PERMIT"] = "US"
+		};
+
+		/// <summary>The published catalog (and, while <see cref="Resgrid.Config.ContentPacksConfig.ShowUnreviewedPacks"/> is on, the jurisdiction packs awaiting review).</summary>
+		public static IReadOnlyList<CertificationTypeTemplate> All => Resgrid.Config.ContentPacksConfig.ShowUnreviewedPacks ? WithUnreviewed : Published;
+		private static readonly IReadOnlyList<CertificationTypeTemplate> Published = Tag(BuildAll());
+
+		/// <summary>
+		/// G8 CA2 (decision ERT-D10): facility fire brigade qualifications and Ontario workplace credentials, written but not yet signed
+		/// off by a Canadian fire-protection or OHS reviewer. Validity periods marked "to confirm" are the gap plan §7 items. Move an
+		/// entry into BuildAll() (and add its translations) when it is approved.
+		/// </summary>
+		public static IReadOnlyList<CertificationTypeTemplate> PendingReview { get; } = BuildPendingReview();
+		private static readonly IReadOnlyList<CertificationTypeTemplate> WithUnreviewed = Published.Concat(PendingReview).ToList();
+
+		/// <summary>True when the template is in a jurisdiction pack that has not been signed off yet.</summary>
+		public static bool IsUnreviewed(CertificationTypeTemplate template) => template != null && PendingReview.Any(t => t.Id == template.Id);
+
+		private static IReadOnlyList<CertificationTypeTemplate> BuildPendingReview()
+		{
+			const CertificationCategories Fire = CertificationCategories.Fire, Ind = CertificationCategories.Industrial, Drv = CertificationCategories.Driver;
+			return new List<CertificationTypeTemplate>
+			{
+				// NFPA 1081 (2024 edition, "Facility Fire Brigade Member Professional Qualifications"): qualification levels, no fixed expiry;
+				// currency comes from the brigade's training program. NFPA 600's current status is a gap plan §7 item.
+				P("NFPA1081-INC", "Facility Fire Brigade Member – Incipient", Fire, "NFPA 1081 (2024)", null, "Facility fire brigade member qualified for incipient-stage fires.", "nfpa", "brigade", "industrial", "ert"),
+				P("NFPA1081-AE", "Facility Fire Brigade Member – Advanced Exterior", Fire, "NFPA 1081 (2024)", null, "Facility fire brigade member qualified for advanced exterior fire fighting.", "nfpa", "brigade", "industrial", "ert"),
+				P("NFPA1081-IS", "Facility Fire Brigade Member – Interior Structural", Fire, "NFPA 1081 (2024)", null, "Facility fire brigade member qualified for interior structural fire fighting.", "nfpa", "brigade", "industrial", "ert"),
+				P("NFPA1081-LDR", "Facility Fire Brigade Leader", Fire, "NFPA 1081 (2024)", null, "Leads a facility fire brigade at the level the site operates.", "nfpa", "brigade", "leader", "ert"),
+				P("NFPA1081-TC", "Facility Fire Brigade Training Coordinator", Fire, "NFPA 1081 (2024)", null, "Plans and records the facility fire brigade's training program.", "nfpa", "brigade", "training", "ert"),
+				// Ontario workplace credentials (OHSA and its regulations; validity periods to confirm against the current rules).
+				P("ON-WAH", "Working at Heights (Ontario)", Ind, "CPO-approved provider (O. Reg. 297/13)", 36, "Ontario working at heights training from an approved provider; a refresher is commonly due every 3 years (validity to confirm).", "ontario", "canada", "fall protection", "heights").In("CA-ON"),
+				P("ON-CONFINED", "Confined Space Training (Ontario)", Ind, "Employer program (O. Reg. 632/05)", null, "Training for workers who enter or attend confined spaces under the employer's program. Set the retraining cycle your program requires.", "ontario", "canada", "confined space").In("CA-ON"),
+				P("ON-LOCKOUT", "Lockout and Energy Isolation (Ontario)", Ind, "Employer program (O. Reg. 851)", null, "Training in the site's lockout and energy isolation procedures. Set the retraining cycle your program requires.", "ontario", "canada", "lockout", "loto").In("CA-ON"),
+				P("ON-LIFT-TRUCK", "Lift Truck Operator (Ontario)", Ind, "Employer / training provider (O. Reg. 851; CSA B335)", 36, "Lift truck operator training and evaluation; re-evaluation is commonly every 3 years (validity to confirm).", "ontario", "canada", "forklift", "lift truck").In("CA-ON"),
+				P("ON-DZ", "Class DZ Driver's Licence (Ontario)", Drv, "Ontario Ministry of Transportation", 60, "Licence for apparatus drivers with air brakes; record the medical report schedule as its own item where it applies (validity to confirm).", "ontario", "canada", "driver", "air brakes", "apparatus").In("CA-ON")
+			};
+		}
+
+		private static IReadOnlyList<CertificationTypeTemplate> Tag(IReadOnlyList<CertificationTypeTemplate> templates)
+		{
+			foreach (var template in templates)
+				if (template.Jurisdiction == null && Jurisdictions.TryGetValue(template.Code, out var code)) template.Jurisdiction = code;
+			return templates;
+		}
+
+		/// <summary>G8 CA1: the templates offered to a department in <paramref name="jurisdiction"/> (generic ones always).</summary>
+		public static IReadOnlyList<CertificationTypeTemplate> ForJurisdiction(IEnumerable<CertificationTypeTemplate> templates, string jurisdiction)
+			=> TemplateJurisdictions.Filter(templates, t => t.Jurisdiction, jurisdiction);
 
 		public static CertificationTypeTemplate GetById(string id)
 		{
@@ -89,6 +154,7 @@ namespace Resgrid.Model.Certifications
 			=> new CertificationTypeTemplate { Id = code.ToLowerInvariant(), Code = code, Name = name, Category = category, AppliesTo = CertificationAppliesTo.Unit, IssuingAuthority = authority, DefaultValidityMonths = months, NeverExpires = months == null, Description = description, Keywords = keywords };
 
 		private static CertificationTypeTemplate Verified(this CertificationTypeTemplate t) { t.RequiresVerification = true; return t; }
+		private static CertificationTypeTemplate In(this CertificationTypeTemplate t, string jurisdiction) { t.Jurisdiction = jurisdiction; return t; }
 		private static CertificationTypeTemplate Credits(this CertificationTypeTemplate t, decimal hours) { t.RenewalCreditHoursRequired = hours; return t; }
 
 		private static IReadOnlyList<CertificationTypeTemplate> BuildAll()

@@ -10521,4 +10521,36 @@
     <value>Apra i posti Workforce Pro dalla pagina del componente Workforce Pro e attivi i membri. Disattivare un membro non elimina mai un registro: i suoi registri diventano di sola lettura.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>Revisione guasti</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>Guasti meno recenti delle checklist non trasformati automaticamente in ordini di lavoro.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>Attivare Readiness Pro non genera mai una valanga di ordini di lavoro né mette fuori servizio unità per guasti vecchi; un responsabile decide ciascuno.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>Dopo aver attivato Readiness Pro, apri Revisione guasti e crea o ignora ogni guasto meno recente.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>Impostazione della manutenzione attrezzature</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>Piani di manutenzione annuale, sessennale e idrostatica per ogni estintore o altro esemplare serializzato di un articolo in un colpo solo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>Centinaia di estintori ricevono le scadenze di manutenzione senza impostarli uno per uno.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>In Manutenzione preventiva scegli Imposta la manutenzione delle attrezzature, poi l'articolo e i servizi necessari al suo tipo.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

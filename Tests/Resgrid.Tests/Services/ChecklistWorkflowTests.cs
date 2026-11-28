@@ -208,16 +208,63 @@ namespace Resgrid.Tests.Services
 			Func<Task> start = () => _service.StartAsync(_actor, run.Definition, "77", Guid.NewGuid().ToString()); (await start.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(409);
 			await _service.SaveRunAsync(_actor, run.Run, Answers(run.Form), true); (await _service.GetRunAsync(_actor, run.Run)).Completion.State.Should().Be(2);
 		}
-		[Test]
-		public async Task Images_need_a_clean_scan_and_scan_rejection_leaves_no_file()
+		private static byte[] Png()
 		{
-			var run = await Start(); byte[] png;
-			using (var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(1, 1))
-			using (var stream = new System.IO.MemoryStream()) { image.Save(stream, new SixLabors.ImageSharp.Formats.Png.PngEncoder()); png = stream.ToArray(); }
-			_scanner.Setup(s => s.ScanAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>())).ReturnsAsync(new RecordAttachmentScanResult { State = RmsAttachmentScanState.Skipped });
+			using var image = new SixLabors.ImageSharp.Image<SixLabors.ImageSharp.PixelFormats.Rgba32>(1, 1);
+			using var stream = new System.IO.MemoryStream(); image.Save(stream, new SixLabors.ImageSharp.Formats.Png.PngEncoder()); return stream.ToArray();
+		}
+		private void ScanAs(RmsAttachmentScanState state) => _scanner.Setup(s => s.ScanAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>())).ReturnsAsync(new RecordAttachmentScanResult { State = state });
+
+		[TestCase(RmsAttachmentScanState.Pending)]
+		[TestCase(RmsAttachmentScanState.Rejected)]
+		public async Task Evidence_is_refused_when_scanning_is_on_and_does_not_pass(RmsAttachmentScanState state)
+		{
+			// ERT-D13: Pending means scanning is on but the engine is unavailable (fail-open setting); Rejected is a hit or fail-closed.
+			var run = await Start(); ScanAs(state);
+			Func<Task> upload = () => _service.AddFileAsync(_actor, run.Run, run.Form.Sections[0].Items[0].Id, "evidence.png", "image/png", Png());
+			(await upload.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(409);
+			(await _store.ListAsync<ChecklistCompletionFile>(77)).Should().BeEmpty();
+		}
+		[Test]
+		public async Task Evidence_with_scanning_off_is_stored_as_not_scanned_counts_and_downloads()
+		{
+			// RF-6 / ERT-D13: a self-hosted server without ClamAV returns Skipped; the re-encoded image is evidence, marked "Not scanned".
+			var form = new ChecklistForm { Name = "Extinguisher", Sections = { new ChecklistSection { Name = "Evidence", Items = { new ChecklistItem { Name = "Tag photo", Type = ChecklistItemType.Photo, Required = true } } } } };
+			var definition = await _service.SaveDefinitionAsync(_actor, null, 0, form); await _service.PublishAsync(_actor, definition, 1);
+			var run = await _service.StartAsync(_actor, definition, "77", Guid.NewGuid().ToString());
+			var itemId = (await _service.GetRunAsync(_actor, run)).Form.Sections[0].Items[0].Id;
+			ScanAs(RmsAttachmentScanState.Skipped);
+			await _service.AddFileAsync(_actor, run, itemId, "tag.png", "image/png", Png());
+			var view = await _service.GetRunAsync(_actor, run);
+			view.Files.Should().ContainSingle().Which.ScanState.Should().Be((int)RmsAttachmentScanState.Skipped);
+			var input = new ChecklistRunInput { Revision = view.Completion.Revision, Answers = { new ChecklistAnswer { ItemId = itemId, Status = ChecklistAnswerStatus.Answered } } };
+			await _service.SaveRunAsync(_actor, run, input, true);
+			(await _service.GetRunAsync(_actor, run)).Completion.State.Should().Be((int)ChecklistRunState.Submitted);
+			(await _service.GetFileAsync(_actor, view.Files[0].Id)).Data.Should().NotBeNull();
+		}
+		[Test]
+		public async Task RF1_a_first_save_queued_behind_its_start_may_carry_the_preview_revision()
+		{
+			// Omni previews an occurrence or opens a local run at revision 0 and queues StartChecklistRun ahead of the first save.
+			var run = await Start(); var input = Answers(run.Form); input.Revision = 0;
+			(await _service.SaveRunAsync(_actor, run.Run, input, false)).Should().Be(2);
+			var again = Answers(run.Form, "fail"); again.Revision = 0;
+			// Once the run was saved, a stale revision 0 is a real conflict again.
+			(await FluentActions.Awaiting(() => _service.SaveRunAsync(_actor, run.Run, again, false)).Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(409);
+		}
+		[TestCase(RmsAttachmentScanState.Clean, true)]
+		[TestCase(RmsAttachmentScanState.Skipped, true)]
+		[TestCase(RmsAttachmentScanState.Pending, false)]
+		[TestCase(RmsAttachmentScanState.Rejected, false)]
+		public void Usable_evidence_states(RmsAttachmentScanState state, bool usable) => ChecklistsService.IsUsableEvidence((int)state).Should().Be(usable);
+		[Test]
+		public async Task Images_need_a_passing_scan_and_scan_rejection_leaves_no_file()
+		{
+			var run = await Start(); var png = Png();
+			ScanAs(RmsAttachmentScanState.Rejected);
 			Func<Task> upload = () => _service.AddFileAsync(_actor, run.Run, run.Form.Sections[0].Items[0].Id, "evidence.png", "image/png", png);
 			(await upload.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(409); (await _store.ListAsync<ChecklistCompletionFile>(77)).Should().BeEmpty();
-			_scanner.Setup(s => s.ScanAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<CancellationToken>())).ReturnsAsync(new RecordAttachmentScanResult { State = RmsAttachmentScanState.Clean });
+			ScanAs(RmsAttachmentScanState.Clean);
 			await upload(); await upload(); (await _store.ListAsync<ChecklistCompletionFile>(77)).Should().ContainSingle();
 			var view = await _service.GetRunAsync(_actor, run.Run); var input = Answers(run.Form); input.Revision = view.Completion.Revision; await _service.SaveRunAsync(_actor, run.Run, input, true);
 			Func<Task> remove = () => _service.DeleteFileAsync(_actor, view.Files[0].Id); (await remove.Should().ThrowAsync<ChecklistException>()).Which.StatusCode.Should().Be(409);

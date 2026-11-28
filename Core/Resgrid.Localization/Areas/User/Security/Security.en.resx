@@ -1952,6 +1952,9 @@
   <data name="AuditLogTypeWorkforceProPacksChanged" xml:space="preserve">
     <value>Workforce Pro Packs Changed</value>
   </data>
+  <data name="AuditLogTypeWorkOrderFailureReviewResolved" xml:space="preserve">
+    <value>Work Order Failure Review Resolved</value>
+  </data>
 </root>
 
 

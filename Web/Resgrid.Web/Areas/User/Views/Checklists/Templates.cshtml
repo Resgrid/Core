@@ -39,14 +39,25 @@
             }
             else
             {
+                var otherRegions = Model.Templates.Count(t => !Resgrid.Model.TemplateJurisdictions.Fits(t.Jurisdiction, Model.Jurisdiction));
+                if (otherRegions > 0)
+                {
+                    <p><a href="#" onclick="document.querySelectorAll('.rgw-other-region').forEach(function (n) { n.hidden = false; }); this.hidden = true; return false;">@string.Format(localizer["TemplatesOtherRegions"].Value, otherRegions, Model.Jurisdiction)</a></p>
+                }
                 <div class="row">
                     @foreach (var template in Model.Templates)
                     {
-                        <div class="col-lg-4 col-md-6">
+                        var fits = Resgrid.Model.TemplateJurisdictions.Fits(template.Jurisdiction, Model.Jurisdiction);
+                        <div class="col-lg-4 col-md-6 @(fits ? null : "rgw-other-region")" hidden="@(!fits)">
                             <div class="ibox">
                                 <div class="ibox-title"><h5>@template.Name</h5></div>
                                 <div class="ibox-content">
-                                    <p><span class="label">@template.Sector</span></p>
+                                    <p>
+                                        <span class="label">@template.Sector</span>
+                                        @if (!string.IsNullOrEmpty(template.Jurisdiction)) { <span class="label label-default">@template.Jurisdiction</span> }
+                                        @if (Resgrid.Model.Checklists.ChecklistTemplateCatalog.IsUnreviewed(template)) { <span class="label label-warning" title="@localizer["NotYetReviewedHint"]">@localizer["NotYetReviewed"]</span> }
+                                    </p>
+                                    @if (!string.IsNullOrEmpty(template.Basis)) { <p class="small text-muted">@string.Format(localizer["TemplateBasis"].Value, template.Basis)</p> }
                                     <p class="text-muted">@template.Description</p>
                                     <a asp-action="Template" asp-controller="Checklists" asp-area="User" asp-route-id="@template.Id" class="btn btn-default btn-sm">
                                         <i class="fa fa-eye"></i> @localizer["Preview"] <span class="sr-only">@template.Name</span>

@@ -81,6 +81,7 @@ namespace Resgrid.Services
 			builder.RegisterType<InventoryScheduledReportService>().As<IInventoryScheduledReportService>().InstancePerLifetimeScope();
 			builder.RegisterType<ReadinessAccessService>().As<IReadinessAccessService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChecklistTemplateService>().As<IChecklistTemplateService>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentJurisdictionService>().As<IDepartmentJurisdictionService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkOrderNotificationService>().As<IWorkOrderNotificationService>().InstancePerLifetimeScope();
 			builder.Register(_ => new RestClient(new RestClientOptions(SystemBehaviorConfig.BillingApiBaseUrl) { Timeout = TimeSpan.FromSeconds(10) },
 				configureSerialization: serializer => serializer.UseNewtonsoftJson())).Named<RestClient>("readiness-billing-client").SingleInstance();

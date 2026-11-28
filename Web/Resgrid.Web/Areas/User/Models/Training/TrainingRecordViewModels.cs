@@ -293,6 +293,9 @@ namespace Resgrid.Web.Areas.User.Models.Training
 
 		public IReadOnlyList<TrainingCategoryTemplate> Templates { get; set; } = new List<TrainingCategoryTemplate>();
 
+		/// <summary>G8 CA1: the department's jurisdiction code (null: every template is shown).</summary>
+		public string Jurisdiction { get; set; }
+
 		/// <summary>Keys of the templates the department's operating profile suggests (round 9C); they are listed first.</summary>
 		public ISet<string> Suggested { get; set; } = new HashSet<string>(StringComparer.Ordinal);
 

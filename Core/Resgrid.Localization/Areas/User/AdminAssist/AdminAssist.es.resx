@@ -10521,4 +10521,36 @@
     <value>Abra los puestos de Workforce Pro desde la página del complemento Workforce Pro y active a los miembros. Desactivar a un miembro nunca borra un registro: sus registros pasan a ser de solo lectura.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>Revisión de fallos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>Fallos antiguos de listas de control que no se convirtieron automáticamente en órdenes de trabajo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>Activar Readiness Pro nunca inunda de órdenes de trabajo ni deja unidades fuera de servicio por fallos antiguos; un responsable decide cada uno.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>Tras activar Readiness Pro, abra Revisión de fallos y cree o descarte cada fallo antiguo.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>Configuración del servicio de equipos</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>Planes de servicio anual, de 6 años e hidrostático para cada extintor u otro activo serializado de un artículo a la vez.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>Cientos de extintores obtienen sus fechas de servicio técnico sin configurarlos uno a uno.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>En Mantenimiento preventivo, elija Configurar el servicio de equipos, el artículo y los servicios que necesita su tipo.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

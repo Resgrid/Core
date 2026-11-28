@@ -10521,4 +10521,36 @@
     <value>Ανοίξτε τις θέσεις Workforce Pro από τη σελίδα του πρόσθετου Workforce Pro και ενεργοποιήστε μέλη. Η απενεργοποίηση ενός μέλους δεν διαγράφει ποτέ αρχείο: τα αρχεία του γίνονται μόνο για ανάγνωση.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>Αναθεώρηση αστοχιών</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>Παλαιότερες αστοχίες λιστών ελέγχου που δεν έγιναν αυτόματα εντολές εργασίας.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>Η ενεργοποίηση του Readiness Pro δεν πλημμυρίζει εντολές εργασίας ούτε θέτει μονάδες εκτός υπηρεσίας για παλιές αστοχίες· ένας υπεύθυνος αποφασίζει για καθεμία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>Μετά την ενεργοποίηση του Readiness Pro, ανοίξτε την Αναθεώρηση αστοχιών και δημιουργήστε ή απορρίψτε κάθε παλαιότερη αστοχία.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>Ρύθμιση συντήρησης εξοπλισμού</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>Ετήσια, εξαετή και υδραυλικά προγράμματα συντήρησης για κάθε πυροσβεστήρα ή άλλο σειριακό τεμάχιο ενός είδους μονομιάς.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>Εκατοντάδες πυροσβεστήρες αποκτούν ημερομηνίες συντήρησης χωρίς χειροκίνητη ρύθμιση του καθενός.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>Στην Προληπτική συντήρηση επιλέξτε Ρύθμιση συντήρησης εξοπλισμού, το είδος και τις εργασίες που χρειάζεται ο τύπος του.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

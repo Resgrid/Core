@@ -13,6 +13,7 @@
         <div class="work-order-protected">
             @if (Model.CanWrite)
             {
+                <a class="btn btn-default" asp-action="AssetService"><i class="fa fa-fire-extinguisher"></i> @localizer["AssetServiceSetup"]</a>
                 <a class="btn btn-success" asp-action="NewRecurrence"><i class="fa fa-plus"></i> @localizer["NewRecurrence"]</a>
             }
         </div>

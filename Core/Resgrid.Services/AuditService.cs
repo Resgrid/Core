@@ -596,6 +596,8 @@ namespace Resgrid.Services
 					return "Workforce Pro Seats Changed";
 				case AuditLogTypes.WorkforceProPacksChanged:
 					return "Workforce Pro Packs Changed";
+				case AuditLogTypes.WorkOrderFailureReviewResolved:
+					return "Work Order Failure Review Resolved";
 				case AuditLogTypes.AdminAssistReviewChanged:
 					return "Admin Assist Review Changed";
 				case AuditLogTypes.DepartmentSettingsChanged:

@@ -324,4 +324,16 @@
     <comment>machine-translated</comment>
   </data>
   <data name="CategoryLawEnforcement" xml:space="preserve"><value>Polisverksamhet</value><comment>machine-translated</comment></data>
+  <data name="TemplatesForRegion" xml:space="preserve">
+    <value>Bara mallar för {0} och allmänna mallar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRegion" xml:space="preserve">
+    <value>Område</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRegionGeneral" xml:space="preserve">
+    <value>Allmän</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

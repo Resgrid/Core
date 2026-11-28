@@ -186,6 +186,8 @@
                 const line = el('p', null, block.evidence);
                 const link = el('a', file.Content || file.content || tr('Evidence'), line); link.href = form.dataset.evidence + '?id=' + encodeURIComponent(id);
                 if (window.resgridAdpReveal) link.addEventListener('click', event => { event.preventDefault(); window.resgridAdpReveal.download(link.href); });
+                // RF-6: stored without a malware scan because this server runs with scanning off (ScanState 3 = Skipped).
+                if ((file.ScanState ?? file.scanState) === 3) { line.appendChild(document.createTextNode(' ')); const badge = el('span', tr('Not scanned'), line); badge.className = 'label label-default'; badge.title = tr('NotScannedHint'); }
                 button(line, 'Remove', async () => {
                     if (form.dataset.busy === 'true') return;
                     form.dataset.busy = 'true';
@@ -224,7 +226,7 @@
                 const na = field(box, 'N/A reason', answer, 'NotApplicableReason', 'textarea'); na.maxLength = 2000;
                 field(box, item.RequireNoteOnFail ? 'Note (required on failure)' : 'Note', answer, 'Note', 'textarea').maxLength = 5000;
                 const evidence = el('div', null, box); const block = { box, item, answer, required, status, value, na, evidence }; blocks.push(block);
-                const uploadLabel = el('label', tr('Evidence image (PNG/JPEG, up to 10 MB; scanning required)'), box);
+                const uploadLabel = el('label', tr('Evidence image (PNG/JPEG, up to 10 MB)'), box);
                 const picker = el('input', null, uploadLabel); picker.type = 'file'; picker.accept = 'image/png,image/jpeg';
                 picker.addEventListener('change', async () => { try { await upload(block, picker.files[0]); } finally { picker.value = ''; } });
                 if (item.Type === 9) {

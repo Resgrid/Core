@@ -443,5 +443,7 @@ namespace Resgrid.Model
 		public decimal? RenewalCreditHoursRequired { get; set; }
 		public string Description { get; set; }
 		public IReadOnlyList<string> Keywords { get; set; } = Array.Empty<string>();
+		/// <summary>G8 CA1: where the template applies ("CA", "CA-ON", "US", "EU"...), or null for a generic template (TemplateJurisdictions).</summary>
+		public string Jurisdiction { get; set; }
 	}
 }

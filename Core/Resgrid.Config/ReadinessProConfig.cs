@@ -9,5 +9,13 @@ namespace Resgrid.Config
 		public static string PaddleTestProductId = "";
 		public static decimal StripeMonthlyAmount = 150m;
 		public static decimal PaddleMonthlyAmount = 195m;
+
+		/// <summary>
+		/// RF-4 / ERT-D5: a checklist failure intent older than this many hours is not turned into a work order and holds by the
+		/// unattended sweep; it waits in the Work Orders "Failure review" queue instead (a manager creates an order without a hold,
+		/// or dismisses it). Keeps a first Readiness Pro activation from replaying months of free-tier failures. 0 = never expire.
+		/// Environment key RESGRID:ReadinessProConfig:FailureIntentMaxAgeHours.
+		/// </summary>
+		public static int FailureIntentMaxAgeHours = 72;
 	}
 }

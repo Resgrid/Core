@@ -700,6 +700,9 @@ ChecklistReminderSettingsUpdated,
 		LmsAppLaunchOpened,
 		// Round 11 (Workforce Pro): a member's Workforce Pro seat switched on or off, and the add-on's pack quantity changed
 		WorkforceProSeatsChanged,
-		WorkforceProPacksChanged
+		WorkforceProPacksChanged,
+		// Industrial ERT G12i (RF-4): a manager resolved a stale checklist failure intent in the Work Orders failure review queue
+		// (created a work order without a hold, or dismissed it)
+		WorkOrderFailureReviewResolved
 	}
 }

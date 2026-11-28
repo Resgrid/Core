@@ -3492,4 +3492,8 @@
     <value>Zmieniono pakiety Workforce Pro</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="AuditLogTypeWorkOrderFailureReviewResolved" xml:space="preserve">
+    <value>Przegląd usterek zleceń pracy rozpatrzony</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

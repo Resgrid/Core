@@ -29,8 +29,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentDataProtectionService _protection;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> _strings;
 		private readonly Lazy<IWorkShiftsService> _workshifts;
-		public ChecklistsController(IChecklistTemplateService templates, IChecklistsService checklists, IReadinessAccessService access, IProtectedGrantContext grant, IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings, Lazy<IWorkShiftsService> workshifts = null)
-		{ _templates = templates; _checklists = checklists; _access = access; _grant = grant; _protection = protection; _strings = strings; _workshifts = workshifts; }
+		private readonly IDepartmentJurisdictionService _jurisdictions;
+		public ChecklistsController(IChecklistTemplateService templates, IChecklistsService checklists, IReadinessAccessService access, IProtectedGrantContext grant, IDepartmentDataProtectionService protection, IStringLocalizer<Resgrid.Localization.Areas.User.Checklists.Checklists> strings, Lazy<IWorkShiftsService> workshifts = null, IDepartmentJurisdictionService jurisdictions = null)
+		{ _templates = templates; _checklists = checklists; _access = access; _grant = grant; _protection = protection; _strings = strings; _workshifts = workshifts; _jurisdictions = jurisdictions; }
 		private ChecklistActor Actor => new ChecklistActor { DepartmentId = DepartmentId, UserId = UserId, GrantToken = _grant.GrantToken };
 		private Task<bool> _checklistsEnabled;
 		private Task<bool> ChecklistsEnabledAsync() => _checklistsEnabled ??= _access.CanUseChecklistsAsync(DepartmentId);
@@ -64,7 +65,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (query?.Length > 256) return BadRequest();
 			var templates = await _templates.SearchAsync(DepartmentId, query);
 			if (templates == null) return NotFound();
-			return View(new ChecklistTemplatesView { Templates = templates, Query = query });
+			// G8 CA1: templates for the department's region (and general ones) first; the rest stay listed behind a toggle.
+			var jurisdiction = _jurisdictions == null ? null : await _jurisdictions.GetJurisdictionAsync(DepartmentId);
+			return View(new ChecklistTemplatesView { Templates = templates.OrderBy(t => Resgrid.Model.TemplateJurisdictions.Fits(t.Jurisdiction, jurisdiction) ? 0 : 1).ToList(), Query = query, Jurisdiction = jurisdiction });
 		}
 		[HttpGet]
 		public async Task<IActionResult> Template(string id)

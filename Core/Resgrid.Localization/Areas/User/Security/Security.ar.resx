@@ -2087,4 +2087,8 @@
     <value>تم تغيير حزم Workforce Pro</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="AuditLogTypeWorkOrderFailureReviewResolved" xml:space="preserve">
+    <value>تمت معالجة مراجعة أعطال أوامر العمل</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

@@ -1,0 +1,113 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderFailureReviewView
+@using Resgrid.Model.Checklists
+@using Resgrid.Model.WorkOrders
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{
+    var departmentTime = DepartmentTime.From(ViewData);
+    ViewBag.Title = "Resgrid | " + localizer["FailureReview"];
+    ViewData["Tab"] = "FailureReview";
+    ViewData["Title"] = localizer["FailureReview"].Value;
+    ViewData["Subtitle"] = localizer["FailureReviewSubtitle"].Value;
+    ViewData["CanWrite"] = Model.CanWrite;
+    var rows = Model.Review.Rows;
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["FailureReview"]</h5></div>
+        <div class="ibox-content">
+
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @string.Format(localizer["FailureReviewHelp"].Value, Model.Review.MaxAgeHours)</div>
+            <div class="alert alert-danger work-order-error" role="alert" hidden></div>
+
+            <div class="work-order-protected">
+                @if (rows.Count == 0)
+                {
+                    <div class="text-center m-t-lg m-b-lg">
+                        <i class="fa fa-check-circle fa-3x text-muted"></i>
+                        <h4 class="m-t-sm">@localizer["FailureReviewEmpty"]</h4>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">@string.Format(localizer["FailureReviewCount"].Value, Model.Review.Total)</p>
+                    <div class="table-responsive">
+                        <table class="table table-striped rgw-table">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["FailureRecordedOn"]</th>
+                                    <th>@localizer["Target"]</th>
+                                    <th>@localizer["Priority"]</th>
+                                    <th>@localizer["FailureConfiguredHolds"]</th>
+                                    <th class="rgw-row-actions">@localizer["Actions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var row in rows)
+                                {
+                                    var target = row.TargetType == (int)ChecklistTargetType.Unit
+                                        ? (row.UnitName ?? localizer["Unit"].Value)
+                                        : row.TargetType == (int)ChecklistTargetType.InventoryAsset ? localizer["Asset"].Value : localizer["FailureTargetOther"].Value;
+                                    <tr>
+                                        <td>@departmentTime.Format(row.RecordedOn)</td>
+                                        <td>
+                                            @target
+                                            <br /><a asp-controller="Checklists" asp-action="CompletionDetail" asp-route-id="@row.CompletionId">@localizer["FailureViewCheck"]</a>
+                                        </td>
+                                        <td>@localizer["Priority" + ((WorkOrderPriority)row.Priority).ToString()]</td>
+                                        <td>
+                                            @if (row.HoldUnit || row.HoldAsset)
+                                            {
+                                                <span class="label label-default" title="@localizer["FailureNoHoldHint"]">@localizer["FailureHoldNotApplied"]</span>
+                                            }
+                                        </td>
+                                        <td class="rgw-row-actions">
+                                            @if (row.CanCreate)
+                                            {
+                                                <form class="work-order-form work-order-command" style="display:inline" method="post" asp-action="ResolveFailureReview" data-destination="Detail">
+                                                    <input type="hidden" name="intentId" value="@row.IntentId" />
+                                                    <input type="hidden" name="create" value="true" />
+                                                    <button type="submit" class="btn btn-xs btn-primary">@localizer["FailureCreateWorkOrder"]</button>
+                                                </form>
+                                            }
+                                            <form class="work-order-form work-order-command" style="display:inline" method="post" asp-action="ResolveFailureReview" data-destination="FailureReview">
+                                                <input type="hidden" name="intentId" value="@row.IntentId" />
+                                                <input type="hidden" name="create" value="false" />
+                                                <button type="submit" class="btn btn-xs btn-default">@localizer["FailureDismiss"]</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+
+                @if (Model.Page > 0 || Model.Review.HasMore)
+                {
+                    <div class="rgw-pager">
+                        @if (Model.Page > 0)
+                        {
+                            <a class="btn btn-default btn-sm" asp-action="FailureReview" asp-route-page="@(Model.Page - 1)"><i class="fa fa-chevron-left"></i> @localizer["Previous"]</a>
+                        }
+                        @if (Model.Review.HasMore)
+                        {
+                            <a class="btn btn-default btn-sm" asp-action="FailureReview" asp-route-page="@(Model.Page + 1)">@localizer["Next"] <i class="fa fa-chevron-right"></i></a>
+                        }
+                        <span class="text-muted">@(Model.Page + 1)</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts") }

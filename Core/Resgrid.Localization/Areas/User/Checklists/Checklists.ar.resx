@@ -459,8 +459,8 @@
   <data name="No maximum" xml:space="preserve">
     <value>دون حد أعلى</value>
   </data>
-  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
-    <value>صورة إثباتية (PNG/JPEG، حتى 10 ميغابايت؛ يلزم فحص أمني)</value>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB)" xml:space="preserve">
+    <value>صورة إثباتية (PNG/JPEG، حتى 10 ميغابايت)</value>
   </data>
   <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
     <value>ارسم توقيعك أو ارفع صورة له. إذا كان مطلوبًا وجود شاهد مستقل، فعليه تسجيل الدخول بشكل منفصل.</value>
@@ -729,6 +729,30 @@
   </data>
   <data name="WitnessSignatureRefused" xml:space="preserve">
     <value>لم يُسجَّل توقيع الشاهد، لذا لا تزال قائمة التحقق بانتظار شاهدها.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Not scanned" xml:space="preserve">
+    <value>لم يُفحص</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotScannedHint" xml:space="preserve">
+    <value>يعمل هذا الخادم دون فحص المرفقات، لذلك أُعيد ترميز هذه الصورة وخُزنت دون فحص للبرمجيات الضارة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesOtherRegions" xml:space="preserve">
+    <value>عرض {0} قوالب لمناطق أخرى (هذا القسم: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewed" xml:space="preserve">
+    <value>لم تُراجع بعد</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewedHint" xml:space="preserve">
+    <value>كتبته Resgrid لهذه المنطقة ويُعرض للمراجعة فقط. لم يعتمده مراجع مؤهل بعد.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateBasis" xml:space="preserve">
+    <value>يدعم حفظ السجلات لـ: {0}</value>
     <comment>machine-translated</comment>
   </data>
 </root>

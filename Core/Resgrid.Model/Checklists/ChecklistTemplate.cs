@@ -17,14 +17,20 @@ namespace Resgrid.Model.Checklists
 		public bool RequiresIndependentWitness { get; }
 		public IReadOnlyList<ChecklistTemplateSection> Sections { get; }
 		public IReadOnlyList<string> Keywords { get; }
+		/// <summary>G8 CA1: where the template applies ("CA", "CA-ON", "US", "EU"...), or null for a generic template (TemplateJurisdictions).</summary>
+		public string Jurisdiction { get; }
+		/// <summary>G8 CA2: the standard or regulation the content is paraphrased from, with its edition; null for Resgrid-authored generic content.</summary>
+		public string Basis { get; }
 
 		[JsonIgnore]
 		public string SearchText { get; }
 
 		public ChecklistTemplate(string id, string name, string sector, string description,
 			ChecklistCategory category, ChecklistScheduleFrequency frequency, ChecklistTargetType target,
-			bool requiresIndependentWitness, IEnumerable<string> keywords, IEnumerable<ChecklistTemplateSection> sections)
+			bool requiresIndependentWitness, IEnumerable<string> keywords, IEnumerable<ChecklistTemplateSection> sections, string jurisdiction = null, string basis = null)
 		{
+			Jurisdiction = string.IsNullOrWhiteSpace(jurisdiction) ? null : jurisdiction.Trim().ToUpperInvariant();
+			Basis = basis;
 			Id = id;
 			Name = name;
 			Sector = sector;

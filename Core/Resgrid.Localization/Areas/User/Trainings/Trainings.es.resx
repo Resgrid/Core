@@ -5637,4 +5637,8 @@
     <value>Esta capacitación es una copia gestionada del conjunto de cursos de una organización vinculada. Su contenido y su cuestionario solo cambian a través del conjunto; aun así, puede asignarla, generar informes sobre ella o copiarla en una capacitación propia.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Rec.TemplatesOtherRegions" xml:space="preserve">
+    <value>Mostrar {0} plantillas de otras regiones (este departamento: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

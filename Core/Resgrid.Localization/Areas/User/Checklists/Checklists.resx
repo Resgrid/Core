@@ -465,8 +465,8 @@
   <data name="No maximum" xml:space="preserve">
     <value>No maximum</value>
   </data>
-  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
-    <value>Evidence image (PNG/JPEG, up to 10 MB; scanning required)</value>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB)" xml:space="preserve">
+    <value>Evidence image (PNG/JPEG, up to 10 MB)</value>
   </data>
   <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
     <value>Draw your signature or upload a signature image. A required independent witness must sign in separately.</value>
@@ -727,5 +727,23 @@
   </data>
   <data name="WitnessSignatureRefused" xml:space="preserve">
     <value>The witness signature was not recorded, so the checklist still awaits its witness.</value>
+  </data>
+  <data name="Not scanned" xml:space="preserve">
+    <value>Not scanned</value>
+  </data>
+  <data name="NotScannedHint" xml:space="preserve">
+    <value>This server runs without attachment scanning, so this image was re-encoded and stored without a malware scan.</value>
+  </data>
+  <data name="TemplatesOtherRegions" xml:space="preserve">
+    <value>Show {0} templates for other regions (this department: {1})</value>
+  </data>
+  <data name="NotYetReviewed" xml:space="preserve">
+    <value>Not yet reviewed</value>
+  </data>
+  <data name="NotYetReviewedHint" xml:space="preserve">
+    <value>Written by Resgrid for this region and shown for review only. A qualified reviewer has not signed it off yet.</value>
+  </data>
+  <data name="TemplateBasis" xml:space="preserve">
+    <value>Supports record keeping for: {0}</value>
   </data>
 </root>

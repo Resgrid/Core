@@ -414,4 +414,94 @@
   <data name="HoldReasonOrderOutOfService" xml:space="preserve">
     <value>Taken out of service by the work order.</value>
   </data>
+  <data name="FailureReview" xml:space="preserve">
+    <value>Failure review</value>
+  </data>
+  <data name="FailureReviewSubtitle" xml:space="preserve">
+    <value>Older checklist failures waiting for a decision</value>
+  </data>
+  <data name="FailureReviewHelp" xml:space="preserve">
+    <value>Checklist items set to create a work order on failure are only turned into work orders and safety holds automatically for {0} hours. Older failures, such as those recorded before Readiness Pro was active, wait here: create a work order (no hold is applied) or dismiss them.</value>
+  </data>
+  <data name="FailureReviewEmpty" xml:space="preserve">
+    <value>No older checklist failures are waiting.</value>
+  </data>
+  <data name="FailureReviewCount" xml:space="preserve">
+    <value>{0} failures waiting</value>
+  </data>
+  <data name="FailureRecordedOn" xml:space="preserve">
+    <value>Recorded</value>
+  </data>
+  <data name="FailureConfiguredHolds" xml:space="preserve">
+    <value>Hold</value>
+  </data>
+  <data name="FailureHoldNotApplied" xml:space="preserve">
+    <value>Hold not applied</value>
+  </data>
+  <data name="FailureNoHoldHint" xml:space="preserve">
+    <value>The item was set to take the unit or equipment out of service. An older failure never applies that hold; add one from the work order if it is still needed.</value>
+  </data>
+  <data name="FailureViewCheck" xml:space="preserve">
+    <value>View check</value>
+  </data>
+  <data name="FailureCreateWorkOrder" xml:space="preserve">
+    <value>Create work order</value>
+  </data>
+  <data name="FailureDismiss" xml:space="preserve">
+    <value>Dismiss</value>
+  </data>
+  <data name="FailureTargetOther" xml:space="preserve">
+    <value>Department or group</value>
+  </data>
+  <data name="FailureReviewResolved" xml:space="preserve">
+    <value>This failure was already resolved. Reload the page.</value>
+  </data>
+  <data name="FailureReviewNotStale" xml:space="preserve">
+    <value>This failure is recent and will be processed automatically.</value>
+  </data>
+  <data name="FailureReviewSourceUnavailable" xml:space="preserve">
+    <value>The check behind this failure was changed or removed, so it can only be dismissed.</value>
+  </data>
+  <data name="AssetServiceSetup" xml:space="preserve">
+    <value>Set up asset service</value>
+  </data>
+  <data name="AssetServiceSubtitle" xml:space="preserve">
+    <value>Technician service schedules for every unit of an item</value>
+  </data>
+  <data name="AssetServiceHelp" xml:space="preserve">
+    <value>Creates one preventive maintenance schedule per chosen service for every serialized asset of the item, such as each fire extinguisher of one model. Each schedule is due again counted from its last completion. Choose only the services the asset type needs (for example, 6-year maintenance and the hydrostatic interval depend on the extinguisher type); keep the monthly visual check as a checklist. Running it again only adds schedules for assets added since.</value>
+  </data>
+  <data name="AssetServiceResult" xml:space="preserve">
+    <value>{0} assets: {1} schedules created, {2} already set up, {3} assets left out (retired, lost or consumed), {4} could not be created.</value>
+  </data>
+  <data name="AssetServiceTruncated" xml:space="preserve">
+    <value>This item has more assets than one run handles. Run it again to continue.</value>
+  </data>
+  <data name="AssetServiceItem" xml:space="preserve">
+    <value>Inventory item</value>
+  </data>
+  <data name="AssetServiceFirstDue" xml:space="preserve">
+    <value>First due</value>
+  </data>
+  <data name="AssetServicePresets" xml:space="preserve">
+    <value>Services</value>
+  </data>
+  <data name="AssetServicePresetsHint" xml:space="preserve">
+    <value>Confirm each interval against the manufacturer's label and the standard your jurisdiction adopts.</value>
+  </data>
+  <data name="AssetServiceApply" xml:space="preserve">
+    <value>Create schedules</value>
+  </data>
+  <data name="AssetServicePresetAnnualMaintenance" xml:space="preserve">
+    <value>Annual maintenance by a qualified technician</value>
+  </data>
+  <data name="AssetServicePresetSixYearMaintenance" xml:space="preserve">
+    <value>6-year maintenance</value>
+  </data>
+  <data name="AssetServicePresetHydrostaticFiveYear" xml:space="preserve">
+    <value>Hydrostatic test (5-year)</value>
+  </data>
+  <data name="AssetServicePresetHydrostaticTwelveYear" xml:space="preserve">
+    <value>Hydrostatic test (12-year)</value>
+  </data>
 </root>

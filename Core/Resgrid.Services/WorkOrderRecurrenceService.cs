@@ -208,7 +208,9 @@ namespace Resgrid.Services
         }
         private async Task RecurrenceEventAsync(WorkOrderRecurrence row, WorkflowTriggerEventType trigger, List<long> events)
         {
-            var entry = await _outbox.EnqueueAsync(row.DepartmentId, "WorkOrders", new DomainEventEnvelope { EventName = trigger.ToString(), AggregateType = "WorkOrderRecurrence", AggregateId = "recurrence:" + row.Id, AggregateVersion = row.Revision, Trigger = trigger, OccurredOn = Now,
+            // DomainEventOutbox.AggregateId is 36 characters (M0153): the bare id, with AggregateType naming the kind. The former
+            // "recurrence:" prefix made every schedule save fail on SQL Server and PostgreSQL with a truncation error.
+            var entry = await _outbox.EnqueueAsync(row.DepartmentId, "WorkOrders", new DomainEventEnvelope { EventName = trigger.ToString(), AggregateType = "WorkOrderRecurrence", AggregateId = row.Id, AggregateVersion = row.Revision, Trigger = trigger, OccurredOn = Now,
                 Payload = new { RecurrenceId = row.Id, row.Revision, row.TargetUnitId, row.TargetGroupId, row.InventoryAssetId, DueOn = row.NextDueOn } }); events.Add(entry.DomainEventOutboxId);
         }
         public async Task RecordReadingAsync(ChecklistActor actor, string id, WorkOrderReadingInput input)
@@ -303,6 +305,8 @@ namespace Resgrid.Services
                 var intents = await _maintenance.QueryMaintenanceAsync<WorkOrderFailureIntent>(departmentId, skip: skip);
                 foreach (var intent in intents.Where(i => !i.ProcessedOn.HasValue))
                 {
+                    // RF-4: stale intents wait for the review queue and must not cost a Billing API call.
+                    if (FailureIntentAging.IsStale(intent, Now)) { result.Stale++; continue; }
                     if (!await Entitled()) return result;
                     try { await ProcessFailureAsync(departmentId, intent.Id, result); } catch { result.Errors++; }
                 }

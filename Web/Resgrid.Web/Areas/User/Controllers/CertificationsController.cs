@@ -47,12 +47,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> _signatureStrings;
 		private readonly ILearningRecordService _learningRecords;
 
+		private readonly IDepartmentJurisdictionService _jurisdictions;
 		public CertificationsController(ICertificationService certifications, IPersonnelRolesService roles, IUnitsService units, IDepartmentsService departments,
 			IDepartmentGroupsService groups, IUserProfileService profiles, IProtectedReadService protectedRead,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Certifications.Certifications> strings, Resgrid.Model.Services.IAuthorizationService authorization,
 			ILearningRecordService learningRecords, ISignatureService signatures,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureStrings)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Signatures.Signatures> signatureStrings, IDepartmentJurisdictionService jurisdictions = null)
 		{
+			_jurisdictions = jurisdictions;
 			_learningRecords = learningRecords;
 			_signatures = signatures;
 			_signatureStrings = signatureStrings;
@@ -373,7 +375,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ShowInactive = showInactive,
 				RecordCounts = counts,
 				RequirementCounts = requirements.GroupBy(r => r.DepartmentCertificationTypeId).ToDictionary(g => g.Key, g => g.Count()),
-				ExistingCodes = new HashSet<string>((await _certifications.GetAllCertificationTypesByDepartmentAsync(DepartmentId)).Where(t => !t.IsDeleted).Select(t => t.Code ?? string.Empty), StringComparer.OrdinalIgnoreCase)
+				ExistingCodes = new HashSet<string>((await _certifications.GetAllCertificationTypesByDepartmentAsync(DepartmentId)).Where(t => !t.IsDeleted).Select(t => t.Code ?? string.Empty), StringComparer.OrdinalIgnoreCase),
+				Jurisdiction = _jurisdictions == null ? null : await _jurisdictions.GetJurisdictionAsync(DepartmentId)
 			});
 			return View(view);
 		}

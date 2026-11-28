@@ -14078,6 +14078,9 @@
             given, the year end, fixed date, grace and window given with it replace the stored ones.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Certifications.CertificationTemplateData.Jurisdiction">
+            <summary>G8 CA1: where the template applies ("CA", "CA-ON", "US", "EU"...), or null for a general template.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Certifications.CertificationData">
             <summary>A personnel certification record. Name/Number/Area/IssuedBy are ADP catalog 6 fields and read REDACTED in a protected department without a grant.</summary>
         </member>

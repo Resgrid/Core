@@ -459,8 +459,8 @@
   <data name="No maximum" xml:space="preserve">
     <value>Nessun massimo</value>
   </data>
-  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
-    <value>Immagine di prova (PNG/JPEG, fino a 10 MB; scansione antivirus obbligatoria)</value>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB)" xml:space="preserve">
+    <value>Immagine di prova (PNG/JPEG, fino a 10 MB)</value>
   </data>
   <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
     <value>Disegna la firma o carica un’immagine della firma. Se è richiesto un testimone indipendente, deve accedere separatamente.</value>
@@ -729,6 +729,30 @@
   </data>
   <data name="WitnessSignatureRefused" xml:space="preserve">
     <value>La firma del testimone non è stata registrata, quindi la lista di controllo è ancora in attesa del testimone.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Not scanned" xml:space="preserve">
+    <value>Non analizzato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotScannedHint" xml:space="preserve">
+    <value>Questo server funziona senza scansione degli allegati, quindi l'immagine è stata ricodificata e salvata senza scansione antimalware.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesOtherRegions" xml:space="preserve">
+    <value>Mostra {0} modelli per altre regioni (questo dipartimento: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewed" xml:space="preserve">
+    <value>Non ancora revisionato</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewedHint" xml:space="preserve">
+    <value>Scritto da Resgrid per questa regione e mostrato solo per la revisione. Un revisore qualificato non l'ha ancora approvato.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateBasis" xml:space="preserve">
+    <value>Supporta la tenuta dei registri per: {0}</value>
     <comment>machine-translated</comment>
   </data>
 </root>

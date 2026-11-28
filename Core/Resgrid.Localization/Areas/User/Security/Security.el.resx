@@ -2132,6 +2132,10 @@
     <value>Τα πακέτα Workforce Pro άλλαξαν</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="AuditLogTypeWorkOrderFailureReviewResolved" xml:space="preserve">
+    <value>Η αναθεώρηση αστοχίας εντολής εργασίας ολοκληρώθηκε</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>
 
 

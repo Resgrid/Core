@@ -3492,4 +3492,8 @@
     <value>Workforce Pro-paket ändrade</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="AuditLogTypeWorkOrderFailureReviewResolved" xml:space="preserve">
+    <value>Felgranskning för arbetsorder hanterad</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

@@ -14,6 +14,35 @@ namespace Resgrid.Web.Areas.User.Controllers
         public async Task<IActionResult> CancelPartWitness(string id, string partId, int revision, string reason) { MaintenanceAvailable(); await _maintenance.CancelPartWitnessAsync(Actor, id, partId, revision, reason); return Json(new { id }); }
         [HttpPost, ValidateAntiForgeryToken]
         public async Task<IActionResult> PartChoices(string kind, string itemId, int page = 0) { MaintenanceAvailable(); return Json(await _maintenance.InventoryChoicesAsync(Actor, kind, itemId, page)); }
+        /// <summary>G6 WE1: technician service schedules (annual, 6-year, hydrostatic) for every serialized asset of an item.</summary>
+        [HttpGet]
+        public async Task<IActionResult> AssetService()
+        {
+            MaintenanceAvailable();
+            if (!await _access.CanUseMaintenanceAsync(DepartmentId)) throw new WorkOrderException(402, "ReadinessProRequired");
+            var departmentTime = Resgrid.Web.Helpers.DepartmentTime.From(ViewData);
+            return View("AssetService", new WorkOrderAssetServiceView
+            {
+                Input = new AssetServiceSetupInput { AnchorLocal = departmentTime.Today.AddDays(30).AddHours(9), TimeZoneId = departmentTime.ZoneId, Presets = new() { AssetServicePreset.AnnualMaintenance } },
+                Items = (await _maintenance.InventoryChoicesAsync(Actor, "item")).Items, Choices = await _orders.ChoicesAsync(Actor)
+            });
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> SetupAssetService(AssetServiceSetupInput input)
+        {
+            MaintenanceAvailable();
+            var result = await _maintenance.SetupAssetServiceAsync(Actor, input);
+            return View("AssetService", new WorkOrderAssetServiceView { Input = input, Result = result, Items = (await _maintenance.InventoryChoicesAsync(Actor, "item")).Items, Choices = await _orders.ChoicesAsync(Actor) });
+        }
+        /// <summary>RF-4: checklist failures recorded too long ago to become work orders and holds unattended.</summary>
+        [HttpGet]
+        public async Task<IActionResult> FailureReview(int page = 0)
+        {
+            MaintenanceAvailable();
+            return View("FailureReview", new WorkOrderFailureReviewView { Review = await _maintenance.FailureReviewAsync(Actor, page), Page = page, CanWrite = true });
+        }
+        [HttpPost, ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResolveFailureReview(string intentId, bool create) { MaintenanceAvailable(); return Json(new { id = await _maintenance.ResolveFailureReviewAsync(Actor, intentId, create) }); }
         [HttpGet]
         public async Task<IActionResult> Recurrences(int page = 0)
         {

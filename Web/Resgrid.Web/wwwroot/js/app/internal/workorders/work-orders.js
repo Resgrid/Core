@@ -40,7 +40,7 @@
                 var result = await response.json();
                 if (concealed || !form.isConnected) return;
                 var destination = form.dataset.destination || 'Detail';
-                var needsId = destination !== 'Settings' && destination !== 'Policy';
+                var needsId = destination !== 'Settings' && destination !== 'Policy' && destination !== 'FailureReview';
                 if (!response.ok || needsId && (typeof result.id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(result.id))) { showError(result.message); if (result.code === 'ProtectedDataRequired') form.dispatchEvent(new Event('adp:grant-required')); return; }
                 var reopen = document.createElement('form'); reopen.method = 'POST'; reopen.action = config.reopen;
                 hidden(reopen, 'destination', destination); if (needsId) hidden(reopen, 'id', result.id);

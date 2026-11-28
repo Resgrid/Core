@@ -116,5 +116,24 @@ namespace Resgrid.Tests.Services
             (await repository.MaintenanceDepartmentsAsync(0)).Should().Contain(77).And.NotContain(88, "a department without schedules, failure intents or open orders must not cost each sweep a billing call");
             (await repository.MaintenanceDepartmentsAsync(77)).Should().NotContain(77);
         }
+        [Test, Order(11)]
+        public async Task RF4_a_department_holding_only_stale_failure_intents_is_not_swept()
+        {
+            // ERT-D5: stale intents wait for the attended review queue; they must not keep a free-tier department in both sweeps.
+            using var owner = new UnitOfWork(Connections()); var repository = Orders(owner); await owner.CreateOrGetConnectionAsync();
+            var old = DateTime.UtcNow.AddHours(-(Resgrid.Config.ReadinessProConfig.FailureIntentMaxAgeHours + 5));
+            var stale = new WorkOrderFailureIntent { DepartmentId = 88, CompletionId = Guid.NewGuid().ToString("D"), ItemId = Guid.NewGuid().ToString("D"), CreatedBy = "actor", CreatedOn = old, UpdatedOn = old };
+            await repository.AllocateAsync(stale); owner.CommitChanges();
+            (await repository.MaintenanceDepartmentsAsync(0)).Should().NotContain(88);
+            (await repository.QueryMaintenanceAsync<WorkOrderFailureIntent>(88, pendingOnly: true)).Should().ContainSingle(i => i.Id == stale.Id, "the review queue still reads it");
+            await owner.CreateOrGetConnectionAsync();
+            var fresh = new WorkOrderFailureIntent { DepartmentId = 88, CompletionId = Guid.NewGuid().ToString("D"), ItemId = Guid.NewGuid().ToString("D"), CreatedBy = "actor", CreatedOn = DateTime.UtcNow, UpdatedOn = DateTime.UtcNow };
+            await repository.AllocateAsync(fresh); owner.CommitChanges();
+            (await repository.MaintenanceDepartmentsAsync(0)).Should().Contain(88);
+            await owner.CreateOrGetConnectionAsync();
+            foreach (var intent in new[] { stale, fresh }) { intent.ProcessedOn = DateTime.UtcNow; await repository.WriteAsync(intent); }
+            owner.CommitChanges();
+            (await repository.MaintenanceDepartmentsAsync(0)).Should().NotContain(88);
+        }
     }
 }

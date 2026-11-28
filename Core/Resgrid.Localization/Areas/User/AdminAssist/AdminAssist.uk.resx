@@ -10521,4 +10521,36 @@
     <value>Відкрийте місця Workforce Pro на сторінці доповнення Workforce Pro та ввімкніть членів. Вимкнення члена ніколи не видаляє записів: його записи стають лише для перегляду.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>Перевірка несправностей</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>Давніші несправності з контрольних списків, які не стали нарядами автоматично.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>Увімкнення Readiness Pro ніколи не створює лавину нарядів і не виводить підрозділи з експлуатації через старі несправності; керівник вирішує щодо кожної.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>Після ввімкнення Readiness Pro відкрийте Перевірку несправностей і створіть наряд або відхиліть кожну давнішу несправність.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>Налаштування обслуговування обладнання</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>Графіки щорічного, 6-річного обслуговування й гідровипробувань для кожного вогнегасника чи іншого серійного екземпляра позиції одразу.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>Сотні вогнегасників отримують терміни обслуговування без ручного налаштування кожного.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>У Плановому обслуговуванні виберіть Налаштувати обслуговування обладнання, позицію та послуги, потрібні її типу.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

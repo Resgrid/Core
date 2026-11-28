@@ -6,10 +6,22 @@ using System.Text;
 
 namespace Resgrid.Model.Checklists
 {
-	public static class ChecklistTemplateCatalog
+	public static partial class ChecklistTemplateCatalog
 	{
 		public const string Guidance = "Adapt these starting points to your equipment, manufacturer procedures and local requirements before use.";
-		public static IReadOnlyList<ChecklistTemplate> All { get; } = BuildAll().AsReadOnly();
+		/// <summary>The published catalog (and, while <see cref="Resgrid.Config.ContentPacksConfig.ShowUnreviewedPacks"/> is on, the jurisdiction packs awaiting review).</summary>
+		public static IReadOnlyList<ChecklistTemplate> All => Resgrid.Config.ContentPacksConfig.ShowUnreviewedPacks ? WithUnreviewed : Published;
+		private static readonly IReadOnlyList<ChecklistTemplate> Published = BuildAll().AsReadOnly();
+		/// <summary>G8 CA2: jurisdiction packs written but not yet signed off by a reviewer (ChecklistTemplateCatalog.Jurisdictions.cs).</summary>
+		public static IReadOnlyList<ChecklistTemplate> PendingReview { get; } = BuildPendingReview().AsReadOnly();
+		private static readonly IReadOnlyList<ChecklistTemplate> WithUnreviewed = Published.Concat(PendingReview).ToList().AsReadOnly();
+
+		/// <summary>G8 CA1: true when the template is in a jurisdiction pack that has not been signed off by a reviewer yet.</summary>
+		public static bool IsUnreviewed(ChecklistTemplate template) => template != null && PendingReview.Any(t => t.Id == template.Id);
+
+		/// <summary>G8 CA1: the templates offered to a department in <paramref name="jurisdiction"/> (generic ones always).</summary>
+		public static IReadOnlyList<ChecklistTemplate> ForJurisdiction(IEnumerable<ChecklistTemplate> templates, string jurisdiction)
+			=> TemplateJurisdictions.Filter(templates, t => t.Jurisdiction, jurisdiction);
 
 		public static ChecklistTemplate GetById(string id) => All.FirstOrDefault(t =>
 			string.Equals(t.Id, id, StringComparison.OrdinalIgnoreCase));

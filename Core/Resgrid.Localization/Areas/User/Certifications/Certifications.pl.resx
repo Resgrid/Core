@@ -324,4 +324,16 @@
     <comment>machine-translated</comment>
   </data>
   <data name="CategoryLawEnforcement" xml:space="preserve"><value>Organy ścigania</value><comment>machine-translated</comment></data>
+  <data name="TemplatesForRegion" xml:space="preserve">
+    <value>Tylko szablony dla {0} i ogólne</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRegion" xml:space="preserve">
+    <value>Obszar</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateRegionGeneral" xml:space="preserve">
+    <value>Ogólny</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

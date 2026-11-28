@@ -158,6 +158,36 @@
       "DocsPath": "/web-app/work-orders/"
     },
     {
+      "Id": "asset-service-setup",
+      "AreaId": "maintenance",
+      "LabelKey": "Feature.asset-service-setup",
+      "PurposeKey": "FeaturePurpose.asset-service-setup",
+      "ValueKey": "FeatureValue.asset-service-setup",
+      "ExampleKey": "AreaExample.maintenance",
+      "AdoptionKey": "FeatureSetup.asset-service-setup",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "WorkOrders",
+        "Action": "AssetService"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "ReadinessPro"
+        },
+        {
+          "Kind": "module",
+          "Id": "Maintenance"
+        }
+      ],
+      "SettingIds": [
+        "module.MaintenanceDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/work-orders/#asset-service-setup"
+    },
+    {
       "Id": "maintenance-policy",
       "AreaId": "maintenance",
       "LabelKey": "Feature.maintenance-policy",
@@ -250,6 +280,36 @@
       "RuleIds": [],
       "Prominence": "Detail",
       "DocsPath": "/web-app/work-orders/"
+    },
+    {
+      "Id": "failure-review",
+      "AreaId": "maintenance",
+      "LabelKey": "Feature.failure-review",
+      "PurposeKey": "FeaturePurpose.failure-review",
+      "ValueKey": "FeatureValue.failure-review",
+      "ExampleKey": "AreaExample.maintenance",
+      "AdoptionKey": "FeatureSetup.failure-review",
+      "ReleaseStatus": "available",
+      "Location": {
+        "Controller": "WorkOrders",
+        "Action": "FailureReview"
+      },
+      "Requirements": [
+        {
+          "Kind": "addon",
+          "Id": "ReadinessPro"
+        },
+        {
+          "Kind": "module",
+          "Id": "Maintenance"
+        }
+      ],
+      "SettingIds": [
+        "module.MaintenanceDisabled"
+      ],
+      "RuleIds": [],
+      "Prominence": "Detail",
+      "DocsPath": "/web-app/work-orders/#failure-review"
     },
     {
       "Id": "addon-readiness",
@@ -382,6 +442,17 @@
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
+      "Id": "asset-service-setup",
+      "Locale": "en",
+      "TitleKey": "Feature.asset-service-setup",
+      "Body": "Asset service setup Annual, 6-year and hydrostatic test service schedules for every fire extinguisher or other serialized asset of an inventory item at once. Under Work Orders, Preventive maintenance, Set up asset service, choose the item, the first due date, the lead time, the role and the services its type needs. One completion-based yearly schedule is created per asset and service, named with the asset tag or serial number; running it again only adds assets added since. Keep the monthly visual inspection as a checklist on each extinguisher. Requires the Readiness Pro add-on.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "asset-service-setup",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-27T00:00:00Z"
+    },
+    {
       "Id": "maintenance-policy",
       "Locale": "en",
       "TitleKey": "Feature.maintenance-policy",
@@ -415,15 +486,26 @@
       "ReviewedOn": "2026-09-24T00:00:00Z"
     },
     {
+      "Id": "failure-review",
+      "Locale": "en",
+      "TitleKey": "Feature.failure-review",
+      "Body": "Failure review Older checklist failures that were not turned into work orders automatically. Checklist items set to create a work order on failure are handled automatically only while the failure is less than 72 hours old; older failures, such as those recorded before Readiness Pro was turned on, wait in Work Orders, Failure review. A manager creates a work order for each one (no unit or equipment hold is applied) or dismisses it. Turning on Readiness Pro never floods work orders or takes units out of service for old failures. Requires the Readiness Pro add-on and Manage Work Orders for the whole department.",
+      "SourcePath": "docs/admin-assist/settings-reference.md",
+      "Anchor": "failure-review",
+      "PackVersion": "2026.09.25.2",
+      "Owner": "Resgrid.Core",
+      "ReviewedOn": "2026-11-27T00:00:00Z"
+    },
+    {
       "Id": "addon-readiness",
       "Locale": "en",
       "TitleKey": "Feature.addon-readiness",
-      "Body": "Readiness Pro The Readiness Pro add-on: work orders, preventive maintenance, repair approvals and safety holds. Give equipment defects an owner and a recorded repair and return-to-service review. A failed apparatus check leads to an explicitly created maintenance work order. Checklists do not require this add-on. Maintenance needs its module, permissions and active entitlement. Historical evidence and hold release follow owning-module rules.",
+      "Body": "Readiness Pro The Readiness Pro add-on: work orders, preventive maintenance, repair approvals and safety holds. Give equipment defects an owner and a recorded repair and return-to-service review. A failed apparatus check leads to an explicitly created maintenance work order. Checklists do not require this add-on. Maintenance needs its module, permissions and active entitlement. Historical evidence and hold release follow owning-module rules. It also includes Failure review for checklist failures recorded before activation, and Set up asset service for extinguisher and other long-interval service schedules.",
       "SourcePath": "docs/admin-assist/settings-reference.md",
       "Anchor": "addon-readiness",
       "PackVersion": "2026.09.25.2",
       "Owner": "Resgrid.Core",
-      "ReviewedOn": "2026-09-24T00:00:00Z"
+      "ReviewedOn": "2026-11-27T00:00:00Z"
     },
     {
       "Id": "readiness-signatures",

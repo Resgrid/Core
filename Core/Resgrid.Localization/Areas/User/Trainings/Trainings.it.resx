@@ -5637,4 +5637,8 @@
     <value>Questa formazione è una copia gestita della raccolta di corsi di un'organizzazione collegata. Il contenuto e il quiz cambiano solo tramite la raccolta; potete comunque assegnarla, creare report su di essa o copiarla in una vostra formazione.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Rec.TemplatesOtherRegions" xml:space="preserve">
+    <value>Mostra {0} modelli per altre regioni (questo dipartimento: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

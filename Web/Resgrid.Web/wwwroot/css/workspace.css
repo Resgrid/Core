@@ -56,6 +56,8 @@
 .rgw-toolbar form { margin: 0; }
 /* A toolbar button toggled with the hidden attribute (practice cards' Show / Again / Known): .btn's display would otherwise keep it on screen. */
 .rgw-toolbar [hidden] { display: none !important; }
+/* G8 CA1: template cards for another region stay listed but hidden until "Show templates for other regions" (cards set display). */
+.rgw-other-region[hidden] { display: none !important; }
 
 /* -- Filter block --------------------------------------------------------- */
 .rgw-filter { border: 1px solid #e7eaec; border-radius: 3px; padding: 15px 20px 5px 20px; margin: 0 0 20px 0; background: #f3f3f4; }

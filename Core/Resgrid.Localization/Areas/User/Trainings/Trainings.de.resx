@@ -5637,4 +5637,8 @@
     <value>Diese Schulung ist eine verwaltete Kopie aus der Kurssammlung einer verknüpften Organisation. Inhalt und Quiz ändern sich nur über die Sammlung; Sie können sie dennoch zuweisen, darüber berichten oder sie in eine eigene Schulung kopieren.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Rec.TemplatesOtherRegions" xml:space="preserve">
+    <value>{0} Vorlagen für andere Regionen anzeigen (diese Organisation: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

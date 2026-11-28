@@ -5637,4 +5637,8 @@
     <value>Це навчання є керованою копією з набору курсів пов'язаної організації. Його вміст і тест змінюються лише через набір; ви все одно можете призначати його, створювати звіти щодо нього або скопіювати його у власне навчання.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Rec.TemplatesOtherRegions" xml:space="preserve">
+    <value>Показати шаблони для інших регіонів: {0} (цей підрозділ: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

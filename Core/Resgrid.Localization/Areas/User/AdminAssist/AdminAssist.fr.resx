@@ -10521,4 +10521,36 @@
     <value>Ouvrez les places Workforce Pro depuis la page du module Workforce Pro et activez des membres. Désactiver un membre ne supprime jamais un dossier : ses dossiers passent en lecture seule.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>Revue des défaillances</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>Anciennes défaillances de listes de contrôle non converties automatiquement en bons de travail.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>Activer Readiness Pro ne crée jamais une avalanche de bons de travail ni ne met d'unités hors service pour d'anciennes défaillances ; un responsable décide de chacune.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>Après avoir activé Readiness Pro, ouvrez la Revue des défaillances et créez ou ignorez chaque ancienne défaillance.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>Configuration de l'entretien des équipements</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>Plans d'entretien annuel, de 6 ans et d'épreuve hydrostatique pour chaque extincteur ou autre exemplaire sérialisé d'un article en une fois.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>Des centaines d'extincteurs reçoivent leurs échéances d'entretien sans configuration une à une.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>Dans Maintenance préventive, choisissez Configurer l'entretien des équipements, puis l'article et les services dont son type a besoin.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

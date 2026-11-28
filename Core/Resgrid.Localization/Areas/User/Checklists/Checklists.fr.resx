@@ -459,8 +459,8 @@
   <data name="No maximum" xml:space="preserve">
     <value>Sans maximum</value>
   </data>
-  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
-    <value>Image justificative (PNG/JPEG, 10 Mo maximum ; analyse antivirus requise)</value>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB)" xml:space="preserve">
+    <value>Image justificative (PNG/JPEG, 10 Mo maximum)</value>
   </data>
   <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
     <value>Dessinez votre signature ou importez une image de celle-ci. Si un témoin indépendant est requis, il doit se connecter séparément.</value>
@@ -729,6 +729,30 @@
   </data>
   <data name="WitnessSignatureRefused" xml:space="preserve">
     <value>La signature du témoin n'a pas été enregistrée ; la liste de contrôle attend donc toujours son témoin.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Not scanned" xml:space="preserve">
+    <value>Non analysé</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotScannedHint" xml:space="preserve">
+    <value>Ce serveur fonctionne sans analyse des pièces jointes : cette image a été réencodée et enregistrée sans analyse antivirus.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesOtherRegions" xml:space="preserve">
+    <value>Afficher {0} modèles pour d'autres régions (cette organisation : {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewed" xml:space="preserve">
+    <value>Pas encore relu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewedHint" xml:space="preserve">
+    <value>Rédigé par Resgrid pour cette région et affiché pour relecture uniquement. Un relecteur qualifié ne l'a pas encore validé.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateBasis" xml:space="preserve">
+    <value>Aide à la tenue des registres pour : {0}</value>
     <comment>machine-translated</comment>
   </data>
 </root>

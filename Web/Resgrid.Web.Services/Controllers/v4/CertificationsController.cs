@@ -107,7 +107,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var templates = CertificationTypeTemplateCatalog.Search(query)
 				.Where(t => (!category.HasValue || (int)t.Category == category.Value) && (!appliesTo.HasValue || (int)t.AppliesTo == appliesTo.Value))
-				.Select(t => new CertificationTemplateData { Id = t.Id, Code = t.Code, Name = t.Name, Category = (int)t.Category, AppliesTo = (int)t.AppliesTo, IssuingAuthority = t.IssuingAuthority, DefaultValidityMonths = t.DefaultValidityMonths, NeverExpires = t.NeverExpires, RequiresVerification = t.RequiresVerification, RenewalCreditHoursRequired = t.RenewalCreditHoursRequired, Description = t.Description })
+				.Select(t => new CertificationTemplateData { Id = t.Id, Code = t.Code, Name = t.Name, Category = (int)t.Category, AppliesTo = (int)t.AppliesTo, IssuingAuthority = t.IssuingAuthority, DefaultValidityMonths = t.DefaultValidityMonths, NeverExpires = t.NeverExpires, RequiresVerification = t.RequiresVerification, RenewalCreditHoursRequired = t.RenewalCreditHoursRequired, Description = t.Description, Jurisdiction = t.Jurisdiction })
 				.ToList();
 			var result = new CertificationTemplatesResult { Data = templates, PageSize = templates.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);

@@ -132,7 +132,85 @@ namespace Resgrid.Model.WorkOrders
     public sealed class WorkOrderReadingInput { public int Revision { get; set; } public string RequestId { get; set; } public DateTime ObservedOn { get; set; } public decimal? MeterValue { get; set; } public decimal? ConditionValue { get; set; } public bool ResetMeter { get; set; } public string Source { get; set; } public string Note { get; set; } }
     public sealed class WorkOrderDeferralInput { public int Revision { get; set; } public DateTime DueOn { get; set; } public string Reason { get; set; } }
     public sealed class WorkOrderRecurrenceView { public int HistoryPage { get; set; } public bool HasMoreHistory { get; set; } public WorkOrderRecurrence Schedule { get; set; } public WorkOrderRecurrenceInput Settings { get; set; } public List<WorkOrderRecurrenceChange> Changes { get; set; } = new(); public List<WorkOrderMeterReading> Readings { get; set; } = new(); }
-    public sealed class WorkOrderMaintenanceSweep { public int Generated { get; set; } public int Held { get; set; } public int Escalated { get; set; } public int Deferred { get; set; } public int Errors { get; set; } }
+    public sealed class WorkOrderMaintenanceSweep { public int Generated { get; set; } public int Held { get; set; } public int Escalated { get; set; } public int Deferred { get; set; } public int Errors { get; set; }
+        /// <summary>Failure intents older than <see cref="Resgrid.Config.ReadinessProConfig.FailureIntentMaxAgeHours"/>, left for the review queue (RF-4).</summary>
+        public int Stale { get; set; } }
+
+    /// <summary>
+    /// RF-4 / ERT-D5 (owner 2026-11-27): a checklist failure intent is only turned into a work order and holds by the unattended sweep
+    /// while it is fresh. Older intents (typically recorded while the department had no Readiness Pro) wait in a review queue, where a
+    /// manager creates a work order (never an automatic hold) or dismisses them. Zero hours turns expiry off (replay everything).
+    /// </summary>
+    public static class FailureIntentAging
+    {
+        public static DateTime? StaleBefore(DateTime nowUtc) => Resgrid.Config.ReadinessProConfig.FailureIntentMaxAgeHours > 0 ? nowUtc.AddHours(-Resgrid.Config.ReadinessProConfig.FailureIntentMaxAgeHours) : null;
+        public static bool IsStale(WorkOrderFailureIntent intent, DateTime nowUtc) { var cutoff = StaleBefore(nowUtc); return intent != null && cutoff.HasValue && intent.CreatedOn < cutoff.Value; }
+    }
+    /// <summary>
+    /// Industrial ERT G6 WE1 (Readiness Pro): the long-interval service an extinguisher or similar asset needs from a qualified technician,
+    /// as a completion-based yearly preventive-maintenance schedule. Which presets apply to a given asset is the department's call (by
+    /// type and manufacturer), never inferred. The monthly visual stays a checklist.
+    /// </summary>
+    public enum AssetServicePreset { AnnualMaintenance = 1, SixYearMaintenance = 2, HydrostaticFiveYear = 3, HydrostaticTwelveYear = 4 }
+    public static class AssetServicePresets
+    {
+        /// <summary>The yearly interval of each preset.</summary>
+        public static int Years(AssetServicePreset preset) => preset switch
+        {
+            AssetServicePreset.AnnualMaintenance => 1, AssetServicePreset.SixYearMaintenance => 6,
+            AssetServicePreset.HydrostaticFiveYear => 5, AssetServicePreset.HydrostaticTwelveYear => 12, _ => throw new ArgumentOutOfRangeException(nameof(preset))
+        };
+        /// <summary>The localization key of the generated work order's title (WorkOrders resx).</summary>
+        public static string TitleKey(AssetServicePreset preset) => "AssetServicePreset" + preset;
+    }
+    /// <summary>WE1: one preventive-maintenance schedule per preset for every serialized asset of an inventory item.</summary>
+    public sealed class AssetServiceSetupInput
+    {
+        public string ItemId { get; set; }
+        public List<AssetServicePreset> Presets { get; set; } = new();
+        /// <summary>The first due date in the department's zone; later cycles count from each completion.</summary>
+        public DateTime AnchorLocal { get; set; }
+        public string TimeZoneId { get; set; } = "UTC";
+        public int LeadDays { get; set; } = 30;
+        public int? AssignedToRoleId { get; set; }
+        public WorkOrderPriority Priority { get; set; } = WorkOrderPriority.Normal;
+    }
+    public sealed class AssetServiceSetupResult
+    {
+        public int Assets { get; set; }
+        public int Created { get; set; }
+        /// <summary>Already set up from an earlier run (same asset and preset).</summary>
+        public int Existing { get; set; }
+        /// <summary>Retired, lost or consumed assets left out.</summary>
+        public int Skipped { get; set; }
+        public int Failed { get; set; }
+        public bool Truncated { get; set; }
+    }
+    /// <summary>One stale failure intent in the activation review queue. Routing metadata only (no answers or findings).</summary>
+    public sealed class WorkOrderFailureReviewRow
+    {
+        public string IntentId { get; set; }
+        public DateTime RecordedOn { get; set; }
+        public string CompletionId { get; set; }
+        public string ItemId { get; set; }
+        public int TargetType { get; set; }
+        public string TargetId { get; set; }
+        public int? TargetGroupId { get; set; }
+        public int? UnitId { get; set; }
+        public string UnitName { get; set; }
+        public int Priority { get; set; }
+        public bool HoldUnit { get; set; }
+        public bool HoldAsset { get; set; }
+        /// <summary>False when the source run is gone, reopened or on another version: the intent can only be dismissed.</summary>
+        public bool CanCreate { get; set; }
+    }
+    public sealed class WorkOrderFailureReviewPage
+    {
+        public List<WorkOrderFailureReviewRow> Rows { get; set; } = new();
+        public bool HasMore { get; set; }
+        public int Total { get; set; }
+        public int MaxAgeHours { get; set; }
+    }
     public sealed class WorkOrderAssetState { public List<long> OutboxIds { get; set; } = new(); public int State { get; set; } public int Revision { get; set; } }
 }
 
@@ -155,6 +233,12 @@ namespace Resgrid.Model.Services
         Task<WorkOrderMaintenanceSweep> EscalateMaintenanceAsync(int departmentId);
         Task ValidateFailureOptionsAsync(ChecklistActor actor, ChecklistForm form);
         Task RecordFailureIntentAsync(ChecklistActor actor, ChecklistCompletion completion, ChecklistDefinitionVersion version, ChecklistItem item);
+        /// <summary>RF-4: stale failure intents waiting for a manager (Readiness Pro and department-wide Manage Work Orders).</summary>
+        Task<WorkOrderFailureReviewPage> FailureReviewAsync(ChecklistActor actor, int page = 0);
+        /// <summary>RF-4: creates a work order for a stale intent (no hold) or dismisses it. Returns the work order id, or null when dismissed.</summary>
+        Task<string> ResolveFailureReviewAsync(ChecklistActor actor, string intentId, bool createWorkOrder);
+        /// <summary>G6 WE1: creates the chosen service schedules for every serialized asset of an item (idempotent per asset and preset).</summary>
+        Task<AssetServiceSetupResult> SetupAssetServiceAsync(ChecklistActor actor, AssetServiceSetupInput input);
         Task CompleteInventoryPartAsync(InventoryActor actor, string partId, string transactionId, bool reversal, List<long> events);
     }
     /// <summary>Inventory owns its permissions, controlled witnesses, ledger and asset state. Caller owns the shared transaction.</summary>

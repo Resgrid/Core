@@ -10521,4 +10521,36 @@
     <value>Otwórz miejsca Workforce Pro ze strony dodatku Workforce Pro i włącz członków. Wyłączenie członka nigdy nie usuwa wpisu: jego rejestry stają się tylko do odczytu.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>Przegląd usterek</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>Starsze usterki z list kontrolnych, które nie stały się automatycznie zleceniami pracy.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>Włączenie Readiness Pro nigdy nie zalewa zleceniami pracy ani nie wyłącza jednostek z powodu starych usterek; kierownik decyduje o każdej.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>Po włączeniu Readiness Pro otwórz Przegląd usterek i utwórz zlecenie lub odrzuć każdą starszą usterkę.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>Konfiguracja serwisu sprzętu</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>Harmonogramy przeglądów rocznych, 6-letnich i prób hydrostatycznych dla każdej gaśnicy lub innej sztuki pozycji naraz.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>Setki gaśnic dostają terminy serwisu bez ręcznego ustawiania każdej z osobna.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>W Konserwacji zapobiegawczej wybierz Skonfiguruj serwis sprzętu, pozycję i usługi potrzebne jej typowi.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

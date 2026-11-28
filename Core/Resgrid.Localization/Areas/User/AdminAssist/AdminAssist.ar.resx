@@ -10521,4 +10521,36 @@
     <value>افتح مقاعد Workforce Pro من صفحة إضافة Workforce Pro وفعّل الأعضاء. إيقاف عضو لا يحذف أي سجل أبدًا: تصبح سجلاته للقراءة فقط.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>مراجعة الأعطال</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>أعطال قوائم التحقق الأقدم التي لم تتحول تلقائيًا إلى أوامر عمل.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>تفعيل Readiness Pro لا يُغرق أوامر العمل ولا يُخرج الوحدات من الخدمة بسبب أعطال قديمة؛ يقرر المدير كل حالة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>بعد تفعيل Readiness Pro، افتح مراجعة الأعطال وأنشئ أمر عمل لكل عطل أقدم أو تجاهله.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>إعداد صيانة الأصول</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>جداول الصيانة السنوية وكل 6 سنوات والاختبار الهيدروستاتيكي لكل طفاية أو أصل متسلسل آخر من صنف دفعة واحدة.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>تحصل مئات الطفايات على مواعيد صيانة الفنيين دون إعداد كل واحدة يدويًا.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>من الصيانة الوقائية اختر إعداد صيانة الأصول، ثم الصنف والخدمات التي يحتاجها نوعه.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

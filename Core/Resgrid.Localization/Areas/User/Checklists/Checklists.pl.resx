@@ -459,8 +459,8 @@
   <data name="No maximum" xml:space="preserve">
     <value>Brak maksimum</value>
   </data>
-  <data name="Evidence image (PNG/JPEG, up to 10 MB; scanning required)" xml:space="preserve">
-    <value>Zdjęcie dowodowe (PNG/JPEG, do 10 MB; wymagane skanowanie antywirusowe)</value>
+  <data name="Evidence image (PNG/JPEG, up to 10 MB)" xml:space="preserve">
+    <value>Zdjęcie dowodowe (PNG/JPEG, do 10 MB)</value>
   </data>
   <data name="Draw your signature or upload a signature image. A required independent witness must sign in separately." xml:space="preserve">
     <value>Narysuj podpis lub prześlij jego obraz. Wymagany niezależny świadek musi zalogować się osobno.</value>
@@ -729,6 +729,30 @@
   </data>
   <data name="WitnessSignatureRefused" xml:space="preserve">
     <value>Podpis świadka nie został zapisany, więc lista kontrolna nadal czeka na świadka.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Not scanned" xml:space="preserve">
+    <value>Nie przeskanowano</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotScannedHint" xml:space="preserve">
+    <value>Ten serwer działa bez skanowania załączników, więc obraz został ponownie zakodowany i zapisany bez skanowania antywirusowego.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplatesOtherRegions" xml:space="preserve">
+    <value>Pokaż szablony dla innych regionów: {0} (ta jednostka: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewed" xml:space="preserve">
+    <value>Jeszcze nie sprawdzono</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="NotYetReviewedHint" xml:space="preserve">
+    <value>Opracowane przez Resgrid dla tego regionu i pokazane tylko do przeglądu. Wykwalifikowany recenzent jeszcze tego nie zatwierdził.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="TemplateBasis" xml:space="preserve">
+    <value>Wspiera prowadzenie dokumentacji dla: {0}</value>
     <comment>machine-translated</comment>
   </data>
 </root>

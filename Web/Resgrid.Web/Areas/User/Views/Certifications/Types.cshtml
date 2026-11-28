@@ -74,14 +74,18 @@
                 <div class="modal-body">
                     <p class="text-muted">@localizer["TemplateGalleryIntro"]</p>
                     <input type="text" class="form-control m-b-sm" id="templateFilter" placeholder="@localizer["FilterTemplates"]" />
+                    @if (!string.IsNullOrEmpty(Model.Jurisdiction))
+                    {
+                        <div class="checkbox m-b-sm"><label><input type="checkbox" id="templateRegionOnly" checked /> @string.Format(localizer["TemplatesForRegion"].Value, Model.Jurisdiction)</label></div>
+                    }
                     <div style="max-height: 420px; overflow-y: auto;">
                         <table class="table table-condensed" id="templateTable">
-                            <thead><tr><th></th><th>@localizer["TypeCode"]</th><th>@localizer["TypeName"]</th><th>@localizer["Category"]</th><th>@localizer["AppliesTo"]</th><th>@localizer["Validity"]</th><th>@localizer["IssuingAuthority"]</th></tr></thead>
+                            <thead><tr><th></th><th>@localizer["TypeCode"]</th><th>@localizer["TypeName"]</th><th>@localizer["Category"]</th><th>@localizer["AppliesTo"]</th><th>@localizer["Validity"]</th><th>@localizer["IssuingAuthority"]</th><th>@localizer["TemplateRegion"]</th></tr></thead>
                             <tbody>
                                 @foreach (var t in templates)
                                 {
                                     var exists = Model.ExistingCodes.Contains(t.Code);
-                                    <tr data-search="@((t.Code + " " + t.Name + " " + t.Category + " " + t.AppliesTo + " " + t.IssuingAuthority + " " + string.Join(" ", t.Keywords)).ToLowerInvariant())" class="@(exists ? "text-muted" : null)">
+                                    <tr data-search="@((t.Code + " " + t.Name + " " + t.Category + " " + t.AppliesTo + " " + t.IssuingAuthority + " " + t.Jurisdiction + " " + string.Join(" ", t.Keywords)).ToLowerInvariant())" data-fits="@(Resgrid.Model.TemplateJurisdictions.Fits(t.Jurisdiction, Model.Jurisdiction) ? "true" : "false")" class="@(exists ? "text-muted" : null)">
                                         <td>@if (!exists) { <input type="checkbox" name="templateIds" value="@t.Id" /> } else { <i class="fa fa-check text-navy" title="@localizer["AlreadyAdded"]"></i> }</td>
                                         <td><code>@t.Code</code></td>
                                         <td>@t.Name</td>
@@ -89,6 +93,7 @@
                                         <td>@localizer[t.AppliesTo == Resgrid.Model.CertificationAppliesTo.Unit ? "AppliesToUnit" : "AppliesToPerson"]</td>
                                         <td>@(t.NeverExpires ? localizer["NeverExpires"].Value : t.DefaultValidityMonths.HasValue ? string.Format(localizer["Months"].Value, t.DefaultValidityMonths) : "—")</td>
                                         <td><small>@t.IssuingAuthority</small></td>
+                                        <td>@if (string.IsNullOrEmpty(t.Jurisdiction)) { <span class="text-muted">@localizer["TemplateRegionGeneral"]</span> } else { <span class="label label-default">@t.Jurisdiction</span> }</td>
                                     </tr>
                                 }
                             </tbody>
@@ -107,14 +112,19 @@
 @section Scripts {
     <script>
         $(function () {
-            $('#templateFilter').on('input', function () {
-                var q = $(this).val().toLowerCase().split(/\s+/).filter(function (s) { return s.length; });
+            // G8 CA1: templates for other regions are hidden while "my region" is ticked (never removed; untick to see all).
+            function filterTemplates() {
+                var q = ($('#templateFilter').val() || '').toLowerCase().split(/\s+/).filter(function (s) { return s.length; });
+                var regionOnly = $('#templateRegionOnly').is(':checked');
                 $('#templateTable tbody tr').each(function () {
                     var text = $(this).data('search') || '';
-                    var show = q.every(function (term) { return text.indexOf(term) >= 0; });
+                    var show = q.every(function (term) { return text.indexOf(term) >= 0; }) && (!regionOnly || String($(this).data('fits')) === 'true');
                     $(this).toggle(show);
                 });
-            });
+            }
+            $('#templateFilter').on('input', filterTemplates);
+            $('#templateRegionOnly').on('change', filterTemplates);
+            filterTemplates();
         });
     </script>
 }

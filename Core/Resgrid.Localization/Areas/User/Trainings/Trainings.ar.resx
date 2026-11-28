@@ -5637,4 +5637,8 @@
     <value>هذا التدريب نسخة مُدارة من مجموعة دورات مؤسسة مرتبطة. لا يتغير محتواه واختباره إلا عبر المجموعة؛ ولا يزال بإمكانكم تعيينه وإعداد التقارير عنه أو نسخه إلى تدريب خاص بكم.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Rec.TemplatesOtherRegions" xml:space="preserve">
+    <value>عرض {0} قوالب لمناطق أخرى (هذا القسم: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

@@ -85,6 +85,8 @@ namespace Resgrid.Web.Services.Models.v4.Certifications
 		public bool RequiresVerification { get; set; }
 		public decimal? RenewalCreditHoursRequired { get; set; }
 		public string Description { get; set; }
+		/// <summary>G8 CA1: where the template applies ("CA", "CA-ON", "US", "EU"...), or null for a general template.</summary>
+		public string Jurisdiction { get; set; }
 	}
 
 	public class CertificationsResult : StandardApiResponseV4Base

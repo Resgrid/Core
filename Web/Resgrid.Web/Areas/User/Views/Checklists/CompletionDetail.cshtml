@@ -117,7 +117,12 @@
                                         <td>
                                             @foreach (var file in Model.Files.Where(f => f.ItemId == item.Id))
                                             {
-                                                <a class="checklist-evidence" asp-action="Evidence" asp-route-id="@file.Id">@file.Content</a><br />
+                                                <a class="checklist-evidence" asp-action="Evidence" asp-route-id="@file.Id">@file.Content</a>
+                                                @if (file.ScanState == (int)Resgrid.Model.RmsAttachmentScanState.Skipped)
+                                                {
+                                                    <span class="label label-default" title="@localizer["NotScannedHint"]">@localizer["Not scanned"]</span>
+                                                }
+                                                <br />
                                             }
                                         </td>
                                     </tr>

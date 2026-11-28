@@ -10521,4 +10521,36 @@
     <value>Öppna Workforce Pro-platserna från sidan för tillägget Workforce Pro och slå på medlemmar. Att slå av en medlem raderar aldrig något: medlemmens register blir skrivskyddade.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>Felgranskning</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>Äldre checklistfel som inte blev arbetsorder automatiskt.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>Att aktivera Readiness Pro skapar aldrig en flod av arbetsorder eller tar enheter ur tjänst för gamla fel; en chef beslutar om varje.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>Öppna Felgranskning när Readiness Pro har aktiverats och skapa eller avfärda varje äldre fel.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>Inställning av utrustningsservice</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>Scheman för årlig service, 6-årsservice och hydrostatiskt prov för varje brandsläckare eller annat serienumrerat exemplar av en artikel på en gång.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>Hundratals brandsläckare får sina servicedatum utan att var och en ställs in för hand.</value>
+    <comment>machine-translated</comment>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>Under Förebyggande underhåll väljer du Ställ in service för utrustning, artikeln och de tjänster typen behöver.</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

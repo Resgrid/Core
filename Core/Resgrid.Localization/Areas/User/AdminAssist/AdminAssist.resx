@@ -9294,4 +9294,28 @@
   <data name="FeatureSetup.workforce-pro-seats" xml:space="preserve">
     <value>Open Workforce Pro seats from the Workforce Pro add-on page and switch members on. Switching a member off never deletes a record: their records become read-only.</value>
   </data>
+  <data name="Feature.failure-review" xml:space="preserve">
+    <value>Failure review</value>
+  </data>
+  <data name="FeaturePurpose.failure-review" xml:space="preserve">
+    <value>Older checklist failures that were not turned into work orders automatically.</value>
+  </data>
+  <data name="FeatureValue.failure-review" xml:space="preserve">
+    <value>Turning on Readiness Pro never floods work orders or takes units out of service for old failures; a manager decides each one.</value>
+  </data>
+  <data name="FeatureSetup.failure-review" xml:space="preserve">
+    <value>After turning on Readiness Pro, open Failure review and create or dismiss each older failure.</value>
+  </data>
+  <data name="Feature.asset-service-setup" xml:space="preserve">
+    <value>Asset service setup</value>
+  </data>
+  <data name="FeaturePurpose.asset-service-setup" xml:space="preserve">
+    <value>Annual, 6-year and hydrostatic service schedules for every extinguisher or other serialized asset of an item at once.</value>
+  </data>
+  <data name="FeatureValue.asset-service-setup" xml:space="preserve">
+    <value>Hundreds of extinguishers get their technician service due dates without setting each one up by hand.</value>
+  </data>
+  <data name="FeatureSetup.asset-service-setup" xml:space="preserve">
+    <value>Under Preventive maintenance, choose Set up asset service, pick the item and the services its type needs.</value>
+  </data>
 </root>

@@ -74,12 +74,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private List<TrainingRecordMemberOption> _memberOptions;
 		private bool? _lmsAllowed;
 
+		private readonly IDepartmentJurisdictionService _jurisdictions;
 		public TrainingRecordsController(ILearningRecordService learningRecords, ITrainingHistoryImportService historyImport, ILmsAccessService lmsAccess,
 			ILmsTrainingService lmsTraining, IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			IDepartmentSettingsService departmentSettingsService, ICertificationService certificationService, IPdfProvider pdfProvider,
 			IDocumentSealingService sealing, IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer,
-			ITrainingCompletionRecordingService recordings, ITrainingSubmissionService submissions)
+			ITrainingCompletionRecordingService recordings, ITrainingSubmissionService submissions, IDepartmentJurisdictionService jurisdictions = null)
 		{
+			_jurisdictions = jurisdictions;
 			_submissions = submissions;
 			_recordings = recordings;
 			_learningRecords = learningRecords;
@@ -1145,10 +1147,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Round 9C: templates in the reader's language; the ones the operating profile suggests come first (nothing is hidden).
 			var profile = await _departmentSettingsService.GetOperatingProfileAsync(DepartmentId);
 			var templates = TrainingCategoryTemplateCatalog.AllFor(CultureInfo.CurrentUICulture.Name);
+			// G8 CA1: templates for the department's region (and general ones) come first; the others stay listed behind a toggle.
+			var jurisdiction = _jurisdictions == null ? null : await _jurisdictions.GetJurisdictionAsync(DepartmentId);
 			var model = await PageAsync(new TrainingCategoriesView
 			{
-				Templates = SeedSectorRecommendations.SuggestedFirst(templates, SeedContentLocalization.CategoryTemplates, t => t.Key, profile),
-				Suggested = SeedSectorRecommendations.Suggested(SeedContentLocalization.CategoryTemplates, templates.Select(t => t.Key), profile)
+				Templates = SeedSectorRecommendations.SuggestedFirst(templates, SeedContentLocalization.CategoryTemplates, t => t.Key, profile)
+					.OrderBy(t => TemplateJurisdictions.Fits(t.Jurisdiction, jurisdiction) ? 0 : 1).ToList(),
+				Suggested = SeedSectorRecommendations.Suggested(SeedContentLocalization.CategoryTemplates, templates.Select(t => t.Key), profile),
+				Jurisdiction = jurisdiction
 			}, "Categories");
 			model.Input = input ?? new TrainingCategoryInput();
 			model.Codes = new HashSet<string>(model.LiveCategories.Where(c => !string.IsNullOrWhiteSpace(c.Code)).Select(c => c.Code), StringComparer.OrdinalIgnoreCase);

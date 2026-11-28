@@ -4326,4 +4326,7 @@
   <data name="ManagedBySetMessage" xml:space="preserve">
     <value>This training is a managed copy from a linked organization's course set. Its content and quiz change only through the set; you can still assign it, report on it or copy it into a training of your own.</value>
   </data>
+  <data name="Rec.TemplatesOtherRegions" xml:space="preserve">
+    <value>Show {0} templates for other regions (this department: {1})</value>
+  </data>
 </root>

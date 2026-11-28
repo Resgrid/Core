@@ -1,0 +1,82 @@
+@model Resgrid.Web.Areas.User.Models.WorkOrders.WorkOrderAssetServiceView
+@using Resgrid.Model.WorkOrders
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WorkOrders.WorkOrders> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["AssetServiceSetup"];
+    ViewData["Tab"] = "Recurrences";
+    ViewData["Title"] = localizer["AssetServiceSetup"].Value;
+    ViewData["Subtitle"] = localizer["AssetServiceSubtitle"].Value;
+    ViewData["CanWrite"] = true;
+    var presets = new[] { AssetServicePreset.AnnualMaintenance, AssetServicePreset.SixYearMaintenance, AssetServicePreset.HydrostaticFiveYear, AssetServicePreset.HydrostaticTwelveYear };
+}
+
+@await Html.PartialAsync("_Shell")
+
+<div class="wrapper wrapper-content rgw-page">
+    <div class="ibox float-e-margins">
+        <div class="ibox-title"><h5>@localizer["AssetServiceSetup"]</h5></div>
+        <div class="ibox-content">
+            @await Html.PartialAsync("_Protection")
+
+            <div class="alert alert-info"><i class="fa fa-info-circle"></i> @localizer["AssetServiceHelp"]</div>
+
+            @if (Model.Result != null)
+            {
+                <div class="alert @(Model.Result.Failed > 0 ? "alert-warning" : "alert-success")" role="status">
+                    @string.Format(localizer["AssetServiceResult"].Value, Model.Result.Assets, Model.Result.Created, Model.Result.Existing, Model.Result.Skipped, Model.Result.Failed)
+                    @if (Model.Result.Truncated) { <br /> @localizer["AssetServiceTruncated"] }
+                </div>
+            }
+
+            <form method="post" asp-action="SetupAssetService" class="work-order-form">
+                <div class="rgw-grid">
+                    <div class="form-group">
+                        <label for="Input_ItemId">@localizer["AssetServiceItem"]</label>
+                        <select id="Input_ItemId" name="ItemId" class="form-control" required>
+                            <option value="">@localizer["None"]</option>
+                            @foreach (var item in Model.Items)
+                            {
+                                <option value="@item.Id" selected="@(item.Id == Model.Input.ItemId)">@item.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Input_AnchorLocal">@localizer["AssetServiceFirstDue"]</label>
+                        <input id="Input_AnchorLocal" name="AnchorLocal" type="datetime-local" class="form-control" value="@Model.Input.AnchorLocal.ToString("yyyy-MM-ddTHH:mm")" required />
+                        <input type="hidden" name="TimeZoneId" value="@Model.Input.TimeZoneId" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Input_LeadDays">@localizer["LeadDays"]</label>
+                        <input id="Input_LeadDays" name="LeadDays" type="number" min="0" max="90" class="form-control" value="@Model.Input.LeadDays" />
+                    </div>
+                    <div class="form-group">
+                        <label for="Input_AssignedToRoleId">@localizer["Roles"]</label>
+                        <select id="Input_AssignedToRoleId" name="AssignedToRoleId" class="form-control">
+                            <option value="">@localizer["None"]</option>
+                            @foreach (var role in Model.Choices.Roles)
+                            {
+                                <option value="@role.Id" selected="@(role.Id == Model.Input.AssignedToRoleId?.ToString())">@role.Name</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <fieldset class="form-group">
+                    <legend class="h5">@localizer["AssetServicePresets"]</legend>
+                    @foreach (var preset in presets)
+                    {
+                        <div class="checkbox"><label><input type="checkbox" name="Presets" value="@preset" checked="@(Model.Input.Presets.Contains(preset))" /> @localizer[AssetServicePresets.TitleKey(preset)]</label></div>
+                    }
+                    <p class="help-block">@localizer["AssetServicePresetsHint"]</p>
+                </fieldset>
+                <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> @localizer["AssetServiceApply"]</button>
+                <a asp-action="Recurrences" class="btn btn-default">@localizer["PreventiveMaintenance"]</a>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/workspace.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/module-workspace.css" asp-append-version="true" />
+}
+@section Scripts { @await Html.PartialAsync("_Scripts") }

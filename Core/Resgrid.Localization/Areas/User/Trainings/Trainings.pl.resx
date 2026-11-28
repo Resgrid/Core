@@ -5637,4 +5637,8 @@
     <value>To szkolenie jest zarządzaną kopią z zestawu kursów powiązanej organizacji. Jego treść i quiz zmieniają się tylko poprzez zestaw; nadal można je przypisywać, tworzyć o nim raporty lub skopiować je do własnego szkolenia.</value>
     <comment>machine-translated</comment>
   </data>
+  <data name="Rec.TemplatesOtherRegions" xml:space="preserve">
+    <value>Pokaż szablony dla innych regionów: {0} (ta jednostka: {1})</value>
+    <comment>machine-translated</comment>
+  </data>
 </root>

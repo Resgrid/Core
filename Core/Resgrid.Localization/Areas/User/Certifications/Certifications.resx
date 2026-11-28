@@ -302,4 +302,13 @@
     <value>The renewal window must be between 1 and 60 months.</value>
   </data>
   <data name="CategoryLawEnforcement" xml:space="preserve"><value>Law enforcement</value></data>
+  <data name="TemplatesForRegion" xml:space="preserve">
+    <value>Only templates for {0} and general ones</value>
+  </data>
+  <data name="TemplateRegion" xml:space="preserve">
+    <value>Region</value>
+  </data>
+  <data name="TemplateRegionGeneral" xml:space="preserve">
+    <value>General</value>
+  </data>
 </root>
